@@ -1,0 +1,65 @@
+{
+  "name": "UTAU oto labeler",
+  "description": "Default oto labeler (Overlap cannot be negative).",
+  "fields": [
+    {
+      "index": 0,
+      "name": "Fixed",
+      "abbr": "Fixed",
+      "color": "#0000ff",
+      "height": 0.5,
+      "filling": -2,
+      "constraints": []
+    },
+    {
+      "index": 1,
+      "name": "Preutterance",
+      "abbr": "Preu",
+      "color": "#ff0000",
+      "height": 0.6667,
+      "filling": null,
+      "constraints": [
+        {
+          "min": null,
+          "max": 0
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Overlap",
+      "abbr": "Ovl",
+      "color": "#00ff00",
+      "height": 0.8333,
+      "filling": null,
+      "constraints": [
+        {
+          "min": null,
+          "max": 0
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "name": "Offset",
+      "value": "{-2}"
+    },
+    {
+      "name": "Fixed",
+      "value": "{0}-{-2}"
+    },
+    {
+      "name": "Blank",
+      "value": "{-2}-{-1}"
+    },
+    {
+      "name": "Preutterance",
+      "value": "{1}-{-2}"
+    },
+    {
+      "name": "Overlap",
+      "value": "{2}-{-2}"
+    }
+  ]
+}
