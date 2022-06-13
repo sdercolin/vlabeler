@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PointMode
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.io.Wave
@@ -70,32 +71,24 @@ private fun WaveChannelCanvas(
     canvasParams: CanvasParams,
     channel: Wave.Channel
 ) {
+    val dataDensity = 10 // temp value; should be smaller than resolution; bigger the heavier
+    val step = canvasParams.resolution / dataDensity
+    val actualDataDensity = canvasParams.resolution / step
+    val data = channel.data
+        .slice(channel.data.indices step step)
+
     Canvas(
         Modifier.fillMaxHeight()
             .width(canvasParams.canvasWidthInDp)
             .background(MaterialTheme.colors.background)
     ) {
-        val data = channel.data
-        val maxY = data.maxOfOrNull { it.absoluteValue } ?: 0
-        val yScale = maxY.toFloat() / center.y * 1.5f
-        var i = 0
-        var oldX = 0f
-        var oldY = center.y
-        var xIndex = 0f
-        while (i < data.size) {
-            val rawY = data[i]
-            val y = center.y - rawY / yScale
-            drawLine(
-                Color.Black,
-                start = Offset(oldX, oldY),
-                end = Offset(xIndex, y),
-                strokeWidth = 1f
-            )
-            i += canvasParams.resolution
-            oldX = xIndex
-            oldY = y
-            xIndex++
-        }
+        val centerY: Float = center.y
+        val maxRawY = channel.data.maxOfOrNull { it.absoluteValue } ?: 0
+        val yScale = maxRawY.toFloat() / centerY * 1.2f
+        val points = data
+            .map { centerY - it / yScale }
+            .withIndex().map { Offset(it.index.toFloat() / actualDataDensity, it.value) }
+        drawPoints(points, pointMode = PointMode.Polygon, color = Color(0xFF050505))
     }
 }
 
