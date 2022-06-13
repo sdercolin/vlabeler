@@ -17,6 +17,7 @@ import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.io.loadSampleFile
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.theme.AppTheme
@@ -29,6 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 @Preview
 fun MainWindow(
     mainScope: CoroutineScope,
+    appConf: AppConf,
     labelerConf: LabelerConf,
     player: Player,
     playerState: PlayerState,
@@ -41,6 +43,7 @@ fun MainWindow(
         if (sample != null) {
             Labeler(
                 sample = sample,
+                appConf = appConf,
                 labelerConf = labelerConf,
                 playerState = playerState,
                 playSampleSection = player::playSection,

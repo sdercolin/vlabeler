@@ -1,0 +1,11 @@
+{
+  "painter": {
+    "dataDensity": 10,
+    "canvasResolution": {
+      "default": 100,
+      "min": 10,
+      "max": 400,
+      "step": 20
+    }
+  }
+}

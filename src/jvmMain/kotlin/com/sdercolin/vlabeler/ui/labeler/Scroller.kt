@@ -21,9 +21,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import com.sdercolin.vlabeler.audio.PlayerState
-import com.sdercolin.vlabeler.DataDensity
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.io.Wave
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
@@ -33,6 +33,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun Scroller(
     sample: Sample,
+    appConf: AppConf,
     labelerConf: LabelerConf,
     playerState: PlayerState,
     playSampleSection: (Float, Float) -> Unit,
@@ -46,7 +47,7 @@ fun Scroller(
         Column(Modifier.fillMaxSize()) {
             sample.wave.channels.forEach { channel ->
                 Box(Modifier.weight(1f).fillMaxWidth()) {
-                    WaveChannelCanvas(canvasParams, channel)
+                    WaveChannelCanvas(appConf, canvasParams, channel)
                 }
             }
         }
@@ -69,10 +70,11 @@ fun Scroller(
 
 @Composable
 private fun WaveChannelCanvas(
+    appConf: AppConf,
     canvasParams: CanvasParams,
     channel: Wave.Channel
 ) {
-    val step = canvasParams.resolution / DataDensity
+    val step = canvasParams.resolution / appConf.painter.dataDensity
     val actualDataDensity = canvasParams.resolution / step
     val data = channel.data
         .slice(channel.data.indices step step)

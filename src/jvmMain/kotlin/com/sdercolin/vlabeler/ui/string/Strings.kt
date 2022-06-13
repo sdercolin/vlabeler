@@ -13,7 +13,7 @@ enum class Strings(val en: String) {
         en = "Horizontal Resolution"
     ),
     SetResolutionDialogDescription(
-        en = "Input horizontal resolution (frames per pixel) for the editor (%d ~ %d)"
+        en = "Input horizontal resolution (points per pixel) for the editor (%d ~ %d)"
     );
 
     fun get(language: Language): String = when (language) {

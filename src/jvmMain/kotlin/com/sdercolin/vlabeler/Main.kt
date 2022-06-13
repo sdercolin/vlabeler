@@ -8,9 +8,10 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
-import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.env.KeyEventHandler
 import com.sdercolin.vlabeler.env.KeyboardState
+import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.MainWindow
 import java.io.BufferedReader
 import kotlinx.serialization.decodeFromString
@@ -23,12 +24,16 @@ fun main() = application {
     val keyboardState = remember { mutableStateOf(KeyboardState()) }
     val keyEventHandler = KeyEventHandler(player, keyboardState)
 
+    val appConf = useResource("app.conf.json") {
+        val content = it.bufferedReader().use(BufferedReader::readText)
+        Json.decodeFromString<AppConf>(content)
+    }
     val labelerConf = useResource("oto.labeler.json") {
         val content = it.bufferedReader().use(BufferedReader::readText)
         Json.decodeFromString<LabelerConf>(content)
     }.let { conf -> conf.copy(fields = conf.fields.sortedBy { it.index }) }
     Window(onCloseRequest = ::exitApplication, onKeyEvent = { keyEventHandler.onKeyEvent(it) }) {
-        MainWindow(mainScope, labelerConf, player, playerState.value, keyboardState.value)
+        MainWindow(mainScope, appConf, labelerConf, player, playerState.value, keyboardState.value)
     }
 }
 

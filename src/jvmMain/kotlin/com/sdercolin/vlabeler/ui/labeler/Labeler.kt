@@ -29,15 +29,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardState
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialog
-import com.sdercolin.vlabeler.ui.labeler.CanvasParams
 import com.sdercolin.vlabeler.util.update
 
 @Composable
 fun Labeler(
     sample: Sample,
+    appConf: AppConf,
     labelerConf: LabelerConf,
     playerState: PlayerState,
     playSampleSection: (Float, Float) -> Unit,
@@ -45,18 +46,28 @@ fun Labeler(
 ) {
     val scrollState = rememberScrollState(0)
     val currentDensity = LocalDensity.current
-    val canvasParamsState = remember { mutableStateOf(CanvasParams(sample.wave.length, 100, currentDensity)) }
+    val resolutionRange = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
+    val canvasParamsState = remember {
+        mutableStateOf(
+            CanvasParams(
+                sample.wave.length,
+                appConf.painter.canvasResolution.default,
+                currentDensity
+            )
+        )
+    }
     var setResolutionDialogShown by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxWidth().weight(1f)) {
             Scroller(
-                sample,
-                labelerConf,
-                playerState,
-                playSampleSection,
-                keyboardState,
-                canvasParamsState.value,
-                scrollState
+                sample = sample,
+                appConf = appConf,
+                labelerConf = labelerConf,
+                playerState = playerState,
+                playSampleSection = playSampleSection,
+                keyboardState = keyboardState,
+                canvasParams = canvasParamsState.value,
+                horizontalScrollState = scrollState
             )
         }
         HorizontalScrollbar(
@@ -64,16 +75,16 @@ fun Labeler(
             adapter = rememberScrollbarAdapter(scrollState)
         )
         StatusBar(
+            resolutionRange = resolutionRange,
             openSetResolutionDialog = { setResolutionDialogShown = true },
-            resolution = canvasParamsState.value.resolution,
-            onChangeResolution = { canvasParamsState.update { copy(resolution = it) } }
-        )
+            resolution = canvasParamsState.value.resolution
+        ) { canvasParamsState.update { copy(resolution = it) } }
     }
     if (setResolutionDialogShown) {
         SetResolutionDialog(
             current = canvasParamsState.value.resolution,
-            min = CanvasParams.MinResolution,
-            max = CanvasParams.MaxResolution,
+            min = resolutionRange.min,
+            max = resolutionRange.max,
             dismiss = {
                 setResolutionDialogShown = false
             },
@@ -87,8 +98,12 @@ fun Labeler(
 
 @Composable
 private fun StatusBar(
-    openSetResolutionDialog: () -> Unit, resolution: Int, onChangeResolution: (Int) -> Unit
+    resolutionRange: CanvasParams.ResolutionRange,
+    openSetResolutionDialog: () -> Unit,
+    resolution: Int,
+    onChangeResolution: (Int) -> Unit
 ) {
+
     Row(
         modifier = Modifier.fillMaxWidth().height(30.dp).padding(5.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -97,8 +112,8 @@ private fun StatusBar(
         Box(
             Modifier.size(30.dp)
                 .clickable(
-                    enabled = CanvasParams.canIncrease(resolution),
-                    onClick = { onChangeResolution(CanvasParams.increaseFrom(resolution)) }
+                    enabled = resolutionRange.canIncrease(resolution),
+                    onClick = { onChangeResolution(resolutionRange.increaseFrom(resolution)) }
                 )
         ) {
             Text(
@@ -116,8 +131,8 @@ private fun StatusBar(
         Box(
             Modifier.size(30.dp)
                 .clickable(
-                    enabled = CanvasParams.canDecrease(resolution),
-                    onClick = { onChangeResolution(CanvasParams.decreaseFrom(resolution)) }
+                    enabled = resolutionRange.canDecrease(resolution),
+                    onClick = { onChangeResolution(resolutionRange.decreaseFrom(resolution)) }
                 )
         ) {
             Text(
@@ -130,4 +145,4 @@ private fun StatusBar(
 
 @Composable
 @Preview
-private fun StatusBarPreview() = StatusBar({}, 500, {})
+private fun StatusBarPreview() = StatusBar(CanvasParams.ResolutionRange(AppConf.CanvasResolution()), {}, 500) {}

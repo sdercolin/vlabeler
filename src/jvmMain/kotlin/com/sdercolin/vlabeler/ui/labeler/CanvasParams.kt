@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.labeler
 
 import androidx.compose.ui.unit.Density
+import com.sdercolin.vlabeler.model.AppConf
 
 data class CanvasParams(
     val dataLength: Int,
@@ -10,15 +11,17 @@ data class CanvasParams(
     val lengthInPixel = dataLength / resolution
     val canvasWidthInDp = with(density) { lengthInPixel.toDp() }
 
-    companion object {
+    class ResolutionRange(
+        private val conf: AppConf.CanvasResolution
+    ) {
 
-        fun canIncrease(resolution: Int) = resolution < MaxResolution
-        fun canDecrease(resolution: Int) = resolution > MinResolution
-        fun increaseFrom(resolution: Int) = resolution.plus(Interval).coerceAtMost(MaxResolution)
-        fun decreaseFrom(resolution: Int) = resolution.minus(Interval).coerceAtLeast(MinResolution)
+        val min get() = conf.min
+        val max get() = conf.max
 
-        const val MaxResolution = 400
-        const val MinResolution = 10
-        private const val Interval = 20
+        fun canIncrease(resolution: Int) = resolution < conf.max
+        fun canDecrease(resolution: Int) = resolution > conf.min
+        fun increaseFrom(resolution: Int) = resolution.plus(conf.step).coerceAtMost(conf.max)
+        fun decreaseFrom(resolution: Int) = resolution.minus(conf.step).coerceAtLeast(conf.min)
+
     }
 }
