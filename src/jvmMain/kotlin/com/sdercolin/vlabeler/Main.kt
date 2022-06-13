@@ -9,8 +9,8 @@ import androidx.compose.ui.window.application
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.ui.KeyEventHandler
-import com.sdercolin.vlabeler.ui.KeyboardState
+import com.sdercolin.vlabeler.env.KeyEventHandler
+import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.ui.MainWindow
 import java.io.BufferedReader
 import kotlinx.serialization.decodeFromString

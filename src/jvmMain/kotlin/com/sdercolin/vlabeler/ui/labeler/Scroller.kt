@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui
+package com.sdercolin.vlabeler.ui.labeler
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
@@ -20,11 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.sdercolin.vlabeler.audio.PlayerState
+import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
-import com.sdercolin.vlabeler.ui.model.CanvasParams
+import com.sdercolin.vlabeler.ui.labeler.marker.MarkerCanvas
 import kotlin.math.absoluteValue
 
 @Composable

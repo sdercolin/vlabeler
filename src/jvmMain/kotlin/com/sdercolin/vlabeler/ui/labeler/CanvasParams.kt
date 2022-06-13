@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui.model
+package com.sdercolin.vlabeler.ui.labeler
 
 import androidx.compose.ui.unit.Density
 

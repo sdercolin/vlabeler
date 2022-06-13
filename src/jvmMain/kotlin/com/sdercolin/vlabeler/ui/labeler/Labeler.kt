@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui
+package com.sdercolin.vlabeler.ui.labeler
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.HorizontalScrollbar
@@ -28,10 +28,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
+import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialog
-import com.sdercolin.vlabeler.ui.model.CanvasParams
 import com.sdercolin.vlabeler.util.update
 
 @Composable

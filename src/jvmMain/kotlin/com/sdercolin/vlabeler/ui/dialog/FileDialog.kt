@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui.util
+package com.sdercolin.vlabeler.ui.env
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.AwtWindow

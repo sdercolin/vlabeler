@@ -15,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
+import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.io.loadSampleFile
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.theme.AppTheme
-import com.sdercolin.vlabeler.ui.util.FileDialog
+import com.sdercolin.vlabeler.ui.env.FileDialog
+import com.sdercolin.vlabeler.ui.labeler.Labeler
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
 
