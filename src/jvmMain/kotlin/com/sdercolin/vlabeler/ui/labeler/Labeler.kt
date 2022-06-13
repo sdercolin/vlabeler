@@ -32,6 +32,7 @@ import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialog
+import com.sdercolin.vlabeler.ui.labeler.CanvasParams
 import com.sdercolin.vlabeler.util.update
 
 @Composable
@@ -96,8 +97,8 @@ private fun StatusBar(
         Box(
             Modifier.size(30.dp)
                 .clickable(
-                    enabled = CanvasParams.canDecrease(resolution),
-                    onClick = { onChangeResolution(CanvasParams.decreaseFrom(resolution)) }
+                    enabled = CanvasParams.canIncrease(resolution),
+                    onClick = { onChangeResolution(CanvasParams.increaseFrom(resolution)) }
                 )
         ) {
             Text(
@@ -107,16 +108,16 @@ private fun StatusBar(
         }
         Text(
             modifier = Modifier.clickable { openSetResolutionDialog() }
-                .defaultMinSize(minWidth = 40.dp),
-            text = "$resolution",
+                .defaultMinSize(minWidth = 55.dp),
+            text = "1/$resolution",
             style = MaterialTheme.typography.body2,
             textAlign = TextAlign.Center
         )
         Box(
             Modifier.size(30.dp)
                 .clickable(
-                    enabled = CanvasParams.canIncrease(resolution),
-                    onClick = { onChangeResolution(CanvasParams.increaseFrom(resolution)) }
+                    enabled = CanvasParams.canDecrease(resolution),
+                    onClick = { onChangeResolution(CanvasParams.decreaseFrom(resolution)) }
                 )
         ) {
             Text(

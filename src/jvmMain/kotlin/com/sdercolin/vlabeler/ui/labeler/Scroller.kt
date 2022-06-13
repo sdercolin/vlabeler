@@ -21,6 +21,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import com.sdercolin.vlabeler.audio.PlayerState
+import com.sdercolin.vlabeler.DataDensity
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.Entry
@@ -71,8 +72,7 @@ private fun WaveChannelCanvas(
     canvasParams: CanvasParams,
     channel: Wave.Channel
 ) {
-    val dataDensity = 10 // temp value; should be smaller than resolution; bigger the heavier
-    val step = canvasParams.resolution / dataDensity
+    val step = canvasParams.resolution / DataDensity
     val actualDataDensity = canvasParams.resolution / step
     val data = channel.data
         .slice(channel.data.indices step step)

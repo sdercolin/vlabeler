@@ -17,8 +17,8 @@ data class CanvasParams(
         fun increaseFrom(resolution: Int) = resolution.plus(Interval).coerceAtMost(MaxResolution)
         fun decreaseFrom(resolution: Int) = resolution.minus(Interval).coerceAtLeast(MinResolution)
 
-        const val MaxResolution = 1000
-        const val MinResolution = 50
-        private const val Interval = 50
+        const val MaxResolution = 400
+        const val MinResolution = 10
+        private const val Interval = 20
     }
 }
