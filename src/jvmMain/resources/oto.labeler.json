@@ -8,6 +8,7 @@
       "abbr": "Fixed",
       "color": "#0000ff",
       "height": 0.5,
+      "dragBase": false,
       "filling": -2,
       "constraints": []
     },
@@ -17,6 +18,7 @@
       "abbr": "Preu",
       "color": "#ff0000",
       "height": 0.6667,
+      "dragBase": true,
       "filling": null,
       "constraints": [
         {
@@ -31,6 +33,7 @@
       "abbr": "Ovl",
       "color": "#00ff00",
       "height": 0.8333,
+      "dragBase": false,
       "filling": null,
       "constraints": [
         {
@@ -61,5 +64,9 @@
       "name": "Overlap",
       "value": "{2}-{-2}"
     }
-  ]
+  ],
+  "lockedDrag": {
+    "useDragBase": true,
+    "useStart": true
+  }
 }

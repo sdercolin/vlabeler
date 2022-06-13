@@ -3,22 +3,30 @@
 package com.sdercolin.vlabeler.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.MarkerState.Companion.EndPointIndex
@@ -33,11 +41,11 @@ import com.sdercolin.vlabeler.util.update
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.min
-import org.jetbrains.skia.Font
 
 private data class MarkerState(
     val mouse: MouseState = MouseState.None,
-    val pointIndex: Int = -3 // -3: null, -2: start, -1: end
+    val pointIndex: Int = -3, // -3: null, -2: start, -1: end
+    val lockedDrag: Boolean = false
 ) {
 
     enum class MouseState {
@@ -65,51 +73,88 @@ private data class EntryInPixel(
 
     private val pointsSorted = points.sorted()
 
-    fun getPoint(index: Int): Float {
-        return points.getOrNull(index) ?: points.lastOrNull() ?: start
+    fun getPoint(index: Int): Float = when (index) {
+        StartPointIndex -> start
+        EndPointIndex -> end
+        else -> getCustomPoint(index)
     }
 
-    fun getPointIndex(x: Float): Int {
+    fun getCustomPoint(index: Int): Float = points.getOrNull(index) ?: points.lastOrNull() ?: start
+
+    fun getPointIndexForHovering(x: Float, y: Float, conf: LabelerConf, canvasHeight: Float, density: Density): Int {
         // end
-        if ((end - x).absoluteValue <= NearRadius) {
+        if ((end - x).absoluteValue <= NearRadiusStartOrEnd) {
             if (x >= end) return EndPointIndex
             val prev = pointsSorted.lastOrNull() ?: start
             if (end - x <= x - prev) return EndPointIndex
         }
 
         // start
-        if ((start - x).absoluteValue <= NearRadius) {
+        if ((start - x).absoluteValue <= NearRadiusStartOrEnd) {
             if (x <= start) return StartPointIndex
             val next = pointsSorted.firstOrNull() ?: end
             if (x - start <= next - x) return StartPointIndex
         }
 
+        // other points
         val pointsSorted = points.withIndex().sortedBy { it.value }
+        for ((index, value) in pointsSorted) {
+            // label part
+            val centerY = canvasHeight * (1 - conf.fields[index].height) - with(density) { labelShiftUp.toPx() }
+            val height = with(density) { labelSize.height.toPx() }
+            val top = centerY - 0.5 * height
+            val bottom = centerY + 0.5 * height
+            val width = with(density) { labelSize.width.toPx() }
+            val left = value - 0.5f * width
+            val right = value + 0.5f * width
+            if (x in left..right && y in top..bottom) {
+                return index
+            }
+        }
         for ((current, next) in (pointsSorted + listOf(IndexedValue(EndPointIndex, end))).zipWithNext()) {
-            if ((current.value - x).absoluteValue > NearRadius) continue
-            if (current.value == next.value) return current.index
-            if (x - current.value <= next.value - x) return current.index
+            // line part
+            if ((current.value - x).absoluteValue > NearRadiusCustom) continue
+            if (current.value == next.value || x - current.value <= next.value - x) {
+                val top = canvasHeight * (1 - conf.fields[current.index].height)
+                if (y >= top) return current.index
+            }
         }
 
         return NonePointIndex
     }
 
-    fun drag(pointIndex: Int, point: Float): EntryInPixel =
+    fun drag(pointIndex: Int, x: Float, conf: LabelerConf, canvasWidthInPixel: Int): EntryInPixel =
         when (pointIndex) {
             NonePointIndex -> this
             StartPointIndex -> {
                 val max = pointsSorted.firstOrNull() ?: end
-                copy(start = point.coerceAtMost(max))
+                copy(start = x.coerceIn(0f, max))
             }
             EndPointIndex -> {
                 val min = pointsSorted.lastOrNull() ?: start
-                copy(end = point.coerceAtLeast(min))
+                copy(end = x.coerceIn(min, canvasWidthInPixel.toFloat() - 1))
             }
             else -> {
-                // TODO: other points
-                this
+                val constraints = conf.connectedConstraints
+                val min = constraints.filter { it.second == pointIndex }
+                    .maxOfOrNull { points[it.first] }
+                    ?: start
+                val max = constraints.filter { it.first == pointIndex }
+                    .minOfOrNull { points[it.second] }
+                    ?: end
+                val newPoints = points.toMutableList()
+                newPoints[pointIndex] = x.coerceIn(min, max)
+                copy(points = newPoints)
             }
         }
+
+    fun lockedDrag(pointIndex: Int, x: Float, canvasWidthInPixel: Int): EntryInPixel {
+        if (pointIndex == NonePointIndex) return this
+        val dxMin = -start
+        val dxMax = canvasWidthInPixel.toFloat() - 1 - end
+        val dx = (x - getPoint(pointIndex)).coerceIn(dxMin, dxMax)
+        return copy(start = start + dx, end = end + dx, points = points.map { it + dx })
+    }
 
     fun getClickedRange(x: Float): Pair<Float?, Float?>? {
         val borders = (listOf(start, end) + points).distinct().sorted()
@@ -125,7 +170,8 @@ private data class EntryInPixel(
 
 
     companion object {
-        private const val NearRadius = 20f
+        private const val NearRadiusStartOrEnd = 10f
+        private const val NearRadiusCustom = 5f
     }
 }
 
@@ -153,6 +199,12 @@ private class Converter(
     fun convertToFrame(px: Float) = px.times(resolution)
 }
 
+private const val RegionAlpha = 0.1f
+private const val IdleLineAlpha = 0.7f
+private const val StrokeWidth = 2f
+private val labelSize = DpSize(40.dp, 25.dp)
+private val labelShiftUp = 8.dp
+
 @Composable
 fun MarkerCanvas(
     canvasParams: CanvasParams,
@@ -166,19 +218,29 @@ fun MarkerCanvas(
     val converter = Converter(sampleRate, canvasParams.resolution)
     val entryInPixel = converter.convertToPixel(entry)
     val state = remember { mutableStateOf(MarkerState()) }
+    val canvasHeightState = remember { mutableStateOf(0f) }
+    val fields = labelerConf.fields
     val primaryColor = MaterialTheme.colors.primary
+
     Canvas(
         Modifier.fillMaxHeight()
-            .width(canvasParams.canvasWidth)
-            .onPointerEvent(PointerEventType.Move) {
-                val x = it.changes.first().position.x.coerceIn(0f, canvasParams.lengthInPixel - 1f)
+            .width(canvasParams.canvasWidthInDp)
+            .onPointerEvent(PointerEventType.Move) { event ->
+                val eventChange = event.changes.first()
+                val x = eventChange.position.x.coerceIn(0f, canvasParams.lengthInPixel - 1f)
+                val y = eventChange.position.y.coerceIn(0f, (canvasHeightState.value - 1f).coerceAtLeast(0f))
                 if (state.value.mouse == MouseState.Dragging) {
-                    val newEntryInPixel = entryInPixel.drag(state.value.pointIndex, x)
+                    val newEntryInPixel = if (state.value.lockedDrag) {
+                        entryInPixel.lockedDrag(state.value.pointIndex, x, canvasParams.lengthInPixel)
+                    } else {
+                        entryInPixel.drag(state.value.pointIndex, x, labelerConf, canvasParams.lengthInPixel)
+                    }
                     if (newEntryInPixel != entryInPixel) {
                         editEntry(converter.convertToMillis(newEntryInPixel))
                     }
                 } else {
-                    val newPointIndex = entryInPixel.getPointIndex(x)
+                    val newPointIndex = entryInPixel
+                        .getPointIndexForHovering(x, y, labelerConf, canvasHeightState.value, canvasParams.density)
                     if (newPointIndex == NonePointIndex) {
                         state.update {
                             copy(pointIndex = newPointIndex, mouse = MouseState.None)
@@ -193,7 +255,13 @@ fun MarkerCanvas(
             .onPointerEvent(PointerEventType.Press) {
                 if (!keyboardState.isCtrlPressed) {
                     if (state.value.mouse == MouseState.Hovering) {
-                        state.update { copy(mouse = MouseState.Dragging) }
+                        val lockedDragByBaseField =
+                            labelerConf.lockedDrag.useDragBase &&
+                                    labelerConf.fields.getOrNull(state.value.pointIndex)?.dragBase == true
+                        val lockedDragByStart =
+                            labelerConf.lockedDrag.useStart && state.value.usingStartPoint
+                        val lockedDrag = (lockedDragByBaseField || lockedDragByStart) xor keyboardState.isShiftPressed
+                        state.update { copy(mouse = MouseState.Dragging, lockedDrag = lockedDrag) }
                     }
                 }
             }
@@ -208,109 +276,126 @@ fun MarkerCanvas(
                         playSampleSection(start, end)
                     }
                 } else {
-                    state.update { copy(mouse = MouseState.None) }
+                    state.update { copy(mouse = MouseState.None, lockedDrag = false) }
                 }
             }
     ) {
-        val regionAlpha = 0.1f
-        val idleLineAlpha = 0.5f
-        val hoverLineAlpha = 0.8f
-        val strokeWidth = 2f
         val start = entryInPixel.start
         val end = entryInPixel.end
         val canvasWidth = size.width
         val canvasHeight = size.height
+        canvasHeightState.value = canvasHeight
 
         // Draw start
         val startColor = primaryColor
         drawRect(
             color = startColor,
-            alpha = regionAlpha,
+            alpha = RegionAlpha,
             topLeft = Offset.Zero,
             size = Size(width = start, height = canvasHeight)
         )
-        if (state.value.usingStartPoint &&
-            (state.value.mouse == MouseState.Hovering || state.value.mouse == MouseState.Dragging)
-        ) {
-            val color = if (state.value.mouse == MouseState.Hovering) {
-                startColor.copy(alpha = hoverLineAlpha)
-            } else {
-                startColor
-            }
-            drawLine(
-                color = color,
-                start = Offset(start, 0f),
-                end = Offset(start, canvasHeight),
-                strokeWidth = strokeWidth
-            )
-        }
+        val startLineAlpha = if (state.value.usingStartPoint) IdleLineAlpha else 1f
+        drawLine(
+            color = startColor.copy(alpha = startLineAlpha),
+            start = Offset(start, 0f),
+            end = Offset(start, canvasHeight),
+            strokeWidth = StrokeWidth
+        )
 
         // Draw custom fields
-        val fields = labelerConf.fields.sortedBy { it.index }
         for (i in fields.indices) {
             val field = fields[i]
-            val x = entryInPixel.getPoint(i)
-            println("i=$i, x=$x")
+            val x = entryInPixel.getCustomPoint(i)
             val height = canvasHeight * field.height
             val top = canvasHeight - height
             val color = parseColor(field.color)
             if (field.filling != null) {
-                val targetX = when (field.filling) {
-                    StartPointIndex -> start
-                    EndPointIndex -> end
-                    else -> entryInPixel.getPoint(field.filling)
-                }
+                val targetX = entryInPixel.getPoint(field.filling)
                 val left = min(targetX, x)
                 val width = abs(targetX - x)
                 drawRect(
                     color = color,
-                    alpha = regionAlpha,
+                    alpha = RegionAlpha,
                     topLeft = Offset(left, top),
                     size = Size(width = width, height = height)
                 )
             }
-            val lineAlpha = when {
-                state.value.pointIndex != i -> idleLineAlpha
-                state.value.mouse == MouseState.Hovering -> hoverLineAlpha
-                else -> 1f
-            }
+            val lineAlpha = if (state.value.pointIndex != i) IdleLineAlpha else 1f
             drawLine(
                 color = color.copy(alpha = lineAlpha),
                 start = Offset(x, top),
                 end = Offset(x, canvasHeight),
-                strokeWidth = strokeWidth
+                strokeWidth = StrokeWidth
             )
-            drawIntoCanvas {
-                it.nativeCanvas.drawString(
-                    field.abbr,
-                    x = x - 20f,
-                    y = top - 10f,
-                    font = Font().apply { size = 28f },
-                    paint = Paint().asFrameworkPaint().apply { this.color = color.toArgb() }
-                )
-            }
         }
 
         // Draw end
         val endColor = primaryColor
         drawRect(
             color = endColor,
-            alpha = regionAlpha,
+            alpha = RegionAlpha,
             topLeft = Offset(end, 0f),
             size = Size(width = canvasWidth - end, height = canvasHeight)
         )
-        if (state.value.usingEndPoint) {
-            val color = if (state.value.mouse == MouseState.Hovering) {
-                endColor.copy(alpha = hoverLineAlpha)
-            } else {
-                endColor
+        val endLineAlpha = if (state.value.usingEndPoint) 1f else IdleLineAlpha
+        drawLine(
+            color = endColor.copy(alpha = endLineAlpha),
+            start = Offset(end, 0f),
+            end = Offset(end, canvasHeight),
+            strokeWidth = StrokeWidth
+        )
+    }
+    FieldLabelCanvas(canvasParams, state.value, labelerConf, entryInPixel)
+}
+
+@Composable
+private fun FieldLabelCanvas(
+    canvasParams: CanvasParams,
+    state: MarkerState,
+    conf: LabelerConf,
+    entryInPixel: EntryInPixel
+) {
+    FieldLabelCanvasLayout(Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp), conf.fields, entryInPixel) {
+        for (i in conf.fields.indices) {
+            val field = conf.fields[i]
+            val alpha = if (state.pointIndex != i) IdleLineAlpha else 1f
+            Box(
+                modifier = Modifier.requiredSize(labelSize),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = field.abbr,
+                    textAlign = TextAlign.Center,
+                    color = parseColor(field.color).copy(alpha = alpha),
+                    style = MaterialTheme.typography.body2.copy(fontSize = 12.sp)
+                )
             }
-            drawLine(
-                color = color,
-                start = Offset(end, 0f),
-                end = Offset(end, canvasHeight),
-                strokeWidth = strokeWidth
-            )
+        }
+    }
+}
+
+@Composable
+private fun FieldLabelCanvasLayout(
+    modifier: Modifier,
+    fields: List<LabelerConf.Field>,
+    entry: EntryInPixel,
+    content: @Composable () -> Unit
+) {
+    val labelShiftUp = with(LocalDensity.current) { labelShiftUp.toPx() }
+    Layout(modifier = modifier, content = content) { measurables, constraints ->
+        val placeables = measurables.map { measurable ->
+            measurable.measure(constraints)
+        }
+
+        // Set the size of the layout as big as it can
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            placeables.forEachIndexed { index, placeable ->
+                val field = fields[index]
+                val x = entry.getCustomPoint(index) - (constraints.maxWidth) / 2
+                val y =
+                    constraints.maxHeight.toFloat() * (1 - field.height) - (constraints.maxHeight) / 2 - labelShiftUp
+                placeable.place(x = x.toInt(), y = y.toInt())
+            }
         }
     }
 }

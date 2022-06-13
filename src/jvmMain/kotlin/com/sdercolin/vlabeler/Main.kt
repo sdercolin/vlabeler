@@ -26,7 +26,7 @@ fun main() = application {
     val labelerConf = useResource("oto.labeler.json") {
         val content = it.bufferedReader().use(BufferedReader::readText)
         Json.decodeFromString<LabelerConf>(content)
-    }
+    }.let { conf -> conf.copy(fields = conf.fields.sortedBy { it.index }) }
     Window(onCloseRequest = ::exitApplication, onKeyEvent = { keyEventHandler.onKeyEvent(it) }) {
         MainWindow(mainScope, labelerConf, player, playerState.value, keyboardState.value)
     }

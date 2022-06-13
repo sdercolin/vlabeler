@@ -71,7 +71,7 @@ private fun WaveChannelCanvas(
 ) {
     Canvas(
         Modifier.fillMaxHeight()
-            .width(canvasParams.canvasWidth)
+            .width(canvasParams.canvasWidthInDp)
             .background(MaterialTheme.colors.background)
     ) {
         val data = channel.data
@@ -101,7 +101,7 @@ private fun WaveChannelCanvas(
 @Composable
 private fun PlayerCursorCanvas(canvasParams: CanvasParams, playerState: PlayerState) {
     Canvas(
-        Modifier.fillMaxHeight().width(canvasParams.canvasWidth)
+        Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp)
     ) {
         val x = (playerState.framePosition / canvasParams.resolution).toFloat()
         drawLine(

@@ -38,13 +38,34 @@ class KeyEventHandler(private val player: Player, private val state: MutableStat
                 return true
             }
         }
+        if (event.key == Key.ShiftLeft) {
+            if (event.type == KeyEventType.KeyUp) {
+                state.update { copy(isLeftShiftPressed = false) }
+                return true
+            } else if (event.type == KeyEventType.KeyDown) {
+                state.update { copy(isLeftShiftPressed = true) }
+                return true
+            }
+        }
+        if (event.key == Key.ShiftRight) {
+            if (event.type == KeyEventType.KeyUp) {
+                state.update { copy(isRightShiftPressed = false) }
+                return true
+            } else if (event.type == KeyEventType.KeyDown) {
+                state.update { copy(isRightShiftPressed = true) }
+                return true
+            }
+        }
         return false
     }
 }
 
 data class KeyboardState(
     val isLeftCtrlPressed: Boolean = false,
-    val isRightCtrlPressed: Boolean = false
+    val isRightCtrlPressed: Boolean = false,
+    val isLeftShiftPressed: Boolean = false,
+    val isRightShiftPressed: Boolean = false
 ) {
     val isCtrlPressed get() = isLeftCtrlPressed || isRightCtrlPressed
+    val isShiftPressed get() = isLeftShiftPressed || isRightShiftPressed
 }

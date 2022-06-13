@@ -8,7 +8,7 @@ data class CanvasParams(
     val density: Density
 ) {
     val lengthInPixel = dataLength / resolution
-    val canvasWidth = with(density) { lengthInPixel.toDp() }
+    val canvasWidthInDp = with(density) { lengthInPixel.toDp() }
 
     companion object {
 
