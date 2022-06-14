@@ -20,9 +20,9 @@ import com.sdercolin.vlabeler.io.loadSampleFile
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
-import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.env.FileDialog
 import com.sdercolin.vlabeler.ui.labeler.Labeler
+import com.sdercolin.vlabeler.ui.theme.AppTheme
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
 
@@ -50,7 +50,7 @@ fun MainWindow(
                 keyboardState = keyboardState
             )
         } else {
-            Loader {
+            Loader(appConf) {
                 sampleState.value = it
                 player.load(it.info.file)
             }
@@ -59,7 +59,7 @@ fun MainWindow(
 }
 
 @Composable
-private fun Loader(onLoaded: (Sample) -> Unit) {
+private fun Loader(appConf: AppConf, onLoaded: (Sample) -> Unit) {
     var isFileDialogOpened by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -75,7 +75,7 @@ private fun Loader(onLoaded: (Sample) -> Unit) {
                     isFileDialogOpened = false
                     if (directory != null && fileName != null) {
                         val file = File(directory, fileName)
-                        val sample = loadSampleFile(file)
+                        val sample = loadSampleFile(file, appConf)
                         onLoaded(sample)
                     }
                 }

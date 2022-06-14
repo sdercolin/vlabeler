@@ -46,14 +46,15 @@ fun Scroller(
     var entry: Entry? by remember { mutableStateOf(dummyEntry) }
     Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
         Column(Modifier.fillMaxSize()) {
+            val weightOfEachChannel = 1f / sample.wave.channels.size
             sample.wave.channels.forEach { channel ->
-                Box(Modifier.weight(1f).fillMaxWidth()) {
+                Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
                     WaveChannelCanvas(appConf, canvasParams, channel)
                 }
             }
             sample.spectrogram?.let {
-                Box(Modifier.weight(1f).fillMaxWidth()) {
-                    SpectrogramCanvas(canvasParams, it)
+                Box(Modifier.weight(appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
+                    SpectrogramCanvas(appConf, canvasParams, it, sample.info.sampleRate)
                 }
             }
         }
@@ -80,7 +81,7 @@ private fun WaveChannelCanvas(
     canvasParams: CanvasParams,
     channel: Wave.Channel
 ) {
-    val step = canvasParams.resolution / appConf.painter.dataDensity
+    val step = canvasParams.resolution / appConf.painter.amplitude.dataDensity
     val actualDataDensity = canvasParams.resolution / step
     val data = channel.data
         .slice(channel.data.indices step step)
@@ -92,7 +93,7 @@ private fun WaveChannelCanvas(
     ) {
         val centerY: Float = center.y
         val maxRawY = channel.data.maxOfOrNull { it.absoluteValue } ?: 0
-        val yScale = maxRawY.toFloat() / centerY * 1.2f
+        val yScale = maxRawY.toFloat() / centerY * (1 + appConf.painter.amplitude.yAxisBlankRate)
         val points = data
             .map { centerY - it / yScale }
             .withIndex().map { Offset(it.index.toFloat() / actualDataDensity, it.value) }
@@ -102,24 +103,29 @@ private fun WaveChannelCanvas(
 
 @Composable
 private fun SpectrogramCanvas(
+    appConf: AppConf,
     canvasParams: CanvasParams,
-    spectrogram: Array<DoubleArray>
+    spectrogram: Array<DoubleArray>,
+    sampleRate: Float
 ) {
+    val frameSize = appConf.painter.spectrogram.frameSize.toFloat()
     Canvas(
         Modifier.fillMaxHeight()
             .width(canvasParams.canvasWidthInDp)
             .background(MaterialTheme.colors.background)
     ) {
-        val unitWidth = 512f / canvasParams.resolution
-        val unitHeight = size.height * 2 / 512f / 0.5f
+        val unitWidth = frameSize / canvasParams.resolution
+        val maxFrequencyRate = appConf.painter.spectrogram.maxFrequency / sampleRate * 2
+        val unitHeight = size.height * 2 / frameSize / maxFrequencyRate
         spectrogram.forEachIndexed { xIndex, yArray ->
             yArray.forEachIndexed { yIndex, z ->
-                if (z == 0.0) return@forEachIndexed
-                val left = xIndex * unitWidth
-                val top = size.height - unitHeight * yIndex - unitHeight
-                val gray = ((1 - z) * 255).toInt()
-                val color = Color(gray, gray, gray)
-                drawRect(color = color, topLeft = Offset(left, top), Size(unitWidth, unitHeight))
+                if (z > 0.0) {
+                    val left = xIndex * unitWidth
+                    val top = size.height - unitHeight * yIndex - unitHeight
+                    val gray = ((1 - z) * 255).toInt()
+                    val color = Color(gray, gray, gray)
+                    drawRect(color = color, topLeft = Offset(left, top), Size(unitWidth, unitHeight))
+                }
             }
         }
     }

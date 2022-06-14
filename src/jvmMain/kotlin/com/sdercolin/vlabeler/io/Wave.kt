@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.io
 
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.process.fft.toSpectrogram
@@ -13,7 +14,7 @@ class Wave(val channels: List<Channel>) {
     val length get() = channels[0].data.size
 }
 
-fun loadSampleFile(file: File): Sample {
+fun loadSampleFile(file: File, appConf: AppConf): Sample {
     val stream = AudioSystem.getAudioInputStream(file)
     val format = stream.format
     println("Loaded wav file: $format")
@@ -55,7 +56,9 @@ fun loadSampleFile(file: File): Sample {
         }
     }
     val wave = Wave(channels = channels.map { Wave.Channel(it) })
-    val spectrogram = wave.channels.first().toSpectrogram(format.sampleRate)
+    val spectrogram = if (appConf.painter.spectrogram.enabled) {
+        wave.channels.first().toSpectrogram(appConf.painter.spectrogram, format.sampleRate)
+    } else null
     return Sample(
         info = SampleInfo(
             name = file.nameWithoutExtension,

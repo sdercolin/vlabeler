@@ -1,11 +1,23 @@
 {
   "painter": {
-    "dataDensity": 10,
     "canvasResolution": {
       "default": 100,
       "min": 10,
       "max": 400,
       "step": 20
+    },
+    "amplitude": {
+      "dataDensity": 10,
+      "yAxisBlankRate": 0.1
+    },
+    "spectrogram": {
+      "enabled": true,
+      "heightWeight": 0.75,
+      "frameSize": 512,
+      "maxFrequency": 15000,
+      "minIntensity": -20,
+      "maxIntensity": 40,
+      "windowType": "Hamming"
     }
   }
 }

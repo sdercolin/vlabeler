@@ -1,16 +1,29 @@
 package com.sdercolin.vlabeler.process.fft
 
 import com.github.psambit9791.jdsp.transform.FastFourier
+import com.github.psambit9791.jdsp.windows.Bartlett
+import com.github.psambit9791.jdsp.windows.Blackman
 import com.github.psambit9791.jdsp.windows.Hamming
+import com.github.psambit9791.jdsp.windows.Hanning
+import com.github.psambit9791.jdsp.windows.Rectangular
+import com.github.psambit9791.jdsp.windows.Triangular
 import com.sdercolin.vlabeler.io.Wave
+import com.sdercolin.vlabeler.model.AppConf
 import kotlin.math.log10
 
-fun Wave.Channel.toSpectrogram(sampleRate: Float): Array<DoubleArray> {
-    val frameSize = 512
-    val maxFrequencyRate = 0.5
+fun Wave.Channel.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Array<DoubleArray> {
+    val frameSize = conf.frameSize
+    val maxFrequencyRate = conf.maxFrequency / sampleRate * 2
     val frameCount = data.size / frameSize
 
-    val window = Hamming(frameSize).window
+    val window = when (conf.windowType) {
+        AppConf.WindowType.Hamming -> Hamming(frameSize).window
+        AppConf.WindowType.Hanning -> Hanning(frameSize).window
+        AppConf.WindowType.Rectangular -> Rectangular(frameSize).window
+        AppConf.WindowType.Triangular -> Triangular(frameSize).window
+        AppConf.WindowType.Blackman -> Blackman(frameSize).window
+        AppConf.WindowType.Bartlett -> Bartlett(frameSize).window
+    }
     val signals: Array<DoubleArray> = Array(frameCount) { i ->
         DoubleArray(frameSize) { j ->
             data[i * frameSize + j] * window[j]
@@ -28,16 +41,13 @@ fun Wave.Channel.toSpectrogram(sampleRate: Float): Array<DoubleArray> {
     if (absoluteSpectrogram.isEmpty()) return arrayOf()
     val frequencyUnitCount = absoluteSpectrogram.first().size
 
+    val min = conf.minIntensity.toDouble()
+    val max = conf.maxIntensity.toDouble()
     return Array(frameCount) { i ->
         DoubleArray(frequencyUnitCount) { j ->
-            (20 * log10(absoluteSpectrogram[i][j] / frameSize)).coerceIn(-20.0, 40.0)
+            (20 * log10(absoluteSpectrogram[i][j] / frameSize))
+                .coerceIn(min, max)
+                .let { (it - min) / (max - min) }
         }
     }
-        .let { arr ->
-            val min = arr.flatMap { it.toList() }.minOrNull()!!
-            arr.map { it.map { p -> p - min } }
-        }.let { arr ->
-            val max = arr.flatMap { it.toList() }.maxOrNull()!!
-            arr.map { it.map { p -> p / max }.toDoubleArray() }.toTypedArray()
-        }
 }
