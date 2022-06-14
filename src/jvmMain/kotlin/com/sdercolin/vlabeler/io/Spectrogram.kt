@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.process.fft
+package com.sdercolin.vlabeler.process
 
 import com.github.psambit9791.jdsp.transform.FastFourier
 import com.github.psambit9791.jdsp.windows.Bartlett

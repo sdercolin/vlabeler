@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.io
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.model.SampleInfo
-import com.sdercolin.vlabeler.process.fft.toSpectrogram
+import com.sdercolin.vlabeler.process.toSpectrogram
 import java.io.File
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
