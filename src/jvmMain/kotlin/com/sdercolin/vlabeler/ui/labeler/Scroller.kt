@@ -61,6 +61,7 @@ fun Scroller(
         entry?.let {
             MarkerCanvas(
                 canvasParams = canvasParams,
+                appConf = appConf,
                 labelerConf = labelerConf,
                 keyboardState = keyboardState,
                 sampleRate = sample.info.sampleRate,

@@ -28,6 +28,7 @@ data class EntryInPixel(
         y: Float,
         conf: LabelerConf,
         canvasHeight: Float,
+        waveformsHeightRatio: Float,
         density: Density,
         labelSize: DpSize,
         labelShiftUp: Dp
@@ -50,7 +51,8 @@ data class EntryInPixel(
         val pointsSorted = points.withIndex().sortedBy { it.value }
         for ((index, value) in pointsSorted) {
             // label part
-            val centerY = canvasHeight * (1 - conf.fields[index].height) - with(density) { labelShiftUp.toPx() }
+            val centerY = canvasHeight * waveformsHeightRatio *
+                    (1 - conf.fields[index].height) - with(density) { labelShiftUp.toPx() }
             val height = with(density) { labelSize.height.toPx() }
             val top = centerY - 0.5 * height
             val bottom = centerY + 0.5 * height
@@ -65,7 +67,7 @@ data class EntryInPixel(
             // line part
             if ((current.value - x).absoluteValue > NearRadiusCustom) continue
             if (current.value == next.value || x - current.value <= next.value - x) {
-                val top = canvasHeight * (1 - conf.fields[current.index].height)
+                val top = canvasHeight * waveformsHeightRatio * (1 - conf.fields[current.index].height)
                 if (y >= top) return current.index
             }
         }

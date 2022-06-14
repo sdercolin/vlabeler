@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.KeyboardState
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.labeler.CanvasParams
@@ -70,6 +71,7 @@ private val labelShiftUp = 8.dp
 @Composable
 fun MarkerCanvas(
     canvasParams: CanvasParams,
+    appConf: AppConf,
     labelerConf: LabelerConf,
     keyboardState: KeyboardState,
     sampleRate: Float,
@@ -83,9 +85,14 @@ fun MarkerCanvas(
     val canvasHeightState = remember { mutableStateOf(0f) }
     val fields = labelerConf.fields
     val primaryColor = MaterialTheme.colors.primary
-
+    val waveformsHeightRatio = run {
+        val spectrogram = appConf.painter.spectrogram
+        val totalWeight = 1f + if (spectrogram.enabled) spectrogram.heightWeight else 0f
+        1f / totalWeight
+    }
     FieldBorderCanvas(
         canvasParams,
+        waveformsHeightRatio,
         canvasHeightState,
         state,
         entryInPixel,
@@ -97,12 +104,13 @@ fun MarkerCanvas(
         primaryColor,
         fields
     )
-    FieldLabelCanvas(canvasParams, state.value, labelerConf, entryInPixel)
+    FieldLabelCanvas(canvasParams, waveformsHeightRatio, state.value, labelerConf, entryInPixel)
 }
 
 @Composable
 private fun FieldBorderCanvas(
     canvasParams: CanvasParams,
+    waveformsHeightRatio: Float,
     canvasHeightState: MutableState<Float>,
     state: MutableState<MarkerState>,
     entryInPixel: EntryInPixel,
@@ -113,7 +121,8 @@ private fun FieldBorderCanvas(
     playSampleSection: (Float, Float) -> Unit,
     primaryColor: Color,
     fields: List<LabelerConf.Field>
-) =
+) {
+
     Canvas(
         Modifier.fillMaxHeight()
             .width(canvasParams.canvasWidthInDp)
@@ -136,6 +145,7 @@ private fun FieldBorderCanvas(
                         y = y,
                         conf = labelerConf,
                         canvasHeight = canvasHeightState.value,
+                        waveformsHeightRatio = waveformsHeightRatio,
                         density = canvasParams.density,
                         labelSize = labelSize,
                         labelShiftUp = labelShiftUp
@@ -205,7 +215,9 @@ private fun FieldBorderCanvas(
         for (i in fields.indices) {
             val field = fields[i]
             val x = entryInPixel.getCustomPoint(i)
-            val height = canvasHeight * field.height
+            val waveformsHeight = canvasHeight * waveformsHeightRatio
+            val restCanvasHeight = canvasHeight - waveformsHeight
+            val height = waveformsHeight * field.height + restCanvasHeight
             val top = canvasHeight - height
             val color = parseColor(field.color)
             if (field.filling != null) {
@@ -244,15 +256,18 @@ private fun FieldBorderCanvas(
             strokeWidth = StrokeWidth
         )
     }
+}
 
 @Composable
 private fun FieldLabelCanvas(
     canvasParams: CanvasParams,
+    waveformsHeightRatio: Float,
     state: MarkerState,
     conf: LabelerConf,
     entryInPixel: EntryInPixel
 ) = FieldLabelCanvasLayout(
     modifier = Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp),
+    waveformsHeightRatio = waveformsHeightRatio,
     fields = conf.fields,
     entry = entryInPixel
 ) {
@@ -276,6 +291,7 @@ private fun FieldLabelCanvas(
 @Composable
 private fun FieldLabelCanvasLayout(
     modifier: Modifier,
+    waveformsHeightRatio: Float,
     fields: List<LabelerConf.Field>,
     entry: EntryInPixel,
     content: @Composable () -> Unit
@@ -291,8 +307,11 @@ private fun FieldLabelCanvasLayout(
             placeables.forEachIndexed { index, placeable ->
                 val field = fields[index]
                 val x = entry.getCustomPoint(index) - (constraints.maxWidth) / 2
-                val y =
-                    constraints.maxHeight.toFloat() * (1 - field.height) - (constraints.maxHeight) / 2 - labelShiftUp
+                val canvasHeight = constraints.maxHeight.toFloat()
+                val waveformsHeight = canvasHeight * waveformsHeightRatio
+                val restCanvasHeight = canvasHeight - waveformsHeight
+                val height = waveformsHeight * field.height + restCanvasHeight
+                val y = canvasHeight - height - labelShiftUp - canvasHeight / 2
                 placeable.place(x = x.toInt(), y = y.toInt())
             }
         }
