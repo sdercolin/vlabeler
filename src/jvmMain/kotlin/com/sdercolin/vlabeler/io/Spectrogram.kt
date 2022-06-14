@@ -13,7 +13,11 @@ import com.sdercolin.vlabeler.model.SampleInfo
 import kotlin.math.absoluteValue
 import kotlin.math.log10
 
-fun Wave.Channel.toSpectrogram(conf: AppConf.Spectrogram, info: SampleInfo): Array<DoubleArray> {
+fun Wave.toSpectrogram(conf: AppConf.Spectrogram, info: SampleInfo): Array<DoubleArray> {
+    val dataLength = channels.minOf { it.data.size }
+    val data = DoubleArray(dataLength) { i ->
+        channels.sumOf { it.data[i].toDouble() } / channels.size
+    }
     val frameSize = conf.frameSize
     val maxFrequencyRate = conf.maxFrequency / info.sampleRate * 2
     val frameCount = data.size / frameSize

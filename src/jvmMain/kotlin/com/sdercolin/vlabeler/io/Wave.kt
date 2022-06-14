@@ -65,7 +65,7 @@ fun loadSampleFile(file: File, appConf: AppConf): Sample {
     )
     val wave = Wave(channels = channels.map { Wave.Channel(it) })
     val spectrogram = if (appConf.painter.spectrogram.enabled) {
-        wave.channels.first().toSpectrogram(appConf.painter.spectrogram, info)
+        wave.toSpectrogram(appConf.painter.spectrogram, info)
     } else null
     return Sample(
         info = info,
