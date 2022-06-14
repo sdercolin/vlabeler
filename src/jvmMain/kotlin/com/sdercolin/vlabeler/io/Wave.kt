@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.io
 
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.process.fft.toSpectrogram
 import java.io.File
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
@@ -54,6 +55,7 @@ fun loadSampleFile(file: File): Sample {
         }
     }
     val wave = Wave(channels = channels.map { Wave.Channel(it) })
+    val spectrogram = wave.channels.first().toSpectrogram(format.sampleRate)
     return Sample(
         info = SampleInfo(
             name = file.nameWithoutExtension,
@@ -61,6 +63,7 @@ fun loadSampleFile(file: File): Sample {
             sampleRate = format.sampleRate,
             channels = wave.channels.size
         ),
-        wave = wave
+        wave = wave,
+        spectrogram = spectrogram
     )
 }

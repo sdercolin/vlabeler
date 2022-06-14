@@ -6,6 +6,7 @@ import java.io.File
 class Sample(
     val info: SampleInfo,
     val wave: Wave,
+    val spectrogram: Array<DoubleArray>?
 )
 
 data class SampleInfo(

@@ -28,6 +28,7 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+                implementation("org.apache.commons:commons-math3:3.0")
             }
         }
         val jvmTest by getting

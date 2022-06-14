@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import com.sdercolin.vlabeler.audio.PlayerState
@@ -29,6 +30,8 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerCanvas
 import kotlin.math.absoluteValue
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 @Composable
 fun Scroller(
@@ -48,6 +51,11 @@ fun Scroller(
             sample.wave.channels.forEach { channel ->
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     WaveChannelCanvas(appConf, canvasParams, channel)
+                }
+            }
+            sample.spectrogram?.let {
+                Box(Modifier.weight(1f).fillMaxWidth()) {
+                    SpectrogramCanvas(canvasParams, it)
                 }
             }
         }
@@ -91,6 +99,30 @@ private fun WaveChannelCanvas(
             .map { centerY - it / yScale }
             .withIndex().map { Offset(it.index.toFloat() / actualDataDensity, it.value) }
         drawPoints(points, pointMode = PointMode.Polygon, color = Color(0xFF050505))
+    }
+}
+
+@Composable
+private fun SpectrogramCanvas(
+    canvasParams: CanvasParams,
+    spectrogram: Array<DoubleArray>
+) {
+    Canvas(
+        Modifier.fillMaxHeight()
+            .width(canvasParams.canvasWidthInDp)
+            .background(MaterialTheme.colors.background)
+    ) {
+        val unitWidth = 512f / canvasParams.resolution
+        val unitHeight = size.height * 2 / 512f
+        spectrogram.forEachIndexed { xIndex, yArray ->
+            yArray.forEachIndexed { yIndex, z ->
+                val left = xIndex * unitWidth
+                val top = size.height - unitHeight * yIndex - unitHeight
+                val gray = ((1 - z) * 255).toInt()
+                val color = Color(gray, gray, gray)
+                drawRect(color = color, topLeft = Offset(left, top), Size(unitWidth, unitHeight))
+            }
+        }
     }
 }
 
