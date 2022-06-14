@@ -30,8 +30,6 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerCanvas
 import kotlin.math.absoluteValue
-import kotlin.math.pow
-import kotlin.math.roundToInt
 
 @Composable
 fun Scroller(
@@ -113,9 +111,10 @@ private fun SpectrogramCanvas(
             .background(MaterialTheme.colors.background)
     ) {
         val unitWidth = 512f / canvasParams.resolution
-        val unitHeight = size.height * 2 / 512f
+        val unitHeight = size.height * 2 / 512f / 0.5f
         spectrogram.forEachIndexed { xIndex, yArray ->
             yArray.forEachIndexed { yIndex, z ->
+                if (z == 0.0) return@forEachIndexed
                 val left = xIndex * unitWidth
                 val top = size.height - unitHeight * yIndex - unitHeight
                 val gray = ((1 - z) * 255).toInt()
