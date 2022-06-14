@@ -55,17 +55,20 @@ fun loadSampleFile(file: File, appConf: AppConf): Sample {
             channel.add(sample)
         }
     }
+    val info = SampleInfo(
+        name = file.nameWithoutExtension,
+        file = file,
+        sampleRate = format.sampleRate,
+        bitDepth = frameByteSize,
+        isFloat = isFloat,
+        channels = channels.size
+    )
     val wave = Wave(channels = channels.map { Wave.Channel(it) })
     val spectrogram = if (appConf.painter.spectrogram.enabled) {
-        wave.channels.first().toSpectrogram(appConf.painter.spectrogram, format.sampleRate)
+        wave.channels.first().toSpectrogram(appConf.painter.spectrogram, info)
     } else null
     return Sample(
-        info = SampleInfo(
-            name = file.nameWithoutExtension,
-            file = file,
-            sampleRate = format.sampleRate,
-            channels = wave.channels.size
-        ),
+        info = info,
         wave = wave,
         spectrogram = spectrogram
     )

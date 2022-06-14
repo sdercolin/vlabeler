@@ -1,5 +1,8 @@
 package com.sdercolin.vlabeler.model
 
+import kotlin.math.ceil
+import kotlin.math.log2
+import kotlin.math.pow
 import kotlinx.serialization.Serializable
 
 /**
@@ -64,16 +67,22 @@ data class AppConf(
         /**
          * Min intensity (dB) displayed in the heatmap
          */
-        val minIntensity: Int = -20,
+        val minIntensity: Int = 0,
         /**
          * Max intensity (dB) displayed in the heatmap
          */
-        val maxIntensity: Int = 40,
+        val maxIntensity: Int = 45,
         /**
          * Window type used in the Short-Time FT
          */
         val windowType: WindowType = WindowType.Hamming
-    )
+    ) {
+        fun getFourierLength(): Int {
+            val power = log2(frameSize.toDouble())
+            val raisedPower = ceil(power)
+            return 2.0.pow(raisedPower).toInt()
+        }
+    }
 
     @Serializable
     enum class WindowType {

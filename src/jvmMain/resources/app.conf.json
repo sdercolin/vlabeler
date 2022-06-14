@@ -13,10 +13,10 @@
     "spectrogram": {
       "enabled": true,
       "heightWeight": 0.75,
-      "frameSize": 512,
+      "frameSize": 350,
       "maxFrequency": 15000,
-      "minIntensity": -20,
-      "maxIntensity": 40,
+      "minIntensity": 0,
+      "maxIntensity": 45,
       "windowType": "Hamming"
     }
   }

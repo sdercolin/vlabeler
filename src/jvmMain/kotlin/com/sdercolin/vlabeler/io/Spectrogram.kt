@@ -9,13 +9,14 @@ import com.github.psambit9791.jdsp.windows.Rectangular
 import com.github.psambit9791.jdsp.windows.Triangular
 import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.SampleInfo
+import kotlin.math.absoluteValue
 import kotlin.math.log10
 
-fun Wave.Channel.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Array<DoubleArray> {
+fun Wave.Channel.toSpectrogram(conf: AppConf.Spectrogram, info: SampleInfo): Array<DoubleArray> {
     val frameSize = conf.frameSize
-    val maxFrequencyRate = conf.maxFrequency / sampleRate * 2
+    val maxFrequencyRate = conf.maxFrequency / info.sampleRate * 2
     val frameCount = data.size / frameSize
-
     val window = when (conf.windowType) {
         AppConf.WindowType.Hamming -> Hamming(frameSize).window
         AppConf.WindowType.Hanning -> Hanning(frameSize).window
@@ -24,9 +25,10 @@ fun Wave.Channel.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Ar
         AppConf.WindowType.Blackman -> Blackman(frameSize).window
         AppConf.WindowType.Bartlett -> Bartlett(frameSize).window
     }
+    val peak = data.maxByOrNull { it.absoluteValue }!!
     val signals: Array<DoubleArray> = Array(frameCount) { i ->
         DoubleArray(frameSize) { j ->
-            data[i * frameSize + j] * window[j]
+            data[i * frameSize + j] * window[j] / peak * Short.MAX_VALUE
         }
     }
 
@@ -39,12 +41,12 @@ fun Wave.Channel.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Ar
     }
 
     if (absoluteSpectrogram.isEmpty()) return arrayOf()
-    val frequencyUnitCount = absoluteSpectrogram.first().size
+    val frequencySize = absoluteSpectrogram.first().size
 
     val min = conf.minIntensity.toDouble()
     val max = conf.maxIntensity.toDouble()
     return Array(frameCount) { i ->
-        DoubleArray(frequencyUnitCount) { j ->
+        DoubleArray(frequencySize) { j ->
             (20 * log10(absoluteSpectrogram[i][j] / frameSize))
                 .coerceIn(min, max)
                 .let { (it - min) / (max - min) }

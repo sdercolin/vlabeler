@@ -54,7 +54,7 @@ fun Scroller(
             }
             sample.spectrogram?.let {
                 Box(Modifier.weight(appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
-                    SpectrogramCanvas(appConf, canvasParams, it, sample.info.sampleRate)
+                    SpectrogramCanvas(appConf, canvasParams, it)
                 }
             }
         }
@@ -105,18 +105,16 @@ private fun WaveChannelCanvas(
 private fun SpectrogramCanvas(
     appConf: AppConf,
     canvasParams: CanvasParams,
-    spectrogram: Array<DoubleArray>,
-    sampleRate: Float
+    spectrogram: Array<DoubleArray>
 ) {
-    val frameSize = appConf.painter.spectrogram.frameSize.toFloat()
     Canvas(
         Modifier.fillMaxHeight()
             .width(canvasParams.canvasWidthInDp)
             .background(MaterialTheme.colors.background)
     ) {
+        val frameSize = appConf.painter.spectrogram.frameSize.toFloat()
         val unitWidth = frameSize / canvasParams.resolution
-        val maxFrequencyRate = appConf.painter.spectrogram.maxFrequency / sampleRate * 2
-        val unitHeight = size.height * 2 / frameSize / maxFrequencyRate
+        val unitHeight = size.height / spectrogram.first().size
         spectrogram.forEachIndexed { xIndex, yArray ->
             yArray.forEachIndexed { yIndex, z ->
                 if (z > 0.0) {
