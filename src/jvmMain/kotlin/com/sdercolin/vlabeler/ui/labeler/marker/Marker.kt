@@ -216,9 +216,8 @@ private fun FieldBorderCanvas(
             val field = fields[i]
             val x = entryInPixel.getCustomPoint(i)
             val waveformsHeight = canvasHeight * waveformsHeightRatio
-            val restCanvasHeight = canvasHeight - waveformsHeight
-            val height = waveformsHeight * field.height + restCanvasHeight
-            val top = canvasHeight - height
+            val height = waveformsHeight * field.height
+            val top = waveformsHeight - height
             val color = parseColor(field.color)
             if (field.filling != null) {
                 val targetX = entryInPixel.getPoint(field.filling)
