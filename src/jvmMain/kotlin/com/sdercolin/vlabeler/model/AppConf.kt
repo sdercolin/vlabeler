@@ -76,13 +76,7 @@ data class AppConf(
          * Window type used in the Short-Time FT
          */
         val windowType: WindowType = WindowType.Hamming
-    ) {
-        fun getFourierLength(): Int {
-            val power = log2(frameSize.toDouble())
-            val raisedPower = ceil(power)
-            return 2.0.pow(raisedPower).toInt()
-        }
-    }
+    )
 
     @Serializable
     enum class WindowType {
