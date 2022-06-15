@@ -42,6 +42,10 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "vlabeler"
             packageVersion = "1.0.0"
+            appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
+            windows {
+                upgradeUuid = "7b4dfb1e-63d8-4dec-9683-8e099c3545cd"
+            }
         }
     }
 }
