@@ -84,7 +84,6 @@ fun MarkerCanvas(
     val state = remember { mutableStateOf(MarkerState()) }
     val canvasHeightState = remember { mutableStateOf(0f) }
     val fields = labelerConf.fields
-    val primaryColor = MaterialTheme.colors.primary
     val waveformsHeightRatio = run {
         val spectrogram = appConf.painter.spectrogram
         val totalWeight = 1f + if (spectrogram.enabled) spectrogram.heightWeight else 0f
