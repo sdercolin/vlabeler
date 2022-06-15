@@ -27,7 +27,6 @@ import java.io.File
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-@Preview
 fun MainWindow(
     mainScope: CoroutineScope,
     appConf: AppConf,

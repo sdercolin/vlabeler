@@ -12,10 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -34,16 +30,16 @@ import kotlin.math.absoluteValue
 @Composable
 fun Scroller(
     sample: Sample,
+    entry: Entry,
+    editEntry: (Entry) -> Unit,
+    playSampleSection: (Float, Float) -> Unit,
     appConf: AppConf,
     labelerConf: LabelerConf,
-    playerState: PlayerState,
-    playSampleSection: (Float, Float) -> Unit,
-    keyboardState: KeyboardState,
     canvasParams: CanvasParams,
+    playerState: PlayerState,
+    keyboardState: KeyboardState,
     horizontalScrollState: ScrollState
 ) {
-    val dummyEntry = Entry("i あ", 2615f, 3315f, listOf(3055f, 2915f, 2715f))
-    var entry: Entry? by remember { mutableStateOf(dummyEntry) }
     Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
         Column(Modifier.fillMaxSize()) {
             val weightOfEachChannel = 1f / sample.wave.channels.size
@@ -58,18 +54,16 @@ fun Scroller(
                 }
             }
         }
-        entry?.let {
-            MarkerCanvas(
-                canvasParams = canvasParams,
-                appConf = appConf,
-                labelerConf = labelerConf,
-                keyboardState = keyboardState,
-                sampleRate = sample.info.sampleRate,
-                entry = it,
-                editEntry = { newClip -> entry = newClip },
-                playSampleSection = playSampleSection
-            )
-        }
+        MarkerCanvas(
+            entry = entry,
+            editEntry = editEntry,
+            playSampleSection = playSampleSection,
+            appConf = appConf,
+            labelerConf = labelerConf,
+            canvasParams = canvasParams,
+            sampleRate = sample.info.sampleRate,
+            keyboardState = keyboardState
+        )
         if (playerState.isPlaying) {
             PlayerCursorCanvas(canvasParams, playerState)
         }

@@ -70,14 +70,14 @@ private val labelShiftUp = 8.dp
 
 @Composable
 fun MarkerCanvas(
-    canvasParams: CanvasParams,
-    appConf: AppConf,
-    labelerConf: LabelerConf,
-    keyboardState: KeyboardState,
-    sampleRate: Float,
     entry: Entry,
     editEntry: (Entry) -> Unit,
-    playSampleSection: (Float, Float) -> Unit
+    playSampleSection: (Float, Float) -> Unit,
+    appConf: AppConf,
+    labelerConf: LabelerConf,
+    canvasParams: CanvasParams,
+    sampleRate: Float,
+    keyboardState: KeyboardState
 ) {
     val entryConverter = EntryConverter(sampleRate, canvasParams.resolution)
     val entryInPixel = entryConverter.convertToPixel(entry)
