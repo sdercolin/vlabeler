@@ -13,7 +13,7 @@
     "spectrogram": {
       "enabled": true,
       "heightWeight": 0.75,
-      "frameSize": 350,
+      "frameSize": 300,
       "maxFrequency": 15000,
       "minIntensity": 0,
       "maxIntensity": 45,

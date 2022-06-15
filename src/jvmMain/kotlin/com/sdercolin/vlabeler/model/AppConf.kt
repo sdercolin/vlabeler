@@ -59,7 +59,7 @@ data class AppConf(
         /**
          * Number of samples that each FFT-frame should have
          */
-        val frameSize: Int = 512,
+        val frameSize: Int = 300,
         /**
          * Max frequency (Hz) displayed
          */

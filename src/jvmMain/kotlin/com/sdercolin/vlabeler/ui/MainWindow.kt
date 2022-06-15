@@ -1,11 +1,13 @@
 package com.sdercolin.vlabeler.ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,19 +41,21 @@ fun MainWindow(
 
     AppTheme {
         val sample = sampleState.value
-        if (sample != null) {
-            Labeler(
-                sample = sample,
-                appConf = appConf,
-                labelerConf = labelerConf,
-                playerState = playerState,
-                playSampleSection = player::playSection,
-                keyboardState = keyboardState
-            )
-        } else {
-            Loader(appConf) {
-                sampleState.value = it
-                player.load(it.info.file)
+        Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
+            if (sample != null) {
+                Labeler(
+                    sample = sample,
+                    appConf = appConf,
+                    labelerConf = labelerConf,
+                    playerState = playerState,
+                    playSampleSection = player::playSection,
+                    keyboardState = keyboardState
+                )
+            } else {
+                Loader(appConf) {
+                    sampleState.value = it
+                    player.load(it.info.file)
+                }
             }
         }
     }
@@ -65,7 +69,7 @@ private fun Loader(appConf: AppConf, onLoaded: (Sample) -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = { isFileDialogOpened = true }) {
+        TextButton(onClick = { isFileDialogOpened = true }) {
             Text("Click to load a wav file")
         }
         if (isFileDialogOpened) {

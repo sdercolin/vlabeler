@@ -28,7 +28,7 @@ import com.sdercolin.vlabeler.ui.labeler.marker.MarkerCanvas
 import kotlin.math.absoluteValue
 
 @Composable
-fun Scroller(
+fun Canvas(
     sample: Sample,
     entry: Entry,
     editEntry: (Entry) -> Unit,
@@ -45,12 +45,12 @@ fun Scroller(
             val weightOfEachChannel = 1f / sample.wave.channels.size
             sample.wave.channels.forEach { channel ->
                 Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
-                    WaveChannelCanvas(appConf, canvasParams, channel)
+                    Waveforms(appConf, canvasParams, channel)
                 }
             }
             sample.spectrogram?.let {
                 Box(Modifier.weight(appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
-                    SpectrogramCanvas(appConf, canvasParams, it)
+                    Spectrogram(appConf, canvasParams, it)
                 }
             }
         }
@@ -65,13 +65,13 @@ fun Scroller(
             keyboardState = keyboardState
         )
         if (playerState.isPlaying) {
-            PlayerCursorCanvas(canvasParams, playerState)
+            PlayerCursor(canvasParams, playerState)
         }
     }
 }
 
 @Composable
-private fun WaveChannelCanvas(
+private fun Waveforms(
     appConf: AppConf,
     canvasParams: CanvasParams,
     channel: Wave.Channel
@@ -80,7 +80,7 @@ private fun WaveChannelCanvas(
     val actualDataDensity = canvasParams.resolution / step
     val data = channel.data
         .slice(channel.data.indices step step)
-
+    val waveformsColor = MaterialTheme.colors.onBackground
     Canvas(
         Modifier.fillMaxHeight()
             .width(canvasParams.canvasWidthInDp)
@@ -92,12 +92,12 @@ private fun WaveChannelCanvas(
         val points = data
             .map { centerY - it / yScale }
             .withIndex().map { Offset(it.index.toFloat() / actualDataDensity, it.value) }
-        drawPoints(points, pointMode = PointMode.Polygon, color = Color(0xFF050505))
+        drawPoints(points, pointMode = PointMode.Polygon, color = waveformsColor)
     }
 }
 
 @Composable
-private fun SpectrogramCanvas(
+private fun Spectrogram(
     appConf: AppConf,
     canvasParams: CanvasParams,
     spectrogram: Array<DoubleArray>
@@ -115,8 +115,7 @@ private fun SpectrogramCanvas(
                 if (z > 0.0) {
                     val left = xIndex * unitWidth
                     val top = size.height - unitHeight * yIndex - unitHeight
-                    val gray = ((1 - z) * 255).toInt()
-                    val color = Color(gray, gray, gray)
+                    val color = Color.White.copy(alpha = z.toFloat())
                     drawRect(color = color, topLeft = Offset(left, top), Size(unitWidth, unitHeight))
                 }
             }
@@ -125,13 +124,13 @@ private fun SpectrogramCanvas(
 }
 
 @Composable
-private fun PlayerCursorCanvas(canvasParams: CanvasParams, playerState: PlayerState) {
+private fun PlayerCursor(canvasParams: CanvasParams, playerState: PlayerState) {
     Canvas(
         Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp)
     ) {
         val x = (playerState.framePosition / canvasParams.resolution).toFloat()
         drawLine(
-            color = Color.Green,
+            color = Color.Yellow,
             start = Offset(x, 0f),
             end = Offset(x, center.y * 2),
             strokeWidth = 2f

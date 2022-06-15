@@ -62,7 +62,7 @@ data class MarkerState(
     }
 }
 
-private const val RegionAlpha = 0.1f
+private const val RegionAlpha = 0.3f
 private const val IdleLineAlpha = 0.7f
 private const val StrokeWidth = 2f
 private val labelSize = DpSize(40.dp, 25.dp)
@@ -101,7 +101,6 @@ fun MarkerCanvas(
         entryConverter,
         keyboardState,
         playSampleSection,
-        primaryColor,
         fields
     )
     FieldLabelCanvas(canvasParams, waveformsHeightRatio, state.value, labelerConf, entryInPixel)
@@ -119,7 +118,6 @@ private fun FieldBorderCanvas(
     entryConverter: EntryConverter,
     keyboardState: KeyboardState,
     playSampleSection: (Float, Float) -> Unit,
-    primaryColor: Color,
     fields: List<LabelerConf.Field>
 ) {
 
@@ -196,14 +194,14 @@ private fun FieldBorderCanvas(
         canvasHeightState.value = canvasHeight
 
         // Draw start
-        val startColor = primaryColor
+        val startColor = Color.White
         drawRect(
             color = startColor,
             alpha = RegionAlpha,
             topLeft = Offset.Zero,
             size = Size(width = start, height = canvasHeight)
         )
-        val startLineAlpha = if (state.value.usingStartPoint) IdleLineAlpha else 1f
+        val startLineAlpha = if (state.value.usingStartPoint) 1f else IdleLineAlpha
         drawLine(
             color = startColor.copy(alpha = startLineAlpha),
             start = Offset(start, 0f),
@@ -240,7 +238,7 @@ private fun FieldBorderCanvas(
         }
 
         // Draw end
-        val endColor = primaryColor
+        val endColor = Color.White
         drawRect(
             color = endColor,
             alpha = RegionAlpha,

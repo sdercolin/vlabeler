@@ -9,8 +9,8 @@ enum class Strings(val en: String) {
     CommonDialogConfirmButton(
         en = "OK"
     ),
-    SetResolutionDialogTitle(
-        en = "Horizontal Resolution"
+    CommonDialogCancelButton(
+        en = "Cancel"
     ),
     SetResolutionDialogDescription(
         en = "Input horizontal resolution (points per pixel) for the editor (%d ~ %d)"
