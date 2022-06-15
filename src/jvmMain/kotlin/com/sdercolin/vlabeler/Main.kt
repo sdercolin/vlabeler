@@ -32,7 +32,7 @@ fun main() = application {
         Json.decodeFromString<LabelerConf>(it)
     }.let { conf -> conf.copy(fields = conf.fields.sortedBy { it.index }) }
 
-    Window(onCloseRequest = ::exitApplication, onKeyEvent = { keyEventHandler.onKeyEvent(it) }) {
+    Window(title = "vlabeler", onCloseRequest = ::exitApplication, onKeyEvent = { keyEventHandler.onKeyEvent(it) }) {
         MainWindow(mainScope, appConf, labelerConf, player, playerState.value, keyboardState.value)
     }
 }
