@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.process
+package com.sdercolin.vlabeler.io
 
 import com.github.psambit9791.jdsp.transform.FastFourier
 import com.github.psambit9791.jdsp.windows.Bartlett
@@ -7,7 +7,6 @@ import com.github.psambit9791.jdsp.windows.Hamming
 import com.github.psambit9791.jdsp.windows.Hanning
 import com.github.psambit9791.jdsp.windows.Rectangular
 import com.github.psambit9791.jdsp.windows.Triangular
-import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.SampleInfo
 import kotlin.math.absoluteValue
