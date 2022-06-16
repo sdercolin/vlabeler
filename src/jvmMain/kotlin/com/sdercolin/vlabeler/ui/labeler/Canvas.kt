@@ -56,7 +56,6 @@ fun Canvas(
     keyboardState: KeyboardState,
     horizontalScrollState: ScrollState
 ) {
-    println("Canvas: composed")
     val chunkCount = remember(sample, appConf) {
         ceil(sample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
     }
