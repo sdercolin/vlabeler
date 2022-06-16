@@ -4,7 +4,6 @@ import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.util.update
 import java.io.File
 import javax.sound.sampled.AudioSystem
-import javax.sound.sampled.LineEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -40,15 +39,13 @@ class Player(
     fun load(file: File) {
         this.file = file
         clip.open(AudioSystem.getAudioInputStream(file))
-        clip.addLineListener {
-            if (it.type == LineEvent.Type.STOP) {
-                reset()
-            }
-        }
     }
 
     fun toggle() {
-        if (isPlaying) stop() else play()
+        if (isPlaying) stop() else {
+            reset()
+            play()
+        }
     }
 
     private fun play(untilPosition: Int? = null) {
@@ -57,6 +54,10 @@ class Player(
             while (true) {
                 delay(PlayingTimeInterval)
                 framePosition = clip.framePosition
+                if (!clip.isRunning) {
+                    isPlaying = false
+                    return@launch
+                }
                 if (untilPosition != null && framePosition >= untilPosition) {
                     stop()
                     return@launch
@@ -69,7 +70,7 @@ class Player(
 
     fun playSection(startPosition: Float, endPosition: Float) {
         println("Player::playSection($startPosition, $endPosition)")
-        if (isPlaying) reset()
+        reset()
         clip.framePosition = startPosition.toInt()
         play(untilPosition = endPosition.toInt())
     }
@@ -77,13 +78,13 @@ class Player(
     private fun stop() {
         println("Player::stop()")
         clip.stop()
+        countingJob?.cancel()
+        countingJob = null
+        isPlaying = false
     }
 
     private fun reset() {
         println("Player::reset()")
-        isPlaying = false
-        countingJob?.cancel()
-        countingJob = null
         clip.close()
         clip.open(AudioSystem.getAudioInputStream(file))
         clip.framePosition = 0
