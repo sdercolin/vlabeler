@@ -8,6 +8,7 @@
     },
     "amplitude": {
       "unitSize": 40,
+      "intensityAccuracy": 1000,
       "yAxisBlankRate": 0.1
     },
     "spectrogram": {

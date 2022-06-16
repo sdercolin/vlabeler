@@ -41,6 +41,10 @@ data class AppConf(
          */
         val unitSize: Int = 40,
         /**
+         * Height of the container bitmap in pixel
+         */
+        val intensityAccuracy: Int = 1000,
+        /**
          * Height rate of the extra blank region displayed in both top and bottom to the height of the waveform
          */
         val yAxisBlankRate: Float = 0.1f

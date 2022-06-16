@@ -94,7 +94,7 @@ private fun Waveforms(
     val imageBitmap = remember(channel, appConf) { mutableStateOf<ImageBitmap?>(null) }
     val width = data.size / dataDensity
     val maxRawY = data.maxOfOrNull { it.absoluteValue } ?: 0f
-    val height = 100
+    val height = appConf.painter.amplitude.intensityAccuracy
     val size = Size(width.toFloat(), height.toFloat())
 
     LaunchedEffect(Unit) {
