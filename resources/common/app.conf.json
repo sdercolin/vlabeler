@@ -7,7 +7,7 @@
       "step": 20
     },
     "amplitude": {
-      "dataDensity": 10,
+      "unitSize": 40,
       "yAxisBlankRate": 0.1
     },
     "spectrogram": {

@@ -1,8 +1,5 @@
 package com.sdercolin.vlabeler.model
 
-import kotlin.math.ceil
-import kotlin.math.log2
-import kotlin.math.pow
 import kotlinx.serialization.Serializable
 
 /**
@@ -40,9 +37,9 @@ data class AppConf(
     @Serializable
     data class Amplitude(
         /**
-         * Number of sample points actually drawn into 1 pixel.
+         * Size of the unit used when drawing the waveforms
          */
-        val dataDensity: Int = 10,
+        val unitSize: Int = 40,
         /**
          * Height rate of the extra blank region displayed in both top and bottom to the height of the waveform
          */
