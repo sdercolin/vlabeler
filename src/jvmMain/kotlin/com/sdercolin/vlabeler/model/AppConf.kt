@@ -12,10 +12,13 @@ data class AppConf(
     @Serializable
     data class Painter(
         /**
-         * Number of sample points included in 1 pixel.
-         * The minimum value should not be smaller than [dataDensity]
+         * Number of sample points included in 1 pixel
          */
         val canvasResolution: CanvasResolution = CanvasResolution(),
+        /**
+         * Max number of sample points in one chunk drawn in the painter
+         */
+        val maxDataChunkSize: Int = 441000,
         /**
          * Configurations of the wave amplitude (waveform) canvas
          */

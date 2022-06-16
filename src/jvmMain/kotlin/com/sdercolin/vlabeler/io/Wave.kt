@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.io
 
+import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -7,7 +8,9 @@ import java.io.File
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
 
+@Stable
 class Wave(val channels: List<Channel>) {
+    @Stable
     class Channel(val data: List<Float>)
 
     val length get() = channels[0].data.size

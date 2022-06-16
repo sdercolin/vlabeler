@@ -6,6 +6,7 @@
       "max": 400,
       "step": 20
     },
+    "maxDataChunkSize": 441000,
     "amplitude": {
       "unitSize": 40,
       "intensityAccuracy": 1000,

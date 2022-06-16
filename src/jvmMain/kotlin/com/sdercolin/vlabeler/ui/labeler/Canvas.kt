@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -36,6 +38,9 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerCanvas
 import kotlin.math.absoluteValue
+import kotlin.math.ceil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun Canvas(
@@ -50,17 +55,20 @@ fun Canvas(
     keyboardState: KeyboardState,
     horizontalScrollState: ScrollState
 ) {
+    val chunkCount = remember(sample, appConf) {
+        ceil(sample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
+    }
     Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
         Column(Modifier.fillMaxSize()) {
             val weightOfEachChannel = 1f / sample.wave.channels.size
             sample.wave.channels.forEach { channel ->
                 Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
-                    Waveforms(appConf, canvasParams, channel)
+                    Waveforms(appConf, canvasParams, channel, chunkCount)
                 }
             }
             sample.spectrogram?.let {
                 Box(Modifier.weight(appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
-                    Spectrogram(canvasParams, it)
+                    Spectrogram(canvasParams, it, chunkCount)
                 }
             }
         }
@@ -84,78 +92,111 @@ fun Canvas(
 private fun Waveforms(
     appConf: AppConf,
     canvasParams: CanvasParams,
-    channel: Wave.Channel
+    channel: Wave.Channel,
+    chunkCount: Int
 ) {
-    val dataDensity = appConf.painter.amplitude.unitSize
-    val data = channel.data
+    val chunkSize = remember(channel, chunkCount) { channel.data.size / chunkCount }
+    val dataChunks = remember(channel, chunkSize) { channel.data.chunked(chunkSize) }
     val waveformsColor = MaterialTheme.colors.onBackground
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
-    val imageBitmap = remember(channel, appConf) { mutableStateOf<ImageBitmap?>(null) }
-    val width = data.size / dataDensity
-    val maxRawY = data.maxOfOrNull { it.absoluteValue } ?: 0f
-    val height = appConf.painter.amplitude.intensityAccuracy
-    val size = Size(width.toFloat(), height.toFloat())
+    val imageBitmaps = remember(channel, appConf) { List(chunkSize) { mutableStateOf<ImageBitmap?>(null) } }
 
     LaunchedEffect(Unit) {
-        val newBitmap = ImageBitmap(width, height)
-        CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
-            val yScale = maxRawY / height * 2 * (1 + appConf.painter.amplitude.yAxisBlankRate)
-            val points = data
-                .map { height / 2 - it / yScale }
-                .withIndex().map { Offset(it.index.toFloat() / dataDensity, it.value) }
-            drawPoints(points, pointMode = PointMode.Polygon, color = waveformsColor)
+        withContext(Dispatchers.IO) {
+            repeat(chunkCount) { i ->
+                val data = dataChunks[i]
+                val dataDensity = appConf.painter.amplitude.unitSize
+                val width = data.size / dataDensity
+                val maxRawY = data.maxOfOrNull { it.absoluteValue } ?: 0f
+                val height = appConf.painter.amplitude.intensityAccuracy
+                val size = Size(width.toFloat(), height.toFloat())
+                val newBitmap = ImageBitmap(width, height)
+                CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
+                    println("Waveforms chunk $i: draw bitmap")
+                    val yScale = maxRawY / height * 2 * (1 + appConf.painter.amplitude.yAxisBlankRate)
+                    val points = data
+                        .map { height / 2 - it / yScale }
+                        .withIndex().map { Offset(it.index.toFloat() / dataDensity, it.value) }
+                    drawPoints(points, pointMode = PointMode.Polygon, color = waveformsColor)
+                }
+                imageBitmaps[i].value = newBitmap
+            }
         }
-        imageBitmap.value = newBitmap
     }
-
-
-    imageBitmap.value?.let {
-        Image(
-            modifier = Modifier.fillMaxHeight()
-                .width(canvasParams.canvasWidthInDp)
-                .background(MaterialTheme.colors.background),
-            contentScale = ContentScale.FillBounds,
-            bitmap = it,
-            contentDescription = null
-        )
+    Row(
+        Modifier.fillMaxHeight()
+            .width(canvasParams.canvasWidthInDp)
+            .background(MaterialTheme.colors.background)
+    ) {
+        repeat(chunkCount) { i ->
+            println("WaveformsChunk $i: composed")
+            ChunkImage(canvasParams, chunkCount, imageBitmaps[i], i, "Waveforms")
+        }
     }
 }
 
 @Composable
 private fun Spectrogram(
     canvasParams: CanvasParams,
-    spectrogram: Array<DoubleArray>
+    spectrogram: Array<DoubleArray>,
+    chunkCount: Int
 ) {
+    val chunkSize = remember(spectrogram, chunkCount) { spectrogram.size / chunkCount }
+    val dataChunks = remember(spectrogram, chunkSize) { spectrogram.toList().chunked(chunkSize) }
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
-    val imageBitmap = remember(spectrogram) { mutableStateOf<ImageBitmap?>(null) }
-    val width = spectrogram.size.toFloat()
-    val height = spectrogram.first().size.toFloat()
-    val size = Size(width, height)
+    val imageBitmaps = remember(spectrogram) { List(chunkSize) { mutableStateOf<ImageBitmap?>(null) } }
 
     LaunchedEffect(Unit) {
-        val newBitmap = ImageBitmap(width.toInt(), height.toInt())
-        CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
-            spectrogram.forEachIndexed { xIndex, yArray ->
-                yArray.forEachIndexed { yIndex, z ->
-                    val color = Color.White.copy(alpha = z.toFloat())
-                    drawRect(
-                        color = color,
-                        topLeft = Offset(xIndex.toFloat(), height - yIndex.toFloat()),
-                        size = Size(1f, 1f)
-                    )
+        withContext(Dispatchers.IO) {
+            repeat(chunkCount) { i ->
+                val data = dataChunks[i]
+                val width = data.size.toFloat()
+                val height = data.first().size.toFloat()
+                val size = Size(width, height)
+                val newBitmap = ImageBitmap(width.toInt(), height.toInt())
+                println("Spectrogram chunk $i: draw bitmap")
+                CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
+                    data.forEachIndexed { xIndex, yArray ->
+                        yArray.forEachIndexed { yIndex, z ->
+                            val color = Color.White.copy(alpha = z.toFloat())
+                            drawRect(
+                                color = color,
+                                topLeft = Offset(xIndex.toFloat(), height - yIndex.toFloat()),
+                                size = Size(1f, 1f)
+                            )
+                        }
+                    }
                 }
+                imageBitmaps[i].value = newBitmap
             }
         }
-        imageBitmap.value = newBitmap
     }
+    Row(
+        Modifier.fillMaxHeight()
+            .width(canvasParams.canvasWidthInDp)
+            .background(MaterialTheme.colors.background)
+    ) {
+        repeat(chunkCount) { i ->
+            ChunkImage(canvasParams, chunkCount, imageBitmaps[i], i, "Spectrogram")
+        }
+    }
+}
 
-    imageBitmap.value?.let {
+@Composable
+private fun ChunkImage(
+    canvasParams: CanvasParams,
+    chunkCount: Int,
+    bitmap: State<ImageBitmap?>,
+    index: Int,
+    chunkType: String
+) {
+    println("$chunkType chunk $index: composed")
+    bitmap.value?.let {
         Image(
             modifier = Modifier.fillMaxHeight()
-                .width(canvasParams.canvasWidthInDp)
-                .background(MaterialTheme.colors.background),
+                .width(canvasParams.canvasWidthInDp / chunkCount),
             contentScale = ContentScale.FillBounds,
             bitmap = it,
             contentDescription = null
