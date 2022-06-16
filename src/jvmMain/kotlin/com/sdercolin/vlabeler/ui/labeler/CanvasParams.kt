@@ -1,8 +1,10 @@
 package com.sdercolin.vlabeler.ui.labeler
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Density
 import com.sdercolin.vlabeler.model.AppConf
 
+@Stable
 data class CanvasParams(
     val dataLength: Int,
     val resolution: Int,
@@ -11,6 +13,7 @@ data class CanvasParams(
     val lengthInPixel = dataLength / resolution
     val canvasWidthInDp = with(density) { lengthInPixel.toDp() }
 
+    @Stable
     class ResolutionRange(
         private val conf: AppConf.CanvasResolution
     ) {

@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Stable
+import com.sdercolin.vlabeler.io.Spectrogram
 import com.sdercolin.vlabeler.io.Wave
 import java.io.File
 
@@ -8,7 +9,7 @@ import java.io.File
 class Sample(
     val info: SampleInfo,
     val wave: Wave,
-    val spectrogram: Array<DoubleArray>?
+    val spectrogram: Spectrogram?
 )
 
 data class SampleInfo(

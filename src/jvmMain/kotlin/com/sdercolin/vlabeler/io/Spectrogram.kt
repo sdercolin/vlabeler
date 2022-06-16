@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.io
 
+import androidx.compose.runtime.Stable
 import com.github.psambit9791.jdsp.transform.FastFourier
 import com.github.psambit9791.jdsp.windows.Bartlett
 import com.github.psambit9791.jdsp.windows.Blackman
@@ -12,7 +13,10 @@ import com.sdercolin.vlabeler.model.SampleInfo
 import kotlin.math.absoluteValue
 import kotlin.math.log10
 
-fun Wave.toSpectrogram(conf: AppConf.Spectrogram, info: SampleInfo): Array<DoubleArray> {
+@Stable
+data class Spectrogram(val data: List<DoubleArray>)
+
+fun Wave.toSpectrogram(conf: AppConf.Spectrogram, info: SampleInfo): Spectrogram {
     val dataLength = channels.minOf { it.data.size }
     val data = DoubleArray(dataLength) { i ->
         channels.sumOf { it.data[i].toDouble() } / channels.size
@@ -43,16 +47,17 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, info: SampleInfo): Array<Doubl
         magnitude.copyOf((magnitude.size * maxFrequencyRate).toInt())
     }
 
-    if (absoluteSpectrogram.isEmpty()) return arrayOf()
+    if (absoluteSpectrogram.isEmpty()) return Spectrogram(listOf())
     val frequencySize = absoluteSpectrogram.first().size
 
     val min = conf.minIntensity.toDouble()
     val max = conf.maxIntensity.toDouble()
-    return Array(frameCount) { i ->
+    val output = List(frameCount) { i ->
         DoubleArray(frequencySize) { j ->
             (20 * log10(absoluteSpectrogram[i][j] / frameSize))
                 .coerceIn(min, max)
                 .let { (it - min) / (max - min) }
         }
     }
+    return Spectrogram(output)
 }

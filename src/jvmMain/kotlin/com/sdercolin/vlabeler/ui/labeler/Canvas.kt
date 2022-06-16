@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardState
+import com.sdercolin.vlabeler.io.Spectrogram
 import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
@@ -45,7 +46,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun Canvas(
     sample: Sample,
-    entry: Entry,
+    entry: State<Entry>,
     editEntry: (Entry) -> Unit,
     playSampleSection: (Float, Float) -> Unit,
     appConf: AppConf,
@@ -55,6 +56,7 @@ fun Canvas(
     keyboardState: KeyboardState,
     horizontalScrollState: ScrollState
 ) {
+    println("Canvas: composed")
     val chunkCount = remember(sample, appConf) {
         ceil(sample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
     }
@@ -73,7 +75,7 @@ fun Canvas(
             }
         }
         MarkerCanvas(
-            entry = entry,
+            entry = entry.value,
             editEntry = editEntry,
             playSampleSection = playSampleSection,
             appConf = appConf,
@@ -95,6 +97,7 @@ private fun Waveforms(
     channel: Wave.Channel,
     chunkCount: Int
 ) {
+    println("Waveforms: composed")
     val chunkSize = remember(channel, chunkCount) { channel.data.size / chunkCount }
     val dataChunks = remember(channel, chunkSize) { channel.data.chunked(chunkSize) }
     val waveformsColor = MaterialTheme.colors.onBackground
@@ -139,11 +142,13 @@ private fun Waveforms(
 @Composable
 private fun Spectrogram(
     canvasParams: CanvasParams,
-    spectrogram: Array<DoubleArray>,
+    spectrogram: Spectrogram,
     chunkCount: Int
 ) {
-    val chunkSize = remember(spectrogram, chunkCount) { spectrogram.size / chunkCount }
-    val dataChunks = remember(spectrogram, chunkSize) { spectrogram.toList().chunked(chunkSize) }
+    println("Spectrogram: composed")
+    val data = spectrogram.data
+    val chunkSize = remember(spectrogram, chunkCount) { data.size / chunkCount }
+    val dataChunks = remember(spectrogram, chunkSize) { data.toList().chunked(chunkSize) }
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val imageBitmaps = remember(spectrogram) { List(chunkSize) { mutableStateOf<ImageBitmap?>(null) } }
@@ -151,14 +156,14 @@ private fun Spectrogram(
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             repeat(chunkCount) { i ->
-                val data = dataChunks[i]
-                val width = data.size.toFloat()
-                val height = data.first().size.toFloat()
+                val chunk = dataChunks[i]
+                val width = chunk.size.toFloat()
+                val height = chunk.first().size.toFloat()
                 val size = Size(width, height)
                 val newBitmap = ImageBitmap(width.toInt(), height.toInt())
                 println("Spectrogram chunk $i: draw bitmap")
                 CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
-                    data.forEachIndexed { xIndex, yArray ->
+                    chunk.forEachIndexed { xIndex, yArray ->
                         yArray.forEachIndexed { yIndex, z ->
                             val color = Color.White.copy(alpha = z.toFloat())
                             drawRect(

@@ -52,7 +52,9 @@ fun Labeler(
 ) {
     val scrollState = rememberScrollState(0)
     val currentDensity = LocalDensity.current
-    val resolutionRange = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
+    val resolutionRange = remember(appConf.painter.canvasResolution) {
+        CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
+    }
     val canvasParamsState = remember {
         mutableStateOf(
             CanvasParams(
@@ -64,14 +66,14 @@ fun Labeler(
     }
     var setResolutionDialogShown by remember { mutableStateOf(false) }
     val dummyEntry = Entry("i あ", 2615f, 3315f, listOf(3055f, 2915f, 2715f))
-    var entry by remember { mutableStateOf(dummyEntry) }
+    val entry = remember { mutableStateOf(dummyEntry) }
     Column(Modifier.fillMaxSize()) {
-        EntryTitleBar(entryName = entry.name, sampleName = sample.info.name)
+        EntryTitleBar(entryName = entry.value.name, sampleName = sample.info.name)
         Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Color.Black.copy(alpha = 0.5f))) {
             Canvas(
                 sample = sample,
                 entry = entry,
-                editEntry = { entry = it },
+                editEntry = { entry.value = it },
                 playSampleSection = playSampleSection,
                 appConf = appConf,
                 labelerConf = labelerConf,
@@ -109,6 +111,7 @@ fun Labeler(
 
 @Composable
 private fun EntryTitleBar(entryName: String, sampleName: String) {
+    println("EntryTitleBar: composed")
     Surface {
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -130,6 +133,7 @@ private fun StatusBar(
     resolution: Int,
     onChangeResolution: (Int) -> Unit
 ) {
+    println("StatusBar: composed")
     Surface {
         Row(
             modifier = Modifier.fillMaxWidth().height(30.dp),
