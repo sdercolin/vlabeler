@@ -7,14 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val colors = darkColors(
-    primary = Color(0xfff48fb1),
-    primaryVariant = Color(0xfff48fb1),
-    background = Color(0xff1e1e1e),
-    surface = Color(0xFF252525),
+    primary = AppColor.Pink,
+    primaryVariant = AppColor.Pink,
+    background = AppColor.DarkGray,
+    surface = AppColor.Gray,
     onPrimary = Color.Black,
     onSecondary = Color.Black,
-    onBackground = Color(0xfff2f2f2),
-    onSurface = Color(0xfff2f2f2),
+    onBackground = AppColor.LightGray,
+    onSurface = AppColor.LightGray,
     onError = Color.Black
 )
 

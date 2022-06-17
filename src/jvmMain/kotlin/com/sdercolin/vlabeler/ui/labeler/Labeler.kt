@@ -25,11 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,6 +39,7 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogArgs
+import com.sdercolin.vlabeler.ui.theme.AppColor
 import com.sdercolin.vlabeler.util.update
 
 @Immutable
@@ -49,6 +48,7 @@ data class LabelerState(val canvasResolution: Int)
 @Composable
 fun Labeler(
     sample: Sample,
+    entry: MutableState<Entry>,
     playSampleSection: (Float, Float) -> Unit,
     showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
@@ -68,11 +68,9 @@ fun Labeler(
             )
         }
     }
-    val dummyEntry = Entry("i あ", 2615f, 3315f, listOf(3055f, 2915f, 2715f))
-    val entry = remember { mutableStateOf(dummyEntry) }
     Column(Modifier.fillMaxSize()) {
         EntryTitleBar(entryName = entry.value.name, sampleName = sample.info.name)
-        Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Color.Black.copy(alpha = 0.5f))) {
+        Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = AppColor.Black50)) {
             Canvas(
                 sample = sample,
                 entry = entry,
