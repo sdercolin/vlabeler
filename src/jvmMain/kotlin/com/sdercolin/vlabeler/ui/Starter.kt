@@ -100,7 +100,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
     var projectName by remember { mutableStateOf("") }
     var projectNameEdited by remember { mutableStateOf(false) }
     var currentPathPicker by remember { mutableStateOf<PathPicker?>(null) }
-    var labelerName by remember(availableLabelerConfs) { mutableStateOf(availableLabelerConfs.first().name) }
+    var labeler by remember(availableLabelerConfs) { mutableStateOf(availableLabelerConfs.first()) }
 
     fun setSampleDirectory(path: String) {
         sampleDirectory = path
@@ -190,8 +190,8 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
             Box {
                 OutlinedTextField(
                     modifier = Modifier.widthIn(min = 400.dp),
-                    value = labelerName,
-                    onValueChange = { labelerName = it },
+                    value = labeler.displayedName,
+                    onValueChange = { },
                     readOnly = true,
                     label = { Text(string(Strings.StarterNewLabeler)) },
                     maxLines = 2,
@@ -209,11 +209,11 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
                     availableLabelerConfs.forEach { conf ->
                         DropdownMenuItem(
                             onClick = {
-                                labelerName = conf.name
+                                labeler = conf
                                 expanded = false
                             }
                         ) {
-                            Text(text = conf.name)
+                            Text(text = conf.displayedName)
                         }
                     }
                 }
@@ -234,8 +234,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
                             sampleDirectory = sampleDirectory,
                             workingDirectory = workingDirectory,
                             projectName = projectName,
-                            availableLabelerConfs = availableLabelerConfs,
-                            labelerName = labelerName
+                            labelerConf = labeler
                         )
                     )
                 },
@@ -266,7 +265,10 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
                 directory ?: return@FileDialog
                 when (picker) {
                     PathPicker.SampleDirectory -> setSampleDirectory(directory)
-                    PathPicker.WorkingDirectory -> setWorkingDirectory(directory)
+                    PathPicker.WorkingDirectory -> {
+                        workingDirectoryEdited = true
+                        setWorkingDirectory(directory)
+                    }
                 }
             }
         }
@@ -277,10 +279,8 @@ private fun getNewProject(
     sampleDirectory: String,
     workingDirectory: String,
     projectName: String,
-    availableLabelerConfs: List<LabelerConf>,
-    labelerName: String
+    labelerConf: LabelerConf
 ): Project {
-    val labelerConf = availableLabelerConfs.first { it.name == labelerName }
     val sampleDirectoryFile = File(sampleDirectory)
     val sampleNames = sampleDirectoryFile.listFiles().orEmpty()
         .filter { it.extension == Project.SampleFileExtension }

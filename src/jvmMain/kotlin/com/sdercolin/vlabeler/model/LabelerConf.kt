@@ -10,9 +10,17 @@ import kotlinx.serialization.Serializable
 @Immutable
 data class LabelerConf(
     /**
-     * Name of the labeler to be displayed
+     * Unique name of the labeler
+     * Names ending with ".default" represent that it's a built-in labeler
      */
     val name: String,
+    /**
+     * Version code in integer
+     * Configurations with same [name] and [version] should always have same contents
+     */
+    val version: Int = 1,
+    val displayedName: String = name,
+    val author: String = "",
     val description: String = "",
     /**
      * Default value listed as [start, *fields, end] in millisecond

@@ -1,5 +1,8 @@
 {
-  "name": "UTAU oto labeler",
+  "name": "oto.default",
+  "version": 1,
+  "displayedName": "UTAU oto labeler",
+  "author": "sdercolin",
   "description": "Default oto labeler (Overlap cannot be negative).",
   "fields": [
     {

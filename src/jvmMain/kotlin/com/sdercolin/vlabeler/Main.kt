@@ -41,7 +41,8 @@ fun main() = application {
             .let { mutableStateOf(it) }
     }
     val availableLabelerConfs = remember {
-        resourcesDir.listFiles().orEmpty().filter { it.name.endsWith(".labeler.json") }
+        resourcesDir.resolve("labelers").listFiles().orEmpty()
+            .filter { it.name.endsWith(".labeler.json") }
             .map { it.readText() }
             .map { Json.decodeFromString<LabelerConf>(it) }
             .map { conf -> conf.copy(fields = conf.fields.sortedBy { it.index }) }
