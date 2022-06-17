@@ -4,6 +4,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 private val colors = darkColors(
     primary = Pink,
@@ -17,9 +20,22 @@ private val colors = darkColors(
     onError = Black
 )
 
+private val typography = Typography(
+    button = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
+        letterSpacing = 1.25.sp
+    ),
+    h3 = TextStyle(
+        fontWeight = FontWeight.Light,
+        fontSize = 48.sp,
+        letterSpacing = 0.sp
+    )
+)
+
 @Composable
 fun AppTheme(content: @Composable () -> Unit) = MaterialTheme(
     colors = colors,
-    typography = Typography(),
+    typography = typography,
     content = content
 )

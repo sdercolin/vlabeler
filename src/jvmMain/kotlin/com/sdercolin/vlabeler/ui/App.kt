@@ -1,19 +1,14 @@
 package com.sdercolin.vlabeler.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
@@ -34,11 +29,14 @@ import com.sdercolin.vlabeler.ui.labeler.LabelerState
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.io.File
 
 @Composable
 fun App(
     appConf: AppConf,
-    labelerConf: LabelerConf,
+    availableLabelerConfs: List<LabelerConf>,
     projectState: MutableState<Project?>,
     dialogState: MutableState<DialogState>,
     playerState: PlayerState,
@@ -56,15 +54,19 @@ fun App(
                 playSampleSection = player::playSection,
                 showDialog = { dialogState.update { copy(embedded = it) } },
                 appConf = appConf,
-                labelerConf = labelerConf,
                 labelerState = labelerState,
                 playerState = playerState,
                 keyboardState = keyboardState
             )
         } else {
-            Loader {
-                dialogState.update { copy(openFile = true) }
-            }
+            Starter(
+                requestNewProject = {
+                    saveProjectFile(it)
+                    projectState.update { it }
+                },
+                requestOpenProject = { dialogState.update { copy(openProject = true) } },
+                availableLabelerConfs = availableLabelerConfs
+            )
         }
         dialogState.value.embedded?.let { args ->
             EmbeddedDialog(args) { result ->
@@ -81,7 +83,6 @@ private fun Editor(
     playSampleSection: (Float, Float) -> Unit,
     showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
-    labelerConf: LabelerConf,
     labelerState: MutableState<LabelerState>,
     playerState: PlayerState,
     keyboardState: KeyboardState
@@ -89,7 +90,7 @@ private fun Editor(
     val sampleState = remember { mutableStateOf<Sample?>(null) }
     val loadingState = produceState(initialValue = true, project, appConf) {
         withContext(Dispatchers.IO) {
-            sampleState.value = loadSampleFile(project.currentSampleFile, appConf)
+            sampleState.value = project.currentSampleFile?.let { loadSampleFile(it, appConf) }
         }
         value = false
     }
@@ -105,7 +106,7 @@ private fun Editor(
             playSampleSection = playSampleSection,
             showDialog = showDialog,
             appConf = appConf,
-            labelerConf = labelerConf,
+            labelerConf = project.labelerConf,
             labelerState = labelerState,
             playerState = playerState,
             keyboardState = keyboardState
@@ -116,21 +117,17 @@ private fun Editor(
     }
 }
 
-@Composable
-private fun Loader(requestOpenFileDialog: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TextButton(onClick = requestOpenFileDialog) {
-            Text("Click to load a wav file")
-        }
-    }
-}
-
 private fun handleDialogResult(result: EmbeddedDialogResult, labelerState: MutableState<LabelerState>) {
     when (result) {
         is SetResolutionDialogResult -> labelerState.update { copy(canvasResolution = result.newValue) }
     }
+}
+
+private fun saveProjectFile(project: Project) {
+    val workingDirectory = File(project.workingDirectory)
+    if (!workingDirectory.exists()) {
+        workingDirectory.mkdir()
+    }
+    val projectContent = Json.encodeToString(project)
+    project.projectFile.writeText(projectContent)
 }

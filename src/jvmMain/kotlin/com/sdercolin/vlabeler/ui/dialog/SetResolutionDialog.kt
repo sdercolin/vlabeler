@@ -65,14 +65,14 @@ fun SetResolutionDialog(
             TextButton(
                 onClick = { dismiss() }
             ) {
-                Text(string(Strings.CommonDialogCancelButton))
+                Text(string(Strings.CommonCancel))
             }
             Spacer(Modifier.width(25.dp))
             Button(
                 enabled = value != null,
                 onClick = { input.toIntOrNull()?.let { submit(it) } }
             ) {
-                Text(string(Strings.CommonDialogConfirmButton))
+                Text(string(Strings.CommonOkay))
             }
         }
     }

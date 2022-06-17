@@ -3,7 +3,9 @@ package com.sdercolin.vlabeler
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
@@ -16,6 +18,8 @@ import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.Menu
 import com.sdercolin.vlabeler.ui.dialog.DialogState
 import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -36,19 +40,28 @@ fun main() = application {
             .let { Json.decodeFromString<AppConf>(it) }
             .let { mutableStateOf(it) }
     }
-    val labelerConf = remember {
-        resourcesDir.resolve("oto.labeler.json").readText()
-            .let { Json.decodeFromString<LabelerConf>(it) }
-            .let { conf -> conf.copy(fields = conf.fields.sortedBy { it.index }) }
+    val availableLabelerConfs = remember {
+        resourcesDir.listFiles().orEmpty().filter { it.name.endsWith(".labeler.json") }
+            .map { it.readText() }
+            .map { Json.decodeFromString<LabelerConf>(it) }
+            .map { conf -> conf.copy(fields = conf.fields.sortedBy { it.index }) }
             .let { mutableStateOf(it) }
     }
+    if (availableLabelerConfs.value.isEmpty()) {
+        throw Exception("No labeler configuration files found.")
+    }
 
-    Window(title = "vlabeler", onCloseRequest = ::exitApplication, onKeyEvent = { keyEventHandler.onKeyEvent(it) }) {
+    Window(
+        title = string(Strings.AppName),
+        state = WindowState(width = 1000.dp, height = 800.dp),
+        onCloseRequest = ::exitApplication,
+        onKeyEvent = { keyEventHandler.onKeyEvent(it) }
+    ) {
         Menu(projectState, dialogState)
         AppTheme {
             App(
                 appConf.value,
-                labelerConf.value,
+                availableLabelerConfs.value,
                 projectState,
                 dialogState,
                 playerState.value,
@@ -56,6 +69,6 @@ fun main() = application {
                 player
             )
         }
-        StandaloneDialogs(appConf.value, labelerConf.value, projectState, dialogState)
+        StandaloneDialogs(availableLabelerConfs.value, projectState, dialogState)
     }
 }

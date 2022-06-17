@@ -9,4 +9,5 @@ val LightGray = Color(0xfff2f2f2)
 val Black = Color.Black
 val Black50 = Color(0x7f000000)
 val White = Color.White
+val White20 = Color(0x33ffffff)
 val Yellow = Color.Yellow

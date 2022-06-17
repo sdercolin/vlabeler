@@ -115,9 +115,19 @@ private fun EntryTitleBar(entryName: String, sampleName: String) {
                 .padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.Start,
         ) {
-            Text(modifier = Modifier.alignByBaseline(), text = entryName, style = MaterialTheme.typography.h3)
+            Text(
+                modifier = Modifier.alignByBaseline(),
+                text = entryName,
+                style = MaterialTheme.typography.h3,
+                maxLines = 1
+            )
             Spacer(Modifier.width(10.dp))
-            Text(modifier = Modifier.alignByBaseline(), text = "（$sampleName）", style = MaterialTheme.typography.h5)
+            Text(
+                modifier = Modifier.alignByBaseline(),
+                text = "（$sampleName）",
+                style = MaterialTheme.typography.h5,
+                maxLines = 1
+            )
         }
     }
 }

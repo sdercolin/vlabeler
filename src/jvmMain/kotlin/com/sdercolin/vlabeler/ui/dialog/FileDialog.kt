@@ -4,19 +4,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.AwtWindow
 import java.awt.FileDialog
 import java.awt.Frame
+import java.io.FilenameFilter
 
 @Composable
 fun FileDialog(
-    parent: Frame? = null,
-    title: String = "Choose a file",
+    title: String,
+    initialDirectory: String? = null,
+    extensions: List<String>? = null,
     onCloseRequest: (directory: String?, result: String?) -> Unit
 ) = AwtWindow(
     create = {
-        object : FileDialog(parent, title, LOAD) {
+        object : FileDialog(null as Frame?, title, LOAD) {
             override fun setVisible(value: Boolean) {
                 super.setVisible(value)
                 if (value) {
                     onCloseRequest(directory, file)
+                }
+            }
+        }.apply {
+            directory = initialDirectory
+            if (extensions != null) {
+                filenameFilter = FilenameFilter { _, name ->
+                    extensions.any {
+                        name.endsWith(".$it")
+                    }
                 }
             }
         }

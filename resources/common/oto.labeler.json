@@ -43,6 +43,13 @@
       ]
     }
   ],
+  "defaultValues": [
+    100,
+    200,
+    300,
+    400,
+    500
+  ],
   "properties": [
     {
       "name": "Offset",

@@ -4,6 +4,6 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class DialogState(
-    val openFile: Boolean = false,
+    val openProject: Boolean = false,
     val embedded: EmbeddedDialogArgs? = null
 )

@@ -17,7 +17,8 @@ class Wave(val channels: List<Channel>) {
     val length get() = channels[0].data.size
 }
 
-fun loadSampleFile(file: File, appConf: AppConf): Sample {
+fun loadSampleFile(file: File, appConf: AppConf): Sample? {
+    if (!file.exists()) return null
     val stream = AudioSystem.getAudioInputStream(file)
     val format = stream.format
     println("Loaded wav file: $format")

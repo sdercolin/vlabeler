@@ -44,6 +44,7 @@ class Player(
     }
 
     fun toggle() {
+        file ?: return
         if (isPlaying) stop() else {
             reset()
             play()
@@ -71,6 +72,7 @@ class Player(
     }
 
     fun playSection(startPosition: Float, endPosition: Float) {
+        file ?: return
         println("Player::playSection($startPosition, $endPosition)")
         reset()
         clip.framePosition = startPosition.toInt()

@@ -4,15 +4,31 @@ import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
 /**
- * Main configuration of the labeler
+ * Configuration of the labeler's appearances and behaviors
  */
 @Serializable
 @Immutable
 data class LabelerConf(
+    /**
+     * Name of the labeler to be displayed
+     */
     val name: String,
     val description: String = "",
+    /**
+     * Default value listed as [start, *fields, end] in millisecond
+     */
+    val defaultValues: List<Float> = listOf(100f, 200f),
+    /**
+     * Fields defined expect for built-in "start" and "end"
+     */
     val fields: List<Field> = listOf(),
+    /**
+     * Properties that are displayed in the entry list
+     */
     val properties: List<Property> = listOf(),
+    /**
+     * Defines when to use locked dragging (all parameters will move with dragged one)
+     */
     val lockedDrag: LockedDrag = LockedDrag()
 ) {
 

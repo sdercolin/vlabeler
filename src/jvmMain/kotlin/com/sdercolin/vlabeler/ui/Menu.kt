@@ -23,11 +23,15 @@ fun FrameWindowScope.Menu(
     MenuBar {
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
             Item(
-                "Open",
-                onClick = { dialogState.update { copy(openFile = true) } },
+                string(Strings.MenuFileOpen),
+                onClick = { dialogState.update { copy(openProject = true) } },
                 shortcut = getKeyShortCut(Key.O, ctrl = true)
             )
-            Item("Close", onClick = { projectState.value = null }, enabled = projectState.value != null)
+            Item(
+                string(Strings.MenuFileClose),
+                onClick = { projectState.value = null },
+                enabled = projectState.value != null
+            )
         }
     }
 }

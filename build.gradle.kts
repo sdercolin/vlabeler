@@ -28,6 +28,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation(compose.materialIconsExtended)
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
                 implementation("com.github.psambit9791:jdsp:1.0.0")
             }
@@ -41,7 +42,7 @@ compose.desktop {
         mainClass = "com.sdercolin.vlabeler.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "vlabeler"
+            packageName = "VLabeler"
             packageVersion = "1.0.0"
             appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
             windows {
