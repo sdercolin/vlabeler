@@ -6,6 +6,9 @@ enum class Strings(val en: String) {
     LanguageDisplayName(
         en = English.displayName
     ),
+    MenuFile(
+        en = "File"
+    ),
     CommonDialogConfirmButton(
         en = "OK"
     ),

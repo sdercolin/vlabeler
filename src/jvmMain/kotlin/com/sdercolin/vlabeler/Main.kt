@@ -11,7 +11,11 @@ import com.sdercolin.vlabeler.env.KeyEventHandler
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.ui.MainWindow
+import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.App
+import com.sdercolin.vlabeler.ui.Menu
+import com.sdercolin.vlabeler.ui.dialog.DialogState
+import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import java.io.File
 import kotlinx.serialization.decodeFromString
@@ -23,6 +27,8 @@ fun main() = application {
     val player = remember { Player(mainScope, playerState) }
     val keyboardState = remember { mutableStateOf(KeyboardState()) }
     val keyEventHandler = remember { KeyEventHandler(player, keyboardState) }
+    val projectState = remember { mutableStateOf<Project?>(null) }
+    val dialogState = remember { mutableStateOf(DialogState()) }
 
     val resourcesDir = remember { File(System.getProperty("compose.application.resources.dir")) }
     val appConf = remember {
@@ -38,9 +44,19 @@ fun main() = application {
     }
 
     Window(title = "vlabeler", onCloseRequest = ::exitApplication, onKeyEvent = { keyEventHandler.onKeyEvent(it) }) {
+        Menu(projectState, dialogState)
         AppTheme {
-            MainWindow(player, appConf, labelerConf, playerState.value, keyboardState.value)
+            App(
+                appConf.value,
+                labelerConf.value,
+                projectState,
+                dialogState,
+                playerState.value,
+                keyboardState.value,
+                player
+            )
         }
+        StandaloneDialogs(appConf.value, labelerConf.value, projectState, dialogState)
     }
 }
 

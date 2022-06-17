@@ -17,5 +17,26 @@ data class Project(
 
     companion object {
         const val SampleFileExtension = ".wav"
+
+        fun fromSingleFile(
+            directoryPath: String,
+            fileName: String,
+            appConf: AppConf,
+            labelerConf: LabelerConf
+        ): Project {
+            val file = File(directoryPath, fileName)
+            return Project(
+                workingDirectory = File(directoryPath),
+                entriesBySampleName = mapOf(
+                    file.nameWithoutExtension to listOf(
+                        Entry("i あ", 2615f, 3315f, listOf(3055f, 2915f, 2715f))
+                    )
+                ),
+                appConf,
+                labelerConf,
+                currentSampleName = file.nameWithoutExtension,
+                currentEntryIndex = 0
+            )
+        }
     }
 }

@@ -10,11 +10,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.audio.Player
@@ -22,58 +20,55 @@ import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.io.loadSampleFile
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.common.CircularProgress
+import com.sdercolin.vlabeler.ui.dialog.DialogState
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
-import com.sdercolin.vlabeler.ui.dialog.FileDialog
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.labeler.Labeler
 import com.sdercolin.vlabeler.ui.labeler.LabelerState
 import com.sdercolin.vlabeler.util.update
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun MainWindow(
-    player: Player,
-    appConf: MutableState<AppConf>,
-    labelerConf: MutableState<LabelerConf>,
+fun App(
+    appConf: AppConf,
+    labelerConf: LabelerConf,
+    projectState: MutableState<Project?>,
+    dialogState: MutableState<DialogState>,
     playerState: PlayerState,
-    keyboardState: KeyboardState
+    keyboardState: KeyboardState,
+    player: Player
 ) {
-    val projectState = remember { mutableStateOf<Project?>(null) }
-    val dialogState = remember { mutableStateOf<EmbeddedDialogArgs?>(null) }
-    val labelerState = remember(appConf.value.painter.canvasResolution.default) {
-        mutableStateOf(LabelerState(appConf.value.painter.canvasResolution.default))
+    val labelerState = remember(appConf.painter.canvasResolution.default) {
+        mutableStateOf(LabelerState(appConf.painter.canvasResolution.default))
     }
-
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         val project = projectState.value
         if (project != null) {
             Editor(
                 project = project,
                 playSampleSection = player::playSection,
-                showDialog = { dialogState.update { it } },
-                appConf = appConf.value,
-                labelerConf = labelerConf.value,
+                showDialog = { dialogState.update { copy(embedded = it) } },
+                appConf = appConf,
+                labelerConf = labelerConf,
                 labelerState = labelerState,
                 playerState = playerState,
                 keyboardState = keyboardState
             )
         } else {
-            Loader(appConf.value, labelerConf.value) {
-                projectState.value = it
+            Loader {
+                dialogState.update { copy(openFile = true) }
             }
         }
-        dialogState.value?.let { args ->
+        dialogState.value.embedded?.let { args ->
             EmbeddedDialog(args) { result ->
-                dialogState.update { null }
+                dialogState.update { copy(embedded = null) }
                 if (result != null) handleDialogResult(result, labelerState)
             }
         }
@@ -122,38 +117,14 @@ private fun Editor(
 }
 
 @Composable
-private fun Loader(appConf: AppConf, labelerConf: LabelerConf, onLoaded: (Project) -> Unit) {
-    var isFileDialogOpened by remember { mutableStateOf(false) }
+private fun Loader(requestOpenFileDialog: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TextButton(onClick = { isFileDialogOpened = true }) {
+        TextButton(onClick = requestOpenFileDialog) {
             Text("Click to load a wav file")
-        }
-        if (isFileDialogOpened) {
-            FileDialog(
-                onCloseRequest = { directory, fileName ->
-                    isFileDialogOpened = false
-                    if (directory != null && fileName != null) {
-                        val file = File(directory, fileName)
-                        val project = Project(
-                            workingDirectory = File(directory),
-                            entriesBySampleName = mapOf(
-                                file.nameWithoutExtension to listOf(
-                                    Entry("i あ", 2615f, 3315f, listOf(3055f, 2915f, 2715f))
-                                )
-                            ),
-                            appConf,
-                            labelerConf,
-                            currentSampleName = file.nameWithoutExtension,
-                            currentEntryIndex = 0
-                        )
-                        onLoaded(project)
-                    }
-                }
-            )
         }
     }
 }

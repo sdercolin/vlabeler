@@ -18,7 +18,7 @@ class KeyEventHandler(private val player: Player, private val state: MutableStat
             player.toggle()
             return true
         }
-        val isLeftCtrl = if (isMacOs) event.key == Key.MetaLeft else event.key == Key.CtrlLeft
+        val isLeftCtrl = if (isMacOS) event.key == Key.MetaLeft else event.key == Key.CtrlLeft
         if (isLeftCtrl) {
             if (event.type == KeyEventType.KeyUp) {
                 state.update { copy(isLeftCtrlPressed = false) }
@@ -28,7 +28,7 @@ class KeyEventHandler(private val player: Player, private val state: MutableStat
                 return true
             }
         }
-        val isRightCtrl = if (isMacOs) event.key == Key.MetaRight else event.key == Key.CtrlRight
+        val isRightCtrl = if (isMacOS) event.key == Key.MetaRight else event.key == Key.CtrlRight
         if (isRightCtrl) {
             if (event.type == KeyEventType.KeyUp) {
                 state.update { copy(isRightCtrlPressed = false) }
