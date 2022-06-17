@@ -39,7 +39,7 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogArgs
-import com.sdercolin.vlabeler.ui.theme.AppColor
+import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.util.update
 
 @Immutable
@@ -70,7 +70,7 @@ fun Labeler(
     }
     Column(Modifier.fillMaxSize()) {
         EntryTitleBar(entryName = entry.value.name, sampleName = sample.info.name)
-        Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = AppColor.Black50)) {
+        Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Black50)) {
             Canvas(
                 sample = sample,
                 entry = entry,

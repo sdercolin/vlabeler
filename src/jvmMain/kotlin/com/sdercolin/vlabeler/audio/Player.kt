@@ -3,12 +3,12 @@ package com.sdercolin.vlabeler.audio
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.util.update
-import java.io.File
-import javax.sound.sampled.AudioSystem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
+import javax.sound.sampled.AudioSystem
 
 @Immutable
 data class PlayerState(

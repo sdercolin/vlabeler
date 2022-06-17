@@ -78,7 +78,6 @@ fun SetResolutionDialog(
     }
 }
 
-
 @Composable
 @Preview
 private fun Preview() = SetResolutionDialog(SetResolutionDialogArgs(100, 10, 1000)) {}

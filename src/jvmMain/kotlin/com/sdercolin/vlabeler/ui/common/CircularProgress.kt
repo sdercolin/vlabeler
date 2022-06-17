@@ -7,12 +7,12 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.sdercolin.vlabeler.ui.theme.AppColor
+import com.sdercolin.vlabeler.ui.theme.Black50
 
 @Composable
 fun CircularProgress() {
     Box(
-        modifier = Modifier.fillMaxSize().background(color = AppColor.Black50),
+        modifier = Modifier.fillMaxSize().background(color = Black50),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()

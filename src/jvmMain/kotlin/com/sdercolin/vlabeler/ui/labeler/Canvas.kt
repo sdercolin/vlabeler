@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
@@ -38,10 +37,12 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerCanvas
-import kotlin.math.absoluteValue
-import kotlin.math.ceil
+import com.sdercolin.vlabeler.ui.theme.White
+import com.sdercolin.vlabeler.ui.theme.Yellow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.math.absoluteValue
+import kotlin.math.ceil
 
 @Composable
 fun Canvas(
@@ -164,7 +165,7 @@ private fun Spectrogram(
                 CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
                     chunk.forEachIndexed { xIndex, yArray ->
                         yArray.forEachIndexed { yIndex, z ->
-                            val color = Color.White.copy(alpha = z.toFloat())
+                            val color = White.copy(alpha = z.toFloat())
                             drawRect(
                                 color = color,
                                 topLeft = Offset(xIndex.toFloat(), height - yIndex.toFloat()),
@@ -215,7 +216,7 @@ private fun PlayerCursor(canvasParams: CanvasParams, playerState: PlayerState) {
     ) {
         val x = (playerState.framePosition / canvasParams.resolution).toFloat()
         drawLine(
-            color = Color.Yellow,
+            color = Yellow,
             start = Offset(x, 0f),
             end = Offset(x, center.y * 2),
             strokeWidth = 2f

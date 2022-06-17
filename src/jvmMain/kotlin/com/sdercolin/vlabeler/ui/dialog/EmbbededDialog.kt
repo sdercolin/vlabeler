@@ -12,7 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.ui.theme.AppColor
+import com.sdercolin.vlabeler.ui.theme.Black50
 
 sealed interface EmbeddedDialogArgs
 sealed interface EmbeddedDialogResult
@@ -21,7 +21,7 @@ sealed interface EmbeddedDialogResult
 fun EmbeddedDialog(args: EmbeddedDialogArgs, submit: (EmbeddedDialogResult?) -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize()
-            .background(AppColor.Black50)
+            .background(color = Black50)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,

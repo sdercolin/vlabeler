@@ -5,6 +5,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization") version "1.6.10"
     id("org.jetbrains.compose")
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
 
 group = "com.sdercolin"
@@ -48,4 +49,8 @@ compose.desktop {
             }
         }
     }
+}
+
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    version.set("0.45.2")
 }

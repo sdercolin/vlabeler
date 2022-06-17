@@ -20,7 +20,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.Layout
@@ -36,6 +35,7 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.NonePointIndex
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.MouseState
+import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.parseColor
 import com.sdercolin.vlabeler.util.update
 import kotlin.math.abs
@@ -162,7 +162,7 @@ private fun FieldBorderCanvas(
                     if (state.value.mouse == MouseState.Hovering) {
                         val lockedDragByBaseField =
                             labelerConf.lockedDrag.useDragBase &&
-                                    labelerConf.fields.getOrNull(state.value.pointIndex)?.dragBase == true
+                                labelerConf.fields.getOrNull(state.value.pointIndex)?.dragBase == true
                         val lockedDragByStart =
                             labelerConf.lockedDrag.useStart && state.value.usingStartPoint
                         val lockedDrag = (lockedDragByBaseField || lockedDragByStart) xor keyboardState.isShiftPressed
@@ -192,7 +192,7 @@ private fun FieldBorderCanvas(
         canvasHeightState.value = canvasHeight
 
         // Draw start
-        val startColor = Color.White
+        val startColor = White
         drawRect(
             color = startColor,
             alpha = RegionAlpha,
@@ -236,7 +236,7 @@ private fun FieldBorderCanvas(
         }
 
         // Draw end
-        val endColor = Color.White
+        val endColor = White
         drawRect(
             color = endColor,
             alpha = RegionAlpha,

@@ -54,7 +54,7 @@ data class EntryInPixel(
         for ((index, value) in pointsSorted) {
             // label part
             val centerY = canvasHeight * waveformsHeightRatio *
-                    (1 - conf.fields[index].height) - with(density) { labelShiftUp.toPx() }
+                (1 - conf.fields[index].height) - with(density) { labelShiftUp.toPx() }
             val height = with(density) { labelSize.height.toPx() }
             val top = centerY - 0.5 * height
             val bottom = centerY + 0.5 * height
@@ -121,7 +121,6 @@ data class EntryInPixel(
         }
         return null
     }
-
 
     companion object {
         private const val NearRadiusStartOrEnd = 10f

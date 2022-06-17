@@ -17,9 +17,9 @@ import com.sdercolin.vlabeler.ui.Menu
 import com.sdercolin.vlabeler.ui.dialog.DialogState
 import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
 import com.sdercolin.vlabeler.ui.theme.AppTheme
-import java.io.File
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.io.File
 
 fun main() = application {
     val mainScope = rememberCoroutineScope()
@@ -59,4 +59,3 @@ fun main() = application {
         StandaloneDialogs(appConf.value, labelerConf.value, projectState, dialogState)
     }
 }
-
