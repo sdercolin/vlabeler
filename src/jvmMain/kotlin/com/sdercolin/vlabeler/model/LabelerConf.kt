@@ -1,11 +1,13 @@
 package com.sdercolin.vlabeler.model
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
 /**
  * Main configuration of the labeler
  */
 @Serializable
+@Immutable
 data class LabelerConf(
     val name: String,
     val description: String = "",
@@ -25,6 +27,7 @@ data class LabelerConf(
         .distinct()
 
     @Serializable
+    @Immutable
     data class Field(
         val index: Int, // Starts from 0
         val name: String,
@@ -37,18 +40,21 @@ data class LabelerConf(
     )
 
     @Serializable
+    @Immutable
     data class Property(
         val name: String, // Displayed
         val value: String // Calculated by fields ({\d}); -2 is start, -1 is end
     )
 
     @Serializable
+    @Immutable
     data class Constraint(
         val min: Int? = null, // Index of field (except for start and end)
         val max: Int? = null
     )
 
     @Serializable
+    @Immutable
     data class LockedDrag(
         val useDragBase: Boolean = false,
         val useStart: Boolean = false

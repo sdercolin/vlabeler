@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,7 @@ import com.sdercolin.vlabeler.util.update
 import kotlin.math.abs
 import kotlin.math.min
 
+@Immutable
 data class MarkerState(
     val mouse: MouseState = MouseState.None,
     val pointIndex: Int = NonePointIndex, // starts from 0 for custom points
@@ -83,8 +85,7 @@ fun MarkerCanvas(
     val entryInPixel = entryConverter.convertToPixel(entry)
     val state = remember { mutableStateOf(MarkerState()) }
     val canvasHeightState = remember { mutableStateOf(0f) }
-    val fields = labelerConf.fields
-    val waveformsHeightRatio = run {
+    val waveformsHeightRatio = remember(appConf.painter.spectrogram) {
         val spectrogram = appConf.painter.spectrogram
         val totalWeight = 1f + if (spectrogram.enabled) spectrogram.heightWeight else 0f
         1f / totalWeight
@@ -99,8 +100,7 @@ fun MarkerCanvas(
         editEntry,
         entryConverter,
         keyboardState,
-        playSampleSection,
-        fields
+        playSampleSection
     )
     FieldLabelCanvas(canvasParams, waveformsHeightRatio, state.value, labelerConf, entryInPixel)
 }
@@ -116,8 +116,7 @@ private fun FieldBorderCanvas(
     editEntry: (Entry) -> Unit,
     entryConverter: EntryConverter,
     keyboardState: KeyboardState,
-    playSampleSection: (Float, Float) -> Unit,
-    fields: List<LabelerConf.Field>
+    playSampleSection: (Float, Float) -> Unit
 ) {
 
     Canvas(
@@ -209,8 +208,8 @@ private fun FieldBorderCanvas(
         )
 
         // Draw custom fields
-        for (i in fields.indices) {
-            val field = fields[i]
+        for (i in labelerConf.fields.indices) {
+            val field = labelerConf.fields[i]
             val x = entryInPixel.getCustomPoint(i)
             val waveformsHeight = canvasHeight * waveformsHeightRatio
             val height = waveformsHeight * field.height

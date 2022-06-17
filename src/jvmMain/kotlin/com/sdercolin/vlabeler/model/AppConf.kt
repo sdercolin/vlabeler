@@ -1,15 +1,18 @@
 package com.sdercolin.vlabeler.model
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
 /**
  * Basic configurations of app
  */
 @Serializable
+@Immutable
 data class AppConf(
     val painter: Painter = Painter()
 ) {
     @Serializable
+    @Immutable
     data class Painter(
         /**
          * Number of sample points included in 1 pixel
@@ -30,6 +33,7 @@ data class AppConf(
     )
 
     @Serializable
+    @Immutable
     data class CanvasResolution(
         val default: Int = 100,
         val min: Int = 10,
@@ -38,6 +42,7 @@ data class AppConf(
     )
 
     @Serializable
+    @Immutable
     data class Amplitude(
         /**
          * Size of the unit used when drawing the waveforms
@@ -54,6 +59,7 @@ data class AppConf(
     )
 
     @Serializable
+    @Immutable
     data class Spectrogram(
         val enabled: Boolean = false,
         /**
@@ -83,6 +89,7 @@ data class AppConf(
     )
 
     @Serializable
+    @Immutable
     enum class WindowType {
         Hamming,
         Hanning,

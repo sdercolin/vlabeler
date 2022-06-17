@@ -1,6 +1,6 @@
 package com.sdercolin.vlabeler.io
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import com.github.psambit9791.jdsp.transform.FastFourier
 import com.github.psambit9791.jdsp.windows.Bartlett
 import com.github.psambit9791.jdsp.windows.Blackman
@@ -13,7 +13,7 @@ import com.sdercolin.vlabeler.model.SampleInfo
 import kotlin.math.absoluteValue
 import kotlin.math.log10
 
-@Stable
+@Immutable
 data class Spectrogram(val data: List<DoubleArray>)
 
 fun Wave.toSpectrogram(conf: AppConf.Spectrogram, info: SampleInfo): Spectrogram {

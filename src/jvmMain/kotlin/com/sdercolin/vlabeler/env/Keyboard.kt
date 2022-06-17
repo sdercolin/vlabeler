@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.env
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
@@ -59,6 +60,7 @@ class KeyEventHandler(private val player: Player, private val state: MutableStat
     }
 }
 
+@Immutable
 data class KeyboardState(
     val isLeftCtrlPressed: Boolean = false,
     val isRightCtrlPressed: Boolean = false,

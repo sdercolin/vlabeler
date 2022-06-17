@@ -1,17 +1,18 @@
 package com.sdercolin.vlabeler.model
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.io.Spectrogram
 import com.sdercolin.vlabeler.io.Wave
 import java.io.File
 
-@Stable
+@Immutable
 class Sample(
     val info: SampleInfo,
     val wave: Wave,
     val spectrogram: Spectrogram?
 )
 
+@Immutable
 data class SampleInfo(
     val name: String,
     val file: File,

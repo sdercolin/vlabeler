@@ -1,11 +1,13 @@
 package com.sdercolin.vlabeler.ui.labeler.marker
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import com.sdercolin.vlabeler.model.LabelerConf
 import kotlin.math.absoluteValue
 
+@Immutable
 data class EntryInPixel(
     val name: String,
     val start: Float,

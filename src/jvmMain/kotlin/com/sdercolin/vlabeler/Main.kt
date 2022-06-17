@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.MainWindow
+import com.sdercolin.vlabeler.ui.theme.AppTheme
 import java.io.File
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -21,19 +22,25 @@ fun main() = application {
     val playerState = remember { mutableStateOf(PlayerState()) }
     val player = remember { Player(mainScope, playerState) }
     val keyboardState = remember { mutableStateOf(KeyboardState()) }
-    val keyEventHandler = KeyEventHandler(player, keyboardState)
+    val keyEventHandler = remember { KeyEventHandler(player, keyboardState) }
 
-    val resourcesDir = File(System.getProperty("compose.application.resources.dir"))
-
-    val appConf = resourcesDir.resolve("app.conf.json").readText().let {
-        Json.decodeFromString<AppConf>(it)
+    val resourcesDir = remember { File(System.getProperty("compose.application.resources.dir")) }
+    val appConf = remember {
+        resourcesDir.resolve("app.conf.json").readText()
+            .let { Json.decodeFromString<AppConf>(it) }
+            .let { mutableStateOf(it) }
     }
-    val labelerConf = resourcesDir.resolve("oto.labeler.json").readText().let {
-        Json.decodeFromString<LabelerConf>(it)
-    }.let { conf -> conf.copy(fields = conf.fields.sortedBy { it.index }) }
+    val labelerConf = remember {
+        resourcesDir.resolve("oto.labeler.json").readText()
+            .let { Json.decodeFromString<LabelerConf>(it) }
+            .let { conf -> conf.copy(fields = conf.fields.sortedBy { it.index }) }
+            .let { mutableStateOf(it) }
+    }
 
     Window(title = "vlabeler", onCloseRequest = ::exitApplication, onKeyEvent = { keyEventHandler.onKeyEvent(it) }) {
-        MainWindow(mainScope, appConf, labelerConf, player, playerState.value, keyboardState.value)
+        AppTheme {
+            MainWindow(player, appConf, labelerConf, playerState.value, keyboardState.value)
+        }
     }
 }
 

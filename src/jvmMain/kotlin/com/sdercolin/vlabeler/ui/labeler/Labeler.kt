@@ -22,10 +22,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,33 +39,35 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
-import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialog
+import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogArgs
 import com.sdercolin.vlabeler.util.update
+
+@Immutable
+data class LabelerState(val canvasResolution: Int)
 
 @Composable
 fun Labeler(
     sample: Sample,
+    playSampleSection: (Float, Float) -> Unit,
+    showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
     labelerConf: LabelerConf,
+    labelerState: MutableState<LabelerState>,
     playerState: PlayerState,
-    playSampleSection: (Float, Float) -> Unit,
     keyboardState: KeyboardState
 ) {
     val scrollState = rememberScrollState(0)
     val currentDensity = LocalDensity.current
-    val resolutionRange = remember(appConf.painter.canvasResolution) {
-        CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
-    }
     val canvasParamsState = remember {
-        mutableStateOf(
+        derivedStateOf {
             CanvasParams(
                 sample.wave.length,
-                appConf.painter.canvasResolution.default,
+                labelerState.value.canvasResolution,
                 currentDensity
             )
-        )
+        }
     }
-    var setResolutionDialogShown by remember { mutableStateOf(false) }
     val dummyEntry = Entry("i あ", 2615f, 3315f, listOf(3055f, 2915f, 2715f))
     val entry = remember { mutableStateOf(dummyEntry) }
     Column(Modifier.fillMaxSize()) {
@@ -88,22 +91,17 @@ fun Labeler(
             adapter = rememberScrollbarAdapter(scrollState)
         )
         StatusBar(
-            resolutionRange = resolutionRange,
-            openSetResolutionDialog = { setResolutionDialogShown = true },
-            resolution = canvasParamsState.value.resolution
-        ) { canvasParamsState.update { copy(resolution = it) } }
-    }
-    if (setResolutionDialogShown) {
-        SetResolutionDialog(
-            current = canvasParamsState.value.resolution,
-            min = resolutionRange.min,
-            max = resolutionRange.max,
-            dismiss = {
-                setResolutionDialogShown = false
-            },
-            submit = {
-                setResolutionDialogShown = false
-                canvasParamsState.update { copy(resolution = it) }
+            appConf = appConf,
+            resolution = canvasParamsState.value.resolution,
+            onChangeResolution = { labelerState.update { copy(canvasResolution = it) } },
+            openSetResolutionDialog = {
+                showDialog(
+                    SetResolutionDialogArgs(
+                        current = canvasParamsState.value.resolution,
+                        min = appConf.painter.canvasResolution.min,
+                        max = appConf.painter.canvasResolution.max
+                    )
+                )
             }
         )
     }
@@ -128,12 +126,13 @@ private fun EntryTitleBar(entryName: String, sampleName: String) {
 
 @Composable
 private fun StatusBar(
-    resolutionRange: CanvasParams.ResolutionRange,
-    openSetResolutionDialog: () -> Unit,
+    appConf: AppConf,
     resolution: Int,
-    onChangeResolution: (Int) -> Unit
+    onChangeResolution: (Int) -> Unit,
+    openSetResolutionDialog: () -> Unit
 ) {
     println("StatusBar: composed")
+    val resolutionRange = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
     Surface {
         Row(
             modifier = Modifier.fillMaxWidth().height(30.dp),

@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.audio
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.util.update
 import java.io.File
@@ -9,6 +10,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@Immutable
 data class PlayerState(
     val isPlaying: Boolean = false,
     val framePosition: Int = 0

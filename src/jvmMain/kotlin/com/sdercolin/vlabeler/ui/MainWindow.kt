@@ -9,6 +9,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,40 +23,53 @@ import com.sdercolin.vlabeler.io.loadSampleFile
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
-import com.sdercolin.vlabeler.ui.env.FileDialog
+import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
+import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
+import com.sdercolin.vlabeler.ui.dialog.FileDialog
+import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.labeler.Labeler
-import com.sdercolin.vlabeler.ui.theme.AppTheme
+import com.sdercolin.vlabeler.ui.labeler.LabelerState
+import com.sdercolin.vlabeler.util.update
 import java.io.File
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun MainWindow(
-    mainScope: CoroutineScope,
-    appConf: AppConf,
-    labelerConf: LabelerConf,
     player: Player,
+    appConf: MutableState<AppConf>,
+    labelerConf: MutableState<LabelerConf>,
     playerState: PlayerState,
     keyboardState: KeyboardState
 ) {
     val sampleState = remember { mutableStateOf<Sample?>(null) }
+    val dialogState = remember { mutableStateOf<EmbeddedDialogArgs?>(null) }
+    val labelerState = remember(appConf.value.painter.canvasResolution.default) {
+        mutableStateOf(LabelerState(appConf.value.painter.canvasResolution.default))
+    }
 
-    AppTheme {
-        val sample = sampleState.value
-        Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
-            if (sample != null) {
-                Labeler(
-                    sample = sample,
-                    appConf = appConf,
-                    labelerConf = labelerConf,
-                    playerState = playerState,
-                    playSampleSection = player::playSection,
-                    keyboardState = keyboardState
-                )
-            } else {
-                Loader(appConf) {
-                    sampleState.value = it
-                    player.load(it.info.file)
-                }
+    val sample = sampleState.value
+    Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
+        if (sample != null) {
+            Labeler(
+                sample = sample,
+                playSampleSection = player::playSection,
+                showDialog = { dialogState.update { it } },
+                appConf = appConf.value,
+                labelerConf = labelerConf.value,
+                labelerState = labelerState,
+                playerState = playerState,
+                keyboardState = keyboardState
+            )
+        } else {
+            Loader(appConf.value) {
+                sampleState.value = it
+                player.load(it.info.file)
+            }
+        }
+        dialogState.value?.let { args ->
+            EmbeddedDialog(args) { result ->
+                dialogState.update { null }
+                if (result != null) handleDialogResult(result, labelerState)
             }
         }
     }
@@ -84,5 +98,11 @@ private fun Loader(appConf: AppConf, onLoaded: (Sample) -> Unit) {
                 }
             )
         }
+    }
+}
+
+private fun handleDialogResult(result: EmbeddedDialogResult, labelerState: MutableState<LabelerState>) {
+    when (result) {
+        is SetResolutionDialogResult -> labelerState.update { copy(canvasResolution = result.newValue) }
     }
 }

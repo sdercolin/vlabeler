@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.io
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Sample
@@ -8,7 +9,7 @@ import java.io.File
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
 
-@Stable
+@Immutable
 class Wave(val channels: List<Channel>) {
     @Stable
     class Channel(val data: List<Float>)
