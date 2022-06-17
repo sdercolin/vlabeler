@@ -19,7 +19,6 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.common.CircularProgress
-import com.sdercolin.vlabeler.ui.dialog.DialogState
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
@@ -38,7 +37,7 @@ fun App(
     appConf: AppConf,
     availableLabelerConfs: List<LabelerConf>,
     projectState: MutableState<Project?>,
-    dialogState: MutableState<DialogState>,
+    appState: MutableState<AppState>,
     playerState: PlayerState,
     keyboardState: KeyboardState,
     player: Player
@@ -48,11 +47,11 @@ fun App(
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         val project = projectState.value
-        if (project != null) {
+        if (project != null && appState.value.isConfiguringNewProject.not()) {
             Editor(
                 project = project,
                 playSampleSection = player::playSection,
-                showDialog = { dialogState.update { copy(embedded = it) } },
+                showDialog = { appState.update { copy(embeddedDialog = it) } },
                 appConf = appConf,
                 labelerState = labelerState,
                 playerState = playerState,
@@ -60,17 +59,18 @@ fun App(
             )
         } else {
             Starter(
+                appState = appState,
                 requestNewProject = {
                     saveProjectFile(it)
+                    appState.update { copy(isConfiguringNewProject = false) }
                     projectState.update { it }
                 },
-                requestOpenProject = { dialogState.update { copy(openProject = true) } },
                 availableLabelerConfs = availableLabelerConfs
             )
         }
-        dialogState.value.embedded?.let { args ->
+        appState.value.embeddedDialog?.let { args ->
             EmbeddedDialog(args) { result ->
-                dialogState.update { copy(embedded = null) }
+                appState.update { copy(embeddedDialog = null) }
                 if (result != null) handleDialogResult(result, labelerState)
             }
         }

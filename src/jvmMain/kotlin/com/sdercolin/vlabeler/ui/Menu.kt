@@ -9,7 +9,6 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.model.Project
-import com.sdercolin.vlabeler.ui.dialog.DialogState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.update
@@ -18,14 +17,19 @@ import com.sdercolin.vlabeler.util.update
 @Composable
 fun FrameWindowScope.Menu(
     projectState: MutableState<Project?>,
-    dialogState: MutableState<DialogState>
+    appState: MutableState<AppState>
 ) {
     MenuBar {
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
             Item(
+                string(Strings.MenuFileNewProject),
+                onClick = { appState.update { copy(isConfiguringNewProject = true) } },
+                shortcut = getKeyShortCut(Key.N, ctrl = true, shift = true)
+            )
+            Item(
                 string(Strings.MenuFileOpen),
-                onClick = { dialogState.update { copy(openProject = true) } },
-                shortcut = getKeyShortCut(Key.O, ctrl = true)
+                onClick = { appState.update { copy(isShowingOpenProjectDialog = true) } },
+                shortcut = getKeyShortCut(Key.O, ctrl = true, shift = true)
             )
             Item(
                 string(Strings.MenuFileClose),

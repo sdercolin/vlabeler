@@ -15,8 +15,8 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.App
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.Menu
-import com.sdercolin.vlabeler.ui.dialog.DialogState
 import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -32,7 +32,7 @@ fun main() = application {
     val keyboardState = remember { mutableStateOf(KeyboardState()) }
     val keyEventHandler = remember { KeyEventHandler(player, keyboardState) }
     val projectState = remember { mutableStateOf<Project?>(null) }
-    val dialogState = remember { mutableStateOf(DialogState()) }
+    val appState = remember { mutableStateOf(AppState()) }
 
     val resourcesDir = remember { File(System.getProperty("compose.application.resources.dir")) }
     val appConf = remember {
@@ -57,18 +57,18 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         onKeyEvent = { keyEventHandler.onKeyEvent(it) }
     ) {
-        Menu(projectState, dialogState)
+        Menu(projectState, appState)
         AppTheme {
             App(
                 appConf.value,
                 availableLabelerConfs.value,
                 projectState,
-                dialogState,
+                appState,
                 playerState.value,
                 keyboardState.value,
                 player
             )
         }
-        StandaloneDialogs(availableLabelerConfs.value, projectState, dialogState)
+        StandaloneDialogs(availableLabelerConfs.value, projectState, appState)
     }
 }

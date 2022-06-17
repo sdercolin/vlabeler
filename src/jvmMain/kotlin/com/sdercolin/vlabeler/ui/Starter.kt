@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,17 +46,17 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.HomePath
 import com.sdercolin.vlabeler.util.isValidFileName
+import com.sdercolin.vlabeler.util.update
 import java.io.File
 
 @Composable
 fun BoxScope.Starter(
+    appState: MutableState<AppState>,
     requestNewProject: (Project) -> Unit,
-    requestOpenProject: () -> Unit,
     availableLabelerConfs: List<LabelerConf>
 ) {
-    var creatingNew by remember { mutableStateOf(false) }
     Surface(Modifier.fillMaxSize()) {
-        if (!creatingNew) {
+        if (!appState.value.isConfiguringNewProject) {
             Column(
                 modifier = Modifier.wrapContentSize()
                     .padding(30.dp)
@@ -68,14 +69,14 @@ fun BoxScope.Starter(
                 Row {
                     OutlinedButton(
                         modifier = Modifier.size(180.dp, 120.dp),
-                        onClick = { creatingNew = true }
+                        onClick = { appState.update { copy(isConfiguringNewProject = true) } }
                     ) {
                         Text(string(Strings.StarterNewProject))
                     }
                     Spacer(Modifier.width(40.dp))
                     OutlinedButton(
                         modifier = Modifier.size(180.dp, 120.dp),
-                        onClick = requestOpenProject
+                        onClick = { appState.update { copy(isShowingOpenProjectDialog = true) } }
                     ) {
                         Text(string(Strings.StarterOpen))
                     }
@@ -84,7 +85,7 @@ fun BoxScope.Starter(
         } else {
             NewProject(
                 create = requestNewProject,
-                cancel = { creatingNew = false },
+                cancel = { appState.update { copy(isConfiguringNewProject = false) } },
                 availableLabelerConfs = availableLabelerConfs
             )
         }
