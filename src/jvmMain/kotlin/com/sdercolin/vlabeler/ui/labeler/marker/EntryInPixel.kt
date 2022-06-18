@@ -17,6 +17,12 @@ data class EntryInPixel(
 
     private val pointsSorted = points.sorted()
 
+    fun validate(canvasWidthInPixel: Int) = copy(
+        start = start.coerceAtMost(canvasWidthInPixel.toFloat()),
+        end = end.coerceAtMost(canvasWidthInPixel.toFloat()),
+        points = points.map { it.coerceAtMost(canvasWidthInPixel.toFloat()) }
+    )
+
     fun getPoint(index: Int): Float = when (index) {
         MarkerState.StartPointIndex -> start
         MarkerState.EndPointIndex -> end
