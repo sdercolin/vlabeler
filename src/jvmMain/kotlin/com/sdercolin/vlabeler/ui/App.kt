@@ -7,6 +7,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -14,6 +16,10 @@ import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.shouldGoNextEntry
+import com.sdercolin.vlabeler.env.shouldGoNextSample
+import com.sdercolin.vlabeler.env.shouldGoPreviousEntry
+import com.sdercolin.vlabeler.env.shouldGoPreviousSample
 import com.sdercolin.vlabeler.io.loadSampleFile
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -28,6 +34,7 @@ import com.sdercolin.vlabeler.ui.labeler.Labeler
 import com.sdercolin.vlabeler.ui.labeler.LabelerState
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -45,6 +52,19 @@ fun App(
 ) {
     val labelerState = remember(appConf.painter.canvasResolution.default) {
         mutableStateOf(LabelerState(appConf.painter.canvasResolution.default))
+    }
+    LaunchedEffect(Unit) {
+        keyboardViewModel.keyboardEventFlow.collect {
+            val project = projectState.value ?: return@collect
+            val updated = when {
+                it.shouldGoNextSample -> project.nextSample()
+                it.shouldGoPreviousSample -> project.previousSample()
+                it.shouldGoNextEntry -> project.nextEntry()
+                it.shouldGoPreviousEntry -> project.previousEntry()
+                else -> null
+            } ?: return@collect
+            projectState.update { updated }
+        }
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         val project = projectState.value
@@ -88,35 +108,38 @@ private fun Editor(
     keyboardViewModel: KeyboardViewModel,
     player: Player
 ) {
-    val sampleState = remember { mutableStateOf<Sample?>(null) }
-    val loadingState = produceState(initialValue = true, project, appConf) {
-        withContext(Dispatchers.IO) {
-            sampleState.value = project.currentSampleFile?.let { loadSampleFile(it, appConf) }
+    val sampleState = produceState(initialValue = null as Sample?, project.currentSampleName, appConf) {
+        value = withContext(Dispatchers.IO) {
+            loadSampleFile(project.currentSampleFile, appConf)
         }
-        value = false
     }
+    val isLoading by remember { derivedStateOf { sampleState.value == null } }
+    val localEntryState = remember { mutableStateOf(project.currentEntry) }
+    LaunchedEffect(project.currentEntry) {
+        // TODO: post local state upward
+        localEntryState.value = project.currentEntry
+    }
+
     val sample = sampleState.value
     LaunchedEffect(sample) {
         if (sample != null) player.load(sample.info.file)
     }
-    if (sample != null) {
-        val localEntryState = remember {
-            val entry = project.entriesBySampleName.getValue(sample.info.name)[project.currentEntryIndex]
-            mutableStateOf(entry)
-        }
-        Labeler(
-            sample = sample,
-            entry = localEntryState,
-            playSampleSection = player::playSection,
-            showDialog = showDialog,
-            appConf = appConf,
-            labelerConf = project.labelerConf,
-            labelerState = labelerState,
-            playerState = playerState,
-            keyboardViewModel = keyboardViewModel
-        )
-    }
-    if (loadingState.value) {
+    Labeler(
+        sample = sample,
+        sampleName = project.currentSampleName,
+        entry = localEntryState.value,
+        currentEntryIndexInTotal = project.currentEntryIndexInTotal,
+        totalEntryCount = project.totalEntryCount,
+        editEntry = { localEntryState.update { it } },
+        playSampleSection = player::playSection,
+        showDialog = showDialog,
+        appConf = appConf,
+        labelerConf = project.labelerConf,
+        labelerState = labelerState,
+        playerState = playerState,
+        keyboardViewModel = keyboardViewModel
+    )
+    if (isLoading) {
         CircularProgress()
     }
 }

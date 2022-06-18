@@ -16,8 +16,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -46,47 +48,58 @@ import kotlin.math.ceil
 
 @Composable
 fun Canvas(
-    sample: Sample,
-    entry: State<Entry>,
+    sample: Sample?,
+    entry: Entry,
+    isBusy: Boolean,
     editEntry: (Entry) -> Unit,
     playSampleSection: (Float, Float) -> Unit,
     appConf: AppConf,
     labelerConf: LabelerConf,
-    canvasParams: CanvasParams,
+    resolution: Int,
     playerState: PlayerState,
     horizontalScrollState: ScrollState,
     keyboardViewModel: KeyboardViewModel
 ) {
-    val chunkCount = remember(sample, appConf) {
-        ceil(sample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
+    val currentDensity = LocalDensity.current
+
+    var localSample by remember { mutableStateOf(sample) }
+    LaunchedEffect(sample) {
+        if (sample != null) localSample = sample
     }
-    Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
-        Column(Modifier.fillMaxSize()) {
-            val weightOfEachChannel = 1f / sample.wave.channels.size
-            sample.wave.channels.forEach { channel ->
-                Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
-                    Waveforms(appConf, canvasParams, channel, chunkCount)
-                }
-            }
-            sample.spectrogram?.let {
-                Box(Modifier.weight(appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
-                    Spectrogram(canvasParams, it, chunkCount)
-                }
-            }
+    localSample?.let { nonNullSample ->
+        val chunkCount = remember(nonNullSample, appConf) {
+            ceil(nonNullSample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
         }
-        MarkerCanvas(
-            entry = entry.value,
-            sampleLengthMillis = sample.info.lengthMillis,
-            editEntry = editEntry,
-            playSampleSection = playSampleSection,
-            appConf = appConf,
-            labelerConf = labelerConf,
-            canvasParams = canvasParams,
-            sampleRate = sample.info.sampleRate,
-            keyboardViewModel = keyboardViewModel
-        )
-        if (playerState.isPlaying) {
-            PlayerCursor(canvasParams, playerState)
+        val canvasParams = CanvasParams(nonNullSample.wave.length, resolution, currentDensity)
+        Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
+            Column(Modifier.fillMaxSize()) {
+                val weightOfEachChannel = 1f / nonNullSample.wave.channels.size
+                nonNullSample.wave.channels.forEach { channel ->
+                    Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
+                        Waveforms(appConf, canvasParams, channel, chunkCount)
+                    }
+                }
+                nonNullSample.spectrogram?.let {
+                    Box(Modifier.weight(appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
+                        Spectrogram(canvasParams, it, chunkCount)
+                    }
+                }
+            }
+            MarkerCanvas(
+                entry = entry,
+                sampleLengthMillis = nonNullSample.info.lengthMillis,
+                isBusy = isBusy,
+                editEntry = editEntry,
+                playSampleSection = playSampleSection,
+                appConf = appConf,
+                labelerConf = labelerConf,
+                canvasParams = canvasParams,
+                sampleRate = nonNullSample.info.sampleRate,
+                keyboardViewModel = keyboardViewModel
+            )
+            if (playerState.isPlaying) {
+                PlayerCursor(canvasParams, playerState)
+            }
         }
     }
 }
@@ -106,7 +119,7 @@ private fun Waveforms(
     val layoutDirection = LocalLayoutDirection.current
     val imageBitmaps = remember(channel, appConf) { List(chunkSize) { mutableStateOf<ImageBitmap?>(null) } }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(channel) {
         withContext(Dispatchers.IO) {
             repeat(chunkCount) { i ->
                 val data = dataChunks[i]
@@ -154,7 +167,7 @@ private fun Spectrogram(
     val layoutDirection = LocalLayoutDirection.current
     val imageBitmaps = remember(spectrogram) { List(chunkSize) { mutableStateOf<ImageBitmap?>(null) } }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(spectrogram) {
         withContext(Dispatchers.IO) {
             repeat(chunkCount) { i ->
                 val chunk = dataChunks[i]

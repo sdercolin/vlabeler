@@ -4,7 +4,6 @@ import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -24,11 +24,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
@@ -47,8 +44,12 @@ data class LabelerState(val canvasResolution: Int)
 
 @Composable
 fun Labeler(
-    sample: Sample,
-    entry: MutableState<Entry>,
+    sample: Sample?,
+    sampleName: String,
+    entry: Entry,
+    currentEntryIndexInTotal: Int,
+    totalEntryCount: Int,
+    editEntry: (Entry) -> Unit,
     playSampleSection: (Float, Float) -> Unit,
     showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
@@ -57,28 +58,22 @@ fun Labeler(
     playerState: PlayerState,
     keyboardViewModel: KeyboardViewModel
 ) {
+    val isBusy = sample == null
     val scrollState = rememberScrollState(0)
-    val currentDensity = LocalDensity.current
-    val canvasParamsState = remember {
-        derivedStateOf {
-            CanvasParams(
-                sample.wave.length,
-                labelerState.value.canvasResolution,
-                currentDensity
-            )
-        }
-    }
+    val currentResolution = labelerState.value.canvasResolution
+
     Column(Modifier.fillMaxSize()) {
-        EntryTitleBar(entryName = entry.value.name, sampleName = sample.info.name)
+        EntryTitleBar(entryName = entry.name, sampleName = sampleName)
         Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Black50)) {
             Canvas(
                 sample = sample,
                 entry = entry,
-                editEntry = { entry.value = it },
+                isBusy = isBusy,
+                resolution = currentResolution,
+                editEntry = editEntry,
                 playSampleSection = playSampleSection,
                 appConf = appConf,
                 labelerConf = labelerConf,
-                canvasParams = canvasParamsState.value,
                 playerState = playerState,
                 horizontalScrollState = scrollState,
                 keyboardViewModel = keyboardViewModel
@@ -89,18 +84,20 @@ fun Labeler(
             adapter = rememberScrollbarAdapter(scrollState)
         )
         StatusBar(
-            appConf = appConf,
-            resolution = canvasParamsState.value.resolution,
+            currentEntryIndexInTotal = currentEntryIndexInTotal,
+            totalEntryCount = totalEntryCount,
+            resolution = currentResolution,
             onChangeResolution = { labelerState.update { copy(canvasResolution = it) } },
             openSetResolutionDialog = {
                 showDialog(
                     SetResolutionDialogArgs(
-                        current = canvasParamsState.value.resolution,
+                        current = currentResolution,
                         min = appConf.painter.canvasResolution.min,
                         max = appConf.painter.canvasResolution.max
                     )
                 )
-            }
+            },
+            appConf = appConf
         )
     }
 }
@@ -109,35 +106,39 @@ fun Labeler(
 private fun EntryTitleBar(entryName: String, sampleName: String) {
     println("EntryTitleBar: composed")
     Surface {
-        Row(
+        Box(
             modifier = Modifier.fillMaxWidth()
+                .heightIn(min = 80.dp)
                 .background(color = MaterialTheme.colors.surface)
-                .padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.Start,
+                .padding(horizontal = 20.dp)
         ) {
-            Text(
-                modifier = Modifier.alignByBaseline(),
-                text = entryName,
-                style = MaterialTheme.typography.h3,
-                maxLines = 1
-            )
-            Spacer(Modifier.width(10.dp))
-            Text(
-                modifier = Modifier.alignByBaseline(),
-                text = "（$sampleName）",
-                style = MaterialTheme.typography.h5,
-                maxLines = 1
-            )
+            Row(modifier = Modifier.align(Alignment.CenterStart)) {
+                Text(
+                    modifier = Modifier.alignByBaseline(),
+                    text = entryName,
+                    style = MaterialTheme.typography.h3,
+                    maxLines = 1
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    modifier = Modifier.alignByBaseline(),
+                    text = "（$sampleName）",
+                    style = MaterialTheme.typography.h5,
+                    maxLines = 1
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun StatusBar(
-    appConf: AppConf,
+    currentEntryIndexInTotal: Int,
+    totalEntryCount: Int,
     resolution: Int,
     onChangeResolution: (Int) -> Unit,
-    openSetResolutionDialog: () -> Unit
+    openSetResolutionDialog: () -> Unit,
+    appConf: AppConf
 ) {
     println("StatusBar: composed")
     val resolutionRange = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
@@ -146,6 +147,11 @@ private fun StatusBar(
             modifier = Modifier.fillMaxWidth().height(30.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Text(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                text = "${currentEntryIndexInTotal + 1} / $totalEntryCount",
+                style = MaterialTheme.typography.caption
+            )
             Spacer(Modifier.weight(1f))
             Box(
                 Modifier.width(30.dp).fillMaxHeight()

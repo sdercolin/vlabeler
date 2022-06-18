@@ -76,6 +76,7 @@ private val labelShiftUp = 8.dp
 fun MarkerCanvas(
     entry: Entry,
     sampleLengthMillis: Float,
+    isBusy: Boolean,
     editEntry: (Entry) -> Unit,
     playSampleSection: (Float, Float) -> Unit,
     appConf: AppConf,
@@ -86,7 +87,7 @@ fun MarkerCanvas(
 ) {
     val entryConverter = EntryConverter(sampleRate, canvasParams.resolution)
     val entryInPixel = entryConverter.convertToPixel(entry, sampleLengthMillis).validate(canvasParams.lengthInPixel)
-    val state = remember { mutableStateOf(MarkerState()) }
+    val state = remember(isBusy) { mutableStateOf(MarkerState()) }
     val canvasHeightState = remember { mutableStateOf(0f) }
     val waveformsHeightRatio = remember(appConf.painter.spectrogram) {
         val spectrogram = appConf.painter.spectrogram
@@ -94,32 +95,34 @@ fun MarkerCanvas(
         1f / totalWeight
     }
     FieldBorderCanvas(
+        entryInPixel,
         canvasParams,
         waveformsHeightRatio,
+        isBusy,
+        editEntry,
+        playSampleSection,
+        labelerConf,
         canvasHeightState,
         state,
-        entryInPixel,
-        labelerConf,
-        editEntry,
-        entryConverter,
         keyboardViewModel,
-        playSampleSection
+        entryConverter
     )
     FieldLabelCanvas(canvasParams, waveformsHeightRatio, state.value, labelerConf, entryInPixel)
 }
 
 @Composable
 private fun FieldBorderCanvas(
+    entryInPixel: EntryInPixel,
     canvasParams: CanvasParams,
     waveformsHeightRatio: Float,
+    isBusy: Boolean,
+    editEntry: (Entry) -> Unit,
+    playSampleSection: (Float, Float) -> Unit,
+    labelerConf: LabelerConf,
     canvasHeightState: MutableState<Float>,
     state: MutableState<MarkerState>,
-    entryInPixel: EntryInPixel,
-    labelerConf: LabelerConf,
-    editEntry: (Entry) -> Unit,
-    entryConverter: EntryConverter,
     keyboardViewModel: KeyboardViewModel,
-    playSampleSection: (Float, Float) -> Unit
+    entryConverter: EntryConverter
 ) {
     val keyboardState by keyboardViewModel.keyboardStateFlow.collectAsState()
 
@@ -127,6 +130,7 @@ private fun FieldBorderCanvas(
         Modifier.fillMaxHeight()
             .width(canvasParams.canvasWidthInDp)
             .onPointerEvent(PointerEventType.Move) { event ->
+                if (isBusy) return@onPointerEvent
                 val eventChange = event.changes.first()
                 val x = eventChange.position.x.coerceIn(0f, canvasParams.lengthInPixel - 1f)
                 val y = eventChange.position.y.coerceIn(0f, (canvasHeightState.value - 1f).coerceAtLeast(0f))
@@ -162,6 +166,7 @@ private fun FieldBorderCanvas(
                 }
             }
             .onPointerEvent(PointerEventType.Press) {
+                if (isBusy) return@onPointerEvent
                 if (!keyboardState.isCtrlPressed) {
                     if (state.value.mouse == MouseState.Hovering) {
                         val lockedDragByBaseField =
@@ -175,6 +180,7 @@ private fun FieldBorderCanvas(
                 }
             }
             .onPointerEvent(PointerEventType.Release) { event ->
+                if (isBusy) return@onPointerEvent
                 if (keyboardState.isCtrlPressed) {
                     val x = event.changes.first().position.x
                     val clickedRange = entryInPixel.getClickedAudioRange(x)

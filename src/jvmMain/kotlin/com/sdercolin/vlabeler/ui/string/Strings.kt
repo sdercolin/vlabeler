@@ -68,6 +68,9 @@ enum class Strings(val en: String) {
     ),
     SetResolutionDialogDescription(
         en = "Input horizontal resolution (points per pixel) for the editor (%d ~ %d)"
+    ),
+    EmptySampleDirectoryException(
+        en = "Could not create project because no sample files are found in the given sample directory."
     );
 
     fun get(language: Language): String = when (language) {

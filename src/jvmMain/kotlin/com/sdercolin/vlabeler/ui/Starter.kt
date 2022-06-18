@@ -24,6 +24,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -40,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.common.CircularProgress
@@ -99,6 +102,7 @@ fun BoxScope.Starter(
 @Composable
 private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableLabelerConfs: List<LabelerConf>) {
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     var isLoading by remember { mutableStateOf(false) }
     var sampleDirectory by remember { mutableStateOf(HomePath.absolutePath) }
     var workingDirectory by remember { mutableStateOf(HomePath.absolutePath) }
@@ -316,16 +320,22 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
                     onClick = {
                         coroutineScope.launch(Dispatchers.IO) {
                             isLoading = true
-                            create(
-                                Project.from(
-                                    sampleDirectory = sampleDirectory,
-                                    workingDirectory = workingDirectory,
-                                    projectName = projectName,
-                                    labelerConf = labeler,
-                                    inputLabelFile = inputLabelFile,
-                                    encoding = encoding
-                                )
-                            )
+                            val project = Project.from(
+                                sampleDirectory = sampleDirectory,
+                                workingDirectory = workingDirectory,
+                                projectName = projectName,
+                                labelerConf = labeler,
+                                inputLabelFile = inputLabelFile,
+                                encoding = encoding
+                            ).getOrElse {
+                                val message = when (it) {
+                                    is EmptySampleDirectoryException -> string(Strings.EmptySampleDirectoryException)
+                                    else -> it.message.orEmpty()
+                                }
+                                snackbarHostState.showSnackbar(message)
+                                null
+                            }
+                            project?.let(create)
                             isLoading = false
                         }
                     },
@@ -378,6 +388,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
         if (isLoading) {
             CircularProgress()
         }
+        SnackbarHost(hostState = snackbarHostState)
     }
 }
 

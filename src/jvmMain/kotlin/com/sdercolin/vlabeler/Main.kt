@@ -7,10 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
@@ -18,6 +14,7 @@ import androidx.compose.ui.window.application
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.shouldTogglePlayer
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
@@ -43,9 +40,7 @@ fun main() = application {
 
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect { event ->
-            if (event.key == Key.Spacebar && event.type == KeyEventType.KeyUp) {
-                player.toggle()
-            }
+            if (event.shouldTogglePlayer) player.toggle()
         }
     }
 

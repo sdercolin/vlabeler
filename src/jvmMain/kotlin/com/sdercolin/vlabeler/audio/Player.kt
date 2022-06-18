@@ -39,6 +39,10 @@ class Player(
     private var countingJob: Job? = null
 
     fun load(file: File) {
+        if (this.file != null) {
+            clip.flush()
+            clip.close()
+        }
         this.file = file
         clip.open(AudioSystem.getAudioInputStream(file))
     }

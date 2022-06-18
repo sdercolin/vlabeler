@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.sdercolin.vlabeler.env
 
 import androidx.compose.runtime.Immutable
@@ -7,6 +9,7 @@ import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +19,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalComposeUiApi::class)
 class KeyboardViewModel(private val coroutineScope: CoroutineScope) {
     private var isLeftCtrlPressed: Boolean = false
     private var isRightCtrlPressed: Boolean = false
@@ -72,14 +74,9 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope) {
                 isRightShiftPressed = true
             }
         }
-        if (event.key == Key.Spacebar && event.type == KeyEventType.KeyUp) {
-            // player toggle
-            isEventCaught = true
-        }
-        if ((event.key == Key.DirectionDown || event.key == Key.DirectionUp) && event.isNativeCtrlPressed) {
-            // switch entry/sample
-            isEventCaught = true
-        }
+        if (event.shouldTogglePlayer) isEventCaught = true
+        if (event.shouldSwitchEntryOrSample) isEventCaught = true
+
         coroutineScope.launch {
             emitState()
             if (isEventCaught) emitEvent(event)
@@ -94,4 +91,12 @@ data class KeyboardState(
     val isShiftPressed: Boolean = false
 )
 
-private val KeyEvent.isNativeCtrlPressed get() = if (isMacOS) isMetaPressed else isCtrlPressed
+val KeyEvent.released get() = type == KeyEventType.KeyUp
+val KeyEvent.isNativeCtrlPressed get() = if (isMacOS) isMetaPressed else isCtrlPressed
+val KeyEvent.shouldTogglePlayer get() = key == Key.Spacebar && released
+val KeyEvent.shouldGoNextEntry get() = key == Key.DirectionDown && isNativeCtrlPressed && released
+val KeyEvent.shouldGoPreviousEntry get() = key == Key.DirectionUp && isNativeCtrlPressed && released
+val KeyEvent.shouldGoNextSample get() = key == Key.DirectionDown && isNativeCtrlPressed && isShiftPressed && released
+val KeyEvent.shouldGoPreviousSample get() = key == Key.DirectionUp && isNativeCtrlPressed && isShiftPressed && released
+val KeyEvent.shouldSwitchEntryOrSample
+    get() = shouldGoNextEntry || shouldGoPreviousEntry || shouldGoNextSample || shouldGoPreviousSample
