@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -50,12 +51,12 @@ fun App(
         if (project != null && appState.value.isConfiguringNewProject.not()) {
             Editor(
                 project = project,
-                playSampleSection = player::playSection,
                 showDialog = { appState.update { copy(embeddedDialog = it) } },
                 appConf = appConf,
                 labelerState = labelerState,
                 playerState = playerState,
-                keyboardState = keyboardState
+                keyboardState = keyboardState,
+                player = player
             )
         } else {
             Starter(
@@ -80,12 +81,12 @@ fun App(
 @Composable
 private fun Editor(
     project: Project,
-    playSampleSection: (Float, Float) -> Unit,
     showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
     labelerState: MutableState<LabelerState>,
     playerState: PlayerState,
-    keyboardState: KeyboardState
+    keyboardState: KeyboardState,
+    player: Player
 ) {
     val sampleState = remember { mutableStateOf<Sample?>(null) }
     val loadingState = produceState(initialValue = true, project, appConf) {
@@ -95,6 +96,9 @@ private fun Editor(
         value = false
     }
     val sample = sampleState.value
+    LaunchedEffect(sample) {
+        if (sample != null) player.load(sample.info.file)
+    }
     if (sample != null) {
         val localEntryState = remember {
             val entry = project.entriesBySampleName.getValue(sample.info.name)[project.currentEntryIndex]
@@ -103,7 +107,7 @@ private fun Editor(
         Labeler(
             sample = sample,
             entry = localEntryState,
-            playSampleSection = playSampleSection,
+            playSampleSection = player::playSection,
             showDialog = showDialog,
             appConf = appConf,
             labelerConf = project.labelerConf,
