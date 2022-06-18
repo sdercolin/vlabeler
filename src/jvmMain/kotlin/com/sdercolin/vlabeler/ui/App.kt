@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
-import com.sdercolin.vlabeler.env.KeyboardState
+import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.io.loadSampleFile
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -40,7 +40,7 @@ fun App(
     projectState: MutableState<Project?>,
     appState: MutableState<AppState>,
     playerState: PlayerState,
-    keyboardState: KeyboardState,
+    keyboardViewModel: KeyboardViewModel,
     player: Player
 ) {
     val labelerState = remember(appConf.painter.canvasResolution.default) {
@@ -55,7 +55,7 @@ fun App(
                 appConf = appConf,
                 labelerState = labelerState,
                 playerState = playerState,
-                keyboardState = keyboardState,
+                keyboardViewModel = keyboardViewModel,
                 player = player
             )
         } else {
@@ -85,7 +85,7 @@ private fun Editor(
     appConf: AppConf,
     labelerState: MutableState<LabelerState>,
     playerState: PlayerState,
-    keyboardState: KeyboardState,
+    keyboardViewModel: KeyboardViewModel,
     player: Player
 ) {
     val sampleState = remember { mutableStateOf<Sample?>(null) }
@@ -113,7 +113,7 @@ private fun Editor(
             labelerConf = project.labelerConf,
             labelerState = labelerState,
             playerState = playerState,
-            keyboardState = keyboardState
+            keyboardViewModel = keyboardViewModel
         )
     }
     if (loadingState.value) {

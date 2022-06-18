@@ -1,72 +1,97 @@
 package com.sdercolin.vlabeler.env
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
-import com.sdercolin.vlabeler.audio.Player
-import com.sdercolin.vlabeler.util.update
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
-class KeyEventHandler(private val player: Player, private val state: MutableState<KeyboardState>) {
+class KeyboardViewModel(private val coroutineScope: CoroutineScope) {
+    private var isLeftCtrlPressed: Boolean = false
+    private var isRightCtrlPressed: Boolean = false
+    private var isLeftShiftPressed: Boolean = false
+    private var isRightShiftPressed: Boolean = false
+    private val isCtrlPressed get() = isLeftCtrlPressed || isRightCtrlPressed
+    private val isShiftPressed get() = isLeftShiftPressed || isRightShiftPressed
+
+    private val _keyboardEventFlow = MutableSharedFlow<KeyEvent>(replay = 0)
+    val keyboardEventFlow = _keyboardEventFlow.asSharedFlow()
+
+    private val _keyboardStateFlow = MutableStateFlow(KeyboardState())
+    val keyboardStateFlow = _keyboardStateFlow.asStateFlow()
+
+    private suspend fun emitEvent(event: KeyEvent) {
+        _keyboardEventFlow.emit(event)
+    }
+
+    private suspend fun emitState() {
+        val state = KeyboardState(isCtrlPressed, isShiftPressed)
+        _keyboardStateFlow.emit(state)
+    }
+
     fun onKeyEvent(event: KeyEvent): Boolean {
-        if (event.key == Key.Spacebar && event.type == KeyEventType.KeyUp) {
-            player.toggle()
-            return true
-        }
+        var isEventCaught = false
         val isLeftCtrl = if (isMacOS) event.key == Key.MetaLeft else event.key == Key.CtrlLeft
         if (isLeftCtrl) {
             if (event.type == KeyEventType.KeyUp) {
-                state.update { copy(isLeftCtrlPressed = false) }
-                return true
+                isLeftCtrlPressed = false
             } else if (event.type == KeyEventType.KeyDown) {
-                state.update { copy(isLeftCtrlPressed = true) }
-                return true
+                isLeftCtrlPressed = true
             }
         }
         val isRightCtrl = if (isMacOS) event.key == Key.MetaRight else event.key == Key.CtrlRight
         if (isRightCtrl) {
             if (event.type == KeyEventType.KeyUp) {
-                state.update { copy(isRightCtrlPressed = false) }
-                return true
+                isRightCtrlPressed = false
             } else if (event.type == KeyEventType.KeyDown) {
-                state.update { copy(isRightCtrlPressed = true) }
-                return true
+                isRightCtrlPressed = true
             }
         }
         if (event.key == Key.ShiftLeft) {
             if (event.type == KeyEventType.KeyUp) {
-                state.update { copy(isLeftShiftPressed = false) }
-                return true
+                isLeftShiftPressed = false
             } else if (event.type == KeyEventType.KeyDown) {
-                state.update { copy(isLeftShiftPressed = true) }
-                return true
+                isLeftShiftPressed = true
             }
         }
         if (event.key == Key.ShiftRight) {
             if (event.type == KeyEventType.KeyUp) {
-                state.update { copy(isRightShiftPressed = false) }
-                return true
+                isRightShiftPressed = false
             } else if (event.type == KeyEventType.KeyDown) {
-                state.update { copy(isRightShiftPressed = true) }
-                return true
+                isRightShiftPressed = true
             }
         }
-        return false
+        if (event.key == Key.Spacebar && event.type == KeyEventType.KeyUp) {
+            // player toggle
+            isEventCaught = true
+        }
+        if ((event.key == Key.DirectionDown || event.key == Key.DirectionUp) && event.isNativeCtrlPressed) {
+            // switch entry/sample
+            isEventCaught = true
+        }
+        coroutineScope.launch {
+            emitState()
+            if (isEventCaught) emitEvent(event)
+        }
+        return isEventCaught
     }
 }
 
 @Immutable
 data class KeyboardState(
-    val isLeftCtrlPressed: Boolean = false,
-    val isRightCtrlPressed: Boolean = false,
-    val isLeftShiftPressed: Boolean = false,
-    val isRightShiftPressed: Boolean = false
-) {
-    val isCtrlPressed get() = isLeftCtrlPressed || isRightCtrlPressed
-    val isShiftPressed get() = isLeftShiftPressed || isRightShiftPressed
-}
+    val isCtrlPressed: Boolean = false,
+    val isShiftPressed: Boolean = false
+)
+
+private val KeyEvent.isNativeCtrlPressed get() = if (isMacOS) isMetaPressed else isCtrlPressed

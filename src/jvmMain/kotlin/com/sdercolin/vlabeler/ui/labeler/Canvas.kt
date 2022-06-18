@@ -29,7 +29,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import com.sdercolin.vlabeler.audio.PlayerState
-import com.sdercolin.vlabeler.env.KeyboardState
+import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.io.Spectrogram
 import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.AppConf
@@ -54,8 +54,8 @@ fun Canvas(
     labelerConf: LabelerConf,
     canvasParams: CanvasParams,
     playerState: PlayerState,
-    keyboardState: KeyboardState,
-    horizontalScrollState: ScrollState
+    horizontalScrollState: ScrollState,
+    keyboardViewModel: KeyboardViewModel
 ) {
     val chunkCount = remember(sample, appConf) {
         ceil(sample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
@@ -83,7 +83,7 @@ fun Canvas(
             labelerConf = labelerConf,
             canvasParams = canvasParams,
             sampleRate = sample.info.sampleRate,
-            keyboardState = keyboardState
+            keyboardViewModel = keyboardViewModel
         )
         if (playerState.isPlaying) {
             PlayerCursor(canvasParams, playerState)

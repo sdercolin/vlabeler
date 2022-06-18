@@ -1,16 +1,23 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.sdercolin.vlabeler
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
-import com.sdercolin.vlabeler.env.KeyEventHandler
-import com.sdercolin.vlabeler.env.KeyboardState
+import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
@@ -21,6 +28,7 @@ import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
+import kotlinx.coroutines.flow.collect
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -29,10 +37,17 @@ fun main() = application {
     val mainScope = rememberCoroutineScope()
     val playerState = remember { mutableStateOf(PlayerState()) }
     val player = remember { Player(mainScope, playerState) }
-    val keyboardState = remember { mutableStateOf(KeyboardState()) }
-    val keyEventHandler = remember { KeyEventHandler(player, keyboardState) }
+    val keyboardViewModel = remember { KeyboardViewModel(mainScope) }
     val projectState = remember { mutableStateOf<Project?>(null) }
     val appState = remember { mutableStateOf(AppState()) }
+
+    LaunchedEffect(Unit) {
+        keyboardViewModel.keyboardEventFlow.collect { event ->
+            if (event.key == Key.Spacebar && event.type == KeyEventType.KeyUp) {
+                player.toggle()
+            }
+        }
+    }
 
     val resourcesDir = remember { File(System.getProperty("compose.application.resources.dir")) }
     val appConf = remember {
@@ -55,7 +70,7 @@ fun main() = application {
         title = string(Strings.AppName),
         state = WindowState(width = 1000.dp, height = 800.dp),
         onCloseRequest = ::exitApplication,
-        onKeyEvent = { keyEventHandler.onKeyEvent(it) }
+        onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
         Menu(projectState, appState)
         AppTheme {
@@ -65,7 +80,7 @@ fun main() = application {
                 projectState,
                 appState,
                 playerState.value,
-                keyboardState.value,
+                keyboardViewModel,
                 player
             )
         }

@@ -13,6 +13,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,7 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sdercolin.vlabeler.env.KeyboardState
+import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -80,7 +82,7 @@ fun MarkerCanvas(
     labelerConf: LabelerConf,
     canvasParams: CanvasParams,
     sampleRate: Float,
-    keyboardState: KeyboardState
+    keyboardViewModel: KeyboardViewModel
 ) {
     val entryConverter = EntryConverter(sampleRate, canvasParams.resolution)
     val entryInPixel = entryConverter.convertToPixel(entry, sampleLengthMillis).validate(canvasParams.lengthInPixel)
@@ -100,7 +102,7 @@ fun MarkerCanvas(
         labelerConf,
         editEntry,
         entryConverter,
-        keyboardState,
+        keyboardViewModel,
         playSampleSection
     )
     FieldLabelCanvas(canvasParams, waveformsHeightRatio, state.value, labelerConf, entryInPixel)
@@ -116,9 +118,10 @@ private fun FieldBorderCanvas(
     labelerConf: LabelerConf,
     editEntry: (Entry) -> Unit,
     entryConverter: EntryConverter,
-    keyboardState: KeyboardState,
+    keyboardViewModel: KeyboardViewModel,
     playSampleSection: (Float, Float) -> Unit
 ) {
+    val keyboardState by keyboardViewModel.keyboardStateFlow.collectAsState()
 
     Canvas(
         Modifier.fillMaxHeight()

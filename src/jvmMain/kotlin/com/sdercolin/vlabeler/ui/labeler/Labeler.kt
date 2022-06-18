@@ -32,7 +32,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
-import com.sdercolin.vlabeler.env.KeyboardState
+import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -55,7 +55,7 @@ fun Labeler(
     labelerConf: LabelerConf,
     labelerState: MutableState<LabelerState>,
     playerState: PlayerState,
-    keyboardState: KeyboardState
+    keyboardViewModel: KeyboardViewModel
 ) {
     val scrollState = rememberScrollState(0)
     val currentDensity = LocalDensity.current
@@ -80,8 +80,8 @@ fun Labeler(
                 labelerConf = labelerConf,
                 canvasParams = canvasParamsState.value,
                 playerState = playerState,
-                keyboardState = keyboardState,
-                horizontalScrollState = scrollState
+                horizontalScrollState = scrollState,
+                keyboardViewModel = keyboardViewModel
             )
         }
         HorizontalScrollbar(
