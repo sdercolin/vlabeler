@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
@@ -22,6 +23,7 @@ import com.sdercolin.vlabeler.env.shouldGoPreviousEntry
 import com.sdercolin.vlabeler.env.shouldGoPreviousSample
 import com.sdercolin.vlabeler.io.loadSampleFile
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Sample
@@ -71,6 +73,7 @@ fun App(
         if (project != null && appState.value.isConfiguringNewProject.not()) {
             Editor(
                 project = project,
+                editEntry = { projectState.update { project.updateEntry(it) } },
                 showDialog = { appState.update { copy(embeddedDialog = it) } },
                 appConf = appConf,
                 labelerState = labelerState,
@@ -98,9 +101,17 @@ fun App(
     }
 }
 
+@Immutable
+data class EditedEntry(
+    val entry: Entry,
+    val sampleName: String,
+    val index: Int
+)
+
 @Composable
 private fun Editor(
     project: Project,
+    editEntry: (EditedEntry) -> Unit,
     showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
     labelerState: MutableState<LabelerState>,
@@ -114,10 +125,10 @@ private fun Editor(
         }
     }
     val isLoading by remember { derivedStateOf { sampleState.value == null } }
-    val localEntryState = remember { mutableStateOf(project.currentEntry) }
+    val editedEntryState = remember { mutableStateOf(project.getEntryForEditing()) }
     LaunchedEffect(project.currentEntry) {
-        // TODO: post local state upward
-        localEntryState.value = project.currentEntry
+        editEntry(editedEntryState.value)
+        editedEntryState.value = project.getEntryForEditing()
     }
 
     val sample = sampleState.value
@@ -127,10 +138,10 @@ private fun Editor(
     Labeler(
         sample = sample,
         sampleName = project.currentSampleName,
-        entry = localEntryState.value,
+        entry = editedEntryState.value.entry,
         currentEntryIndexInTotal = project.currentEntryIndexInTotal,
         totalEntryCount = project.totalEntryCount,
-        editEntry = { localEntryState.update { it } },
+        editEntry = { editedEntryState.update { copy(entry = it) } },
         playSampleSection = player::playSection,
         showDialog = showDialog,
         appConf = appConf,

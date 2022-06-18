@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.io.parseRawLabels
+import com.sdercolin.vlabeler.ui.EditedEntry
 import kotlinx.serialization.Serializable
 import java.io.File
 import java.nio.charset.Charset
@@ -35,6 +36,20 @@ data class Project(
 
     val projectFile: File
         get() = File(workingDirectory).resolve("$projectName.$ProjectFileExtension")
+
+    fun getEntryForEditing() = EditedEntry(
+        entry = currentEntry,
+        sampleName = currentSampleName,
+        index = currentEntryIndex
+    )
+
+    fun updateEntry(editedEntry: EditedEntry): Project {
+        val map = entriesBySampleName.toMutableMap()
+        val entries = map.getValue(editedEntry.sampleName).toMutableList()
+        entries[editedEntry.index] = editedEntry.entry
+        map[editedEntry.sampleName] = entries.toList()
+        return copy(entriesBySampleName = map.toMap())
+    }
 
     fun nextEntry() = switchEntry(reverse = false)
     fun previousEntry() = switchEntry(reverse = true)

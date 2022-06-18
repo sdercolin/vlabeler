@@ -148,7 +148,7 @@ private fun StatusBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 10.dp),
+                modifier = Modifier.padding(horizontal = 15.dp),
                 text = "${currentEntryIndexInTotal + 1} / $totalEntryCount",
                 style = MaterialTheme.typography.caption
             )
