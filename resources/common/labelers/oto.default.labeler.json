@@ -6,7 +6,6 @@
   "description": "Default oto labeler (Overlap cannot be negative).",
   "fields": [
     {
-      "index": 0,
       "name": "Fixed",
       "abbr": "Fixed",
       "color": "#0000ff",
@@ -16,7 +15,6 @@
       "constraints": []
     },
     {
-      "index": 1,
       "name": "Preutterance",
       "abbr": "Preu",
       "color": "#ff0000",
@@ -31,7 +29,6 @@
       ]
     },
     {
-      "index": 2,
       "name": "Overlap",
       "abbr": "Ovl",
       "color": "#00ff00",
@@ -78,5 +75,33 @@
   "lockedDrag": {
     "useDragBase": true,
     "useStart": true
+  },
+  "parser": {
+    "extension": "ini",
+    "defaultInputFilePath": "oto.ini",
+    "defaultEncoding": "Shift-JIS",
+    "extractionPattern": "(.*)\\.wav=(.*),(.*),(.*),(.*),(.*),(.*)",
+    "variableNames": [
+      "sample",
+      "alias",
+      "left",
+      "fixed",
+      "right",
+      "preu",
+      "ovl"
+    ],
+    "parsingScript": [
+      "name = alias",
+      "start = float(left)",
+      "points = []",
+      "points.append(float(fixed) + start)",
+      "right = float(right)",
+      "if(right < 0):",
+      "    end = start - right",
+      "else:",
+      "    end = -right",
+      "points.append(float(preu) + start)",
+      "points.append(float(ovl) + start)"
+    ]
   }
 }

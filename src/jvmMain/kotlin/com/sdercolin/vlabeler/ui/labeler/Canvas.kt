@@ -76,6 +76,7 @@ fun Canvas(
         }
         MarkerCanvas(
             entry = entry.value,
+            sampleLengthMillis = sample.info.lengthMillis,
             editEntry = editEntry,
             playSampleSection = playSampleSection,
             appConf = appConf,

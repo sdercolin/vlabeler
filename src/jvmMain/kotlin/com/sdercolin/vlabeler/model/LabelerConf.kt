@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
+import javax.swing.text.html.parser.Parser
 
 /**
  * Configuration of the labeler's appearances and behaviors
@@ -37,12 +38,16 @@ data class LabelerConf(
     /**
      * Defines when to use locked dragging (all parameters will move with dragged one)
      */
-    val lockedDrag: LockedDrag = LockedDrag()
+    val lockedDrag: LockedDrag = LockedDrag(),
+    /**
+     * Defines how data from the original format are parsed
+     */
+    val parser: Parser? = null
 ) {
 
-    val connectedConstraints: List<Pair<Int, Int>> = fields
+    val connectedConstraints: List<Pair<Int, Int>> = fields.withIndex()
         .flatMap { field ->
-            field.constraints.flatMap { constraint ->
+            field.value.constraints.flatMap { constraint ->
                 val min = constraint.min?.let { it to field.index }
                 val max = constraint.max?.let { field.index to it }
                 listOfNotNull(min, max)
@@ -53,7 +58,6 @@ data class LabelerConf(
     @Serializable
     @Immutable
     data class Field(
-        val index: Int, // Starts from 0
         val name: String,
         val abbr: String, // Displayed
         val color: String, // In format of "#ffffff"
@@ -82,5 +86,48 @@ data class LabelerConf(
     data class LockedDrag(
         val useDragBase: Boolean = false,
         val useStart: Boolean = false
+    )
+
+    /**
+     * Definition for parsing the raw format to local [Entry]
+     */
+    @Serializable
+    @Immutable
+    data class Parser(
+        /**
+         * Available file extension for this parser
+         */
+        val extension: String,
+        /**
+         * Default name of the input file relative to the sample directory
+         */
+        val defaultInputFilePath: String,
+        /**
+         * Default text encoding of the input file
+         */
+        val defaultEncoding: String,
+        /**
+         * Regex pattern that extract groups
+         */
+        val extractionPattern: String,
+        /**
+         * Definition of how the extracted string groups will be put into variables later in the parser python code.
+         * Should be in the same order as the extracted groups
+         */
+        val variableNames: List<String>,
+        /**
+         *  Python script in lines that sets properties of [Entry] using the variables extracted, including:
+         *  String "name"
+         *  Float "start"
+         *  Float "end"
+         *  Float List "points"
+         *  String "sample" (sample file name without extension)
+         *
+         *  If "sample" is set empty, the first sample file is used by all entries in case all entries are bound to the
+         *  only one sample file, so the file name doesn't exist in the line
+         *
+         *  String values with names defined in [variableNames] are available
+         */
+        val parsingScript: List<String>,
     )
 }

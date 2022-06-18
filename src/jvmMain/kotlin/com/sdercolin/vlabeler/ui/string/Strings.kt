@@ -45,11 +45,23 @@ enum class Strings(val en: String) {
     StarterNewLabeler(
         en = "Labeler"
     ),
+    StarterNewInputLabelFile(
+        en = "Input label file"
+    ),
+    StarterNewInputLabelFilePlaceholder(
+        en = "(Create template if this is not set)"
+    ),
+    StarterNewEncoding(
+        en = "Encoding"
+    ),
     ChooseSampleDirectoryDialogTitle(
         en = "Choose sample directory"
     ),
     ChooseWorkingDirectoryDialogTitle(
         en = "Choose sample directory"
+    ),
+    ChooseInputLabelFileDialogTitle(
+        en = "Choose input label file"
     ),
     OpenProjectDialogTitle(
         en = "Open project"

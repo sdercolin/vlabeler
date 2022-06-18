@@ -73,6 +73,7 @@ private val labelShiftUp = 8.dp
 @Composable
 fun MarkerCanvas(
     entry: Entry,
+    sampleLengthMillis: Float,
     editEntry: (Entry) -> Unit,
     playSampleSection: (Float, Float) -> Unit,
     appConf: AppConf,
@@ -82,7 +83,7 @@ fun MarkerCanvas(
     keyboardState: KeyboardState
 ) {
     val entryConverter = EntryConverter(sampleRate, canvasParams.resolution)
-    val entryInPixel = entryConverter.convertToPixel(entry)
+    val entryInPixel = entryConverter.convertToPixel(entry, sampleLengthMillis)
     val state = remember { mutableStateOf(MarkerState()) }
     val canvasHeightState = remember { mutableStateOf(0f) }
     val waveformsHeightRatio = remember(appConf.painter.spectrogram) {

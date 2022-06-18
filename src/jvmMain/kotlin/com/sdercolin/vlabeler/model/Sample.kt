@@ -19,5 +19,6 @@ data class SampleInfo(
     val sampleRate: Float,
     val bitDepth: Int,
     val isFloat: Boolean,
-    val channels: Int
+    val channels: Int,
+    val lengthMillis: Float
 )

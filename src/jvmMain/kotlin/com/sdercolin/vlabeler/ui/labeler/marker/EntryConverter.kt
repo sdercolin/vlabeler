@@ -8,14 +8,19 @@ class EntryConverter(
     private val sampleRate: Float,
     private val resolution: Int
 ) {
-    fun convertToPixel(entry: Entry) = EntryInPixel(
+    fun convertToPixel(entry: Entry, sampleFileLengthMillis: Float) = EntryInPixel(
         name = entry.name,
         start = convertToPixel(entry.start),
-        end = convertToPixel(entry.end),
+        end = if (entry.end <= 0) {
+            convertToPixel(sampleFileLengthMillis + entry.end)
+        } else {
+            convertToPixel(entry.end)
+        },
         points = entry.points.map { convertToPixel(it) }
     )
 
-    private fun convertToPixel(millis: Float) = toFrame(millis, sampleRate).div(resolution)
+    private fun convertToPixel(millis: Float) =
+        toFrame(millis, sampleRate).div(resolution)
 
     fun convertToMillis(entry: EntryInPixel) = Entry(
         name = entry.name,

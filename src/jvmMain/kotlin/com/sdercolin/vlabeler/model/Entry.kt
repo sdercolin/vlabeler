@@ -11,6 +11,6 @@ import kotlinx.serialization.Serializable
 data class Entry(
     val name: String,
     val start: Float,
-    val end: Float,
+    val end: Float, // minus or zero value represents a relative value to the sample file's end
     val points: List<Float>
 )

@@ -26,6 +26,7 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FolderOpen
@@ -38,7 +39,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.dialog.FileDialog
@@ -101,6 +101,16 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
     var projectNameEdited by remember { mutableStateOf(false) }
     var currentPathPicker by remember { mutableStateOf<PathPicker?>(null) }
     var labeler by remember(availableLabelerConfs) { mutableStateOf(availableLabelerConfs.first()) }
+    var inputLabelFile by remember { mutableStateOf("") }
+    var inputLabelFileEdited by remember { mutableStateOf(false) }
+    val encodings = listOf("UTF-8", "Shift-JIS")
+    var encoding by remember(labeler) {
+        val parser = labeler.parser
+        val encodingName = if (parser != null) {
+            encodings.find { it.equals(parser.defaultEncoding, ignoreCase = true) } ?: encodings.first()
+        } else encodings.first()
+        mutableStateOf(encodingName)
+    }
 
     fun setSampleDirectory(path: String) {
         sampleDirectory = path
@@ -108,14 +118,23 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
             workingDirectory = sampleDirectory
         }
         if (!projectNameEdited && !workingDirectoryEdited) {
-            projectName = (if (File(path) != HomePath) path.trim('/').split("/").last() else "")
+            projectName = if (File(path) != HomePath) path.trim('/').split("/").last() else ""
+        }
+        if (!inputLabelFileEdited) {
+            inputLabelFile = if (File(path) != HomePath) {
+                val parser = labeler.parser
+                if (parser == null) "" else {
+                    val file = File(path).resolve(parser.defaultInputFilePath)
+                    if (file.exists()) file.absolutePath else ""
+                }
+            } else ""
         }
     }
 
     fun setWorkingDirectory(path: String) {
         workingDirectory = path
         if (!projectNameEdited) {
-            projectName = (if (File(path) != HomePath) path.trim('/').split("/").last() else "")
+            projectName = if (File(path) != HomePath) path.trim('/').split("/").last() else ""
         }
     }
 
@@ -133,6 +152,12 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
 
     fun isProjectNameValid(): Boolean {
         return projectName.isValidFileName()
+    }
+
+    fun isInputLabelFileValid(): Boolean {
+        if (inputLabelFile == "") return true
+        val file = File(inputLabelFile)
+        return file.extension == labeler.parser?.extension && file.exists()
     }
 
     Column(
@@ -188,13 +213,13 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
         }, {
             var expanded by remember { mutableStateOf(false) }
             Box {
-                OutlinedTextField(
+                TextField(
                     modifier = Modifier.widthIn(min = 400.dp),
                     value = labeler.displayedName,
                     onValueChange = { },
                     readOnly = true,
                     label = { Text(string(Strings.StarterNewLabeler)) },
-                    maxLines = 2,
+                    maxLines = 1,
                     leadingIcon = {
                         IconButton(onClick = { expanded = true }) {
                             Icon(Icons.Default.ExpandMore, null)
@@ -218,6 +243,59 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
                     }
                 }
             }
+        }, {
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = if (labeler.parser != null) inputLabelFile else "",
+                onValueChange = {
+                    inputLabelFile = it
+                    inputLabelFileEdited = true
+                },
+                enabled = labeler.parser != null,
+                label = { Text(string(Strings.StarterNewInputLabelFile)) },
+                placeholder = { Text(string(Strings.StarterNewInputLabelFilePlaceholder)) },
+                maxLines = 2,
+                trailingIcon = {
+                    IconButton(onClick = { currentPathPicker = PathPicker.InputFile }) {
+                        Icon(Icons.Default.FolderOpen, null)
+                    }
+                },
+                isError = isInputLabelFileValid().not()
+            )
+        }, {
+            var expanded by remember { mutableStateOf(false) }
+            Box {
+                TextField(
+                    modifier = Modifier.widthIn(min = 200.dp),
+                    value = encoding,
+                    onValueChange = { },
+                    enabled = labeler.parser != null && inputLabelFile != "",
+                    readOnly = true,
+                    label = { Text(string(Strings.StarterNewEncoding)) },
+                    maxLines = 1,
+                    leadingIcon = {
+                        IconButton(onClick = { expanded = true }) {
+                            Icon(Icons.Default.ExpandMore, null)
+                        }
+                    }
+                )
+                DropdownMenu(
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    encodings.forEach { encodingName ->
+                        DropdownMenuItem(
+                            onClick = {
+                                encoding = encodingName
+                                expanded = false
+                            }
+                        ) {
+                            Text(text = encodingName)
+                        }
+                    }
+                }
+            }
         }).forEach {
             it.invoke()
             Spacer(Modifier.height(20.dp))
@@ -230,11 +308,13 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
             Button(
                 onClick = {
                     create(
-                        getNewProject(
+                        Project.from(
                             sampleDirectory = sampleDirectory,
                             workingDirectory = workingDirectory,
                             projectName = projectName,
-                            labelerConf = labeler
+                            labelerConf = labeler,
+                            inputLabelFile = inputLabelFile,
+                            encoding = encoding
                         )
                     )
                 },
@@ -247,20 +327,27 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
             val title = when (picker) {
                 PathPicker.SampleDirectory -> string(Strings.ChooseSampleDirectoryDialogTitle)
                 PathPicker.WorkingDirectory -> string(Strings.ChooseWorkingDirectoryDialogTitle)
+                PathPicker.InputFile -> string(Strings.ChooseInputLabelFileDialogTitle)
             }
             val initial = when (picker) {
                 PathPicker.SampleDirectory -> sampleDirectory
                 PathPicker.WorkingDirectory -> workingDirectory
+                PathPicker.InputFile -> if (inputLabelFile != "" && isInputLabelFileValid()) {
+                    File(inputLabelFile).parent
+                } else {
+                    sampleDirectory
+                }
             }
             val extensions = when (picker) {
                 PathPicker.SampleDirectory -> listOf(Project.SampleFileExtension)
                 PathPicker.WorkingDirectory -> null
+                PathPicker.InputFile -> labeler.parser?.extension?.let { listOf(it) }
             }
             FileDialog(
                 title = title,
                 initialDirectory = initial,
                 extensions = extensions
-            ) { directory, _ ->
+            ) { directory, file ->
                 currentPathPicker = null
                 directory ?: return@FileDialog
                 when (picker) {
@@ -269,41 +356,18 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
                         workingDirectoryEdited = true
                         setWorkingDirectory(directory)
                     }
+                    PathPicker.InputFile -> {
+                        inputLabelFileEdited = true
+                        inputLabelFile = File(directory, file ?: "").absolutePath
+                    }
                 }
             }
         }
     }
 }
 
-private fun getNewProject(
-    sampleDirectory: String,
-    workingDirectory: String,
-    projectName: String,
-    labelerConf: LabelerConf
-): Project {
-    val sampleDirectoryFile = File(sampleDirectory)
-    val sampleNames = sampleDirectoryFile.listFiles().orEmpty()
-        .filter { it.extension == Project.SampleFileExtension }
-        .map { it.nameWithoutExtension }
-        .sorted()
-    val start = labelerConf.defaultValues.first()
-    val end = labelerConf.defaultValues.last()
-    val fields = labelerConf.defaultValues.drop(1).dropLast(1)
-    val entriesBySample = sampleNames.associateWith {
-        listOf(Entry(it, start, end, fields))
-    }
-    return Project(
-        sampleDirectory = sampleDirectory,
-        workingDirectory = workingDirectory,
-        projectName = projectName,
-        entriesBySampleName = entriesBySample,
-        labelerConf = labelerConf,
-        currentSampleName = sampleNames.firstOrNull(),
-        currentEntryIndex = 0
-    )
-}
-
 private enum class PathPicker {
     SampleDirectory,
-    WorkingDirectory
+    WorkingDirectory,
+    InputFile
 }

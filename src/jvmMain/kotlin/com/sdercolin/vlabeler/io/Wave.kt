@@ -65,7 +65,8 @@ fun loadSampleFile(file: File, appConf: AppConf): Sample? {
         sampleRate = format.sampleRate,
         bitDepth = frameByteSize,
         isFloat = isFloat,
-        channels = channels.size
+        channels = channels.size,
+        lengthMillis = channels[0].size.toFloat() / format.sampleRate * 1000
     )
     val wave = Wave(channels = channels.map { Wave.Channel(it) })
     val spectrogram = if (appConf.painter.spectrogram.enabled) {
