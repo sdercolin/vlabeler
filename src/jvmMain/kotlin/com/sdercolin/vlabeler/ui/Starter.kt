@@ -1,5 +1,11 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.sdercolin.vlabeler.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
+import androidx.compose.foundation.TooltipPlacement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -15,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.DropdownMenu
@@ -32,6 +39,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -41,12 +49,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.common.CircularProgress
-import com.sdercolin.vlabeler.ui.dialog.FileDialog
+import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.HomePath
@@ -164,6 +173,12 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
         return projectName.isValidFileName()
     }
 
+    fun isProjectFileExisting(): Boolean {
+        return if (isWorkingDirectoryValid() && isProjectNameValid()) {
+            File(workingDirectory, "$projectName.${Project.ProjectFileExtension}").exists()
+        } else false
+    }
+
     fun isInputLabelFileValid(): Boolean {
         if (inputLabelFile == "") return true
         val file = File(inputLabelFile)
@@ -210,17 +225,41 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
                     isError = isWorkingDirectoryValid().not()
                 )
             }, {
-                OutlinedTextField(
-                    modifier = Modifier.widthIn(min = 300.dp),
-                    value = projectName,
-                    onValueChange = {
-                        projectName = it
-                        projectNameEdited = true
-                    },
-                    label = { Text(string(Strings.StarterNewProjectName)) },
-                    maxLines = 2,
-                    isError = isProjectNameValid().not()
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        modifier = Modifier.widthIn(min = 300.dp),
+                        value = projectName,
+                        onValueChange = {
+                            projectName = it
+                            projectNameEdited = true
+                        },
+                        label = { Text(string(Strings.StarterNewProjectName)) },
+                        maxLines = 2,
+                        isError = isProjectNameValid().not()
+                    )
+                    if (isProjectFileExisting()) {
+                        Spacer(Modifier.width(20.dp))
+                        TooltipArea(
+                            tooltip = {
+                                Box(
+                                    Modifier.background(
+                                        color = MaterialTheme.colors.background,
+                                        shape = RoundedCornerShape(5.dp)
+                                    )
+                                        .padding(10.dp)
+                                        .shadow(elevation = 5.dp, shape = RoundedCornerShape(5.dp))
+                                ) {
+                                    Text(
+                                        string(Strings.StarterNewProjectNameWarning),
+                                        style = MaterialTheme.typography.caption
+                                    )
+                                }
+                            }
+                        ) {
+                            Icon(Icons.Default.Warning, null, tint = MaterialTheme.colors.primary)
+                        }
+                    }
+                }
             }, {
                 var expanded by remember { mutableStateOf(false) }
                 Box {
@@ -364,13 +403,13 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
                     PathPicker.WorkingDirectory -> null
                     PathPicker.InputFile -> labeler.parser?.extension?.let { listOf(it) }
                 }
-                FileDialog(
+                OpenFileDialog(
                     title = title,
                     initialDirectory = initial,
                     extensions = extensions
                 ) { directory, file ->
                     currentPathPicker = null
-                    directory ?: return@FileDialog
+                    directory ?: return@OpenFileDialog
                     when (picker) {
                         PathPicker.SampleDirectory -> setSampleDirectory(directory)
                         PathPicker.WorkingDirectory -> {

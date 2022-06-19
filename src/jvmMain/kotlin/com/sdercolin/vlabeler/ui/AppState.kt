@@ -7,6 +7,7 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 data class AppState(
     val isConfiguringNewProject: Boolean = false,
     val isShowingOpenProjectDialog: Boolean = false,
+    val isShowingSaveAsProjectDialog: Boolean = false,
     val embeddedDialog: EmbeddedDialogArgs? = null,
     /**
      * Describes the update status between [Project] state and project file
@@ -19,6 +20,9 @@ data class AppState(
 ) {
 
     val isSaveEnabled get() = projectWriteStatus == ProjectWriteStatus.Changed || hasEditedEntry
+
+    fun requestSave() = copy(projectWriteStatus = ProjectWriteStatus.UpdateRequested)
+    fun newFileOpened() = AppState()
 
     enum class ProjectWriteStatus {
         Updated,

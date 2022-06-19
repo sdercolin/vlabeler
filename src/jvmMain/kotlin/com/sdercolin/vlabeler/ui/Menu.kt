@@ -33,9 +33,14 @@ fun FrameWindowScope.Menu(
             )
             Item(
                 string(Strings.MenuFileSave),
-                onClick = { appState.update { copy(projectWriteStatus = AppState.ProjectWriteStatus.UpdateRequested) } },
+                onClick = { appState.update { requestSave() } },
                 enabled = appState.value.isSaveEnabled,
                 shortcut = getKeyShortCut(Key.S, ctrl = true)
+            )
+            Item(
+                string(Strings.MenuFileSaveAs),
+                onClick = { appState.update { copy(isShowingSaveAsProjectDialog = true) } },
+                shortcut = getKeyShortCut(Key.S, ctrl = true, shift = true)
             )
             Item(
                 string(Strings.MenuFileClose),

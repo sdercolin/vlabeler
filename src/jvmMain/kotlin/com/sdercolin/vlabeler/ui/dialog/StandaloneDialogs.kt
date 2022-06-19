@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.update
+import com.sdercolin.vlabeler.util.updateNonNull
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -19,7 +20,7 @@ fun StandaloneDialogs(
     appState: MutableState<AppState>
 ) {
     when {
-        appState.value.isShowingOpenProjectDialog -> FileDialog(
+        appState.value.isShowingOpenProjectDialog -> OpenFileDialog(
             title = string(Strings.OpenProjectDialogTitle),
             extensions = listOf(Project.ProjectFileExtension)
         ) { directory, fileName ->
@@ -31,6 +32,22 @@ fun StandaloneDialogs(
                     ?: throw Exception("Cannot find labeler: ${project.labelerConf.name}")
                 // TODO: update or save labelerConf
                 projectState.update { project.copy(labelerConf = labelerConf) }
+                appState.update { newFileOpened() }
+            }
+        }
+        appState.value.isShowingSaveAsProjectDialog -> SaveFileDialog(
+            title = string(Strings.SaveAsProjectDialogTitle),
+            extensions = listOf(Project.ProjectFileExtension)
+        ) { directory, fileName ->
+            appState.update { copy(isShowingSaveAsProjectDialog = false) }
+            if (directory != null && fileName != null) {
+                projectState.updateNonNull {
+                    copy(
+                        workingDirectory = directory,
+                        projectName = File(fileName).nameWithoutExtension
+                    )
+                }
+                appState.update { requestSave() }
             }
         }
     }

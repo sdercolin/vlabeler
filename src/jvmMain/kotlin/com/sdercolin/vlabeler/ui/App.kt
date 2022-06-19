@@ -88,7 +88,7 @@ fun App(
                 requestNewProject = {
                     mainScope.launch {
                         saveProjectFile(it)
-                        appState.update { copy(isConfiguringNewProject = false) }
+                        appState.update { newFileOpened() }
                         projectState.update { it }
                     }
                 },

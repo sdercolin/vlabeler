@@ -51,6 +51,9 @@ enum class Strings(val en: String) {
     StarterNewProjectName(
         en = "Project name"
     ),
+    StarterNewProjectNameWarning(
+        en = "The project file already exists. Creating project will overwrite the file."
+    ),
     StarterNewLabeler(
         en = "Labeler"
     ),
@@ -74,6 +77,9 @@ enum class Strings(val en: String) {
     ),
     OpenProjectDialogTitle(
         en = "Open project"
+    ),
+    SaveAsProjectDialogTitle(
+        en = "Save as project"
     ),
     SetResolutionDialogDescription(
         en = "Input horizontal resolution (points per pixel) for the editor (%d ~ %d)"
