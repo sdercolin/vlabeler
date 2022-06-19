@@ -81,6 +81,9 @@ enum class Strings(val en: String) {
     SaveAsProjectDialogTitle(
         en = "Save as project"
     ),
+    ExportDialogTitle(
+        en = "Export"
+    ),
     SetResolutionDialogDescription(
         en = "Input horizontal resolution (points per pixel) for the editor (%d ~ %d)"
     ),

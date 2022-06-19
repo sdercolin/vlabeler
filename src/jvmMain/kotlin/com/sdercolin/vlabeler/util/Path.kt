@@ -9,3 +9,5 @@ private val invalidCharsForFileName = arrayOf('"', '*', ':', '<', '>', '?', '\\'
 fun String.isValidFileName(): Boolean {
     return invalidCharsForFileName.none { contains(it) }
 }
+
+val String.lastPathSection get() = split("/").last()

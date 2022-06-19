@@ -4,7 +4,6 @@ package com.sdercolin.vlabeler.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.TooltipArea
-import androidx.compose.foundation.TooltipPlacement
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,6 +59,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.HomePath
 import com.sdercolin.vlabeler.util.isValidFileName
+import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -125,9 +125,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
     val encodings = listOf("UTF-8", "Shift-JIS")
     var encoding by remember(labeler) {
         val parser = labeler.parser
-        val encodingName = if (parser != null) {
-            encodings.find { it.equals(parser.defaultEncoding, ignoreCase = true) } ?: encodings.first()
-        } else encodings.first()
+        val encodingName = encodings.find { it.equals(parser.defaultEncoding, ignoreCase = true) } ?: encodings.first()
         mutableStateOf(encodingName)
     }
 
@@ -137,15 +135,12 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
             workingDirectory = sampleDirectory
         }
         if (!projectNameEdited && !workingDirectoryEdited) {
-            projectName = if (File(path) != HomePath) path.trim('/').split("/").last() else ""
+            projectName = if (File(path) != HomePath) path.trim('/').lastPathSection else ""
         }
         if (!inputLabelFileEdited) {
             inputLabelFile = if (File(path) != HomePath) {
-                val parser = labeler.parser
-                if (parser == null) "" else {
-                    val file = File(path).resolve(parser.defaultInputFilePath)
-                    if (file.exists()) file.absolutePath else ""
-                }
+                val file = File(path).resolve(labeler.defaultInputFilePath)
+                if (file.exists()) file.absolutePath else ""
             } else ""
         }
     }
@@ -153,7 +148,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
     fun setWorkingDirectory(path: String) {
         workingDirectory = path
         if (!projectNameEdited) {
-            projectName = if (File(path) != HomePath) path.trim('/').split("/").last() else ""
+            projectName = if (File(path) != HomePath) path.trim('/').lastPathSection else ""
         }
     }
 
@@ -182,7 +177,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
     fun isInputLabelFileValid(): Boolean {
         if (inputLabelFile == "") return true
         val file = File(inputLabelFile)
-        return file.extension == labeler.parser?.extension && file.exists()
+        return file.extension == labeler.extension && file.exists()
     }
 
     Box(contentAlignment = Alignment.Center) {
@@ -296,12 +291,11 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
             }, {
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = if (labeler.parser != null) inputLabelFile else "",
+                    value = inputLabelFile,
                     onValueChange = {
                         inputLabelFile = it
                         inputLabelFileEdited = true
                     },
-                    enabled = labeler.parser != null,
                     label = { Text(string(Strings.StarterNewInputLabelFile)) },
                     placeholder = { Text(string(Strings.StarterNewInputLabelFilePlaceholder)) },
                     maxLines = 2,
@@ -319,7 +313,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
                         modifier = Modifier.widthIn(min = 200.dp),
                         value = encoding,
                         onValueChange = { },
-                        enabled = labeler.parser != null && inputLabelFile != "",
+                        enabled = inputLabelFile != "",
                         readOnly = true,
                         label = { Text(string(Strings.StarterNewEncoding)) },
                         maxLines = 1,
@@ -401,7 +395,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
                 val extensions = when (picker) {
                     PathPicker.SampleDirectory -> listOf(Project.SampleFileExtension)
                     PathPicker.WorkingDirectory -> null
-                    PathPicker.InputFile -> labeler.parser?.extension?.let { listOf(it) }
+                    PathPicker.InputFile -> listOf(labeler.extension)
                 }
                 OpenFileDialog(
                     title = title,

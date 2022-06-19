@@ -27,4 +27,8 @@ class Python {
     inline fun <reified T : Any> get(name: String): T {
         return get(name, T::class.java)
     }
+
+    fun eval(text: String): Double {
+        return interpreter.eval(text).asDouble()
+    }
 }

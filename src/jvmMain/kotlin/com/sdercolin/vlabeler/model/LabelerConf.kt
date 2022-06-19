@@ -2,7 +2,6 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
-import javax.swing.text.html.parser.Parser
 
 /**
  * Configuration of the labeler's appearances and behaviors
@@ -20,6 +19,14 @@ data class LabelerConf(
      * Configurations with same [name] and [version] should always have same contents
      */
     val version: Int = 1,
+    /**
+     * File extension of the raw label file
+     */
+    val extension: String,
+    /**
+     * Default name of the input file relative to the sample directory
+     */
+    val defaultInputFilePath: String,
     val displayedName: String = name,
     val author: String = "",
     val description: String = "",
@@ -32,6 +39,11 @@ data class LabelerConf(
      */
     val fields: List<Field> = listOf(),
     /**
+     * Extra field names for some data only for calculation.
+     * Saved as String
+     */
+    val extraFieldNames: List<String> = listOf(),
+    /**
      * Properties that are displayed in the entry list
      */
     val properties: List<Property> = listOf(),
@@ -42,7 +54,11 @@ data class LabelerConf(
     /**
      * Defines how data from the original format are parsed
      */
-    val parser: Parser? = null
+    val parser: Parser,
+    /**
+     * Defines how to write content in the original format
+     */
+    val writer: Writer
 ) {
 
     val connectedConstraints: List<Pair<Int, Int>> = fields.withIndex()
@@ -59,7 +75,7 @@ data class LabelerConf(
     @Immutable
     data class Field(
         val name: String,
-        val abbr: String, // Displayed
+        val label: String, // Displayed
         val color: String, // In format of "#ffffff"
         val height: Float, // 0~1
         val dragBase: Boolean = false,
@@ -67,11 +83,20 @@ data class LabelerConf(
         val constraints: List<Constraint> = listOf()
     )
 
+    /**
+     * Definition of properties that will be displayed as entry info and written to the raw label file
+     */
     @Serializable
     @Immutable
     data class Property(
-        val name: String, // Displayed
-        val value: String // Calculated by fields ({\d}); -2 is start, -1 is end
+        val name: String,
+        val displayedName: String,
+        /**
+         * Mathematical expression including fields written as "{[Field.name]}" and "{start}", "{end}".
+         * Extra fields of number type defined in [extraFieldNames] are also available.
+         * Expression is calculated by Python's "eval()"
+         */
+        val value: String
     )
 
     @Serializable
@@ -89,19 +114,11 @@ data class LabelerConf(
     )
 
     /**
-     * Definition for parsing the raw format to local [Entry]
+     * Definition for parsing the raw label file to local [Entry]
      */
     @Serializable
     @Immutable
     data class Parser(
-        /**
-         * Available file extension for this parser
-         */
-        val extension: String,
-        /**
-         * Default name of the input file relative to the sample directory
-         */
-        val defaultInputFilePath: String,
         /**
          * Default text encoding of the input file
          */
@@ -128,6 +145,37 @@ data class LabelerConf(
          *
          *  String values with names defined in [variableNames] are available
          */
-        val parsingScript: List<String>,
+        val scripts: List<String>,
+    )
+
+    /**
+     * Definition for line format in the raw label file
+     */
+    @Serializable
+    @Immutable
+    data class Writer(
+        /**
+         * String format using the following variables written as "{<var_name>}":
+         * {sample} - sample file name without extension
+         * {name} - entry name
+         * {start} - [Entry.start]
+         * {end} - [Entry.end]
+         * {[Property.name]} - Evaluated value of a [Property]
+         * {[Field.name]} - value in [Entry.points] with the same index of the corresponding [Field]
+         * {<item in [extraFieldNames]>} - value saved in
+         *
+         * If a name is shared by a [Property] and [Field], it's considered as [Property].
+         *
+         * @sample "{sample}.wav:{name}={start},{middle},{end}" will be written like "a.wav:a:100,220.5,300"
+         */
+        val format: String? = null,
+        /**
+         * Python scripts text lines that sets "output" variable using the same variables as described in [format]
+         * String type: sample, name
+         * Float type: start, end, and others
+         *
+         * Either [format] or [scripts] should be given. If both of them are given, [scripts] is used
+         */
+        val scripts: List<String>? = null
     )
 }

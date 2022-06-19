@@ -20,4 +20,10 @@ class PythonTest {
         python.set("a", "あ")
         assertEquals("あ", python.get("a"))
     }
+
+    @Test
+    fun testEval() {
+        val python = Python()
+        assertEquals(1.7, python.eval("(3+5.5)*2/(11-1)"))
+    }
 }

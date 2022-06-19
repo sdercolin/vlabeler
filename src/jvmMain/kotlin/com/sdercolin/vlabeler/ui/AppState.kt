@@ -8,6 +8,7 @@ data class AppState(
     val isConfiguringNewProject: Boolean = false,
     val isShowingOpenProjectDialog: Boolean = false,
     val isShowingSaveAsProjectDialog: Boolean = false,
+    val isShowingExportDialog: Boolean = false,
     val embeddedDialog: EmbeddedDialogArgs? = null,
     /**
      * Describes the update status between [Project] state and project file

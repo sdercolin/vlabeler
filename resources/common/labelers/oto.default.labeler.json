@@ -1,13 +1,22 @@
 {
   "name": "oto.default",
   "version": 1,
+  "extension": "ini",
+  "defaultInputFilePath": "oto.ini",
   "displayedName": "UTAU oto labeler",
   "author": "sdercolin",
   "description": "Default oto labeler (Overlap cannot be negative).",
+  "defaultValues": [
+    100,
+    400,
+    300,
+    200,
+    500
+  ],
   "fields": [
     {
-      "name": "Fixed",
-      "abbr": "Fixed",
+      "name": "fixed",
+      "label": "Fixed",
       "color": "#0000ff",
       "height": 0.5,
       "dragBase": false,
@@ -15,8 +24,8 @@
       "constraints": []
     },
     {
-      "name": "Preutterance",
-      "abbr": "Preu",
+      "name": "preu",
+      "label": "Preu",
       "color": "#ff0000",
       "height": 0.6667,
       "dragBase": true,
@@ -29,8 +38,8 @@
       ]
     },
     {
-      "name": "Overlap",
-      "abbr": "Ovl",
+      "name": "ovl",
+      "label": "Ovl",
       "color": "#00ff00",
       "height": 0.8333,
       "dragBase": false,
@@ -43,33 +52,34 @@
       ]
     }
   ],
-  "defaultValues": [
-    100,
-    400,
-    300,
-    200,
-    500
+  "extraFieldNames": [
+    "rawRight"
   ],
   "properties": [
     {
-      "name": "Offset",
-      "value": "{-2}"
+      "name": "left",
+      "displayedName": "Offset",
+      "value": "{start}"
     },
     {
-      "name": "Fixed",
-      "value": "{0}-{-2}"
+      "name": "fixed",
+      "displayedName": "Fixed",
+      "value": "{fixed}-{start}"
     },
     {
-      "name": "Blank",
-      "value": "{-2}-{-1}"
+      "name": "right",
+      "displayedName": "Blank",
+      "value": "{start}-{end}"
     },
     {
-      "name": "Preutterance",
-      "value": "{1}-{-2}"
+      "name": "preu",
+      "displayedName": "Preutterance",
+      "value": "{preu}-{start}"
     },
     {
-      "name": "Overlap",
-      "value": "{2}-{-2}"
+      "name": "ovl",
+      "displayedName": "Overlap",
+      "value": "{ovl}-{start}"
     }
   ],
   "lockedDrag": {
@@ -77,8 +87,6 @@
     "useStart": true
   },
   "parser": {
-    "extension": "ini",
-    "defaultInputFilePath": "oto.ini",
     "defaultEncoding": "Shift-JIS",
     "extractionPattern": "(.*)\\.wav=(.*),(.*),(.*),(.*),(.*),(.*)",
     "variableNames": [
@@ -90,7 +98,7 @@
       "preu",
       "ovl"
     ],
-    "parsingScript": [
+    "scripts": [
       "name = alias",
       "start = float(left)",
       "points = []",
@@ -101,7 +109,15 @@
       "else:",
       "    end = -right",
       "points.append(float(preu) + start)",
-      "points.append(float(ovl) + start)"
+      "points.append(float(ovl) + start)",
+      "rawRight = right"
+    ]
+  },
+  "writer": {
+    "scripts": [
+      "if(end <=0):",
+      "    right = rawRight",
+      "output = sample + \".wav=\" + name + \",\" + str(left) + \",\" + str(fixed) + \",\" + str(right) + \",\" + str(preu) + \",\" + str(ovl)"
     ]
   }
 }

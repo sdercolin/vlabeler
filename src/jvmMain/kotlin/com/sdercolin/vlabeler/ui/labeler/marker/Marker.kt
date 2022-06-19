@@ -284,7 +284,7 @@ private fun FieldLabelCanvas(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = field.abbr,
+                text = field.label,
                 textAlign = TextAlign.Center,
                 color = parseColor(field.color).copy(alpha = alpha),
                 style = MaterialTheme.typography.body2.copy(fontSize = 12.sp)

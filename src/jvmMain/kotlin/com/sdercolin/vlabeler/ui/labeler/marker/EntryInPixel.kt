@@ -12,7 +12,8 @@ data class EntryInPixel(
     val name: String,
     val start: Float,
     val end: Float,
-    val points: List<Float>
+    val points: List<Float>,
+    val extra: List<String>
 ) {
 
     private val pointsSorted = points.sorted()

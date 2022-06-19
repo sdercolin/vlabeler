@@ -2,7 +2,7 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
-import com.sdercolin.vlabeler.io.parseRawLabels
+import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.EditedEntry
 import kotlinx.serialization.Serializable
 import java.io.File
@@ -25,6 +25,11 @@ data class Project(
 
     val currentEntry: Entry
         get() = entriesBySampleName.getValue(currentSampleName)[currentEntryIndex]
+
+    val entriesWithSampleName: List<Pair<Entry, String>>
+        get() = entriesBySampleName.flatMap { (sampleName, entries) ->
+            entries.map { it to sampleName }
+        }
 
     private val allEntries = entriesBySampleName.flatMap { it.value }
 
@@ -113,19 +118,18 @@ data class Project(
 
             if (sampleNames.isEmpty()) return Result.failure(EmptySampleDirectoryException())
 
-            val parser = labelerConf.parser
             val inputFile = if (inputLabelFile != "") {
                 File(inputLabelFile)
             } else null
 
             val entriesBySample = if (inputFile != null) {
-                parseRawLabels(inputFile.readLines(Charset.forName(encoding)), parser!!)
+                fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf)
             } else {
                 val start = labelerConf.defaultValues.first()
                 val end = labelerConf.defaultValues.last()
                 val fields = labelerConf.defaultValues.drop(1).dropLast(1)
                 sampleNames.associateWith {
-                    listOf(Entry(it, start, end, fields))
+                    listOf(Entry(it, start, end, fields, listOf()))
                 }
             }
 
