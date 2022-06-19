@@ -35,15 +35,15 @@ import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.labeler.Labeler
 import com.sdercolin.vlabeler.ui.labeler.LabelerState
 import com.sdercolin.vlabeler.util.update
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.io.File
 
 @Composable
 fun App(
+    mainScope: CoroutineScope,
     appConf: AppConf,
     availableLabelerConfs: List<LabelerConf>,
     projectState: MutableState<Project?>,
@@ -77,6 +77,7 @@ fun App(
                 showDialog = { appState.update { copy(embeddedDialog = it) } },
                 appConf = appConf,
                 labelerState = labelerState,
+                appState = appState,
                 playerState = playerState,
                 keyboardViewModel = keyboardViewModel,
                 player = player
@@ -85,9 +86,11 @@ fun App(
             Starter(
                 appState = appState,
                 requestNewProject = {
-                    saveProjectFile(it)
-                    appState.update { copy(isConfiguringNewProject = false) }
-                    projectState.update { it }
+                    mainScope.launch {
+                        saveProjectFile(it)
+                        appState.update { copy(isConfiguringNewProject = false) }
+                        projectState.update { it }
+                    }
                 },
                 availableLabelerConfs = availableLabelerConfs
             )
@@ -115,6 +118,7 @@ private fun Editor(
     showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
     labelerState: MutableState<LabelerState>,
+    appState: MutableState<AppState>,
     playerState: PlayerState,
     keyboardViewModel: KeyboardViewModel,
     player: Player
@@ -126,9 +130,25 @@ private fun Editor(
     }
     val isLoading by remember { derivedStateOf { sampleState.value == null } }
     val editedEntryState = remember { mutableStateOf(project.getEntryForEditing()) }
-    LaunchedEffect(project.currentEntry) {
-        editEntry(editedEntryState.value)
+    LaunchedEffect(project.currentSampleName, project.currentEntryIndex) {
+        // when switched to a new entry, merge the edited entry and load the new one
+        val edited = appState.value.hasEditedEntry
+        if (edited) {
+            println("Previous entry merged")
+            editEntry(editedEntryState.value)
+        }
+        println("Entry loaded")
         editedEntryState.value = project.getEntryForEditing()
+        if (edited) appState.update { copy(hasEditedEntry = false) }
+    }
+
+    LaunchedEffect(appState.value.projectWriteStatus) {
+        if (appState.value.projectWriteStatus != AppState.ProjectWriteStatus.UpdateRequested) return@LaunchedEffect
+        if (appState.value.hasEditedEntry.not()) return@LaunchedEffect
+        // when saving is requested, merge the edited entry first
+        println("Entry Merged")
+        editEntry(editedEntryState.value)
+        appState.update { copy(hasEditedEntry = false) }
     }
 
     val sample = sampleState.value
@@ -141,7 +161,10 @@ private fun Editor(
         entry = editedEntryState.value.entry,
         currentEntryIndexInTotal = project.currentEntryIndexInTotal,
         totalEntryCount = project.totalEntryCount,
-        editEntry = { editedEntryState.update { copy(entry = it) } },
+        editEntry = {
+            editedEntryState.update { copy(entry = it) }
+            appState.update { copy(hasEditedEntry = true) }
+        },
         playSampleSection = player::playSection,
         showDialog = showDialog,
         appConf = appConf,
@@ -159,13 +182,4 @@ private fun handleDialogResult(result: EmbeddedDialogResult, labelerState: Mutab
     when (result) {
         is SetResolutionDialogResult -> labelerState.update { copy(canvasResolution = result.newValue) }
     }
-}
-
-private fun saveProjectFile(project: Project) {
-    val workingDirectory = File(project.workingDirectory)
-    if (!workingDirectory.exists()) {
-        workingDirectory.mkdir()
-    }
-    val projectContent = Json.encodeToString(project)
-    project.projectFile.writeText(projectContent)
 }

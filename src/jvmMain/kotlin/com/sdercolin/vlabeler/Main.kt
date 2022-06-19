@@ -21,6 +21,8 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.Menu
+import com.sdercolin.vlabeler.ui.ProjectStateListener
+import com.sdercolin.vlabeler.ui.ProjectWriter
 import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -70,6 +72,7 @@ fun main() = application {
         Menu(projectState, appState)
         AppTheme {
             App(
+                mainScope,
                 appConf.value,
                 availableLabelerConfs.value,
                 projectState,
@@ -80,5 +83,7 @@ fun main() = application {
             )
         }
         StandaloneDialogs(availableLabelerConfs.value, projectState, appState)
+        ProjectStateListener(projectState, appState)
+        ProjectWriter(projectState, appState)
     }
 }

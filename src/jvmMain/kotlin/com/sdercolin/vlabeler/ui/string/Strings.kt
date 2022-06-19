@@ -18,6 +18,15 @@ enum class Strings(val en: String) {
     MenuFileOpen(
         en = "Open"
     ),
+    MenuFileSave(
+        en = "Save"
+    ),
+    MenuFileSaveAs(
+        en = "Save as"
+    ),
+    MenuFileExport(
+        en = "Export"
+    ),
     MenuFileClose(
         en = "Close"
     ),
