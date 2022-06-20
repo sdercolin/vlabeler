@@ -23,7 +23,7 @@ fun StandaloneDialogs(
             title = string(Strings.OpenProjectDialogTitle),
             extensions = listOf(Project.ProjectFileExtension)
         ) { directory, fileName ->
-            appState.update { copy(isShowingOpenProjectDialog = false) }
+            appState.update { closeOpenProjectDialog() }
             if (directory != null && fileName != null) {
                 val projectContent = File(directory, fileName).readText()
                 val project = parseJson<Project>(projectContent)
@@ -39,7 +39,7 @@ fun StandaloneDialogs(
             initialDirectory = appState.value.project!!.workingDirectory,
             initialFileName = appState.value.project!!.projectFile.name
         ) { directory, fileName ->
-            appState.update { copy(isShowingSaveAsProjectDialog = false) }
+            appState.update { closeSaveAsProjectDialog() }
             if (directory != null && fileName != null) {
                 appState.update {
                     editProject {
@@ -57,7 +57,7 @@ fun StandaloneDialogs(
             initialDirectory = appState.value.project!!.sampleDirectory,
             initialFileName = appState.value.project!!.labelerConf.defaultInputFilePath.lastPathSection
         ) { directory, fileName ->
-            appState.update { copy(isShowingExportDialog = false) }
+            appState.update { closeExportDialog() }
             if (directory != null && fileName != null) {
                 val outputText = appState.value.project!!.toRawLabels()
                 File(directory, fileName).writeText(outputText)

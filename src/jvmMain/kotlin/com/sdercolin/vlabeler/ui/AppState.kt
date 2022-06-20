@@ -32,14 +32,20 @@ data class AppState(
     fun configureNewProject() = copy(isConfiguringNewProject = true)
     fun stopConfiguringNewProject() = copy(isConfiguringNewProject = false)
 
-    val hasUnsavedChanges get() = projectWriteStatus == ProjectWriteStatus.Changed || hasEditedEntry
+    fun openOpenProjectDialog() = copy(isShowingOpenProjectDialog = true)
+    fun closeOpenProjectDialog() = copy(isShowingOpenProjectDialog = false)
 
-    val isEditorActive
-        get() = !isConfiguringNewProject &&
-            !isShowingOpenProjectDialog &&
-            !isShowingSaveAsProjectDialog &&
-            !isShowingExportDialog &&
-            embeddedDialog == null
+    fun openSaveAsProjectDialog() = copy(isShowingSaveAsProjectDialog = true)
+    fun closeSaveAsProjectDialog() = copy(isShowingSaveAsProjectDialog = false)
+
+    fun requestExport() = if (hasUnsavedChanges) askIfSaveBeforeExport() else openExportDialog()
+    private fun askIfSaveBeforeExport() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsExporting)
+    fun openExportDialog() = copy(isShowingExportDialog = true)
+    fun closeExportDialog() = copy(isShowingExportDialog = false)
+
+    fun requestClose() = if (hasUnsavedChanges) askIfSaveBeforeClose() else closeProject()
+    private fun askIfSaveBeforeClose() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsClosing)
+    val hasUnsavedChanges get() = projectWriteStatus == ProjectWriteStatus.Changed || hasEditedEntry
 
     fun requestSave(pendingAction: PendingActionAfterSaved? = null) =
         copy(
@@ -47,14 +53,6 @@ data class AppState(
             pendingActionAfterSaved = pendingAction
         )
 
-    fun requestExport() = if (hasUnsavedChanges) {
-        copy(embeddedDialog = AskIfSaveDialogPurpose.IsExporting)
-    } else {
-        copy(isShowingExportDialog = true)
-    }
-
-    fun requestClose() = if (hasUnsavedChanges) askSaveBeforeClose() else closeProject()
-    fun askSaveBeforeClose() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsClosing)
     fun saved() = copy(projectWriteStatus = ProjectWriteStatus.Updated).consumePendingActionAfterSaved()
 
     private fun consumePendingActionAfterSaved() = when (pendingActionAfterSaved) {
@@ -62,6 +60,16 @@ data class AppState(
         PendingActionAfterSaved.Close -> closeProject()
         null -> this
     }
+
+    fun openEmbeddedDialog(args: EmbeddedDialogArgs) = copy(embeddedDialog = args)
+    fun closeEmbeddedDialog() = copy(embeddedDialog = null)
+
+    val isEditorActive
+        get() = !isConfiguringNewProject &&
+            !isShowingOpenProjectDialog &&
+            !isShowingSaveAsProjectDialog &&
+            !isShowingExportDialog &&
+            embeddedDialog == null
 
     enum class ProjectWriteStatus {
         Updated,

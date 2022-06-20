@@ -62,7 +62,7 @@ fun App(
                 project = project,
                 editProject = { appState.value.editProject { it } },
                 editEntry = { appState.value.editProject { updateEntry(it) } },
-                showDialog = { appState.update { copy(embeddedDialog = it) } },
+                showDialog = { appState.update { openEmbeddedDialog(it) } },
                 appConf = appConf,
                 labelerState = labelerState,
                 appState = appState,
@@ -84,7 +84,7 @@ fun App(
         }
         appState.value.embeddedDialog?.let { args ->
             EmbeddedDialog(args) { result ->
-                appState.update { copy(embeddedDialog = null) }
+                appState.update { closeEmbeddedDialog() }
                 if (result != null) handleDialogResult(result, labelerState, appState)
             }
         }
@@ -103,7 +103,7 @@ private fun handleDialogResult(
                 appState.update { requestSave(result.actionAfterSaved) }
             } else {
                 when (result.actionAfterSaved) {
-                    AppState.PendingActionAfterSaved.Export -> appState.update { copy(isShowingExportDialog = true) }
+                    AppState.PendingActionAfterSaved.Export -> appState.update { openExportDialog() }
                     AppState.PendingActionAfterSaved.Close -> appState.update { closeProject() }
                 }
             }

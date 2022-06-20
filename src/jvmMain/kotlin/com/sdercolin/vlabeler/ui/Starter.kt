@@ -85,7 +85,7 @@ fun BoxScope.Starter(
                 Row {
                     OutlinedButton(
                         modifier = Modifier.size(180.dp, 120.dp),
-                        onClick = { appState.update { copy(isConfiguringNewProject = true) } }
+                        onClick = { appState.update { configureNewProject() } }
                     ) {
                         Text(string(Strings.StarterNewProject))
                     }
@@ -101,7 +101,7 @@ fun BoxScope.Starter(
         } else {
             NewProject(
                 create = requestNewProject,
-                cancel = { appState.update { copy(isConfiguringNewProject = false) } },
+                cancel = { appState.update { stopConfiguringNewProject() } },
                 availableLabelerConfs = availableLabelerConfs
             )
         }

@@ -21,12 +21,12 @@ fun FrameWindowScope.Menu(
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
             Item(
                 string(Strings.MenuFileNewProject),
-                onClick = { appState.update { copy(isConfiguringNewProject = true) } },
+                onClick = { appState.update { configureNewProject() } },
                 shortcut = getKeyShortCut(Key.N, ctrl = true, shift = true)
             )
             Item(
                 string(Strings.MenuFileOpen),
-                onClick = { appState.update { copy(isShowingOpenProjectDialog = true) } },
+                onClick = { appState.update { openOpenProjectDialog() } },
                 shortcut = getKeyShortCut(Key.O, ctrl = true, shift = true)
             )
             Item(
@@ -37,7 +37,7 @@ fun FrameWindowScope.Menu(
             )
             Item(
                 string(Strings.MenuFileSaveAs),
-                onClick = { appState.update { copy(isShowingSaveAsProjectDialog = true) } },
+                onClick = { appState.update { openSaveAsProjectDialog() } },
                 shortcut = getKeyShortCut(Key.S, ctrl = true, shift = true),
                 enabled = appState.value.hasProject
             )
