@@ -42,7 +42,6 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope) {
     }
 
     fun onKeyEvent(event: KeyEvent): Boolean {
-        var isEventCaught = false
         val isLeftCtrl = if (isMacOS) event.key == Key.MetaLeft else event.key == Key.CtrlLeft
         if (isLeftCtrl) {
             if (event.type == KeyEventType.KeyUp) {
@@ -73,14 +72,13 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope) {
                 isRightShiftPressed = true
             }
         }
-        if (event.shouldTogglePlayer) isEventCaught = true
-        if (event.shouldSwitchEntryOrSample) isEventCaught = true
+        val eventCaught = event.shouldBeCaught
 
         coroutineScope.launch {
             emitState()
-            if (isEventCaught) emitEvent(event)
+            if (eventCaught) emitEvent(event)
         }
-        return isEventCaught
+        return eventCaught
     }
 }
 
@@ -99,3 +97,7 @@ val KeyEvent.shouldGoNextSample get() = key == Key.DirectionDown && isNativeCtrl
 val KeyEvent.shouldGoPreviousSample get() = key == Key.DirectionUp && isNativeCtrlPressed && released
 val KeyEvent.shouldSwitchEntryOrSample
     get() = shouldGoNextEntry || shouldGoPreviousEntry || shouldGoNextSample || shouldGoPreviousSample
+val KeyEvent.shouldIncreaseResolution get() = (key == Key.Minus || key == Key.NumPadSubtract) && released
+val KeyEvent.shouldDecreaseResolution get() = (key == Key.Equals || key == Key.NumPadAdd) && released
+val KeyEvent.shouldBeCaught
+    get() = shouldTogglePlayer || shouldSwitchEntryOrSample || shouldIncreaseResolution || shouldDecreaseResolution

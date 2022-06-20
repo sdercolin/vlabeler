@@ -62,7 +62,7 @@ fun App(
         if (project != null && appState.value.isConfiguringNewProject.not()) {
             Editor(
                 project = project,
-                editProject = { projectState.updateNonNull { it }},
+                editProject = { projectState.updateNonNull { it } },
                 editEntry = { projectState.update { project.updateEntry(it) } },
                 showDialog = { appState.update { copy(embeddedDialog = it) } },
                 appConf = appConf,
