@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,6 +33,7 @@ import com.sdercolin.vlabeler.util.getCustomLabelers
 import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
+import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +60,7 @@ fun main() = application {
     Window(
         title = string(Strings.AppName),
         state = WindowState(width = 1000.dp, height = 800.dp),
-        onCloseRequest = ::exitApplication,
+        onCloseRequest = { appState.update { requestExit() } },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
         Menu(appState)
@@ -77,6 +79,7 @@ fun main() = application {
         ProjectChangesListener(appState)
         ProjectWriter(appState)
     }
+    LaunchExit(appState, ::exitApplication)
 }
 
 @Composable
@@ -110,4 +113,12 @@ private fun rememberAvailableLabelerConfs() = remember {
 private fun ensureDirectories() {
     if (AppDir.exists().not()) AppDir.mkdir()
     if (CustomLabelerDir.exists().not()) CustomLabelerDir.mkdir()
+}
+
+@Composable
+private fun LaunchExit(appState: State<AppState>, exit: () -> Unit) {
+    val shouldExit = appState.value.shouldExit
+    LaunchedEffect(shouldExit) {
+        if (shouldExit) exit()
+    }
 }

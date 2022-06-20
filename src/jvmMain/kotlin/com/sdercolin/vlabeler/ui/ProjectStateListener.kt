@@ -19,6 +19,7 @@ fun ProjectChangesListener(appState: MutableState<AppState>) {
             appState.update { copy(projectWriteStatus = AppState.ProjectWriteStatus.Updated) }
             return@LaunchedEffect
         }
+        if (project == null) return@LaunchedEffect
         appState.update { copy(projectWriteStatus = AppState.ProjectWriteStatus.Changed) }
     }
 }

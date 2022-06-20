@@ -23,12 +23,13 @@ data class AppState(
      * True if the editor has not saved its changes on the current entry to the [Project] state
      */
     val hasEditedEntry: Boolean = false,
+    val shouldExit: Boolean = false,
 ) {
 
     val hasProject get() = project != null
     fun openProject(project: Project) = AppState(project = project)
-    private fun closeProject() = copy(project = null)
-    fun editProject(editor: Project.() -> Project) = copy(project = editor(project!!))
+    private fun closeProject() = AppState()
+    fun editProject(editor: Project.() -> Project) = copy(project = project!!.editor())
 
     fun configureNewProject() = copy(isConfiguringNewProject = true)
     fun stopConfiguringNewProject() = copy(isConfiguringNewProject = false)
@@ -59,25 +60,25 @@ data class AppState(
     fun takeAskIfSaveResult(result: AskIfSaveDialogResult) =
         if (result.save) {
             requestSave(result.actionAfterSaved)
-        } else {
-            when (result.actionAfterSaved) {
-                PendingActionAfterSaved.Open -> openOpenProjectDialog()
-                PendingActionAfterSaved.Export -> openExportDialog()
-                PendingActionAfterSaved.Close -> closeProject()
-            }
-        }
+        } else consumePendingActionAfterSaved(result.actionAfterSaved)
 
-    fun saved() = copy(projectWriteStatus = ProjectWriteStatus.Updated).consumePendingActionAfterSaved()
+    fun saved() = copy(projectWriteStatus = ProjectWriteStatus.Updated)
+        .consumePendingActionAfterSaved(pendingActionAfterSaved)
 
-    private fun consumePendingActionAfterSaved() = when (pendingActionAfterSaved) {
+    private fun consumePendingActionAfterSaved(action: PendingActionAfterSaved?) = when (action) {
         PendingActionAfterSaved.Open -> openOpenProjectDialog()
         PendingActionAfterSaved.Export -> openExportDialog()
         PendingActionAfterSaved.Close -> closeProject()
+        PendingActionAfterSaved.Exit -> exit()
         null -> this
     }
 
     fun openEmbeddedDialog(args: EmbeddedDialogArgs) = copy(embeddedDialog = args)
     fun closeEmbeddedDialog() = copy(embeddedDialog = null)
+
+    fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
+    private fun askIfSaveBeforeExit() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsExiting)
+    private fun exit() = copy(shouldExit = true)
 
     val isEditorActive
         get() = !isConfiguringNewProject &&
@@ -95,6 +96,7 @@ data class AppState(
     enum class PendingActionAfterSaved {
         Open,
         Export,
-        Close
+        Close,
+        Exit
     }
 }

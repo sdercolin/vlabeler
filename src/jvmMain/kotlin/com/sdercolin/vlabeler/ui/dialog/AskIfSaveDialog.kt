@@ -26,7 +26,8 @@ enum class AskIfSaveDialogPurpose(
 ) : EmbeddedDialogArgs {
     IsOpening(Strings.AskIfSaveBeforeOpenDialogDescription, AppState.PendingActionAfterSaved.Open),
     IsExporting(Strings.AskIfSaveBeforeExportDialogDescription, AppState.PendingActionAfterSaved.Export),
-    IsClosing(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close)
+    IsClosing(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close),
+    IsExiting(Strings.AskIfSaveBeforeExitDialogDescription, AppState.PendingActionAfterSaved.Exit),
 }
 
 data class AskIfSaveDialogResult(

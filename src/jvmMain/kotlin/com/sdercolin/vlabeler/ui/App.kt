@@ -60,8 +60,8 @@ fun App(
         if (project != null && appState.value.isConfiguringNewProject.not()) {
             Editor(
                 project = project,
-                editProject = { appState.value.editProject { it } },
-                editEntry = { appState.value.editProject { updateEntry(it) } },
+                editProject = { appState.update { editProject { it } } },
+                editEntry = { appState.update { editProject { updateEntry(it) } } },
                 showDialog = { appState.update { openEmbeddedDialog(it) } },
                 appConf = appConf,
                 labelerState = labelerState,
