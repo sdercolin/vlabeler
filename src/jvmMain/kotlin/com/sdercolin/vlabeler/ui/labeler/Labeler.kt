@@ -59,7 +59,7 @@ fun Labeler(
     keyboardViewModel: KeyboardViewModel
 ) {
     val isBusy = sample == null
-    val scrollState = rememberScrollState(0)
+    val horizontalScrollState = rememberScrollState(0)
     val currentResolution = labelerState.value.canvasResolution
 
     Column(Modifier.fillMaxSize()) {
@@ -75,13 +75,13 @@ fun Labeler(
                 appConf = appConf,
                 labelerConf = labelerConf,
                 playerState = playerState,
-                horizontalScrollState = scrollState,
+                horizontalScrollState = horizontalScrollState,
                 keyboardViewModel = keyboardViewModel
             )
         }
         HorizontalScrollbar(
             modifier = Modifier.fillMaxWidth().height(20.dp),
-            adapter = rememberScrollbarAdapter(scrollState)
+            adapter = rememberScrollbarAdapter(horizontalScrollState)
         )
         StatusBar(
             currentEntryIndexInTotal = currentEntryIndexInTotal,
