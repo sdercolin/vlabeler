@@ -33,6 +33,7 @@ fun EmbeddedDialog(args: EmbeddedDialogArgs, submit: (EmbeddedDialogResult?) -> 
             Box(modifier = Modifier.padding(horizontal = 50.dp, vertical = 20.dp)) {
                 when (args) {
                     is SetResolutionDialogArgs -> SetResolutionDialog(args, submit)
+                    is AskIfSaveDialogPurpose -> AskIfSaveDialog(args, submit)
                 }
             }
         }

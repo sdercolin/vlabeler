@@ -11,13 +11,11 @@ import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.update
-import com.sdercolin.vlabeler.util.updateNonNull
 import java.io.File
 
 @Composable
 fun StandaloneDialogs(
     labelerConfs: List<LabelerConf>,
-    projectState: MutableState<Project?>,
     appState: MutableState<AppState>
 ) {
     when {
@@ -32,36 +30,36 @@ fun StandaloneDialogs(
                 val labelerConf = labelerConfs.find { it.name == project.labelerConf.name }
                     ?: throw Exception("Cannot find labeler: ${project.labelerConf.name}")
                 // TODO: update or save labelerConf
-                projectState.update { project.copy(labelerConf = labelerConf) }
-                appState.update { newFileOpened() }
+                appState.update { openProject(project.copy(labelerConf = labelerConf)) }
             }
         }
         appState.value.isShowingSaveAsProjectDialog -> SaveFileDialog(
             title = string(Strings.SaveAsProjectDialogTitle),
             extensions = listOf(Project.ProjectFileExtension),
-            initialDirectory = projectState.value!!.workingDirectory,
-            initialFileName = projectState.value!!.projectFile.name
+            initialDirectory = appState.value.project!!.workingDirectory,
+            initialFileName = appState.value.project!!.projectFile.name
         ) { directory, fileName ->
             appState.update { copy(isShowingSaveAsProjectDialog = false) }
             if (directory != null && fileName != null) {
-                projectState.updateNonNull {
-                    copy(
-                        workingDirectory = directory,
-                        projectName = File(fileName).nameWithoutExtension
-                    )
+                appState.update {
+                    editProject {
+                        copy(
+                            workingDirectory = directory,
+                            projectName = File(fileName).nameWithoutExtension
+                        )
+                    }.requestSave()
                 }
-                appState.update { requestSave() }
             }
         }
         appState.value.isShowingExportDialog -> SaveFileDialog(
             title = string(Strings.ExportDialogTitle),
-            extensions = listOf(projectState.value!!.labelerConf.extension),
-            initialDirectory = projectState.value!!.sampleDirectory,
-            initialFileName = projectState.value!!.labelerConf.defaultInputFilePath.lastPathSection
+            extensions = listOf(appState.value.project!!.labelerConf.extension),
+            initialDirectory = appState.value.project!!.sampleDirectory,
+            initialFileName = appState.value.project!!.labelerConf.defaultInputFilePath.lastPathSection
         ) { directory, fileName ->
             appState.update { copy(isShowingExportDialog = false) }
             if (directory != null && fileName != null) {
-                val outputText = projectState.value!!.toRawLabels()
+                val outputText = appState.value.project!!.toRawLabels()
                 File(directory, fileName).writeText(outputText)
             }
         }

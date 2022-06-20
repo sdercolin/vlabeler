@@ -15,11 +15,10 @@ import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.shouldTogglePlayer
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.Menu
-import com.sdercolin.vlabeler.ui.ProjectStateListener
+import com.sdercolin.vlabeler.ui.ProjectChangesListener
 import com.sdercolin.vlabeler.ui.ProjectWriter
 import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -42,7 +41,6 @@ fun main() = application {
     val playerState = remember { mutableStateOf(PlayerState()) }
     val player = remember { Player(mainScope, playerState) }
     val keyboardViewModel = remember { KeyboardViewModel(mainScope) }
-    val projectState = remember { mutableStateOf<Project?>(null) }
     val appState = remember { mutableStateOf(AppState()) }
 
     LaunchedEffect(Unit) {
@@ -63,22 +61,21 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
-        Menu(projectState, appState)
+        Menu(appState)
         AppTheme {
             App(
                 mainScope,
                 appConf.value,
                 availableLabelerConfs.value,
-                projectState,
                 appState,
                 playerState.value,
                 keyboardViewModel,
                 player
             )
         }
-        StandaloneDialogs(availableLabelerConfs.value, projectState, appState)
-        ProjectStateListener(projectState, appState)
-        ProjectWriter(projectState, appState)
+        StandaloneDialogs(availableLabelerConfs.value, appState)
+        ProjectChangesListener(appState)
+        ProjectWriter(appState)
     }
 }
 

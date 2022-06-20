@@ -8,7 +8,6 @@ import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.env.isMacOS
-import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.update
@@ -16,7 +15,6 @@ import com.sdercolin.vlabeler.util.update
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FrameWindowScope.Menu(
-    projectState: MutableState<Project?>,
     appState: MutableState<AppState>
 ) {
     MenuBar {
@@ -34,24 +32,24 @@ fun FrameWindowScope.Menu(
             Item(
                 string(Strings.MenuFileSave),
                 onClick = { appState.update { requestSave() } },
-                enabled = appState.value.isSaveEnabled,
+                enabled = appState.value.hasUnsavedChanges,
                 shortcut = getKeyShortCut(Key.S, ctrl = true)
             )
             Item(
                 string(Strings.MenuFileSaveAs),
                 onClick = { appState.update { copy(isShowingSaveAsProjectDialog = true) } },
                 shortcut = getKeyShortCut(Key.S, ctrl = true, shift = true),
-                enabled = projectState.value != null
+                enabled = appState.value.hasProject
             )
             Item(
                 string(Strings.MenuFileExport),
-                onClick = { appState.update { copy(isShowingExportDialog = true) } },
-                enabled = projectState.value != null
+                onClick = { appState.update { requestExport() } },
+                enabled = appState.value.hasProject
             )
             Item(
                 string(Strings.MenuFileClose),
-                onClick = { projectState.value = null },
-                enabled = projectState.value != null
+                onClick = { appState.update { requestClose() } },
+                enabled = appState.value.hasProject
             )
         }
     }

@@ -19,13 +19,12 @@ import com.sdercolin.vlabeler.env.shouldGoPreviousEntry
 import com.sdercolin.vlabeler.env.shouldGoPreviousSample
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.labeler.LabelerState
 import com.sdercolin.vlabeler.util.update
-import com.sdercolin.vlabeler.util.updateNonNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -34,7 +33,6 @@ fun App(
     mainScope: CoroutineScope,
     appConf: AppConf,
     availableLabelerConfs: List<LabelerConf>,
-    projectState: MutableState<Project?>,
     appState: MutableState<AppState>,
     playerState: PlayerState,
     keyboardViewModel: KeyboardViewModel,
@@ -46,7 +44,7 @@ fun App(
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect {
             if (appState.value.isEditorActive.not()) return@collect
-            val project = projectState.value ?: return@collect
+            val project = appState.value.project ?: return@collect
             val updated = when {
                 it.shouldGoNextSample -> project.nextSample()
                 it.shouldGoPreviousSample -> project.previousSample()
@@ -54,16 +52,16 @@ fun App(
                 it.shouldGoPreviousEntry -> project.previousEntry()
                 else -> null
             } ?: return@collect
-            projectState.update { updated }
+            appState.update { editProject { updated } }
         }
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
-        val project = projectState.value
+        val project = appState.value.project
         if (project != null && appState.value.isConfiguringNewProject.not()) {
             Editor(
                 project = project,
-                editProject = { projectState.updateNonNull { it } },
-                editEntry = { projectState.update { project.updateEntry(it) } },
+                editProject = { appState.value.editProject { it } },
+                editEntry = { appState.value.editProject { updateEntry(it) } },
                 showDialog = { appState.update { copy(embeddedDialog = it) } },
                 appConf = appConf,
                 labelerState = labelerState,
@@ -78,8 +76,7 @@ fun App(
                 requestNewProject = {
                     mainScope.launch {
                         saveProjectFile(it)
-                        appState.update { newFileOpened() }
-                        projectState.update { it }
+                        appState.update { openProject(it) }
                     }
                 },
                 availableLabelerConfs = availableLabelerConfs
@@ -88,14 +85,28 @@ fun App(
         appState.value.embeddedDialog?.let { args ->
             EmbeddedDialog(args) { result ->
                 appState.update { copy(embeddedDialog = null) }
-                if (result != null) handleDialogResult(result, labelerState)
+                if (result != null) handleDialogResult(result, labelerState, appState)
             }
         }
     }
 }
 
-private fun handleDialogResult(result: EmbeddedDialogResult, labelerState: MutableState<LabelerState>) {
+private fun handleDialogResult(
+    result: EmbeddedDialogResult,
+    labelerState: MutableState<LabelerState>,
+    appState: MutableState<AppState>
+) {
     when (result) {
         is SetResolutionDialogResult -> labelerState.update { copy(canvasResolution = result.newValue) }
+        is AskIfSaveDialogResult -> {
+            if (result.save) {
+                appState.update { requestSave(result.actionAfterSaved) }
+            } else {
+                when (result.actionAfterSaved) {
+                    AppState.PendingActionAfterSaved.Export -> appState.update { copy(isShowingExportDialog = true) }
+                    AppState.PendingActionAfterSaved.Close -> appState.update { closeProject() }
+                }
+            }
+        }
     }
 }
