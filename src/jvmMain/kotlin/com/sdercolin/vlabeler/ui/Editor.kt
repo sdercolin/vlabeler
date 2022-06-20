@@ -1,14 +1,23 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.sdercolin.vlabeler.ui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
@@ -35,6 +44,7 @@ data class EditedEntry(
 @Composable
 fun Editor(
     project: Project,
+    editProject: (Project) -> Unit,
     editEntry: (EditedEntry) -> Unit,
     showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
@@ -51,6 +61,8 @@ fun Editor(
     }
     val isLoading by remember { derivedStateOf { sampleState.value == null } }
     val editedEntryState = remember { mutableStateOf(project.getEntryForEditing()) }
+    val keyboardState by keyboardViewModel.keyboardStateFlow.collectAsState()
+
     LaunchedEffect(project.currentSampleName, project.currentEntryIndex) {
         // when switched to a new entry, merge the edited entry and load the new one
         val edited = appState.value.hasEditedEntry
@@ -76,24 +88,38 @@ fun Editor(
     LaunchedEffect(sample) {
         if (sample != null) player.load(sample.info.file)
     }
-    Labeler(
-        sample = sample,
-        sampleName = project.currentSampleName,
-        entry = editedEntryState.value.entry,
-        currentEntryIndexInTotal = project.currentEntryIndexInTotal,
-        totalEntryCount = project.totalEntryCount,
-        editEntry = {
-            editedEntryState.update { copy(entry = it) }
-            appState.update { copy(hasEditedEntry = true) }
-        },
-        playSampleSection = player::playSection,
-        showDialog = showDialog,
-        appConf = appConf,
-        labelerConf = project.labelerConf,
-        labelerState = labelerState,
-        playerState = playerState,
-        keyboardViewModel = keyboardViewModel
-    )
+    Box(Modifier.fillMaxSize()
+        .onPointerEvent(PointerEventType.Scroll) {
+            if (!appState.value.isEditorActive) return@onPointerEvent
+            val yDelta = it.changes.first().scrollDelta.y
+            val shouldSwitchSample = keyboardState.isCtrlPressed
+            val updated = when {
+                yDelta > 0 -> if (shouldSwitchSample) project.nextSample() else project.nextEntry()
+                yDelta < 0 -> if (shouldSwitchSample) project.previousSample() else project.previousEntry()
+                else -> null
+            }
+            if (updated != null) editProject(updated)
+        }
+    ) {
+        Labeler(
+            sample = sample,
+            sampleName = project.currentSampleName,
+            entry = editedEntryState.value.entry,
+            currentEntryIndexInTotal = project.currentEntryIndexInTotal,
+            totalEntryCount = project.totalEntryCount,
+            editEntry = {
+                editedEntryState.update { copy(entry = it) }
+                appState.update { copy(hasEditedEntry = true) }
+            },
+            playSampleSection = player::playSection,
+            showDialog = showDialog,
+            appConf = appConf,
+            labelerConf = project.labelerConf,
+            labelerState = labelerState,
+            playerState = playerState,
+            keyboardViewModel = keyboardViewModel
+        )
+    }
     if (isLoading) {
         CircularProgress()
     }

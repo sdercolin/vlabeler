@@ -25,8 +25,8 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.labeler.LabelerState
 import com.sdercolin.vlabeler.util.update
+import com.sdercolin.vlabeler.util.updateNonNull
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @Composable
@@ -45,6 +45,7 @@ fun App(
     }
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect {
+            if (appState.value.isEditorActive.not()) return@collect
             val project = projectState.value ?: return@collect
             val updated = when {
                 it.shouldGoNextSample -> project.nextSample()
@@ -61,6 +62,7 @@ fun App(
         if (project != null && appState.value.isConfiguringNewProject.not()) {
             Editor(
                 project = project,
+                editProject = { projectState.updateNonNull { it }},
                 editEntry = { projectState.update { project.updateEntry(it) } },
                 showDialog = { appState.update { copy(embeddedDialog = it) } },
                 appConf = appConf,

@@ -76,12 +76,7 @@ fun Canvas(
             ceil(nonNullSample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
         }
         val canvasParams = CanvasParams(nonNullSample.wave.length, resolution, currentDensity)
-        Box(
-            Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)
-                .onPointerEvent(PointerEventType.Scroll) {
-                    println(it.changes.first().scrollDelta.y)
-                }
-        ) {
+        Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
             Column(Modifier.fillMaxSize()) {
                 val weightOfEachChannel = 1f / nonNullSample.wave.channels.size
                 nonNullSample.wave.channels.forEach { channel ->

@@ -47,7 +47,9 @@ fun main() = application {
 
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect { event ->
-            if (event.shouldTogglePlayer) player.toggle()
+            if (appState.value.isEditorActive) {
+                if (event.shouldTogglePlayer) player.toggle()
+            }
         }
     }
 

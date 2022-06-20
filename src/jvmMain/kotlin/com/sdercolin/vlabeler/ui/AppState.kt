@@ -22,6 +22,13 @@ data class AppState(
 
     val isSaveEnabled get() = projectWriteStatus == ProjectWriteStatus.Changed || hasEditedEntry
 
+    val isEditorActive
+        get() = !isConfiguringNewProject &&
+            !isShowingOpenProjectDialog &&
+            !isShowingSaveAsProjectDialog &&
+            !isShowingExportDialog &&
+            embeddedDialog == null
+
     fun requestSave() = copy(projectWriteStatus = ProjectWriteStatus.UpdateRequested)
     fun newFileOpened() = AppState()
 
