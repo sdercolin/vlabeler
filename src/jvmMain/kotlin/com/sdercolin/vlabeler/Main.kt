@@ -2,6 +2,7 @@
 
 package com.sdercolin.vlabeler
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,10 +28,18 @@ import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
+import com.sdercolin.vlabeler.util.AppDir
+import com.sdercolin.vlabeler.util.CustomAppConfFile
+import com.sdercolin.vlabeler.util.CustomLabelerDir
+import com.sdercolin.vlabeler.util.DefaultAppConfFile
+import com.sdercolin.vlabeler.util.getAvailableLabelerFilesWithIsCustom
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.io.File
 
 fun main() = application {
     val mainScope = rememberCoroutineScope()
@@ -46,22 +55,9 @@ fun main() = application {
         }
     }
 
-    val resourcesDir = remember { File(System.getProperty("compose.application.resources.dir")) }
-    val appConf = remember {
-        resourcesDir.resolve("app.conf.json").readText()
-            .let { Json.decodeFromString<AppConf>(it) }
-            .let { mutableStateOf(it) }
-    }
-    val availableLabelerConfs = remember {
-        resourcesDir.resolve("labelers").listFiles().orEmpty()
-            .filter { it.name.endsWith(".labeler.json") }
-            .map { it.readText() }
-            .map { Json.decodeFromString<LabelerConf>(it) }
-            .let { mutableStateOf(it) }
-    }
-    if (availableLabelerConfs.value.isEmpty()) {
-        throw Exception("No labeler configuration files found.")
-    }
+    remember { ensureDirectories() }
+    val appConf = rememberAppConf(mainScope)
+    val availableLabelerConfs = rememberAvailableLabelerConfs()
 
     Window(
         title = string(Strings.AppName),
@@ -86,4 +82,34 @@ fun main() = application {
         ProjectStateListener(projectState, appState)
         ProjectWriter(projectState, appState)
     }
+}
+
+@Composable
+private fun rememberAppConf(scope: CoroutineScope) = remember {
+    val customAppConf = if (CustomAppConfFile.exists()) {
+        runCatching { CustomAppConfFile.readText().let { Json.decodeFromString<AppConf>(it) } }
+            .getOrNull()
+    } else null
+    val appConf = customAppConf ?: DefaultAppConfFile.readText().let { Json.decodeFromString(it) }
+    scope.launch(Dispatchers.IO) {
+        CustomAppConfFile.writeText(Json.encodeToString(appConf))
+    }
+    mutableStateOf(appConf)
+}
+
+@Composable
+private fun rememberAvailableLabelerConfs() = remember {
+    val availableLabelerConfs = getAvailableLabelerFilesWithIsCustom()
+        .map { it.first } //  TODO: Display something to help user know if it's default or custom
+        .map { it.readText() }
+        .map { Json.decodeFromString<LabelerConf>(it) }
+    if (availableLabelerConfs.isEmpty()) {
+        throw Exception("No labeler configuration files found.")
+    }
+    mutableStateOf(availableLabelerConfs)
+}
+
+private fun ensureDirectories() {
+    if (AppDir.exists().not()) AppDir.mkdir()
+    if (CustomLabelerDir.exists().not()) CustomLabelerDir.mkdir()
 }

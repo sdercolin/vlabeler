@@ -4,4 +4,5 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 
 private val osName get() = System.getProperty("os.name")
+val isWindows get() = osName.toLowerCase(Locale.current).contains("windows")
 val isMacOS get() = osName.toLowerCase(Locale.current).contains("mac")

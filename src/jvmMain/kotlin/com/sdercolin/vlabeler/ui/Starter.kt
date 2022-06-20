@@ -57,7 +57,7 @@ import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.util.HomePath
+import com.sdercolin.vlabeler.util.HomeDir
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.update
@@ -113,8 +113,8 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var isLoading by remember { mutableStateOf(false) }
-    var sampleDirectory by remember { mutableStateOf(HomePath.absolutePath) }
-    var workingDirectory by remember { mutableStateOf(HomePath.absolutePath) }
+    var sampleDirectory by remember { mutableStateOf(HomeDir.absolutePath) }
+    var workingDirectory by remember { mutableStateOf(HomeDir.absolutePath) }
     var workingDirectoryEdited by remember { mutableStateOf(false) }
     var projectName by remember { mutableStateOf("") }
     var projectNameEdited by remember { mutableStateOf(false) }
@@ -135,10 +135,10 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
             workingDirectory = sampleDirectory
         }
         if (!projectNameEdited && !workingDirectoryEdited) {
-            projectName = if (File(path) != HomePath) path.lastPathSection else ""
+            projectName = if (File(path).absolutePath != HomeDir.absolutePath) path.lastPathSection else ""
         }
         if (!inputLabelFileEdited) {
-            inputLabelFile = if (File(path) != HomePath) {
+            inputLabelFile = if (File(path).absolutePath != HomeDir.absolutePath) {
                 val file = File(path).resolve(labeler.defaultInputFilePath)
                 if (file.exists()) file.absolutePath else ""
             } else ""
@@ -148,7 +148,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
     fun setWorkingDirectory(path: String) {
         workingDirectory = path
         if (!projectNameEdited) {
-            projectName = if (File(path) != HomePath) path.lastPathSection else ""
+            projectName = if (File(path).absolutePath != HomeDir.absolutePath) path.lastPathSection else ""
         }
     }
 

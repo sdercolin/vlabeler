@@ -178,4 +178,8 @@ data class LabelerConf(
          */
         val scripts: List<String>? = null
     )
+
+    companion object {
+        const val LabelerFileExtension = "labeler.json"
+    }
 }
