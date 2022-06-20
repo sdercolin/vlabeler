@@ -5,11 +5,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.util.toJson
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import java.io.File
 
 @Composable
@@ -32,7 +31,7 @@ suspend fun saveProjectFile(project: Project) {
         if (!workingDirectory.exists()) {
             workingDirectory.mkdir()
         }
-        val projectContent = Json.encodeToString(project)
+        val projectContent = toJson(project)
         project.projectFile.writeText(projectContent)
     }
 }

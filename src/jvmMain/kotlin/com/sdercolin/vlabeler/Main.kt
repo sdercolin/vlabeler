@@ -33,13 +33,12 @@ import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.DefaultAppConfFile
 import com.sdercolin.vlabeler.util.getAvailableLabelerFilesWithIsCustom
+import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 fun main() = application {
     val mainScope = rememberCoroutineScope()
@@ -87,12 +86,12 @@ fun main() = application {
 @Composable
 private fun rememberAppConf(scope: CoroutineScope) = remember {
     val customAppConf = if (CustomAppConfFile.exists()) {
-        runCatching { CustomAppConfFile.readText().let { Json.decodeFromString<AppConf>(it) } }
+        runCatching { parseJson<AppConf>(CustomAppConfFile.readText()) }
             .getOrNull()
     } else null
-    val appConf = customAppConf ?: DefaultAppConfFile.readText().let { Json.decodeFromString(it) }
+    val appConf = customAppConf ?: parseJson(DefaultAppConfFile.readText())
     scope.launch(Dispatchers.IO) {
-        CustomAppConfFile.writeText(Json.encodeToString(appConf))
+        CustomAppConfFile.writeText(toJson(appConf))
     }
     mutableStateOf(appConf)
 }
@@ -102,7 +101,7 @@ private fun rememberAvailableLabelerConfs() = remember {
     val availableLabelerConfs = getAvailableLabelerFilesWithIsCustom()
         .map { it.first } //  TODO: Display something to help user know if it's default or custom
         .map { it.readText() }
-        .map { Json.decodeFromString<LabelerConf>(it) }
+        .map { parseJson<LabelerConf>(it) }
     if (availableLabelerConfs.isEmpty()) {
         throw Exception("No labeler configuration files found.")
     }

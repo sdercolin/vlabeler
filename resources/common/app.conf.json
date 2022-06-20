@@ -1,7 +1,7 @@
 {
   "painter": {
     "canvasResolution": {
-      "default": 100,
+      "default": 40,
       "min": 10,
       "max": 400,
       "step": 20
