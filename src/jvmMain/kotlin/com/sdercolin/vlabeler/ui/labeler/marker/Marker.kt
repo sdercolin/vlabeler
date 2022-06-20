@@ -21,6 +21,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.Layout
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
@@ -136,64 +138,33 @@ private fun FieldBorderCanvas(
             .width(canvasParams.canvasWidthInDp)
             .onPointerEvent(PointerEventType.Move) { event ->
                 if (isBusy) return@onPointerEvent
-                val eventChange = event.changes.first()
-                val x = eventChange.position.x.coerceIn(0f, canvasParams.lengthInPixel - 1f)
-                val y = eventChange.position.y.coerceIn(0f, (canvasHeightState.value - 1f).coerceAtLeast(0f))
-                if (state.value.mouse == MouseState.Dragging) {
-                    val newEntryInPixel = if (state.value.lockedDrag) {
-                        entryInPixel.lockedDrag(state.value.pointIndex, x, canvasParams.lengthInPixel)
-                    } else {
-                        entryInPixel.drag(state.value.pointIndex, x, labelerConf, canvasParams.lengthInPixel)
-                    }
-                    if (newEntryInPixel != entryInPixel) {
-                        editEntry(entryConverter.convertToMillis(newEntryInPixel))
-                    }
-                } else {
-                    val newPointIndex = entryInPixel.getPointIndexForHovering(
-                        x = x,
-                        y = y,
-                        conf = labelerConf,
-                        canvasHeight = canvasHeightState.value,
-                        waveformsHeightRatio = waveformsHeightRatio,
-                        density = canvasParams.density,
-                        labelSize = labelSize,
-                        labelShiftUp = labelShiftUp
-                    )
-                    if (newPointIndex == NonePointIndex) {
-                        state.update { moveToNothing() }
-                    } else {
-                        state.update { moveToHover(newPointIndex) }
-                    }
-                }
+                handleMouseMove(
+                    event,
+                    canvasParams,
+                    canvasHeightState,
+                    state,
+                    entryInPixel,
+                    labelerConf,
+                    editEntry,
+                    entryConverter,
+                    waveformsHeightRatio
+                )
             }
             .onPointerEvent(PointerEventType.Press) {
                 if (isBusy) return@onPointerEvent
-                if (!keyboardState.isCtrlPressed) {
-                    if (state.value.mouse == MouseState.Hovering) {
-                        val lockedDragByBaseField =
-                            labelerConf.lockedDrag.useDragBase &&
-                                labelerConf.fields.getOrNull(state.value.pointIndex)?.dragBase == true
-                        val lockedDragByStart =
-                            labelerConf.lockedDrag.useStart && state.value.usingStartPoint
-                        val lockedDrag = (lockedDragByBaseField || lockedDragByStart) xor keyboardState.isShiftPressed
-                        state.update { startDragging(lockedDrag) }
-                    }
-                }
+                handleMousePress(keyboardState, state, labelerConf)
             }
             .onPointerEvent(PointerEventType.Release) { event ->
                 if (isBusy) return@onPointerEvent
-                if (keyboardState.isCtrlPressed) {
-                    val x = event.changes.first().position.x
-                    val clickedRange = entryInPixel.getClickedAudioRange(x)
-                    if (clickedRange != null) {
-                        val start = clickedRange.first?.let { entryConverter.convertToFrame(it) } ?: 0f
-                        val end = clickedRange.second?.let { entryConverter.convertToFrame(it) }
-                            ?: canvasParams.dataLength.toFloat()
-                        playSampleSection(start, end)
-                    }
-                } else {
-                    state.update { finishDragging() }
-                }
+                handleMouseRelease(
+                    keyboardState,
+                    event,
+                    entryInPixel,
+                    entryConverter,
+                    canvasParams,
+                    playSampleSection,
+                    state
+                )
             }
     ) {
         val start = entryInPixel.start
@@ -321,5 +292,88 @@ private fun FieldLabelCanvasLayout(
                 placeable.place(x = x.toInt(), y = y.toInt())
             }
         }
+    }
+}
+
+private fun handleMouseMove(
+    event: PointerEvent,
+    canvasParams: CanvasParams,
+    canvasHeightState: MutableState<Float>,
+    state: MutableState<MarkerState>,
+    entryInPixel: EntryInPixel,
+    labelerConf: LabelerConf,
+    editEntry: (Entry) -> Unit,
+    entryConverter: EntryConverter,
+    waveformsHeightRatio: Float
+) {
+    val eventChange = event.changes.first()
+    val x = eventChange.position.x.coerceIn(0f, canvasParams.lengthInPixel - 1f)
+    val y = eventChange.position.y.coerceIn(0f, (canvasHeightState.value - 1f).coerceAtLeast(0f))
+    if (state.value.mouse == MouseState.Dragging) {
+        val newEntryInPixel = if (state.value.lockedDrag) {
+            entryInPixel.lockedDrag(state.value.pointIndex, x, canvasParams.lengthInPixel)
+        } else {
+            entryInPixel.drag(state.value.pointIndex, x, labelerConf, canvasParams.lengthInPixel)
+        }
+        if (newEntryInPixel != entryInPixel) {
+            editEntry(entryConverter.convertToMillis(newEntryInPixel))
+        }
+    } else {
+        val newPointIndex = entryInPixel.getPointIndexForHovering(
+            x = x,
+            y = y,
+            conf = labelerConf,
+            canvasHeight = canvasHeightState.value,
+            waveformsHeightRatio = waveformsHeightRatio,
+            density = canvasParams.density,
+            labelSize = labelSize,
+            labelShiftUp = labelShiftUp
+        )
+        if (newPointIndex == NonePointIndex) {
+            state.update { moveToNothing() }
+        } else {
+            state.update { moveToHover(newPointIndex) }
+        }
+    }
+}
+
+private fun handleMousePress(
+    keyboardState: KeyboardState,
+    state: MutableState<MarkerState>,
+    labelerConf: LabelerConf
+) {
+    if (!keyboardState.isCtrlPressed) {
+        if (state.value.mouse == MouseState.Hovering) {
+            val lockedDragByBaseField =
+                labelerConf.lockedDrag.useDragBase &&
+                    labelerConf.fields.getOrNull(state.value.pointIndex)?.dragBase == true
+            val lockedDragByStart =
+                labelerConf.lockedDrag.useStart && state.value.usingStartPoint
+            val lockedDrag = (lockedDragByBaseField || lockedDragByStart) xor keyboardState.isShiftPressed
+            state.update { startDragging(lockedDrag) }
+        }
+    }
+}
+
+private fun handleMouseRelease(
+    keyboardState: KeyboardState,
+    event: PointerEvent,
+    entryInPixel: EntryInPixel,
+    entryConverter: EntryConverter,
+    canvasParams: CanvasParams,
+    playSampleSection: (Float, Float) -> Unit,
+    state: MutableState<MarkerState>
+) {
+    if (keyboardState.isCtrlPressed) {
+        val x = event.changes.first().position.x
+        val clickedRange = entryInPixel.getClickedAudioRange(x)
+        if (clickedRange != null) {
+            val start = clickedRange.first?.let { entryConverter.convertToFrame(it) } ?: 0f
+            val end = clickedRange.second?.let { entryConverter.convertToFrame(it) }
+                ?: canvasParams.dataLength.toFloat()
+            playSampleSection(start, end)
+        }
+    } else {
+        state.update { finishDragging() }
     }
 }
