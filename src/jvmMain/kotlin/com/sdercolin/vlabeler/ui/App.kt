@@ -97,7 +97,7 @@ private fun handleDialogResult(
     appState: MutableState<AppState>
 ) {
     when (result) {
-        is SetResolutionDialogResult -> labelerState.update { copy(canvasResolution = result.newValue) }
+        is SetResolutionDialogResult -> labelerState.update { changeResolution(result.newValue) }
         is AskIfSaveDialogResult -> appState.update { takeAskIfSaveResult(result) }
     }
 }

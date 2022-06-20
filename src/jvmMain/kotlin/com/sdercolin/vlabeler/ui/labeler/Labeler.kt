@@ -40,7 +40,9 @@ import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.util.update
 
 @Immutable
-data class LabelerState(val canvasResolution: Int)
+data class LabelerState(val canvasResolution: Int) {
+    fun changeResolution(resolution: Int) = copy(canvasResolution = resolution)
+}
 
 @Composable
 fun Labeler(
@@ -87,7 +89,7 @@ fun Labeler(
             currentEntryIndexInTotal = currentEntryIndexInTotal,
             totalEntryCount = totalEntryCount,
             resolution = currentResolution,
-            onChangeResolution = { labelerState.update { copy(canvasResolution = it) } },
+            onChangeResolution = { labelerState.update { changeResolution(it) } },
             openSetResolutionDialog = {
                 showDialog(
                     SetResolutionDialogArgs(

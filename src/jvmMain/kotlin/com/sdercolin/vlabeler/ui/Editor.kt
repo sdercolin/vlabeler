@@ -45,7 +45,9 @@ data class EditedEntry(
     val entry: Entry,
     val sampleName: String,
     val index: Int
-)
+) {
+    fun edit(entry: Entry) = copy(entry = entry)
+}
 
 @Composable
 fun Editor(
@@ -90,8 +92,8 @@ fun Editor(
             currentEntryIndexInTotal = project.currentEntryIndexInTotal,
             totalEntryCount = project.totalEntryCount,
             editEntry = {
-                editedEntryState.update { copy(entry = it) }
-                appState.update { copy(hasEditedEntry = true) }
+                editedEntryState.update { edit(it) }
+                appState.update { localEntryEdited() }
             },
             playSampleSection = player::playSection,
             showDialog = showDialog,
@@ -123,7 +125,7 @@ private fun LaunchSwitchEntryFromUpstreamState(
         }
         println("Entry loaded")
         editedEntryState.value = project.getEntryForEditing()
-        if (edited) appState.update { copy(hasEditedEntry = false) }
+        if (edited) appState.update { editedEntryMerged() }
     }
 }
 
@@ -139,7 +141,7 @@ private fun LaunchSubmitEditedEntryWhenSaveRequested(
         // when saving is requested, merge the edited entry first
         println("Entry Merged")
         editEntry(editedEntryState.value)
-        appState.update { copy(hasEditedEntry = false) }
+        appState.update { editedEntryMerged() }
     }
 }
 
@@ -178,7 +180,7 @@ private fun changeResolutionByPointerEvent(
         xDelta < 0 -> range.increaseFrom(resolution).takeIf { (range.canIncrease(resolution)) }
         else -> null
     }
-    if (updatedResolution != null) labelerState.update { copy(canvasResolution = updatedResolution) }
+    if (updatedResolution != null) labelerState.update { changeResolution(updatedResolution) }
 }
 
 @Composable
@@ -206,7 +208,7 @@ private fun changeResolutionByKeyEvent(
     val updatedResolution = if (event.shouldIncreaseResolution) range.increaseFrom(resolution)
     else if (event.shouldDecreaseResolution) range.decreaseFrom(resolution)
     else null
-    if (updatedResolution != null) labelerState.update { copy(canvasResolution = updatedResolution) }
+    if (updatedResolution != null) labelerState.update { changeResolution(updatedResolution) }
 }
 
 @Composable

@@ -5,7 +5,6 @@ package com.sdercolin.vlabeler.ui.labeler.marker
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
@@ -49,6 +48,12 @@ data class MarkerState(
     val pointIndex: Int = NonePointIndex, // starts from 0 for custom points
     val lockedDrag: Boolean = false
 ) {
+
+    fun startDragging(lockedDrag: Boolean) = copy(mouse = MouseState.Dragging, lockedDrag = lockedDrag)
+    fun finishDragging() = copy(mouse = MouseState.None, lockedDrag = false)
+
+    fun moveToNothing() = copy(pointIndex = NonePointIndex, mouse = MouseState.None)
+    fun moveToHover(index: Int) = copy(pointIndex = index, mouse = MouseState.Hovering)
 
     enum class MouseState {
         Dragging,
@@ -155,13 +160,9 @@ private fun FieldBorderCanvas(
                         labelShiftUp = labelShiftUp
                     )
                     if (newPointIndex == NonePointIndex) {
-                        state.update {
-                            copy(pointIndex = newPointIndex, mouse = MouseState.None)
-                        }
+                        state.update { moveToNothing() }
                     } else {
-                        state.update {
-                            copy(pointIndex = newPointIndex, mouse = MouseState.Hovering)
-                        }
+                        state.update { moveToHover(newPointIndex) }
                     }
                 }
             }
@@ -175,7 +176,7 @@ private fun FieldBorderCanvas(
                         val lockedDragByStart =
                             labelerConf.lockedDrag.useStart && state.value.usingStartPoint
                         val lockedDrag = (lockedDragByBaseField || lockedDragByStart) xor keyboardState.isShiftPressed
-                        state.update { copy(mouse = MouseState.Dragging, lockedDrag = lockedDrag) }
+                        state.update { startDragging(lockedDrag) }
                     }
                 }
             }
@@ -191,7 +192,7 @@ private fun FieldBorderCanvas(
                         playSampleSection(start, end)
                     }
                 } else {
-                    state.update { copy(mouse = MouseState.None, lockedDrag = false) }
+                    state.update { finishDragging() }
                 }
             }
     ) {

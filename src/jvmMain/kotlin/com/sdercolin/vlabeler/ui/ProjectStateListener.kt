@@ -16,10 +16,10 @@ fun ProjectChangesListener(appState: MutableState<AppState>) {
     LaunchedEffect(project) {
         if (previousProjectPath != project?.projectFile?.absolutePath) {
             previousProjectPath = project?.projectFile?.absolutePath
-            appState.update { copy(projectWriteStatus = AppState.ProjectWriteStatus.Updated) }
+            appState.update { projectPathChanged() }
             return@LaunchedEffect
         }
         if (project == null) return@LaunchedEffect
-        appState.update { copy(projectWriteStatus = AppState.ProjectWriteStatus.Changed) }
+        appState.update { projectContentChanged() }
     }
 }

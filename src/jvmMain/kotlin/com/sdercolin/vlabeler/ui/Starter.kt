@@ -92,7 +92,7 @@ fun BoxScope.Starter(
                     Spacer(Modifier.width(40.dp))
                     OutlinedButton(
                         modifier = Modifier.size(180.dp, 120.dp),
-                        onClick = { appState.update { copy(isShowingOpenProjectDialog = true) } }
+                        onClick = { appState.update { openOpenProjectDialog() } }
                     ) {
                         Text(string(Strings.StarterOpen))
                     }

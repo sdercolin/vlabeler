@@ -36,7 +36,7 @@ data class AppState(
 
     fun requestOpenProject() = if (hasUnsavedChanges) askIfSaveBeforeOpenProject() else openOpenProjectDialog()
     private fun askIfSaveBeforeOpenProject() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsOpening)
-    private fun openOpenProjectDialog() = copy(isShowingOpenProjectDialog = true)
+    fun openOpenProjectDialog() = copy(isShowingOpenProjectDialog = true)
     fun closeOpenProjectDialog() = copy(isShowingOpenProjectDialog = false)
 
     fun openSaveAsProjectDialog() = copy(isShowingSaveAsProjectDialog = true)
@@ -75,6 +75,12 @@ data class AppState(
 
     fun openEmbeddedDialog(args: EmbeddedDialogArgs) = copy(embeddedDialog = args)
     fun closeEmbeddedDialog() = copy(embeddedDialog = null)
+
+    fun projectContentChanged() = copy(projectWriteStatus = ProjectWriteStatus.Changed)
+    fun projectPathChanged() = copy(projectWriteStatus = ProjectWriteStatus.Updated)
+
+    fun localEntryEdited() = copy(hasEditedEntry = true)
+    fun editedEntryMerged() = copy(hasEditedEntry = false)
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
     private fun askIfSaveBeforeExit() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsExiting)
