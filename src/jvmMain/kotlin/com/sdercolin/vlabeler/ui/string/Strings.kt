@@ -4,7 +4,7 @@ import com.sdercolin.vlabeler.ui.string.Language.English
 
 enum class Strings(val en: String) {
     AppName(
-        en = "VLabeler"
+        en = "vLabeler"
     ),
     LanguageDisplayName(
         en = English.displayName
