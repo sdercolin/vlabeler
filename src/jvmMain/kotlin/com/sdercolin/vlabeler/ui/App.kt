@@ -98,15 +98,6 @@ private fun handleDialogResult(
 ) {
     when (result) {
         is SetResolutionDialogResult -> labelerState.update { copy(canvasResolution = result.newValue) }
-        is AskIfSaveDialogResult -> {
-            if (result.save) {
-                appState.update { requestSave(result.actionAfterSaved) }
-            } else {
-                when (result.actionAfterSaved) {
-                    AppState.PendingActionAfterSaved.Export -> appState.update { openExportDialog() }
-                    AppState.PendingActionAfterSaved.Close -> appState.update { closeProject() }
-                }
-            }
-        }
+        is AskIfSaveDialogResult -> appState.update { takeAskIfSaveResult(result) }
     }
 }

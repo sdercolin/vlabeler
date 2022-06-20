@@ -26,7 +26,7 @@ fun FrameWindowScope.Menu(
             )
             Item(
                 string(Strings.MenuFileOpen),
-                onClick = { appState.update { openOpenProjectDialog() } },
+                onClick = { appState.update { requestOpenProject() } },
                 shortcut = getKeyShortCut(Key.O, ctrl = true, shift = true)
             )
             Item(
@@ -48,7 +48,7 @@ fun FrameWindowScope.Menu(
             )
             Item(
                 string(Strings.MenuFileClose),
-                onClick = { appState.update { requestClose() } },
+                onClick = { appState.update { requestCloseProject() } },
                 enabled = appState.value.hasProject
             )
         }

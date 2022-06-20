@@ -93,11 +93,14 @@ enum class Strings(val en: String) {
     SetResolutionDialogDescription(
         en = "Input horizontal resolution (points per pixel) for the editor (%d ~ %d)"
     ),
-    AskIfSaveBeforeCloseDialogDescription(
-        en = "You have unsaved changes. Do you want to save them before closing the current project?"
+    AskIfSaveBeforeOpenDialogDescription(
+        en = "You have unsaved changes. Do you want to save them before opening a new project?"
     ),
     AskIfSaveBeforeExportDialogDescription(
         en = "You have unsaved changes. Do you want to save them before exporting?"
+    ),
+    AskIfSaveBeforeCloseDialogDescription(
+        en = "You have unsaved changes. Do you want to save them before closing the current project?"
     ),
     EmptySampleDirectoryException(
         en = "Could not create project because no sample files are found in the given sample directory."

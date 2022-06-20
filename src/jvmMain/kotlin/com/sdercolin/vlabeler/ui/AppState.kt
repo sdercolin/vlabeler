@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
+import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 
 @Immutable
@@ -26,13 +27,15 @@ data class AppState(
 
     val hasProject get() = project != null
     fun openProject(project: Project) = AppState(project = project)
-    fun closeProject() = copy(project = null)
+    private fun closeProject() = copy(project = null)
     fun editProject(editor: Project.() -> Project) = copy(project = editor(project!!))
 
     fun configureNewProject() = copy(isConfiguringNewProject = true)
     fun stopConfiguringNewProject() = copy(isConfiguringNewProject = false)
 
-    fun openOpenProjectDialog() = copy(isShowingOpenProjectDialog = true)
+    fun requestOpenProject() = if (hasUnsavedChanges) askIfSaveBeforeOpenProject() else openOpenProjectDialog()
+    private fun askIfSaveBeforeOpenProject() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsOpening)
+    private fun openOpenProjectDialog() = copy(isShowingOpenProjectDialog = true)
     fun closeOpenProjectDialog() = copy(isShowingOpenProjectDialog = false)
 
     fun openSaveAsProjectDialog() = copy(isShowingSaveAsProjectDialog = true)
@@ -40,11 +43,11 @@ data class AppState(
 
     fun requestExport() = if (hasUnsavedChanges) askIfSaveBeforeExport() else openExportDialog()
     private fun askIfSaveBeforeExport() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsExporting)
-    fun openExportDialog() = copy(isShowingExportDialog = true)
+    private fun openExportDialog() = copy(isShowingExportDialog = true)
     fun closeExportDialog() = copy(isShowingExportDialog = false)
 
-    fun requestClose() = if (hasUnsavedChanges) askIfSaveBeforeClose() else closeProject()
-    private fun askIfSaveBeforeClose() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsClosing)
+    fun requestCloseProject() = if (hasUnsavedChanges) askIfSaveBeforeCloseProject() else closeProject()
+    private fun askIfSaveBeforeCloseProject() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsClosing)
     val hasUnsavedChanges get() = projectWriteStatus == ProjectWriteStatus.Changed || hasEditedEntry
 
     fun requestSave(pendingAction: PendingActionAfterSaved? = null) =
@@ -53,10 +56,22 @@ data class AppState(
             pendingActionAfterSaved = pendingAction
         )
 
+    fun takeAskIfSaveResult(result: AskIfSaveDialogResult) =
+        if (result.save) {
+            requestSave(result.actionAfterSaved)
+        } else {
+            when (result.actionAfterSaved) {
+                PendingActionAfterSaved.Open -> openOpenProjectDialog()
+                PendingActionAfterSaved.Export -> openExportDialog()
+                PendingActionAfterSaved.Close -> closeProject()
+            }
+        }
+
     fun saved() = copy(projectWriteStatus = ProjectWriteStatus.Updated).consumePendingActionAfterSaved()
 
     private fun consumePendingActionAfterSaved() = when (pendingActionAfterSaved) {
-        PendingActionAfterSaved.Export -> copy(isShowingExportDialog = true)
+        PendingActionAfterSaved.Open -> openOpenProjectDialog()
+        PendingActionAfterSaved.Export -> openExportDialog()
         PendingActionAfterSaved.Close -> closeProject()
         null -> this
     }
@@ -78,6 +93,7 @@ data class AppState(
     }
 
     enum class PendingActionAfterSaved {
+        Open,
         Export,
         Close
     }

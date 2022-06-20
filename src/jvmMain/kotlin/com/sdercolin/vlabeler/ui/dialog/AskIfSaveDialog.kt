@@ -24,8 +24,9 @@ enum class AskIfSaveDialogPurpose(
     val stringKey: Strings,
     val action: AppState.PendingActionAfterSaved
 ) : EmbeddedDialogArgs {
-    IsClosing(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close),
-    IsExporting(Strings.AskIfSaveBeforeExportDialogDescription, AppState.PendingActionAfterSaved.Export)
+    IsOpening(Strings.AskIfSaveBeforeOpenDialogDescription, AppState.PendingActionAfterSaved.Open),
+    IsExporting(Strings.AskIfSaveBeforeExportDialogDescription, AppState.PendingActionAfterSaved.Export),
+    IsClosing(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close)
 }
 
 data class AskIfSaveDialogResult(
