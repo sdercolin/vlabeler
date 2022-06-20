@@ -25,10 +25,8 @@ val CustomAppConfFile get() = AppDir.resolve(AppConfFileName)
 val CustomLabelerDir get() = AppDir.resolve(LabelerFolderName)
 
 private val labelerFileFilter = FilenameFilter { _, name -> name.endsWith(".$LabelerFileExtension") }
-private fun getDefaultLabelers() = DefaultLabelerDir.listFiles(labelerFileFilter).orEmpty().toList()
-private fun getCustomLabelers() = CustomLabelerDir.listFiles(labelerFileFilter).orEmpty().toList()
-fun getAvailableLabelerFilesWithIsCustom(): List<Pair<File, Boolean>> =
-    getDefaultLabelers().map { it to false } + getCustomLabelers().map { it to true }
+fun getDefaultLabelers() = DefaultLabelerDir.listFiles(labelerFileFilter).orEmpty().toList()
+fun getCustomLabelers() = CustomLabelerDir.listFiles(labelerFileFilter).orEmpty().toList()
 
 private val invalidCharsForFileName = arrayOf('"', '*', ':', '<', '>', '?', '\\', '|', Char(0x7F), '\u0000')
 

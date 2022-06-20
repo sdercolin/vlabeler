@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package com.sdercolin.vlabeler
 
 import androidx.compose.runtime.Composable
@@ -7,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
@@ -32,7 +29,8 @@ import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.DefaultAppConfFile
-import com.sdercolin.vlabeler.util.getAvailableLabelerFilesWithIsCustom
+import com.sdercolin.vlabeler.util.getCustomLabelers
+import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
@@ -86,8 +84,7 @@ fun main() = application {
 @Composable
 private fun rememberAppConf(scope: CoroutineScope) = remember {
     val customAppConf = if (CustomAppConfFile.exists()) {
-        runCatching { parseJson<AppConf>(CustomAppConfFile.readText()) }
-            .getOrNull()
+        runCatching { parseJson<AppConf>(CustomAppConfFile.readText()) }.getOrNull()
     } else null
     val appConf = customAppConf ?: parseJson(DefaultAppConfFile.readText())
     scope.launch(Dispatchers.IO) {
@@ -98,10 +95,14 @@ private fun rememberAppConf(scope: CoroutineScope) = remember {
 
 @Composable
 private fun rememberAvailableLabelerConfs() = remember {
-    val availableLabelerConfs = getAvailableLabelerFilesWithIsCustom()
-        .map { it.first } //  TODO: Display something to help user know if it's default or custom
-        .map { it.readText() }
-        .map { parseJson<LabelerConf>(it) }
+    val defaultLabelers = getDefaultLabelers()
+    val customLabelers = getCustomLabelers()
+    val customLabelerNames = customLabelers.map { it.name }
+    defaultLabelers.filter { it.name !in customLabelerNames }.forEach {
+        it.copyTo(CustomLabelerDir.resolve(it.name))
+    }
+
+    val availableLabelerConfs = getCustomLabelers().map { it.readText() }.map { parseJson<LabelerConf>(it) }
     if (availableLabelerConfs.isEmpty()) {
         throw Exception("No labeler configuration files found.")
     }
