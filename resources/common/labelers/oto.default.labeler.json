@@ -55,33 +55,6 @@
   "extraFieldNames": [
     "rawRight"
   ],
-  "properties": [
-    {
-      "name": "left",
-      "displayedName": "Offset",
-      "value": "{start}"
-    },
-    {
-      "name": "fixed",
-      "displayedName": "Fixed",
-      "value": "{fixed}-{start}"
-    },
-    {
-      "name": "right",
-      "displayedName": "Blank",
-      "value": "{start}-{end}"
-    },
-    {
-      "name": "preu",
-      "displayedName": "Preutterance",
-      "value": "{preu}-{start}"
-    },
-    {
-      "name": "ovl",
-      "displayedName": "Overlap",
-      "value": "{ovl}-{start}"
-    }
-  ],
   "lockedDrag": {
     "useDragBase": true,
     "useStart": true
@@ -114,6 +87,33 @@
     ]
   },
   "writer": {
+    "properties": [
+      {
+        "name": "left",
+        "displayedName": "Offset",
+        "value": "{start}"
+      },
+      {
+        "name": "fixed",
+        "displayedName": "Fixed",
+        "value": "{fixed}-{start}"
+      },
+      {
+        "name": "right",
+        "displayedName": "Blank",
+        "value": "{start}-{end}"
+      },
+      {
+        "name": "preu",
+        "displayedName": "Preutterance",
+        "value": "{preu}-{start}"
+      },
+      {
+        "name": "ovl",
+        "displayedName": "Overlap",
+        "value": "{ovl}-{start}"
+      }
+    ],
     "scripts": [
       "if(end <=0):",
       "    right = rawRight",

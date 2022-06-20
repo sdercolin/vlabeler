@@ -44,10 +44,6 @@ data class LabelerConf(
      */
     val extraFieldNames: List<String> = listOf(),
     /**
-     * Properties that are displayed in the entry list
-     */
-    val properties: List<Property> = listOf(),
-    /**
      * Defines when to use locked dragging (all parameters will move with dragged one)
      */
     val lockedDrag: LockedDrag = LockedDrag(),
@@ -81,22 +77,6 @@ data class LabelerConf(
         val dragBase: Boolean = false,
         val filling: Int? = null, // Index of the target field; -2 is start, -1 is end
         val constraints: List<Constraint> = listOf()
-    )
-
-    /**
-     * Definition of properties that will be displayed as entry info and written to the raw label file
-     */
-    @Serializable
-    @Immutable
-    data class Property(
-        val name: String,
-        val displayedName: String,
-        /**
-         * Mathematical expression including fields written as "{[Field.name]}" and "{start}", "{end}".
-         * Extra fields of number type defined in [extraFieldNames] are also available.
-         * Expression is calculated by Python's "eval()"
-         */
-        val value: String
     )
 
     @Serializable
@@ -155,6 +135,10 @@ data class LabelerConf(
     @Immutable
     data class Writer(
         /**
+         * Properties that are used
+         */
+        val properties: List<Property> = listOf(),
+        /**
          * String format using the following variables written as "{<var_name>}":
          * {sample} - sample file name without extension
          * {name} - entry name
@@ -177,6 +161,21 @@ data class LabelerConf(
          * Either [format] or [scripts] should be given. If both of them are given, [scripts] is used
          */
         val scripts: List<String>? = null
+    )
+
+    /**
+     * Definition of properties that will be written to the raw label file
+     */
+    @Serializable
+    @Immutable
+    data class Property(
+        val name: String,
+        /**
+         * Mathematical expression including fields written as "{[Field.name]}" and "{start}", "{end}".
+         * Extra fields of number type defined in [extraFieldNames] are also available.
+         * Expression is calculated by Python's "eval()"
+         */
+        val value: String
     )
 
     companion object {
