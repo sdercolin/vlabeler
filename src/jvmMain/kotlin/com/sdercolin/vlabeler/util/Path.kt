@@ -10,4 +10,6 @@ fun String.isValidFileName(): Boolean {
     return invalidCharsForFileName.none { contains(it) }
 }
 
-val String.lastPathSection get() = split("/").last()
+private val splitters = charArrayOf('\\' ,'/')
+
+val String.lastPathSection get() = trim(*splitters).split(*splitters).last()

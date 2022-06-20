@@ -135,7 +135,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
             workingDirectory = sampleDirectory
         }
         if (!projectNameEdited && !workingDirectoryEdited) {
-            projectName = if (File(path) != HomePath) path.trim('/').lastPathSection else ""
+            projectName = if (File(path) != HomePath) path.lastPathSection else ""
         }
         if (!inputLabelFileEdited) {
             inputLabelFile = if (File(path) != HomePath) {
@@ -148,7 +148,7 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
     fun setWorkingDirectory(path: String) {
         workingDirectory = path
         if (!projectNameEdited) {
-            projectName = if (File(path) != HomePath) path.trim('/').lastPathSection else ""
+            projectName = if (File(path) != HomePath) path.lastPathSection else ""
         }
     }
 
