@@ -8,9 +8,6 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
 
-group = "com.sdercolin"
-version = "1.0-SNAPSHOT"
-
 repositories {
     google()
     mavenCentral()
@@ -49,7 +46,7 @@ compose.desktop {
     application {
         mainClass = "com.sdercolin.vlabeler.MainKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm)
             packageName = "vLabeler"
             packageVersion = "1.0.0"
             appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
@@ -62,4 +59,8 @@ compose.desktop {
 
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     version.set("0.45.2")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
 }
