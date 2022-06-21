@@ -20,7 +20,7 @@
       "color": "#0000ff",
       "height": 0.5,
       "dragBase": false,
-      "filling": -2,
+      "filling": "start",
       "constraints": []
     },
     {

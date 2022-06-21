@@ -36,7 +36,9 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.labeler.CanvasParams
+import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.EndPointIndex
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.NonePointIndex
+import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.StartPointIndex
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.MouseState
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.parseColor
@@ -197,8 +199,14 @@ private fun FieldBorderCanvas(
             val height = waveformsHeight * field.height
             val top = waveformsHeight - height
             val color = parseColor(field.color)
-            if (field.filling != null) {
-                val targetX = entryInPixel.getPoint(field.filling)
+            val fillTargetIndex = when (field.filling) {
+                "start" -> StartPointIndex
+                "end" -> EndPointIndex
+                null -> null
+                else -> labelerConf.fields.withIndex().find { it.value.name == field.filling }?.index
+            }
+            if (fillTargetIndex != null) {
+                val targetX = entryInPixel.getPoint(fillTargetIndex)
                 val left = min(targetX, x)
                 val width = abs(targetX - x)
                 drawRect(
