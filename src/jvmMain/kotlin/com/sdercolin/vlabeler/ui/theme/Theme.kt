@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.sp
 
 private val colors = darkColors(
     primary = Pink,
-    primaryVariant = Pink,
+    primaryVariant = DarkPink,
     background = DarkGray,
     surface = Gray,
     onPrimary = Black,

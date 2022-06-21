@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 
 @Immutable
 data class AppState(
@@ -75,6 +76,15 @@ data class AppState(
 
     fun openEmbeddedDialog(args: EmbeddedDialogArgs) = copy(embeddedDialog = args)
     fun closeEmbeddedDialog() = copy(embeddedDialog = null)
+
+    fun openJumpToEntryDialog() = copy(embeddedDialog = JumpToEntryDialogArgs(project!!))
+
+    fun jumpToEntry(sampleName: String, entryIndex: Int) = copy(
+        project = project!!.copy(
+            currentSampleName = sampleName,
+            currentEntryIndex = entryIndex
+        )
+    )
 
     fun projectContentChanged() = copy(projectWriteStatus = ProjectWriteStatus.Changed)
     fun projectPathChanged() = copy(projectWriteStatus = ProjectWriteStatus.Updated)

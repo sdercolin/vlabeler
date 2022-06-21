@@ -6,8 +6,6 @@ import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.util.toJson
 import com.sdercolin.vlabeler.util.update
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.File
 
 @Composable
@@ -23,14 +21,12 @@ fun ProjectWriter(appState: MutableState<AppState>) {
     }
 }
 
-suspend fun saveProjectFile(project: Project) {
-    withContext(Dispatchers.IO) {
-        println("Save project")
-        val workingDirectory = File(project.workingDirectory)
-        if (!workingDirectory.exists()) {
-            workingDirectory.mkdir()
-        }
-        val projectContent = toJson(project)
-        project.projectFile.writeText(projectContent)
+fun saveProjectFile(project: Project) {
+    val workingDirectory = File(project.workingDirectory)
+    if (!workingDirectory.exists()) {
+        workingDirectory.mkdir()
     }
+    val projectContent = toJson(project)
+    project.projectFile.writeText(projectContent)
+    println("Saved project")
 }

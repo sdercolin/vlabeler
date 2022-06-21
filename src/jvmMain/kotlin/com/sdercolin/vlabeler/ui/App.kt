@@ -22,6 +22,7 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
+import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.labeler.LabelerState
 import com.sdercolin.vlabeler.util.update
@@ -99,5 +100,6 @@ private fun handleDialogResult(
     when (result) {
         is SetResolutionDialogResult -> labelerState.update { changeResolution(result.newValue) }
         is AskIfSaveDialogResult -> appState.update { takeAskIfSaveResult(result) }
+        is JumpToEntryDialogArgsResult -> appState.update { jumpToEntry(result.sampleName, result.index) }
     }
 }

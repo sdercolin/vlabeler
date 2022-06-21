@@ -14,7 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.theme.Black50
 
-sealed interface EmbeddedDialogArgs
+sealed interface EmbeddedDialogArgs {
+    val customMargin: Boolean
+    val cancellableOnClickOutside: Boolean
+}
+
 sealed interface EmbeddedDialogResult
 
 @Composable
@@ -25,15 +29,19 @@ fun EmbeddedDialog(args: EmbeddedDialogArgs, submit: (EmbeddedDialogResult?) -> 
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = {},
+                onClick = { if (args.cancellableOnClickOutside) submit(null) },
             ),
         contentAlignment = Alignment.Center
     ) {
         Surface {
-            Box(modifier = Modifier.padding(horizontal = 50.dp, vertical = 20.dp)) {
+            Box(
+                modifier = Modifier
+                    .run { if (!args.customMargin) padding(horizontal = 50.dp, vertical = 20.dp) else this }
+            ) {
                 when (args) {
                     is SetResolutionDialogArgs -> SetResolutionDialog(args, submit)
                     is AskIfSaveDialogPurpose -> AskIfSaveDialog(args, submit)
+                    is JumpToEntryDialogArgs -> JumpToEntryDialog(args, submit)
                 }
             }
         }

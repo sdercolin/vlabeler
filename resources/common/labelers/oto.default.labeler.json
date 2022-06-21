@@ -57,7 +57,7 @@
   ],
   "lockedDrag": {
     "useDragBase": true,
-    "useStart": true
+    "useStart": false
   },
   "parser": {
     "defaultEncoding": "Shift-JIS",

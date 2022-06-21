@@ -27,7 +27,13 @@ enum class AskIfSaveDialogPurpose(
     IsOpening(Strings.AskIfSaveBeforeOpenDialogDescription, AppState.PendingActionAfterSaved.Open),
     IsExporting(Strings.AskIfSaveBeforeExportDialogDescription, AppState.PendingActionAfterSaved.Export),
     IsClosing(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close),
-    IsExiting(Strings.AskIfSaveBeforeExitDialogDescription, AppState.PendingActionAfterSaved.Exit),
+    IsExiting(Strings.AskIfSaveBeforeExitDialogDescription, AppState.PendingActionAfterSaved.Exit);
+
+    override val customMargin: Boolean
+        get() = false
+
+    override val cancellableOnClickOutside: Boolean
+        get() = false
 }
 
 data class AskIfSaveDialogResult(

@@ -24,7 +24,14 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
-data class SetResolutionDialogArgs(val current: Int, val min: Int, val max: Int) : EmbeddedDialogArgs
+data class SetResolutionDialogArgs(val current: Int, val min: Int, val max: Int) : EmbeddedDialogArgs {
+    override val customMargin: Boolean
+        get() = false
+
+    override val cancellableOnClickOutside: Boolean
+        get() = false
+}
+
 data class SetResolutionDialogResult(val newValue: Int) : EmbeddedDialogResult
 
 @Composable
