@@ -99,6 +99,11 @@ fun FrameWindowScope.Menu(
                 enabled = appState.value.isEditorActive
             )
             Item(
+                string(Strings.MenuEditRemoveEntry),
+                onClick = { appState.update { confirmIfRemoveCurrentEntry() } },
+                enabled = appState.value.isEditorActive && appState.value.canRemoveCurrentEntry
+            )
+            Item(
                 string(Strings.MenuEditJumpToEntry),
                 shortcut = getKeyShortCut(Key.G, ctrl = true),
                 onClick = { appState.update { openJumpToEntryDialog() } },

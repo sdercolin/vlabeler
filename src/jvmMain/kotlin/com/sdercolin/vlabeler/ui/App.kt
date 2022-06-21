@@ -21,6 +21,8 @@ import com.sdercolin.vlabeler.env.shouldGoPreviousSample
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
+import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
+import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
@@ -114,6 +116,9 @@ private fun handleDialogResult(
             } else {
                 renameEntry(result.sampleName, result.index, result.name)
             }
+        }
+        is CommonConfirmationDialogResult -> when (result.action) {
+            CommonConfirmationDialogAction.RemoveCurrentEntry -> appState.update { removeCurrentEntry() }
         }
     }
 }

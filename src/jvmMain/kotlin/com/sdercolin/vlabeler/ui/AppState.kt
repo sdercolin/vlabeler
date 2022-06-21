@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
+import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
@@ -110,8 +111,8 @@ data class AppState(
         val entry = project.currentEntry
         val invalidOptions = project.allEntries.map { it.name }
             .run { if (!duplicate) minus(entry.name) else this }
-        return copy(
-            embeddedDialog = EditEntryNameDialogArgs(
+        return openEmbeddedDialog(
+            EditEntryNameDialogArgs(
                 sampleName = sampleName,
                 index = index,
                 initial = entry.name,
@@ -135,6 +136,14 @@ data class AppState(
                 .copy(currentEntryIndex = entryIndex + 1)
         }
     }
+
+    val canRemoveCurrentEntry
+        get() = project?.let {
+            it.entriesBySampleName.getValue(it.currentSampleName).size > 1
+        } == true
+
+    fun confirmIfRemoveCurrentEntry() = openEmbeddedDialog(CommonConfirmationDialogAction.RemoveCurrentEntry)
+    fun removeCurrentEntry() = editProject { removeCurrentEntry() }
 
     fun projectContentChanged() = copy(projectWriteStatus = ProjectWriteStatus.Changed)
     fun projectPathChanged() = copy(projectWriteStatus = ProjectWriteStatus.Updated)

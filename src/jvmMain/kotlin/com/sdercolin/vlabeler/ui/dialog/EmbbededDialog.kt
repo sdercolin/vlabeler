@@ -43,6 +43,7 @@ fun EmbeddedDialog(args: EmbeddedDialogArgs, submit: (EmbeddedDialogResult?) -> 
                     is AskIfSaveDialogPurpose -> AskIfSaveDialog(args, submit)
                     is JumpToEntryDialogArgs -> JumpToEntryDialog(args, submit)
                     is EditEntryNameDialogArgs -> EditEntryNameDialog(args, submit)
+                    is CommonConfirmationDialogAction -> CommonConfirmationDialog(args, submit)
                 }
             }
         }

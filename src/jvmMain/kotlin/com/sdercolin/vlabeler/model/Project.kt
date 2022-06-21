@@ -67,6 +67,15 @@ data class Project(
         return copy(entriesBySampleName = map.toMap())
     }
 
+    fun removeCurrentEntry(): Project {
+        val map = entriesBySampleName.toMutableMap()
+        val entries = map.getValue(currentSampleName).toMutableList()
+        entries.removeAt(currentEntryIndex)
+        val newIndex = currentEntryIndex.coerceAtMost(entries.lastIndex)
+        map[currentSampleName] = entries.toList()
+        return copy(entriesBySampleName = map.toMap(), currentEntryIndex = newIndex)
+    }
+
     fun nextEntry() = switchEntry(reverse = false)
     fun previousEntry() = switchEntry(reverse = true)
     private fun switchEntry(reverse: Boolean): Project? {

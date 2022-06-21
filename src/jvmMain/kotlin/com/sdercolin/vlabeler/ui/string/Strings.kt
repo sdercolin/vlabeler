@@ -45,6 +45,9 @@ enum class Strings(val en: String) {
     MenuEditDuplicateEntry(
         en = "Duplicate current entry..."
     ),
+    MenuEditRemoveEntry(
+        en = "Remove current entry"
+    ),
     MenuEditJumpToEntry(
         en = "Go to entry..."
     ),
@@ -134,6 +137,9 @@ enum class Strings(val en: String) {
     ),
     EditEntryNameDialogExistingError(
         en = "The name you input already exists."
+    ),
+    AskIfRemoveEntryDialogDescription(
+        en = "Removing current entry..."
     ),
     EmptySampleDirectoryException(
         en = "Could not create project because no sample files are found in the given sample directory."
