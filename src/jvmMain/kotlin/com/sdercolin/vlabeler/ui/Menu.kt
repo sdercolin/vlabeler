@@ -54,6 +54,18 @@ fun FrameWindowScope.Menu(
         }
         Menu(string(Strings.MenuEdit), mnemonic = 'E') {
             Item(
+                string(Strings.MenuUndo),
+                shortcut = getKeyShortCut(Key.Z, ctrl = true),
+                onClick = { appState.update { undo() } },
+                enabled = appState.value.history.canUndo
+            )
+            Item(
+                string(Strings.MenuRedo),
+                shortcut = getKeyShortCut(Key.Z, ctrl = true, shift = true),
+                onClick = { appState.update { redo() } },
+                enabled = appState.value.history.canRedo
+            )
+            Item(
                 string(Strings.MenuJumpToEntry),
                 shortcut = getKeyShortCut(Key.G, ctrl = true),
                 onClick = { appState.update { openJumpToEntryDialog() } },

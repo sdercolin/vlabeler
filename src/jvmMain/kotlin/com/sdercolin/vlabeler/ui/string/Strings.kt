@@ -33,6 +33,12 @@ enum class Strings(val en: String) {
     MenuEdit(
         en = "Edit"
     ),
+    MenuUndo(
+        en = "Undo"
+    ),
+    MenuRedo(
+        en = "Redo"
+    ),
     MenuJumpToEntry(
         en = "Go to entry..."
     ),
@@ -110,9 +116,6 @@ enum class Strings(val en: String) {
     ),
     AskIfSaveBeforeExitDialogDescription(
         en = "You have unsaved changes. Do you want to save them before exiting?"
-    ),
-    JumpToEntryDialogSearchPlaceholder(
-        en = "Search for entry..."
     ),
     EmptySampleDirectoryException(
         en = "Could not create project because no sample files are found in the given sample directory."

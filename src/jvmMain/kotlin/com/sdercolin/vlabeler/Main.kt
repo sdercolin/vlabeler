@@ -16,6 +16,7 @@ import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.shouldTogglePlayer
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.Menu
@@ -44,6 +45,7 @@ fun main() = application {
     val player = remember { Player(mainScope, playerState) }
     val keyboardViewModel = remember { KeyboardViewModel(mainScope) }
     val appState = remember { mutableStateOf(AppState()) }
+    val projectHistory = remember { ProjectHistory() }
 
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect { event ->

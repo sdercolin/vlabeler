@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.ui
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
@@ -10,6 +11,7 @@ import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 @Immutable
 data class AppState(
     val project: Project? = null,
+    val history: ProjectHistory = ProjectHistory(),
     val isConfiguringNewProject: Boolean = false,
     val isShowingOpenProjectDialog: Boolean = false,
     val isShowingSaveAsProjectDialog: Boolean = false,
@@ -28,9 +30,22 @@ data class AppState(
 ) {
 
     val hasProject get() = project != null
-    fun openProject(project: Project) = AppState(project = project)
+    fun openProject(project: Project) = AppState(project = project, history = history.new(project))
     private fun closeProject() = AppState()
-    fun editProject(editor: Project.() -> Project) = copy(project = project!!.editor())
+    fun editProject(editor: Project.() -> Project): AppState {
+        val edited = project!!.editor()
+        return copy(project = edited, history = history.push(edited))
+    }
+
+    fun undo(): AppState {
+        val history = history.undo()
+        return copy(project = history.current, history = history)
+    }
+
+    fun redo(): AppState {
+        val history = history.redo()
+        return copy(project = history.current, history = history)
+    }
 
     fun configureNewProject() = copy(isConfiguringNewProject = true)
     fun stopConfiguringNewProject() = copy(isConfiguringNewProject = false)
@@ -79,12 +94,12 @@ data class AppState(
 
     fun openJumpToEntryDialog() = copy(embeddedDialog = JumpToEntryDialogArgs(project!!))
 
-    fun jumpToEntry(sampleName: String, entryIndex: Int) = copy(
-        project = project!!.copy(
+    fun jumpToEntry(sampleName: String, entryIndex: Int) = editProject {
+        project!!.copy(
             currentSampleName = sampleName,
             currentEntryIndex = entryIndex
         )
-    )
+    }
 
     fun projectContentChanged() = copy(projectWriteStatus = ProjectWriteStatus.Changed)
     fun projectPathChanged() = copy(projectWriteStatus = ProjectWriteStatus.Updated)
