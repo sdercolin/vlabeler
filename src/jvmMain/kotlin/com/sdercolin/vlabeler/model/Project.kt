@@ -87,9 +87,7 @@ data class Project(
             } else {
                 entriesBySampleName.getValue(currentSampleName).lastIndex
             }
-            if (currentEntryIndex == entryBorderIndex) return null
-            val targetIndex = currentEntryIndex + (if (reverse) -1 else 1)
-            return copy(currentEntryIndex = targetIndex)
+            return copy(currentEntryIndex = entryBorderIndex)
         }
         val targetIndex = currentIndex + (if (reverse) -1 else 1)
         val targetName = sampleNames[targetIndex]
