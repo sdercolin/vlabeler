@@ -87,6 +87,7 @@ fun MarkerCanvas(
     sampleLengthMillis: Float,
     isBusy: Boolean,
     editEntry: (Entry) -> Unit,
+    submitEntry: () -> Unit,
     playSampleSection: (Float, Float) -> Unit,
     appConf: AppConf,
     labelerConf: LabelerConf,
@@ -109,6 +110,7 @@ fun MarkerCanvas(
         waveformsHeightRatio,
         isBusy,
         editEntry,
+        submitEntry,
         playSampleSection,
         labelerConf,
         canvasHeightState,
@@ -126,6 +128,7 @@ private fun FieldBorderCanvas(
     waveformsHeightRatio: Float,
     isBusy: Boolean,
     editEntry: (Entry) -> Unit,
+    submitEntry: () -> Unit,
     playSampleSection: (Float, Float) -> Unit,
     labelerConf: LabelerConf,
     canvasHeightState: MutableState<Float>,
@@ -159,13 +162,14 @@ private fun FieldBorderCanvas(
             .onPointerEvent(PointerEventType.Release) { event ->
                 if (isBusy) return@onPointerEvent
                 handleMouseRelease(
-                    keyboardState,
                     event,
                     entryInPixel,
-                    entryConverter,
-                    canvasParams,
+                    submitEntry,
                     playSampleSection,
-                    state
+                    canvasParams,
+                    state,
+                    keyboardState,
+                    entryConverter
                 )
             }
     ) {
@@ -364,13 +368,14 @@ private fun handleMousePress(
 }
 
 private fun handleMouseRelease(
-    keyboardState: KeyboardState,
     event: PointerEvent,
     entryInPixel: EntryInPixel,
-    entryConverter: EntryConverter,
-    canvasParams: CanvasParams,
+    submitEntry: () -> Unit,
     playSampleSection: (Float, Float) -> Unit,
-    state: MutableState<MarkerState>
+    canvasParams: CanvasParams,
+    state: MutableState<MarkerState>,
+    keyboardState: KeyboardState,
+    entryConverter: EntryConverter
 ) {
     if (keyboardState.isCtrlPressed) {
         val x = event.changes.first().position.x
@@ -382,6 +387,7 @@ private fun handleMouseRelease(
             playSampleSection(start, end)
         }
     } else {
+        submitEntry()
         state.update { finishDragging() }
     }
 }

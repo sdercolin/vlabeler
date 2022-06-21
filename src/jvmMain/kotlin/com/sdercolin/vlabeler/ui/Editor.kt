@@ -72,8 +72,14 @@ fun Editor(
     val keyboardState by keyboardViewModel.keyboardStateFlow.collectAsState()
     val sample = sampleState.value
 
-    LaunchSwitchEntryFromUpstreamState(project, appState, editEntry, editedEntryState)
-    LaunchSubmitEditedEntryWhenSaveRequested(appState, editEntry, editedEntryState)
+    val submitEntry = {
+        if (editedEntryState.value.entry != project.currentEntry) {
+            println("Submit entry")
+            editEntry(editedEntryState.value)
+        }
+    }
+
+    LaunchSwitchEntryFromUpstreamState(project, editedEntryState)
     LaunchChangeResolutionByKeyEvent(keyboardViewModel, appState, appConf, labelerState)
     LaunchLoadSampleByPlayer(sample, player)
 
@@ -91,10 +97,8 @@ fun Editor(
             entry = editedEntryState.value.entry,
             currentEntryIndexInTotal = project.currentEntryIndexInTotal,
             totalEntryCount = project.totalEntryCount,
-            editEntry = {
-                editedEntryState.update { edit(it) }
-                appState.update { localEntryEdited() }
-            },
+            editEntry = { editedEntryState.update { edit(it) } },
+            submitEntry = submitEntry,
             playSampleSection = player::playSection,
             showDialog = showDialog,
             appConf = appConf,
@@ -112,36 +116,14 @@ fun Editor(
 @Composable
 private fun LaunchSwitchEntryFromUpstreamState(
     project: Project,
-    appState: MutableState<AppState>,
-    editEntry: (EditedEntry) -> Unit,
     editedEntryState: MutableState<EditedEntry>
 ) {
-    LaunchedEffect(project.currentSampleName, project.currentEntryIndex) {
-        // when switched to a new entry, merge the edited entry and load the new one
-        val edited = appState.value.hasEditedEntry
-        if (edited) {
-            println("Previous entry merged")
-            editEntry(editedEntryState.value)
+    LaunchedEffect(project.currentEntryIndexInTotal, project.currentEntry) {
+        val newValue = project.getEntryForEditing()
+        if (newValue != editedEntryState.value) {
+            println("Load new entry")
+            editedEntryState.value = newValue
         }
-        println("Entry loaded")
-        editedEntryState.value = project.getEntryForEditing()
-        if (edited) appState.update { editedEntryMerged() }
-    }
-}
-
-@Composable
-private fun LaunchSubmitEditedEntryWhenSaveRequested(
-    appState: MutableState<AppState>,
-    editEntry: (EditedEntry) -> Unit,
-    editedEntryState: MutableState<EditedEntry>
-) {
-    LaunchedEffect(appState.value.projectWriteStatus) {
-        if (appState.value.projectWriteStatus != AppState.ProjectWriteStatus.UpdateRequested) return@LaunchedEffect
-        if (appState.value.hasEditedEntry.not()) return@LaunchedEffect
-        // when saving is requested, merge the edited entry first
-        println("Entry Merged")
-        editEntry(editedEntryState.value)
-        appState.update { editedEntryMerged() }
     }
 }
 

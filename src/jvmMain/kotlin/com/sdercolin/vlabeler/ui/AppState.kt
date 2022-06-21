@@ -22,10 +22,6 @@ data class AppState(
      * Describes the update status between [Project] state and project file
      */
     val projectWriteStatus: ProjectWriteStatus = ProjectWriteStatus.Updated,
-    /**
-     * True if the editor has not saved its changes on the current entry to the [Project] state
-     */
-    val hasEditedEntry: Boolean = false,
     val shouldExit: Boolean = false,
 ) {
 
@@ -65,7 +61,7 @@ data class AppState(
 
     fun requestCloseProject() = if (hasUnsavedChanges) askIfSaveBeforeCloseProject() else closeProject()
     private fun askIfSaveBeforeCloseProject() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsClosing)
-    val hasUnsavedChanges get() = projectWriteStatus == ProjectWriteStatus.Changed || hasEditedEntry
+    val hasUnsavedChanges get() = projectWriteStatus == ProjectWriteStatus.Changed
 
     fun requestSave(pendingAction: PendingActionAfterSaved? = null) =
         copy(
@@ -103,9 +99,6 @@ data class AppState(
 
     fun projectContentChanged() = copy(projectWriteStatus = ProjectWriteStatus.Changed)
     fun projectPathChanged() = copy(projectWriteStatus = ProjectWriteStatus.Updated)
-
-    fun localEntryEdited() = copy(hasEditedEntry = true)
-    fun editedEntryMerged() = copy(hasEditedEntry = false)
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
     private fun askIfSaveBeforeExit() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsExiting)

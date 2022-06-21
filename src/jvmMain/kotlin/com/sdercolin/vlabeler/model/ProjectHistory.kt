@@ -21,18 +21,18 @@ data class ProjectHistory(
         }
 
     private fun List<Project>.squashLatest(): List<Project> {
-        if (size < 2) return this
-        val (prev, last) = takeLast(2)
-        return if (
-            prev.copy(
-                currentSampleName = last.currentSampleName,
-                currentEntryIndex = last.currentEntryIndex
-            ) == last
-        ) {
+        if (size < 3) return this
+        val (first, second, last) = takeLast(3)
+        return if (first.contentEquals(second) && second.contentEquals(last)) {
             // only index changed, remove the previous one
             dropLast(2) + last
         } else this
     }
+
+    private fun Project.contentEquals(other: Project) = copy(
+        currentSampleName = other.currentSampleName,
+        currentEntryIndex = other.currentEntryIndex
+    ) == other
 
     fun undo() = copy(index = index.minus(1).coerceAtLeast(0))
 

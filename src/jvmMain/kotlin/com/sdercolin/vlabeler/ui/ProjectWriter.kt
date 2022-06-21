@@ -11,10 +11,8 @@ import java.io.File
 @Composable
 fun ProjectWriter(appState: MutableState<AppState>) {
     val writtenStatus = appState.value.projectWriteStatus
-    val hasEditedEntry = appState.value.hasEditedEntry
-    LaunchedEffect(writtenStatus, hasEditedEntry) {
+    LaunchedEffect(writtenStatus) {
         if (writtenStatus != AppState.ProjectWriteStatus.UpdateRequested) return@LaunchedEffect
-        if (hasEditedEntry) return@LaunchedEffect
         val project = appState.value.project ?: return@LaunchedEffect
         saveProjectFile(project)
         appState.update { saved() }
