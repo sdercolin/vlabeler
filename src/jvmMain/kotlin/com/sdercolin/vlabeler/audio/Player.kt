@@ -44,7 +44,7 @@ class Player(
             clip.close()
         }
         this.file = file
-        clip.open(AudioSystem.getAudioInputStream(file))
+        AudioSystem.getAudioInputStream(file).use { clip.open(it) }
     }
 
     fun toggle() {
@@ -94,7 +94,7 @@ class Player(
     private fun reset() {
         println("Player::reset()")
         clip.close()
-        clip.open(AudioSystem.getAudioInputStream(file))
+        AudioSystem.getAudioInputStream(file).use { clip.open(it) }
         clip.framePosition = 0
         framePosition = 0
     }
