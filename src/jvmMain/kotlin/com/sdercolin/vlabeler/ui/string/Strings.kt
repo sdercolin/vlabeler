@@ -13,19 +13,19 @@ enum class Strings(val en: String) {
         en = "File"
     ),
     MenuFileNewProject(
-        en = "New project"
+        en = "New project..."
     ),
     MenuFileOpen(
-        en = "Open"
+        en = "Open..."
     ),
     MenuFileSave(
         en = "Save"
     ),
     MenuFileSaveAs(
-        en = "Save as"
+        en = "Save as..."
     ),
     MenuFileExport(
-        en = "Export"
+        en = "Export..."
     ),
     MenuFileClose(
         en = "Close"
