@@ -3,6 +3,7 @@
 package com.sdercolin.vlabeler.ui.labeler.marker
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.requiredSize
@@ -11,6 +12,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +38,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.labeler.CanvasParams
+import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.EndPointIndex
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.NonePointIndex
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.StartPointIndex
@@ -93,7 +96,9 @@ fun MarkerCanvas(
     labelerConf: LabelerConf,
     canvasParams: CanvasParams,
     sampleRate: Float,
-    keyboardViewModel: KeyboardViewModel
+    horizontalScrollState: ScrollState,
+    keyboardViewModel: KeyboardViewModel,
+    scrollFitViewModel: ScrollFitViewModel
 ) {
     val entryConverter = EntryConverter(sampleRate, canvasParams.resolution)
     val entryInPixel = entryConverter.convertToPixel(entry, sampleLengthMillis).validate(canvasParams.lengthInPixel)
@@ -119,6 +124,7 @@ fun MarkerCanvas(
         entryConverter
     )
     FieldLabelCanvas(canvasParams, waveformsHeightRatio, state.value, labelerConf, entryInPixel)
+    LaunchAdjustScrollPosition(entryInPixel, canvasParams.lengthInPixel, horizontalScrollState, scrollFitViewModel)
 }
 
 @Composable
@@ -389,5 +395,23 @@ private fun handleMouseRelease(
     } else {
         submitEntry()
         state.update { finishDragging() }
+    }
+}
+
+@Composable
+private fun LaunchAdjustScrollPosition(
+    entryInPixel: EntryInPixel,
+    canvasLength: Int,
+    horizontalScrollState: ScrollState,
+    scrollFitViewModel: ScrollFitViewModel
+) {
+    LaunchedEffect(entryInPixel.name, canvasLength, horizontalScrollState.maxValue) {
+        val scrollMax = horizontalScrollState.maxValue
+        val screenLength = canvasLength.toFloat() - scrollMax
+        val start = entryInPixel.start
+        val end = entryInPixel.end
+        val center = (start + end) / 2
+        val target = (center - screenLength / 2).toInt().coerceIn(0 until scrollMax)
+        scrollFitViewModel.update(target)
     }
 }

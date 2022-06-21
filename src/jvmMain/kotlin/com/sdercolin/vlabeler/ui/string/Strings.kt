@@ -33,14 +33,17 @@ enum class Strings(val en: String) {
     MenuEdit(
         en = "Edit"
     ),
-    MenuUndo(
+    MenuEditUndo(
         en = "Undo"
     ),
-    MenuRedo(
+    MenuEditRedo(
         en = "Redo"
     ),
-    MenuJumpToEntry(
+    MenuEditJumpToEntry(
         en = "Go to entry..."
+    ),
+    MenuEditScrollFit(
+        en = "Scroll to editable area"
     ),
     CommonOkay(
         en = "OK"

@@ -23,6 +23,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogArgs
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.util.update
+import kotlinx.coroutines.flow.collectLatest
 
 @Immutable
 data class LabelerState(val canvasResolution: Int) {
@@ -59,11 +61,18 @@ fun Labeler(
     labelerConf: LabelerConf,
     labelerState: MutableState<LabelerState>,
     playerState: PlayerState,
-    keyboardViewModel: KeyboardViewModel
+    keyboardViewModel: KeyboardViewModel,
+    scrollFitViewModel: ScrollFitViewModel
 ) {
     val isBusy = sample == null
     val horizontalScrollState = rememberScrollState(0)
     val currentResolution = labelerState.value.canvasResolution
+
+    LaunchedEffect(Unit) {
+        scrollFitViewModel.eventFlow.collectLatest {
+            horizontalScrollState.animateScrollTo(it)
+        }
+    }
 
     Column(Modifier.fillMaxSize()) {
         EntryTitleBar(entryName = entry.name, sampleName = sampleName)
@@ -72,15 +81,16 @@ fun Labeler(
                 sample = sample,
                 entry = entry,
                 isBusy = isBusy,
-                resolution = currentResolution,
                 editEntry = editEntry,
                 submitEntry = submitEntry,
                 playSampleSection = playSampleSection,
                 appConf = appConf,
                 labelerConf = labelerConf,
+                resolution = currentResolution,
                 playerState = playerState,
                 horizontalScrollState = horizontalScrollState,
-                keyboardViewModel = keyboardViewModel
+                keyboardViewModel = keyboardViewModel,
+                scrollFitViewModel = scrollFitViewModel
             )
         }
         HorizontalScrollbar(

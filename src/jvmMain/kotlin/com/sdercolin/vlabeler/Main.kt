@@ -16,13 +16,13 @@ import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.shouldTogglePlayer
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.Menu
 import com.sdercolin.vlabeler.ui.ProjectChangesListener
 import com.sdercolin.vlabeler.ui.ProjectWriter
 import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
+import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
@@ -44,8 +44,8 @@ fun main() = application {
     val playerState = remember { mutableStateOf(PlayerState()) }
     val player = remember { Player(mainScope, playerState) }
     val keyboardViewModel = remember { KeyboardViewModel(mainScope) }
+    val scrollFitViewModel = remember { ScrollFitViewModel(mainScope) }
     val appState = remember { mutableStateOf(AppState()) }
-    val projectHistory = remember { ProjectHistory() }
 
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect { event ->
@@ -65,7 +65,7 @@ fun main() = application {
         onCloseRequest = { appState.update { requestExit() } },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
-        Menu(appState)
+        Menu(appState, scrollFitViewModel)
         AppTheme {
             App(
                 mainScope,
@@ -74,6 +74,7 @@ fun main() = application {
                 appState,
                 playerState.value,
                 keyboardViewModel,
+                scrollFitViewModel,
                 player
             )
         }

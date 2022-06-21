@@ -25,6 +25,7 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.labeler.LabelerState
+import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -37,6 +38,7 @@ fun App(
     appState: MutableState<AppState>,
     playerState: PlayerState,
     keyboardViewModel: KeyboardViewModel,
+    scrollFitViewModel: ScrollFitViewModel,
     player: Player
 ) {
     val labelerState = remember(appConf.painter.canvasResolution.default) {
@@ -69,6 +71,7 @@ fun App(
                 appState = appState,
                 playerState = playerState,
                 keyboardViewModel = keyboardViewModel,
+                scrollFitViewModel = scrollFitViewModel,
                 player = player
             )
         } else {

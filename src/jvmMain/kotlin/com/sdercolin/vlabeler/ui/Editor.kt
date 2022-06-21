@@ -36,6 +36,7 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.labeler.Labeler
 import com.sdercolin.vlabeler.ui.labeler.LabelerState
+import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -60,6 +61,7 @@ fun Editor(
     appState: MutableState<AppState>,
     playerState: PlayerState,
     keyboardViewModel: KeyboardViewModel,
+    scrollFitViewModel: ScrollFitViewModel,
     player: Player
 ) {
     val sampleState = produceState(initialValue = null as Sample?, project.currentSampleName, appConf) {
@@ -105,7 +107,8 @@ fun Editor(
             labelerConf = project.labelerConf,
             labelerState = labelerState,
             playerState = playerState,
-            keyboardViewModel = keyboardViewModel
+            keyboardViewModel = keyboardViewModel,
+            scrollFitViewModel = scrollFitViewModel
         )
     }
     if (isLoading) {

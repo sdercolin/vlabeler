@@ -8,6 +8,7 @@ import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.env.isMacOS
+import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.update
@@ -15,7 +16,8 @@ import com.sdercolin.vlabeler.util.update
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FrameWindowScope.Menu(
-    appState: MutableState<AppState>
+    appState: MutableState<AppState>,
+    scrollFitViewModel: ScrollFitViewModel
 ) {
     MenuBar {
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
@@ -54,21 +56,27 @@ fun FrameWindowScope.Menu(
         }
         Menu(string(Strings.MenuEdit), mnemonic = 'E') {
             Item(
-                string(Strings.MenuUndo),
+                string(Strings.MenuEditUndo),
                 shortcut = getKeyShortCut(Key.Z, ctrl = true),
                 onClick = { appState.update { undo() } },
                 enabled = appState.value.history.canUndo
             )
             Item(
-                string(Strings.MenuRedo),
+                string(Strings.MenuEditRedo),
                 shortcut = getKeyShortCut(Key.Z, ctrl = true, shift = true),
                 onClick = { appState.update { redo() } },
                 enabled = appState.value.history.canRedo
             )
             Item(
-                string(Strings.MenuJumpToEntry),
+                string(Strings.MenuEditJumpToEntry),
                 shortcut = getKeyShortCut(Key.G, ctrl = true),
                 onClick = { appState.update { openJumpToEntryDialog() } },
+                enabled = appState.value.isEditorActive
+            )
+            Item(
+                string(Strings.MenuEditScrollFit),
+                shortcut = getKeyShortCut(Key.F),
+                onClick = { scrollFitViewModel.emit() },
                 enabled = appState.value.isEditorActive
             )
         }

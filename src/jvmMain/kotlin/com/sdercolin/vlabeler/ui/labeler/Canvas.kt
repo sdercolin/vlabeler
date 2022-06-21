@@ -16,10 +16,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -59,28 +57,25 @@ fun Canvas(
     resolution: Int,
     playerState: PlayerState,
     horizontalScrollState: ScrollState,
-    keyboardViewModel: KeyboardViewModel
+    keyboardViewModel: KeyboardViewModel,
+    scrollFitViewModel: ScrollFitViewModel
 ) {
     val currentDensity = LocalDensity.current
 
-    var localSample by remember { mutableStateOf(sample) }
-    LaunchedEffect(sample) {
-        if (sample != null) localSample = sample
-    }
-    localSample?.let { nonNullSample ->
-        val chunkCount = remember(nonNullSample, appConf) {
-            ceil(nonNullSample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
+    if (sample != null) {
+        val chunkCount = remember(sample, appConf) {
+            ceil(sample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
         }
-        val canvasParams = CanvasParams(nonNullSample.wave.length, resolution, currentDensity)
+        val canvasParams = CanvasParams(sample.wave.length, resolution, currentDensity)
         Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
             Column(Modifier.fillMaxSize()) {
-                val weightOfEachChannel = 1f / nonNullSample.wave.channels.size
-                nonNullSample.wave.channels.forEach { channel ->
+                val weightOfEachChannel = 1f / sample.wave.channels.size
+                sample.wave.channels.forEach { channel ->
                     Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
                         Waveforms(appConf, canvasParams, channel, chunkCount)
                     }
                 }
-                nonNullSample.spectrogram?.let {
+                sample.spectrogram?.let {
                     Box(Modifier.weight(appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
                         Spectrogram(canvasParams, it, chunkCount)
                     }
@@ -88,7 +83,7 @@ fun Canvas(
             }
             MarkerCanvas(
                 entry = entry,
-                sampleLengthMillis = nonNullSample.info.lengthMillis,
+                sampleLengthMillis = sample.info.lengthMillis,
                 isBusy = isBusy,
                 editEntry = editEntry,
                 submitEntry = submitEntry,
@@ -96,8 +91,10 @@ fun Canvas(
                 appConf = appConf,
                 labelerConf = labelerConf,
                 canvasParams = canvasParams,
-                sampleRate = nonNullSample.info.sampleRate,
-                keyboardViewModel = keyboardViewModel
+                sampleRate = sample.info.sampleRate,
+                horizontalScrollState = horizontalScrollState,
+                keyboardViewModel = keyboardViewModel,
+                scrollFitViewModel = scrollFitViewModel
             )
             if (playerState.isPlaying) {
                 PlayerCursor(canvasParams, playerState)
