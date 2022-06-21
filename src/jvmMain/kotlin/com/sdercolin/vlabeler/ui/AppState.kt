@@ -87,7 +87,8 @@ data class AppState(
     private fun exit() = copy(shouldExit = true)
 
     val isEditorActive
-        get() = !isConfiguringNewProject &&
+        get() = project != null &&
+            !isConfiguringNewProject &&
             !isShowingOpenProjectDialog &&
             !isShowingSaveAsProjectDialog &&
             !isShowingExportDialog &&

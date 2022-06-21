@@ -30,6 +30,12 @@ enum class Strings(val en: String) {
     MenuFileClose(
         en = "Close"
     ),
+    MenuEdit(
+        en = "Edit"
+    ),
+    MenuJumpToEntry(
+        en = "Go to entry..."
+    ),
     CommonOkay(
         en = "OK"
     ),

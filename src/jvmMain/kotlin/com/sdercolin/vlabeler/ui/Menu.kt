@@ -52,6 +52,13 @@ fun FrameWindowScope.Menu(
                 enabled = appState.value.hasProject
             )
         }
+        Menu(string(Strings.MenuEdit), mnemonic = 'E', enabled = appState.value.isEditorActive) {
+            Item(
+                string(Strings.MenuJumpToEntry),
+                shortcut = getKeyShortCut(Key.G, ctrl = true),
+                onClick = { },
+            )
+        }
     }
 }
 
