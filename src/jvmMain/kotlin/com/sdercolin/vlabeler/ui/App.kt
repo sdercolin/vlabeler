@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -20,6 +21,7 @@ import com.sdercolin.vlabeler.env.shouldGoPreviousSample
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
+import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
@@ -37,6 +39,7 @@ fun App(
     availableLabelerConfs: List<LabelerConf>,
     appState: MutableState<AppState>,
     playerState: PlayerState,
+    snackbarHostState: SnackbarHostState,
     keyboardViewModel: KeyboardViewModel,
     scrollFitViewModel: ScrollFitViewModel,
     player: Player
@@ -64,7 +67,7 @@ fun App(
             Editor(
                 project = project,
                 editProject = { appState.update { editProject { it } } },
-                editEntry = { appState.update { editProject { updateEntry(it) } } },
+                editEntry = { appState.update { editEntry(it) } },
                 showDialog = { appState.update { openEmbeddedDialog(it) } },
                 appConf = appConf,
                 labelerState = labelerState,
@@ -83,7 +86,8 @@ fun App(
                         appState.update { openProject(it) }
                     }
                 },
-                availableLabelerConfs = availableLabelerConfs
+                availableLabelerConfs = availableLabelerConfs,
+                snackbarHostState = snackbarHostState
             )
         }
         appState.value.embeddedDialog?.let { args ->
@@ -104,5 +108,12 @@ private fun handleDialogResult(
         is SetResolutionDialogResult -> labelerState.update { changeResolution(result.newValue) }
         is AskIfSaveDialogResult -> appState.update { takeAskIfSaveResult(result) }
         is JumpToEntryDialogArgsResult -> appState.update { jumpToEntry(result.sampleName, result.index) }
+        is EditEntryNameDialogResult -> appState.update {
+            if (result.duplicate) {
+                duplicateEntry(result.sampleName, result.index, result.name)
+            } else {
+                renameEntry(result.sampleName, result.index, result.name)
+            }
+        }
     }
 }

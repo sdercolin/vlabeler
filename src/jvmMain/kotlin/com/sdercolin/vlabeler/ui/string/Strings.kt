@@ -39,6 +39,12 @@ enum class Strings(val en: String) {
     MenuEditRedo(
         en = "Redo"
     ),
+    MenuEditRenameEntry(
+        en = "Rename current entry..."
+    ),
+    MenuEditDuplicateEntry(
+        en = "Duplicate current entry..."
+    ),
     MenuEditJumpToEntry(
         en = "Go to entry..."
     ),
@@ -119,6 +125,15 @@ enum class Strings(val en: String) {
     ),
     AskIfSaveBeforeExitDialogDescription(
         en = "You have unsaved changes. Do you want to save them before exiting?"
+    ),
+    EditEntryNameDialogDescription(
+        en = "Rename this entry"
+    ),
+    EditEntryNameDuplicateDialogDescription(
+        en = "Input the name of the new entry"
+    ),
+    EditEntryNameDialogExistingError(
+        en = "The name you input already exists."
     ),
     EmptySampleDirectoryException(
         en = "Could not create project because no sample files are found in the given sample directory."

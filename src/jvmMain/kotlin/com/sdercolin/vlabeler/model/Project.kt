@@ -24,14 +24,14 @@ data class Project(
         get() = File(sampleDirectory).resolve("$currentSampleName.$SampleFileExtension")
 
     val currentEntry: Entry
-        get() = entriesBySampleName.getValue(currentSampleName)[currentEntryIndex]
+        get() = getEntry()
 
     val entriesWithSampleName: List<Pair<Entry, String>>
         get() = entriesBySampleName.flatMap { (sampleName, entries) ->
             entries.map { it to sampleName }
         }
 
-    private val allEntries = entriesBySampleName.flatMap { it.value }
+    val allEntries = entriesBySampleName.flatMap { it.value }
 
     val totalEntryCount: Int
         get() = allEntries.size
@@ -42,10 +42,13 @@ data class Project(
     val projectFile: File
         get() = File(workingDirectory).resolve("$projectName.$ProjectFileExtension")
 
-    fun getEntryForEditing() = EditedEntry(
-        entry = currentEntry,
-        sampleName = currentSampleName,
-        index = currentEntryIndex
+    fun getEntry(sampleName: String = currentSampleName, index: Int = currentEntryIndex) =
+        entriesBySampleName.getValue(sampleName)[index]
+
+    fun getEntryForEditing(sampleName: String = currentSampleName, index: Int = currentEntryIndex) = EditedEntry(
+        entry = getEntry(sampleName, index),
+        sampleName = sampleName,
+        index = index
     )
 
     fun updateEntry(editedEntry: EditedEntry): Project {
@@ -53,6 +56,14 @@ data class Project(
         val entries = map.getValue(editedEntry.sampleName).toMutableList()
         entries[editedEntry.index] = editedEntry.entry
         map[editedEntry.sampleName] = entries.toList()
+        return copy(entriesBySampleName = map.toMap())
+    }
+
+    fun insertEntry(sampleName: String, entry: Entry, position: Int): Project {
+        val map = entriesBySampleName.toMutableMap()
+        val entries = map.getValue(sampleName).toMutableList()
+        entries.add(position, entry)
+        map[sampleName] = entries.toList()
         return copy(entriesBySampleName = map.toMap())
     }
 

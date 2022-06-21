@@ -30,7 +30,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -69,7 +68,8 @@ import java.io.File
 fun BoxScope.Starter(
     appState: MutableState<AppState>,
     requestNewProject: (Project) -> Unit,
-    availableLabelerConfs: List<LabelerConf>
+    availableLabelerConfs: List<LabelerConf>,
+    snackbarHostState: SnackbarHostState
 ) {
     Surface(Modifier.fillMaxSize()) {
         if (!appState.value.isConfiguringNewProject) {
@@ -102,16 +102,21 @@ fun BoxScope.Starter(
             NewProject(
                 create = requestNewProject,
                 cancel = { appState.update { stopConfiguringNewProject() } },
-                availableLabelerConfs = availableLabelerConfs
+                availableLabelerConfs = availableLabelerConfs,
+                snackbarHostState = snackbarHostState
             )
         }
     }
 }
 
 @Composable
-private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableLabelerConfs: List<LabelerConf>) {
+private fun NewProject(
+    create: (Project) -> Unit,
+    cancel: () -> Unit,
+    availableLabelerConfs: List<LabelerConf>,
+    snackbarHostState: SnackbarHostState
+) {
     val coroutineScope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
     var isLoading by remember { mutableStateOf(false) }
     var sampleDirectory by remember { mutableStateOf(HomeDir.absolutePath) }
     var workingDirectory by remember { mutableStateOf(HomeDir.absolutePath) }
@@ -421,7 +426,6 @@ private fun NewProject(create: (Project) -> Unit, cancel: () -> Unit, availableL
         if (isLoading) {
             CircularProgress()
         }
-        SnackbarHost(hostState = snackbarHostState)
     }
 }
 

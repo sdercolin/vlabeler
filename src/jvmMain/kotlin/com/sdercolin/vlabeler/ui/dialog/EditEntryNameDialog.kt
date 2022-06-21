@@ -1,12 +1,12 @@
 package com.sdercolin.vlabeler.ui.dialog
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -24,25 +24,44 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
-data class SetResolutionDialogArgs(val current: Int, val min: Int, val max: Int) : EmbeddedDialogArgs
+data class EditEntryNameDialogArgs(
+    val sampleName: String,
+    val index: Int,
+    val initial: String,
+    val invalidOptions: List<String>,
+    val showSnackbar: (String) -> Unit,
+    val duplicate: Boolean
+) : EmbeddedDialogArgs
 
-data class SetResolutionDialogResult(val newValue: Int) : EmbeddedDialogResult
+data class EditEntryNameDialogResult(
+    val sampleName: String,
+    val index: Int,
+    val name: String,
+    val duplicate: Boolean
+) : EmbeddedDialogResult
 
 @Composable
-fun SetResolutionDialog(
-    args: SetResolutionDialogArgs,
-    finish: (EmbeddedDialogResult?) -> Unit,
+fun EditEntryNameDialog(
+    args: EditEntryNameDialogArgs,
+    finish: (EditEntryNameDialogResult?) -> Unit,
 ) {
     val dismiss = { finish(null) }
-    val submit = { newValue: Int -> finish(SetResolutionDialogResult(newValue)) }
+    val submit = { name: String ->
+        finish(EditEntryNameDialogResult(args.sampleName, args.index, name, args.duplicate))
+    }
 
-    var input by remember { mutableStateOf(args.current.toString()) }
-    var value by remember { mutableStateOf<Int?>(args.current) }
+    var input by remember { mutableStateOf(args.initial) }
 
-    Column {
+    Column(Modifier.widthIn(min = 350.dp)) {
         Spacer(Modifier.height(15.dp))
         Text(
-            text = string(Strings.SetResolutionDialogDescription, args.min, args.max),
+            text = string(
+                if (args.duplicate) {
+                    Strings.EditEntryNameDuplicateDialogDescription
+                } else {
+                    Strings.EditEntryNameDialogDescription
+                }
+            ),
             style = MaterialTheme.typography.body2,
             fontWeight = FontWeight.Bold
         )
@@ -51,15 +70,8 @@ fun SetResolutionDialog(
             modifier = Modifier.width(150.dp),
             value = input,
             singleLine = true,
-            onValueChange = {
-                input = it
-                val intValue = it.toIntOrNull()
-                value = if (intValue != null && intValue in args.min..args.max) {
-                    intValue
-                } else {
-                    null
-                }
-            }
+            isError = args.invalidOptions.contains(input),
+            onValueChange = { input = it }
         )
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
@@ -70,15 +82,16 @@ fun SetResolutionDialog(
             }
             Spacer(Modifier.width(25.dp))
             Button(
-                enabled = value != null,
-                onClick = { input.toIntOrNull()?.let { submit(it) } }
+                onClick = {
+                    if (args.invalidOptions.contains(input)) {
+                        args.showSnackbar(string(Strings.EditEntryNameDialogExistingError))
+                    } else {
+                        submit(input)
+                    }
+                }
             ) {
                 Text(string(Strings.CommonOkay))
             }
         }
     }
 }
-
-@Composable
-@Preview
-private fun Preview() = SetResolutionDialog(SetResolutionDialogArgs(100, 10, 1000)) {}

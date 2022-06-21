@@ -1,11 +1,17 @@
 package com.sdercolin.vlabeler
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
@@ -46,6 +52,7 @@ fun main() = application {
     val keyboardViewModel = remember { KeyboardViewModel(mainScope) }
     val scrollFitViewModel = remember { ScrollFitViewModel(mainScope) }
     val appState = remember { mutableStateOf(AppState()) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect { event ->
@@ -65,7 +72,7 @@ fun main() = application {
         onCloseRequest = { appState.update { requestExit() } },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
-        Menu(appState, scrollFitViewModel)
+        Menu(appState, scrollFitViewModel, snackbarHostState)
         AppTheme {
             App(
                 mainScope,
@@ -73,6 +80,7 @@ fun main() = application {
                 availableLabelerConfs.value,
                 appState,
                 playerState.value,
+                snackbarHostState,
                 keyboardViewModel,
                 scrollFitViewModel,
                 player
@@ -81,6 +89,9 @@ fun main() = application {
         StandaloneDialogs(availableLabelerConfs.value, appState)
         ProjectChangesListener(appState)
         ProjectWriter(appState)
+        Box(Modifier.fillMaxSize()) {
+            SnackbarHost(snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+        }
     }
     LaunchExit(appState, ::exitApplication)
 }

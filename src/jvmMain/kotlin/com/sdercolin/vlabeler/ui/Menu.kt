@@ -1,7 +1,9 @@
 package com.sdercolin.vlabeler.ui
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
@@ -12,13 +14,18 @@ import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.update
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FrameWindowScope.Menu(
     appState: MutableState<AppState>,
-    scrollFitViewModel: ScrollFitViewModel
+    scrollFitViewModel: ScrollFitViewModel,
+    snackbarHostState: SnackbarHostState
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val showSnackbar: (String) -> Unit = { coroutineScope.launch { snackbarHostState.showSnackbar(it) } }
+
     MenuBar {
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
             Item(
@@ -66,6 +73,30 @@ fun FrameWindowScope.Menu(
                 shortcut = getKeyShortCut(Key.Z, ctrl = true, shift = true),
                 onClick = { appState.update { redo() } },
                 enabled = appState.value.history.canRedo
+            )
+            Item(
+                string(Strings.MenuEditRenameEntry),
+                onClick = {
+                    appState.update {
+                        openEditEntryNameDialog(
+                            duplicate = false,
+                            showSnackbar = showSnackbar
+                        )
+                    }
+                },
+                enabled = appState.value.isEditorActive
+            )
+            Item(
+                string(Strings.MenuEditDuplicateEntry),
+                onClick = {
+                    appState.update {
+                        openEditEntryNameDialog(
+                            duplicate = true,
+                            showSnackbar = showSnackbar
+                        )
+                    }
+                },
+                enabled = appState.value.isEditorActive
             )
             Item(
                 string(Strings.MenuEditJumpToEntry),

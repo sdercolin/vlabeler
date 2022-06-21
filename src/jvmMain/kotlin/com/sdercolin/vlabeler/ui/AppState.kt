@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
+import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 
@@ -28,10 +29,13 @@ data class AppState(
     val hasProject get() = project != null
     fun openProject(project: Project) = AppState(project = project, history = history.new(project))
     private fun closeProject() = AppState()
+
     fun editProject(editor: Project.() -> Project): AppState {
         val edited = project!!.editor()
         return copy(project = edited, history = history.push(edited))
     }
+
+    fun editEntry(editedEntry: EditedEntry) = editProject { updateEntry(editedEntry) }
 
     fun undo(): AppState {
         val history = history.undo()
@@ -95,6 +99,41 @@ data class AppState(
             currentSampleName = sampleName,
             currentEntryIndex = entryIndex
         )
+    }
+
+    fun openEditEntryNameDialog(
+        duplicate: Boolean,
+        showSnackbar: (String) -> Unit
+    ): AppState {
+        val sampleName = project!!.currentSampleName
+        val index = project.currentEntryIndex
+        val entry = project.currentEntry
+        val invalidOptions = project.allEntries.map { it.name }
+            .run { if (!duplicate) minus(entry.name) else this }
+        return copy(
+            embeddedDialog = EditEntryNameDialogArgs(
+                sampleName = sampleName,
+                index = index,
+                initial = entry.name,
+                invalidOptions = invalidOptions,
+                showSnackbar = showSnackbar,
+                duplicate = duplicate
+            )
+        )
+    }
+
+    fun renameEntry(sampleName: String, entryIndex: Int, newName: String): AppState {
+        val editedEntry = project!!.getEntryForEditing(sampleName, entryIndex)
+        val renamed = editedEntry.entry.copy(name = newName)
+        return editEntry(editedEntry.edit(renamed))
+    }
+
+    fun duplicateEntry(sampleName: String, entryIndex: Int, newName: String): AppState {
+        val duplicated = project!!.getEntry(sampleName, entryIndex).copy(name = newName)
+        return editProject {
+            insertEntry(sampleName, duplicated, entryIndex + 1)
+                .copy(currentEntryIndex = entryIndex + 1)
+        }
     }
 
     fun projectContentChanged() = copy(projectWriteStatus = ProjectWriteStatus.Changed)

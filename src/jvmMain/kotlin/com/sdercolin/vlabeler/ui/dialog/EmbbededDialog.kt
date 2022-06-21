@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.theme.Black50
 
 sealed interface EmbeddedDialogArgs {
-    val customMargin: Boolean
-    val cancellableOnClickOutside: Boolean
+    val customMargin: Boolean get() = false
+    val cancellableOnClickOutside: Boolean get() = false
 }
 
 sealed interface EmbeddedDialogResult
@@ -42,6 +42,7 @@ fun EmbeddedDialog(args: EmbeddedDialogArgs, submit: (EmbeddedDialogResult?) -> 
                     is SetResolutionDialogArgs -> SetResolutionDialog(args, submit)
                     is AskIfSaveDialogPurpose -> AskIfSaveDialog(args, submit)
                     is JumpToEntryDialogArgs -> JumpToEntryDialog(args, submit)
+                    is EditEntryNameDialogArgs -> EditEntryNameDialog(args, submit)
                 }
             }
         }
