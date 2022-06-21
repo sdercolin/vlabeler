@@ -106,6 +106,7 @@ fun Editor(
             appConf = appConf,
             labelerConf = project.labelerConf,
             labelerState = labelerState,
+            appState = appState,
             playerState = playerState,
             keyboardViewModel = keyboardViewModel,
             scrollFitViewModel = scrollFitViewModel

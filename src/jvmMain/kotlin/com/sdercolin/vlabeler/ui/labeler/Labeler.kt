@@ -35,6 +35,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogArgs
 import com.sdercolin.vlabeler.ui.theme.Black50
@@ -60,6 +61,7 @@ fun Labeler(
     appConf: AppConf,
     labelerConf: LabelerConf,
     labelerState: MutableState<LabelerState>,
+    appState: MutableState<AppState>,
     playerState: PlayerState,
     keyboardViewModel: KeyboardViewModel,
     scrollFitViewModel: ScrollFitViewModel
@@ -111,6 +113,7 @@ fun Labeler(
                     )
                 )
             },
+            openJumpToEntryDialog = { appState.update { openJumpToEntryDialog() } },
             appConf = appConf
         )
     }
@@ -152,6 +155,7 @@ private fun StatusBar(
     resolution: Int,
     onChangeResolution: (Int) -> Unit,
     openSetResolutionDialog: () -> Unit,
+    openJumpToEntryDialog: () -> Unit,
     appConf: AppConf
 ) {
     println("StatusBar: composed")
@@ -161,11 +165,18 @@ private fun StatusBar(
             modifier = Modifier.fillMaxWidth().height(30.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 15.dp),
-                text = "${currentEntryIndexInTotal + 1} / $totalEntryCount",
-                style = MaterialTheme.typography.caption
-            )
+            Box(
+                Modifier.fillMaxHeight()
+                    .clickable { openJumpToEntryDialog() }
+                    .padding(horizontal = 15.dp)
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "${currentEntryIndexInTotal + 1} / $totalEntryCount",
+                    style = MaterialTheme.typography.caption
+                )
+            }
+
             Spacer(Modifier.weight(1f))
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
