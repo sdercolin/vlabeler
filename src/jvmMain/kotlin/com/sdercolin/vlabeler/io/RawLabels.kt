@@ -27,9 +27,9 @@ fun fromRawLabels(
         val start = python.get<Float>("start")
         val end = python.get<Float>("end")
         val points = python.getOrNull<List<Float>>("points") ?: listOf()
-        val sampleName = python.getOrNull<String>("sample") ?: sampleNames.first()
+        val sampleName = python.getOrNull("sample") ?: sampleNames.first()
         val extra = labelerConf.extraFieldNames.mapIndexed { index, extraName ->
-            python.getOrNull<Any>(extraName)?.toString() ?: labelerConf.extraFieldNames[index]
+            python.getOrNull<Any>(extraName)?.toString() ?: labelerConf.defaultExtras[index]
         }
         sampleName to Entry(name = name, start = start, end = end, points = points, extra = extra)
     }
@@ -40,7 +40,7 @@ fun fromRawLabels(
         (
             entriesBySampleName[sampleName]
                 ?.takeUnless { it.isEmpty() }
-                ?: listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues))
+                ?: listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues, labelerConf.defaultExtras))
             )
             .toContinuous(labelerConf.continuous)
     }

@@ -175,7 +175,7 @@ data class Project(
                 fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf, sampleNames)
             } else {
                 sampleNames.associateWith {
-                    listOf(Entry.fromDefaultValues(it, labelerConf.defaultValues))
+                    listOf(Entry.fromDefaultValues(it, labelerConf.defaultValues, labelerConf.defaultExtras))
                 }
             }
 

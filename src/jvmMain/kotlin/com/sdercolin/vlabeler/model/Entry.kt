@@ -27,12 +27,12 @@ data class Entry(
     val extra: List<String>
 ) {
     companion object {
-        fun fromDefaultValues(name: String, defaultValues: List<Float>) = Entry(
+        fun fromDefaultValues(name: String, defaultValues: List<Float>, defaultExtras: List<String>) = Entry(
             name = name,
             start = defaultValues.first(),
             end = defaultValues.last(),
             points = defaultValues.drop(1).dropLast(1),
-            extra = listOf()
+            extra = defaultExtras
         )
     }
 }
