@@ -35,4 +35,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: deb
-        path: /home/runner/work/vlabeler/vlabeler/build/compose/binaries/main/*.deb
+        path: /home/runner/work/vlabeler/vlabeler/build/compose/binaries/main/deb/*.deb
