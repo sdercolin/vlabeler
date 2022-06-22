@@ -46,7 +46,7 @@ compose.desktop {
     application {
         mainClass = "com.sdercolin.vlabeler.MainKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.AppImage)
             packageName = "vLabeler"
             packageVersion = "1.0.0"
             appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
