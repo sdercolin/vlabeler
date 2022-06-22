@@ -33,6 +33,10 @@ data class LabelerConf(
     val author: String = "",
     val description: String = "",
     /**
+     * Continuous mode, where the end of entry is forcedly set to the start of its next entry
+     */
+    val continuous: Boolean = false,
+    /**
      * Default value listed as [start, *fields, end] in millisecond
      */
     val defaultValues: List<Float> = listOf(100f, 200f),

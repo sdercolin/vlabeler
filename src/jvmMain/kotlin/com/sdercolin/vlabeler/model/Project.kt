@@ -143,11 +143,8 @@ data class Project(
             val entriesBySample = if (inputFile != null) {
                 fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf, sampleNames)
             } else {
-                val start = labelerConf.defaultValues.first()
-                val end = labelerConf.defaultValues.last()
-                val fields = labelerConf.defaultValues.drop(1).dropLast(1)
                 sampleNames.associateWith {
-                    listOf(Entry(it, start, end, fields, listOf()))
+                    listOf(Entry.fromDefaultValues(it, labelerConf.defaultValues))
                 }
             }
 

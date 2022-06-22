@@ -6,6 +6,7 @@
   "displayedName": "Sinsy lab labeler",
   "author": "sdercolin",
   "description": "Default labeler for Sinsy lab file",
+  "continuous": true,
   "defaultValues": [
     100,
     500

@@ -15,7 +15,7 @@ fun fromRawLabels(
 ): Map<String, List<Entry>> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
-    return sources.map { source ->
+    val entriesBySampleName = sources.map { source ->
         val groups = source.matchGroups(extractor)
         val python = Python()
         parser.variableNames.mapIndexed { i, name ->
@@ -36,6 +36,24 @@ fun fromRawLabels(
         .groupBy { it.first }
         .map { group -> group.key to group.value.map { it.second } }
         .toMap()
+    return sampleNames.associateWith { sampleName ->
+        (entriesBySampleName[sampleName]
+            ?.takeUnless { it.isEmpty() }
+            ?: listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues)))
+            .toContinuous(labelerConf.continuous)
+    }
+}
+
+private fun List<Entry>.toContinuous(continuous: Boolean): List<Entry> {
+    if (!continuous) return this
+    return this
+        .sortedBy { it.start }
+        .distinctBy { it.start }
+        .let {
+            it.zipWithNext { current, next ->
+                current.copy(end = next.start)
+            }.plus(it.last())
+        }
 }
 
 fun Project.toRawLabels(): String {

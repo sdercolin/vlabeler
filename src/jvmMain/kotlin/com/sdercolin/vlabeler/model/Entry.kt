@@ -25,4 +25,14 @@ data class Entry(
      * Extra data as [String] defined by [LabelerConf.extraFieldNames]
      */
     val extra: List<String>
-)
+) {
+    companion object {
+        fun fromDefaultValues(name: String, defaultValues: List<Float>) = Entry(
+            name = name,
+            start = defaultValues.first(),
+            end = defaultValues.last(),
+            points = defaultValues.drop(1).dropLast(1),
+            extra = listOf()
+        )
+    }
+}
