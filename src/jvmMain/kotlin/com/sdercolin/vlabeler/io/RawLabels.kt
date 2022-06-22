@@ -37,9 +37,11 @@ fun fromRawLabels(
         .map { group -> group.key to group.value.map { it.second } }
         .toMap()
     return sampleNames.associateWith { sampleName ->
-        (entriesBySampleName[sampleName]
-            ?.takeUnless { it.isEmpty() }
-            ?: listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues)))
+        (
+            entriesBySampleName[sampleName]
+                ?.takeUnless { it.isEmpty() }
+                ?: listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues))
+            )
             .toContinuous(labelerConf.continuous)
     }
 }

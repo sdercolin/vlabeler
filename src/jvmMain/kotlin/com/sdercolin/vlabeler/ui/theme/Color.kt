@@ -12,4 +12,4 @@ val Black50 = Color(0x7f000000)
 val White = Color.White
 val White20 = Color(0x33ffffff)
 val Yellow = Color.Yellow
-val Red = Color.Red
+val DarkYellow = Color(0xffe89f17)

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -23,12 +24,15 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,7 +48,7 @@ import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.NonePointI
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.StartPointIndex
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.MouseState
 import com.sdercolin.vlabeler.ui.theme.Black
-import com.sdercolin.vlabeler.ui.theme.Red
+import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.parseColor
 import com.sdercolin.vlabeler.util.update
@@ -81,11 +85,15 @@ data class MarkerState(
 }
 
 private const val RegionAlpha = 0.3f
+private val EditableOutsideRegionColor = White
 private const val UneditableRegionAlpha = 0.9f
+private val UneditableRegionColor = Black
 private const val IdleLineAlpha = 0.7f
 private const val StrokeWidth = 2f
-private val labelSize = DpSize(40.dp, 25.dp)
-private val labelShiftUp = 8.dp
+private val LabelSize = DpSize(40.dp, 25.dp)
+private val LabelShiftUp = 8.dp
+private val NameLabelLeftMargin = 5.dp
+private val NameLabelTopMargin = 2.dp
 
 @Composable
 fun MarkerCanvas(
@@ -107,9 +115,28 @@ fun MarkerCanvas(
 ) {
     val entryConverter = EntryConverter(sampleRate, canvasParams.resolution)
     val entryInPixel = entryConverter.convertToPixel(entry, sampleLengthMillis).validate(canvasParams.lengthInPixel)
-    val entriesInSampleInPixel = entriesInSample.map {
-        entryConverter.convertToPixel(it, sampleLengthMillis).validate(canvasParams.lengthInPixel)
+    val entriesInSampleInPixel = remember(entry, canvasParams) {
+        entriesInSample.map {
+            entryConverter.convertToPixel(it, sampleLengthMillis).validate(canvasParams.lengthInPixel)
+        }
     }
+    val leftBorder = remember(entry, canvasParams) {
+        (
+            if (labelerConf.continuous) {
+                entriesInSampleInPixel.getOrNull(currentIndexInSample - 1)?.start?.plus(1)
+            } else null
+            )
+            ?: 0f
+    }
+    val rightBorder = remember(entry, canvasParams) {
+        (
+            if (labelerConf.continuous) {
+                entriesInSampleInPixel.getOrNull(currentIndexInSample + 1)?.end?.minus(1)
+            } else null
+            )
+            ?: (canvasParams.lengthInPixel - 1f)
+    }
+
     val state = remember(isBusy) { mutableStateOf(MarkerState()) }
     val canvasHeightState = remember { mutableStateOf(0f) }
     val waveformsHeightRatio = remember(appConf.painter.spectrogram) {
@@ -119,9 +146,9 @@ fun MarkerCanvas(
     }
     FieldBorderCanvas(
         entryInPixel,
-        entriesInSampleInPixel,
-        currentIndexInSample,
         canvasParams,
+        leftBorder,
+        rightBorder,
         waveformsHeightRatio,
         isBusy,
         editEntry,
@@ -134,15 +161,20 @@ fun MarkerCanvas(
         entryConverter
     )
     FieldLabelCanvas(canvasParams, waveformsHeightRatio, state.value, labelerConf, entryInPixel)
+    if (labelerConf.continuous) {
+        val leftName = entriesInSample.getOrNull(currentIndexInSample - 1)?.name
+        val rightName = entriesInSample.getOrNull(currentIndexInSample + 1)?.name
+        NameLabelCanvas(canvasParams, entryInPixel, leftName, rightName, leftBorder, rightBorder)
+    }
     LaunchAdjustScrollPosition(entryInPixel, canvasParams.lengthInPixel, horizontalScrollState, scrollFitViewModel)
 }
 
 @Composable
 private fun FieldBorderCanvas(
     entryInPixel: EntryInPixel,
-    entriesInSampleInPixel: List<EntryInPixel>,
-    currentIndexInSample: Int,
     canvasParams: CanvasParams,
+    leftBorder: Float,
+    rightBorder: Float,
     waveformsHeightRatio: Float,
     isBusy: Boolean,
     editEntry: (Entry) -> Unit,
@@ -155,19 +187,6 @@ private fun FieldBorderCanvas(
     entryConverter: EntryConverter
 ) {
     val keyboardState by keyboardViewModel.keyboardStateFlow.collectAsState()
-
-    val leftBorder = remember(entryInPixel) {
-        (if (labelerConf.continuous) {
-            entriesInSampleInPixel.getOrNull(currentIndexInSample - 1)?.start?.plus(1)
-        } else null)
-            ?: 0f
-    }
-    val rightBorder = remember(entryInPixel) {
-        (if (labelerConf.continuous) {
-            entriesInSampleInPixel.getOrNull(currentIndexInSample + 1)?.end?.minus(1)
-        } else null)
-            ?: (canvasParams.lengthInPixel - 1f)
-    }
 
     Canvas(
         Modifier.fillMaxHeight()
@@ -216,7 +235,7 @@ private fun FieldBorderCanvas(
 
         // Draw left border
         if (leftBorder > 0) {
-            val leftBorderColor = Black
+            val leftBorderColor = UneditableRegionColor
             drawRect(
                 color = leftBorderColor,
                 alpha = UneditableRegionAlpha,
@@ -232,7 +251,7 @@ private fun FieldBorderCanvas(
         }
 
         // Draw start
-        val startColor = White
+        val startColor = EditableOutsideRegionColor
         drawRect(
             color = startColor,
             alpha = RegionAlpha,
@@ -282,7 +301,7 @@ private fun FieldBorderCanvas(
         }
 
         // Draw end
-        val endColor = White
+        val endColor = EditableOutsideRegionColor
         drawRect(
             color = endColor,
             alpha = RegionAlpha,
@@ -299,7 +318,7 @@ private fun FieldBorderCanvas(
 
         // Draw right border
         if (rightBorder < canvasWidth) {
-            val rightBorderColor = Black
+            val rightBorderColor = UneditableRegionColor
             drawRect(
                 color = rightBorderColor,
                 alpha = UneditableRegionAlpha,
@@ -333,14 +352,15 @@ private fun FieldLabelCanvas(
         val field = conf.fields[i]
         val alpha = if (state.pointIndex != i) IdleLineAlpha else 1f
         Box(
-            modifier = Modifier.requiredSize(labelSize),
+            modifier = Modifier.requiredSize(LabelSize),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = field.label,
                 textAlign = TextAlign.Center,
                 color = parseColor(field.color).copy(alpha = alpha),
-                style = MaterialTheme.typography.body2.copy(fontSize = 12.sp)
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.caption.copy(fontSize = 14.sp)
             )
         }
     }
@@ -354,7 +374,7 @@ private fun FieldLabelCanvasLayout(
     entry: EntryInPixel,
     content: @Composable () -> Unit
 ) {
-    val labelShiftUp = with(LocalDensity.current) { labelShiftUp.toPx() }
+    val labelShiftUp = with(LocalDensity.current) { LabelShiftUp.toPx() }
     Layout(modifier = modifier, content = content) { measurables, constraints ->
         val placeables = measurables.map { measurable ->
             measurable.measure(constraints)
@@ -370,7 +390,73 @@ private fun FieldLabelCanvasLayout(
                 val restCanvasHeight = canvasHeight - waveformsHeight
                 val height = waveformsHeight * field.height + restCanvasHeight
                 val y = canvasHeight - height - labelShiftUp - canvasHeight / 2
-                placeable.place(x = x.toInt(), y = y.toInt())
+                placeable.place(x.toInt(), y.toInt())
+            }
+        }
+    }
+}
+
+@Composable
+private fun NameLabelCanvas(
+    canvasParams: CanvasParams,
+    entryInPixel: EntryInPixel,
+    leftName: String?,
+    rightName: String?,
+    leftBorder: Float,
+    rightBorder: Float
+) = NameLabelCanvasLayout(
+    modifier = Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp),
+    entry = entryInPixel,
+    leftBorder = leftBorder.takeIf { leftName != null },
+    rightBorder = rightBorder.takeIf { rightName != null }
+) {
+    if (leftName != null) {
+        NameLabel(leftName, Black)
+    }
+    NameLabel(entryInPixel.name, DarkYellow)
+    if (rightName != null) {
+        NameLabel(rightName, Black)
+    }
+}
+
+@Composable
+private fun NameLabel(name: String, color: Color) {
+    Text(
+        modifier = Modifier.widthIn(max = 100.dp),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        text = name,
+        color = color,
+        style = MaterialTheme.typography.caption
+    )
+}
+
+@Composable
+private fun NameLabelCanvasLayout(
+    modifier: Modifier,
+    entry: EntryInPixel,
+    leftBorder: Float?,
+    rightBorder: Float?,
+    content: @Composable () -> Unit
+) {
+    val labelTopMargin = with(LocalDensity.current) { NameLabelTopMargin.toPx() }
+    val labelLeftMargin = with(LocalDensity.current) { NameLabelLeftMargin.toPx() }
+    Layout(modifier = modifier, content = content) { measurables, constraints ->
+        val placeables = measurables.map { measurable ->
+            measurable.measure(constraints)
+        }
+
+        // Set the size of the layout as big as it can
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            val y = labelTopMargin.toInt()
+            val xs = listOfNotNull(
+                leftBorder,
+                entry.start,
+                rightBorder?.let { entry.end }
+            )
+            placeables.forEachIndexed { index, placeable ->
+                val x = xs[index] + labelLeftMargin
+                placeable.place(x.toInt(), y)
             }
         }
     }
@@ -409,8 +495,8 @@ private fun handleMouseMove(
             canvasHeight = canvasHeightState.value,
             waveformsHeightRatio = waveformsHeightRatio,
             density = canvasParams.density,
-            labelSize = labelSize,
-            labelShiftUp = labelShiftUp
+            labelSize = LabelSize,
+            labelShiftUp = LabelShiftUp
         )
         if (newPointIndex == NonePointIndex) {
             state.update { moveToNothing() }
