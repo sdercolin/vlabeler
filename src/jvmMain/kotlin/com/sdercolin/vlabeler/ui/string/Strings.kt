@@ -141,6 +141,10 @@ enum class Strings(val en: String) {
     AskIfRemoveEntryDialogDescription(
         en = "Removing current entry..."
     ),
+    CanvasLengthOverflowError(
+        en = "The charts are too long to be painted." +
+            " Please use \"-\" button to reduce data length, or divide the input files priorly."
+    ),
     EmptySampleDirectoryException(
         en = "Could not create project because no sample files are found in the given sample directory."
     );

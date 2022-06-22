@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -28,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.io.Spectrogram
@@ -37,6 +41,8 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerCanvas
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.ui.theme.Yellow
 import kotlinx.coroutines.Dispatchers
@@ -67,37 +73,41 @@ fun Canvas(
             ceil(sample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
         }
         val canvasParams = CanvasParams(sample.wave.length, resolution, currentDensity)
-        Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
-            Column(Modifier.fillMaxSize()) {
-                val weightOfEachChannel = 1f / sample.wave.channels.size
-                sample.wave.channels.forEach { channel ->
-                    Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
-                        Waveforms(appConf, canvasParams, channel, chunkCount)
+        if (canvasParams.lengthInPixel > CanvasParams.MaxCanvasLengthInPixel) {
+            LengthOverflowError()
+        } else {
+            Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
+                Column(Modifier.fillMaxSize()) {
+                    val weightOfEachChannel = 1f / sample.wave.channels.size
+                    sample.wave.channels.forEach { channel ->
+                        Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
+                            Waveforms(appConf, canvasParams, channel, chunkCount)
+                        }
+                    }
+                    sample.spectrogram?.let {
+                        Box(Modifier.weight(appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
+                            Spectrogram(canvasParams, it, chunkCount)
+                        }
                     }
                 }
-                sample.spectrogram?.let {
-                    Box(Modifier.weight(appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
-                        Spectrogram(canvasParams, it, chunkCount)
-                    }
+                MarkerCanvas(
+                    entry = entry,
+                    sampleLengthMillis = sample.info.lengthMillis,
+                    isBusy = isBusy,
+                    editEntry = editEntry,
+                    submitEntry = submitEntry,
+                    playSampleSection = playSampleSection,
+                    appConf = appConf,
+                    labelerConf = labelerConf,
+                    canvasParams = canvasParams,
+                    sampleRate = sample.info.sampleRate,
+                    horizontalScrollState = horizontalScrollState,
+                    keyboardViewModel = keyboardViewModel,
+                    scrollFitViewModel = scrollFitViewModel
+                )
+                if (playerState.isPlaying) {
+                    PlayerCursor(canvasParams, playerState)
                 }
-            }
-            MarkerCanvas(
-                entry = entry,
-                sampleLengthMillis = sample.info.lengthMillis,
-                isBusy = isBusy,
-                editEntry = editEntry,
-                submitEntry = submitEntry,
-                playSampleSection = playSampleSection,
-                appConf = appConf,
-                labelerConf = labelerConf,
-                canvasParams = canvasParams,
-                sampleRate = sample.info.sampleRate,
-                horizontalScrollState = horizontalScrollState,
-                keyboardViewModel = keyboardViewModel,
-                scrollFitViewModel = scrollFitViewModel
-            )
-            if (playerState.isPlaying) {
-                PlayerCursor(canvasParams, playerState)
             }
         }
     }
@@ -233,6 +243,21 @@ private fun PlayerCursor(canvasParams: CanvasParams, playerState: PlayerState) {
             start = Offset(x, 0f),
             end = Offset(x, center.y * 2),
             strokeWidth = 2f
+        )
+    }
+}
+
+@Composable
+private fun LengthOverflowError() {
+    Box(
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.error.copy(alpha = 0.3f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.widthIn(max = 600.dp),
+            text = string(Strings.CanvasLengthOverflowError),
+            style = MaterialTheme.typography.body1,
+            color = MaterialTheme.colors.onBackground
         )
     }
 }
