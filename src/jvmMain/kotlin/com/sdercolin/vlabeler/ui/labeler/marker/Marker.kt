@@ -564,7 +564,7 @@ private fun LaunchAdjustScrollPosition(
         val start = entryInPixel.start
         val end = entryInPixel.end
         val center = (start + end) / 2
-        val target = (center - screenLength / 2).toInt().coerceIn(0 until scrollMax)
+        val target = (center - screenLength / 2).toInt().coerceAtMost(scrollMax).coerceAtLeast(0)
         scrollFitViewModel.update(target)
     }
 }
