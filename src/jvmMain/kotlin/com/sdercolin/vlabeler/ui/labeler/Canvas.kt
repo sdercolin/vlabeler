@@ -54,6 +54,8 @@ import kotlin.math.ceil
 fun Canvas(
     sample: Sample?,
     entry: Entry,
+    entriesInSample: List<Entry>,
+    currentIndexInSample: Int,
     isBusy: Boolean,
     editEntry: (Entry) -> Unit,
     submitEntry: () -> Unit,
@@ -92,6 +94,8 @@ fun Canvas(
                 }
                 MarkerCanvas(
                     entry = entry,
+                    entriesInSample = entriesInSample,
+                    currentIndexInSample = currentIndexInSample,
                     sampleLengthMillis = sample.info.lengthMillis,
                     isBusy = isBusy,
                     editEntry = editEntry,

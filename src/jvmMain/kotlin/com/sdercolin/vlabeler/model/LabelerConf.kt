@@ -37,6 +37,10 @@ data class LabelerConf(
      */
     val continuous: Boolean = false,
     /**
+     * Whether to allow more than one entry with a shared name in one sample
+     */
+    val allowSameNameEntry: Boolean = false,
+    /**
      * Default value listed as [start, *fields, end] in millisecond
      */
     val defaultValues: List<Float> = listOf(100f, 200f),

@@ -26,6 +26,9 @@ data class Project(
     val currentEntry: Entry
         get() = getEntry()
 
+    val entriesInCurrentSample: List<Entry>
+        get() = entriesBySampleName.getValue(currentSampleName)
+
     val entriesWithSampleName: List<Pair<Entry, String>>
         get() = entriesBySampleName.flatMap { (sampleName, entries) ->
             entries.map { it to sampleName }
@@ -55,14 +58,36 @@ data class Project(
         val map = entriesBySampleName.toMutableMap()
         val entries = map.getValue(editedEntry.sampleName).toMutableList()
         entries[editedEntry.index] = editedEntry.entry
+        if (labelerConf.continuous) {
+            val previousIndex = editedEntry.index - 1
+            entries.getOrNull(previousIndex)?.copy(end = editedEntry.entry.start)
+                ?.let { entries[previousIndex] = it }
+            val nextIndex = editedEntry.index + 1
+            entries.getOrNull(nextIndex)?.copy(start = editedEntry.entry.end)
+                ?.let { entries[nextIndex] = it }
+        }
         map[editedEntry.sampleName] = entries.toList()
         return copy(entriesBySampleName = map.toMap())
     }
 
-    fun insertEntry(sampleName: String, entry: Entry, position: Int): Project {
+    fun renameEntry(sampleName: String, index: Int, newName: String): Project {
+        val editedEntry = getEntryForEditing(sampleName, index)
+        val renamed = editedEntry.entry.copy(name = newName)
+        return updateEntry(editedEntry.edit(renamed))
+    }
+
+    fun duplicateEntry(sampleName: String, position: Int, newName: String): Project {
         val map = entriesBySampleName.toMutableMap()
         val entries = map.getValue(sampleName).toMutableList()
-        entries.add(position, entry)
+        var original = getEntry(sampleName, position)
+        var duplicated = original.copy(name = newName)
+        if (labelerConf.continuous) {
+            val splitPoint = (original.start + original.end) / 2
+            original = original.copy(end = splitPoint)
+            duplicated = duplicated.copy(start = splitPoint)
+            entries[position] = original
+        }
+        entries.add(position + 1, duplicated)
         map[sampleName] = entries.toList()
         return copy(entriesBySampleName = map.toMap())
     }
@@ -70,8 +95,14 @@ data class Project(
     fun removeCurrentEntry(): Project {
         val map = entriesBySampleName.toMutableMap()
         val entries = map.getValue(currentSampleName).toMutableList()
-        entries.removeAt(currentEntryIndex)
-        val newIndex = currentEntryIndex.coerceAtMost(entries.lastIndex)
+        val index = currentEntryIndex
+        val removed = entries.removeAt(index)
+        val newIndex = index - 1
+        if (labelerConf.continuous) {
+            val previousIndex = index - 1
+            entries.getOrNull(previousIndex)?.copy(end = removed.end)
+                ?.let { entries[previousIndex] = it }
+        }
         map[currentSampleName] = entries.toList()
         return copy(entriesBySampleName = map.toMap(), currentEntryIndex = newIndex)
     }

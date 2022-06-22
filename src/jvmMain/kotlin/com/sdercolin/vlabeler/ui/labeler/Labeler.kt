@@ -52,7 +52,9 @@ fun Labeler(
     sample: Sample?,
     sampleName: String,
     entry: Entry,
-    currentEntryIndexInTotal: Int,
+    entriesInSample: List<Entry>,
+    currentIndexInSample: Int,
+    currentIndexInTotal: Int,
     totalEntryCount: Int,
     editEntry: (Entry) -> Unit,
     submitEntry: () -> Unit,
@@ -82,6 +84,8 @@ fun Labeler(
             Canvas(
                 sample = sample,
                 entry = entry,
+                entriesInSample = entriesInSample,
+                currentIndexInSample = currentIndexInSample,
                 isBusy = isBusy,
                 editEntry = editEntry,
                 submitEntry = submitEntry,
@@ -100,7 +104,7 @@ fun Labeler(
             adapter = rememberScrollbarAdapter(horizontalScrollState)
         )
         StatusBar(
-            currentEntryIndexInTotal = currentEntryIndexInTotal,
+            currentEntryIndexInTotal = currentIndexInTotal,
             totalEntryCount = totalEntryCount,
             resolution = currentResolution,
             onChangeResolution = { labelerState.update { changeResolution(it) } },

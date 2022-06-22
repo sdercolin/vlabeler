@@ -84,16 +84,22 @@ data class EntryInPixel(
         return MarkerState.NonePointIndex
     }
 
-    fun drag(pointIndex: Int, x: Float, conf: LabelerConf, canvasWidthInPixel: Int): EntryInPixel =
+    fun drag(
+        pointIndex: Int,
+        x: Float,
+        leftBorder: Float,
+        rightBorder: Float,
+        conf: LabelerConf
+    ): EntryInPixel =
         when (pointIndex) {
             MarkerState.NonePointIndex -> this
             MarkerState.StartPointIndex -> {
                 val max = pointsSorted.firstOrNull() ?: end
-                copy(start = x.coerceIn(0f, max))
+                copy(start = x.coerceIn(leftBorder, max))
             }
             MarkerState.EndPointIndex -> {
                 val min = pointsSorted.lastOrNull() ?: start
-                copy(end = x.coerceIn(min, canvasWidthInPixel.toFloat() - 1))
+                copy(end = x.coerceIn(min, rightBorder - 1))
             }
             else -> {
                 val constraints = conf.connectedConstraints
@@ -109,16 +115,25 @@ data class EntryInPixel(
             }
         }
 
-    fun lockedDrag(pointIndex: Int, x: Float, canvasWidthInPixel: Int): EntryInPixel {
+    fun lockedDrag(
+        pointIndex: Int,
+        x: Float,
+        leftBorder: Float,
+        rightBorder: Float
+    ): EntryInPixel {
         if (pointIndex == MarkerState.NonePointIndex) return this
-        val dxMin = -start
-        val dxMax = canvasWidthInPixel.toFloat() - 1 - end
+        val dxMin = leftBorder - start
+        val dxMax = rightBorder - 1 - end
         val dx = (x - getPoint(pointIndex)).coerceIn(dxMin, dxMax)
         return copy(start = start + dx, end = end + dx, points = points.map { it + dx })
     }
 
-    fun getClickedAudioRange(x: Float): Pair<Float?, Float?>? {
-        val borders = (listOf(start, end) + points).distinct().sorted()
+    fun getClickedAudioRange(
+        x: Float,
+        leftBorder: Float,
+        rightBorder: Float
+    ): Pair<Float?, Float?>? {
+        val borders = (listOf(leftBorder, rightBorder, start, end) + points).distinct().sorted()
         if (x < borders.first()) return null to borders.first()
         if (x > borders.last()) return borders.last() to null
         for (range in borders.zipWithNext()) {
@@ -130,7 +145,7 @@ data class EntryInPixel(
     }
 
     companion object {
-        private const val NearRadiusStartOrEnd = 10f
+        private const val NearRadiusStartOrEnd = 20f
         private const val NearRadiusCustom = 5f
     }
 }

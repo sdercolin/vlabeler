@@ -109,8 +109,12 @@ data class AppState(
         val sampleName = project!!.currentSampleName
         val index = project.currentEntryIndex
         val entry = project.currentEntry
-        val invalidOptions = project.allEntries.map { it.name }
-            .run { if (!duplicate) minus(entry.name) else this }
+        val invalidOptions = if (project.labelerConf.allowSameNameEntry) {
+            listOf()
+        } else {
+            project.allEntries.map { it.name }
+                .run { if (!duplicate) minus(entry.name) else this }
+        }
         return openEmbeddedDialog(
             EditEntryNameDialogArgs(
                 sampleName = sampleName,
@@ -123,18 +127,12 @@ data class AppState(
         )
     }
 
-    fun renameEntry(sampleName: String, entryIndex: Int, newName: String): AppState {
-        val editedEntry = project!!.getEntryForEditing(sampleName, entryIndex)
-        val renamed = editedEntry.entry.copy(name = newName)
-        return editEntry(editedEntry.edit(renamed))
+    fun renameEntry(sampleName: String, index: Int, newName: String) = editProject {
+        renameEntry(sampleName, index, newName)
     }
 
-    fun duplicateEntry(sampleName: String, entryIndex: Int, newName: String): AppState {
-        val duplicated = project!!.getEntry(sampleName, entryIndex).copy(name = newName)
-        return editProject {
-            insertEntry(sampleName, duplicated, entryIndex + 1)
-                .copy(currentEntryIndex = entryIndex + 1)
-        }
+    fun duplicateEntry(sampleName: String, index: Int, newName: String) = editProject {
+        duplicateEntry(sampleName, index, newName).copy(currentEntryIndex = index + 1)
     }
 
     val canRemoveCurrentEntry

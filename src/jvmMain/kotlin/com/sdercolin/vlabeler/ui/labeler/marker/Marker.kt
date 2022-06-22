@@ -43,6 +43,8 @@ import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.EndPointIn
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.NonePointIndex
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.StartPointIndex
 import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.MouseState
+import com.sdercolin.vlabeler.ui.theme.Black
+import com.sdercolin.vlabeler.ui.theme.Red
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.parseColor
 import com.sdercolin.vlabeler.util.update
@@ -79,6 +81,7 @@ data class MarkerState(
 }
 
 private const val RegionAlpha = 0.3f
+private const val UneditableRegionAlpha = 0.9f
 private const val IdleLineAlpha = 0.7f
 private const val StrokeWidth = 2f
 private val labelSize = DpSize(40.dp, 25.dp)
@@ -87,6 +90,8 @@ private val labelShiftUp = 8.dp
 @Composable
 fun MarkerCanvas(
     entry: Entry,
+    entriesInSample: List<Entry>,
+    currentIndexInSample: Int,
     sampleLengthMillis: Float,
     isBusy: Boolean,
     editEntry: (Entry) -> Unit,
@@ -102,6 +107,9 @@ fun MarkerCanvas(
 ) {
     val entryConverter = EntryConverter(sampleRate, canvasParams.resolution)
     val entryInPixel = entryConverter.convertToPixel(entry, sampleLengthMillis).validate(canvasParams.lengthInPixel)
+    val entriesInSampleInPixel = entriesInSample.map {
+        entryConverter.convertToPixel(it, sampleLengthMillis).validate(canvasParams.lengthInPixel)
+    }
     val state = remember(isBusy) { mutableStateOf(MarkerState()) }
     val canvasHeightState = remember { mutableStateOf(0f) }
     val waveformsHeightRatio = remember(appConf.painter.spectrogram) {
@@ -111,6 +119,8 @@ fun MarkerCanvas(
     }
     FieldBorderCanvas(
         entryInPixel,
+        entriesInSampleInPixel,
+        currentIndexInSample,
         canvasParams,
         waveformsHeightRatio,
         isBusy,
@@ -130,6 +140,8 @@ fun MarkerCanvas(
 @Composable
 private fun FieldBorderCanvas(
     entryInPixel: EntryInPixel,
+    entriesInSampleInPixel: List<EntryInPixel>,
+    currentIndexInSample: Int,
     canvasParams: CanvasParams,
     waveformsHeightRatio: Float,
     isBusy: Boolean,
@@ -144,6 +156,19 @@ private fun FieldBorderCanvas(
 ) {
     val keyboardState by keyboardViewModel.keyboardStateFlow.collectAsState()
 
+    val leftBorder = remember(entryInPixel) {
+        (if (labelerConf.continuous) {
+            entriesInSampleInPixel.getOrNull(currentIndexInSample - 1)?.start?.plus(1)
+        } else null)
+            ?: 0f
+    }
+    val rightBorder = remember(entryInPixel) {
+        (if (labelerConf.continuous) {
+            entriesInSampleInPixel.getOrNull(currentIndexInSample + 1)?.end?.minus(1)
+        } else null)
+            ?: (canvasParams.lengthInPixel - 1f)
+    }
+
     Canvas(
         Modifier.fillMaxHeight()
             .width(canvasParams.canvasWidthInDp)
@@ -152,6 +177,8 @@ private fun FieldBorderCanvas(
                 handleMouseMove(
                     event,
                     canvasParams,
+                    leftBorder,
+                    rightBorder,
                     canvasHeightState,
                     state,
                     entryInPixel,
@@ -170,6 +197,8 @@ private fun FieldBorderCanvas(
                 handleMouseRelease(
                     event,
                     entryInPixel,
+                    leftBorder,
+                    rightBorder,
                     submitEntry,
                     playSampleSection,
                     canvasParams,
@@ -185,13 +214,30 @@ private fun FieldBorderCanvas(
         val canvasHeight = size.height
         canvasHeightState.value = canvasHeight
 
+        // Draw left border
+        if (leftBorder > 0) {
+            val leftBorderColor = Black
+            drawRect(
+                color = leftBorderColor,
+                alpha = UneditableRegionAlpha,
+                topLeft = Offset.Zero,
+                size = Size(width = leftBorder, height = canvasHeight)
+            )
+            drawLine(
+                color = leftBorderColor.copy(alpha = IdleLineAlpha),
+                start = Offset(leftBorder, 0f),
+                end = Offset(leftBorder, canvasHeight),
+                strokeWidth = StrokeWidth
+            )
+        }
+
         // Draw start
         val startColor = White
         drawRect(
             color = startColor,
             alpha = RegionAlpha,
-            topLeft = Offset.Zero,
-            size = Size(width = start, height = canvasHeight)
+            topLeft = Offset(leftBorder, 0f),
+            size = Size(width = start - leftBorder, height = canvasHeight)
         )
         val startLineAlpha = if (state.value.usingStartPoint) 1f else IdleLineAlpha
         drawLine(
@@ -241,7 +287,7 @@ private fun FieldBorderCanvas(
             color = endColor,
             alpha = RegionAlpha,
             topLeft = Offset(end, 0f),
-            size = Size(width = canvasWidth - end, height = canvasHeight)
+            size = Size(width = rightBorder - end, height = canvasHeight)
         )
         val endLineAlpha = if (state.value.usingEndPoint) 1f else IdleLineAlpha
         drawLine(
@@ -250,6 +296,23 @@ private fun FieldBorderCanvas(
             end = Offset(end, canvasHeight),
             strokeWidth = StrokeWidth
         )
+
+        // Draw right border
+        if (rightBorder < canvasWidth) {
+            val rightBorderColor = Black
+            drawRect(
+                color = rightBorderColor,
+                alpha = UneditableRegionAlpha,
+                topLeft = Offset(rightBorder, 0f),
+                size = Size(width = canvasWidth - rightBorder, height = canvasHeight)
+            )
+            drawLine(
+                color = rightBorderColor.copy(alpha = IdleLineAlpha),
+                start = Offset(rightBorder, 0f),
+                end = Offset(rightBorder, canvasHeight),
+                strokeWidth = StrokeWidth
+            )
+        }
     }
 }
 
@@ -316,6 +379,8 @@ private fun FieldLabelCanvasLayout(
 private fun handleMouseMove(
     event: PointerEvent,
     canvasParams: CanvasParams,
+    leftBorder: Float,
+    rightBorder: Float,
     canvasHeightState: MutableState<Float>,
     state: MutableState<MarkerState>,
     entryInPixel: EntryInPixel,
@@ -329,9 +394,9 @@ private fun handleMouseMove(
     val y = eventChange.position.y.coerceIn(0f, (canvasHeightState.value - 1f).coerceAtLeast(0f))
     if (state.value.mouse == MouseState.Dragging) {
         val newEntryInPixel = if (state.value.lockedDrag) {
-            entryInPixel.lockedDrag(state.value.pointIndex, x, canvasParams.lengthInPixel)
+            entryInPixel.lockedDrag(state.value.pointIndex, x, leftBorder, rightBorder)
         } else {
-            entryInPixel.drag(state.value.pointIndex, x, labelerConf, canvasParams.lengthInPixel)
+            entryInPixel.drag(state.value.pointIndex, x, leftBorder, rightBorder, labelerConf)
         }
         if (newEntryInPixel != entryInPixel) {
             editEntry(entryConverter.convertToMillis(newEntryInPixel))
@@ -376,6 +441,8 @@ private fun handleMousePress(
 private fun handleMouseRelease(
     event: PointerEvent,
     entryInPixel: EntryInPixel,
+    leftBorder: Float,
+    rightBorder: Float,
     submitEntry: () -> Unit,
     playSampleSection: (Float, Float) -> Unit,
     canvasParams: CanvasParams,
@@ -385,7 +452,7 @@ private fun handleMouseRelease(
 ) {
     if (keyboardState.isCtrlPressed) {
         val x = event.changes.first().position.x
-        val clickedRange = entryInPixel.getClickedAudioRange(x)
+        val clickedRange = entryInPixel.getClickedAudioRange(x, leftBorder, rightBorder)
         if (clickedRange != null) {
             val start = clickedRange.first?.let { entryConverter.convertToFrame(it) } ?: 0f
             val end = clickedRange.second?.let { entryConverter.convertToFrame(it) }
