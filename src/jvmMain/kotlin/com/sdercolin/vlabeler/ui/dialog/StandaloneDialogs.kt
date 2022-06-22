@@ -51,16 +51,20 @@ fun StandaloneDialogs(
                 }
             }
         }
-        appState.value.isShowingExportDialog -> SaveFileDialog(
-            title = string(Strings.ExportDialogTitle),
-            extensions = listOf(appState.value.project!!.labelerConf.extension),
-            initialDirectory = appState.value.project!!.sampleDirectory,
-            initialFileName = appState.value.project!!.labelerConf.defaultInputFilePath?.lastPathSection
-        ) { directory, fileName ->
-            appState.update { closeExportDialog() }
-            if (directory != null && fileName != null) {
-                val outputText = appState.value.project!!.toRawLabels()
-                File(directory, fileName).writeText(outputText)
+        appState.value.isShowingExportDialog -> {
+            val project = appState.value.project!!
+            SaveFileDialog(
+                title = string(Strings.ExportDialogTitle),
+                extensions = listOf(project.labelerConf.extension),
+                initialDirectory = project.sampleDirectory,
+                initialFileName = project.labelerConf.defaultInputFilePath?.lastPathSection
+                    ?: "${project.projectName}.${project.labelerConf.extension}"
+            ) { directory, fileName ->
+                appState.update { closeExportDialog() }
+                if (directory != null && fileName != null) {
+                    val outputText = appState.value.project!!.toRawLabels()
+                    File(directory, fileName).writeText(outputText)
+                }
             }
         }
     }
