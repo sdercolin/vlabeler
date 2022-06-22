@@ -4,6 +4,7 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.util.Python
+import com.sdercolin.vlabeler.util.fromLocalEncoding
 import com.sdercolin.vlabeler.util.matchGroups
 import com.sdercolin.vlabeler.util.replaceWithVariables
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
@@ -23,13 +24,13 @@ fun fromRawLabels(
         }
         val script = parser.scripts.joinToString("\n")
         python.exec(script)
-        val name = python.get<String>("name")
+        val name = python.get<String>("name").fromLocalEncoding()
         val start = python.get<Float>("start")
         val end = python.get<Float>("end")
         val points = python.getOrNull<List<Float>>("points") ?: listOf()
-        val sampleName = python.getOrNull("sample") ?: sampleNames.first()
-        val extra = labelerConf.extraFieldNames.map { extraName ->
-            python.get<Any>(extraName).toString()
+        val sampleName = python.getOrNull<String>("sample")?.fromLocalEncoding() ?: sampleNames.first()
+        val extra = labelerConf.extraFieldNames.mapIndexed { index, extraName ->
+            python.getOrNull<Any>(extraName)?.toString()?.fromLocalEncoding() ?: labelerConf.extraFieldNames[index]
         }
         sampleName to Entry(name = name, start = start, end = end, points = points, extra = extra)
     }

@@ -43,7 +43,11 @@ data class LabelerConf(
     /**
      * Default value listed as [start, *fields, end] in millisecond
      */
-    val defaultValues: List<Float> = listOf(100f, 200f),
+    val defaultValues: List<Float>,
+    /**
+     * Default [extraFieldNames] values
+     */
+    val defaultExtras: List<String>,
     /**
      * Fields defined except for built-in "start" and "end"
      */
