@@ -28,6 +28,10 @@ class Python {
         return get(name, T::class.java)
     }
 
+    inline fun <reified T : Any> getOrNull(name: String): T? {
+        return kotlin.runCatching { get(name, T::class.java) }.getOrNull()
+    }
+
     fun eval(text: String): Double {
         return interpreter.eval(text).asDouble()
     }

@@ -25,7 +25,7 @@ data class LabelerConf(
     /**
      * Default name of the input file relative to the sample directory
      */
-    val defaultInputFilePath: String,
+    val defaultInputFilePath: String? = null,
     /**
      * Name displayed in the UI
      */

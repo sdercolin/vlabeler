@@ -144,8 +144,8 @@ private fun NewProject(
         }
         if (!inputLabelFileEdited) {
             inputLabelFile = if (File(path).absolutePath != HomeDir.absolutePath) {
-                val file = File(path).resolve(labeler.defaultInputFilePath)
-                if (file.exists()) file.absolutePath else ""
+                val file = labeler.defaultInputFilePath?.let { File(path).resolve(it) }
+                if (file?.exists() == true) file.absolutePath else ""
             } else ""
         }
     }

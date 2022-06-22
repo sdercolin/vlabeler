@@ -1,0 +1,38 @@
+{
+  "name": "sinsy.default",
+  "version": 1,
+  "extension": "lab",
+  "defaultInputFilePath": null,
+  "displayedName": "Sinsy lab labeler",
+  "author": "sdercolin",
+  "description": "Default labeler for Sinsy lab file",
+  "defaultValues": [
+    100,
+    500
+  ],
+  "fields": [],
+  "extraFieldNames": [],
+  "lockedDrag": {
+    "useDragBase": false,
+    "useStart": false
+  },
+  "parser": {
+    "defaultEncoding": "UTF-8",
+    "extractionPattern": "(.*) (.*) (.*)",
+    "variableNames": [
+      "left",
+      "right",
+      "name"
+    ],
+    "scripts": [
+      "start = float(left) / 10000",
+      "end = float(right) / 10000"
+    ]
+  },
+  "writer": {
+    "properties": [],
+    "scripts": [
+      "output = str(int(start*10000)) + \" \" + str(int(end*10000)) + \" \" + name"
+    ]
+  }
+}

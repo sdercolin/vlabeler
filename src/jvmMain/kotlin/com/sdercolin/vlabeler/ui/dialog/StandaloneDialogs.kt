@@ -55,7 +55,7 @@ fun StandaloneDialogs(
             title = string(Strings.ExportDialogTitle),
             extensions = listOf(appState.value.project!!.labelerConf.extension),
             initialDirectory = appState.value.project!!.sampleDirectory,
-            initialFileName = appState.value.project!!.labelerConf.defaultInputFilePath.lastPathSection
+            initialFileName = appState.value.project!!.labelerConf.defaultInputFilePath?.lastPathSection
         ) { directory, fileName ->
             appState.update { closeExportDialog() }
             if (directory != null && fileName != null) {

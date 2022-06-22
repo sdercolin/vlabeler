@@ -8,7 +8,11 @@ import com.sdercolin.vlabeler.util.matchGroups
 import com.sdercolin.vlabeler.util.replaceWithVariables
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
 
-fun fromRawLabels(sources: List<String>, labelerConf: LabelerConf): Map<String, List<Entry>> {
+fun fromRawLabels(
+    sources: List<String>,
+    labelerConf: LabelerConf,
+    sampleNames: List<String>
+): Map<String, List<Entry>> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
     return sources.map { source ->
@@ -22,8 +26,8 @@ fun fromRawLabels(sources: List<String>, labelerConf: LabelerConf): Map<String, 
         val name = python.get<String>("name")
         val start = python.get<Float>("start")
         val end = python.get<Float>("end")
-        val points = python.get<List<Float>>("points")
-        val sampleName = python.get<String>("sample")
+        val points = python.getOrNull<List<Float>>("points") ?: listOf()
+        val sampleName = python.getOrNull("sample") ?: sampleNames.first()
         val extra = labelerConf.extraFieldNames.map { extraName ->
             python.get<Any>(extraName).toString()
         }

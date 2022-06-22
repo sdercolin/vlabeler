@@ -141,7 +141,7 @@ data class Project(
             } else null
 
             val entriesBySample = if (inputFile != null) {
-                fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf)
+                fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf, sampleNames)
             } else {
                 val start = labelerConf.defaultValues.first()
                 val end = labelerConf.defaultValues.last()
