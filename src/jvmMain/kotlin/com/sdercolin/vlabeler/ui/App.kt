@@ -61,6 +61,9 @@ fun App(
                 else -> null
             } ?: return@collect
             appState.update { editProject { updated } }
+            if (it.shouldGoNextSample || it.shouldGoPreviousSample) {
+                scrollFitViewModel.emitNext()
+            }
         }
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
