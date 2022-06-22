@@ -11,14 +11,23 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
     val eventFlow = _eventFlow.asSharedFlow()
 
     private var pendingValue: Int = 0
+    private var waitingNext = false
 
     fun update(value: Int) {
         pendingValue = value
+        if (waitingNext) {
+            waitingNext = false
+            emit()
+        }
     }
 
     fun emit() {
         coroutineScope.launch {
             _eventFlow.emit(pendingValue)
         }
+    }
+
+    fun emitNext() {
+        waitingNext = true
     }
 }

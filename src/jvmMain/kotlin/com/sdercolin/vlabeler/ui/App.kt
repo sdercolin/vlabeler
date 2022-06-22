@@ -95,7 +95,7 @@ fun App(
         appState.value.embeddedDialog?.let { args ->
             EmbeddedDialog(args) { result ->
                 appState.update { closeEmbeddedDialog() }
-                if (result != null) handleDialogResult(result, labelerState, appState)
+                if (result != null) handleDialogResult(result, labelerState, appState, scrollFitViewModel)
             }
         }
     }
@@ -104,12 +104,16 @@ fun App(
 private fun handleDialogResult(
     result: EmbeddedDialogResult,
     labelerState: MutableState<LabelerState>,
-    appState: MutableState<AppState>
+    appState: MutableState<AppState>,
+    scrollFitViewModel: ScrollFitViewModel
 ) {
     when (result) {
         is SetResolutionDialogResult -> labelerState.update { changeResolution(result.newValue) }
         is AskIfSaveDialogResult -> appState.update { takeAskIfSaveResult(result) }
-        is JumpToEntryDialogArgsResult -> appState.update { jumpToEntry(result.sampleName, result.index) }
+        is JumpToEntryDialogArgsResult -> {
+            appState.update { jumpToEntry(result.sampleName, result.index) }
+            scrollFitViewModel.emitNext()
+        }
         is EditEntryNameDialogResult -> appState.update {
             if (result.duplicate) {
                 duplicateEntry(result.sampleName, result.index, result.name)
