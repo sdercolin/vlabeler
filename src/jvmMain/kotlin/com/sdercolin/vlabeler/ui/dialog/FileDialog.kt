@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.AwtWindow
+import com.sdercolin.vlabeler.env.setAwtDirectoryMode
 import java.awt.FileDialog
 import java.awt.FileDialog.LOAD
 import java.awt.FileDialog.SAVE
@@ -14,8 +15,9 @@ fun OpenFileDialog(
     initialDirectory: String? = null,
     initialFileName: String? = null,
     extensions: List<String>? = null,
+    directoryMode: Boolean = false,
     onCloseRequest: (directory: String?, result: String?) -> Unit
-) = FileDialog(LOAD, title, initialDirectory, initialFileName, extensions, onCloseRequest)
+) = FileDialog(LOAD, title, initialDirectory, initialFileName, extensions, directoryMode, onCloseRequest)
 
 @Composable
 fun SaveFileDialog(
@@ -24,18 +26,21 @@ fun SaveFileDialog(
     initialFileName: String? = null,
     extensions: List<String>? = null,
     onCloseRequest: (directory: String?, result: String?) -> Unit
-) = FileDialog(SAVE, title, initialDirectory, initialFileName, extensions, onCloseRequest)
+) = FileDialog(SAVE, title, initialDirectory, initialFileName, extensions, false, onCloseRequest)
 
 @Composable
 private fun FileDialog(
     mode: Int,
     title: String,
-    initialDirectory: String? = null,
-    initialFileName: String? = null,
-    extensions: List<String>? = null,
+    initialDirectory: String?,
+    initialFileName: String?,
+    extensions: List<String>?,
+    directoryMode: Boolean,
     onCloseRequest: (directory: String?, result: String?) -> Unit
 ) = AwtWindow(
     create = {
+        if (directoryMode) setAwtDirectoryMode(true)
+
         object : FileDialog(null as Frame?, title, mode) {
             override fun setVisible(value: Boolean) {
                 super.setVisible(value)
@@ -55,5 +60,8 @@ private fun FileDialog(
             }
         }
     },
-    dispose = FileDialog::dispose
+    dispose = {
+        if (directoryMode) setAwtDirectoryMode(false)
+        it.dispose()
+    }
 )

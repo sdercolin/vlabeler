@@ -402,22 +402,25 @@ private fun NewProject(
                     PathPicker.WorkingDirectory -> null
                     PathPicker.InputFile -> listOf(labeler.extension)
                 }
+                val directoryMode = picker != PathPicker.InputFile
                 OpenFileDialog(
                     title = title,
                     initialDirectory = initial,
-                    extensions = extensions
+                    extensions = extensions,
+                    directoryMode = directoryMode
                 ) { directory, file ->
                     currentPathPicker = null
-                    directory ?: return@OpenFileDialog
+                    if (directory == null || file == null) return@OpenFileDialog
+                    val path = File(directory, file).absolutePath
                     when (picker) {
-                        PathPicker.SampleDirectory -> setSampleDirectory(directory)
+                        PathPicker.SampleDirectory -> setSampleDirectory(path)
                         PathPicker.WorkingDirectory -> {
                             workingDirectoryEdited = true
-                            setWorkingDirectory(directory)
+                            setWorkingDirectory(path)
                         }
                         PathPicker.InputFile -> {
                             inputLabelFileEdited = true
-                            inputLabelFile = File(directory, file ?: "").absolutePath
+                            inputLabelFile = path
                         }
                     }
                 }
