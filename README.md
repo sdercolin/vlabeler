@@ -21,6 +21,10 @@ The following platforms are provided in the releases.
 
 For other linux os you may have to build it by yourself.
 
+### For macOS users
+If you cannot open the app with a "damaged" error, please run `sudo xattr -rc /Applications/vLabeler.app`
+with your terminal. (sudo command requires your password)
+
 ## Building
 vLabeler is built by [Compose Multiplatforms](https://github.com/JetBrains/compose-jb). You can use Gradle to build the application. [See more](https://github.com/JetBrains/compose-jb/tree/master/tutorials/Native_distributions_and_local_execution)
 
