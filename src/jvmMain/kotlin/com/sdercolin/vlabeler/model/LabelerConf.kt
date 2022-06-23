@@ -153,10 +153,16 @@ data class LabelerConf(
          * - Float "end"
          * - Float List "points"
          * - String "sample" (sample file name without extension)
+         * - String "<extra>" defined in [extraFieldNames]
          *
-         * If "sample" is set empty, the first sample file is used by all entries in case all entries are bound to the
+         * If "sample" is not set, the first sample file is used by all entries in case all entries are bound to the
          * only one sample file, so the file name doesn't exist in the line.
-         * String values with names defined in [variableNames] are available
+         *
+         * If "name" is not set, this entry is ignored.
+         * If any of "start", "end" is not set, or points don't have a same size with [fields], this entry will fall
+         * back to default values except the entry name
+         *
+         * String values with names defined in [variableNames] are available as input
          */
         val scripts: List<String>,
     )

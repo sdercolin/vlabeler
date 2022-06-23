@@ -15,23 +15,46 @@ fun fromRawLabels(
 ): Map<String, List<Entry>> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
-    val entriesBySampleName = sources.map { source ->
-        val groups = source.matchGroups(extractor)
-        val python = Python()
-        parser.variableNames.mapIndexed { i, name ->
-            python.set(name, groups[i])
+    val entriesBySampleName = sources.mapNotNull { source ->
+        runCatching {
+            val groups = source.matchGroups(extractor)
+            val python = Python()
+            parser.variableNames.mapIndexed { i, name ->
+                python.set(name, groups[i])
+            }
+            val script = parser.scripts.joinToString("\n")
+            python.exec(script)
+
+            // when "sample" is not set, using the first sample's name
+            // because the label file will not contain the sample name if there is only one
+            val sampleName = python.getOrNull<String>("sample")?.takeUnless { it.isEmpty() }
+                ?: sampleNames.first()
+
+            // require name, otherwise ignore the entry
+            val name = python.get<String>("name")
+            require(name.isNotEmpty())
+
+            // optional start, end, points
+            val start = python.getOrNull<Float>("start")
+            val end = python.getOrNull<Float>("end")
+            val points = python.getOrNull<List<Float>>("points") ?: listOf()
+
+            // optional extra
+            val extra = labelerConf.extraFieldNames.mapIndexed { index, extraName ->
+                python.getOrNull<Any>(extraName)?.toString() ?: labelerConf.defaultExtras[index]
+            }
+
+            val entry = if (start == null || end == null || points.size != labelerConf.fields.size) {
+                // use default except name if data size is not enough
+                Entry.fromDefaultValues(name, labelerConf.defaultValues, labelerConf.defaultExtras)
+            } else {
+                Entry(name = name, start = start, end = end, points = points, extra = extra)
+            }
+            sampleName to entry
+        }.getOrElse {
+            println(it)
+            null
         }
-        val script = parser.scripts.joinToString("\n")
-        python.exec(script)
-        val name = python.get<String>("name")
-        val start = python.get<Float>("start")
-        val end = python.get<Float>("end")
-        val points = python.getOrNull<List<Float>>("points") ?: listOf()
-        val sampleName = python.getOrNull("sample") ?: sampleNames.first()
-        val extra = labelerConf.extraFieldNames.mapIndexed { index, extraName ->
-            python.getOrNull<Any>(extraName)?.toString() ?: labelerConf.defaultExtras[index]
-        }
-        sampleName to Entry(name = name, start = start, end = end, points = points, extra = extra)
     }
         .groupBy { it.first }
         .map { group -> group.key to group.value.map { it.second } }

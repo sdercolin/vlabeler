@@ -73,17 +73,22 @@
       "ovl"
     ],
     "scripts": [
-      "start = float(left)",
+      "if(left != ''):",
+      "    start = float(left)",
       "points = []",
-      "points.append(float(fixed) + start)",
-      "right = float(right)",
-      "if(right < 0):",
-      "    end = start - right",
-      "else:",
-      "    end = -right",
-      "points.append(float(preu) + start)",
-      "points.append(float(ovl) + start)",
-      "rawRight = right"
+      "if(fixed != ''):",
+      "    points.append(float(fixed) + start)",
+      "if(right != ''):",
+      "    right = float(right)",
+      "    rawRight = right # for restoring from a non-negative value (distance to sample end)",
+      "    if(right < 0):",
+      "        end = start - right",
+      "    else:",
+      "        end = -right",
+      "if(preu != ''):",
+      "    points.append(float(preu) + start)",
+      "if(ovl != ''):",
+      "    points.append(float(ovl) + start)"
     ]
   },
   "writer": {
