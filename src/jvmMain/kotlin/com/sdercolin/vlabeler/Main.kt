@@ -44,6 +44,7 @@ import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 
 fun main() = application {
     val mainScope = rememberCoroutineScope()
@@ -110,18 +111,48 @@ private fun rememberAppConf(scope: CoroutineScope) = remember {
 
 @Composable
 private fun rememberAvailableLabelerConfs() = remember {
-    val defaultLabelers = getDefaultLabelers()
-    val customLabelers = getCustomLabelers()
-    val customLabelerNames = customLabelers.map { it.name }
-    defaultLabelers.filter { it.name !in customLabelerNames }.forEach {
-        it.copyTo(CustomLabelerDir.resolve(it.name))
-    }
+    val defaultLabelers = getDefaultLabelers().associateWith {
+        it.asLabelerConf().getOrThrow() // default items should always be parsed
+    }.toList()
+    val defaultLabelerNames = defaultLabelers.map { it.first.name }
+    val customLabelers = getCustomLabelers().associateWith {
+        it.asLabelerConf().getOrElse {
+            // TODO: log
+            null
+        }
+    }.toList()
+    val validCustomLabelers = customLabelers.mapNotNull { (file, result) -> result?.let { file to it } }
+    val validCustomLabelerNames = validCustomLabelers.map { it.first.name }
 
-    val availableLabelerConfs = getCustomLabelers().map { it.readText() }.map { parseJson<LabelerConf>(it) }
-    if (availableLabelerConfs.isEmpty()) {
+    val availableLabelers = mutableListOf<LabelerConf>()
+    val (duplicated, new) = defaultLabelers.partition { it.first.name in validCustomLabelerNames }
+    new.forEach {
+        availableLabelers.add(it.second)
+        it.first.copyTo(CustomLabelerDir.resolve(it.first.name))
+    }
+    duplicated.forEach { default ->
+        val custom = validCustomLabelers.first { it.first.name == default.first.name }
+        if (default.second.version > custom.second.version) {
+            // update with default
+            availableLabelers.add(default.second)
+            default.first.copyTo(CustomLabelerDir.resolve(custom.first.name), overwrite = true)
+        } else {
+            availableLabelers.add(custom.second)
+        }
+    }
+    availableLabelers.addAll(
+        validCustomLabelers.filter { it.first.name !in defaultLabelerNames }.map { it.second }
+    )
+    if (availableLabelers.isEmpty()) {
         throw Exception("No labeler configuration files found.")
     }
-    mutableStateOf(availableLabelerConfs)
+    mutableStateOf(availableLabelers)
+}
+
+private fun File.asLabelerConf() = runCatching {
+    parseJson<LabelerConf>(this@asLabelerConf.readText()).copy(
+        name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}")
+    )
 }
 
 private fun ensureDirectories() {

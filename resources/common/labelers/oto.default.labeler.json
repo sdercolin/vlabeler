@@ -1,6 +1,6 @@
 {
   "name": "oto.default",
-  "version": 1,
+  "version": 2,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": "UTAU oto labeler",

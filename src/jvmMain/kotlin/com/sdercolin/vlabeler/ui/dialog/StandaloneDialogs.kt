@@ -8,8 +8,10 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.toJson
 import com.sdercolin.vlabeler.util.update
 import java.io.File
 
@@ -27,9 +29,20 @@ fun StandaloneDialogs(
             if (directory != null && fileName != null) {
                 val projectContent = File(directory, fileName).readText()
                 val project = parseJson<Project>(projectContent)
-                val labelerConf = labelerConfs.find { it.name == project.labelerConf.name }
-                    ?: throw Exception("Cannot find labeler: ${project.labelerConf.name}")
-                // TODO: update or save labelerConf
+                val existingLabelerConf = labelerConfs.find { it.name == project.labelerConf.name }
+                val labelerConf = when {
+                    existingLabelerConf == null -> {
+                        CustomLabelerDir.resolve(project.labelerConf.fileName).writeText(toJson(project.labelerConf))
+                        project.labelerConf
+                    }
+                    existingLabelerConf.version >= project.labelerConf.version -> {
+                        existingLabelerConf
+                    }
+                    else -> {
+                        // TODO: notifying user about updating local labelers
+                        project.labelerConf
+                    }
+                }
                 appState.update { openProject(project.copy(labelerConf = labelerConf)) }
             }
         }

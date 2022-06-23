@@ -71,6 +71,8 @@ data class LabelerConf(
     val writer: Writer
 ) {
 
+    val fileName get() = "$name.$LabelerFileExtension"
+
     /**
      * Get constraints for canvas usage
      * Pair<a, b> represents "a <= b"
