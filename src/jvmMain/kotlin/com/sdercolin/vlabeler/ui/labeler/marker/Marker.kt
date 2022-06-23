@@ -134,7 +134,7 @@ fun MarkerCanvas(
                 entriesInSampleInPixel.getOrNull(currentIndexInSample + 1)?.end?.minus(1)
             } else null
             )
-            ?: (canvasParams.lengthInPixel - 1f)
+            ?: canvasParams.lengthInPixel.toFloat()
     }
 
     val state = remember(isBusy) { mutableStateOf(MarkerState()) }
@@ -476,8 +476,8 @@ private fun handleMouseMove(
     waveformsHeightRatio: Float
 ) {
     val eventChange = event.changes.first()
-    val x = eventChange.position.x.coerceIn(0f, canvasParams.lengthInPixel - 1f)
-    val y = eventChange.position.y.coerceIn(0f, (canvasHeightState.value - 1f).coerceAtLeast(0f))
+    val x = eventChange.position.x.coerceIn(0f, canvasParams.lengthInPixel.toFloat())
+    val y = eventChange.position.y.coerceIn(0f, canvasHeightState.value.coerceAtLeast(0f))
     if (state.value.mouse == MouseState.Dragging) {
         val newEntryInPixel = if (state.value.lockedDrag) {
             entryInPixel.lockedDrag(state.value.pointIndex, x, leftBorder, rightBorder)
