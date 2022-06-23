@@ -91,7 +91,7 @@ enum class Strings(val en: String) {
         en = "Input label file"
     ),
     StarterNewInputLabelFilePlaceholder(
-        en = "(Create template if this is not set)"
+        en = "(One would be created if left blank)"
     ),
     StarterNewEncoding(
         en = "Encoding"
