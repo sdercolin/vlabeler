@@ -57,6 +57,7 @@ import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.HomeDir
+import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.update
@@ -408,19 +409,21 @@ private fun NewProject(
                     initialDirectory = initial,
                     extensions = extensions,
                     directoryMode = directoryMode
-                ) { directory, file ->
+                ) { directory, fileName ->
                     currentPathPicker = null
-                    if (directory == null || file == null) return@OpenFileDialog
-                    val path = File(directory, file).absolutePath
+                    if (directory == null || fileName == null) return@OpenFileDialog
+                    val file = File(directory, fileName)
                     when (picker) {
-                        PathPicker.SampleDirectory -> setSampleDirectory(path)
+                        PathPicker.SampleDirectory -> {
+                            setSampleDirectory(file.getDirectory().absolutePath)
+                        }
                         PathPicker.WorkingDirectory -> {
                             workingDirectoryEdited = true
-                            setWorkingDirectory(path)
+                            setWorkingDirectory(file.getDirectory().absolutePath)
                         }
                         PathPicker.InputFile -> {
                             inputLabelFileEdited = true
-                            inputLabelFile = path
+                            inputLabelFile = file.absolutePath
                         }
                     }
                 }
