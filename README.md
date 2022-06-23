@@ -1,6 +1,6 @@
 # vLabeler
 
-[![Discord](https://img.shields.io/discord/984044285584359444?style=for-the-badge&label=discord&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/TyEcQ6P73y)
+[![Discord](https://img.shields.io/discord/984044285584359444?style=for-the-badge&label=discord&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/yrTqG2SrRd)
 
 `vLabeler` is an open-sourced voice labeling application, aiming:
 - Modern and fluent UI/UX
