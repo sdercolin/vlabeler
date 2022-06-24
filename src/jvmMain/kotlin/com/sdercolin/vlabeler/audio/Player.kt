@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.audio
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -39,6 +40,7 @@ class Player(
     private var countingJob: Job? = null
 
     fun load(file: File) {
+        Log.info("Player.load(${file.absolutePath}")
         if (this.file != null) {
             clip.flush()
             clip.close()
@@ -56,7 +58,7 @@ class Player(
     }
 
     private fun play(untilPosition: Int? = null) {
-        println("Player::play()")
+        Log.info("Player.play()")
         countingJob = coroutineScope.launch {
             while (true) {
                 delay(PlayingTimeInterval)
@@ -77,14 +79,14 @@ class Player(
 
     fun playSection(startPosition: Float, endPosition: Float) {
         file ?: return
-        println("Player::playSection($startPosition, $endPosition)")
+        Log.info("Player.playSection($startPosition, $endPosition)")
         reset()
         clip.framePosition = startPosition.toInt()
         play(untilPosition = endPosition.toInt())
     }
 
     private fun stop() {
-        println("Player::stop()")
+        Log.info("Player.stop()")
         clip.stop()
         countingJob?.cancel()
         countingJob = null
@@ -92,7 +94,7 @@ class Player(
     }
 
     private fun reset() {
-        println("Player::reset()")
+        Log.info("Player.reset()")
         clip.close()
         AudioSystem.getAudioInputStream(file).use { clip.open(it) }
         clip.framePosition = 0

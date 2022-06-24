@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.Spectrogram
 import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.AppConf
@@ -124,7 +125,7 @@ private fun Waveforms(
     channel: Wave.Channel,
     chunkCount: Int
 ) {
-    println("Waveforms: composed")
+    Log.info("Waveforms: composed")
     val chunkSize = remember(channel, chunkCount) { channel.data.size / chunkCount }
     val dataChunks = remember(channel, chunkSize) { channel.data.chunked(chunkSize) }
     val waveformsColor = MaterialTheme.colors.onBackground
@@ -143,7 +144,7 @@ private fun Waveforms(
                 val size = Size(width.toFloat(), height.toFloat())
                 val newBitmap = ImageBitmap(width, height)
                 CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
-                    println("Waveforms chunk $i: draw bitmap")
+                    Log.info("Waveforms chunk $i: draw bitmap")
                     val yScale = maxRawY / height * 2 * (1 + appConf.painter.amplitude.yAxisBlankRate)
                     val points = data
                         .map { height / 2 - it / yScale }
@@ -172,7 +173,7 @@ private fun Spectrogram(
     spectrogram: Spectrogram,
     chunkCount: Int
 ) {
-    println("Spectrogram: composed")
+    Log.info("Spectrogram: composed")
     val data = spectrogram.data
     val chunkSize = remember(spectrogram, chunkCount) { data.size / chunkCount }
     val dataChunks = remember(spectrogram, chunkSize) { data.toList().chunked(chunkSize) }
@@ -224,7 +225,7 @@ private fun ChunkImage(
     index: Int,
     chunkType: String
 ) {
-    println("$chunkType chunk $index: composed")
+    Log.info("$chunkType chunk $index: composed")
     bitmap.value?.let {
         Image(
             modifier = Modifier.fillMaxHeight()

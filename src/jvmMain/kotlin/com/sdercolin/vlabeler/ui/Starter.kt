@@ -49,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
@@ -359,6 +360,11 @@ private fun NewProject(
                     onClick = {
                         coroutineScope.launch(Dispatchers.IO) {
                             isLoading = true
+                            Log.debug(
+                                "Create project. sampleDir=$sampleDirectory, workingDir=$workingDirectory, " +
+                                    "projectName=$projectName, labeler=${labeler.name}, input=$inputLabelFile, " +
+                                    "encoding=$encoding"
+                            )
                             val project = Project.from(
                                 sampleDirectory = sampleDirectory,
                                 workingDirectory = workingDirectory,
@@ -371,6 +377,7 @@ private fun NewProject(
                                     is EmptySampleDirectoryException -> string(Strings.EmptySampleDirectoryException)
                                     else -> it.message.orEmpty()
                                 }
+                                Log.error(it)
                                 snackbarHostState.showSnackbar(message)
                                 null
                             }

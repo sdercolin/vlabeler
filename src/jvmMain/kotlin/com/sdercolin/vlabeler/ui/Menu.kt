@@ -9,6 +9,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
+import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -115,6 +116,14 @@ fun FrameWindowScope.Menu(
                 onClick = { scrollFitViewModel.emit() },
                 enabled = appState.value.isEditorActive
             )
+        }
+        if (isDebug) {
+            Menu("Debug") {
+                Item(
+                    "Throw exception",
+                    onClick = { throw IllegalStateException("Test exception from menu") }
+                )
+            }
         }
     }
 }

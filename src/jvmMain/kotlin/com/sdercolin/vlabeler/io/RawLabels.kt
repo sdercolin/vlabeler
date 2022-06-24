@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.io
 
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
@@ -32,7 +33,7 @@ fun fromRawLabels(
 
             // require name, otherwise ignore the entry
             val name = python.get<String>("name")
-            require(name.isNotEmpty())
+            require(name.isNotEmpty()) { "Cannot get `name` from parser in `$source`" }
 
             // optional start, end, points
             val start = python.getOrNull<Float>("start")
@@ -46,13 +47,15 @@ fun fromRawLabels(
 
             val entry = if (start == null || end == null || points.size != labelerConf.fields.size) {
                 // use default except name if data size is not enough
-                Entry.fromDefaultValues(name, labelerConf.defaultValues, labelerConf.defaultExtras)
+                Entry.fromDefaultValues(name, labelerConf.defaultValues, labelerConf.defaultExtras).also {
+                    Log.info("Entry parse failed, fallback to default: $it")
+                }
             } else {
                 Entry(name = name, start = start, end = end, points = points, extra = extra)
             }
             sampleName to entry
         }.getOrElse {
-            println(it)
+            Log.debug(it)
             null
         }
     }
@@ -64,6 +67,9 @@ fun fromRawLabels(
             entriesBySampleName[sampleName]
                 ?.takeUnless { it.isEmpty() }
                 ?: listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues, labelerConf.defaultExtras))
+                    .also {
+                        Log.info("Sample $sampleName doesn't have entries, created default: ${it.first()}")
+                    }
             )
             .toContinuous(labelerConf.continuous)
     }

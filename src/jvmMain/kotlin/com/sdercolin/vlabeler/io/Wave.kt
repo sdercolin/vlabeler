@@ -2,6 +2,8 @@ package com.sdercolin.vlabeler.io
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -20,12 +22,12 @@ class Wave(val channels: List<Channel>) {
 fun loadSampleFile(file: File, appConf: AppConf): Sample {
     val stream = AudioSystem.getAudioInputStream(file)
     val format = stream.format
-    println("Loaded wav file: $format")
+    Log.debug("Sample file loaded: $format")
     val channelNumber = format.channels
     val isBigEndian = format.isBigEndian
     val channels = (0 until channelNumber).map { mutableListOf<Float>() }
     val frameByteSize = format.sampleSizeInBits / 8
-    if (frameByteSize > 4) {
+    if (frameByteSize > 4 || (isWindows && frameByteSize != 2)) {
         throw Exception("Unsupported sampleSizeInBits: ${format.sampleSizeInBits} bit")
     }
     val sampleSize = channelNumber * frameByteSize
@@ -39,7 +41,7 @@ fun loadSampleFile(file: File, appConf: AppConf): Sample {
         val sampleBytes = stream.readNBytes(sampleSize)
         if (sampleBytes.isEmpty()) break
         if (sampleBytes.size != sampleSize) {
-            println("Warning: Ignored last ${sampleBytes.size} bytes.")
+            Log.error("Ignored last ${sampleBytes.size} bytes.")
             break
         }
         for (channelIndex in channels.indices) {

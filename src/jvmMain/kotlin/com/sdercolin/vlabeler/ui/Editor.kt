@@ -24,6 +24,7 @@ import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.shouldDecreaseResolution
 import com.sdercolin.vlabeler.env.shouldIncreaseResolution
 import com.sdercolin.vlabeler.io.loadSampleFile
@@ -76,7 +77,7 @@ fun Editor(
 
     val submitEntry = {
         if (editedEntryState.value.entry != project.currentEntry) {
-            println("Submit entry")
+            Log.info("Submit entry: ${editedEntryState.value}")
             editEntry(editedEntryState.value)
         }
     }
@@ -127,7 +128,7 @@ private fun LaunchSwitchEntryFromUpstreamState(
     LaunchedEffect(project.currentEntryIndexInTotal, project.currentEntry) {
         val newValue = project.getEntryForEditing()
         if (newValue != editedEntryState.value) {
-            println("Load new entry")
+            Log.info("Load new entry: $newValue")
             editedEntryState.value = newValue
         }
     }

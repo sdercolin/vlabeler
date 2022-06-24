@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -125,7 +126,7 @@ fun Labeler(
 
 @Composable
 private fun EntryTitleBar(entryName: String, sampleName: String) {
-    println("EntryTitleBar: composed")
+    Log.info("EntryTitleBar: composed")
     Surface {
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -162,7 +163,7 @@ private fun StatusBar(
     openJumpToEntryDialog: () -> Unit,
     appConf: AppConf
 ) {
-    println("StatusBar: composed")
+    Log.info("StatusBar: composed")
     val resolutionRange = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
     Surface {
         Row(

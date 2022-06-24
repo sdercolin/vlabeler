@@ -19,6 +19,7 @@ import androidx.compose.ui.window.application
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.shouldTogglePlayer
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -41,9 +42,6 @@ import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
 import com.sdercolin.vlabeler.util.update
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
 
 fun main() = application {
@@ -54,6 +52,8 @@ fun main() = application {
     val scrollFitViewModel = remember { ScrollFitViewModel(mainScope) }
     val appState = remember { mutableStateOf(AppState()) }
     val snackbarHostState = remember { SnackbarHostState() }
+    remember { ensureDirectories() }
+    remember { Log.init() }
 
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect { event ->
@@ -63,13 +63,12 @@ fun main() = application {
         }
     }
 
-    remember { ensureDirectories() }
-    val appConf = rememberAppConf(mainScope)
+    val appConf = rememberAppConf()
     val availableLabelerConfs = rememberAvailableLabelerConfs()
 
     Window(
         title = string(Strings.AppName),
-        state = WindowState(width = 1000.dp, height = 800.dp),
+        state = WindowState(width = 1000.dp, height = 800.dp), // TODO: remember in appConf
         onCloseRequest = { appState.update { requestExit() } },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
@@ -98,14 +97,18 @@ fun main() = application {
 }
 
 @Composable
-private fun rememberAppConf(scope: CoroutineScope) = remember {
+private fun rememberAppConf() = remember {
     val customAppConf = if (CustomAppConfFile.exists()) {
-        runCatching { parseJson<AppConf>(CustomAppConfFile.readText()) }.getOrNull()
+        Log.info("Custom app conf found")
+        val customAppConfText = CustomAppConfFile.readText()
+        runCatching { parseJson<AppConf>(customAppConfText) }.getOrElse {
+            Log.debug("Failed to parse custom app conf: $customAppConfText. Error message: {${it.message}}.")
+            null
+        }
     } else null
     val appConf = customAppConf ?: parseJson(DefaultAppConfFile.readText())
-    scope.launch(Dispatchers.IO) {
-        CustomAppConfFile.writeText(toJson(appConf))
-    }
+    CustomAppConfFile.writeText(toJson(appConf))
+    Log.info("AppConf: $appConf")
     mutableStateOf(appConf)
 }
 
@@ -116,10 +119,7 @@ private fun rememberAvailableLabelerConfs() = remember {
     }.toList()
     val defaultLabelerNames = defaultLabelers.map { it.first.name }
     val customLabelers = getCustomLabelers().associateWith {
-        it.asLabelerConf().getOrElse {
-            // TODO: log
-            null
-        }
+        it.asLabelerConf().getOrNull()
     }.toList()
     val validCustomLabelers = customLabelers.mapNotNull { (file, result) -> result?.let { file to it } }
     val validCustomLabelerNames = validCustomLabelers.map { it.first.name }
@@ -136,6 +136,7 @@ private fun rememberAvailableLabelerConfs() = remember {
             // update with default
             availableLabelers.add(default.second)
             default.first.copyTo(CustomLabelerDir.resolve(custom.first.name), overwrite = true)
+            Log.debug("Update ${custom.first.name} to version ${default.second.version}")
         } else {
             availableLabelers.add(custom.second)
         }
@@ -144,20 +145,35 @@ private fun rememberAvailableLabelerConfs() = remember {
         validCustomLabelers.filter { it.first.name !in defaultLabelerNames }.map { it.second }
     )
     if (availableLabelers.isEmpty()) {
-        throw Exception("No labeler configuration files found.")
+        throw IllegalStateException("No labeler configuration files found.")
     }
+
+    Log.info("Labelers: ${availableLabelers.joinToString { it.toString() }}")
     mutableStateOf(availableLabelers)
 }
 
-private fun File.asLabelerConf() = runCatching {
-    parseJson<LabelerConf>(this@asLabelerConf.readText()).copy(
-        name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}")
-    )
+private fun File.asLabelerConf(): Result<LabelerConf> {
+    val text = readText()
+    val result = runCatching {
+        parseJson<LabelerConf>(text).copy(
+            name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}")
+        )
+    }
+    result.exceptionOrNull()?.let {
+        Log.debug("Failed to parse custom app conf: $text. Error message: {${it.message}}.")
+    }
+    return result
 }
 
 private fun ensureDirectories() {
-    if (AppDir.exists().not()) AppDir.mkdir()
-    if (CustomLabelerDir.exists().not()) CustomLabelerDir.mkdir()
+    if (AppDir.exists().not()) {
+        AppDir.mkdir()
+        Log.info("$AppDir created")
+    }
+    if (CustomLabelerDir.exists().not()) {
+        CustomLabelerDir.mkdir()
+        Log.info("$CustomLabelerDir created")
+    }
 }
 
 @Composable
