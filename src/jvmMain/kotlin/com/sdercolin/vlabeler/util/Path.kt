@@ -31,7 +31,7 @@ fun getCustomLabelers() = CustomLabelerDir.listFiles(labelerFileFilter).orEmpty(
 private val invalidCharsForFileName = arrayOf('"', '*', ':', '<', '>', '?', '\\', '|', Char(0x7F), '\u0000')
 
 fun String.isValidFileName(): Boolean {
-    return invalidCharsForFileName.none { contains(it) }
+    return invalidCharsForFileName.none { contains(it) } && isNotBlank()
 }
 
 private val splitters = charArrayOf('\\', '/')
