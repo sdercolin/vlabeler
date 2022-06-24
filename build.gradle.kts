@@ -53,9 +53,7 @@ compose.desktop {
             packageVersion = "1.0.0"
             copyright = "© 2022 sdercolin. All rights reserved."
             appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
-            modules("java.sql")
-            modules("jdk.charsets")
-            modules("jdk.unsupported")
+            modules("java.sql", "jdk.charsets", "jdk.unsupported", "jdk.accessibility")
         }
     }
 }
