@@ -47,6 +47,7 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "com.sdercolin.vlabeler.MainKt"
+        jvmArgs("-Xmx2G")
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "vLabeler"
