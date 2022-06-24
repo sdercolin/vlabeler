@@ -100,7 +100,7 @@ enum class Strings(val en: String) {
         en = "Choose sample directory"
     ),
     ChooseWorkingDirectoryDialogTitle(
-        en = "Choose sample directory"
+        en = "Choose working directory"
     ),
     ChooseInputLabelFileDialogTitle(
         en = "Choose input label file"
