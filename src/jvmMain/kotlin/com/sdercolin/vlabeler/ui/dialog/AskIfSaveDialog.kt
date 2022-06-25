@@ -27,6 +27,7 @@ enum class AskIfSaveDialogPurpose(
     IsOpening(Strings.AskIfSaveBeforeOpenDialogDescription, AppState.PendingActionAfterSaved.Open),
     IsExporting(Strings.AskIfSaveBeforeExportDialogDescription, AppState.PendingActionAfterSaved.Export),
     IsClosing(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close),
+    IsCreatingNew(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.CreatingNew),
     IsExiting(Strings.AskIfSaveBeforeExitDialogDescription, AppState.PendingActionAfterSaved.Exit);
 }
 

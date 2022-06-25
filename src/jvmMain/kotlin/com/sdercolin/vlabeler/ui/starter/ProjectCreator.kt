@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
@@ -152,257 +154,261 @@ fun ProjectCreator(
         }
     }
 
-    Box(contentAlignment = Alignment.Center) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 60.dp, vertical = 40.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            Text(text = string(Strings.StarterNewProject), style = MaterialTheme.typography.h4, maxLines = 1)
-            Spacer(Modifier.height(25.dp))
-            listOf<@Composable () -> Unit>({
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = sampleDirectory,
-                    onValueChange = { setSampleDirectory(it) },
-                    label = { Text(string(Strings.StarterNewSampleDirectory)) },
-                    maxLines = 2,
-                    trailingIcon = {
-                        IconButton(onClick = { currentPathPicker = PathPicker.SampleDirectory }) {
-                            Icon(Icons.Default.FolderOpen, null)
-                        }
-                    },
-                    isError = isSampleDirectoryValid().not()
-                )
-            }, {
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = workingDirectory,
-                    onValueChange = {
-                        workingDirectoryEdited = true
-                        setWorkingDirectory(it)
-                    },
-                    label = { Text(string(Strings.StarterNewWorkingDirectory)) },
-                    maxLines = 2,
-                    trailingIcon = {
-                        IconButton(onClick = { currentPathPicker = PathPicker.WorkingDirectory }) {
-                            Icon(Icons.Default.FolderOpen, null)
-                        }
-                    },
-                    isError = isWorkingDirectoryValid().not()
-                )
-            }, {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+    Surface(Modifier.fillMaxSize()) {
+        Box(contentAlignment = Alignment.Center) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 60.dp, vertical = 40.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(text = string(Strings.StarterNewProject), style = MaterialTheme.typography.h4, maxLines = 1)
+                Spacer(Modifier.height(25.dp))
+                listOf<@Composable () -> Unit>({
                     OutlinedTextField(
-                        modifier = Modifier.widthIn(min = 300.dp),
-                        value = projectName,
-                        onValueChange = {
-                            projectName = it
-                            projectNameEdited = true
-                        },
-                        label = { Text(string(Strings.StarterNewProjectName)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        value = sampleDirectory,
+                        onValueChange = { setSampleDirectory(it) },
+                        label = { Text(string(Strings.StarterNewSampleDirectory)) },
                         maxLines = 2,
-                        isError = isProjectNameValid().not()
+                        trailingIcon = {
+                            IconButton(onClick = { currentPathPicker = PathPicker.SampleDirectory }) {
+                                Icon(Icons.Default.FolderOpen, null)
+                            }
+                        },
+                        isError = isSampleDirectoryValid().not()
                     )
-                    if (isProjectFileExisting()) {
-                        Spacer(Modifier.width(20.dp))
-                        TooltipArea(
-                            tooltip = {
-                                Box(
-                                    Modifier.background(
-                                        color = MaterialTheme.colors.background,
-                                        shape = RoundedCornerShape(5.dp)
-                                    )
-                                        .padding(10.dp)
-                                        .shadow(elevation = 5.dp, shape = RoundedCornerShape(5.dp))
-                                ) {
-                                    Text(
-                                        string(Strings.StarterNewProjectNameWarning),
-                                        style = MaterialTheme.typography.caption
-                                    )
-                                }
-                            }
-                        ) {
-                            Icon(Icons.Default.Warning, null, tint = MaterialTheme.colors.primary)
-                        }
-                    }
-                }
-            }, {
-                var expanded by remember { mutableStateOf(false) }
-                Box {
-                    TextField(
-                        modifier = Modifier.widthIn(min = 400.dp),
-                        value = labeler.displayedName,
-                        onValueChange = { },
-                        readOnly = true,
-                        label = { Text(string(Strings.StarterNewLabeler)) },
-                        maxLines = 1,
-                        leadingIcon = {
-                            IconButton(onClick = { expanded = true }) {
-                                Icon(Icons.Default.ExpandMore, null)
-                            }
-                        }
-                    )
-                    DropdownMenu(
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        availableLabelerConfs.forEach { conf ->
-                            DropdownMenuItem(
-                                onClick = {
-                                    labeler = conf
-                                    expanded = false
-                                }
-                            ) {
-                                Text(text = conf.displayedName)
-                            }
-                        }
-                    }
-                }
-            }, {
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = inputLabelFile,
-                    onValueChange = {
-                        inputLabelFile = it
-                        inputLabelFileEdited = true
-                    },
-                    label = { Text(string(Strings.StarterNewInputLabelFile)) },
-                    placeholder = { Text(string(Strings.StarterNewInputLabelFilePlaceholder)) },
-                    maxLines = 2,
-                    trailingIcon = {
-                        IconButton(onClick = { currentPathPicker = PathPicker.InputFile }) {
-                            Icon(Icons.Default.FolderOpen, null)
-                        }
-                    },
-                    isError = isInputLabelFileValid().not()
-                )
-            }, {
-                var expanded by remember { mutableStateOf(false) }
-                Box {
-                    TextField(
-                        modifier = Modifier.widthIn(min = 200.dp),
-                        value = encoding,
-                        onValueChange = { },
-                        enabled = inputLabelFile != "",
-                        readOnly = true,
-                        label = { Text(string(Strings.StarterNewEncoding)) },
-                        maxLines = 1,
-                        leadingIcon = {
-                            IconButton(onClick = { expanded = true }) {
-                                Icon(Icons.Default.ExpandMore, null)
-                            }
-                        }
-                    )
-                    DropdownMenu(
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        encodings.forEach { encodingName ->
-                            DropdownMenuItem(
-                                onClick = {
-                                    encoding = encodingName
-                                    expanded = false
-                                }
-                            ) {
-                                Text(text = encodingName)
-                            }
-                        }
-                    }
-                }
-            }).forEach {
-                it.invoke()
-                Spacer(Modifier.height(20.dp))
-            }
-            Spacer(Modifier.weight(1f))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                OutlinedButton(onClick = cancel) {
-                    Text(string(Strings.CommonCancel))
-                }
-                Button(
-                    onClick = {
-                        coroutineScope.launch(Dispatchers.IO) {
-                            isLoading = true
-                            Log.debug(
-                                "Create project. sampleDir=$sampleDirectory, workingDir=$workingDirectory, " +
-                                    "projectName=$projectName, labeler=${labeler.name}, input=$inputLabelFile, " +
-                                    "encoding=$encoding"
-                            )
-                            val project = Project.from(
-                                sampleDirectory = sampleDirectory,
-                                workingDirectory = workingDirectory,
-                                projectName = projectName,
-                                labelerConf = labeler,
-                                inputLabelFile = inputLabelFile,
-                                encoding = encoding
-                            ).getOrElse {
-                                val message = when (it) {
-                                    is EmptySampleDirectoryException -> string(Strings.EmptySampleDirectoryException)
-                                    else -> it.message.orEmpty()
-                                }
-                                Log.error(it)
-                                snackbarHostState.showSnackbar(message)
-                                null
-                            }
-                            project?.let(create)
-                            isLoading = false
-                        }
-                    },
-                    enabled = isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid()
-                ) {
-                    Text(string(Strings.CommonOkay))
-                }
-            }
-            currentPathPicker?.let { picker ->
-                val title = when (picker) {
-                    PathPicker.SampleDirectory -> string(Strings.ChooseSampleDirectoryDialogTitle)
-                    PathPicker.WorkingDirectory -> string(Strings.ChooseWorkingDirectoryDialogTitle)
-                    PathPicker.InputFile -> string(Strings.ChooseInputLabelFileDialogTitle)
-                }
-                val initial = when (picker) {
-                    PathPicker.SampleDirectory -> sampleDirectory
-                    PathPicker.WorkingDirectory -> workingDirectory
-                    PathPicker.InputFile -> if (inputLabelFile != "" && isInputLabelFileValid()) {
-                        File(inputLabelFile).parent
-                    } else {
-                        sampleDirectory
-                    }
-                }
-                val extensions = when (picker) {
-                    PathPicker.SampleDirectory -> listOf(Project.SampleFileExtension)
-                    PathPicker.WorkingDirectory -> null
-                    PathPicker.InputFile -> listOf(labeler.extension)
-                }
-                val directoryMode = picker != PathPicker.InputFile
-                OpenFileDialog(
-                    title = title,
-                    initialDirectory = initial,
-                    extensions = extensions,
-                    directoryMode = directoryMode
-                ) { directory, fileName ->
-                    currentPathPicker = null
-                    if (directory == null || fileName == null) return@OpenFileDialog
-                    val file = File(directory, fileName)
-                    when (picker) {
-                        PathPicker.SampleDirectory -> {
-                            setSampleDirectory(file.getDirectory().absolutePath)
-                        }
-                        PathPicker.WorkingDirectory -> {
+                }, {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = workingDirectory,
+                        onValueChange = {
                             workingDirectoryEdited = true
-                            setWorkingDirectory(file.getDirectory().absolutePath)
+                            setWorkingDirectory(it)
+                        },
+                        label = { Text(string(Strings.StarterNewWorkingDirectory)) },
+                        maxLines = 2,
+                        trailingIcon = {
+                            IconButton(onClick = { currentPathPicker = PathPicker.WorkingDirectory }) {
+                                Icon(Icons.Default.FolderOpen, null)
+                            }
+                        },
+                        isError = isWorkingDirectoryValid().not()
+                    )
+                }, {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedTextField(
+                            modifier = Modifier.widthIn(min = 300.dp),
+                            value = projectName,
+                            onValueChange = {
+                                projectName = it
+                                projectNameEdited = true
+                            },
+                            label = { Text(string(Strings.StarterNewProjectName)) },
+                            maxLines = 2,
+                            isError = isProjectNameValid().not()
+                        )
+                        if (isProjectFileExisting()) {
+                            Spacer(Modifier.width(20.dp))
+                            TooltipArea(
+                                tooltip = {
+                                    Box(
+                                        Modifier.background(
+                                            color = MaterialTheme.colors.background,
+                                            shape = RoundedCornerShape(5.dp)
+                                        )
+                                            .padding(10.dp)
+                                            .shadow(elevation = 5.dp, shape = RoundedCornerShape(5.dp))
+                                    ) {
+                                        Text(
+                                            string(Strings.StarterNewProjectNameWarning),
+                                            style = MaterialTheme.typography.caption
+                                        )
+                                    }
+                                }
+                            ) {
+                                Icon(Icons.Default.Warning, null, tint = MaterialTheme.colors.primary)
+                            }
                         }
-                        PathPicker.InputFile -> {
+                    }
+                }, {
+                    var expanded by remember { mutableStateOf(false) }
+                    Box {
+                        TextField(
+                            modifier = Modifier.widthIn(min = 400.dp),
+                            value = labeler.displayedName,
+                            onValueChange = { },
+                            readOnly = true,
+                            label = { Text(string(Strings.StarterNewLabeler)) },
+                            maxLines = 1,
+                            leadingIcon = {
+                                IconButton(onClick = { expanded = true }) {
+                                    Icon(Icons.Default.ExpandMore, null)
+                                }
+                            }
+                        )
+                        DropdownMenu(
+                            modifier = Modifier.align(Alignment.CenterEnd),
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            availableLabelerConfs.forEach { conf ->
+                                DropdownMenuItem(
+                                    onClick = {
+                                        labeler = conf
+                                        expanded = false
+                                    }
+                                ) {
+                                    Text(text = conf.displayedName)
+                                }
+                            }
+                        }
+                    }
+                }, {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = inputLabelFile,
+                        onValueChange = {
+                            inputLabelFile = it
                             inputLabelFileEdited = true
-                            inputLabelFile = file.absolutePath
+                        },
+                        label = { Text(string(Strings.StarterNewInputLabelFile)) },
+                        placeholder = { Text(string(Strings.StarterNewInputLabelFilePlaceholder)) },
+                        maxLines = 2,
+                        trailingIcon = {
+                            IconButton(onClick = { currentPathPicker = PathPicker.InputFile }) {
+                                Icon(Icons.Default.FolderOpen, null)
+                            }
+                        },
+                        isError = isInputLabelFileValid().not()
+                    )
+                }, {
+                    var expanded by remember { mutableStateOf(false) }
+                    Box {
+                        TextField(
+                            modifier = Modifier.widthIn(min = 200.dp),
+                            value = encoding,
+                            onValueChange = { },
+                            enabled = inputLabelFile != "",
+                            readOnly = true,
+                            label = { Text(string(Strings.StarterNewEncoding)) },
+                            maxLines = 1,
+                            leadingIcon = {
+                                IconButton(onClick = { expanded = true }) {
+                                    Icon(Icons.Default.ExpandMore, null)
+                                }
+                            }
+                        )
+                        DropdownMenu(
+                            modifier = Modifier.align(Alignment.CenterEnd),
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            encodings.forEach { encodingName ->
+                                DropdownMenuItem(
+                                    onClick = {
+                                        encoding = encodingName
+                                        expanded = false
+                                    }
+                                ) {
+                                    Text(text = encodingName)
+                                }
+                            }
+                        }
+                    }
+                }).forEach {
+                    it.invoke()
+                    Spacer(Modifier.height(20.dp))
+                }
+                Spacer(Modifier.weight(1f))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    OutlinedButton(onClick = cancel) {
+                        Text(string(Strings.CommonCancel))
+                    }
+                    Button(
+                        onClick = {
+                            coroutineScope.launch(Dispatchers.IO) {
+                                isLoading = true
+                                Log.debug(
+                                    "Create project. sampleDir=$sampleDirectory, workingDir=$workingDirectory, " +
+                                        "projectName=$projectName, labeler=${labeler.name}, input=$inputLabelFile, " +
+                                        "encoding=$encoding"
+                                )
+                                val project = Project.from(
+                                    sampleDirectory = sampleDirectory,
+                                    workingDirectory = workingDirectory,
+                                    projectName = projectName,
+                                    labelerConf = labeler,
+                                    inputLabelFile = inputLabelFile,
+                                    encoding = encoding
+                                ).getOrElse {
+                                    val message = when (it) {
+                                        is EmptySampleDirectoryException -> string(
+                                            Strings.EmptySampleDirectoryException
+                                        )
+                                        else -> it.message.orEmpty()
+                                    }
+                                    Log.error(it)
+                                    snackbarHostState.showSnackbar(message)
+                                    null
+                                }
+                                project?.let(create)
+                                isLoading = false
+                            }
+                        },
+                        enabled = isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid()
+                    ) {
+                        Text(string(Strings.CommonOkay))
+                    }
+                }
+                currentPathPicker?.let { picker ->
+                    val title = when (picker) {
+                        PathPicker.SampleDirectory -> string(Strings.ChooseSampleDirectoryDialogTitle)
+                        PathPicker.WorkingDirectory -> string(Strings.ChooseWorkingDirectoryDialogTitle)
+                        PathPicker.InputFile -> string(Strings.ChooseInputLabelFileDialogTitle)
+                    }
+                    val initial = when (picker) {
+                        PathPicker.SampleDirectory -> sampleDirectory
+                        PathPicker.WorkingDirectory -> workingDirectory
+                        PathPicker.InputFile -> if (inputLabelFile != "" && isInputLabelFileValid()) {
+                            File(inputLabelFile).parent
+                        } else {
+                            sampleDirectory
+                        }
+                    }
+                    val extensions = when (picker) {
+                        PathPicker.SampleDirectory -> listOf(Project.SampleFileExtension)
+                        PathPicker.WorkingDirectory -> null
+                        PathPicker.InputFile -> listOf(labeler.extension)
+                    }
+                    val directoryMode = picker != PathPicker.InputFile
+                    OpenFileDialog(
+                        title = title,
+                        initialDirectory = initial,
+                        extensions = extensions,
+                        directoryMode = directoryMode
+                    ) { directory, fileName ->
+                        currentPathPicker = null
+                        if (directory == null || fileName == null) return@OpenFileDialog
+                        val file = File(directory, fileName)
+                        when (picker) {
+                            PathPicker.SampleDirectory -> {
+                                setSampleDirectory(file.getDirectory().absolutePath)
+                            }
+                            PathPicker.WorkingDirectory -> {
+                                workingDirectoryEdited = true
+                                setWorkingDirectory(file.getDirectory().absolutePath)
+                            }
+                            PathPicker.InputFile -> {
+                                inputLabelFileEdited = true
+                                inputLabelFile = file.absolutePath
+                            }
                         }
                     }
                 }
             }
-        }
-        if (isLoading) {
-            CircularProgress()
+            if (isLoading) {
+                CircularProgress()
+            }
         }
     }
 }

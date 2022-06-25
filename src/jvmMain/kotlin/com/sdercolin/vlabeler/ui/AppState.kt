@@ -15,7 +15,7 @@ import com.sdercolin.vlabeler.ui.editor.EditedEntry
 data class AppState(
     val project: Project? = null,
     val history: ProjectHistory = ProjectHistory(),
-    val isConfiguringNewProject: Boolean = false,
+    val screen: Screen = Screen.Starter,
     val isShowingOpenProjectDialog: Boolean = false,
     val isShowingSaveAsProjectDialog: Boolean = false,
     val isShowingExportDialog: Boolean = false,
@@ -29,7 +29,9 @@ data class AppState(
 ) {
 
     val hasProject get() = project != null
-    fun openProject(project: Project) = AppState(project = project, history = history.new(project))
+    fun openProject(project: Project) =
+        AppState(project = project, history = history.new(project), screen = Screen.Editor)
+
     private fun closeProject() = AppState()
 
     fun editProject(editor: Project.() -> Project): AppState {
@@ -54,8 +56,10 @@ data class AppState(
         return copy(project = history.current, history = history)
     }
 
-    fun configureNewProject() = copy(isConfiguringNewProject = true)
-    fun stopConfiguringNewProject() = copy(isConfiguringNewProject = false)
+    fun requestOpenProjectCreator() = if (hasUnsavedChanges) askIfSaveBeforeCreateProject() else openProjectCreator()
+    private fun askIfSaveBeforeCreateProject() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsCreatingNew)
+    private fun openProjectCreator() = AppState(screen = Screen.ProjectCreator)
+    fun closeProjectCreator() = AppState()
 
     fun requestOpenProject() = if (hasUnsavedChanges) askIfSaveBeforeOpenProject() else openOpenProjectDialog()
     private fun askIfSaveBeforeOpenProject() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsOpening)
@@ -92,6 +96,7 @@ data class AppState(
         PendingActionAfterSaved.Open -> openOpenProjectDialog()
         PendingActionAfterSaved.Export -> openExportDialog()
         PendingActionAfterSaved.Close -> closeProject()
+        PendingActionAfterSaved.CreatingNew -> openProjectCreator()
         PendingActionAfterSaved.Exit -> exit()
         null -> this
     }
@@ -166,11 +171,17 @@ data class AppState(
 
     val isEditorActive
         get() = project != null &&
-            !isConfiguringNewProject &&
+            screen == Screen.Editor &&
             !isShowingOpenProjectDialog &&
             !isShowingSaveAsProjectDialog &&
             !isShowingExportDialog &&
             embeddedDialog == null
+
+    enum class Screen {
+        Starter,
+        ProjectCreator,
+        Editor
+    }
 
     enum class ProjectWriteStatus {
         Updated,
@@ -182,6 +193,7 @@ data class AppState(
         Open,
         Export,
         Close,
+        CreatingNew,
         Exit
     }
 }

@@ -31,7 +31,7 @@ fun FrameWindowScope.Menu(
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
             Item(
                 string(Strings.MenuFileNewProject),
-                onClick = { appState.update { configureNewProject() } },
+                onClick = { appState.update { requestOpenProjectCreator() } },
                 shortcut = getKeyShortCut(Key.N, ctrl = true, shift = true)
             )
             Item(

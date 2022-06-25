@@ -26,6 +26,7 @@ import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.editor.labeler.LabelerState
 import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
@@ -48,34 +49,37 @@ fun App(
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         val project = appState.value.project
-        if (project != null && appState.value.isConfiguringNewProject.not()) {
-            Editor(
-                project = project,
-                editProject = { appState.update { editProject { it } } },
-                editEntry = { appState.update { editEntry(it) } },
-                showDialog = { appState.update { openEmbeddedDialog(it) } },
-                appConf = appConf,
-                labelerState = labelerState,
-                appState = appState,
-                playerState = playerState,
-                snackbarHostState = snackbarHostState,
-                keyboardViewModel = keyboardViewModel,
-                scrollFitViewModel = scrollFitViewModel,
-                player = player
-            )
-        } else {
-            Starter(
-                appState = appState,
-                requestNewProject = {
-                    mainScope.launch {
-                        saveProjectFile(it)
-                        appState.update { openProject(it) }
-                        scrollFitViewModel.emitNext()
-                    }
-                },
-                availableLabelerConfs = availableLabelerConfs,
-                snackbarHostState = snackbarHostState
-            )
+        when (appState.value.screen) {
+            AppState.Screen.Starter -> Starter(appState = appState)
+            AppState.Screen.ProjectCreator ->
+                ProjectCreator(
+                    create = {
+                        mainScope.launch {
+                            saveProjectFile(it)
+                            appState.update { openProject(it) }
+                            scrollFitViewModel.emitNext()
+                        }
+                    },
+                    cancel = { appState.update { closeProjectCreator() } },
+                    availableLabelerConfs = availableLabelerConfs,
+                    snackbarHostState = snackbarHostState
+                )
+            AppState.Screen.Editor -> if (project != null) {
+                Editor(
+                    project = project,
+                    editProject = { appState.update { editProject { it } } },
+                    editEntry = { appState.update { editEntry(it) } },
+                    showDialog = { appState.update { openEmbeddedDialog(it) } },
+                    appConf = appConf,
+                    labelerState = labelerState,
+                    appState = appState,
+                    playerState = playerState,
+                    snackbarHostState = snackbarHostState,
+                    keyboardViewModel = keyboardViewModel,
+                    scrollFitViewModel = scrollFitViewModel,
+                    player = player
+                )
+            }
         }
         appState.value.embeddedDialog?.let { args ->
             EmbeddedDialog(args) { result ->
