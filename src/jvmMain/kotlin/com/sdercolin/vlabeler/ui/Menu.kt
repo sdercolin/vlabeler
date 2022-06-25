@@ -118,7 +118,7 @@ fun FrameWindowScope.Menu(
                         updated
                     }
                 },
-                enabled = appState.value.canGoNextEntryOrSample
+                enabled = appState.value.isEditorActive && appState.value.canGoNextEntryOrSample
             )
             Item(
                 string(Strings.MenuNavigatePreviousEntry),
@@ -132,7 +132,7 @@ fun FrameWindowScope.Menu(
                         updated
                     }
                 },
-                enabled = appState.value.canGoPreviousEntryOrSample
+                enabled = appState.value.isEditorActive && appState.value.canGoPreviousEntryOrSample
             )
             Item(
                 string(Strings.MenuNavigateNextSample),
@@ -141,7 +141,7 @@ fun FrameWindowScope.Menu(
                     appState.update { nextSample() }
                     scrollFitViewModel.emitNext()
                 },
-                enabled = appState.value.canGoNextEntryOrSample
+                enabled = appState.value.isEditorActive && appState.value.canGoNextEntryOrSample
             )
             Item(
                 string(Strings.MenuNavigatePreviousSample),
@@ -150,7 +150,7 @@ fun FrameWindowScope.Menu(
                     appState.update { previousSample() }
                     scrollFitViewModel.emitNext()
                 },
-                enabled = appState.value.canGoPreviousEntryOrSample
+                enabled = appState.value.isEditorActive && appState.value.canGoPreviousEntryOrSample
             )
             Item(
                 string(Strings.MenuNavigateJumpToEntry),
