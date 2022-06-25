@@ -81,11 +81,20 @@ enum class Strings(val en: String) {
     CommonNo(
         en = "No"
     ),
+    StarterStart(
+        en = "Start"
+    ),
     StarterNewProject(
         en = "New Project"
     ),
     StarterOpen(
         en = "Open"
+    ),
+    StarterRecent(
+        en = "Recent"
+    ),
+    StarterRecentEmpty(
+        en = "You have no recent projects."
     ),
     StarterNewSampleDirectory(
         en = "Sample directory"

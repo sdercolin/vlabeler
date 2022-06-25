@@ -30,6 +30,16 @@ private val typography = Typography(
         fontWeight = FontWeight.Light,
         fontSize = 48.sp,
         letterSpacing = 0.sp
+    ),
+    h5 = TextStyle(
+        fontWeight = FontWeight.Light,
+        fontSize = 24.sp,
+        letterSpacing = 0.sp
+    ),
+    h6 = TextStyle(
+        fontWeight = FontWeight.Light,
+        fontSize = 20.sp,
+        letterSpacing = 0.15.sp
     )
 )
 

@@ -12,11 +12,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
@@ -32,28 +37,54 @@ fun BoxScope.Starter(appState: MutableState<AppState>) {
     Surface(Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.wrapContentSize()
-                .padding(30.dp)
-                .align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .padding(150.dp)
+                .align(Alignment.Center)
         ) {
-            Text(text = string(Strings.AppName), style = MaterialTheme.typography.h2)
+            Text(
+                modifier = Modifier.padding(start = 10.dp),
+                text = string(Strings.AppName),
+                style = MaterialTheme.typography.h2
+            )
             Spacer(Modifier.height(50.dp))
 
-            Row {
-                OutlinedButton(
-                    modifier = Modifier.size(180.dp, 120.dp),
-                    onClick = { appState.update { requestOpenProjectCreator() } }
-                ) {
-                    Text(string(Strings.StarterNewProject))
+            Row(Modifier.weight(2f)) {
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp),
+                        text = string(Strings.StarterStart),
+                        style = MaterialTheme.typography.h5
+                    )
+                    Spacer(Modifier.height(15.dp))
+                    TextButton(onClick = { appState.update { requestOpenProjectCreator() } }) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            imageVector = Icons.Default.Create,
+                            contentDescription = null
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Text(text = string(Strings.StarterNewProject), style = MaterialTheme.typography.body2)
+                    }
+                    TextButton(onClick = { appState.update { openOpenProjectDialog() } }) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            imageVector = Icons.Default.FileOpen,
+                            contentDescription = null
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Text(text = string(Strings.StarterOpen), style = MaterialTheme.typography.body2)
+                    }
                 }
-                Spacer(Modifier.width(40.dp))
-                OutlinedButton(
-                    modifier = Modifier.size(180.dp, 120.dp),
-                    onClick = { appState.update { openOpenProjectDialog() } }
-                ) {
-                    Text(string(Strings.StarterOpen))
+                Spacer(Modifier.widthIn(min = 50.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = string(Strings.StarterRecent),
+                        style = MaterialTheme.typography.h5
+                    )
+                    Spacer(Modifier.height(30.dp))
+                    Text(text = string(Strings.StarterRecentEmpty), style = MaterialTheme.typography.body2)
                 }
             }
+            Spacer(Modifier.weight(1f))
         }
     }
 }
