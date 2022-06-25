@@ -56,6 +56,7 @@ fun App(
                 labelerState = labelerState,
                 appState = appState,
                 playerState = playerState,
+                snackbarHostState = snackbarHostState,
                 keyboardViewModel = keyboardViewModel,
                 scrollFitViewModel = scrollFitViewModel,
                 player = player

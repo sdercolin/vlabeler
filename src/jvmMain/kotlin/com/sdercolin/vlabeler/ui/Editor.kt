@@ -4,6 +4,7 @@ package com.sdercolin.vlabeler.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,6 +62,7 @@ fun Editor(
     labelerState: MutableState<LabelerState>,
     appState: MutableState<AppState>,
     playerState: PlayerState,
+    snackbarHostState: SnackbarHostState,
     keyboardViewModel: KeyboardViewModel,
     scrollFitViewModel: ScrollFitViewModel,
     player: Player
@@ -114,6 +116,7 @@ fun Editor(
             labelerState = labelerState,
             appState = appState,
             playerState = playerState,
+            snackbarHostState = snackbarHostState,
             keyboardViewModel = keyboardViewModel,
             scrollFitViewModel = scrollFitViewModel
         )

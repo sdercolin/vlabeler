@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui.labeler
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,12 +17,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -38,6 +41,7 @@ import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogArgs
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Immutable
 data class LabelerState(val canvasResolution: Int) {
@@ -62,10 +66,13 @@ fun Labeler(
     labelerState: MutableState<LabelerState>,
     appState: MutableState<AppState>,
     playerState: PlayerState,
+    snackbarHostState: SnackbarHostState,
     keyboardViewModel: KeyboardViewModel,
     scrollFitViewModel: ScrollFitViewModel
 ) {
     val isBusy = sample == null
+
+    val scope = rememberCoroutineScope()
     val horizontalScrollState = rememberScrollState(0)
     val currentResolution = labelerState.value.canvasResolution
 
@@ -76,7 +83,19 @@ fun Labeler(
     }
 
     Column(Modifier.fillMaxSize()) {
-        EntryTitleBar(entryName = entry.name, sampleName = sampleName)
+        EntryTitleBar(
+            entryName = entry.name, sampleName = sampleName,
+            openEditEntryNameDialog = {
+                appState.update {
+                    openEditEntryNameDialog(
+                        duplicate = false,
+                        showSnackbar = {
+                            scope.launch { snackbarHostState.showSnackbar(it) }
+                        }
+                    )
+                }
+            }
+        )
         Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Black50)) {
             Canvas(
                 sample = sample,
@@ -150,7 +169,7 @@ fun Labeler(
 }
 
 @Composable
-private fun EntryTitleBar(entryName: String, sampleName: String) {
+private fun EntryTitleBar(entryName: String, sampleName: String, openEditEntryNameDialog: () -> Unit) {
     Log.info("EntryTitleBar: composed")
     Surface {
         Box(
@@ -161,7 +180,8 @@ private fun EntryTitleBar(entryName: String, sampleName: String) {
         ) {
             Row(modifier = Modifier.align(Alignment.CenterStart)) {
                 Text(
-                    modifier = Modifier.alignByBaseline(),
+                    modifier = Modifier.alignByBaseline()
+                        .clickable { openEditEntryNameDialog() },
                     text = entryName,
                     style = MaterialTheme.typography.h3,
                     maxLines = 1
