@@ -32,12 +32,12 @@ fun BottomBar(
     resolution: Int,
     onChangeResolution: (Int) -> Unit,
     openSetResolutionDialog: () -> Unit,
-    canSwitchToPrevious: Boolean,
-    canSwitchToNext: Boolean,
-    switchToPreviousEntry: () -> Unit,
-    switchToNextEntry: () -> Unit,
-    switchToPreviousSample: () -> Unit,
-    switchToNextSample: () -> Unit,
+    canGoPrevious: Boolean,
+    canGoNext: Boolean,
+    goNextEntry: () -> Unit,
+    goPreviousEntry: () -> Unit,
+    goNextSample: () -> Unit,
+    goPreviousSample: () -> Unit,
     openJumpToEntryDialog: () -> Unit,
     scrollFit: () -> Unit,
     appConf: AppConf
@@ -52,8 +52,8 @@ fun BottomBar(
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
-                        enabled = canSwitchToPrevious,
-                        onClick = switchToPreviousSample
+                        enabled = canGoPrevious,
+                        onClick = goPreviousSample
                     )
                     .padding(start = 8.dp)
             ) {
@@ -66,8 +66,8 @@ fun BottomBar(
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
-                        enabled = canSwitchToPrevious,
-                        onClick = switchToPreviousEntry
+                        enabled = canGoPrevious,
+                        onClick = goPreviousEntry
                     )
             ) {
                 Text(
@@ -90,8 +90,8 @@ fun BottomBar(
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
-                        enabled = canSwitchToNext,
-                        onClick = switchToNextEntry
+                        enabled = canGoNext,
+                        onClick = goNextEntry
                     )
             ) {
                 Text(
@@ -103,8 +103,8 @@ fun BottomBar(
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
-                        enabled = canSwitchToNext,
-                        onClick = switchToNextSample
+                        enabled = canGoNext,
+                        onClick = goNextSample
                     )
             ) {
                 Text(

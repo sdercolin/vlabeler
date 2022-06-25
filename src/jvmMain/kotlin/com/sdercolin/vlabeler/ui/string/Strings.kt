@@ -48,10 +48,25 @@ enum class Strings(val en: String) {
     MenuEditRemoveEntry(
         en = "Remove current entry"
     ),
-    MenuEditJumpToEntry(
+    MenuNavigate(
+        en = "Navigate"
+    ),
+    MenuNavigateNextEntry(
+        en = "Go to next entry"
+    ),
+    MenuNavigatePreviousEntry(
+        en = "Go to previous entry"
+    ),
+    MenuNavigateNextSample(
+        en = "Go to next sample"
+    ),
+    MenuNavigatePreviousSample(
+        en = "Go the previous entry"
+    ),
+    MenuNavigateJumpToEntry(
         en = "Go to entry..."
     ),
-    MenuEditScrollFit(
+    MenuNavigateScrollFit(
         en = "Scroll to editable area"
     ),
     CommonOkay(

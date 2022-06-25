@@ -147,6 +147,8 @@ data class Project(
         return copy(currentSampleName = sampleNames[targetIndex], currentEntryIndex = targetEntryIndex)
     }
 
+    fun hasSwitchedSample(previous: Project?) = previous != null && previous.currentSampleName != currentSampleName
+
     companion object {
         const val SampleFileExtension = "wav"
         const val ProjectFileExtension = "lbp"

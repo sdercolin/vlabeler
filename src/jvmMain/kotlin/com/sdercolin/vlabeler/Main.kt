@@ -86,7 +86,7 @@ fun main() = application {
                 player
             )
         }
-        StandaloneDialogs(availableLabelerConfs.value, appState)
+        StandaloneDialogs(availableLabelerConfs.value, appState, scrollFitViewModel)
         ProjectChangesListener(appState)
         ProjectWriter(appState)
         Box(Modifier.fillMaxSize()) {

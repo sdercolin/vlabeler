@@ -90,7 +90,10 @@ fun Editor(
         Modifier.fillMaxSize()
             .onPointerEvent(PointerEventType.Scroll) {
                 if (appState.value.isEditorActive.not()) return@onPointerEvent
-                if (switchEntryByPointerEvent(it, keyboardState, project, editProject)) return@onPointerEvent
+                if (switchEntryByPointerEvent(
+                        it, keyboardState, project, editProject, scrollFitViewModel
+                    )
+                ) return@onPointerEvent
                 changeResolutionByPointerEvent(it, appConf, keyboardState, labelerState)
             }
     ) {
@@ -138,7 +141,8 @@ private fun switchEntryByPointerEvent(
     event: PointerEvent,
     keyboardState: KeyboardState,
     project: Project,
-    editProject: (Project) -> Unit
+    editProject: (Project) -> Unit,
+    scrollFitViewModel: ScrollFitViewModel
 ): Boolean {
     val yDelta = event.changes.first().scrollDelta.y
     val shouldSwitchSample = keyboardState.isCtrlPressed
@@ -147,8 +151,12 @@ private fun switchEntryByPointerEvent(
         yDelta < 0 -> if (shouldSwitchSample) project.previousSample() else project.previousEntry()
         else -> null
     }
+
     if (updatedProject != null) {
         editProject(updatedProject)
+        if (updatedProject.hasSwitchedSample(project)) {
+            scrollFitViewModel.emitNext()
+        }
         return true
     }
     return false

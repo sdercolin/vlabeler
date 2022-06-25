@@ -8,7 +8,6 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
-import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import kotlinx.coroutines.CoroutineScope
@@ -89,15 +88,8 @@ data class KeyboardState(
 )
 
 val KeyEvent.released get() = type == KeyEventType.KeyUp
-val KeyEvent.isNativeCtrlPressed get() = if (isMacOS) isMetaPressed else isCtrlPressed
 val KeyEvent.shouldTogglePlayer get() = key == Key.Spacebar && released
-val KeyEvent.shouldGoNextEntry get() = key == Key.DirectionDown && released
-val KeyEvent.shouldGoPreviousEntry get() = key == Key.DirectionUp && released
-val KeyEvent.shouldGoNextSample get() = key == Key.DirectionDown && isNativeCtrlPressed && released
-val KeyEvent.shouldGoPreviousSample get() = key == Key.DirectionUp && isNativeCtrlPressed && released
-val KeyEvent.shouldSwitchEntryOrSample
-    get() = shouldGoNextEntry || shouldGoPreviousEntry || shouldGoNextSample || shouldGoPreviousSample
 val KeyEvent.shouldIncreaseResolution get() = (key == Key.Minus || key == Key.NumPadSubtract) && released
 val KeyEvent.shouldDecreaseResolution get() = (key == Key.Equals || key == Key.NumPadAdd) && released
 val KeyEvent.shouldBeCaught
-    get() = shouldTogglePlayer || shouldSwitchEntryOrSample || shouldIncreaseResolution || shouldDecreaseResolution
+    get() = shouldTogglePlayer || shouldIncreaseResolution || shouldDecreaseResolution

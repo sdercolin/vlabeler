@@ -114,12 +114,34 @@ fun Labeler(
                     )
                 )
             },
-            canSwitchToPrevious = currentIndexInTotal > 0,
-            canSwitchToNext = currentIndexInTotal < totalEntryCount - 1,
-            switchToPreviousEntry = { appState.update { editNonNullProject { previousEntry() } } },
-            switchToNextEntry = { appState.update { editNonNullProject { nextEntry() } } },
-            switchToPreviousSample = { appState.update { editNonNullProject { previousSample() } } },
-            switchToNextSample = { appState.update { editNonNullProject { nextSample() } } },
+            canGoNext = appState.value.canGoNextEntryOrSample,
+            canGoPrevious = appState.value.canGoPreviousEntryOrSample,
+            goNextEntry = {
+                appState.update {
+                    val updated = nextEntry()
+                    if (updated.hasSwitchedSample(this)) {
+                        scrollFitViewModel.emitNext()
+                    }
+                    updated
+                }
+            },
+            goPreviousEntry = {
+                appState.update {
+                    val updated = previousEntry()
+                    if (updated.hasSwitchedSample(this)) {
+                        scrollFitViewModel.emitNext()
+                    }
+                    updated
+                }
+            },
+            goNextSample = {
+                appState.update { nextSample() }
+                scrollFitViewModel.emitNext()
+            },
+            goPreviousSample = {
+                appState.update { previousSample() }
+                scrollFitViewModel.emitNext()
+            },
             openJumpToEntryDialog = { appState.update { openJumpToEntryDialog() } },
             scrollFit = { scrollFitViewModel.emit() },
             appConf = appConf

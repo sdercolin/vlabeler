@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.io.toRawLabels
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomLabelerDir
@@ -18,7 +19,8 @@ import java.io.File
 @Composable
 fun StandaloneDialogs(
     labelerConfs: List<LabelerConf>,
-    appState: MutableState<AppState>
+    appState: MutableState<AppState>,
+    scrollFitViewModel: ScrollFitViewModel
 ) {
     when {
         appState.value.isShowingOpenProjectDialog -> OpenFileDialog(
@@ -44,6 +46,7 @@ fun StandaloneDialogs(
                     }
                 }
                 appState.update { openProject(project.copy(labelerConf = labelerConf)) }
+                scrollFitViewModel.emitNext()
             }
         }
         appState.value.isShowingSaveAsProjectDialog -> SaveFileDialog(

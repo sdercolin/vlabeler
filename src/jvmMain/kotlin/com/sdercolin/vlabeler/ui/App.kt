@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,10 +13,6 @@ import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
-import com.sdercolin.vlabeler.env.shouldGoNextEntry
-import com.sdercolin.vlabeler.env.shouldGoNextSample
-import com.sdercolin.vlabeler.env.shouldGoPreviousEntry
-import com.sdercolin.vlabeler.env.shouldGoPreviousSample
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
@@ -49,23 +44,6 @@ fun App(
     val labelerState = remember(appConf.painter.canvasResolution.default) {
         mutableStateOf(LabelerState(appConf.painter.canvasResolution.default))
     }
-    LaunchedEffect(Unit) {
-        keyboardViewModel.keyboardEventFlow.collect {
-            if (appState.value.isEditorActive.not()) return@collect
-            val project = appState.value.project ?: return@collect
-            val updated = when {
-                it.shouldGoNextSample -> project.nextSample()
-                it.shouldGoPreviousSample -> project.previousSample()
-                it.shouldGoNextEntry -> project.nextEntry()
-                it.shouldGoPreviousEntry -> project.previousEntry()
-                else -> null
-            } ?: return@collect
-            appState.update { editProject { updated } }
-            if (it.shouldGoNextSample || it.shouldGoPreviousSample) {
-                scrollFitViewModel.emitNext()
-            }
-        }
-    }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         val project = appState.value.project
         if (project != null && appState.value.isConfiguringNewProject.not()) {
@@ -89,6 +67,7 @@ fun App(
                     mainScope.launch {
                         saveProjectFile(it)
                         appState.update { openProject(it) }
+                        scrollFitViewModel.emitNext()
                     }
                 },
                 availableLabelerConfs = availableLabelerConfs,

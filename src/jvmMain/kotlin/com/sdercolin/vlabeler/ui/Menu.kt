@@ -104,14 +104,62 @@ fun FrameWindowScope.Menu(
                 onClick = { appState.update { confirmIfRemoveCurrentEntry() } },
                 enabled = appState.value.isEditorActive && appState.value.canRemoveCurrentEntry
             )
+        }
+        Menu(string(Strings.MenuNavigate), mnemonic = 'N') {
             Item(
-                string(Strings.MenuEditJumpToEntry),
+                string(Strings.MenuNavigateNextEntry),
+                shortcut = getKeyShortCut(Key.DirectionDown),
+                onClick = {
+                    appState.update {
+                        val updated = nextEntry()
+                        if (updated.hasSwitchedSample(this)) {
+                            scrollFitViewModel.emitNext()
+                        }
+                        updated
+                    }
+                },
+                enabled = appState.value.canGoNextEntryOrSample
+            )
+            Item(
+                string(Strings.MenuNavigatePreviousEntry),
+                shortcut = getKeyShortCut(Key.DirectionUp),
+                onClick = {
+                    appState.update {
+                        val updated = previousEntry()
+                        if (updated.hasSwitchedSample(this)) {
+                            scrollFitViewModel.emitNext()
+                        }
+                        updated
+                    }
+                },
+                enabled = appState.value.canGoPreviousEntryOrSample
+            )
+            Item(
+                string(Strings.MenuNavigateNextSample),
+                shortcut = getKeyShortCut(Key.DirectionDown, ctrl = true),
+                onClick = {
+                    appState.update { nextSample() }
+                    scrollFitViewModel.emitNext()
+                },
+                enabled = appState.value.canGoNextEntryOrSample
+            )
+            Item(
+                string(Strings.MenuNavigatePreviousSample),
+                shortcut = getKeyShortCut(Key.DirectionUp, ctrl = true),
+                onClick = {
+                    appState.update { previousSample() }
+                    scrollFitViewModel.emitNext()
+                },
+                enabled = appState.value.canGoPreviousEntryOrSample
+            )
+            Item(
+                string(Strings.MenuNavigateJumpToEntry),
                 shortcut = getKeyShortCut(Key.G, ctrl = true),
                 onClick = { appState.update { openJumpToEntryDialog() } },
                 enabled = appState.value.isEditorActive
             )
             Item(
-                string(Strings.MenuEditScrollFit),
+                string(Strings.MenuNavigateScrollFit),
                 shortcut = getKeyShortCut(Key.F),
                 onClick = { scrollFitViewModel.emit() },
                 enabled = appState.value.isEditorActive
