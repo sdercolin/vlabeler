@@ -20,7 +20,7 @@ fun ProjectWriter(appState: MutableState<AppState>) {
     }
 }
 
-fun saveProjectFile(project: Project) {
+fun saveProjectFile(project: Project): File {
     val workingDirectory = File(project.workingDirectory)
     if (!workingDirectory.exists()) {
         workingDirectory.mkdir()
@@ -28,4 +28,5 @@ fun saveProjectFile(project: Project) {
     val projectContent = toJson(project)
     project.projectFile.writeText(projectContent)
     Log.debug("Project saved to ${project.projectFile}")
+    return project.projectFile
 }

@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
+import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.common.CircularProgress
@@ -70,6 +72,7 @@ import java.io.File
 fun ProjectCreator(
     create: (Project) -> Unit,
     cancel: () -> Unit,
+    appRecord: MutableState<AppRecord>,
     availableLabelerConfs: List<LabelerConf>,
     snackbarHostState: SnackbarHostState
 ) {

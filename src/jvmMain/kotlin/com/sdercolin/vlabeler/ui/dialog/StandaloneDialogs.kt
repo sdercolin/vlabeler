@@ -2,24 +2,26 @@ package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import com.sdercolin.vlabeler.io.openProject
 import com.sdercolin.vlabeler.io.toRawLabels
+import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.lastPathSection
-import com.sdercolin.vlabeler.util.parseJson
-import com.sdercolin.vlabeler.util.toJson
 import com.sdercolin.vlabeler.util.update
+import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
 @Composable
 fun StandaloneDialogs(
+    mainScope: CoroutineScope,
     labelerConfs: List<LabelerConf>,
     appState: MutableState<AppState>,
+    appRecord: MutableState<AppRecord>,
     scrollFitViewModel: ScrollFitViewModel
 ) {
     when {
@@ -29,24 +31,7 @@ fun StandaloneDialogs(
         ) { directory, fileName ->
             appState.update { closeOpenProjectDialog() }
             if (directory != null && fileName != null) {
-                val projectContent = File(directory, fileName).readText()
-                val project = parseJson<Project>(projectContent)
-                val existingLabelerConf = labelerConfs.find { it.name == project.labelerConf.name }
-                val labelerConf = when {
-                    existingLabelerConf == null -> {
-                        CustomLabelerDir.resolve(project.labelerConf.fileName).writeText(toJson(project.labelerConf))
-                        project.labelerConf
-                    }
-                    existingLabelerConf.version >= project.labelerConf.version -> {
-                        existingLabelerConf
-                    }
-                    else -> {
-                        // TODO: notifying user about updating local labelers
-                        project.labelerConf
-                    }
-                }
-                appState.update { openProject(project.copy(labelerConf = labelerConf)) }
-                scrollFitViewModel.emitNext()
+                openProject(mainScope, File(directory, fileName), labelerConfs, appState, appRecord, scrollFitViewModel)
             }
         }
         appState.value.isShowingSaveAsProjectDialog -> SaveFileDialog(

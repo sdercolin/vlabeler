@@ -85,10 +85,10 @@ enum class Strings(val en: String) {
         en = "Start"
     ),
     StarterNewProject(
-        en = "New Project"
+        en = "New Project..."
     ),
     StarterOpen(
-        en = "Open"
+        en = "Open..."
     ),
     StarterRecent(
         en = "Recent"

@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.io.openCreatedProject
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
@@ -30,7 +32,6 @@ import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun App(
@@ -39,6 +40,7 @@ fun App(
     availableLabelerConfs: List<LabelerConf>,
     appState: MutableState<AppState>,
     playerState: PlayerState,
+    appRecord: MutableState<AppRecord>,
     snackbarHostState: SnackbarHostState,
     keyboardViewModel: KeyboardViewModel,
     scrollFitViewModel: ScrollFitViewModel,
@@ -50,17 +52,18 @@ fun App(
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         val project = appState.value.project
         when (appState.value.screen) {
-            AppState.Screen.Starter -> Starter(appState = appState)
+            AppState.Screen.Starter -> Starter(
+                mainScope = mainScope,
+                appState = appState,
+                appRecord = appRecord,
+                availableLabelerConfs = availableLabelerConfs,
+                scrollFitViewModel = scrollFitViewModel
+            )
             AppState.Screen.ProjectCreator ->
                 ProjectCreator(
-                    create = {
-                        mainScope.launch {
-                            saveProjectFile(it)
-                            appState.update { openProject(it) }
-                            scrollFitViewModel.emitNext()
-                        }
-                    },
+                    create = { openCreatedProject(mainScope, it, appState, appRecord, scrollFitViewModel) },
                     cancel = { appState.update { closeProjectCreator() } },
+                    appRecord = appRecord,
                     availableLabelerConfs = availableLabelerConfs,
                     snackbarHostState = snackbarHostState
                 )

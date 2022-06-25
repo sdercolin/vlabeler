@@ -22,6 +22,7 @@ import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.shouldTogglePlayer
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppState
@@ -34,6 +35,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.util.AppDir
+import com.sdercolin.vlabeler.util.AppRecordFile
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.DefaultAppConfFile
@@ -66,9 +68,12 @@ fun main() = application {
     val appConf = rememberAppConf()
     val availableLabelerConfs = rememberAvailableLabelerConfs()
 
+    val appRecord = rememberAppRecord()
+    LaunchSaveAppRecord(appRecord)
+
     Window(
         title = string(Strings.AppName),
-        state = WindowState(width = 1000.dp, height = 800.dp), // TODO: remember in appConf
+        state = WindowState(width = 1200.dp, height = 800.dp), // TODO: remember in appConf
         onCloseRequest = { appState.update { requestExit() } },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
@@ -80,13 +85,14 @@ fun main() = application {
                 availableLabelerConfs.value,
                 appState,
                 playerState.value,
+                appRecord,
                 snackbarHostState,
                 keyboardViewModel,
                 scrollFitViewModel,
                 player
             )
         }
-        StandaloneDialogs(availableLabelerConfs.value, appState, scrollFitViewModel)
+        StandaloneDialogs(mainScope, availableLabelerConfs.value, appState, appRecord, scrollFitViewModel)
         ProjectChangesListener(appState)
         ProjectWriter(appState)
         Box(Modifier.fillMaxSize()) {
@@ -173,6 +179,19 @@ private fun ensureDirectories() {
     if (CustomLabelerDir.exists().not()) {
         CustomLabelerDir.mkdir()
         Log.info("$CustomLabelerDir created")
+    }
+}
+
+@Composable
+private fun rememberAppRecord() = remember {
+    val recordText = AppRecordFile.takeIf { it.exists() }?.readText() ?: return@remember mutableStateOf(AppRecord())
+    mutableStateOf(parseJson(recordText))
+}
+
+@Composable
+private fun LaunchSaveAppRecord(appRecord: State<AppRecord>) {
+    LaunchedEffect(appRecord.value) {
+        AppRecordFile.writeText(toJson(appRecord.value))
     }
 }
 

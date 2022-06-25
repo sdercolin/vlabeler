@@ -1,18 +1,21 @@
 package com.sdercolin.vlabeler.util
 
 import com.sdercolin.vlabeler.env.isMacOS
+import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.model.LabelerConf.Companion.LabelerFileExtension
 import java.io.File
 import java.io.FilenameFilter
 
 private const val AppNamePath = "vLabeler"
 private const val AppConfFileName = "app.conf.json"
+private const val AppRecordFileName = "app.record.json"
 private const val LabelerFolderName = "labelers"
 
 // Internal files
 val ResourceDir get() = File(System.getProperty("compose.application.resources.dir"))
 val DefaultAppConfFile get() = ResourceDir.resolve(AppConfFileName)
 val DefaultLabelerDir get() = ResourceDir.resolve(LabelerFolderName)
+val AppRecordFile get() = ResourceDir.resolve(AppRecordFileName)
 
 // External files
 val HomeDir get() = File(System.getProperty("user.home"))
@@ -34,6 +37,35 @@ fun String.isValidFileName(): Boolean {
     return invalidCharsForFileName.none { contains(it) } && isNotBlank()
 }
 
+fun String.asPathRelativeToHome(): String = if (!isWindows && startsWith(HomeDir.absolutePath)) {
+    "~" + drop(HomeDir.absolutePath.length)
+} else {
+    this
+}
+
 private val splitters = charArrayOf('\\', '/')
 
-val String.lastPathSection get() = trim(*splitters).split(*splitters).last()
+val String.pathSections get() = trim(*splitters).split(*splitters)
+val String.lastPathSection get() = pathSections.last()
+
+fun List<String>.asSimplifiedPaths(): List<String> {
+    val pathsInSection = map { it.pathSections }
+    val result = pathsInSection.map { it.last() }.toMutableList()
+    while (result.distinct().size != result.size) {
+        val startIndex = result.indexOfFirst { path -> result.count { it == path } > 1 }
+        val indexes = indices.filter { result[it] == result[startIndex] }
+        val countOfSplitters = result[startIndex].count { it in splitters }
+        for (index in indexes) {
+            val sections = pathsInSection[index]
+            result[index] = sections[sections.lastIndex - 1 - countOfSplitters] + "/" + result[index]
+        }
+    }
+    for (index in indices) {
+        if (result[index].contains("/")) {
+            if (result[index].startsWith(pathsInSection[index].first()).not()) {
+                result[index] = ".../" + result[index]
+            }
+        }
+    }
+    return result
+}

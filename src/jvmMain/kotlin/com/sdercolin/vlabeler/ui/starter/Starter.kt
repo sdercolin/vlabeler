@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -26,14 +27,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.io.openProject
+import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.asPathRelativeToHome
+import com.sdercolin.vlabeler.util.asSimplifiedPaths
 import com.sdercolin.vlabeler.util.update
+import kotlinx.coroutines.CoroutineScope
+import java.io.File
 
 @Composable
-fun BoxScope.Starter(appState: MutableState<AppState>) {
+fun BoxScope.Starter(
+    mainScope: CoroutineScope,
+    appState: MutableState<AppState>,
+    appRecord: MutableState<AppRecord>,
+    availableLabelerConfs: List<LabelerConf>,
+    scrollFitViewModel: ScrollFitViewModel
+) {
     Surface(Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.wrapContentSize()
@@ -75,13 +94,50 @@ fun BoxScope.Starter(appState: MutableState<AppState>) {
                     }
                 }
                 Spacer(Modifier.widthIn(min = 50.dp))
-                Column(Modifier.weight(1f)) {
+                Column(Modifier.weight(1.5f)) {
                     Text(
                         text = string(Strings.StarterRecent),
                         style = MaterialTheme.typography.h5
                     )
                     Spacer(Modifier.height(30.dp))
-                    Text(text = string(Strings.StarterRecentEmpty), style = MaterialTheme.typography.body2)
+                    val recentAbsolutePaths = appRecord.value.recentProjects
+                    val recentFiles = recentAbsolutePaths.map { File(it) }.filter { it.exists() }
+                    val recentPaths = recentAbsolutePaths.map { it.asPathRelativeToHome() }.asSimplifiedPaths()
+                    appRecord.update { copy(recentProjects = recentFiles.map { it.absolutePath }) }
+                    if (recentFiles.isEmpty()) {
+                        Text(text = string(Strings.StarterRecentEmpty), style = MaterialTheme.typography.body2)
+                    } else {
+                        recentFiles.forEachIndexed { index, file ->
+                            ClickableText(
+                                modifier = Modifier.padding(bottom = 15.dp),
+                                text = buildAnnotatedString {
+                                    val text = recentPaths[index]
+                                    append(text)
+                                    addStyle(
+                                        style = SpanStyle(
+                                            color = MaterialTheme.colors.primary,
+                                            textDecoration = TextDecoration.Underline
+                                        ),
+                                        start = 0,
+                                        end = text.length
+                                    )
+                                },
+                                style = MaterialTheme.typography.body2,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                onClick = {
+                                    openProject(
+                                        mainScope,
+                                        file,
+                                        availableLabelerConfs,
+                                        appState,
+                                        appRecord,
+                                        scrollFitViewModel
+                                    )
+                                }
+                            )
+                        }
+                    }
                 }
             }
             Spacer(Modifier.weight(1f))
