@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui.labeler
+package com.sdercolin.vlabeler.ui.editor.labeler
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow

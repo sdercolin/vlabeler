@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui.labeler
+package com.sdercolin.vlabeler.ui.editor.labeler
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable

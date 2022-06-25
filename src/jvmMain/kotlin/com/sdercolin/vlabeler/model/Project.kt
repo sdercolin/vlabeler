@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.io.fromRawLabels
-import com.sdercolin.vlabeler.ui.EditedEntry
+import com.sdercolin.vlabeler.ui.editor.EditedEntry
 import kotlinx.serialization.Serializable
 import java.io.File
 import java.nio.charset.Charset

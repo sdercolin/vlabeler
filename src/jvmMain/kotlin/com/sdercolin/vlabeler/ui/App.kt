@@ -23,8 +23,10 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
-import com.sdercolin.vlabeler.ui.labeler.LabelerState
-import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.editor.Editor
+import com.sdercolin.vlabeler.ui.editor.labeler.LabelerState
+import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.starter.Starter
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui.labeler
+package com.sdercolin.vlabeler.ui.editor.labeler
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

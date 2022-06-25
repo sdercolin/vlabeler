@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalComposeUiApi::class)
 
-package com.sdercolin.vlabeler.ui.labeler.marker
+package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
@@ -41,12 +41,12 @@ import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.ui.labeler.CanvasParams
-import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
-import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.EndPointIndex
-import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.NonePointIndex
-import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.Companion.StartPointIndex
-import com.sdercolin.vlabeler.ui.labeler.marker.MarkerState.MouseState
+import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
+import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState.Companion.EndPointIndex
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState.Companion.NonePointIndex
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState.Companion.StartPointIndex
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState.MouseState
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.ui.theme.White

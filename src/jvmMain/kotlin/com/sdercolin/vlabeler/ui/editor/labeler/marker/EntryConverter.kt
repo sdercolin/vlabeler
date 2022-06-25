@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui.labeler.marker
+package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.util.toFrame

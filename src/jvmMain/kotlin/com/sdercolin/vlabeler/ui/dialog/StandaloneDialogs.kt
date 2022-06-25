@@ -6,7 +6,7 @@ import com.sdercolin.vlabeler.io.toRawLabels
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomLabelerDir

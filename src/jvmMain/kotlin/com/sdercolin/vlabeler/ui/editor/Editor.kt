@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalComposeUiApi::class)
 
-package com.sdercolin.vlabeler.ui
+package com.sdercolin.vlabeler.ui.editor
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,12 +33,13 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Sample
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
-import com.sdercolin.vlabeler.ui.labeler.CanvasParams
-import com.sdercolin.vlabeler.ui.labeler.Labeler
-import com.sdercolin.vlabeler.ui.labeler.LabelerState
-import com.sdercolin.vlabeler.ui.labeler.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
+import com.sdercolin.vlabeler.ui.editor.labeler.Labeler
+import com.sdercolin.vlabeler.ui.editor.labeler.LabelerState
+import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui.labeler.marker
+package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.unit.Density

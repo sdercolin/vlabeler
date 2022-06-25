@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui.labeler
+package com.sdercolin.vlabeler.ui.editor.labeler
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -41,7 +41,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
-import com.sdercolin.vlabeler.ui.labeler.marker.MarkerCanvas
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.White
