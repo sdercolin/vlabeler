@@ -36,6 +36,11 @@ data class AppState(
         return copy(project = edited, history = history.push(edited))
     }
 
+    fun editNonNullProject(editor: Project.() -> Project?): AppState {
+        val edited = project!!.editor() ?: return this
+        return copy(project = edited, history = history.push(edited))
+    }
+
     fun editEntry(editedEntry: EditedEntry) = editProject { updateEntry(editedEntry) }
 
     fun undo(): AppState {

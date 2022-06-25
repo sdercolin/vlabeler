@@ -15,12 +15,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CenterFocusWeak
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -104,7 +108,7 @@ fun Labeler(
             modifier = Modifier.fillMaxWidth().height(20.dp),
             adapter = rememberScrollbarAdapter(horizontalScrollState)
         )
-        StatusBar(
+        BottomBar(
             currentEntryIndexInTotal = currentIndexInTotal,
             totalEntryCount = totalEntryCount,
             resolution = currentResolution,
@@ -118,7 +122,14 @@ fun Labeler(
                     )
                 )
             },
+            canSwitchToPrevious = currentIndexInTotal > 0,
+            canSwitchToNext = currentIndexInTotal < totalEntryCount - 1,
+            switchToPreviousEntry = { appState.update { editNonNullProject { previousEntry() } } },
+            switchToNextEntry = { appState.update { editNonNullProject { nextEntry() } } },
+            switchToPreviousSample = { appState.update { editNonNullProject { previousSample() } } },
+            switchToNextSample = { appState.update { editNonNullProject { nextSample() } } },
             openJumpToEntryDialog = { appState.update { openJumpToEntryDialog() } },
+            scrollFit = { scrollFitViewModel.emit() },
             appConf = appConf
         )
     }
@@ -154,22 +165,56 @@ private fun EntryTitleBar(entryName: String, sampleName: String) {
 }
 
 @Composable
-private fun StatusBar(
+private fun BottomBar(
     currentEntryIndexInTotal: Int,
     totalEntryCount: Int,
     resolution: Int,
     onChangeResolution: (Int) -> Unit,
     openSetResolutionDialog: () -> Unit,
+    canSwitchToPrevious: Boolean,
+    canSwitchToNext: Boolean,
+    switchToPreviousEntry: () -> Unit,
+    switchToNextEntry: () -> Unit,
+    switchToPreviousSample: () -> Unit,
+    switchToNextSample: () -> Unit,
     openJumpToEntryDialog: () -> Unit,
+    scrollFit: () -> Unit,
     appConf: AppConf
 ) {
-    Log.info("StatusBar: composed")
+    Log.info("BottomBar: composed")
     val resolutionRange = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
     Surface {
         Row(
             modifier = Modifier.fillMaxWidth().height(30.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Box(
+                Modifier.width(30.dp).fillMaxHeight()
+                    .clickable(
+                        enabled = canSwitchToPrevious,
+                        onClick = switchToPreviousSample
+                    )
+                    .padding(start = 8.dp)
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "<<",
+                    style = MaterialTheme.typography.caption
+                )
+            }
+            Box(
+                Modifier.width(30.dp).fillMaxHeight()
+                    .clickable(
+                        enabled = canSwitchToPrevious,
+                        onClick = switchToPreviousEntry
+                    )
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "<",
+                    style = MaterialTheme.typography.caption
+                )
+            }
             Box(
                 Modifier.fillMaxHeight()
                     .clickable { openJumpToEntryDialog() }
@@ -181,15 +226,55 @@ private fun StatusBar(
                     style = MaterialTheme.typography.caption
                 )
             }
+            Box(
+                Modifier.width(30.dp).fillMaxHeight()
+                    .clickable(
+                        enabled = canSwitchToNext,
+                        onClick = switchToNextEntry
+                    )
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = ">",
+                    style = MaterialTheme.typography.caption
+                )
+            }
+            Box(
+                Modifier.width(30.dp).fillMaxHeight()
+                    .clickable(
+                        enabled = canSwitchToNext,
+                        onClick = switchToNextSample
+                    )
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = ">>",
+                    style = MaterialTheme.typography.caption
+                )
+            }
+
+            Spacer(Modifier.weight(0.8f))
+
+            Box(
+                Modifier.fillMaxHeight()
+                    .clickable { scrollFit() }
+                    .padding(horizontal = 15.dp)
+            ) {
+                Icon(
+                    modifier = Modifier.size(15.dp).align(Alignment.Center),
+                    imageVector = Icons.Default.CenterFocusWeak,
+                    contentDescription = null
+                )
+            }
 
             Spacer(Modifier.weight(1f))
+
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
                         enabled = resolutionRange.canIncrease(resolution),
                         onClick = { onChangeResolution(resolutionRange.increaseFrom(resolution)) }
                     )
-                    .padding(vertical = 5.dp)
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
@@ -203,7 +288,6 @@ private fun StatusBar(
                         enabled = resolutionRange.canIncrease(resolution),
                         onClick = { openSetResolutionDialog() }
                     )
-                    .padding(vertical = 5.dp)
             ) {
                 Text(
                     modifier = Modifier.defaultMinSize(minWidth = 55.dp).align(Alignment.Center),
@@ -218,7 +302,7 @@ private fun StatusBar(
                         enabled = resolutionRange.canDecrease(resolution),
                         onClick = { onChangeResolution(resolutionRange.decreaseFrom(resolution)) }
                     )
-                    .padding(vertical = 5.dp)
+                    .padding(end = 8.dp)
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
