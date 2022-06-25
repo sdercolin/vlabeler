@@ -39,6 +39,7 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,13 +58,17 @@ import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.HomeDir
+import com.sdercolin.vlabeler.util.detectEncoding
+import com.sdercolin.vlabeler.util.encodingNameEquals
 import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 @Composable
@@ -129,10 +134,12 @@ private fun NewProject(
     var labeler by remember(availableLabelerConfs) { mutableStateOf(availableLabelerConfs.first()) }
     var inputLabelFile by remember { mutableStateOf("") }
     var inputLabelFileEdited by remember { mutableStateOf(false) }
-    val encodings = listOf("UTF-8", "Shift-JIS")
+    val encodings = AvailableEncodings
     var encoding by remember(labeler) {
         val parser = labeler.parser
-        val encodingName = encodings.find { it.equals(parser.defaultEncoding, ignoreCase = true) } ?: encodings.first()
+        val encodingName = encodings.find { encodingNameEquals(parser.defaultEncoding, it) }
+            ?: encodings.first().takeIf { it.isNotBlank() }
+            ?: encodings.first()
         mutableStateOf(encodingName)
     }
 
@@ -185,6 +192,16 @@ private fun NewProject(
         if (inputLabelFile == "") return true
         val file = File(inputLabelFile)
         return file.extension == labeler.extension && file.exists()
+    }
+
+    LaunchedEffect(inputLabelFile) {
+        withContext(Dispatchers.IO) {
+            val file = File(inputLabelFile)
+            if (file.isFile && file.exists()) {
+                val detectedEncoding = file.readBytes().detectEncoding() ?: return@withContext
+                encoding = encodings.find { encodingNameEquals(detectedEncoding, it) } ?: detectedEncoding
+            }
+        }
     }
 
     Box(contentAlignment = Alignment.Center) {
