@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.io.openProject
@@ -22,6 +23,7 @@ fun StandaloneDialogs(
     labelerConfs: List<LabelerConf>,
     appState: MutableState<AppState>,
     appRecord: MutableState<AppRecord>,
+    snackbarHostState: SnackbarHostState,
     scrollFitViewModel: ScrollFitViewModel
 ) {
     when {
@@ -31,7 +33,15 @@ fun StandaloneDialogs(
         ) { directory, fileName ->
             appState.update { closeOpenProjectDialog() }
             if (directory != null && fileName != null) {
-                openProject(mainScope, File(directory, fileName), labelerConfs, appState, appRecord, scrollFitViewModel)
+                openProject(
+                    mainScope,
+                    File(directory, fileName),
+                    labelerConfs,
+                    appState,
+                    appRecord,
+                    snackbarHostState,
+                    scrollFitViewModel
+                )
             }
         }
         appState.value.isShowingSaveAsProjectDialog -> SaveFileDialog(

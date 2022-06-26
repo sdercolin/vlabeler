@@ -13,16 +13,22 @@ enum class Strings(val en: String) {
         en = "File"
     ),
     MenuFileNewProject(
-        en = "New project..."
+        en = "New Project..."
     ),
     MenuFileOpen(
         en = "Open..."
+    ),
+    MenuFileOpenRecent(
+        en = "Open Recent"
+    ),
+    MenuFileOpenRecentClear(
+        en = "Clear Recently Opened"
     ),
     MenuFileSave(
         en = "Save"
     ),
     MenuFileSaveAs(
-        en = "Save as..."
+        en = "Save As..."
     ),
     MenuFileExport(
         en = "Export..."
@@ -40,34 +46,34 @@ enum class Strings(val en: String) {
         en = "Redo"
     ),
     MenuEditRenameEntry(
-        en = "Rename current entry..."
+        en = "Rename Current Entry..."
     ),
     MenuEditDuplicateEntry(
-        en = "Duplicate current entry..."
+        en = "Duplicate Current Entry..."
     ),
     MenuEditRemoveEntry(
-        en = "Remove current entry"
+        en = "Remove Current Entry"
     ),
     MenuNavigate(
         en = "Navigate"
     ),
     MenuNavigateNextEntry(
-        en = "Go to next entry"
+        en = "Go to Next Entry"
     ),
     MenuNavigatePreviousEntry(
-        en = "Go to previous entry"
+        en = "Go to Previous Entry"
     ),
     MenuNavigateNextSample(
-        en = "Go to next sample"
+        en = "Go to Next Sample"
     ),
     MenuNavigatePreviousSample(
-        en = "Go the previous entry"
+        en = "Go to Previous Sample"
     ),
     MenuNavigateJumpToEntry(
-        en = "Go to entry..."
+        en = "Go to Entry..."
     ),
     MenuNavigateScrollFit(
-        en = "Scroll to editable area"
+        en = "Scroll to Editable Area"
     ),
     CommonOkay(
         en = "OK"
@@ -95,6 +101,9 @@ enum class Strings(val en: String) {
     ),
     StarterRecentEmpty(
         en = "You have no recent projects."
+    ),
+    StarterRecentDeleted(
+        en = "This profile has been removed."
     ),
     StarterNewSampleDirectory(
         en = "Sample directory"

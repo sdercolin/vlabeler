@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -39,8 +40,6 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.util.asPathRelativeToHome
-import com.sdercolin.vlabeler.util.asSimplifiedPaths
 import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
@@ -51,6 +50,7 @@ fun BoxScope.Starter(
     appState: MutableState<AppState>,
     appRecord: MutableState<AppRecord>,
     availableLabelerConfs: List<LabelerConf>,
+    snackbarHostState: SnackbarHostState,
     scrollFitViewModel: ScrollFitViewModel
 ) {
     Surface(Modifier.fillMaxSize()) {
@@ -100,9 +100,8 @@ fun BoxScope.Starter(
                         style = MaterialTheme.typography.h5
                     )
                     Spacer(Modifier.height(30.dp))
-                    val recentAbsolutePaths = appRecord.value.recentProjects
-                    val recentFiles = recentAbsolutePaths.map { File(it) }.filter { it.exists() }
-                    val recentPaths = recentAbsolutePaths.map { it.asPathRelativeToHome() }.asSimplifiedPaths()
+                    val recentPaths = appRecord.value.recentProjectPathsWithDisplayNames
+                    val recentFiles = recentPaths.map { File(it.first) }
                     appRecord.update { copy(recentProjects = recentFiles.map { it.absolutePath }) }
                     if (recentFiles.isEmpty()) {
                         Text(text = string(Strings.StarterRecentEmpty), style = MaterialTheme.typography.body2)
@@ -111,7 +110,7 @@ fun BoxScope.Starter(
                             ClickableText(
                                 modifier = Modifier.padding(bottom = 15.dp),
                                 text = buildAnnotatedString {
-                                    val text = recentPaths[index]
+                                    val text = recentPaths[index].second
                                     append(text)
                                     addStyle(
                                         style = SpanStyle(
@@ -132,6 +131,7 @@ fun BoxScope.Starter(
                                         availableLabelerConfs,
                                         appState,
                                         appRecord,
+                                        snackbarHostState,
                                         scrollFitViewModel
                                     )
                                 }

@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.io
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppRecord
@@ -8,6 +9,8 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.saveProjectFile
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
@@ -23,9 +26,14 @@ fun openProject(
     labelerConfs: List<LabelerConf>,
     appState: MutableState<AppState>,
     appRecord: MutableState<AppRecord>,
+    snackbarHostState: SnackbarHostState,
     scrollFitViewModel: ScrollFitViewModel
 ) {
     scope.launch(Dispatchers.IO) {
+        if (file.exists().not()) {
+            snackbarHostState.showSnackbar(string(Strings.StarterRecentDeleted))
+            return@launch
+        }
         val project = parseJson<Project>(file.readText())
         val existingLabelerConf = labelerConfs.find { it.name == project.labelerConf.name }
         val labelerConf = when {

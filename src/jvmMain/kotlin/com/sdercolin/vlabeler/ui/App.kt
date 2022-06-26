@@ -57,6 +57,7 @@ fun App(
                 appState = appState,
                 appRecord = appRecord,
                 availableLabelerConfs = availableLabelerConfs,
+                snackbarHostState = snackbarHostState,
                 scrollFitViewModel = scrollFitViewModel
             )
             AppState.Screen.ProjectCreator ->

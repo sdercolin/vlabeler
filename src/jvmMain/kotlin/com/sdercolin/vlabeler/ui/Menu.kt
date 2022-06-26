@@ -11,16 +11,24 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isMacOS
+import com.sdercolin.vlabeler.io.openProject
+import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.update
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FrameWindowScope.Menu(
+    mainScope: CoroutineScope,
+    availableLabelerConfs: List<LabelerConf>,
     appState: MutableState<AppState>,
+    appRecord: MutableState<AppRecord>,
     scrollFitViewModel: ScrollFitViewModel,
     snackbarHostState: SnackbarHostState
 ) {
@@ -39,6 +47,30 @@ fun FrameWindowScope.Menu(
                 onClick = { appState.update { requestOpenProject() } },
                 shortcut = getKeyShortCut(Key.O, ctrl = true, shift = true)
             )
+            Menu(string(Strings.MenuFileOpenRecent)) {
+                appRecord.value.recentProjectPathsWithDisplayNames.forEach { (path, displayName) ->
+                    Item(
+                        text = displayName,
+                        onClick = {
+                            openProject(
+                                mainScope,
+                                File(path),
+                                availableLabelerConfs,
+                                appState,
+                                appRecord,
+                                snackbarHostState,
+                                scrollFitViewModel
+                            )
+                        }
+                    )
+                }
+                Separator()
+                Item(
+                    text = string(Strings.MenuFileOpenRecentClear),
+                    enabled = appRecord.value.recentProjects.isNotEmpty(),
+                    onClick = { appRecord.update { copy(recentProjects = listOf()) } }
+                )
+            }
             Item(
                 string(Strings.MenuFileSave),
                 onClick = { appState.update { requestSave() } },

@@ -77,7 +77,7 @@ fun main() = application {
         onCloseRequest = { appState.update { requestExit() } },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
-        Menu(appState, scrollFitViewModel, snackbarHostState)
+        Menu(mainScope, availableLabelerConfs.value, appState, appRecord, scrollFitViewModel, snackbarHostState)
         AppTheme {
             App(
                 mainScope,
@@ -92,7 +92,14 @@ fun main() = application {
                 player
             )
         }
-        StandaloneDialogs(mainScope, availableLabelerConfs.value, appState, appRecord, scrollFitViewModel)
+        StandaloneDialogs(
+            mainScope,
+            availableLabelerConfs.value,
+            appState,
+            appRecord,
+            snackbarHostState,
+            scrollFitViewModel
+        )
         ProjectChangesListener(appState)
         ProjectWriter(appState)
         Box(Modifier.fillMaxSize()) {
