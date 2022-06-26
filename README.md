@@ -26,7 +26,7 @@ If you cannot open the app with a "damaged" error, please run `sudo xattr -rc /A
 with your terminal. (sudo command requires your password)
 
 ## Building
-vLabeler is built by [Compose Multiplatforms](https://github.com/JetBrains/compose-jb). You can use Gradle to build the application. [See more](https://github.com/JetBrains/compose-jb/tree/master/tutorials/Native_distributions_and_local_execution)
+vLabeler is built by [Compose Multiplatform](https://github.com/JetBrains/compose-jb). You can use Gradle to build the application. [See more](https://github.com/JetBrains/compose-jb/tree/master/tutorials/Native_distributions_and_local_execution)
 
 Currently cross-platform building is not supported. Only packages for your OS are built.
 
