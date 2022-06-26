@@ -109,6 +109,7 @@ fun FrameWindowScope.Menu(
             )
             Item(
                 string(Strings.MenuEditRenameEntry),
+                shortcut = getKeyShortCut(Key.R, ctrl = true),
                 onClick = {
                     appState.update {
                         openEditEntryNameDialog(
@@ -121,6 +122,7 @@ fun FrameWindowScope.Menu(
             )
             Item(
                 string(Strings.MenuEditDuplicateEntry),
+                shortcut = getKeyShortCut(Key.D, ctrl = true),
                 onClick = {
                     appState.update {
                         openEditEntryNameDialog(
