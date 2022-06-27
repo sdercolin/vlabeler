@@ -64,7 +64,6 @@ fun App(
                 ProjectCreator(
                     create = { openCreatedProject(mainScope, it, appState, appRecord, scrollFitViewModel) },
                     cancel = { appState.update { closeProjectCreator() } },
-                    appRecord = appRecord,
                     availableLabelerConfs = availableLabelerConfs,
                     snackbarHostState = snackbarHostState
                 )
