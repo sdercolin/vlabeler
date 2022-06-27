@@ -87,7 +87,7 @@ private fun NativeFileDialog(
         withContext(Dispatchers.IO) {
             val pathPointer = MemoryUtil.memAllocPointer(1)
 
-            val filterList = extensions?.joinToString(",") { "*.$it" }
+            val filterList = extensions?.joinToString(",")
             val defaultPathForFile = if (initialDirectory != null && initialFileName != null) {
                 File(initialDirectory, initialFileName).absolutePath
             } else null
@@ -99,7 +99,6 @@ private fun NativeFileDialog(
                     NativeFileDialog.NFD_PickFolder(initialDirectory ?: HomeDir.absolutePath, pathPointer)
                 }
                 else -> {
-
                     NativeFileDialog.NFD_OpenDialog(filterList, defaultPathForFile, pathPointer)
                 }
             }
