@@ -30,12 +30,12 @@ fun StandaloneDialogs(
         appState.value.isShowingOpenProjectDialog -> OpenFileDialog(
             title = string(Strings.OpenProjectDialogTitle),
             extensions = listOf(Project.ProjectFileExtension)
-        ) { directory, fileName ->
+        ) { parent, name ->
             appState.update { closeOpenProjectDialog() }
-            if (directory != null && fileName != null) {
+            if (parent != null && name != null) {
                 openProject(
                     mainScope,
-                    File(directory, fileName),
+                    File(parent, name),
                     labelerConfs,
                     appState,
                     appRecord,
@@ -70,11 +70,11 @@ fun StandaloneDialogs(
                 initialDirectory = project.sampleDirectory,
                 initialFileName = project.labelerConf.defaultInputFilePath?.lastPathSection
                     ?: "${project.projectName}.${project.labelerConf.extension}"
-            ) { directory, fileName ->
+            ) { parent, name ->
                 appState.update { closeExportDialog() }
-                if (directory != null && fileName != null) {
+                if (parent != null && name != null) {
                     val outputText = appState.value.project!!.toRawLabels()
-                    File(directory, fileName).writeText(outputText)
+                    File(parent, name).writeText(outputText)
                 }
             }
         }

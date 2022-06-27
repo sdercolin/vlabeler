@@ -24,7 +24,7 @@ fun OpenFileDialog(
     initialFileName: String? = null,
     extensions: List<String>? = null,
     directoryMode: Boolean = false,
-    onCloseRequest: (directory: String?, result: String?) -> Unit
+    onCloseRequest: (parent: String?, name: String?) -> Unit
 ) = FileDialog(LOAD, title, initialDirectory, initialFileName, extensions, directoryMode, onCloseRequest)
 
 @Composable
@@ -33,7 +33,7 @@ fun SaveFileDialog(
     initialDirectory: String? = null,
     initialFileName: String? = null,
     extensions: List<String>? = null,
-    onCloseRequest: (directory: String?, result: String?) -> Unit
+    onCloseRequest: (parent: String?, name: String?) -> Unit
 ) = FileDialog(SAVE, title, initialDirectory, initialFileName, extensions, false, onCloseRequest)
 
 @Composable
@@ -44,7 +44,7 @@ private fun FileDialog(
     initialFileName: String?,
     extensions: List<String>?,
     directoryMode: Boolean,
-    onCloseRequest: (directory: String?, result: String?) -> Unit
+    onCloseRequest: (parent: String?, name: String?) -> Unit
 ) = if (!isWindows) AwtWindow(
     create = {
         if (directoryMode) setAwtDirectoryMode(true)
@@ -88,7 +88,7 @@ private fun LwjgalFileDialog(
     initialFileName: String?,
     extensions: List<String>?,
     directoryMode: Boolean,
-    onCloseRequest: (directory: String?, result: String?) -> Unit
+    onCloseRequest: (parent: String?, name: String?) -> Unit
 ) {
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {

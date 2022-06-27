@@ -389,10 +389,10 @@ fun ProjectCreator(
                         initialDirectory = initial,
                         extensions = extensions,
                         directoryMode = directoryMode
-                    ) { directory, fileName ->
+                    ) { parent, name ->
                         currentPathPicker = null
-                        if (directory == null || fileName == null) return@OpenFileDialog
-                        val file = File(directory, fileName)
+                        if (parent == null || name == null) return@OpenFileDialog
+                        val file = File(parent, name)
                         when (picker) {
                             PathPicker.SampleDirectory -> {
                                 setSampleDirectory(file.getDirectory().absolutePath)
