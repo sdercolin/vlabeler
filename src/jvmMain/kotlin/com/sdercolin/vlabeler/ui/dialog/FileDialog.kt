@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui.dialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.AwtWindow
+import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.env.setAwtDirectoryMode
 import com.sdercolin.vlabeler.util.HomeDir
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,7 @@ fun OpenFileDialog(
     extensions: List<String>? = null,
     directoryMode: Boolean = false,
     onCloseRequest: (directory: String?, result: String?) -> Unit
-) = NativeFileDialog(LOAD, title, initialDirectory, initialFileName, extensions, directoryMode, onCloseRequest)
+) = FileDialog(LOAD, title, initialDirectory, initialFileName, extensions, directoryMode, onCloseRequest)
 
 @Composable
 fun SaveFileDialog(
@@ -44,7 +45,7 @@ private fun FileDialog(
     extensions: List<String>?,
     directoryMode: Boolean,
     onCloseRequest: (directory: String?, result: String?) -> Unit
-) = AwtWindow(
+) = if (!isWindows) AwtWindow(
     create = {
         if (directoryMode) setAwtDirectoryMode(true)
 
@@ -71,12 +72,18 @@ private fun FileDialog(
         if (directoryMode) setAwtDirectoryMode(false)
         it.dispose()
     }
+) else LwjgalFileDialog(
+    mode,
+    initialDirectory,
+    initialFileName,
+    extensions,
+    directoryMode,
+    onCloseRequest
 )
 
 @Composable
-private fun NativeFileDialog(
+private fun LwjgalFileDialog(
     mode: Int,
-    title: String,
     initialDirectory: String?,
     initialFileName: String?,
     extensions: List<String>?,

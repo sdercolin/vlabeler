@@ -38,13 +38,9 @@ kotlin {
 
                 val lwjglVersion = "3.3.1"
                 listOf("lwjgl", "lwjgl-nfd").forEach { lwjglDep ->
-                    implementation("org.lwjgl:${lwjglDep}:${lwjglVersion}")
-                    listOf(
-                        "natives-windows", "natives-windows-x86", "natives-windows-arm64",
-                        "natives-macos", "natives-macos-arm64",
-                        "natives-linux", "natives-linux-arm64", "natives-linux-arm32"
-                    ).forEach { native ->
-                        runtimeOnly("org.lwjgl:${lwjglDep}:${lwjglVersion}:${native}")
+                    implementation("org.lwjgl:$lwjglDep:$lwjglVersion")
+                    listOf("natives-windows", "natives-windows-x86", "natives-windows-arm64").forEach { native ->
+                        runtimeOnly("org.lwjgl:$lwjglDep:$lwjglVersion:$native")
                     }
                 }
             }
