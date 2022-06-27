@@ -52,10 +52,16 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "vLabeler"
-            packageVersion = "1.0.0"
+            packageVersion = (version as String).split("-").first()
             copyright = "© 2022 sdercolin. All rights reserved."
             appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
             modules("java.sql", "jdk.charsets", "jdk.unsupported", "jdk.accessibility")
+
+            linux {
+                debPackageVersion = (version as String)
+                    .replace("alpha", "100")
+                    .replace("beta", "200")
+            }
         }
     }
 }
