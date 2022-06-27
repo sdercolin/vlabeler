@@ -1,12 +1,19 @@
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.AwtWindow
 import com.sdercolin.vlabeler.env.setAwtDirectoryMode
+import com.sdercolin.vlabeler.util.HomeDir
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.lwjgl.system.MemoryUtil
+import org.lwjgl.util.nfd.NativeFileDialog
 import java.awt.FileDialog
 import java.awt.FileDialog.LOAD
 import java.awt.FileDialog.SAVE
 import java.awt.Frame
+import java.io.File
 import java.io.FilenameFilter
 
 @Composable
@@ -17,7 +24,7 @@ fun OpenFileDialog(
     extensions: List<String>? = null,
     directoryMode: Boolean = false,
     onCloseRequest: (directory: String?, result: String?) -> Unit
-) = FileDialog(LOAD, title, initialDirectory, initialFileName, extensions, directoryMode, onCloseRequest)
+) = NativeFileDialog(LOAD, title, initialDirectory, initialFileName, extensions, directoryMode, onCloseRequest)
 
 @Composable
 fun SaveFileDialog(
@@ -65,3 +72,45 @@ private fun FileDialog(
         it.dispose()
     }
 )
+
+@Composable
+private fun NativeFileDialog(
+    mode: Int,
+    title: String,
+    initialDirectory: String?,
+    initialFileName: String?,
+    extensions: List<String>?,
+    directoryMode: Boolean,
+    onCloseRequest: (directory: String?, result: String?) -> Unit
+) {
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            val pathPointer = MemoryUtil.memAllocPointer(1)
+
+            val filterList = extensions?.joinToString(",") { "*.$it" }
+            val defaultPathForFile = if (initialDirectory != null && initialFileName != null) {
+                File(initialDirectory, initialFileName).absolutePath
+            } else null
+            val result = when {
+                mode == SAVE -> {
+                    NativeFileDialog.NFD_SaveDialog(filterList, defaultPathForFile, pathPointer)
+                }
+                directoryMode -> {
+                    NativeFileDialog.NFD_PickFolder(initialDirectory ?: HomeDir.absolutePath, pathPointer)
+                }
+                else -> {
+
+                    NativeFileDialog.NFD_OpenDialog(filterList, defaultPathForFile, pathPointer)
+                }
+            }
+            if (result == NativeFileDialog.NFD_OKAY) {
+                val path = pathPointer.stringUTF8
+                NativeFileDialog.nNFD_Free(pathPointer[0])
+                onCloseRequest(File(path).parent, File(path).name)
+            } else {
+                onCloseRequest(null, null)
+            }
+            MemoryUtil.memFree(pathPointer)
+        }
+    }
+}

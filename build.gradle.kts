@@ -35,6 +35,18 @@ kotlin {
                 implementation("com.github.psambit9791:jdsp:1.0.0")
                 implementation("org.python:jython-standalone:2.7.2")
                 implementation("org.apache.tika:tika-parser-text-module:2.4.1")
+
+                val lwjglVersion = "3.3.1"
+                listOf("lwjgl", "lwjgl-nfd").forEach { lwjglDep ->
+                    implementation("org.lwjgl:${lwjglDep}:${lwjglVersion}")
+                    listOf(
+                        "natives-windows", "natives-windows-x86", "natives-windows-arm64",
+                        "natives-macos", "natives-macos-arm64",
+                        "natives-linux", "natives-linux-arm64", "natives-linux-arm32"
+                    ).forEach { native ->
+                        runtimeOnly("org.lwjgl:${lwjglDep}:${lwjglVersion}:${native}")
+                    }
+                }
             }
         }
         val jvmTest by getting {
