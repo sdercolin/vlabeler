@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.util
 
+import com.sdercolin.vlabeler.env.isLinux
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.model.LabelerConf.Companion.LabelerFileExtension
@@ -10,12 +11,14 @@ private const val AppNamePath = "vLabeler"
 private const val AppConfFileName = "app.conf.json"
 private const val AppRecordFileName = "app.record.json"
 private const val LabelerFolderName = "labelers"
+private const val RecordFolderName = ".record"
 
 // Internal files
 val ResourceDir get() = File(System.getProperty("compose.application.resources.dir"))
 val DefaultAppConfFile get() = ResourceDir.resolve(AppConfFileName)
 val DefaultLabelerDir get() = ResourceDir.resolve(LabelerFolderName)
-val AppRecordFile get() = ResourceDir.resolve(AppRecordFileName)
+private val RecordDir get() = if (isLinux) AppDir.resolve(RecordFolderName) else ResourceDir.resolve(RecordFolderName)
+val AppRecordFile get() = RecordDir.resolve(AppRecordFileName)
 
 // External files
 val HomeDir get() = File(System.getProperty("user.home"))
