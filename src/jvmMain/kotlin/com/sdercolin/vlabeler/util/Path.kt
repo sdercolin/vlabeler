@@ -17,7 +17,7 @@ private const val RecordFolderName = ".record"
 val ResourceDir get() = File(System.getProperty("compose.application.resources.dir"))
 val DefaultAppConfFile get() = ResourceDir.resolve(AppConfFileName)
 val DefaultLabelerDir get() = ResourceDir.resolve(LabelerFolderName)
-private val RecordDir get() = if (isLinux) AppDir.resolve(RecordFolderName) else ResourceDir.resolve(RecordFolderName)
+val RecordDir get() = if (isLinux) AppDir.resolve(RecordFolderName) else ResourceDir.resolve(RecordFolderName)
 val AppRecordFile get() = RecordDir.resolve(AppRecordFileName)
 
 // External files

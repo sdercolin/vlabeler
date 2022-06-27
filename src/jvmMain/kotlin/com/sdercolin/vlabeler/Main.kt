@@ -39,6 +39,7 @@ import com.sdercolin.vlabeler.util.AppRecordFile
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.DefaultAppConfFile
+import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getCustomLabelers
 import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
@@ -186,6 +187,10 @@ private fun ensureDirectories() {
     if (CustomLabelerDir.exists().not()) {
         CustomLabelerDir.mkdir()
         Log.info("$CustomLabelerDir created")
+    }
+    if (RecordDir.exists().not()) {
+        RecordDir.mkdir()
+        Log.info("$RecordDir created")
     }
 }
 
