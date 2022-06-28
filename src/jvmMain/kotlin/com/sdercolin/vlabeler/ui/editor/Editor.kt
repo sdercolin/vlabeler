@@ -60,7 +60,7 @@ fun Editor(
     editEntry: (EditedEntry) -> Unit,
     showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
-    labelerState: MutableState<LabelerState>,
+    labelerState: LabelerState,
     appState: MutableState<AppState>,
     playerState: PlayerState,
     snackbarHostState: SnackbarHostState,
@@ -170,18 +170,18 @@ private fun changeResolutionByPointerEvent(
     event: PointerEvent,
     appConf: AppConf,
     keyboardState: KeyboardState,
-    labelerState: MutableState<LabelerState>
+    labelerState: LabelerState
 ) {
     if (!keyboardState.isCtrlPressed) return
     val xDelta = event.changes.first().scrollDelta.x
     val range = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
-    val resolution = labelerState.value.canvasResolution
+    val resolution = labelerState.canvasResolution
     val updatedResolution = when {
         xDelta > 0 -> range.decreaseFrom(resolution).takeIf { (range.canDecrease(resolution)) }
         xDelta < 0 -> range.increaseFrom(resolution).takeIf { (range.canIncrease(resolution)) }
         else -> null
     }
-    if (updatedResolution != null) labelerState.update { changeResolution(updatedResolution) }
+    if (updatedResolution != null) labelerState.changeResolution(updatedResolution)
 }
 
 @Composable
@@ -189,7 +189,7 @@ private fun LaunchChangeResolutionByKeyEvent(
     keyboardViewModel: KeyboardViewModel,
     appState: MutableState<AppState>,
     appConf: AppConf,
-    labelerState: MutableState<LabelerState>
+    labelerState: LabelerState
 ) {
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect {
@@ -202,14 +202,14 @@ private fun LaunchChangeResolutionByKeyEvent(
 private fun changeResolutionByKeyEvent(
     event: KeyEvent,
     appConf: AppConf,
-    labelerState: MutableState<LabelerState>
+    labelerState: LabelerState
 ) {
-    val resolution = labelerState.value.canvasResolution
+    val resolution = labelerState.canvasResolution
     val range = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
     val updatedResolution = if (event.shouldIncreaseResolution) range.increaseFrom(resolution)
     else if (event.shouldDecreaseResolution) range.decreaseFrom(resolution)
     else null
-    if (updatedResolution != null) labelerState.update { changeResolution(updatedResolution) }
+    if (updatedResolution != null) labelerState.changeResolution(updatedResolution)
 }
 
 @Composable

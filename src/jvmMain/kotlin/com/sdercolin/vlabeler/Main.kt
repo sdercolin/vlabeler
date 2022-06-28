@@ -18,6 +18,7 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
+import com.sdercolin.vlabeler.audio.rememberPlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.shouldTogglePlayer
@@ -49,7 +50,7 @@ import java.io.File
 
 fun main() = application {
     val mainScope = rememberCoroutineScope()
-    val playerState = remember { mutableStateOf(PlayerState()) }
+    val playerState = rememberPlayerState()
     val player = remember { Player(mainScope, playerState) }
     val keyboardViewModel = remember { KeyboardViewModel(mainScope) }
     val scrollFitViewModel = remember { ScrollFitViewModel(mainScope) }
@@ -85,7 +86,7 @@ fun main() = application {
                 appConf.value,
                 availableLabelerConfs.value,
                 appState,
-                playerState.value,
+                playerState,
                 appRecord,
                 snackbarHostState,
                 keyboardViewModel,

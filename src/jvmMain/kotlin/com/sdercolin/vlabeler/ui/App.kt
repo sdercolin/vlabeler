@@ -7,8 +7,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
@@ -29,6 +27,7 @@ import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.editor.labeler.LabelerState
 import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.editor.labeler.rememberLabelerState
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
 import com.sdercolin.vlabeler.util.update
@@ -47,9 +46,8 @@ fun App(
     scrollFitViewModel: ScrollFitViewModel,
     player: Player
 ) {
-    val labelerState = remember(appConf.painter.canvasResolution.default) {
-        mutableStateOf(LabelerState(appConf.painter.canvasResolution.default))
-    }
+    val labelerState = rememberLabelerState(appConf)
+
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         val project = appState.value.project
         when (appState.value.screen) {
@@ -99,12 +97,12 @@ fun App(
 
 private fun handleDialogResult(
     result: EmbeddedDialogResult,
-    labelerState: MutableState<LabelerState>,
+    labelerState: LabelerState,
     appState: MutableState<AppState>,
     scrollFitViewModel: ScrollFitViewModel
 ) {
     when (result) {
-        is SetResolutionDialogResult -> labelerState.update { changeResolution(result.newValue) }
+        is SetResolutionDialogResult -> labelerState.changeResolution(result.newValue)
         is AskIfSaveDialogResult -> appState.update { takeAskIfSaveResult(result) }
         is JumpToEntryDialogArgsResult -> {
             appState.update { jumpToEntry(result.sampleName, result.index) }

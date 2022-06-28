@@ -1,9 +1,11 @@
 package com.sdercolin.vlabeler.audio
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -11,32 +13,36 @@ import kotlinx.coroutines.launch
 import java.io.File
 import javax.sound.sampled.AudioSystem
 
-@Immutable
-data class PlayerState(
-    val isPlaying: Boolean = false,
-    val framePosition: Int = 0
-) {
-    fun onStartPlaying() = copy(isPlaying = true)
-    fun onStopPlaying() = copy(isPlaying = false)
-    fun onChangeFramePosition(position: Int) = copy(framePosition = position)
+class PlayerState {
+
+    var isPlaying by mutableStateOf(false)
+        private set
+    var framePosition by mutableStateOf(0)
+        private set
+
+    fun startPlaying() {
+        isPlaying = true
+    }
+
+    fun stopPlaying() {
+        isPlaying = false
+    }
+
+    fun changeFramePosition(position: Int) {
+        framePosition = position
+    }
 }
+
+@Composable
+fun rememberPlayerState() = remember { PlayerState() }
 
 class Player(
     private val coroutineScope: CoroutineScope,
-    private val playerState: MutableState<PlayerState>
+    private val state: PlayerState
 ) {
     private var file: File? = null
     private val clip = AudioSystem.getClip()
-    private var isPlaying: Boolean
-        get() = playerState.value.isPlaying
-        set(value) {
-            playerState.update { if (value) onStartPlaying() else onStopPlaying() }
-        }
-    private var framePosition: Int
-        get() = playerState.value.framePosition
-        set(value) {
-            playerState.update { onChangeFramePosition(value) }
-        }
+
     private var countingJob: Job? = null
 
     fun load(file: File) {
@@ -51,7 +57,7 @@ class Player(
 
     fun toggle() {
         file ?: return
-        if (isPlaying) stop() else {
+        if (state.isPlaying) stop() else {
             reset()
             play()
         }
@@ -62,18 +68,18 @@ class Player(
         countingJob = coroutineScope.launch {
             while (true) {
                 delay(PlayingTimeInterval)
-                framePosition = clip.framePosition
+                state.changeFramePosition(clip.framePosition)
                 if (!clip.isRunning) {
-                    isPlaying = false
+                    state.stopPlaying()
                     return@launch
                 }
-                if (untilPosition != null && framePosition >= untilPosition) {
+                if (untilPosition != null && state.framePosition >= untilPosition) {
                     stop()
                     return@launch
                 }
             }
         }
-        isPlaying = true
+        state.startPlaying()
         clip.start()
     }
 
@@ -90,7 +96,7 @@ class Player(
         clip.stop()
         countingJob?.cancel()
         countingJob = null
-        isPlaying = false
+        state.stopPlaying()
     }
 
     private fun reset() {
@@ -98,7 +104,7 @@ class Player(
         clip.close()
         AudioSystem.getAudioInputStream(file).use { clip.open(it) }
         clip.framePosition = 0
-        framePosition = 0
+        state.changeFramePosition(0)
     }
 
     companion object {

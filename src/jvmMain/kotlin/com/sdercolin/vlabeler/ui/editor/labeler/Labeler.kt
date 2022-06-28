@@ -21,7 +21,6 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,11 +41,6 @@ import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-@Immutable
-data class LabelerState(val canvasResolution: Int) {
-    fun changeResolution(resolution: Int) = copy(canvasResolution = resolution)
-}
-
 @Composable
 fun Labeler(
     sample: Sample?,
@@ -62,7 +56,7 @@ fun Labeler(
     showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
     labelerConf: LabelerConf,
-    labelerState: MutableState<LabelerState>,
+    labelerState: LabelerState,
     appState: MutableState<AppState>,
     playerState: PlayerState,
     snackbarHostState: SnackbarHostState,
@@ -73,7 +67,7 @@ fun Labeler(
 
     val scope = rememberCoroutineScope()
     val horizontalScrollState = rememberScrollState(0)
-    val currentResolution = labelerState.value.canvasResolution
+    val currentResolution = labelerState.canvasResolution
 
     LaunchedEffect(Unit) {
         scrollFitViewModel.eventFlow.collectLatest {
@@ -123,7 +117,7 @@ fun Labeler(
             currentEntryIndexInTotal = currentIndexInTotal,
             totalEntryCount = totalEntryCount,
             resolution = currentResolution,
-            onChangeResolution = { labelerState.update { changeResolution(it) } },
+            onChangeResolution = { labelerState.changeResolution(it) },
             openSetResolutionDialog = {
                 showDialog(
                     SetResolutionDialogArgs(
