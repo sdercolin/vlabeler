@@ -107,7 +107,7 @@ data class AppState(
     fun openJumpToEntryDialog() = copy(embeddedDialog = JumpToEntryDialogArgs(project!!))
 
     val canGoNextEntryOrSample get() = project?.run { currentEntryIndexInTotal < totalEntryCount - 1 } == true
-    val canGoPreviousEntryOrSample get() = project?.run { currentEntryIndexInTotal < totalEntryCount - 1 } == true
+    val canGoPreviousEntryOrSample get() = project?.run { currentEntryIndexInTotal > 0 } == true
     fun nextEntry() = editNonNullProject { nextEntry() }
     fun previousEntry() = editNonNullProject { previousEntry() }
     fun nextSample() = editNonNullProject { nextSample() }
