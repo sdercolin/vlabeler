@@ -62,7 +62,7 @@ fun BottomBar(state: BottomBarState) {
                 Modifier.fillMaxHeight()
                     .widthIn(min = 85.dp)
                     .clickable { state.openJumpToEntryDialog() }
-                    .padding(horizontal = 15.dp)
+                    .padding(horizontal = 5.dp)
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
