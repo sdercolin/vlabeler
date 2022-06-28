@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-fun openProject(
+fun loadProject(
     scope: CoroutineScope,
     file: File,
     appState: AppState

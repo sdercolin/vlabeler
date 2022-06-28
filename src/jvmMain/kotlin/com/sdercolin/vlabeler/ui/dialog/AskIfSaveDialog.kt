@@ -19,16 +19,34 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import kotlinx.coroutines.CoroutineScope
+import java.io.File
 
-enum class AskIfSaveDialogPurpose(
+sealed class AskIfSaveDialogPurpose(
     val stringKey: Strings,
     val action: AppState.PendingActionAfterSaved
 ) : EmbeddedDialogArgs {
-    IsOpening(Strings.AskIfSaveBeforeOpenDialogDescription, AppState.PendingActionAfterSaved.Open),
-    IsExporting(Strings.AskIfSaveBeforeExportDialogDescription, AppState.PendingActionAfterSaved.Export),
-    IsClosing(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close),
-    IsCreatingNew(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.CreatingNew),
-    IsExiting(Strings.AskIfSaveBeforeExitDialogDescription, AppState.PendingActionAfterSaved.Exit);
+    object IsOpening :
+        AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeOpenDialogDescription, AppState.PendingActionAfterSaved.Open)
+
+    class IsOpeningRecent(val scope: CoroutineScope, val file: File) :
+        AskIfSaveDialogPurpose(
+            Strings.AskIfSaveBeforeOpenDialogDescription,
+            AppState.PendingActionAfterSaved.OpenRecent(scope, file)
+        )
+
+    object IsExporting :
+        AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeExportDialogDescription, AppState.PendingActionAfterSaved.Export)
+
+    object IsClosing :
+        AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close)
+
+    object IsCreatingNew : AskIfSaveDialogPurpose(
+        Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.CreatingNew
+    )
+
+    object IsExiting :
+        AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeExitDialogDescription, AppState.PendingActionAfterSaved.Exit)
 }
 
 data class AskIfSaveDialogResult(

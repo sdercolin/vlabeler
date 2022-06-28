@@ -8,7 +8,6 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isMacOS
-import com.sdercolin.vlabeler.io.openProject
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +36,7 @@ fun FrameWindowScope.Menu(
                 appState.appRecord.recentProjectPathsWithDisplayNames.forEach { (path, displayName) ->
                     Item(
                         text = displayName,
-                        onClick = { openProject(mainScope, File(path), appState) }
+                        onClick = { appState.requestOpenRecentProject(mainScope, File(path)) }
                     )
                 }
                 Separator()

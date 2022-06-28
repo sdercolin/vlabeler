@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -148,6 +149,17 @@ class AppState(
         embeddedDialog = AskIfSaveDialogPurpose.IsOpening
     }
 
+    fun requestOpenRecentProject(scope: CoroutineScope, file: File) =
+        if (hasUnsavedChanges) {
+            askIfSaveBeforeOpenRecentProject(scope, file)
+        } else {
+            loadProject(scope, file, this)
+        }
+
+    private fun askIfSaveBeforeOpenRecentProject(scope: CoroutineScope, file: File) {
+        embeddedDialog = AskIfSaveDialogPurpose.IsOpeningRecent(scope, file)
+    }
+
     fun openOpenProjectDialog() {
         isShowingOpenProjectDialog = true
     }
@@ -205,6 +217,7 @@ class AppState(
         PendingActionAfterSaved.Close -> reset()
         PendingActionAfterSaved.CreatingNew -> openProjectCreator()
         PendingActionAfterSaved.Exit -> exit()
+        is PendingActionAfterSaved.OpenRecent -> loadProject(action.scope, action.file, this)
         null -> Unit
     }
 
@@ -343,12 +356,13 @@ class AppState(
         UpdateRequested
     }
 
-    enum class PendingActionAfterSaved {
-        Open,
-        Export,
-        Close,
-        CreatingNew,
-        Exit
+    sealed class PendingActionAfterSaved {
+        object Open : PendingActionAfterSaved()
+        class OpenRecent(val scope: CoroutineScope, val file: File) : PendingActionAfterSaved()
+        object Export : PendingActionAfterSaved()
+        object Close : PendingActionAfterSaved()
+        object CreatingNew : PendingActionAfterSaved()
+        object Exit : PendingActionAfterSaved()
     }
 }
 

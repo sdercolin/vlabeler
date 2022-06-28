@@ -2,7 +2,7 @@ package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.runtime.Composable
 import com.sdercolin.vlabeler.io.exportProject
-import com.sdercolin.vlabeler.io.openProject
+import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -23,7 +23,7 @@ fun StandaloneDialogs(
         ) { parent, name ->
             appState.closeOpenProjectDialog()
             if (parent != null && name != null) {
-                openProject(mainScope, File(parent, name), appState)
+                loadProject(mainScope, File(parent, name), appState)
             }
         }
         appState.isShowingSaveAsProjectDialog -> SaveFileDialog(

@@ -28,7 +28,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.io.openProject
+import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -111,7 +111,7 @@ fun BoxScope.Starter(
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 onClick = {
-                                    openProject(mainScope, file, appState)
+                                    loadProject(mainScope, file, appState)
                                 }
                             )
                         }
