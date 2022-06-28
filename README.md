@@ -55,8 +55,8 @@ Currenty built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU) l
 2. Select a folder containing your sample files
 3. If you don't want to save vLabeler files (project file, processed wav files etc.) in the sample folder, change the `Working directory`
 4. Change `Project name` if you would like
-5. Select a labeler
-6. Select a label file template and its encoding
+5. Select a labeler (e.g. UTAU oto labeler if you are editign UTAU oto)
+6. Select a label file template and its encoding (e.g. the existing oto file), or leave it blank to use the default template (not recommended)
 7. Click `OK` and start editing
 8. Click `Export` in the menu to get the edited label file
  
@@ -74,7 +74,7 @@ Note that following `Ctrl` means `Command` if you are using macOS.
 
 ### Scrolling
 - `Shift` + mouse wheel scroll: horizontal scroll
-- `F`: Scroll to center the current entry in the screen
+- `F` or Focus button in the center of bottom bar: Scroll to center the current entry in the screen
 
 ### Zoom in/out
 - `=` or numpad `+` or `+` button in the bottom bar: zoom in
@@ -84,8 +84,10 @@ Note that following `Ctrl` means `Command` if you are using macOS.
 ### Switch entry/sample
 - Mouse wheel scroll: go to previous/next entry
 - `Up`/`Down`: go to previous/next entry
+- `<`/`>` buttons in the bottom bar: go to previous/next entry
 - `Ctrl` + mouse wheel scroll: go to previous/next sample
 - `Ctrl` + `Up`/`Down`: go to previous/next sample
+- `<<`/`>>` buttons in the bottom: go to previous/next sample
 - `Ctrl` + `G` or entry number button in the bottom bar: show `Go to entry...` dialog
 
 ## Configure
@@ -97,7 +99,12 @@ You can reset configurations by removing the files.
 
 Built-in configuration UI is not available yet. (Please wait!)
 
+## Logs
+Logs are written to files under `.../vLabeler/.logs` where `vLabeler` is the app's external directory described in the `Configure` section.
+You can check the logs for development/debug/test purposes.
+When reporting issues, please attach the recent log files.
+
 ## Known issues
 1. Audio files with a higher bit depth than 16-bit cannot be played normally. Please convert them priorly.
 2. When the audio file gets very long, the editor may get errors while painting. Please zoom out the editor or split the files. You may find [this tool](https://github.com/sdercolin/LongWavOtoHelper) helpful on Windows.
-3. File chooser may not be able to select an empty folder. Please creating something inside, or copy + paste its path.
+3. On Linux, file chooser may not be able to select an empty folder. Please creating something inside, or copy + paste its path.
