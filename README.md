@@ -79,6 +79,7 @@ Note that following `Ctrl` means `Command` if you are using macOS.
 ### Zoom in/out
 - `=` or numpad `+` or `+` button in the bottom bar: zoom in
 - `-` or numpad `-` or `-` button in the bottom bar: zoom out
+- `Ctrl` + `Shift` + mouse wheel scroll: zoom in/out
 - Resolution button in the bottom bar: open dialog for resolution input
 
 ### Switch entry/sample

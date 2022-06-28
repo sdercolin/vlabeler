@@ -17,8 +17,6 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.Editor
-import com.sdercolin.vlabeler.ui.editor.labeler.LabelerState
-import com.sdercolin.vlabeler.ui.editor.labeler.rememberLabelerState
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
 import kotlinx.coroutines.CoroutineScope
@@ -28,31 +26,22 @@ fun App(
     mainScope: CoroutineScope,
     appState: AppState
 ) {
-    val labelerState = rememberLabelerState(appState.appConf)
-
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
-        val project = appState.project
-        when (appState.screen) {
-            AppState.Screen.Starter -> Starter(mainScope, appState)
-            AppState.Screen.ProjectCreator ->
+        when (val screen = appState.screen) {
+            is AppState.Screen.Starter -> Starter(mainScope, appState)
+            is AppState.Screen.ProjectCreator ->
                 ProjectCreator(
                     create = { openCreatedProject(mainScope, it, appState) },
                     cancel = { appState.closeProjectCreator() },
                     availableLabelerConfs = appState.availableLabelerConfs,
                     snackbarHostState = appState.snackbarHostState
                 )
-            AppState.Screen.Editor -> if (project != null) {
-                Editor(
-                    project = project,
-                    labelerState = labelerState,
-                    appState = appState
-                )
-            }
+            is AppState.Screen.Editor -> Editor(screen.editorState)
         }
         appState.embeddedDialog?.let { args ->
             EmbeddedDialog(args) { result ->
                 appState.closeEmbeddedDialog()
-                if (result != null) handleDialogResult(result, labelerState, appState)
+                if (result != null) handleDialogResult(result, appState)
             }
         }
     }
@@ -63,11 +52,10 @@ fun App(
 
 private fun handleDialogResult(
     result: EmbeddedDialogResult,
-    labelerState: LabelerState,
     appState: AppState
 ) {
     when (result) {
-        is SetResolutionDialogResult -> labelerState.changeResolution(result.newValue)
+        is SetResolutionDialogResult -> appState.changeResolution(result.newValue)
         is AskIfSaveDialogResult -> appState.takeAskIfSaveResult(result)
         is JumpToEntryDialogArgsResult -> {
             appState.jumpToEntry(result.sampleName, result.index)

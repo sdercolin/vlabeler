@@ -22,6 +22,7 @@ import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.editor.EditedEntry
+import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import java.io.File
 
@@ -35,12 +36,21 @@ class AppState(
     val availableLabelerConfs: List<LabelerConf>,
     appRecord: MutableState<AppRecord>
 ) {
+    private val editorState get() = (screen as? Screen.Editor)?.editorState
+
     var appConf: AppConf by appConf
         private set
     var appRecord: AppRecord by appRecord
         private set
-    var project: Project? by mutableStateOf(null)
-        private set
+    private val projectState: MutableState<Project?> = mutableStateOf(null)
+    var project: Project?
+        get() = projectState.value
+        private set(value) {
+            if (value != null) {
+                editorState?.updateProject(value)
+            }
+            projectState.value = value
+        }
     var history: ProjectHistory by mutableStateOf(ProjectHistory())
         private set
     var screen: Screen by mutableStateOf(Screen.Starter)
@@ -89,7 +99,11 @@ class AppState(
     fun openProject(newProject: Project) {
         project = newProject
         history = ProjectHistory.new(newProject)
-        screen = Screen.Editor
+        val editor = EditorState(
+            project = newProject,
+            appState = this
+        )
+        screen = Screen.Editor(editor)
     }
 
     fun editProject(editor: Project.() -> Project) {
@@ -294,6 +308,10 @@ class AppState(
         isBusy = false
     }
 
+    fun changeResolution(newValue: Int) {
+        editorState?.labelerState?.changeResolution(newValue)
+    }
+
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
     private fun askIfSaveBeforeExit() {
         embeddedDialog = AskIfSaveDialogPurpose.IsExiting
@@ -305,16 +323,16 @@ class AppState(
 
     val isEditorActive
         get() = project != null &&
-            screen == Screen.Editor &&
+            screen is Screen.Editor &&
             !isShowingOpenProjectDialog &&
             !isShowingSaveAsProjectDialog &&
             !isShowingExportDialog &&
             embeddedDialog == null
 
-    enum class Screen {
-        Starter,
-        ProjectCreator,
-        Editor
+    sealed class Screen {
+        object Starter : Screen()
+        object ProjectCreator : Screen()
+        class Editor(val editorState: EditorState) : Screen()
     }
 
     enum class ProjectWriteStatus {
