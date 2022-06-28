@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
-import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -84,7 +83,8 @@ fun Labeler(
 
     Column(Modifier.fillMaxSize()) {
         EntryTitleBar(
-            entryName = entry.name, sampleName = sampleName,
+            entryName = entry.name,
+            sampleName = sampleName,
             openEditEntryNameDialog = {
                 appState.update {
                     openEditEntryNameDialog(
@@ -170,7 +170,6 @@ fun Labeler(
 
 @Composable
 private fun EntryTitleBar(entryName: String, sampleName: String, openEditEntryNameDialog: () -> Unit) {
-    Log.info("EntryTitleBar: composed")
     Surface {
         Box(
             modifier = Modifier.fillMaxWidth()

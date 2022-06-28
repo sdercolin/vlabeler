@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 
 @Composable
@@ -42,7 +41,6 @@ fun BottomBar(
     scrollFit: () -> Unit,
     appConf: AppConf
 ) {
-    Log.info("BottomBar: composed")
     val resolutionRange = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
     Surface {
         Row(
