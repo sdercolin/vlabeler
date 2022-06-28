@@ -72,7 +72,7 @@ private fun FileDialog(
         if (directoryMode) setAwtDirectoryMode(false)
         it.dispose()
     }
-) else LwjgalFileDialog(
+) else LwjglFileDialog(
     mode,
     initialDirectory,
     initialFileName,
@@ -82,7 +82,7 @@ private fun FileDialog(
 )
 
 @Composable
-private fun LwjgalFileDialog(
+private fun LwjglFileDialog(
     mode: Int,
     initialDirectory: String?,
     initialFileName: String?,
