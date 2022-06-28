@@ -98,7 +98,7 @@ class AppState(
         history = history.push(edited)
     }
 
-    fun editNonNullProject(editor: Project.() -> Project?) {
+    private fun editNonNullProject(editor: Project.() -> Project?) {
         val edited = project!!.editor() ?: return
         project = edited
         history = history.push(edited)
@@ -207,26 +207,27 @@ class AppState(
     val canGoNextEntryOrSample get() = project?.run { currentEntryIndexInTotal < totalEntryCount - 1 } == true
     val canGoPreviousEntryOrSample get() = project?.run { currentEntryIndexInTotal > 0 } == true
 
-    /**
-     * @return true if it has switched to another sample
-     */
-    fun nextEntry(): Boolean {
+    fun nextEntry() {
         val previousProject = project
         editNonNullProject { nextEntry() }
-        return project!!.hasSwitchedSample(previousProject)
+        if (project!!.hasSwitchedSample(previousProject)) scrollFitViewModel.emitNext()
     }
 
-    /**
-     * @return true if it has switched to another sample
-     */
-    fun previousEntry(): Boolean {
+    fun previousEntry() {
         val previous = project
         editNonNullProject { previousEntry() }
-        return project!!.hasSwitchedSample(previous)
+        if (project!!.hasSwitchedSample(previous)) scrollFitViewModel.emitNext()
     }
 
-    fun nextSample() = editNonNullProject { nextSample() }
-    fun previousSample() = editNonNullProject { previousSample() }
+    fun nextSample() {
+        editNonNullProject { nextSample() }
+        scrollFitViewModel.emitNext()
+    }
+
+    fun previousSample() {
+        editNonNullProject { previousSample() }
+        scrollFitViewModel.emitNext()
+    }
 
     fun jumpToEntry(sampleName: String, entryIndex: Int) = editProject {
         project!!.copy(

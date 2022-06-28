@@ -22,26 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.model.AppConf
 
 @Composable
-fun BottomBar(
-    currentEntryIndexInTotal: Int,
-    totalEntryCount: Int,
-    resolution: Int,
-    onChangeResolution: (Int) -> Unit,
-    openSetResolutionDialog: () -> Unit,
-    canGoPrevious: Boolean,
-    canGoNext: Boolean,
-    goNextEntry: () -> Unit,
-    goPreviousEntry: () -> Unit,
-    goNextSample: () -> Unit,
-    goPreviousSample: () -> Unit,
-    openJumpToEntryDialog: () -> Unit,
-    scrollFit: () -> Unit,
-    appConf: AppConf
-) {
-    val resolutionRange = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
+fun BottomBar(state: BottomBarState) {
     Surface {
         Row(
             modifier = Modifier.fillMaxWidth().height(30.dp),
@@ -50,8 +33,8 @@ fun BottomBar(
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
-                        enabled = canGoPrevious,
-                        onClick = goPreviousSample
+                        enabled = state.canGoPrevious,
+                        onClick = state.goPreviousSample
                     )
                     .padding(start = 8.dp)
             ) {
@@ -64,8 +47,8 @@ fun BottomBar(
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
-                        enabled = canGoPrevious,
-                        onClick = goPreviousEntry
+                        enabled = state.canGoPrevious,
+                        onClick = state.goPreviousEntry
                     )
             ) {
                 Text(
@@ -76,20 +59,20 @@ fun BottomBar(
             }
             Box(
                 Modifier.fillMaxHeight()
-                    .clickable { openJumpToEntryDialog() }
+                    .clickable { state.openJumpToEntryDialog() }
                     .padding(horizontal = 15.dp)
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
-                    text = "${currentEntryIndexInTotal + 1} / $totalEntryCount",
+                    text = "${state.currentEntryIndexInTotal + 1} / ${state.totalEntryCount}",
                     style = MaterialTheme.typography.caption
                 )
             }
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
-                        enabled = canGoNext,
-                        onClick = goNextEntry
+                        enabled = state.canGoNext,
+                        onClick = state.goNextEntry
                     )
             ) {
                 Text(
@@ -101,8 +84,8 @@ fun BottomBar(
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
-                        enabled = canGoNext,
-                        onClick = goNextSample
+                        enabled = state.canGoNext,
+                        onClick = state.goNextSample
                     )
             ) {
                 Text(
@@ -116,7 +99,7 @@ fun BottomBar(
 
             Box(
                 Modifier.fillMaxHeight()
-                    .clickable { scrollFit() }
+                    .clickable { state.scrollFit() }
                     .padding(horizontal = 15.dp)
             ) {
                 Icon(
@@ -131,8 +114,8 @@ fun BottomBar(
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
-                        enabled = resolutionRange.canIncrease(resolution),
-                        onClick = { onChangeResolution(resolutionRange.increaseFrom(resolution)) }
+                        enabled = state.canIncrease,
+                        onClick = state::increase
                     )
             ) {
                 Text(
@@ -143,14 +126,11 @@ fun BottomBar(
             }
             Box(
                 Modifier.fillMaxHeight()
-                    .clickable(
-                        enabled = resolutionRange.canIncrease(resolution),
-                        onClick = { openSetResolutionDialog() }
-                    )
+                    .clickable(onClick = state.openSetResolutionDialog)
             ) {
                 Text(
                     modifier = Modifier.defaultMinSize(minWidth = 55.dp).align(Alignment.Center),
-                    text = "1/$resolution",
+                    text = "1/${state.resolution}",
                     style = MaterialTheme.typography.caption,
                     textAlign = TextAlign.Center
                 )
@@ -158,8 +138,8 @@ fun BottomBar(
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
-                        enabled = resolutionRange.canDecrease(resolution),
-                        onClick = { onChangeResolution(resolutionRange.decreaseFrom(resolution)) }
+                        enabled = state.canDecrease,
+                        onClick = state::decrease
                     )
                     .padding(end = 8.dp)
             ) {

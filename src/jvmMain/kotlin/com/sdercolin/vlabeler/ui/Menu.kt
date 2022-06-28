@@ -119,39 +119,25 @@ fun FrameWindowScope.Menu(
             Item(
                 string(Strings.MenuNavigateNextEntry),
                 shortcut = getKeyShortCut(Key.DirectionDown),
-                onClick = {
-                    if (appState.nextEntry()) {
-                        appState.scrollFitViewModel.emitNext()
-                    }
-                },
+                onClick = { appState.nextEntry() },
                 enabled = appState.isEditorActive && appState.canGoNextEntryOrSample
             )
             Item(
                 string(Strings.MenuNavigatePreviousEntry),
                 shortcut = getKeyShortCut(Key.DirectionUp),
-                onClick = {
-                    if (appState.previousEntry()) {
-                        appState.scrollFitViewModel.emitNext()
-                    }
-                },
+                onClick = { appState.previousEntry() },
                 enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample
             )
             Item(
                 string(Strings.MenuNavigateNextSample),
                 shortcut = getKeyShortCut(Key.DirectionDown, ctrl = true),
-                onClick = {
-                    appState.nextSample()
-                    appState.scrollFitViewModel.emitNext()
-                },
+                onClick = { appState.nextSample() },
                 enabled = appState.isEditorActive && appState.canGoNextEntryOrSample
             )
             Item(
                 string(Strings.MenuNavigatePreviousSample),
                 shortcut = getKeyShortCut(Key.DirectionUp, ctrl = true),
-                onClick = {
-                    appState.previousSample()
-                    appState.scrollFitViewModel.emitNext()
-                },
+                onClick = { appState.previousSample() },
                 enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample
             )
             Item(

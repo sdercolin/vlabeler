@@ -29,7 +29,6 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogArgs
 import com.sdercolin.vlabeler.ui.theme.Black50
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -88,44 +87,7 @@ fun Labeler(
             modifier = Modifier.fillMaxWidth().height(20.dp),
             adapter = rememberScrollbarAdapter(horizontalScrollState)
         )
-        BottomBar(
-            currentEntryIndexInTotal = project.currentEntryIndexInTotal,
-            totalEntryCount = project.totalEntryCount,
-            resolution = currentResolution,
-            onChangeResolution = { labelerState.changeResolution(it) },
-            openSetResolutionDialog = {
-                appState.openEmbeddedDialog(
-                    SetResolutionDialogArgs(
-                        current = currentResolution,
-                        min = appState.appConf.painter.canvasResolution.min,
-                        max = appState.appConf.painter.canvasResolution.max
-                    )
-                )
-            },
-            canGoNext = appState.canGoNextEntryOrSample,
-            canGoPrevious = appState.canGoPreviousEntryOrSample,
-            goNextEntry = {
-                if (appState.nextEntry()) {
-                    appState.scrollFitViewModel.emitNext()
-                }
-            },
-            goPreviousEntry = {
-                if (appState.previousEntry()) {
-                    appState.scrollFitViewModel.emitNext()
-                }
-            },
-            goNextSample = {
-                appState.nextSample()
-                appState.scrollFitViewModel.emitNext()
-            },
-            goPreviousSample = {
-                appState.previousSample()
-                appState.scrollFitViewModel.emitNext()
-            },
-            openJumpToEntryDialog = { appState.openJumpToEntryDialog() },
-            scrollFit = { appState.scrollFitViewModel.emit() },
-            appConf = appState.appConf
-        )
+        BottomBar(rememberBottomBarState(project, appState, labelerState))
     }
 }
 
