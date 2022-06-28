@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -59,6 +60,7 @@ fun BottomBar(state: BottomBarState) {
             }
             Box(
                 Modifier.fillMaxHeight()
+                    .widthIn(min = 85.dp)
                     .clickable { state.openJumpToEntryDialog() }
                     .padding(horizontal = 15.dp)
             ) {
