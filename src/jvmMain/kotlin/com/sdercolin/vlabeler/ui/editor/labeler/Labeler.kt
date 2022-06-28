@@ -35,7 +35,6 @@ fun Labeler(
     editorState: EditorState,
     appState: AppState
 ) {
-    val sample = editorState.sample
     val project = editorState.project
     val entry = editorState.editedEntry.entry
     val scope = rememberCoroutineScope()
