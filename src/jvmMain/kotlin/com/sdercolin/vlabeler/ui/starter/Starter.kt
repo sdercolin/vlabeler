@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.sdercolin.vlabeler.ui.starter
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +14,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -25,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -34,24 +29,16 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.io.openProject
-import com.sdercolin.vlabeler.model.AppRecord
-import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
 @Composable
 fun BoxScope.Starter(
     mainScope: CoroutineScope,
-    appState: AppState,
-    appRecord: MutableState<AppRecord>,
-    availableLabelerConfs: List<LabelerConf>,
-    snackbarHostState: SnackbarHostState,
-    scrollFitViewModel: ScrollFitViewModel
+    appState: AppState
 ) {
     Surface(Modifier.fillMaxSize()) {
         Column(
@@ -100,9 +87,8 @@ fun BoxScope.Starter(
                         style = MaterialTheme.typography.h5
                     )
                     Spacer(Modifier.height(30.dp))
-                    val recentPaths = appRecord.value.recentProjectPathsWithDisplayNames
+                    val recentPaths = appState.appRecord.recentProjectPathsWithDisplayNames
                     val recentFiles = recentPaths.map { File(it.first) }
-                    appRecord.update { copy(recentProjects = recentFiles.map { it.absolutePath }) }
                     if (recentFiles.isEmpty()) {
                         Text(text = string(Strings.StarterRecentEmpty), style = MaterialTheme.typography.body2)
                     } else {
@@ -125,15 +111,7 @@ fun BoxScope.Starter(
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 onClick = {
-                                    openProject(
-                                        mainScope,
-                                        file,
-                                        availableLabelerConfs,
-                                        appState,
-                                        appRecord,
-                                        snackbarHostState,
-                                        scrollFitViewModel
-                                    )
+                                    openProject(mainScope, file, appState)
                                 }
                             )
                         }

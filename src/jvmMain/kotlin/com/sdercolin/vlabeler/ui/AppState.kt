@@ -1,10 +1,18 @@
 package com.sdercolin.vlabeler.ui
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.audio.Player
+import com.sdercolin.vlabeler.audio.PlayerState
+import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
@@ -14,24 +22,49 @@ import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.editor.EditedEntry
+import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
+import java.io.File
 
-class AppState {
-
+class AppState(
+    val playerState: PlayerState,
+    val player: Player,
+    val keyboardViewModel: KeyboardViewModel,
+    val scrollFitViewModel: ScrollFitViewModel,
+    val snackbarHostState: SnackbarHostState,
+    appConf: MutableState<AppConf>,
+    val availableLabelerConfs: List<LabelerConf>,
+    appRecord: MutableState<AppRecord>
+) {
+    var appConf: AppConf by appConf
+        private set
+    var appRecord: AppRecord by appRecord
+        private set
     var project: Project? by mutableStateOf(null)
+        private set
     var history: ProjectHistory by mutableStateOf(ProjectHistory())
+        private set
     var screen: Screen by mutableStateOf(Screen.Starter)
+        private set
     var isShowingOpenProjectDialog: Boolean by mutableStateOf(false)
+        private set
     var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
+        private set
     var isShowingExportDialog: Boolean by mutableStateOf(false)
+        private set
     var pendingActionAfterSaved: PendingActionAfterSaved? by mutableStateOf(null)
+        private set
     var embeddedDialog: EmbeddedDialogArgs? by mutableStateOf(null)
+        private set
 
     /**
      * Describes the update status between [Project] state and project file
      */
     var projectWriteStatus: ProjectWriteStatus by mutableStateOf(ProjectWriteStatus.Updated)
+        private set
     var isBusy: Boolean by mutableStateOf(false)
+        private set
     var shouldExit: Boolean by mutableStateOf(false)
+        private set
 
     private fun reset() {
         project = null
@@ -42,6 +75,14 @@ class AppState {
         isShowingExportDialog = false
         pendingActionAfterSaved = null
         embeddedDialog = null
+    }
+
+    fun addRecentProject(file: File) {
+        appRecord = appRecord.addRecent(file.absolutePath)
+    }
+
+    fun clearRecentProjects() {
+        appRecord = appRecord.copy(recentProjects = listOf())
     }
 
     val hasProject get() = project != null
@@ -291,4 +332,24 @@ class AppState {
 }
 
 @Composable
-fun rememberAppState() = remember { AppState() }
+fun rememberAppState(
+    playerState: PlayerState,
+    player: Player,
+    keyboardViewModel: KeyboardViewModel,
+    scrollFitViewModel: ScrollFitViewModel,
+    snackbarHostState: SnackbarHostState,
+    appConf: MutableState<AppConf>,
+    availableLabelerConfs: List<LabelerConf>,
+    appRecord: MutableState<AppRecord>
+) = remember {
+    AppState(
+        playerState,
+        player,
+        keyboardViewModel,
+        scrollFitViewModel,
+        snackbarHostState,
+        appConf,
+        availableLabelerConfs,
+        appRecord
+    )
+}

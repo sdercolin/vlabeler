@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,9 +25,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.audio.PlayerState
-import com.sdercolin.vlabeler.env.KeyboardViewModel
-import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
@@ -50,16 +46,10 @@ fun Labeler(
     totalEntryCount: Int,
     editEntry: (Entry) -> Unit,
     submitEntry: () -> Unit,
-    playSampleSection: (Float, Float) -> Unit,
     showDialog: (EmbeddedDialogArgs) -> Unit,
-    appConf: AppConf,
     labelerConf: LabelerConf,
     labelerState: LabelerState,
     appState: AppState,
-    playerState: PlayerState,
-    snackbarHostState: SnackbarHostState,
-    keyboardViewModel: KeyboardViewModel,
-    scrollFitViewModel: ScrollFitViewModel
 ) {
     val isBusy = sample == null
 
@@ -68,7 +58,7 @@ fun Labeler(
     val currentResolution = labelerState.canvasResolution
 
     LaunchedEffect(Unit) {
-        scrollFitViewModel.eventFlow.collectLatest {
+        appState.scrollFitViewModel.eventFlow.collectLatest {
             horizontalScrollState.animateScrollTo(it)
         }
     }
@@ -81,7 +71,7 @@ fun Labeler(
                 appState.openEditEntryNameDialog(
                     duplicate = false,
                     showSnackbar = {
-                        scope.launch { snackbarHostState.showSnackbar(it) }
+                        scope.launch { appState.snackbarHostState.showSnackbar(it) }
                     }
                 )
             }
@@ -95,14 +85,14 @@ fun Labeler(
                 isBusy = isBusy,
                 editEntry = editEntry,
                 submitEntry = submitEntry,
-                playSampleSection = playSampleSection,
-                appConf = appConf,
+                playSampleSection = appState.player::playSection,
+                appConf = appState.appConf,
                 labelerConf = labelerConf,
                 resolution = currentResolution,
-                playerState = playerState,
+                playerState = appState.playerState,
                 horizontalScrollState = horizontalScrollState,
-                keyboardViewModel = keyboardViewModel,
-                scrollFitViewModel = scrollFitViewModel
+                keyboardViewModel = appState.keyboardViewModel,
+                scrollFitViewModel = appState.scrollFitViewModel
             )
         }
         HorizontalScrollbar(
@@ -118,8 +108,8 @@ fun Labeler(
                 showDialog(
                     SetResolutionDialogArgs(
                         current = currentResolution,
-                        min = appConf.painter.canvasResolution.min,
-                        max = appConf.painter.canvasResolution.max
+                        min = appState.appConf.painter.canvasResolution.min,
+                        max = appState.appConf.painter.canvasResolution.max
                     )
                 )
             },
@@ -127,25 +117,25 @@ fun Labeler(
             canGoPrevious = appState.canGoPreviousEntryOrSample,
             goNextEntry = {
                 if (appState.nextEntry()) {
-                    scrollFitViewModel.emitNext()
+                    appState.scrollFitViewModel.emitNext()
                 }
             },
             goPreviousEntry = {
                 if (appState.previousEntry()) {
-                    scrollFitViewModel.emitNext()
+                    appState.scrollFitViewModel.emitNext()
                 }
             },
             goNextSample = {
                 appState.nextSample()
-                scrollFitViewModel.emitNext()
+                appState.scrollFitViewModel.emitNext()
             },
             goPreviousSample = {
                 appState.previousSample()
-                scrollFitViewModel.emitNext()
+                appState.scrollFitViewModel.emitNext()
             },
             openJumpToEntryDialog = { appState.openJumpToEntryDialog() },
-            scrollFit = { scrollFitViewModel.emit() },
-            appConf = appConf
+            scrollFit = { appState.scrollFitViewModel.emit() },
+            appConf = appState.appConf
         )
     }
 }

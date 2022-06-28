@@ -6,7 +6,6 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,10 +52,24 @@ fun main() = application {
     val player = remember { Player(mainScope, playerState) }
     val keyboardViewModel = remember { KeyboardViewModel(mainScope) }
     val scrollFitViewModel = remember { ScrollFitViewModel(mainScope) }
-    val appState = rememberAppState()
     val snackbarHostState = remember { SnackbarHostState() }
     remember { ensureDirectories() }
     remember { Log.init() }
+
+    val appConf = rememberAppConf()
+    val availableLabelerConfs = rememberAvailableLabelerConfs()
+
+    val appState = rememberAppState(
+        playerState,
+        player,
+        keyboardViewModel,
+        scrollFitViewModel,
+        snackbarHostState,
+        appConf,
+        availableLabelerConfs,
+        rememberAppRecord()
+    )
+    LaunchSaveAppRecord(appState)
 
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect { event ->
@@ -66,41 +79,17 @@ fun main() = application {
         }
     }
 
-    val appConf = rememberAppConf()
-    val availableLabelerConfs = rememberAvailableLabelerConfs()
-
-    val appRecord = rememberAppRecord()
-    LaunchSaveAppRecord(appRecord)
-
     Window(
         title = string(Strings.AppName),
         state = WindowState(width = 1200.dp, height = 800.dp), // TODO: remember in appConf
         onCloseRequest = { appState.requestExit() },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
-        Menu(mainScope, availableLabelerConfs.value, appState, appRecord, scrollFitViewModel, snackbarHostState)
+        Menu(mainScope, appState)
         AppTheme {
-            App(
-                mainScope,
-                appConf.value,
-                availableLabelerConfs.value,
-                appState,
-                playerState,
-                appRecord,
-                snackbarHostState,
-                keyboardViewModel,
-                scrollFitViewModel,
-                player
-            )
+            App(mainScope, appState)
         }
-        StandaloneDialogs(
-            mainScope,
-            availableLabelerConfs.value,
-            appState,
-            appRecord,
-            snackbarHostState,
-            scrollFitViewModel
-        )
+        StandaloneDialogs(mainScope, appState)
         ProjectChangesListener(appState)
         ProjectWriter(appState)
         Box(Modifier.fillMaxSize()) {
@@ -163,7 +152,7 @@ private fun rememberAvailableLabelerConfs() = remember {
     }
 
     Log.info("Labelers: ${availableLabelers.joinToString { it.toString() }}")
-    mutableStateOf(availableLabelers)
+    availableLabelers
 }
 
 private fun File.asLabelerConf(): Result<LabelerConf> {
@@ -201,9 +190,9 @@ private fun rememberAppRecord() = remember {
 }
 
 @Composable
-private fun LaunchSaveAppRecord(appRecord: State<AppRecord>) {
-    LaunchedEffect(appRecord.value) {
-        AppRecordFile.writeText(toJson(appRecord.value))
+private fun LaunchSaveAppRecord(appState: AppState) {
+    LaunchedEffect(appState.appRecord) {
+        AppRecordFile.writeText(toJson(appState.appRecord))
     }
 }
 

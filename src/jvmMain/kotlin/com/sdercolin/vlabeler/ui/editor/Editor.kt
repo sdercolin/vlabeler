@@ -4,7 +4,6 @@ package com.sdercolin.vlabeler.ui.editor
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,7 +21,6 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import com.sdercolin.vlabeler.audio.Player
-import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
@@ -59,23 +57,17 @@ fun Editor(
     editProject: (Project) -> Unit,
     editEntry: (EditedEntry) -> Unit,
     showDialog: (EmbeddedDialogArgs) -> Unit,
-    appConf: AppConf,
     labelerState: LabelerState,
-    appState: AppState,
-    playerState: PlayerState,
-    snackbarHostState: SnackbarHostState,
-    keyboardViewModel: KeyboardViewModel,
-    scrollFitViewModel: ScrollFitViewModel,
-    player: Player
+    appState: AppState
 ) {
-    val sampleState = produceState(initialValue = null as Sample?, project.currentSampleName, appConf) {
+    val sampleState = produceState(initialValue = null as Sample?, project.currentSampleName, appState.appConf) {
         value = withContext(Dispatchers.IO) {
-            loadSampleFile(project.currentSampleFile, appConf)
+            loadSampleFile(project.currentSampleFile, appState.appConf)
         }
     }
     val isLoading by remember { derivedStateOf { sampleState.value == null } }
     val editedEntryState = remember { mutableStateOf(project.getEntryForEditing()) }
-    val keyboardState by keyboardViewModel.keyboardStateFlow.collectAsState()
+    val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
     val sample = sampleState.value
 
     val submitEntry = {
@@ -86,18 +78,17 @@ fun Editor(
     }
 
     LaunchSwitchEntryFromUpstreamState(project, editedEntryState)
-    LaunchChangeResolutionByKeyEvent(keyboardViewModel, appState, appConf, labelerState)
-    LaunchLoadSampleByPlayer(sample, player)
+    LaunchChangeResolutionByKeyEvent(appState.keyboardViewModel, appState, labelerState)
+    LaunchLoadSampleByPlayer(sample, appState.player)
 
     Box(
         Modifier.fillMaxSize()
             .onPointerEvent(PointerEventType.Scroll) {
                 if (appState.isEditorActive.not()) return@onPointerEvent
-                if (switchEntryByPointerEvent(
-                        it, keyboardState, project, editProject, scrollFitViewModel
-                    )
-                ) return@onPointerEvent
-                changeResolutionByPointerEvent(it, appConf, keyboardState, labelerState)
+                if (switchEntryByPointerEvent(it, keyboardState, project, editProject, appState.scrollFitViewModel)) {
+                    return@onPointerEvent
+                }
+                changeResolutionByPointerEvent(it, appState.appConf, keyboardState, labelerState)
             }
     ) {
         Labeler(
@@ -110,16 +101,10 @@ fun Editor(
             totalEntryCount = project.totalEntryCount,
             editEntry = { editedEntryState.update { edit(it) } },
             submitEntry = submitEntry,
-            playSampleSection = player::playSection,
             showDialog = showDialog,
-            appConf = appConf,
             labelerConf = project.labelerConf,
             labelerState = labelerState,
-            appState = appState,
-            playerState = playerState,
-            snackbarHostState = snackbarHostState,
-            keyboardViewModel = keyboardViewModel,
-            scrollFitViewModel = scrollFitViewModel
+            appState = appState
         )
     }
     if (isLoading) {
@@ -188,13 +173,12 @@ private fun changeResolutionByPointerEvent(
 private fun LaunchChangeResolutionByKeyEvent(
     keyboardViewModel: KeyboardViewModel,
     appState: AppState,
-    appConf: AppConf,
     labelerState: LabelerState
 ) {
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect {
             if (appState.isEditorActive.not()) return@collect
-            changeResolutionByKeyEvent(it, appConf, labelerState)
+            changeResolutionByKeyEvent(it, appState.appConf, labelerState)
         }
     }
 }

@@ -1,8 +1,6 @@
 package com.sdercolin.vlabeler.ui
 
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
@@ -12,12 +10,8 @@ import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.io.openProject
-import com.sdercolin.vlabeler.model.AppRecord
-import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -26,14 +20,10 @@ import java.io.File
 @Composable
 fun FrameWindowScope.Menu(
     mainScope: CoroutineScope,
-    availableLabelerConfs: List<LabelerConf>,
-    appState: AppState,
-    appRecord: MutableState<AppRecord>,
-    scrollFitViewModel: ScrollFitViewModel,
-    snackbarHostState: SnackbarHostState
+    appState: AppState
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val showSnackbar: (String) -> Unit = { coroutineScope.launch { snackbarHostState.showSnackbar(it) } }
+    val showSnackbar: (String) -> Unit = { coroutineScope.launch { appState.snackbarHostState.showSnackbar(it) } }
 
     MenuBar {
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
@@ -48,27 +38,17 @@ fun FrameWindowScope.Menu(
                 shortcut = getKeyShortCut(Key.O, ctrl = true, shift = true)
             )
             Menu(string(Strings.MenuFileOpenRecent)) {
-                appRecord.value.recentProjectPathsWithDisplayNames.forEach { (path, displayName) ->
+                appState.appRecord.recentProjectPathsWithDisplayNames.forEach { (path, displayName) ->
                     Item(
                         text = displayName,
-                        onClick = {
-                            openProject(
-                                mainScope,
-                                File(path),
-                                availableLabelerConfs,
-                                appState,
-                                appRecord,
-                                snackbarHostState,
-                                scrollFitViewModel
-                            )
-                        }
+                        onClick = { openProject(mainScope, File(path), appState) }
                     )
                 }
                 Separator()
                 Item(
                     text = string(Strings.MenuFileOpenRecentClear),
-                    enabled = appRecord.value.recentProjects.isNotEmpty(),
-                    onClick = { appRecord.update { copy(recentProjects = listOf()) } }
+                    enabled = appState.appRecord.recentProjects.isNotEmpty(),
+                    onClick = { appState.clearRecentProjects() }
                 )
             }
             Item(
@@ -141,7 +121,7 @@ fun FrameWindowScope.Menu(
                 shortcut = getKeyShortCut(Key.DirectionDown),
                 onClick = {
                     if (appState.nextEntry()) {
-                        scrollFitViewModel.emitNext()
+                        appState.scrollFitViewModel.emitNext()
                     }
                 },
                 enabled = appState.isEditorActive && appState.canGoNextEntryOrSample
@@ -151,7 +131,7 @@ fun FrameWindowScope.Menu(
                 shortcut = getKeyShortCut(Key.DirectionUp),
                 onClick = {
                     if (appState.previousEntry()) {
-                        scrollFitViewModel.emitNext()
+                        appState.scrollFitViewModel.emitNext()
                     }
                 },
                 enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample
@@ -161,7 +141,7 @@ fun FrameWindowScope.Menu(
                 shortcut = getKeyShortCut(Key.DirectionDown, ctrl = true),
                 onClick = {
                     appState.nextSample()
-                    scrollFitViewModel.emitNext()
+                    appState.scrollFitViewModel.emitNext()
                 },
                 enabled = appState.isEditorActive && appState.canGoNextEntryOrSample
             )
@@ -170,7 +150,7 @@ fun FrameWindowScope.Menu(
                 shortcut = getKeyShortCut(Key.DirectionUp, ctrl = true),
                 onClick = {
                     appState.previousSample()
-                    scrollFitViewModel.emitNext()
+                    appState.scrollFitViewModel.emitNext()
                 },
                 enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample
             )
@@ -183,7 +163,7 @@ fun FrameWindowScope.Menu(
             Item(
                 string(Strings.MenuNavigateScrollFit),
                 shortcut = getKeyShortCut(Key.F),
-                onClick = { scrollFitViewModel.emit() },
+                onClick = { appState.scrollFitViewModel.emit() },
                 enabled = appState.isEditorActive
             )
         }

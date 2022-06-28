@@ -1,15 +1,10 @@
 package com.sdercolin.vlabeler.ui.dialog
 
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.io.exportProject
 import com.sdercolin.vlabeler.io.openProject
-import com.sdercolin.vlabeler.model.AppRecord
-import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.lastPathSection
@@ -19,11 +14,7 @@ import java.io.File
 @Composable
 fun StandaloneDialogs(
     mainScope: CoroutineScope,
-    labelerConfs: List<LabelerConf>,
-    appState: AppState,
-    appRecord: MutableState<AppRecord>,
-    snackbarHostState: SnackbarHostState,
-    scrollFitViewModel: ScrollFitViewModel
+    appState: AppState
 ) {
     when {
         appState.isShowingOpenProjectDialog -> OpenFileDialog(
@@ -32,15 +23,7 @@ fun StandaloneDialogs(
         ) { parent, name ->
             appState.closeOpenProjectDialog()
             if (parent != null && name != null) {
-                openProject(
-                    mainScope,
-                    File(parent, name),
-                    labelerConfs,
-                    appState,
-                    appRecord,
-                    snackbarHostState,
-                    scrollFitViewModel
-                )
+                openProject(mainScope, File(parent, name), appState)
             }
         }
         appState.isShowingSaveAsProjectDialog -> SaveFileDialog(
