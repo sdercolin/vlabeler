@@ -1,6 +1,6 @@
 {
   "name": "oto.default",
-  "version": 2,
+  "version": 3,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": "UTAU oto labeler",
@@ -60,6 +60,33 @@
     "useDragBase": true,
     "useStart": false
   },
+  "properties": [
+    {
+      "name": "left",
+      "displayedName": "Offset",
+      "value": "{start}"
+    },
+    {
+      "name": "fixed",
+      "displayedName": "Fixed",
+      "value": "{fixed} - {start}"
+    },
+    {
+      "name": "right",
+      "displayedName": "Blank",
+      "value": "{start} - {end} if {end} > 0 else float({rawRight})"
+    },
+    {
+      "name": "preu",
+      "displayedName": "Preutterance",
+      "value": "{preu} - {start}"
+    },
+    {
+      "name": "ovl",
+      "displayedName": "Overlap",
+      "value": "{ovl} - {start}"
+    }
+  ],
   "parser": {
     "defaultEncoding": "Shift-JIS",
     "extractionPattern": "(.*)\\.wav=(.*),(.*),(.*),(.*),(.*),(.*)",
@@ -92,37 +119,6 @@
     ]
   },
   "writer": {
-    "properties": [
-      {
-        "name": "left",
-        "displayedName": "Offset",
-        "value": "{start}"
-      },
-      {
-        "name": "fixed",
-        "displayedName": "Fixed",
-        "value": "{fixed}-{start}"
-      },
-      {
-        "name": "right",
-        "displayedName": "Blank",
-        "value": "{start}-{end}"
-      },
-      {
-        "name": "preu",
-        "displayedName": "Preutterance",
-        "value": "{preu}-{start}"
-      },
-      {
-        "name": "ovl",
-        "displayedName": "Overlap",
-        "value": "{ovl}-{start}"
-      }
-    ],
-    "scripts": [
-      "if(end <=0):",
-      "    right = rawRight",
-      "output = sample + \".wav=\" + name + \",\" + str(left) + \",\" + str(fixed) + \",\" + str(right) + \",\" + str(preu) + \",\" + str(ovl)"
-    ]
+    "format": "{sample}.wav={name},{left},{fixed},{right},{preu},{ovl}"
   }
 }

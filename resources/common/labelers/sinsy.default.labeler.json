@@ -1,6 +1,6 @@
 {
   "name": "sinsy.default",
-  "version": 1,
+  "version": 2,
   "extension": "lab",
   "defaultInputFilePath": null,
   "displayedName": "Sinsy lab labeler",
@@ -19,6 +19,8 @@
     "useDragBase": false,
     "useStart": false
   },
+  "decimalDigit": 4,
+  "properties": [],
   "parser": {
     "defaultEncoding": "UTF-8",
     "extractionPattern": "(.*) (.*) (.*)",
@@ -33,7 +35,6 @@
     ]
   },
   "writer": {
-    "properties": [],
     "scripts": [
       "output = str(int(start*10000)) + \" \" + str(int(end*10000)) + \" \" + name"
     ]

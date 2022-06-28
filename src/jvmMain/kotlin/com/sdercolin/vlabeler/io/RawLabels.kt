@@ -93,14 +93,15 @@ fun Project.toRawLabels(): String {
         .map { (entry, sample) ->
             val fields = labelerConf.getFieldMap(entry)
             val extra = labelerConf.getExtraMap(entry)
-            val properties = labelerConf.getPropertyMap(fields, python)
-            val variables: Map<String, Any> = fields.mapValues { it.value.roundToDecimalDigit(3) } +
-                properties.mapValues { it.value.roundToDecimalDigit(3) } +
-                extra +
-                mapOf(
-                    "sample" to sample,
-                    "name" to entry.name
-                )
+            val properties = labelerConf.getPropertyMap(fields, extra, python)
+            val variables: Map<String, Any> =
+                fields.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
+                    properties.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
+                    extra +
+                    mapOf(
+                        "sample" to sample,
+                        "name" to entry.name
+                    )
             val scripts = labelerConf.writer.scripts
             if (scripts != null) {
                 for (variable in variables) {
@@ -128,8 +129,9 @@ private fun LabelerConf.getExtraMap(entry: Entry) = extraFieldNames.mapIndexed {
     name to entry.extra[index]
 }.toMap()
 
-private fun LabelerConf.getPropertyMap(fields: Map<String, Float>, python: Python) =
-    writer.properties.associate {
-        val value = it.value.replaceWithVariables(fields).let(python::eval)
+private fun LabelerConf.getPropertyMap(fields: Map<String, Float>, extras: Map<String, String>, python: Python) =
+    properties.associate {
+        val value = it.value.replaceWithVariables(fields + extras).let(python::eval)
+        println("${it.value} -> $value")
         it.name to value
     }

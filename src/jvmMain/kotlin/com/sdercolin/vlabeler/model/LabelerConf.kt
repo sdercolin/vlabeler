@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.model.LabelerConf.Property
 import kotlinx.serialization.Serializable
 
 /**
@@ -61,6 +62,14 @@ data class LabelerConf(
      * Defines when to use locked dragging (all parameters will move with dragged one)
      */
     val lockedDrag: LockedDrag = LockedDrag(),
+    /**
+     * Decimal digit count of the properties and writer
+     */
+    val decimalDigit: Int = 3,
+    /**
+     * Properties that are used in the following procedures. See [Property]
+     */
+    val properties: List<Property> = listOf(),
     /**
      * Defines how data from the original format are parsed
      */
@@ -171,7 +180,6 @@ data class LabelerConf(
 
     /**
      * Definition for line format in the raw label file
-     * @param properties Properties that are used in the following procedures. See [Property]
      * @param format String format to generate the output line
      * @param scripts Python scripts in lines that generate the output line
      * Either [format] or [scripts] should be given. If both of them are given, [scripts] is used
@@ -179,7 +187,6 @@ data class LabelerConf(
     @Serializable
     @Immutable
     data class Writer(
-        val properties: List<Property> = listOf(),
         /**
          * String format using the following variables written as "{<var_name>}":
          * {sample} - sample file name without extension
