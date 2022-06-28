@@ -24,7 +24,7 @@ fun openProject(
     scope: CoroutineScope,
     file: File,
     labelerConfs: List<LabelerConf>,
-    appState: MutableState<AppState>,
+    appState: AppState,
     appRecord: MutableState<AppRecord>,
     snackbarHostState: SnackbarHostState,
     scrollFitViewModel: ScrollFitViewModel
@@ -34,7 +34,7 @@ fun openProject(
             snackbarHostState.showSnackbar(string(Strings.StarterRecentDeleted))
             return@launch
         }
-        appState.update { startProcess() }
+        appState.startProcess()
         val project = parseJson<Project>(file.readText())
         val existingLabelerConf = labelerConfs.find { it.name == project.labelerConf.name }
         val labelerConf = when {
@@ -51,23 +51,23 @@ fun openProject(
             }
         }
         Log.info("Project loaded: $project")
-        appState.update { openProject(project.copy(labelerConf = labelerConf)) }
+        appState.openProject(project.copy(labelerConf = labelerConf))
         appRecord.update { addRecent(file.absolutePath) }
         scrollFitViewModel.emitNext()
-        appState.update { finishProcess() }
+        appState.finishProcess()
     }
 }
 
 fun openCreatedProject(
     mainScope: CoroutineScope,
     project: Project,
-    appState: MutableState<AppState>,
+    appState: AppState,
     appRecord: MutableState<AppRecord>,
     scrollFitViewModel: ScrollFitViewModel
 ) {
     mainScope.launch(Dispatchers.IO) {
         val file = saveProjectFile(project)
-        appState.update { openProject(project) }
+        appState.openProject(project)
         appRecord.update { addRecent(file.absolutePath) }
         scrollFitViewModel.emitNext()
     }
@@ -77,13 +77,13 @@ fun exportProject(
     mainScope: CoroutineScope,
     parent: String,
     name: String,
-    appState: MutableState<AppState>
+    appState: AppState
 ) {
     mainScope.launch(Dispatchers.IO) {
-        appState.update { startProcess() }
-        val outputText = appState.value.project!!.toRawLabels()
+        appState.startProcess()
+        val outputText = appState.project!!.toRawLabels()
         File(parent, name).writeText(outputText)
-        appState.update { finishProcess() }
+        appState.finishProcess()
     }
 }
 

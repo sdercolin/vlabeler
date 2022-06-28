@@ -8,8 +8,6 @@ data class ProjectHistory(
     val canUndo get() = index > 0
     val canRedo get() = index >= 0 && index < list.lastIndex
 
-    fun new(project: Project) = ProjectHistory(list = listOf(project), 0)
-
     fun push(project: Project) = (list.subList(0, index + 1) + project)
         .squashLatest()
         .takeLast(MaxStackSize)
@@ -40,5 +38,7 @@ data class ProjectHistory(
 
     companion object {
         private const val MaxStackSize = 100
+
+        fun new(project: Project) = ProjectHistory(list = listOf(project), 0)
     }
 }

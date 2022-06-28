@@ -47,7 +47,7 @@ import java.io.File
 @Composable
 fun BoxScope.Starter(
     mainScope: CoroutineScope,
-    appState: MutableState<AppState>,
+    appState: AppState,
     appRecord: MutableState<AppRecord>,
     availableLabelerConfs: List<LabelerConf>,
     snackbarHostState: SnackbarHostState,
@@ -74,7 +74,7 @@ fun BoxScope.Starter(
                         style = MaterialTheme.typography.h5
                     )
                     Spacer(Modifier.height(15.dp))
-                    TextButton(onClick = { appState.update { requestOpenProjectCreator() } }) {
+                    TextButton(onClick = { appState.requestOpenProjectCreator() }) {
                         Icon(
                             modifier = Modifier.size(20.dp),
                             imageVector = Icons.Default.Create,
@@ -83,7 +83,7 @@ fun BoxScope.Starter(
                         Spacer(Modifier.width(10.dp))
                         Text(text = string(Strings.StarterNewProject), style = MaterialTheme.typography.body2)
                     }
-                    TextButton(onClick = { appState.update { openOpenProjectDialog() } }) {
+                    TextButton(onClick = { appState.openOpenProjectDialog() }) {
                         Icon(
                             modifier = Modifier.size(20.dp),
                             imageVector = Icons.Default.FileOpen,

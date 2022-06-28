@@ -18,7 +18,7 @@ class Player(
     private var countingJob: Job? = null
 
     fun load(file: File) {
-        Log.info("Player.load(${file.absolutePath}")
+        Log.info("Player.load(\"${file.absolutePath}\")")
         if (this.file != null) {
             clip.flush()
             clip.close()

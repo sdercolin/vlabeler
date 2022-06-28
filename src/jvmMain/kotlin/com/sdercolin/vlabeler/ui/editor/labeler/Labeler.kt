@@ -22,7 +22,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +36,6 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogArgs
 import com.sdercolin.vlabeler.ui.theme.Black50
-import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -57,7 +55,7 @@ fun Labeler(
     appConf: AppConf,
     labelerConf: LabelerConf,
     labelerState: LabelerState,
-    appState: MutableState<AppState>,
+    appState: AppState,
     playerState: PlayerState,
     snackbarHostState: SnackbarHostState,
     keyboardViewModel: KeyboardViewModel,
@@ -80,14 +78,12 @@ fun Labeler(
             entryName = entry.name,
             sampleName = sampleName,
             openEditEntryNameDialog = {
-                appState.update {
-                    openEditEntryNameDialog(
-                        duplicate = false,
-                        showSnackbar = {
-                            scope.launch { snackbarHostState.showSnackbar(it) }
-                        }
-                    )
-                }
+                appState.openEditEntryNameDialog(
+                    duplicate = false,
+                    showSnackbar = {
+                        scope.launch { snackbarHostState.showSnackbar(it) }
+                    }
+                )
             }
         )
         Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Black50)) {
@@ -127,35 +123,27 @@ fun Labeler(
                     )
                 )
             },
-            canGoNext = appState.value.canGoNextEntryOrSample,
-            canGoPrevious = appState.value.canGoPreviousEntryOrSample,
+            canGoNext = appState.canGoNextEntryOrSample,
+            canGoPrevious = appState.canGoPreviousEntryOrSample,
             goNextEntry = {
-                appState.update {
-                    val updated = nextEntry()
-                    if (updated.hasSwitchedSample(this)) {
-                        scrollFitViewModel.emitNext()
-                    }
-                    updated
+                if (appState.nextEntry()) {
+                    scrollFitViewModel.emitNext()
                 }
             },
             goPreviousEntry = {
-                appState.update {
-                    val updated = previousEntry()
-                    if (updated.hasSwitchedSample(this)) {
-                        scrollFitViewModel.emitNext()
-                    }
-                    updated
+                if (appState.previousEntry()) {
+                    scrollFitViewModel.emitNext()
                 }
             },
             goNextSample = {
-                appState.update { nextSample() }
+                appState.nextSample()
                 scrollFitViewModel.emitNext()
             },
             goPreviousSample = {
-                appState.update { previousSample() }
+                appState.previousSample()
                 scrollFitViewModel.emitNext()
             },
-            openJumpToEntryDialog = { appState.update { openJumpToEntryDialog() } },
+            openJumpToEntryDialog = { appState.openJumpToEntryDialog() },
             scrollFit = { scrollFitViewModel.emit() },
             appConf = appConf
         )

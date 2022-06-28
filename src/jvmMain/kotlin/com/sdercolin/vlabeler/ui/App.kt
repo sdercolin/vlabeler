@@ -30,7 +30,6 @@ import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.editor.labeler.rememberLabelerState
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
-import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -38,7 +37,7 @@ fun App(
     mainScope: CoroutineScope,
     appConf: AppConf,
     availableLabelerConfs: List<LabelerConf>,
-    appState: MutableState<AppState>,
+    appState: AppState,
     playerState: PlayerState,
     appRecord: MutableState<AppRecord>,
     snackbarHostState: SnackbarHostState,
@@ -49,8 +48,8 @@ fun App(
     val labelerState = rememberLabelerState(appConf)
 
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
-        val project = appState.value.project
-        when (appState.value.screen) {
+        val project = appState.project
+        when (appState.screen) {
             AppState.Screen.Starter -> Starter(
                 mainScope = mainScope,
                 appState = appState,
@@ -62,16 +61,16 @@ fun App(
             AppState.Screen.ProjectCreator ->
                 ProjectCreator(
                     create = { openCreatedProject(mainScope, it, appState, appRecord, scrollFitViewModel) },
-                    cancel = { appState.update { closeProjectCreator() } },
+                    cancel = { appState.closeProjectCreator() },
                     availableLabelerConfs = availableLabelerConfs,
                     snackbarHostState = snackbarHostState
                 )
             AppState.Screen.Editor -> if (project != null) {
                 Editor(
                     project = project,
-                    editProject = { appState.update { editProject { it } } },
-                    editEntry = { appState.update { editEntry(it) } },
-                    showDialog = { appState.update { openEmbeddedDialog(it) } },
+                    editProject = { appState.editProject { it } },
+                    editEntry = { appState.editEntry(it) },
+                    showDialog = { appState.openEmbeddedDialog(it) },
                     appConf = appConf,
                     labelerState = labelerState,
                     appState = appState,
@@ -83,32 +82,32 @@ fun App(
                 )
             }
         }
-        appState.value.embeddedDialog?.let { args ->
+        appState.embeddedDialog?.let { args ->
             EmbeddedDialog(args) { result ->
-                appState.update { closeEmbeddedDialog() }
+                appState.closeEmbeddedDialog()
                 if (result != null) handleDialogResult(result, labelerState, appState, scrollFitViewModel)
             }
         }
-        if (appState.value.isBusy) {
-            CircularProgress()
-        }
+    }
+    if (appState.isBusy) {
+        CircularProgress()
     }
 }
 
 private fun handleDialogResult(
     result: EmbeddedDialogResult,
     labelerState: LabelerState,
-    appState: MutableState<AppState>,
+    appState: AppState,
     scrollFitViewModel: ScrollFitViewModel
 ) {
     when (result) {
         is SetResolutionDialogResult -> labelerState.changeResolution(result.newValue)
-        is AskIfSaveDialogResult -> appState.update { takeAskIfSaveResult(result) }
+        is AskIfSaveDialogResult -> appState.takeAskIfSaveResult(result)
         is JumpToEntryDialogArgsResult -> {
-            appState.update { jumpToEntry(result.sampleName, result.index) }
+            appState.jumpToEntry(result.sampleName, result.index)
             scrollFitViewModel.emitNext()
         }
-        is EditEntryNameDialogResult -> appState.update {
+        is EditEntryNameDialogResult -> appState.run {
             if (result.duplicate) {
                 duplicateEntry(result.sampleName, result.index, result.name)
             } else {
@@ -116,7 +115,7 @@ private fun handleDialogResult(
             }
         }
         is CommonConfirmationDialogResult -> when (result.action) {
-            CommonConfirmationDialogAction.RemoveCurrentEntry -> appState.update { removeCurrentEntry() }
+            CommonConfirmationDialogAction.RemoveCurrentEntry -> appState.removeCurrentEntry()
         }
     }
 }

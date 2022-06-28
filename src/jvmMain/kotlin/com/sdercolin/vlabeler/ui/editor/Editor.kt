@@ -61,7 +61,7 @@ fun Editor(
     showDialog: (EmbeddedDialogArgs) -> Unit,
     appConf: AppConf,
     labelerState: LabelerState,
-    appState: MutableState<AppState>,
+    appState: AppState,
     playerState: PlayerState,
     snackbarHostState: SnackbarHostState,
     keyboardViewModel: KeyboardViewModel,
@@ -92,7 +92,7 @@ fun Editor(
     Box(
         Modifier.fillMaxSize()
             .onPointerEvent(PointerEventType.Scroll) {
-                if (appState.value.isEditorActive.not()) return@onPointerEvent
+                if (appState.isEditorActive.not()) return@onPointerEvent
                 if (switchEntryByPointerEvent(
                         it, keyboardState, project, editProject, scrollFitViewModel
                     )
@@ -187,13 +187,13 @@ private fun changeResolutionByPointerEvent(
 @Composable
 private fun LaunchChangeResolutionByKeyEvent(
     keyboardViewModel: KeyboardViewModel,
-    appState: MutableState<AppState>,
+    appState: AppState,
     appConf: AppConf,
     labelerState: LabelerState
 ) {
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect {
-            if (appState.value.isEditorActive.not()) return@collect
+            if (appState.isEditorActive.not()) return@collect
             changeResolutionByKeyEvent(it, appConf, labelerState)
         }
     }

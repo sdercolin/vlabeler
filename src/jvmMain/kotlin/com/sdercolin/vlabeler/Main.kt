@@ -31,6 +31,7 @@ import com.sdercolin.vlabeler.ui.ProjectChangesListener
 import com.sdercolin.vlabeler.ui.ProjectWriter
 import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
 import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.rememberAppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
@@ -44,7 +45,6 @@ import com.sdercolin.vlabeler.util.getCustomLabelers
 import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
-import com.sdercolin.vlabeler.util.update
 import java.io.File
 
 fun main() = application {
@@ -53,14 +53,14 @@ fun main() = application {
     val player = remember { Player(mainScope, playerState) }
     val keyboardViewModel = remember { KeyboardViewModel(mainScope) }
     val scrollFitViewModel = remember { ScrollFitViewModel(mainScope) }
-    val appState = remember { mutableStateOf(AppState()) }
+    val appState = rememberAppState()
     val snackbarHostState = remember { SnackbarHostState() }
     remember { ensureDirectories() }
     remember { Log.init() }
 
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect { event ->
-            if (appState.value.isEditorActive) {
+            if (appState.isEditorActive) {
                 if (event.shouldTogglePlayer) player.toggle()
             }
         }
@@ -75,7 +75,7 @@ fun main() = application {
     Window(
         title = string(Strings.AppName),
         state = WindowState(width = 1200.dp, height = 800.dp), // TODO: remember in appConf
-        onCloseRequest = { appState.update { requestExit() } },
+        onCloseRequest = { appState.requestExit() },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
         Menu(mainScope, availableLabelerConfs.value, appState, appRecord, scrollFitViewModel, snackbarHostState)
@@ -208,8 +208,8 @@ private fun LaunchSaveAppRecord(appRecord: State<AppRecord>) {
 }
 
 @Composable
-private fun LaunchExit(appState: State<AppState>, exit: () -> Unit) {
-    val shouldExit = appState.value.shouldExit
+private fun LaunchExit(appState: AppState, exit: () -> Unit) {
+    val shouldExit = appState.shouldExit
     LaunchedEffect(shouldExit) {
         if (shouldExit) exit()
     }
