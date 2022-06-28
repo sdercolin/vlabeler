@@ -39,9 +39,9 @@ import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState.Companion.EndPointIndex
@@ -105,14 +105,11 @@ fun MarkerCanvas(
     isBusy: Boolean,
     editEntry: (Entry) -> Unit,
     submitEntry: () -> Unit,
-    playSampleSection: (Float, Float) -> Unit,
-    appConf: AppConf,
     labelerConf: LabelerConf,
     canvasParams: CanvasParams,
     sampleRate: Float,
     horizontalScrollState: ScrollState,
-    keyboardViewModel: KeyboardViewModel,
-    scrollFitViewModel: ScrollFitViewModel
+    appState: AppState
 ) {
     val entryConverter = EntryConverter(sampleRate, canvasParams.resolution)
     val entryInPixel = entryConverter.convertToPixel(entry, sampleLengthMillis).validate(canvasParams.lengthInPixel)
@@ -140,8 +137,8 @@ fun MarkerCanvas(
 
     val state = remember(isBusy) { mutableStateOf(MarkerState()) }
     val canvasHeightState = remember { mutableStateOf(0f) }
-    val waveformsHeightRatio = remember(appConf.painter.spectrogram) {
-        val spectrogram = appConf.painter.spectrogram
+    val waveformsHeightRatio = remember(appState.appConf.painter.spectrogram) {
+        val spectrogram = appState.appConf.painter.spectrogram
         val totalWeight = 1f + if (spectrogram.enabled) spectrogram.heightWeight else 0f
         1f / totalWeight
     }
@@ -154,11 +151,11 @@ fun MarkerCanvas(
         isBusy,
         editEntry,
         submitEntry,
-        playSampleSection,
+        appState.player::playSection,
         labelerConf,
         canvasHeightState,
         state,
-        keyboardViewModel,
+        appState.keyboardViewModel,
         entryConverter
     )
     FieldLabelCanvas(canvasParams, waveformsHeightRatio, state.value, labelerConf, entryInPixel)
@@ -167,7 +164,12 @@ fun MarkerCanvas(
         val rightName = entriesInSample.getOrNull(currentIndexInSample + 1)?.name
         NameLabelCanvas(canvasParams, entryInPixel, leftName, rightName, leftBorder, rightBorder)
     }
-    LaunchAdjustScrollPosition(entryInPixel, canvasParams.lengthInPixel, horizontalScrollState, scrollFitViewModel)
+    LaunchAdjustScrollPosition(
+        entryInPixel,
+        canvasParams.lengthInPixel,
+        horizontalScrollState,
+        appState.scrollFitViewModel
+    )
 }
 
 @Composable

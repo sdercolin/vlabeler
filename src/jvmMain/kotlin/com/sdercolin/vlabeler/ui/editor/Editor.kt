@@ -33,7 +33,6 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.CircularProgress
-import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.editor.labeler.Labeler
 import com.sdercolin.vlabeler.ui.editor.labeler.LabelerState
@@ -54,9 +53,6 @@ data class EditedEntry(
 @Composable
 fun Editor(
     project: Project,
-    editProject: (Project) -> Unit,
-    editEntry: (EditedEntry) -> Unit,
-    showDialog: (EmbeddedDialogArgs) -> Unit,
     labelerState: LabelerState,
     appState: AppState
 ) {
@@ -70,10 +66,11 @@ fun Editor(
     val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
     val sample = sampleState.value
 
+    val editProject: (Project) -> Unit = { appState.editProject { it } }
     val submitEntry = {
         if (editedEntryState.value.entry != project.currentEntry) {
             Log.info("Submit entry: ${editedEntryState.value}")
-            editEntry(editedEntryState.value)
+            appState.editEntry(editedEntryState.value)
         }
     }
 
@@ -93,16 +90,10 @@ fun Editor(
     ) {
         Labeler(
             sample = sample,
-            sampleName = project.currentSampleName,
+            project = project,
             entry = editedEntryState.value.entry,
-            entriesInSample = project.entriesInCurrentSample,
-            currentIndexInSample = project.currentEntryIndex,
-            currentIndexInTotal = project.currentEntryIndexInTotal,
-            totalEntryCount = project.totalEntryCount,
             editEntry = { editedEntryState.update { edit(it) } },
             submitEntry = submitEntry,
-            showDialog = showDialog,
-            labelerConf = project.labelerConf,
             labelerState = labelerState,
             appState = appState
         )

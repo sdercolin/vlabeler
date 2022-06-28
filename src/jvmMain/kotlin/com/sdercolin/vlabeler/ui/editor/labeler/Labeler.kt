@@ -26,10 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.Entry
-import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogArgs
 import com.sdercolin.vlabeler.ui.theme.Black50
 import kotlinx.coroutines.flow.collectLatest
@@ -38,16 +37,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun Labeler(
     sample: Sample?,
-    sampleName: String,
+    project: Project,
     entry: Entry,
-    entriesInSample: List<Entry>,
-    currentIndexInSample: Int,
-    currentIndexInTotal: Int,
-    totalEntryCount: Int,
     editEntry: (Entry) -> Unit,
     submitEntry: () -> Unit,
-    showDialog: (EmbeddedDialogArgs) -> Unit,
-    labelerConf: LabelerConf,
     labelerState: LabelerState,
     appState: AppState,
 ) {
@@ -66,7 +59,7 @@ fun Labeler(
     Column(Modifier.fillMaxSize()) {
         EntryTitleBar(
             entryName = entry.name,
-            sampleName = sampleName,
+            sampleName = project.currentSampleName,
             openEditEntryNameDialog = {
                 appState.openEditEntryNameDialog(
                     duplicate = false,
@@ -80,19 +73,15 @@ fun Labeler(
             Canvas(
                 sample = sample,
                 entry = entry,
-                entriesInSample = entriesInSample,
-                currentIndexInSample = currentIndexInSample,
+                entriesInSample = project.entriesInCurrentSample,
+                currentIndexInSample = project.currentEntryIndex,
                 isBusy = isBusy,
                 editEntry = editEntry,
                 submitEntry = submitEntry,
-                playSampleSection = appState.player::playSection,
-                appConf = appState.appConf,
-                labelerConf = labelerConf,
+                labelerConf = project.labelerConf,
                 resolution = currentResolution,
-                playerState = appState.playerState,
                 horizontalScrollState = horizontalScrollState,
-                keyboardViewModel = appState.keyboardViewModel,
-                scrollFitViewModel = appState.scrollFitViewModel
+                appState = appState
             )
         }
         HorizontalScrollbar(
@@ -100,12 +89,12 @@ fun Labeler(
             adapter = rememberScrollbarAdapter(horizontalScrollState)
         )
         BottomBar(
-            currentEntryIndexInTotal = currentIndexInTotal,
-            totalEntryCount = totalEntryCount,
+            currentEntryIndexInTotal = project.currentEntryIndexInTotal,
+            totalEntryCount = project.totalEntryCount,
             resolution = currentResolution,
             onChangeResolution = { labelerState.changeResolution(it) },
             openSetResolutionDialog = {
-                showDialog(
+                appState.openEmbeddedDialog(
                     SetResolutionDialogArgs(
                         current = currentResolution,
                         min = appState.appConf.painter.canvasResolution.min,

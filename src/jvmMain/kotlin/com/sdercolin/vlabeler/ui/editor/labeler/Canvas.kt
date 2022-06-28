@@ -33,7 +33,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
-import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.Spectrogram
 import com.sdercolin.vlabeler.io.Wave
@@ -41,6 +40,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -60,20 +60,16 @@ fun Canvas(
     isBusy: Boolean,
     editEntry: (Entry) -> Unit,
     submitEntry: () -> Unit,
-    playSampleSection: (Float, Float) -> Unit,
-    appConf: AppConf,
     labelerConf: LabelerConf,
     resolution: Int,
-    playerState: PlayerState,
     horizontalScrollState: ScrollState,
-    keyboardViewModel: KeyboardViewModel,
-    scrollFitViewModel: ScrollFitViewModel
+    appState: AppState
 ) {
     val currentDensity = LocalDensity.current
 
     if (sample != null) {
-        val chunkCount = remember(sample, appConf) {
-            ceil(sample.wave.length.toFloat() / appConf.painter.maxDataChunkSize).toInt()
+        val chunkCount = remember(sample, appState.appConf) {
+            ceil(sample.wave.length.toFloat() / appState.appConf.painter.maxDataChunkSize).toInt()
         }
         val canvasParams = CanvasParams(sample.wave.length, resolution, currentDensity)
         if (canvasParams.lengthInPixel > CanvasParams.MaxCanvasLengthInPixel) {
@@ -84,11 +80,11 @@ fun Canvas(
                     val weightOfEachChannel = 1f / sample.wave.channels.size
                     sample.wave.channels.forEach { channel ->
                         Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
-                            Waveforms(appConf, canvasParams, channel, chunkCount)
+                            Waveforms(appState.appConf, canvasParams, channel, chunkCount)
                         }
                     }
                     sample.spectrogram?.let {
-                        Box(Modifier.weight(appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
+                        Box(Modifier.weight(appState.appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
                             Spectrogram(canvasParams, it, chunkCount)
                         }
                     }
@@ -101,17 +97,14 @@ fun Canvas(
                     isBusy = isBusy,
                     editEntry = editEntry,
                     submitEntry = submitEntry,
-                    playSampleSection = playSampleSection,
-                    appConf = appConf,
                     labelerConf = labelerConf,
                     canvasParams = canvasParams,
                     sampleRate = sample.info.sampleRate,
                     horizontalScrollState = horizontalScrollState,
-                    keyboardViewModel = keyboardViewModel,
-                    scrollFitViewModel = scrollFitViewModel
+                    appState = appState
                 )
-                if (playerState.isPlaying) {
-                    PlayerCursor(canvasParams, playerState)
+                if (appState.playerState.isPlaying) {
+                    PlayerCursor(canvasParams, appState.playerState)
                 }
             }
         }

@@ -44,9 +44,6 @@ fun App(
             AppState.Screen.Editor -> if (project != null) {
                 Editor(
                     project = project,
-                    editProject = { appState.editProject { it } },
-                    editEntry = { appState.editEntry(it) },
-                    showDialog = { appState.openEmbeddedDialog(it) },
                     labelerState = labelerState,
                     appState = appState
                 )
