@@ -96,6 +96,8 @@ fun Project.toRawLabels(): String {
             val properties = labelerConf.getPropertyMap(fields, extra, python)
             val variables: Map<String, Any> =
                 fields.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
+                    // if a name is shared in fields and properties, its value will be overwritten by properties
+                    // See source of Kotlin's `fun Map<out K, V>.plus(map: Map<out K, V>)`
                     properties.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
                     extra +
                     mapOf(

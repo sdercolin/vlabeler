@@ -195,7 +195,7 @@ data class LabelerConf(
          * {end} - [Entry.end]
          * {[Property.name]} - Evaluated value of a [Property]
          * {[Field.name]} - value in [Entry.points] with the same index of the corresponding [Field]
-         * {<item in [extraFieldNames]>} - value saved in
+         * {<item in [extraFieldNames]>} - value saved in [Parser]
          *
          * If a name is shared by a [Property] and [Field], it's considered as [Property].
          *
@@ -204,7 +204,7 @@ data class LabelerConf(
         val format: String? = null,
         /**
          * Python scripts text lines that sets "output" variable using the same variables as described in [format]
-         * String type: sample, name
+         * String type: sample, name, extras
          * Float type: start, end, and others
          */
         val scripts: List<String>? = null
