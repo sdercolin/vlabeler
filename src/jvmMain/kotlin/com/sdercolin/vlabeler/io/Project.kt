@@ -8,7 +8,6 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
-import com.sdercolin.vlabeler.ui.saveProjectFile
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomLabelerDir
@@ -18,6 +17,7 @@ import com.sdercolin.vlabeler.util.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 fun openProject(
@@ -84,5 +84,18 @@ fun exportProject(
         val outputText = appState.value.project!!.toRawLabels()
         File(parent, name).writeText(outputText)
         appState.update { finishProcess() }
+    }
+}
+
+suspend fun saveProjectFile(project: Project): File {
+    return withContext(Dispatchers.IO) {
+        val workingDirectory = File(project.workingDirectory)
+        if (!workingDirectory.exists()) {
+            workingDirectory.mkdir()
+        }
+        val projectContent = toJson(project)
+        project.projectFile.writeText(projectContent)
+        Log.debug("Project saved to ${project.projectFile}")
+        project.projectFile
     }
 }
