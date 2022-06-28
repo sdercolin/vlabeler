@@ -112,8 +112,8 @@ private fun Waveforms(
     val imageBitmaps = remember(channel, appConf) { List(chunkSize) { mutableStateOf<ImageBitmap?>(null) } }
 
     LaunchedEffect(channel) {
-        withContext(Dispatchers.IO) {
-            repeat(chunkCount) { i ->
+        repeat(chunkCount) { i ->
+            withContext(Dispatchers.IO) {
                 val data = dataChunks[i]
                 val dataDensity = appConf.painter.amplitude.unitSize
                 val width = data.size / dataDensity
@@ -160,8 +160,8 @@ private fun Spectrogram(
     val imageBitmaps = remember(spectrogram) { List(chunkSize) { mutableStateOf<ImageBitmap?>(null) } }
 
     LaunchedEffect(spectrogram) {
-        withContext(Dispatchers.IO) {
-            repeat(chunkCount) { i ->
+        repeat(chunkCount) { i ->
+            withContext(Dispatchers.IO) {
                 val chunk = dataChunks[i]
                 val width = chunk.size.toFloat()
                 val height = chunk.first().size.toFloat()
