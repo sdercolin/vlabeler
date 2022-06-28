@@ -37,10 +37,8 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.Spectrogram
 import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.Entry
-import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -53,19 +51,13 @@ import kotlin.math.ceil
 
 @Composable
 fun Canvas(
-    sample: Sample?,
-    entry: Entry,
-    entriesInSample: List<Entry>,
-    currentIndexInSample: Int,
-    isBusy: Boolean,
-    editEntry: (Entry) -> Unit,
-    submitEntry: () -> Unit,
-    labelerConf: LabelerConf,
-    resolution: Int,
     horizontalScrollState: ScrollState,
+    editorState: EditorState,
     appState: AppState
 ) {
     val currentDensity = LocalDensity.current
+    val sample = editorState.sample
+    val resolution = editorState.canvasResolution
 
     if (sample != null) {
         val chunkCount = remember(sample, appState.appConf) {
@@ -90,17 +82,10 @@ fun Canvas(
                     }
                 }
                 MarkerCanvas(
-                    entry = entry,
-                    entriesInSample = entriesInSample,
-                    currentIndexInSample = currentIndexInSample,
-                    sampleLengthMillis = sample.info.lengthMillis,
-                    isBusy = isBusy,
-                    editEntry = editEntry,
-                    submitEntry = submitEntry,
-                    labelerConf = labelerConf,
+                    sample = sample,
                     canvasParams = canvasParams,
-                    sampleRate = sample.info.sampleRate,
                     horizontalScrollState = horizontalScrollState,
+                    editorState = editorState,
                     appState = appState
                 )
                 if (appState.playerState.isPlaying) {

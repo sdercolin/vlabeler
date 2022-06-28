@@ -38,10 +38,8 @@ fun Labeler(
     val sample = editorState.sample
     val project = editorState.project
     val entry = editorState.editedEntry.entry
-    val isBusy = sample == null
     val scope = rememberCoroutineScope()
     val horizontalScrollState = rememberScrollState(0)
-    val currentResolution = editorState.canvasResolution
 
     LaunchedEffect(Unit) {
         editorState.scrollFitViewModel.eventFlow.collectLatest {
@@ -59,16 +57,8 @@ fun Labeler(
         )
         Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Black50)) {
             Canvas(
-                sample = sample,
-                entry = entry,
-                entriesInSample = project.entriesInCurrentSample,
-                currentIndexInSample = project.currentEntryIndex,
-                isBusy = isBusy,
-                editEntry = editorState::updateEntry,
-                submitEntry = editorState::submitEntry,
-                labelerConf = project.labelerConf,
-                resolution = currentResolution,
                 horizontalScrollState = horizontalScrollState,
+                editorState = editorState,
                 appState = appState
             )
         }

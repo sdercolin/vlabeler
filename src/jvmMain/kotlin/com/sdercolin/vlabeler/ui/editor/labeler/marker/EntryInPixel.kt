@@ -25,8 +25,8 @@ data class EntryInPixel(
     )
 
     fun getPoint(index: Int): Float = when (index) {
-        MarkerState.StartPointIndex -> start
-        MarkerState.EndPointIndex -> end
+        MarkerMouseState.StartPointIndex -> start
+        MarkerMouseState.EndPointIndex -> end
         else -> getCustomPoint(index)
     }
 
@@ -44,16 +44,16 @@ data class EntryInPixel(
     ): Int {
         // end
         if ((end - x).absoluteValue <= NearRadiusStartOrEnd) {
-            if (x >= end) return MarkerState.EndPointIndex
+            if (x >= end) return MarkerMouseState.EndPointIndex
             val prev = pointsSorted.lastOrNull() ?: start
-            if (end - x <= x - prev) return MarkerState.EndPointIndex
+            if (end - x <= x - prev) return MarkerMouseState.EndPointIndex
         }
 
         // start
         if ((start - x).absoluteValue <= NearRadiusStartOrEnd) {
-            if (x <= start) return MarkerState.StartPointIndex
+            if (x <= start) return MarkerMouseState.StartPointIndex
             val next = pointsSorted.firstOrNull() ?: end
-            if (x - start <= next - x) return MarkerState.StartPointIndex
+            if (x - start <= next - x) return MarkerMouseState.StartPointIndex
         }
 
         // other points
@@ -72,7 +72,7 @@ data class EntryInPixel(
                 return index
             }
         }
-        for ((current, next) in (pointsSorted + listOf(IndexedValue(MarkerState.EndPointIndex, end))).zipWithNext()) {
+        for ((current, next) in (pointsSorted + listOf(IndexedValue(MarkerMouseState.EndPointIndex, end))).zipWithNext()) {
             // line part
             if ((current.value - x).absoluteValue > NearRadiusCustom) continue
             if (current.value == next.value || x - current.value <= next.value - x) {
@@ -81,7 +81,7 @@ data class EntryInPixel(
             }
         }
 
-        return MarkerState.NonePointIndex
+        return MarkerMouseState.NonePointIndex
     }
 
     fun drag(
@@ -92,12 +92,12 @@ data class EntryInPixel(
         conf: LabelerConf
     ): EntryInPixel =
         when (pointIndex) {
-            MarkerState.NonePointIndex -> this
-            MarkerState.StartPointIndex -> {
+            MarkerMouseState.NonePointIndex -> this
+            MarkerMouseState.StartPointIndex -> {
                 val max = pointsSorted.firstOrNull() ?: end
                 copy(start = x.coerceIn(leftBorder, max))
             }
-            MarkerState.EndPointIndex -> {
+            MarkerMouseState.EndPointIndex -> {
                 val min = pointsSorted.lastOrNull() ?: start
                 copy(end = x.coerceIn(min, rightBorder - 1))
             }
@@ -121,7 +121,7 @@ data class EntryInPixel(
         leftBorder: Float,
         rightBorder: Float
     ): EntryInPixel {
-        if (pointIndex == MarkerState.NonePointIndex) return this
+        if (pointIndex == MarkerMouseState.NonePointIndex) return this
         val dxMin = leftBorder - start
         val dxMax = rightBorder - 1 - end
         val dx = (x - getPoint(pointIndex)).coerceIn(dxMin, dxMax)
