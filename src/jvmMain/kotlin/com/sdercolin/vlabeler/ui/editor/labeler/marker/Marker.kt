@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -115,23 +116,23 @@ fun MarkerCanvas(
 ) {
     val entryConverter = EntryConverter(sampleRate, canvasParams.resolution)
     val entryInPixel = entryConverter.convertToPixel(entry, sampleLengthMillis).validate(canvasParams.lengthInPixel)
-    val entriesInSampleInPixel = remember(entry, canvasParams) {
+    val entriesInSampleInPixel = remember(entryInPixel) {
         entriesInSample.map {
             entryConverter.convertToPixel(it, sampleLengthMillis).validate(canvasParams.lengthInPixel)
         }
     }
-    val leftBorder = remember(entry, canvasParams) {
+    val leftBorder = remember(entryInPixel) {
         (
             if (labelerConf.continuous) {
-                entriesInSampleInPixel.getOrNull(currentIndexInSample - 1)?.start?.plus(1)
+                entriesInSampleInPixel.getOrNull(currentIndexInSample - 1)?.start
             } else null
             )
             ?: 0f
     }
-    val rightBorder = remember(entry, canvasParams) {
+    val rightBorder = remember(entryInPixel) {
         (
             if (labelerConf.continuous) {
-                entriesInSampleInPixel.getOrNull(currentIndexInSample + 1)?.end?.minus(1)
+                entriesInSampleInPixel.getOrNull(currentIndexInSample + 1)?.end
             } else null
             )
             ?: canvasParams.lengthInPixel.toFloat()
@@ -227,110 +228,114 @@ private fun FieldBorderCanvas(
                 )
             }
     ) {
-        val start = entryInPixel.start
-        val end = entryInPixel.end
-        val canvasWidth = size.width
-        val canvasHeight = size.height
-        canvasHeightState.value = canvasHeight
+        try {
+            val start = entryInPixel.start
+            val end = entryInPixel.end
+            val canvasWidth = size.width
+            val canvasHeight = size.height
+            canvasHeightState.value = canvasHeight
 
-        // Draw left border
-        if (leftBorder > 0) {
-            val leftBorderColor = UneditableRegionColor
-            drawRect(
-                color = leftBorderColor,
-                alpha = UneditableRegionAlpha,
-                topLeft = Offset.Zero,
-                size = Size(width = leftBorder, height = canvasHeight)
-            )
-            drawLine(
-                color = leftBorderColor.copy(alpha = IdleLineAlpha),
-                start = Offset(leftBorder, 0f),
-                end = Offset(leftBorder, canvasHeight),
-                strokeWidth = StrokeWidth
-            )
-        }
-
-        // Draw start
-        val startColor = EditableOutsideRegionColor
-        drawRect(
-            color = startColor,
-            alpha = RegionAlpha,
-            topLeft = Offset(leftBorder, 0f),
-            size = Size(width = start - leftBorder, height = canvasHeight)
-        )
-        val startLineAlpha = if (state.value.usingStartPoint) 1f else IdleLineAlpha
-        drawLine(
-            color = startColor.copy(alpha = startLineAlpha),
-            start = Offset(start, 0f),
-            end = Offset(start, canvasHeight),
-            strokeWidth = StrokeWidth
-        )
-
-        // Draw custom fields
-        for (i in labelerConf.fields.indices) {
-            val field = labelerConf.fields[i]
-            val x = entryInPixel.getCustomPoint(i)
-            val waveformsHeight = canvasHeight * waveformsHeightRatio
-            val height = waveformsHeight * field.height
-            val top = waveformsHeight - height
-            val color = parseColor(field.color)
-            val fillTargetIndex = when (field.filling) {
-                "start" -> StartPointIndex
-                "end" -> EndPointIndex
-                null -> null
-                else -> labelerConf.fields.withIndex().find { it.value.name == field.filling }?.index
-            }
-            if (fillTargetIndex != null) {
-                val targetX = entryInPixel.getPoint(fillTargetIndex)
-                val left = min(targetX, x)
-                val width = abs(targetX - x)
+            // Draw left border
+            if (leftBorder > 0) {
+                val leftBorderColor = UneditableRegionColor
                 drawRect(
-                    color = color,
-                    alpha = RegionAlpha,
-                    topLeft = Offset(left, top),
-                    size = Size(width = width, height = height)
+                    color = leftBorderColor,
+                    alpha = UneditableRegionAlpha,
+                    topLeft = Offset.Zero,
+                    size = Size(width = leftBorder, height = canvasHeight)
+                )
+                drawLine(
+                    color = leftBorderColor.copy(alpha = IdleLineAlpha),
+                    start = Offset(leftBorder, 0f),
+                    end = Offset(leftBorder, canvasHeight),
+                    strokeWidth = StrokeWidth
                 )
             }
-            val lineAlpha = if (state.value.pointIndex != i) IdleLineAlpha else 1f
-            drawLine(
-                color = color.copy(alpha = lineAlpha),
-                start = Offset(x, top),
-                end = Offset(x, canvasHeight),
-                strokeWidth = StrokeWidth
-            )
-        }
 
-        // Draw end
-        val endColor = EditableOutsideRegionColor
-        drawRect(
-            color = endColor,
-            alpha = RegionAlpha,
-            topLeft = Offset(end, 0f),
-            size = Size(width = rightBorder - end, height = canvasHeight)
-        )
-        val endLineAlpha = if (state.value.usingEndPoint) 1f else IdleLineAlpha
-        drawLine(
-            color = endColor.copy(alpha = endLineAlpha),
-            start = Offset(end, 0f),
-            end = Offset(end, canvasHeight),
-            strokeWidth = StrokeWidth
-        )
-
-        // Draw right border
-        if (rightBorder < canvasWidth) {
-            val rightBorderColor = UneditableRegionColor
+            // Draw start
+            val startColor = EditableOutsideRegionColor
             drawRect(
-                color = rightBorderColor,
-                alpha = UneditableRegionAlpha,
-                topLeft = Offset(rightBorder, 0f),
-                size = Size(width = canvasWidth - rightBorder, height = canvasHeight)
+                color = startColor,
+                alpha = RegionAlpha,
+                topLeft = Offset(leftBorder, 0f),
+                size = Size(width = start - leftBorder, height = canvasHeight)
             )
+            val startLineAlpha = if (state.value.usingStartPoint) 1f else IdleLineAlpha
             drawLine(
-                color = rightBorderColor.copy(alpha = IdleLineAlpha),
-                start = Offset(rightBorder, 0f),
-                end = Offset(rightBorder, canvasHeight),
+                color = startColor.copy(alpha = startLineAlpha),
+                start = Offset(start, 0f),
+                end = Offset(start, canvasHeight),
                 strokeWidth = StrokeWidth
             )
+
+            // Draw custom fields
+            for (i in labelerConf.fields.indices) {
+                val field = labelerConf.fields[i]
+                val x = entryInPixel.getCustomPoint(i)
+                val waveformsHeight = canvasHeight * waveformsHeightRatio
+                val height = waveformsHeight * field.height
+                val top = waveformsHeight - height
+                val color = parseColor(field.color)
+                val fillTargetIndex = when (field.filling) {
+                    "start" -> StartPointIndex
+                    "end" -> EndPointIndex
+                    null -> null
+                    else -> labelerConf.fields.withIndex().find { it.value.name == field.filling }?.index
+                }
+                if (fillTargetIndex != null) {
+                    val targetX = entryInPixel.getPoint(fillTargetIndex)
+                    val left = min(targetX, x)
+                    val width = abs(targetX - x)
+                    drawRect(
+                        color = color,
+                        alpha = RegionAlpha,
+                        topLeft = Offset(left, top),
+                        size = Size(width = width, height = height)
+                    )
+                }
+                val lineAlpha = if (state.value.pointIndex != i) IdleLineAlpha else 1f
+                drawLine(
+                    color = color.copy(alpha = lineAlpha),
+                    start = Offset(x, top),
+                    end = Offset(x, canvasHeight),
+                    strokeWidth = StrokeWidth
+                )
+            }
+
+            // Draw end
+            val endColor = EditableOutsideRegionColor
+            drawRect(
+                color = endColor,
+                alpha = RegionAlpha,
+                topLeft = Offset(end, 0f),
+                size = Size(width = rightBorder - end, height = canvasHeight)
+            )
+            val endLineAlpha = if (state.value.usingEndPoint) 1f else IdleLineAlpha
+            drawLine(
+                color = endColor.copy(alpha = endLineAlpha),
+                start = Offset(end, 0f),
+                end = Offset(end, canvasHeight),
+                strokeWidth = StrokeWidth
+            )
+
+            // Draw right border
+            if (rightBorder < canvasWidth) {
+                val rightBorderColor = UneditableRegionColor
+                drawRect(
+                    color = rightBorderColor,
+                    alpha = UneditableRegionAlpha,
+                    topLeft = Offset(rightBorder, 0f),
+                    size = Size(width = canvasWidth - rightBorder, height = canvasHeight)
+                )
+                drawLine(
+                    color = rightBorderColor.copy(alpha = IdleLineAlpha),
+                    start = Offset(rightBorder, 0f),
+                    end = Offset(rightBorder, canvasHeight),
+                    strokeWidth = StrokeWidth
+                )
+            }
+        } catch (t: Throwable) {
+            Log.debug(t)
         }
     }
 }
