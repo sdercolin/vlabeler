@@ -17,7 +17,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.sdercolin.vlabeler.audio.Player
-import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.audio.rememberPlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log

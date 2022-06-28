@@ -1,10 +1,5 @@
 package com.sdercolin.vlabeler.audio
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -12,29 +7,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.sound.sampled.AudioSystem
-
-class PlayerState {
-
-    var isPlaying by mutableStateOf(false)
-        private set
-    var framePosition by mutableStateOf(0)
-        private set
-
-    fun startPlaying() {
-        isPlaying = true
-    }
-
-    fun stopPlaying() {
-        isPlaying = false
-    }
-
-    fun changeFramePosition(position: Int) {
-        framePosition = position
-    }
-}
-
-@Composable
-fun rememberPlayerState() = remember { PlayerState() }
 
 class Player(
     private val coroutineScope: CoroutineScope,
