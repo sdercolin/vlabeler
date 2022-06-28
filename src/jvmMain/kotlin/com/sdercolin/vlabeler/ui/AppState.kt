@@ -23,7 +23,9 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.editor.EditedEntry
 import com.sdercolin.vlabeler.ui.editor.EditorState
-import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 class AppState(
@@ -252,7 +254,7 @@ class AppState(
 
     fun openEditEntryNameDialog(
         duplicate: Boolean,
-        showSnackbar: (String) -> Unit
+        scope: CoroutineScope
     ) {
         val project = project!!
         val sampleName = project.currentSampleName
@@ -270,7 +272,7 @@ class AppState(
                 index = index,
                 initial = entry.name,
                 invalidOptions = invalidOptions,
-                showSnackbar = showSnackbar,
+                showSnackbar = { scope.launch { snackbarHostState.showSnackbar(it) } },
                 duplicate = duplicate
             )
         )
@@ -309,7 +311,7 @@ class AppState(
     }
 
     fun changeResolution(newValue: Int) {
-        editorState?.labelerState?.changeResolution(newValue)
+        editorState?.changeResolution(newValue)
     }
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()

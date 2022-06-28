@@ -36,7 +36,7 @@ fun App(
                     availableLabelerConfs = appState.availableLabelerConfs,
                     snackbarHostState = appState.snackbarHostState
                 )
-            is AppState.Screen.Editor -> Editor(screen.editorState)
+            is AppState.Screen.Editor -> Editor(screen.editorState, appState)
         }
         appState.embeddedDialog?.let { args ->
             EmbeddedDialog(args) { result ->

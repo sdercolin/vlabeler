@@ -16,13 +16,13 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
-import com.sdercolin.vlabeler.ui.editor.labeler.LabelerState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class EditorState(
     project: Project,
-    val appState: AppState // TODO: remove val
+    private val appState: AppState
 ) {
     private val sampleState: MutableState<Sample?> = mutableStateOf(null)
     val sample get() = sampleState.value
@@ -32,9 +32,11 @@ class EditorState(
     private val isActive get() = appState.isEditorActive
     private val appConf = appState.appConf
     val keyboardViewModel = appState.keyboardViewModel
-    private val scrollFitViewModel = appState.scrollFitViewModel
+    val scrollFitViewModel = appState.scrollFitViewModel
     private val player = appState.player
-    val labelerState = LabelerState(appConf.painter.canvasResolution.default)
+
+    var canvasResolution: Int by mutableStateOf(appState.appConf.painter.canvasResolution.default)
+        private set
 
     /**
      * Called from upstream
@@ -76,24 +78,27 @@ class EditorState(
         }
     }
 
+    fun changeResolution(resolution: Int) {
+        canvasResolution = resolution
+    }
+
     suspend fun updateResolution() {
         keyboardViewModel.keyboardEventFlow.collect {
             if (appState.isEditorActive.not()) return@collect
-            updateResolutionByKeyEvent(it, appConf, labelerState)
+            updateResolutionByKeyEvent(it, appConf)
         }
     }
 
     private fun updateResolutionByKeyEvent(
         event: KeyEvent,
-        appConf: AppConf,
-        labelerState: LabelerState
+        appConf: AppConf
     ) {
-        val resolution = labelerState.canvasResolution
+        val resolution = canvasResolution
         val range = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
         val updatedResolution = if (event.shouldIncreaseResolution) range.increaseFrom(resolution)
         else if (event.shouldDecreaseResolution) range.decreaseFrom(resolution)
         else null
-        if (updatedResolution != null) labelerState.changeResolution(updatedResolution)
+        if (updatedResolution != null) changeResolution(updatedResolution)
     }
 
     fun handlePointerEvent(
@@ -137,12 +142,16 @@ class EditorState(
         if (!keyboardState.isCtrlPressed) return
         val xDelta = event.changes.first().scrollDelta.x
         val range = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
-        val resolution = labelerState.canvasResolution
+        val resolution = canvasResolution
         val updatedResolution = when {
             xDelta > 0 -> range.decreaseFrom(resolution).takeIf { (range.canDecrease(resolution)) }
             xDelta < 0 -> range.increaseFrom(resolution).takeIf { (range.canIncrease(resolution)) }
             else -> null
         }
-        if (updatedResolution != null) labelerState.changeResolution(updatedResolution)
+        if (updatedResolution != null) changeResolution(updatedResolution)
+    }
+
+    fun openEditEntryNameDialog(duplicate: Boolean, scope: CoroutineScope) {
+        appState.openEditEntryNameDialog(duplicate, scope)
     }
 }

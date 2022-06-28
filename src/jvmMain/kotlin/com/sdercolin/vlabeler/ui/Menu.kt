@@ -12,7 +12,6 @@ import com.sdercolin.vlabeler.io.openProject
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.io.File
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -21,7 +20,6 @@ fun FrameWindowScope.Menu(
     mainScope: CoroutineScope,
     appState: AppState
 ) {
-    val showSnackbar: (String) -> Unit = { mainScope.launch { appState.snackbarHostState.showSnackbar(it) } }
 
     MenuBar {
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
@@ -91,7 +89,7 @@ fun FrameWindowScope.Menu(
                 onClick = {
                     appState.openEditEntryNameDialog(
                         duplicate = false,
-                        showSnackbar = showSnackbar
+                        scope = mainScope
                     )
                 },
                 enabled = appState.isEditorActive
@@ -102,7 +100,7 @@ fun FrameWindowScope.Menu(
                 onClick = {
                     appState.openEditEntryNameDialog(
                         duplicate = true,
-                        showSnackbar = showSnackbar
+                        scope = mainScope
                     )
                 },
                 enabled = appState.isEditorActive

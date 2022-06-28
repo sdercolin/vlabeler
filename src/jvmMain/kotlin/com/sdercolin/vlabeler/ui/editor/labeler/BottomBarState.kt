@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogArgs
+import com.sdercolin.vlabeler.ui.editor.EditorState
 
 class BottomBarState(
     val currentEntryIndexInTotal: Int,
@@ -34,25 +35,24 @@ class BottomBarState(
 fun rememberBottomBarState(
     project: Project,
     appState: AppState,
-    labelerState: LabelerState
+    editorState: EditorState
 ) = remember(
     project.currentEntryIndexInTotal,
     project.totalEntryCount,
-    labelerState.canvasResolution,
+    editorState.canvasResolution,
     appState.appConf,
     appState.canGoNextEntryOrSample,
-    appState.canGoPreviousEntryOrSample,
-    appState.appConf
+    appState.canGoPreviousEntryOrSample
 ) {
     BottomBarState(
         currentEntryIndexInTotal = project.currentEntryIndexInTotal,
         totalEntryCount = project.totalEntryCount,
-        resolution = labelerState.canvasResolution,
-        onChangeResolution = { labelerState.changeResolution(it) },
+        resolution = editorState.canvasResolution,
+        onChangeResolution = { editorState.changeResolution(it) },
         openSetResolutionDialog = {
             appState.openEmbeddedDialog(
                 SetResolutionDialogArgs(
-                    current = labelerState.canvasResolution,
+                    current = editorState.canvasResolution,
                     min = appState.appConf.painter.canvasResolution.min,
                     max = appState.appConf.painter.canvasResolution.max
                 )

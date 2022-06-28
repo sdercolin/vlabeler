@@ -42,8 +42,8 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
-import com.sdercolin.vlabeler.ui.editor.labeler.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState.Companion.EndPointIndex
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState.Companion.NonePointIndex
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState.Companion.StartPointIndex

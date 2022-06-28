@@ -12,11 +12,12 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.editor.labeler.Labeler
 
 @Composable
-fun Editor(state: EditorState) {
+fun Editor(state: EditorState, appState: AppState) {
     val keyboardState by state.keyboardViewModel.keyboardStateFlow.collectAsState()
 
     LaunchedEffect(state.project.currentSampleName) {
@@ -33,13 +34,8 @@ fun Editor(state: EditorState) {
             }
     ) {
         Labeler(
-            sample = state.sample,
-            project = state.project,
-            entry = state.editedEntry.entry,
-            editEntry = state::updateEntry,
-            submitEntry = state::submitEntry,
-            labelerState = state.labelerState,
-            appState = state.appState
+            editorState = state,
+            appState = appState
         )
     }
     if (state.isLoading) {
