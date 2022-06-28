@@ -17,6 +17,7 @@ import com.sdercolin.vlabeler.io.openCreatedProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
@@ -89,6 +90,9 @@ fun App(
                 appState.update { closeEmbeddedDialog() }
                 if (result != null) handleDialogResult(result, labelerState, appState, scrollFitViewModel)
             }
+        }
+        if (appState.value.isBusy) {
+            CircularProgress()
         }
     }
 }

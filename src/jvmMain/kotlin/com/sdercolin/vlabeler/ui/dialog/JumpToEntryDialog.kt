@@ -5,8 +5,6 @@ package com.sdercolin.vlabeler.ui.dialog
 import androidx.compose.foundation.ScrollbarAdapter
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -53,6 +51,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
 
@@ -99,11 +98,7 @@ fun JumpToEntryDialog(
     Column(
         Modifier.fillMaxWidth(0.5f)
             .fillMaxHeight(0.7f)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = {},
-            )
+            .plainClickable()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 15.dp),

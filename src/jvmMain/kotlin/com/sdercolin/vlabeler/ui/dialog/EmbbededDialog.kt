@@ -1,17 +1,15 @@
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.Black50
 
 sealed interface EmbeddedDialogArgs {
@@ -26,11 +24,7 @@ fun EmbeddedDialog(args: EmbeddedDialogArgs, submit: (EmbeddedDialogResult?) -> 
     Box(
         modifier = Modifier.fillMaxSize()
             .background(color = Black50)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = { if (args.cancellableOnClickOutside) submit(null) },
-            ),
+            .plainClickable { if (args.cancellableOnClickOutside) submit(null) },
         contentAlignment = Alignment.Center
     ) {
         Surface {

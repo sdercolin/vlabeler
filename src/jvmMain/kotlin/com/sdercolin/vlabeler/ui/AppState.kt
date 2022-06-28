@@ -25,6 +25,7 @@ data class AppState(
      * Describes the update status between [Project] state and project file
      */
     val projectWriteStatus: ProjectWriteStatus = ProjectWriteStatus.Updated,
+    val isBusy: Boolean = false,
     val shouldExit: Boolean = false,
 ) {
 
@@ -164,6 +165,9 @@ data class AppState(
 
     fun projectContentChanged() = copy(projectWriteStatus = ProjectWriteStatus.Changed)
     fun projectPathChanged() = copy(projectWriteStatus = ProjectWriteStatus.Updated)
+
+    fun startProcess() = copy(isBusy = true)
+    fun finishProcess() = copy(isBusy = false)
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
     private fun askIfSaveBeforeExit() = copy(embeddedDialog = AskIfSaveDialogPurpose.IsExiting)

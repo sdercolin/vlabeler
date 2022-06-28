@@ -12,7 +12,7 @@ import com.sdercolin.vlabeler.ui.theme.Black50
 @Composable
 fun CircularProgress() {
     Box(
-        modifier = Modifier.fillMaxSize().background(color = Black50),
+        modifier = Modifier.fillMaxSize().background(color = Black50).plainClickable(),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()

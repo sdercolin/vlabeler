@@ -3,8 +3,8 @@ package com.sdercolin.vlabeler.ui.dialog
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import com.sdercolin.vlabeler.io.exportProject
 import com.sdercolin.vlabeler.io.openProject
-import com.sdercolin.vlabeler.io.toRawLabels
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
@@ -73,8 +73,7 @@ fun StandaloneDialogs(
             ) { parent, name ->
                 appState.update { closeExportDialog() }
                 if (parent != null && name != null) {
-                    val outputText = appState.value.project!!.toRawLabels()
-                    File(parent, name).writeText(outputText)
+                    exportProject(mainScope, parent, name, appState)
                 }
             }
         }

@@ -132,6 +132,5 @@ private fun LabelerConf.getExtraMap(entry: Entry) = extraFieldNames.mapIndexed {
 private fun LabelerConf.getPropertyMap(fields: Map<String, Float>, extras: Map<String, String>, python: Python) =
     properties.associate {
         val value = it.value.replaceWithVariables(fields + extras).let(python::eval)
-        println("${it.value} -> $value")
         it.name to value
     }

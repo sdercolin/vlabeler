@@ -34,6 +34,7 @@ fun openProject(
             snackbarHostState.showSnackbar(string(Strings.StarterRecentDeleted))
             return@launch
         }
+        appState.update { startProcess() }
         val project = parseJson<Project>(file.readText())
         val existingLabelerConf = labelerConfs.find { it.name == project.labelerConf.name }
         val labelerConf = when {
@@ -53,6 +54,7 @@ fun openProject(
         appState.update { openProject(project.copy(labelerConf = labelerConf)) }
         appRecord.update { addRecent(file.absolutePath) }
         scrollFitViewModel.emitNext()
+        appState.update { finishProcess() }
     }
 }
 
@@ -68,5 +70,19 @@ fun openCreatedProject(
         appState.update { openProject(project) }
         appRecord.update { addRecent(file.absolutePath) }
         scrollFitViewModel.emitNext()
+    }
+}
+
+fun exportProject(
+    mainScope: CoroutineScope,
+    parent: String,
+    name: String,
+    appState: MutableState<AppState>
+) {
+    mainScope.launch(Dispatchers.IO) {
+        appState.update { startProcess() }
+        val outputText = appState.value.project!!.toRawLabels()
+        File(parent, name).writeText(outputText)
+        appState.update { finishProcess() }
     }
 }
