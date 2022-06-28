@@ -22,8 +22,7 @@ fun FrameWindowScope.Menu(
     mainScope: CoroutineScope,
     appState: AppState
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val showSnackbar: (String) -> Unit = { coroutineScope.launch { appState.snackbarHostState.showSnackbar(it) } }
+    val showSnackbar: (String) -> Unit = { mainScope.launch { appState.snackbarHostState.showSnackbar(it) } }
 
     MenuBar {
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
