@@ -19,6 +19,7 @@ import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.rememberPlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.shouldTogglePlayer
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
@@ -101,7 +102,7 @@ fun main() = application {
 
 @Composable
 private fun rememberAppConf() = remember {
-    val customAppConf = if (CustomAppConfFile.exists()) {
+    val customAppConf = if (CustomAppConfFile.exists() && !isDebug) {
         Log.info("Custom app conf found")
         val customAppConfText = CustomAppConfFile.readText()
         runCatching { parseJson<AppConf>(customAppConfText) }.getOrElse {
@@ -135,7 +136,7 @@ private fun rememberAvailableLabelerConfs() = remember {
     }
     duplicated.forEach { default ->
         val custom = validCustomLabelers.first { it.first.name == default.first.name }
-        if (default.second.version > custom.second.version) {
+        if (default.second.version > custom.second.version || isDebug) {
             // update with default
             availableLabelers.add(default.second)
             default.first.copyTo(CustomLabelerDir.resolve(custom.first.name), overwrite = true)
