@@ -19,9 +19,14 @@ import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
+import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
+import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditedEntry
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
@@ -64,7 +69,7 @@ class AppState(
         private set
     var isShowingExportDialog: Boolean by mutableStateOf(false)
         private set
-    var pendingActionAfterSaved: PendingActionAfterSaved? by mutableStateOf(null)
+    private var pendingActionAfterSaved: PendingActionAfterSaved? by mutableStateOf(null)
         private set
     var embeddedDialog: EmbeddedDialogArgs? by mutableStateOf(null)
         private set
@@ -201,7 +206,7 @@ class AppState(
         pendingActionAfterSaved = pendingAction
     }
 
-    fun takeAskIfSaveResult(result: AskIfSaveDialogResult) =
+    private fun takeAskIfSaveResult(result: AskIfSaveDialogResult) =
         if (result.save) {
             requestSave(result.actionAfterSaved)
         } else consumePendingActionAfterSaved(result.actionAfterSaved)
@@ -227,6 +232,29 @@ class AppState(
 
     fun closeEmbeddedDialog() {
         embeddedDialog = null
+    }
+
+    fun handleDialogResult(
+        result: EmbeddedDialogResult
+    ) {
+        when (result) {
+            is SetResolutionDialogResult -> changeResolution(result.newValue)
+            is AskIfSaveDialogResult -> takeAskIfSaveResult(result)
+            is JumpToEntryDialogArgsResult -> {
+                jumpToEntry(result.sampleName, result.index)
+                scrollFitViewModel.emitNext()
+            }
+            is EditEntryNameDialogResult -> run {
+                if (result.duplicate) {
+                    duplicateEntry(result.sampleName, result.index, result.name)
+                } else {
+                    renameEntry(result.sampleName, result.index, result.name)
+                }
+            }
+            is CommonConfirmationDialogResult -> when (result.action) {
+                CommonConfirmationDialogAction.RemoveCurrentEntry -> removeCurrentEntry()
+            }
+        }
     }
 
     fun openJumpToEntryDialog() {
@@ -258,7 +286,7 @@ class AppState(
         scrollFitViewModel.emitNext()
     }
 
-    fun jumpToEntry(sampleName: String, entryIndex: Int) = editProject {
+    private fun jumpToEntry(sampleName: String, entryIndex: Int) = editProject {
         project!!.copy(
             currentSampleName = sampleName,
             currentEntryIndex = entryIndex
@@ -291,11 +319,11 @@ class AppState(
         )
     }
 
-    fun renameEntry(sampleName: String, index: Int, newName: String) = editProject {
+    private fun renameEntry(sampleName: String, index: Int, newName: String) = editProject {
         renameEntry(sampleName, index, newName)
     }
 
-    fun duplicateEntry(sampleName: String, index: Int, newName: String) = editProject {
+    private fun duplicateEntry(sampleName: String, index: Int, newName: String) = editProject {
         duplicateEntry(sampleName, index, newName).copy(currentEntryIndex = index + 1)
     }
 
@@ -305,7 +333,7 @@ class AppState(
         } == true
 
     fun confirmIfRemoveCurrentEntry() = openEmbeddedDialog(CommonConfirmationDialogAction.RemoveCurrentEntry)
-    fun removeCurrentEntry() = editProject { removeCurrentEntry() }
+    private fun removeCurrentEntry() = editProject { removeCurrentEntry() }
 
     fun projectContentChanged() {
         projectWriteStatus = ProjectWriteStatus.Changed
@@ -323,7 +351,7 @@ class AppState(
         isBusy = false
     }
 
-    fun changeResolution(newValue: Int) {
+    private fun changeResolution(newValue: Int) {
         editorState?.changeResolution(newValue)
     }
 
