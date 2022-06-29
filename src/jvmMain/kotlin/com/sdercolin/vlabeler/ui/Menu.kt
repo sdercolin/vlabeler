@@ -110,6 +110,16 @@ fun FrameWindowScope.Menu(
                 enabled = appState.isEditorActive && appState.canRemoveCurrentEntry
             )
         }
+
+        Menu(string(Strings.MenuView), mnemonic = 'V') {
+            CheckboxItem(
+                string(Strings.MenuViewToggleMarker),
+                shortcut = getKeyShortCut(Key.Zero, ctrl = true),
+                checked = appState.viewState.isMarkerDisplayed,
+                enabled = appState.isEditorActive,
+                onCheckedChange = { appState.viewState.isMarkerDisplayed = it }
+            )
+        }
         Menu(string(Strings.MenuNavigate), mnemonic = 'N') {
             Item(
                 string(Strings.MenuNavigateNextEntry),

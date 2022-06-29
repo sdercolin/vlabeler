@@ -45,6 +45,7 @@ class AppState(
     appRecord: MutableState<AppRecord>
 ) {
     private val editorState get() = (screen as? Screen.Editor)?.editorState
+    val viewState = AppViewState(appRecord)
 
     var appConf: AppConf by appConf
         private set

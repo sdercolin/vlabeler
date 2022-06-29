@@ -81,13 +81,15 @@ fun Canvas(
                         }
                     }
                 }
-                MarkerCanvas(
-                    sample = sample,
-                    canvasParams = canvasParams,
-                    horizontalScrollState = horizontalScrollState,
-                    editorState = editorState,
-                    appState = appState
-                )
+                if (appState.viewState.isMarkerDisplayed) {
+                    MarkerCanvas(
+                        sample = sample,
+                        canvasParams = canvasParams,
+                        horizontalScrollState = horizontalScrollState,
+                        editorState = editorState,
+                        appState = appState
+                    )
+                }
                 if (appState.playerState.isPlaying) {
                     PlayerCursor(canvasParams, appState.playerState)
                 }

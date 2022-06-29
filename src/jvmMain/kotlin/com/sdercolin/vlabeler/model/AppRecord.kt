@@ -6,7 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AppRecord(
-    val recentProjects: List<String> = listOf()
+    val recentProjects: List<String> = listOf(),
+    val isMarkerDisplayed: Boolean = true
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(

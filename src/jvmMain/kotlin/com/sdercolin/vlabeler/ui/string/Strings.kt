@@ -54,6 +54,12 @@ enum class Strings(val en: String) {
     MenuEditRemoveEntry(
         en = "Remove Current Entry"
     ),
+    MenuView(
+        en = "View"
+    ),
+    MenuViewToggleMarker(
+        en = "Show Parameter Controllers"
+    ),
     MenuNavigate(
         en = "Navigate"
     ),
