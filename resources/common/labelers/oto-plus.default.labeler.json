@@ -1,0 +1,141 @@
+{
+  "name": "oto-plus.default",
+  "version": 1,
+  "extension": "ini",
+  "defaultInputFilePath": "oto.ini",
+  "displayedName": "UTAU oto labeler plus",
+  "author": "sdercolin",
+  "description": "Default labeler for UTAU oto. Left is separated from the default start, so Overlap can be set minus.",
+  "defaultValues": [
+    100,
+    400,
+    300,
+    200,
+    100,
+    500
+  ],
+  "defaultExtras": ["500"],
+  "fields": [
+    {
+      "name": "fixed",
+      "label": "Fixed",
+      "color": "#0000ff",
+      "height": 0.5,
+      "dragBase": false,
+      "filling": "left",
+      "constraints": [
+        {
+          "min": 3,
+          "max": null
+        }
+      ]
+    },
+    {
+      "name": "preu",
+      "label": "Preu",
+      "color": "#ff0000",
+      "height": 0.6667,
+      "dragBase": true,
+      "filling": null,
+      "constraints": [
+        {
+          "min": 3,
+          "max": 0
+        }
+      ]
+    },
+    {
+      "name": "ovl",
+      "label": "Ovl",
+      "color": "#00ff00",
+      "height": 0.8333,
+      "dragBase": false,
+      "filling": null,
+      "constraints": [
+        {
+          "min": null,
+          "max": 0
+        }
+      ]
+    },
+    {
+      "name": "left",
+      "label": "Left",
+      "color": "#dba100",
+      "height": 0.9,
+      "dragBase": false,
+      "filling": "start",
+      "constraints": []
+    }
+  ],
+  "extraFieldNames": [
+    "rawRight"
+  ],
+  "lockedDrag": {
+    "useDragBase": true,
+    "useStart": false
+  },
+  "properties": [
+    {
+      "name": "left",
+      "displayedName": "Offset",
+      "value": "{left}"
+    },
+    {
+      "name": "fixed",
+      "displayedName": "Fixed",
+      "value": "{fixed} - {left}"
+    },
+    {
+      "name": "right",
+      "displayedName": "Blank",
+      "value": "{left} - {end} if {end} > 0 else float({rawRight})"
+    },
+    {
+      "name": "preu",
+      "displayedName": "Preutterance",
+      "value": "{preu} - {left}"
+    },
+    {
+      "name": "ovl",
+      "displayedName": "Overlap",
+      "value": "{ovl} - {left}"
+    }
+  ],
+  "parser": {
+    "defaultEncoding": "Shift-JIS",
+    "extractionPattern": "(.*)\\.wav=(.*),(.*),(.*),(.*),(.*),(.*)",
+    "variableNames": [
+      "sample",
+      "name",
+      "left",
+      "fixed",
+      "right",
+      "preu",
+      "ovl"
+    ],
+    "scripts": [
+      "if(left != ''):",
+      "    start = float(left)",
+      "points = []",
+      "if(fixed != ''):",
+      "    points.append(float(fixed) + start)",
+      "if(right != ''):",
+      "    right = float(right)",
+      "    rawRight = right # for restoring from a non-negative value (distance to sample end)",
+      "    if(right < 0):",
+      "        end = start - right",
+      "    else:",
+      "        end = -right",
+      "if(preu != ''):",
+      "    points.append(float(preu) + start)",
+      "if(ovl != ''):",
+      "    points.append(float(ovl) + start)",
+      "if(left != ''):",
+      "    points.append(float(left))"
+    ]
+  },
+  "writer": {
+    "format": "{sample}.wav={name},{left},{fixed},{right},{preu},{ovl}"
+  }
+}

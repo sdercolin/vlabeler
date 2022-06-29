@@ -152,7 +152,7 @@ private fun rememberAvailableLabelerConfs() = remember {
     }
 
     Log.info("Labelers: ${availableLabelers.joinToString { it.toString() }}")
-    availableLabelers
+    availableLabelers.sortedBy { it.name }
 }
 
 private fun File.asLabelerConf(): Result<LabelerConf> {
