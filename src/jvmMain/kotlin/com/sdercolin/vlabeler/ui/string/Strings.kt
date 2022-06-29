@@ -60,6 +60,9 @@ enum class Strings(val en: String) {
     MenuViewToggleMarker(
         en = "Show Parameter Controllers"
     ),
+    MenuViewToggleProperties(
+        en = "Show Properties"
+    ),
     MenuNavigate(
         en = "Navigate"
     ),

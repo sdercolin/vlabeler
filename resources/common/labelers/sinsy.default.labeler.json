@@ -1,6 +1,6 @@
 {
   "name": "sinsy.default",
-  "version": 2,
+  "version": 3,
   "extension": "lab",
   "defaultInputFilePath": null,
   "displayedName": "Sinsy lab labeler",
@@ -20,7 +20,18 @@
     "useStart": false
   },
   "decimalDigit": 4,
-  "properties": [],
+  "properties": [
+    {
+      "name": "start",
+      "displayedName": "Start",
+      "value": "{start}"
+    },
+    {
+      "name": "end",
+      "displayedName": "End",
+      "value": "{end}"
+    }
+  ],
   "parser": {
     "defaultEncoding": "UTF-8",
     "extractionPattern": "(.*) (.*) (.*)",

@@ -65,7 +65,7 @@ data class LabelerConf(
     /**
      * Decimal digit count of the properties and writer
      */
-    val decimalDigit: Int = 3,
+    val decimalDigit: Int = 2,
     /**
      * Properties that are used in the following procedures. See [Property]
      */
@@ -213,6 +213,7 @@ data class LabelerConf(
     /**
      * Definition of properties that will be written to the raw label file
      * @param name Unique name of the property
+     * @param displayedName Name displayed in property view UI
      * @param value Mathematical expression text including fields written as "{[Field.name]}" and "{start}", "{end}".
      * Extra fields of number type defined in [extraFieldNames] are also available. Expression is calculated by Python's
      * "eval()".
@@ -221,6 +222,7 @@ data class LabelerConf(
     @Immutable
     data class Property(
         val name: String,
+        val displayedName: String,
         val value: String
     )
 

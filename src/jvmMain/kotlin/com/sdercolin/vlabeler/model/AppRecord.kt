@@ -1,13 +1,15 @@
 package com.sdercolin.vlabeler.model
 
+import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.util.asPathRelativeToHome
 import com.sdercolin.vlabeler.util.asSimplifiedPaths
 import kotlinx.serialization.Serializable
 
+@Immutable
 @Serializable
 data class AppRecord(
     val recentProjects: List<String> = listOf(),
-    val isMarkerDisplayed: Boolean = true
+    val isPropertyViewDisplayed: Boolean = false
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(

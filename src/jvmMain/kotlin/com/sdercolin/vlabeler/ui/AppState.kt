@@ -42,14 +42,17 @@ class AppState(
     val snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
     val availableLabelerConfs: List<LabelerConf>,
-    appRecord: MutableState<AppRecord>
+    private val appRecordState: MutableState<AppRecord>
 ) {
     private val editorState get() = (screen as? Screen.Editor)?.editorState
-    val viewState = AppViewState(appRecord)
+
+    // If written as `val viewState = AppViewState(appRecordState)`, following error happens:
+    // java.awt.IllegalComponentStateException: The window is showing on screen.
+    val viewState by lazy { AppViewState(appRecordState) }
 
     var appConf: AppConf by appConf
         private set
-    var appRecord: AppRecord by appRecord
+    var appRecord: AppRecord by appRecordState
         private set
     private val projectState: MutableState<Project?> = mutableStateOf(null)
     var project: Project?

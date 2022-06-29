@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
+import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.theme.Black50
 import kotlinx.coroutines.flow.collectLatest
 
@@ -60,6 +61,9 @@ fun Labeler(
                 editorState = editorState,
                 appState = appState
             )
+            if (appState.viewState.isPropertyViewDisplayed) {
+                PropertyView(editorState.project)
+            }
         }
         HorizontalScrollbar(
             modifier = Modifier.fillMaxWidth().height(20.dp),

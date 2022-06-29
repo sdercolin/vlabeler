@@ -131,8 +131,13 @@ private fun LabelerConf.getExtraMap(entry: Entry) = extraFieldNames.mapIndexed {
     name to entry.extra[index]
 }.toMap()
 
-private fun LabelerConf.getPropertyMap(fields: Map<String, Float>, extras: Map<String, String>, python: Python) =
-    properties.associate {
-        val value = it.value.replaceWithVariables(fields + extras).let(python::eval)
-        it.name to value
+private fun LabelerConf.getPropertyBaseMap(fields: Map<String, Float>, extras: Map<String, String>, python: Python) =
+    properties.associateWith {
+        it.value.replaceWithVariables(fields + extras).let(python::eval)
     }
+
+private fun LabelerConf.getPropertyMap(fields: Map<String, Float>, extras: Map<String, String>, python: Python) =
+    getPropertyBaseMap(fields, extras, python).mapKeys { it.key.name }
+
+fun LabelerConf.getPropertyMap(entry: Entry, python: Python) =
+    getPropertyBaseMap(getFieldMap(entry), getExtraMap(entry), python)

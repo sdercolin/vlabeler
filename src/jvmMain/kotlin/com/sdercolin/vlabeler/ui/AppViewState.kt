@@ -5,7 +5,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.util.update
 
-class AppViewState(appRecord: MutableState<AppRecord>) {
-    var isMarkerDisplayed: Boolean by mutableStateOf(appRecord.value.isMarkerDisplayed)
+class AppViewState(private val appRecord: MutableState<AppRecord>) {
+    var isMarkerDisplayed: Boolean by mutableStateOf(true)
+
+    private val isPropertyViewDisplayedState = mutableStateOf(appRecord.value.isPropertyViewDisplayed)
+    var isPropertyViewDisplayed: Boolean
+        get() = isPropertyViewDisplayedState.value
+        set(value) {
+            isPropertyViewDisplayedState.value = value
+            appRecord.update { copy(isPropertyViewDisplayed = value) }
+        }
 }
