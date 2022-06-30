@@ -66,8 +66,14 @@ class AppState(
         }
     var history: ProjectHistory by mutableStateOf(ProjectHistory())
         private set
-    var screen: Screen by mutableStateOf(Screen.Starter)
-        private set
+
+    private val screenState = mutableStateOf<Screen>(Screen.Starter)
+    var screen: Screen
+        get() = screenState.value
+        private set(value) {
+            closeAllDialogs()
+            screenState.value = value
+        }
     var isShowingOpenProjectDialog: Boolean by mutableStateOf(false)
         private set
     var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
@@ -75,7 +81,6 @@ class AppState(
     var isShowingExportDialog: Boolean by mutableStateOf(false)
         private set
     private var pendingActionAfterSaved: PendingActionAfterSaved? by mutableStateOf(null)
-        private set
     var embeddedDialog: EmbeddedDialogArgs? by mutableStateOf(null)
         private set
 
@@ -184,6 +189,13 @@ class AppState(
 
     fun closeSaveAsProjectDialog() {
         isShowingSaveAsProjectDialog = false
+    }
+
+    fun closeAllDialogs() {
+        isShowingOpenProjectDialog = false
+        isShowingSaveAsProjectDialog = false
+        isShowingExportDialog = false
+        embeddedDialog = null
     }
 
     fun requestExport() = if (hasUnsavedChanges) askIfSaveBeforeExport() else openExportDialog()
