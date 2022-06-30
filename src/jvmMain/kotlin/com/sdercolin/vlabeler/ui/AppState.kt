@@ -39,21 +39,22 @@ class AppState(
     val player: Player,
     val keyboardViewModel: KeyboardViewModel,
     val scrollFitViewModel: ScrollFitViewModel,
+    private val appRecordStore: AppRecordStore,
     val snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
-    val availableLabelerConfs: List<LabelerConf>,
-    private val appRecordState: MutableState<AppRecord>
+    val availableLabelerConfs: List<LabelerConf>
 ) {
     private val editorState get() = (screen as? Screen.Editor)?.editorState
 
     // If written as `val viewState = AppViewState(appRecordState)`, following error happens:
     // java.awt.IllegalComponentStateException: The window is showing on screen.
-    val viewState by lazy { AppViewState(appRecordState) }
+    val viewState by lazy { AppViewState(appRecordStore) }
 
     var appConf: AppConf by appConf
         private set
-    var appRecord: AppRecord by appRecordState
-        private set
+
+    val appRecord: AppRecord get() = appRecordStore.value
+
     private val projectState: MutableState<Project?> = mutableStateOf(null)
     var project: Project?
         get() = projectState.value
@@ -100,11 +101,11 @@ class AppState(
     }
 
     fun addRecentProject(file: File) {
-        appRecord = appRecord.addRecent(file.absolutePath)
+        appRecordStore.update { addRecent(file.absolutePath) }
     }
 
     fun clearRecentProjects() {
-        appRecord = appRecord.copy(recentProjects = listOf())
+        appRecordStore.update { copy(recentProjects = listOf()) }
     }
 
     val hasProject get() = project != null
@@ -406,19 +407,19 @@ fun rememberAppState(
     player: Player,
     keyboardViewModel: KeyboardViewModel,
     scrollFitViewModel: ScrollFitViewModel,
+    appRecordStore: AppRecordStore,
     snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
-    availableLabelerConfs: List<LabelerConf>,
-    appRecord: MutableState<AppRecord>
+    availableLabelerConfs: List<LabelerConf>
 ) = remember {
     AppState(
         playerState,
         player,
         keyboardViewModel,
         scrollFitViewModel,
+        appRecordStore,
         snackbarHostState,
         appConf,
-        availableLabelerConfs,
-        appRecord
+        availableLabelerConfs
     )
 }

@@ -11,6 +11,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
@@ -25,6 +29,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.App
+import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.Menu
 import com.sdercolin.vlabeler.ui.ProjectChangesListener
@@ -45,6 +50,7 @@ import com.sdercolin.vlabeler.util.getCustomLabelers
 import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
+import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
 fun main() = application {
@@ -59,18 +65,18 @@ fun main() = application {
 
     val appConf = rememberAppConf()
     val availableLabelerConfs = rememberAvailableLabelerConfs()
+    val appRecord = rememberAppRecordStore(mainScope)
 
     val appState = rememberAppState(
         playerState,
         player,
         keyboardViewModel,
         scrollFitViewModel,
+        appRecord,
         snackbarHostState,
         appConf,
-        availableLabelerConfs,
-        rememberAppRecord()
+        availableLabelerConfs
     )
-    LaunchSaveAppRecord(appState)
 
     LaunchedEffect(Unit) {
         keyboardViewModel.keyboardEventFlow.collect { event ->
@@ -80,12 +86,15 @@ fun main() = application {
         }
     }
 
+    val windowSize = remember { appRecord.value.windowSizeDp }
+    val density = LocalDensity.current
     Window(
         title = string(Strings.AppName),
-        state = WindowState(width = 1200.dp, height = 800.dp), // TODO: remember in appConf
+        state = WindowState(width = windowSize.first.dp, height = windowSize.second.dp),
         onCloseRequest = { appState.requestExit() },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
+        Box(Modifier.fillMaxSize().onSizeChanged { appRecord.saveWindowSize(it, density) })
         Menu(mainScope, appState)
         AppTheme {
             App(mainScope, appState)
@@ -185,16 +194,18 @@ private fun ensureDirectories() {
 }
 
 @Composable
-private fun rememberAppRecord() = remember {
-    val recordText = AppRecordFile.takeIf { it.exists() }?.readText() ?: return@remember mutableStateOf(AppRecord())
-    mutableStateOf(parseJson(recordText))
+private fun rememberAppRecordStore(scope: CoroutineScope) = remember {
+    val recordText = AppRecordFile.takeIf { it.exists() }?.readText()
+    val appRecord = recordText?.let { parseJson(it) } ?: AppRecord()
+    AppRecordStore(appRecord, scope)
 }
 
-@Composable
-private fun LaunchSaveAppRecord(appState: AppState) {
-    LaunchedEffect(appState.appRecord) {
-        AppRecordFile.writeText(toJson(appState.appRecord))
-    }
+private fun AppRecordStore.saveWindowSize(size: IntSize, density: Density) {
+    val width = with(density) { size.width.toDp() }.value
+    val height = with(density) { size.height.toDp() }.value
+    val dpSize = width to height
+    Log.info("Window size changed: $dpSize")
+    update { copy(windowSizeDp = dpSize) }
 }
 
 @Composable
