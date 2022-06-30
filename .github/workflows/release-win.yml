@@ -35,7 +35,7 @@ jobs:
         run: |
           $VERSION="${{ github.ref_name }}"
           echo $VERSION
-          Compress-Archive ./build/compose/binaries/main/app ./vlabeler-$VERSION-win64.zip
+          Compress-Archive ./build/compose/binaries/main/app/vLabeler/* ./vlabeler-$VERSION-win64.zip
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
