@@ -60,20 +60,19 @@ fun fromRawLabels(
         }
     }
         .groupBy { it.first }
-        .map { group -> group.key to group.value.map { it.second }.sortedBy { it.name } }
-        .sortedBy { it.first }
+        .map { group -> group.key to group.value.map { it.second } }
         .toMap()
-    return sampleNames.associateWith { sampleName ->
-        (
-            entriesBySampleName[sampleName]
-                ?.takeUnless { it.isEmpty() }
-                ?: listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues, labelerConf.defaultExtras))
-                    .also {
-                        Log.info("Sample $sampleName doesn't have entries, created default: ${it.first()}")
-                    }
-            )
-            .toContinuous(labelerConf.continuous)
+
+    val sampleNamesNotUsed = sampleNames.filterNot { it in entriesBySampleName.keys }
+    val additionalSampleMap = sampleNamesNotUsed.associateWith { sampleName ->
+        listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues, labelerConf.defaultExtras))
+            .also {
+                Log.info("Sample $sampleName doesn't have entries, created default: ${it.first()}")
+            }
     }
+
+    return (entriesBySampleName + additionalSampleMap)
+        .mapValues { it.value.toContinuous(labelerConf.continuous) }
 }
 
 private fun List<Entry>.toContinuous(continuous: Boolean): List<Entry> {
