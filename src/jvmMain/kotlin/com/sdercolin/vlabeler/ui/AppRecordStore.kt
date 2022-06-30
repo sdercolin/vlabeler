@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.util.AppRecordFile
 import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -21,7 +22,7 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
     }
 
     private fun push(appRecord: AppRecord) {
-        scope.launch {
+        scope.launch(Dispatchers.IO) {
             stateFlow.emit(appRecord)
         }
     }
@@ -29,7 +30,7 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
     val value: AppRecord get() = stateFlow.value
 
     private fun collectAndWrite() {
-        scope.launch {
+        scope.launch(Dispatchers.IO) {
             stateFlow.collectLatest {
                 delay(ThrottlePeriodMs)
                 AppRecordFile.writeText(toJson(it))
