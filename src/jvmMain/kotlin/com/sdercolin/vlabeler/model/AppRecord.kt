@@ -9,7 +9,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AppRecord(
     val recentProjects: List<String> = listOf(),
-    val isPropertyViewDisplayed: Boolean = false
+    val isPropertyViewDisplayed: Boolean = false,
+    val isEntryListPinned: Boolean = false
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(

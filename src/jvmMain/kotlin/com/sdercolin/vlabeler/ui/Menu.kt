@@ -125,6 +125,13 @@ fun FrameWindowScope.Menu(
                 enabled = appState.isEditorActive,
                 onCheckedChange = { appState.viewState.isPropertyViewDisplayed = it }
             )
+            CheckboxItem(
+                string(Strings.MenuViewPinEntryList),
+                shortcut = getKeyShortCut(Key.Two, ctrl = true),
+                checked = appState.viewState.isEntryListPinned,
+                enabled = appState.isEditorActive,
+                onCheckedChange = { appState.viewState.isEntryListPinned = it }
+            )
         }
         Menu(string(Strings.MenuNavigate), mnemonic = 'N') {
             Item(

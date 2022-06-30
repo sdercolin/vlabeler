@@ -246,7 +246,6 @@ class AppState(
             is AskIfSaveDialogResult -> takeAskIfSaveResult(result)
             is JumpToEntryDialogArgsResult -> {
                 jumpToEntry(result.sampleName, result.index)
-                scrollFitViewModel.emitNext()
             }
             is EditEntryNameDialogResult -> run {
                 if (result.duplicate) {
@@ -290,11 +289,14 @@ class AppState(
         scrollFitViewModel.emitNext()
     }
 
-    private fun jumpToEntry(sampleName: String, entryIndex: Int) = editProject {
-        project!!.copy(
-            currentSampleName = sampleName,
-            currentEntryIndex = entryIndex
-        )
+    fun jumpToEntry(sampleName: String, entryIndex: Int) {
+        editProject {
+            project!!.copy(
+                currentSampleName = sampleName,
+                currentEntryIndex = entryIndex
+            )
+        }
+        scrollFitViewModel.emitNext()
     }
 
     fun openEditEntryNameDialog(

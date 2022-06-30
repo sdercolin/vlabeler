@@ -17,4 +17,12 @@ class AppViewState(private val appRecord: MutableState<AppRecord>) {
             isPropertyViewDisplayedState.value = value
             appRecord.update { copy(isPropertyViewDisplayed = value) }
         }
+
+    private val isEntryListPinnedState = mutableStateOf(appRecord.value.isEntryListPinned)
+    var isEntryListPinned: Boolean
+        get() = isEntryListPinnedState.value
+        set(value) {
+            isEntryListPinnedState.value = value
+            appRecord.update { copy(isEntryListPinned = value) }
+        }
 }
