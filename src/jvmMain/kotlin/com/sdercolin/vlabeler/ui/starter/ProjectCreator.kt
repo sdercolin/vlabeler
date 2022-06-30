@@ -47,6 +47,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -58,7 +59,8 @@ fun ProjectCreator(
     cancel: () -> Unit,
     availableLabelerConfs: List<LabelerConf>,
     snackbarHostState: SnackbarHostState,
-    state: ProjectCreatorState = rememberProjectCreatorState(availableLabelerConfs)
+    appRecordStore: AppRecordStore,
+    state: ProjectCreatorState = rememberProjectCreatorState(availableLabelerConfs, appRecordStore),
 ) {
     val coroutineScope = rememberCoroutineScope()
 

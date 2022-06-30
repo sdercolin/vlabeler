@@ -27,7 +27,8 @@ fun App(
                     create = { openCreatedProject(mainScope, it, appState) },
                     cancel = { appState.closeProjectCreator() },
                     availableLabelerConfs = appState.availableLabelerConfs,
-                    snackbarHostState = appState.snackbarHostState
+                    snackbarHostState = appState.snackbarHostState,
+                    appRecordStore = appState.appRecordStore
                 )
             is AppState.Screen.Editor -> Editor(screen.editorState, appState)
         }

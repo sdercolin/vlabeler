@@ -39,7 +39,7 @@ class AppState(
     val player: Player,
     val keyboardViewModel: KeyboardViewModel,
     val scrollFitViewModel: ScrollFitViewModel,
-    private val appRecordStore: AppRecordStore,
+    val appRecordStore: AppRecordStore,
     val snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
     val availableLabelerConfs: List<LabelerConf>

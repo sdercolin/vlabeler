@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.AvailableEncodings
@@ -24,11 +25,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
-class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>) {
+class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val appRecordStore: AppRecordStore) {
+    private val appRecord get() = appRecordStore.value
     var isLoading: Boolean by mutableStateOf(false)
-    var sampleDirectory: String by mutableStateOf(HomeDir.absolutePath)
+    var sampleDirectory: String by mutableStateOf(appRecord.sampleDirectory ?: HomeDir.absolutePath)
         private set
-    var workingDirectory: String by mutableStateOf(HomeDir.absolutePath)
+    var workingDirectory: String by mutableStateOf(appRecord.workingDirectory ?: HomeDir.absolutePath)
         private set
     private var workingDirectoryEdited: Boolean by mutableStateOf(false)
     var projectName: String by mutableStateOf("")
@@ -36,7 +38,9 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>) {
     private var projectNameEdited: Boolean by mutableStateOf(false)
     var currentPathPicker: PathPicker? by mutableStateOf(null)
         private set
-    var labeler: LabelerConf by mutableStateOf(availableLabelerConfs.first())
+    var labeler: LabelerConf by mutableStateOf(
+        availableLabelerConfs.firstOrNull { it.name == appRecord.labelerName } ?: availableLabelerConfs.first()
+    )
     var inputLabelFile: String by mutableStateOf("")
         private set
     private var inputLabelFileEdited: Boolean by mutableStateOf(false)
@@ -204,6 +208,13 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>) {
                     "input=$inputLabelFile, " +
                     "encoding=$encoding"
             )
+            appRecordStore.update {
+                copy(
+                    sampleDirectory = this@ProjectCreatorState.sampleDirectory,
+                    workingDirectory = this@ProjectCreatorState.workingDirectory,
+                    labelerName = this@ProjectCreatorState.labeler.name
+                )
+            }
             val project = Project.from(
                 sampleDirectory = sampleDirectory,
                 workingDirectory = workingDirectory,
@@ -229,8 +240,11 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>) {
 }
 
 @Composable
-fun rememberProjectCreatorState(availableLabelerConfs: List<LabelerConf>) = remember(availableLabelerConfs) {
-    ProjectCreatorState(availableLabelerConfs)
+fun rememberProjectCreatorState(
+    availableLabelerConfs: List<LabelerConf>,
+    appRecordStore: AppRecordStore
+) = remember(availableLabelerConfs) {
+    ProjectCreatorState(availableLabelerConfs, appRecordStore)
 }
 
 enum class PathPicker {

@@ -1,10 +1,12 @@
 package com.sdercolin.vlabeler.ui.editor
 
+import androidx.compose.runtime.Stable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
+@Stable
 class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
 
     private val _eventFlow = MutableSharedFlow<Int>(replay = 0)
