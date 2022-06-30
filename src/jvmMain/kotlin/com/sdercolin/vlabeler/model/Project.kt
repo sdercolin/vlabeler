@@ -17,7 +17,8 @@ data class Project(
     val entriesBySampleName: Map<String, List<Entry>>,
     val labelerConf: LabelerConf,
     val currentSampleName: String,
-    val currentEntryIndex: Int
+    val currentEntryIndex: Int,
+    val encoding: String? = null
 ) {
 
     val currentSampleFile: File
@@ -188,7 +189,8 @@ data class Project(
                 entriesBySampleName = entriesBySample,
                 labelerConf = labelerConf,
                 currentSampleName = sampleNames.first(),
-                currentEntryIndex = 0
+                currentEntryIndex = 0,
+                encoding = encoding
             )
             return Result.success(project)
         }

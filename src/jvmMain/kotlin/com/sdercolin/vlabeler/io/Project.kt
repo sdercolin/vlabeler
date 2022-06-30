@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.nio.charset.Charset
 
 fun loadProject(
     scope: CoroutineScope,
@@ -69,8 +70,10 @@ fun exportProject(
 ) {
     mainScope.launch(Dispatchers.IO) {
         appState.startProcess()
-        val outputText = appState.project!!.toRawLabels()
-        File(parent, name).writeText(outputText)
+        val project = appState.project!!
+        val outputText = project.toRawLabels()
+        val charset = project.encoding?.let { Charset.forName(it) } ?: Charsets.UTF_8
+        File(parent, name).writeText(outputText, charset)
         appState.finishProcess()
     }
 }
