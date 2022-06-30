@@ -60,7 +60,8 @@ fun fromRawLabels(
         }
     }
         .groupBy { it.first }
-        .map { group -> group.key to group.value.map { it.second } }
+        .map { group -> group.key to group.value.map { it.second }.sortedBy { it.name } }
+        .sortedBy { it.first }
         .toMap()
     return sampleNames.associateWith { sampleName ->
         (
