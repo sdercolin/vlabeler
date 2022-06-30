@@ -40,16 +40,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.common.plainClickable
@@ -104,15 +102,15 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (sampleName: Strin
                     .onPreviewKeyEvent {
                         if (searchResult.isEmpty()) return@onPreviewKeyEvent false
                         when {
-                            (it.key == Key.DirectionDown && it.type == KeyEventType.KeyUp) -> {
+                            it.isReleased(Key.DirectionDown) -> {
                                 selectedIndex = selectedIndex.plus(1).coerceAtMost(searchResult.lastIndex)
                                 true
                             }
-                            (it.key == Key.DirectionUp && it.type == KeyEventType.KeyUp) -> {
+                            it.isReleased(Key.DirectionUp) -> {
                                 selectedIndex = selectedIndex.minus(1).coerceAtLeast(0)
                                 true
                             }
-                            (it.key == Key.Enter && it.type == KeyEventType.KeyUp) -> {
+                            it.isReleased(Key.Enter) -> {
                                 submit(selectedIndex)
                                 true
                             }

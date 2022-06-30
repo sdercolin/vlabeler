@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.foundation.layout.Arrangement
@@ -18,9 +20,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
@@ -52,6 +58,14 @@ fun EditEntryNameDialog(
 
     var input by remember { mutableStateOf(args.initial) }
 
+    val trySubmit = {
+        if (args.invalidOptions.contains(input)) {
+            args.showSnackbar(string(Strings.EditEntryNameDialogExistingError))
+        } else {
+            submit(input)
+        }
+    }
+
     Column(Modifier.widthIn(min = 350.dp)) {
         Spacer(Modifier.height(15.dp))
         Text(
@@ -67,7 +81,15 @@ fun EditEntryNameDialog(
         )
         Spacer(Modifier.height(20.dp))
         OutlinedTextField(
-            modifier = Modifier.width(150.dp),
+            modifier = Modifier.width(150.dp)
+                .onKeyEvent {
+                    if (it.isReleased(Key.Enter)) {
+                        trySubmit()
+                        true
+                    } else {
+                        false
+                    }
+                },
             value = input,
             singleLine = true,
             isError = args.invalidOptions.contains(input),
@@ -82,13 +104,7 @@ fun EditEntryNameDialog(
             }
             Spacer(Modifier.width(25.dp))
             Button(
-                onClick = {
-                    if (args.invalidOptions.contains(input)) {
-                        args.showSnackbar(string(Strings.EditEntryNameDialogExistingError))
-                    } else {
-                        submit(input)
-                    }
-                }
+                onClick = { trySubmit() }
             ) {
                 Text(string(Strings.CommonOkay))
             }

@@ -88,6 +88,7 @@ data class KeyboardState(
     val isShiftPressed: Boolean = false
 )
 
+fun KeyEvent.isReleased(key: Key) = released && this.key == key
 val KeyEvent.released get() = type == KeyEventType.KeyUp
 val KeyEvent.shouldTogglePlayer get() = key == Key.Spacebar && released
 val KeyEvent.shouldIncreaseResolution get() = (key == Key.Minus || key == Key.NumPadSubtract) && released

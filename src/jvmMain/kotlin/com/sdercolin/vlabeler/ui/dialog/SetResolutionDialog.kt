@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
@@ -18,9 +20,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
@@ -48,7 +54,15 @@ fun SetResolutionDialog(
         )
         Spacer(Modifier.height(20.dp))
         OutlinedTextField(
-            modifier = Modifier.width(150.dp),
+            modifier = Modifier.width(150.dp)
+                .onKeyEvent { event ->
+                    if (event.isReleased(Key.Enter)) {
+                        input.toIntOrNull()?.let { submit(it) }
+                        true
+                    } else {
+                        false
+                    }
+                },
             value = input,
             singleLine = true,
             onValueChange = {
