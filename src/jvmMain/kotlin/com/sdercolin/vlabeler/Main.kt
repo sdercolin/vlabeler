@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -90,6 +91,7 @@ fun main() = application {
     val density = LocalDensity.current
     Window(
         title = string(Strings.AppName),
+        icon = painterResource("icon.ico"),
         state = WindowState(width = windowSize.first.dp, height = windowSize.second.dp),
         onCloseRequest = { appState.requestExit() },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
