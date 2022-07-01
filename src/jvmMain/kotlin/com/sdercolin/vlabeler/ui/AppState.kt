@@ -43,11 +43,11 @@ class AppState(
     appConf: MutableState<AppConf>,
     val availableLabelerConfs: List<LabelerConf>,
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
-    dialogState: AppDialogState = AppDialogStateImpl(),
-    unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl()
+    unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl(),
+    dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState)
 ) : AppViewState by viewState,
-    AppDialogState by dialogState,
-    AppUnsavedChangesState by unsavedChangesState {
+    AppUnsavedChangesState by unsavedChangesState,
+    AppDialogState by dialogState {
 
     private val editorState get() = (screen as? Screen.Editor)?.editorState
 
@@ -140,23 +140,6 @@ class AppState(
     }
 
     fun closeProjectCreator() = reset()
-
-    fun requestOpenProject() = if (hasUnsavedChanges) askIfSaveBeforeOpenProject() else openOpenProjectDialog()
-    private fun askIfSaveBeforeOpenProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpening)
-
-    fun requestOpenRecentProject(scope: CoroutineScope, file: File) =
-        if (hasUnsavedChanges) {
-            askIfSaveBeforeOpenRecentProject(scope, file)
-        } else {
-            loadProject(scope, file, this)
-        }
-
-    private fun askIfSaveBeforeOpenRecentProject(scope: CoroutineScope, file: File) =
-        openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpeningRecent(scope, file))
-
-
-    fun requestExport() = if (hasUnsavedChanges) askIfSaveBeforeExport() else openExportDialog()
-    private fun askIfSaveBeforeExport() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExporting)
 
     fun requestCloseProject() = if (hasUnsavedChanges) askIfSaveBeforeCloseProject() else reset()
     private fun askIfSaveBeforeCloseProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsClosing)
