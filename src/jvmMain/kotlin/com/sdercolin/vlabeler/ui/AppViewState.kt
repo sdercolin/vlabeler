@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.sdercolin.vlabeler.util.cached
+import com.sdercolin.vlabeler.util.savedMutableStateOf
 
 interface AppViewState {
     var isMarkerDisplayed: Boolean
@@ -14,13 +14,13 @@ interface AppViewState {
 class AppViewStateImpl(appRecord: AppRecordStore) : AppViewState {
     override var isMarkerDisplayed: Boolean by mutableStateOf(true)
 
-    override var isPropertyViewDisplayed by appRecord.cached(
-        selector = { it.isPropertyViewDisplayed },
-        updater = { base, value -> base.copy(isPropertyViewDisplayed = value) }
-    )
+    override var isPropertyViewDisplayed: Boolean
+        by savedMutableStateOf(appRecord.value.isPropertyViewDisplayed) {
+            appRecord.update { copy(isPropertyViewDisplayed = it) }
+        }
 
-    override var isEntryListPinned: Boolean by appRecord.cached(
-        selector = { it.isEntryListPinned },
-        updater = { base, value -> base.copy(isEntryListPinned = value) }
-    )
+    override var isEntryListPinned: Boolean
+        by savedMutableStateOf(appRecord.value.isEntryListPinned) {
+            appRecord.update { copy(isEntryListPinned = it) }
+        }
 }

@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.editor.EditedEntry
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
+import com.sdercolin.vlabeler.util.savedMutableStateOf
 
 interface ProjectStore {
     val project: Project?
@@ -40,14 +41,9 @@ class ProjectStoreImpl(
     private val scrollFitViewModel: ScrollFitViewModel
 ) : ProjectStore {
 
-    private val projectState: MutableState<Project?> = mutableStateOf(null)
-
-    override var project: Project?
-        get() = projectState.value
-        set(value) {
-            if (value != null) screenState.editor?.updateProject(value)
-            projectState.value = value
-        }
+    override var project: Project? by savedMutableStateOf(null) {
+        if (it != null) screenState.editor?.updateProject(it)
+    }
 
     override val hasProject get() = project != null
     override fun requireProject(): Project = requireNotNull(project)
