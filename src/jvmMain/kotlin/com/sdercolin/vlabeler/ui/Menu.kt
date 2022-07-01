@@ -114,23 +114,23 @@ fun FrameWindowScope.Menu(
             CheckboxItem(
                 string(Strings.MenuViewToggleMarker),
                 shortcut = getKeyShortCut(Key.Zero, ctrl = true),
-                checked = appState.viewState.isMarkerDisplayed,
+                checked = appState.isMarkerDisplayed,
                 enabled = appState.isEditorActive,
-                onCheckedChange = { appState.viewState.isMarkerDisplayed = it }
+                onCheckedChange = { appState.isMarkerDisplayed = it }
             )
             CheckboxItem(
                 string(Strings.MenuViewToggleProperties),
                 shortcut = getKeyShortCut(Key.One, ctrl = true),
-                checked = appState.viewState.isPropertyViewDisplayed,
+                checked = appState.isPropertyViewDisplayed,
                 enabled = appState.isEditorActive,
-                onCheckedChange = { appState.viewState.isPropertyViewDisplayed = it }
+                onCheckedChange = { appState.isPropertyViewDisplayed = it }
             )
             CheckboxItem(
                 string(Strings.MenuViewPinEntryList),
                 shortcut = getKeyShortCut(Key.Two, ctrl = true),
-                checked = appState.viewState.isEntryListPinned,
+                checked = appState.isEntryListPinned,
                 enabled = appState.isEditorActive,
-                onCheckedChange = { appState.viewState.isEntryListPinned = it }
+                onCheckedChange = { appState.isEntryListPinned = it }
             )
         }
         Menu(string(Strings.MenuNavigate), mnemonic = 'N') {

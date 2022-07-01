@@ -22,7 +22,6 @@ import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogResult
-import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
@@ -42,13 +41,13 @@ class AppState(
     val appRecordStore: AppRecordStore,
     val snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
-    val availableLabelerConfs: List<LabelerConf>
-) {
-    private val editorState get() = (screen as? Screen.Editor)?.editorState
+    val availableLabelerConfs: List<LabelerConf>,
+    viewState: AppViewState = AppViewStateImpl(appRecordStore),
+    dialogState: AppDialogState = AppDialogStateImpl()
+) : AppViewState by viewState,
+    AppDialogState by dialogState {
 
-    // If written as `val viewState = AppViewState(appRecordState)`, following error happens:
-    // java.awt.IllegalComponentStateException: The window is showing on screen.
-    val viewState by lazy { AppViewState(appRecordStore) }
+    private val editorState get() = (screen as? Screen.Editor)?.editorState
 
     var appConf: AppConf by appConf
         private set
@@ -74,15 +73,6 @@ class AppState(
             closeAllDialogs()
             screenState.value = value
         }
-    var isShowingOpenProjectDialog: Boolean by mutableStateOf(false)
-        private set
-    var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
-        private set
-    var isShowingExportDialog: Boolean by mutableStateOf(false)
-        private set
-    private var pendingActionAfterSaved: PendingActionAfterSaved? by mutableStateOf(null)
-    var embeddedDialog: EmbeddedDialogArgs? by mutableStateOf(null)
-        private set
 
     /**
      * Describes the update status between [Project] state and project file
@@ -98,11 +88,8 @@ class AppState(
         project = null
         history = ProjectHistory()
         screen = Screen.Starter
-        isShowingExportDialog = false
-        isShowingSaveAsProjectDialog = false
-        isShowingExportDialog = false
-        pendingActionAfterSaved = null
-        embeddedDialog = null
+        closeAllDialogs()
+        clearPendingActionAfterSaved()
     }
 
     fun addRecentProject(file: File) {
@@ -149,9 +136,7 @@ class AppState(
     }
 
     fun requestOpenProjectCreator() = if (hasUnsavedChanges) askIfSaveBeforeCreateProject() else openProjectCreator()
-    private fun askIfSaveBeforeCreateProject() {
-        embeddedDialog = AskIfSaveDialogPurpose.IsCreatingNew
-    }
+    private fun askIfSaveBeforeCreateProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsCreatingNew)
 
     private fun openProjectCreator() {
         screen = Screen.ProjectCreator
@@ -160,9 +145,7 @@ class AppState(
     fun closeProjectCreator() = reset()
 
     fun requestOpenProject() = if (hasUnsavedChanges) askIfSaveBeforeOpenProject() else openOpenProjectDialog()
-    private fun askIfSaveBeforeOpenProject() {
-        embeddedDialog = AskIfSaveDialogPurpose.IsOpening
-    }
+    private fun askIfSaveBeforeOpenProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpening)
 
     fun requestOpenRecentProject(scope: CoroutineScope, file: File) =
         if (hasUnsavedChanges) {
@@ -171,56 +154,21 @@ class AppState(
             loadProject(scope, file, this)
         }
 
-    private fun askIfSaveBeforeOpenRecentProject(scope: CoroutineScope, file: File) {
-        embeddedDialog = AskIfSaveDialogPurpose.IsOpeningRecent(scope, file)
-    }
+    private fun askIfSaveBeforeOpenRecentProject(scope: CoroutineScope, file: File) =
+        openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpeningRecent(scope, file))
 
-    fun openOpenProjectDialog() {
-        isShowingOpenProjectDialog = true
-    }
-
-    fun closeOpenProjectDialog() {
-        isShowingOpenProjectDialog = false
-    }
-
-    fun openSaveAsProjectDialog() {
-        isShowingSaveAsProjectDialog = true
-    }
-
-    fun closeSaveAsProjectDialog() {
-        isShowingSaveAsProjectDialog = false
-    }
-
-    fun closeAllDialogs() {
-        isShowingOpenProjectDialog = false
-        isShowingSaveAsProjectDialog = false
-        isShowingExportDialog = false
-        embeddedDialog = null
-    }
 
     fun requestExport() = if (hasUnsavedChanges) askIfSaveBeforeExport() else openExportDialog()
-    private fun askIfSaveBeforeExport() {
-        embeddedDialog = AskIfSaveDialogPurpose.IsExporting
-    }
-
-    private fun openExportDialog() {
-        isShowingExportDialog = true
-    }
-
-    fun closeExportDialog() {
-        isShowingExportDialog = false
-    }
+    private fun askIfSaveBeforeExport() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExporting)
 
     fun requestCloseProject() = if (hasUnsavedChanges) askIfSaveBeforeCloseProject() else reset()
-    private fun askIfSaveBeforeCloseProject() {
-        embeddedDialog = AskIfSaveDialogPurpose.IsClosing
-    }
+    private fun askIfSaveBeforeCloseProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsClosing)
 
     val hasUnsavedChanges get() = projectWriteStatus == ProjectWriteStatus.Changed
 
     fun requestSave(pendingAction: PendingActionAfterSaved? = null) {
         projectWriteStatus = ProjectWriteStatus.UpdateRequested
-        pendingActionAfterSaved = pendingAction
+        putPendingActionAfterSaved(pendingAction)
     }
 
     private fun takeAskIfSaveResult(result: AskIfSaveDialogResult) =
@@ -241,14 +189,6 @@ class AppState(
         PendingActionAfterSaved.Exit -> exit()
         is PendingActionAfterSaved.OpenRecent -> loadProject(action.scope, action.file, this)
         null -> Unit
-    }
-
-    fun openEmbeddedDialog(args: EmbeddedDialogArgs) {
-        embeddedDialog = args
-    }
-
-    fun closeEmbeddedDialog() {
-        embeddedDialog = null
     }
 
     fun handleDialogResult(
@@ -273,9 +213,7 @@ class AppState(
         }
     }
 
-    fun openJumpToEntryDialog() {
-        embeddedDialog = JumpToEntryDialogArgs(project!!)
-    }
+    fun openJumpToEntryDialog() = openEmbeddedDialog(JumpToEntryDialogArgs(project!!))
 
     val canGoNextEntryOrSample get() = project?.run { currentEntryIndexInTotal < totalEntryCount - 1 } == true
     val canGoPreviousEntryOrSample get() = project?.run { currentEntryIndexInTotal > 0 } == true
@@ -375,9 +313,7 @@ class AppState(
     }
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
-    private fun askIfSaveBeforeExit() {
-        embeddedDialog = AskIfSaveDialogPurpose.IsExiting
-    }
+    private fun askIfSaveBeforeExit() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExiting)
 
     private fun exit() {
         shouldExit = true

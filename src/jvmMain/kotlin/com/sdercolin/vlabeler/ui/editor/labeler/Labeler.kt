@@ -61,7 +61,7 @@ fun Labeler(
                 editorState = editorState,
                 appState = appState
             )
-            if (appState.viewState.isPropertyViewDisplayed) {
+            if (appState.isPropertyViewDisplayed) {
                 PropertyView(editorState.project)
             }
         }

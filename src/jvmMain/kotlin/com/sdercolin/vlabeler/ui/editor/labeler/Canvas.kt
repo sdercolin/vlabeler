@@ -81,7 +81,7 @@ fun Canvas(
                         }
                     }
                 }
-                if (appState.viewState.isMarkerDisplayed) {
+                if (appState.isMarkerDisplayed) {
                     MarkerCanvas(
                         sample = sample,
                         canvasParams = canvasParams,

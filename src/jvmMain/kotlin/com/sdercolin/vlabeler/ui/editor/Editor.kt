@@ -56,7 +56,7 @@ fun Editor(state: EditorState, appState: AppState) {
                 appState = appState
             )
         }
-        if (appState.viewState.isEntryListPinned) {
+        if (appState.isEntryListPinned) {
             Card(
                 modifier = Modifier.fillMaxHeight().weight(0.4f),
                 elevation = 10.dp,

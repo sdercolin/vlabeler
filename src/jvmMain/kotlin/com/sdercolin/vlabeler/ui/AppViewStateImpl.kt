@@ -5,15 +5,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.util.cached
 
-class AppViewState(appRecord: AppRecordStore) {
-    var isMarkerDisplayed: Boolean by mutableStateOf(true)
+interface AppViewState {
+    var isMarkerDisplayed: Boolean
+    var isPropertyViewDisplayed: Boolean
+    var isEntryListPinned: Boolean
+}
 
-    var isPropertyViewDisplayed by appRecord.cached(
+class AppViewStateImpl(appRecord: AppRecordStore) : AppViewState {
+    override var isMarkerDisplayed: Boolean by mutableStateOf(true)
+
+    override var isPropertyViewDisplayed by appRecord.cached(
         selector = { it.isPropertyViewDisplayed },
         updater = { base, value -> base.copy(isPropertyViewDisplayed = value) }
     )
 
-    var isEntryListPinned: Boolean by appRecord.cached(
+    override var isEntryListPinned: Boolean by appRecord.cached(
         selector = { it.isEntryListPinned },
         updater = { base, value -> base.copy(isEntryListPinned = value) }
     )
