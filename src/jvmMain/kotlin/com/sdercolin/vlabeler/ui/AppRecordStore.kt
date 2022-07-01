@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppRecord
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Stable
-class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
+class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) : MutableState<AppRecord> {
 
     private val stateFlow = MutableStateFlow(appRecord)
 
@@ -21,13 +22,21 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
         collectAndWrite()
     }
 
+    override var value: AppRecord
+        get() = stateFlow.value
+        set(value) {
+            push(value)
+        }
+
+    override fun component1(): AppRecord = value
+
+    override fun component2(): (AppRecord) -> Unit = { value = it }
+
     private fun push(appRecord: AppRecord) {
         scope.launch(Dispatchers.IO) {
             stateFlow.emit(appRecord)
         }
     }
-
-    val value: AppRecord get() = stateFlow.value
 
     private fun collectAndWrite() {
         scope.launch(Dispatchers.IO) {

@@ -3,23 +3,18 @@ package com.sdercolin.vlabeler.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.util.backed
 
-class AppViewState(private val appRecord: AppRecordStore) {
+class AppViewState(appRecord: AppRecordStore) {
     var isMarkerDisplayed: Boolean by mutableStateOf(true)
 
-    private val isPropertyViewDisplayedState = mutableStateOf(appRecord.value.isPropertyViewDisplayed)
-    var isPropertyViewDisplayed: Boolean
-        get() = isPropertyViewDisplayedState.value
-        set(value) {
-            isPropertyViewDisplayedState.value = value
-            appRecord.update { copy(isPropertyViewDisplayed = value) }
-        }
+    var isPropertyViewDisplayed by appRecord.backed(
+        valueSelector = { it.isPropertyViewDisplayed },
+        valueUpdater = { base, value -> base.copy(isPropertyViewDisplayed = value) }
+    )
 
-    private val isEntryListPinnedState = mutableStateOf(appRecord.value.isEntryListPinned)
-    var isEntryListPinned: Boolean
-        get() = isEntryListPinnedState.value
-        set(value) {
-            isEntryListPinnedState.value = value
-            appRecord.update { copy(isEntryListPinned = value) }
-        }
+    var isEntryListPinned: Boolean by appRecord.backed(
+        valueSelector = { it.isEntryListPinned },
+        valueUpdater = { base, value -> base.copy(isEntryListPinned = value) }
+    )
 }

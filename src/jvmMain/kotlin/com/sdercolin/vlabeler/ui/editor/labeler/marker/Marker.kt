@@ -74,6 +74,7 @@ fun MarkerCanvas(
     appState: AppState,
     state: MarkerState = rememberMarkerState(sample, canvasParams, editorState, appState)
 ) {
+
     FieldBorderCanvas(editorState, appState, state)
     FieldLabelCanvas(state)
     if (state.labelerConf.continuous) {
