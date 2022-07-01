@@ -26,6 +26,7 @@ import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
 class AppState(
@@ -51,7 +52,7 @@ class AppState(
     var appConf: AppConf by appConf
         private set
 
-    val appRecord: AppRecord get() = appRecordStore.value
+    val appRecordFlow: StateFlow<AppRecord> get() = appRecordStore.stateFlow
 
     var isBusy: Boolean by mutableStateOf(false)
         private set
@@ -120,7 +121,8 @@ class AppState(
     }
 
     fun handleDialogResult(
-        result: EmbeddedDialogResult
+        result: EmbeddedDialogResult,
+        mainScope: CoroutineScope
     ) {
         when (result) {
             is SetResolutionDialogResult -> changeResolution(result.newValue)
@@ -135,8 +137,12 @@ class AppState(
                     renameEntry(result.sampleName, result.index, result.name)
                 }
             }
-            is CommonConfirmationDialogResult -> when (result.action) {
-                CommonConfirmationDialogAction.RemoveCurrentEntry -> removeCurrentEntry()
+            is CommonConfirmationDialogResult -> when (val action = result.action) {
+                is CommonConfirmationDialogAction.RemoveCurrentEntry -> removeCurrentEntry()
+                is CommonConfirmationDialogAction.LoadAutoSavedProject -> {
+                    loadProject(mainScope, action.file, this)
+                    hasLoadedAutoSavedProject = true
+                }
             }
         }
     }
@@ -153,10 +159,17 @@ class AppState(
         editor?.changeResolution(newValue)
     }
 
+    fun checkAutoSavedProject() {
+        val file = getAutoSavedProjectFile()
+        if (file != null) {
+            confirmIfLoadAutoSavedProject(file)
+        }
+    }
+
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
-    private fun askIfSaveBeforeExit() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExiting)
 
     private fun exit() {
+        discardAutoSavedProjects()
         shouldExit = true
     }
 

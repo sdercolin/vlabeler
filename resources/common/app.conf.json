@@ -21,5 +21,6 @@
       "maxIntensity": 45,
       "windowType": "Hamming"
     }
-  }
+  },
+  "autoSaveIntervalSecond": 30
 }

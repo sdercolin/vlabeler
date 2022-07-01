@@ -15,12 +15,12 @@ class AppViewStateImpl(appRecord: AppRecordStore) : AppViewState {
     override var isMarkerDisplayed: Boolean by mutableStateOf(true)
 
     override var isPropertyViewDisplayed: Boolean
-        by savedMutableStateOf(appRecord.value.isPropertyViewDisplayed) {
+        by savedMutableStateOf(appRecord.stateFlow.value.isPropertyViewDisplayed) {
             appRecord.update { copy(isPropertyViewDisplayed = it) }
         }
 
     override var isEntryListPinned: Boolean
-        by savedMutableStateOf(appRecord.value.isEntryListPinned) {
+        by savedMutableStateOf(appRecord.stateFlow.value.isEntryListPinned) {
             appRecord.update { copy(isEntryListPinned = it) }
         }
 }

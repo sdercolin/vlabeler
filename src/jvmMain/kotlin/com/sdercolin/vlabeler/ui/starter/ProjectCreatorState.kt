@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val appRecordStore: AppRecordStore) {
-    private val appRecord get() = appRecordStore.value
+    private val appRecord get() = appRecordStore.stateFlow.value
     var isLoading: Boolean by mutableStateOf(false)
     var sampleDirectory: String by mutableStateOf(appRecord.sampleDirectory ?: HomeDir.absolutePath)
         private set

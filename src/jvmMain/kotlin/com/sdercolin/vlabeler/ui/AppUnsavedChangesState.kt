@@ -7,6 +7,7 @@ import com.sdercolin.vlabeler.model.Project
 
 interface AppUnsavedChangesState {
     val hasUnsavedChanges: Boolean
+    var hasLoadedAutoSavedProject: Boolean
     val projectWriteStatus: ProjectWriteStatus
 
     fun requestProjectSave()
@@ -28,6 +29,8 @@ class AppUnsavedChangesStateImpl : AppUnsavedChangesState {
 
     override var projectWriteStatus: ProjectWriteStatus by mutableStateOf(ProjectWriteStatus.Updated)
 
+    override var hasLoadedAutoSavedProject: Boolean = false
+
     override val hasUnsavedChanges: Boolean
         get() = projectWriteStatus == ProjectWriteStatus.Changed
 
@@ -40,10 +43,15 @@ class AppUnsavedChangesStateImpl : AppUnsavedChangesState {
     }
 
     override fun projectPathChanged() {
-        projectWriteStatus = ProjectWriteStatus.Updated
+        projectWriteStatus = if (hasLoadedAutoSavedProject) {
+            ProjectWriteStatus.Changed
+        } else {
+            ProjectWriteStatus.Updated
+        }
     }
 
     override fun projectSaved() {
+        hasLoadedAutoSavedProject = false
         projectWriteStatus = ProjectWriteStatus.Updated
     }
 }

@@ -186,6 +186,9 @@ enum class Strings(val en: String) {
     AskIfRemoveEntryDialogDescription(
         en = "Removing current entry..."
     ),
+    AskIfLoadAutoSavedProjectDialogDescription(
+        en = "Auto-saved project file found. Do you want to load it? If not, the file will be discarded."
+    ),
     CanvasLengthOverflowError(
         en = "The charts are too long to be painted." +
             " Please use \"-\" button to reduce data length, or divide the input files priorly."

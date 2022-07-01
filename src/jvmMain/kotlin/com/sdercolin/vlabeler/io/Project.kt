@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomLabelerDir
+import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
@@ -43,7 +44,7 @@ fun loadProject(
         }
         Log.info("Project loaded: $project")
         appState.openEditor(project.copy(labelerConf = labelerConf))
-        appState.addRecentProject(file)
+        appState.addRecentProject(project.projectFile)
         appState.scrollFitViewModel.emitNext()
         appState.hideProgress()
     }
@@ -78,15 +79,21 @@ fun exportProject(
     }
 }
 
-suspend fun saveProjectFile(project: Project): File {
-    return withContext(Dispatchers.IO) {
-        val workingDirectory = File(project.workingDirectory)
-        if (!workingDirectory.exists()) {
-            workingDirectory.mkdir()
-        }
-        val projectContent = toJson(project)
-        project.projectFile.writeText(projectContent)
-        Log.debug("Project saved to ${project.projectFile}")
-        project.projectFile
+suspend fun saveProjectFile(project: Project): File = withContext(Dispatchers.IO) {
+    val workingDirectory = File(project.workingDirectory)
+    if (!workingDirectory.exists()) {
+        workingDirectory.mkdir()
     }
+    val projectContent = toJson(project)
+    project.projectFile.writeText(projectContent)
+    Log.debug("Project saved to ${project.projectFile}")
+    project.projectFile
+}
+
+suspend fun autoSaveProjectFile(project: Project): File = withContext(Dispatchers.IO) {
+    val file = RecordDir.resolve("_" + project.projectFile.name)
+    val projectContent = toJson(project)
+    file.writeText(projectContent)
+    Log.debug("Project auto-saved to $file")
+    file
 }

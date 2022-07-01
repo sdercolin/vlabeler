@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.io.openCreatedProject
 import com.sdercolin.vlabeler.ui.common.CircularProgress
@@ -19,6 +20,12 @@ fun App(
     mainScope: CoroutineScope,
     appState: AppState
 ) {
+    LaunchedEffect(Unit) {
+        appState.checkAutoSavedProject()
+    }
+    LaunchedEffect(appState.appConf.autoSaveIntervalSecond) {
+        appState.enableAutoSaveProject(appState.appConf.autoSaveIntervalSecond, mainScope, appState)
+    }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         when (val screen = appState.screen) {
             is Screen.Starter -> Starter(mainScope, appState)
@@ -35,7 +42,7 @@ fun App(
         appState.embeddedDialog?.let { args ->
             EmbeddedDialog(args) { result ->
                 appState.closeEmbeddedDialog()
-                if (result != null) appState.handleDialogResult(result)
+                if (result != null) appState.handleDialogResult(result, mainScope)
             }
         }
     }

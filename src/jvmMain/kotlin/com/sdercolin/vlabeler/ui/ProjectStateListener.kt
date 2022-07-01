@@ -12,8 +12,9 @@ fun ProjectChangesListener(appState: AppState) {
     val project = appState.project
     var previousProjectPath by remember { mutableStateOf(project?.projectFile?.absolutePath) }
     LaunchedEffect(project) {
-        if (previousProjectPath != project?.projectFile?.absolutePath) {
-            previousProjectPath = project?.projectFile?.absolutePath
+        val currentPath = project?.projectFile?.absolutePath
+        if (previousProjectPath != currentPath) {
+            previousProjectPath = currentPath
             appState.projectPathChanged()
             return@LaunchedEffect
         }

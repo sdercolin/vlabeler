@@ -1,6 +1,8 @@
 package com.sdercolin.vlabeler.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
@@ -19,7 +21,6 @@ fun FrameWindowScope.Menu(
     mainScope: CoroutineScope,
     appState: AppState
 ) {
-
     MenuBar {
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
             Item(
@@ -32,8 +33,9 @@ fun FrameWindowScope.Menu(
                 onClick = { appState.requestOpenProject() },
                 shortcut = getKeyShortCut(Key.O, ctrl = true, shift = true)
             )
+            val appRecord by appState.appRecordFlow.collectAsState()
             Menu(string(Strings.MenuFileOpenRecent)) {
-                appState.appRecord.recentProjectPathsWithDisplayNames.forEach { (path, displayName) ->
+                appRecord.recentProjectPathsWithDisplayNames.forEach { (path, displayName) ->
                     Item(
                         text = displayName,
                         onClick = { appState.requestOpenRecentProject(mainScope, File(path), appState) }
@@ -42,7 +44,7 @@ fun FrameWindowScope.Menu(
                 Separator()
                 Item(
                     text = string(Strings.MenuFileOpenRecentClear),
-                    enabled = appState.appRecord.recentProjects.isNotEmpty(),
+                    enabled = appRecord.recentProjects.isNotEmpty(),
                     onClick = { appState.clearRecentProjects() }
                 )
             }

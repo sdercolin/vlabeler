@@ -21,6 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -87,7 +89,8 @@ fun BoxScope.Starter(
                         style = MaterialTheme.typography.h5
                     )
                     Spacer(Modifier.height(30.dp))
-                    val recentPaths = appState.appRecord.recentProjectPathsWithDisplayNames
+                    val appRecord by appState.appRecordFlow.collectAsState()
+                    val recentPaths = appRecord.recentProjectPathsWithDisplayNames
                     val recentFiles = recentPaths.map { File(it.first) }
                     if (recentFiles.isEmpty()) {
                         Text(text = string(Strings.StarterRecentEmpty), style = MaterialTheme.typography.body2)

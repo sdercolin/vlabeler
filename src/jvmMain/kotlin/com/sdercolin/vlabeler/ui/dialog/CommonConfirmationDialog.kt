@@ -19,11 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import java.io.File
 
-enum class CommonConfirmationDialogAction(
+sealed class CommonConfirmationDialogAction(
     val stringKey: Strings
 ) : EmbeddedDialogArgs {
-    RemoveCurrentEntry(Strings.AskIfRemoveEntryDialogDescription)
+    object RemoveCurrentEntry : CommonConfirmationDialogAction(Strings.AskIfRemoveEntryDialogDescription)
+    class LoadAutoSavedProject(val file: File) :
+        CommonConfirmationDialogAction(Strings.AskIfLoadAutoSavedProjectDialogDescription)
 }
 
 data class CommonConfirmationDialogResult(

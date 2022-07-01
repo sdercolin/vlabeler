@@ -6,11 +6,13 @@ import kotlinx.serialization.Serializable
 /**
  * Basic configurations of app
  * @param painter Configurations about chart painting
+ * @param autoSaveIntervalSecond Interval in second to auto-save the project; never do auto-save if the value is null
  */
 @Serializable
 @Immutable
 data class AppConf(
-    val painter: Painter = Painter()
+    val painter: Painter = Painter(),
+    val autoSaveIntervalSecond: Int? = 30
 ) {
     /**
      * Configurations about chart painting

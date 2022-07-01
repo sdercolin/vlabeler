@@ -3,11 +3,20 @@ package com.sdercolin.vlabeler.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.io.autoSaveProjectFile
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.editor.EditedEntry
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
+import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.savedMutableStateOf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import java.io.File
 
 interface ProjectStore {
     val project: Project?
@@ -33,6 +42,9 @@ interface ProjectStore {
     fun duplicateEntry(sampleName: String, index: Int, newName: String)
     val canRemoveCurrentEntry: Boolean
     fun removeCurrentEntry()
+    fun getAutoSavedProjectFile(): File?
+    fun discardAutoSavedProjects()
+    fun enableAutoSaveProject(intervalSecond: Int?, scope: CoroutineScope, unsavedChangesState: AppUnsavedChangesState)
 }
 
 class ProjectStoreImpl(
@@ -135,4 +147,38 @@ class ProjectStoreImpl(
         } == true
 
     override fun removeCurrentEntry() = editProject { removeCurrentEntry() }
+
+    private fun listAutoSavedProjectFiles() = RecordDir.listFiles().orEmpty()
+        .filter { it.extension == Project.ProjectFileExtension && it.name.startsWith("_") }
+
+    override fun getAutoSavedProjectFile(): File? = listAutoSavedProjectFiles().firstOrNull()
+
+    override fun discardAutoSavedProjects() {
+        autoSaveJob?.cancel()
+        autoSaveJob = null
+        listAutoSavedProjectFiles().forEach { it.delete() }
+    }
+
+    private var autoSaveJob: Job? = null
+    private var autoSavedProject: Project? = null
+
+    override fun enableAutoSaveProject(
+        intervalSecond: Int?,
+        scope: CoroutineScope,
+        unsavedChangesState: AppUnsavedChangesState
+    ) {
+        autoSaveJob?.cancel()
+        autoSaveJob = null
+        if (intervalSecond == null || intervalSecond <= 0) return
+        autoSaveJob = scope.launch(Dispatchers.IO) {
+            while (isActive) {
+                delay(intervalSecond * 1000L)
+                val project = project ?: continue
+                if (unsavedChangesState.hasUnsavedChanges && autoSavedProject != project) {
+                    autoSaveProjectFile(project)
+                    autoSavedProject = project
+                }
+            }
+        }
+    }
 }

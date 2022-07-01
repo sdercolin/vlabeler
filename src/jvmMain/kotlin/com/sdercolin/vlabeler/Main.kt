@@ -6,6 +6,7 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -66,14 +67,14 @@ fun main() = application {
 
     val appConf = rememberAppConf()
     val availableLabelerConfs = rememberAvailableLabelerConfs()
-    val appRecord = rememberAppRecordStore(mainScope)
+    val appRecordStore = rememberAppRecordStore(mainScope)
 
     val appState = rememberAppState(
         playerState,
         player,
         keyboardViewModel,
         scrollFitViewModel,
-        appRecord,
+        appRecordStore,
         snackbarHostState,
         appConf,
         availableLabelerConfs
@@ -87,6 +88,7 @@ fun main() = application {
         }
     }
 
+    val appRecord = appRecordStore.stateFlow.collectAsState()
     val windowSize = remember { appRecord.value.windowSizeDp }
     val density = LocalDensity.current
     Window(
@@ -96,7 +98,7 @@ fun main() = application {
         onCloseRequest = { appState.requestExit() },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
-        Box(Modifier.fillMaxSize().onSizeChanged { appRecord.saveWindowSize(it, density) })
+        Box(Modifier.fillMaxSize().onSizeChanged { appRecordStore.saveWindowSize(it, density) })
         Menu(mainScope, appState)
         AppTheme {
             App(mainScope, appState)
