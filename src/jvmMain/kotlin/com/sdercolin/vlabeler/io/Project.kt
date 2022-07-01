@@ -25,7 +25,7 @@ fun loadProject(
             appState.snackbarHostState.showSnackbar(string(Strings.StarterRecentDeleted))
             return@launch
         }
-        appState.startProcess()
+        appState.showProgress()
         val project = parseJson<Project>(file.readText())
         val existingLabelerConf = appState.availableLabelerConfs.find { it.name == project.labelerConf.name }
         val labelerConf = when {
@@ -45,7 +45,7 @@ fun loadProject(
         appState.openProject(project.copy(labelerConf = labelerConf))
         appState.addRecentProject(file)
         appState.scrollFitViewModel.emitNext()
-        appState.finishProcess()
+        appState.hideProgress()
     }
 }
 
@@ -69,12 +69,12 @@ fun exportProject(
     appState: AppState
 ) {
     mainScope.launch(Dispatchers.IO) {
-        appState.startProcess()
+        appState.showProgress()
         val project = appState.project!!
         val outputText = project.toRawLabels()
         val charset = project.encoding?.let { Charset.forName(it) } ?: Charsets.UTF_8
         File(parent, name).writeText(outputText, charset)
-        appState.finishProcess()
+        appState.hideProgress()
     }
 }
 

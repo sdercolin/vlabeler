@@ -270,12 +270,11 @@ class AppState(
     fun confirmIfRemoveCurrentEntry() = openEmbeddedDialog(CommonConfirmationDialogAction.RemoveCurrentEntry)
     private fun removeCurrentEntry() = editProject { removeCurrentEntry() }
 
-
-    fun startProcess() {
+    fun showProgress() {
         isBusy = true
     }
 
-    fun finishProcess() {
+    fun hideProgress() {
         isBusy = false
     }
 
