@@ -8,7 +8,7 @@ import com.sdercolin.vlabeler.io.saveProjectFile
 fun ProjectWriter(appState: AppState) {
     val writtenStatus = appState.projectWriteStatus
     LaunchedEffect(writtenStatus) {
-        if (writtenStatus != AppState.ProjectWriteStatus.UpdateRequested) return@LaunchedEffect
+        if (writtenStatus != ProjectWriteStatus.UpdateRequested) return@LaunchedEffect
         val project = appState.project ?: return@LaunchedEffect
         saveProjectFile(project)
         appState.notifySaved()

@@ -43,9 +43,11 @@ class AppState(
     appConf: MutableState<AppConf>,
     val availableLabelerConfs: List<LabelerConf>,
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
-    dialogState: AppDialogState = AppDialogStateImpl()
+    dialogState: AppDialogState = AppDialogStateImpl(),
+    unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl()
 ) : AppViewState by viewState,
-    AppDialogState by dialogState {
+    AppDialogState by dialogState,
+    AppUnsavedChangesState by unsavedChangesState {
 
     private val editorState get() = (screen as? Screen.Editor)?.editorState
 
@@ -74,11 +76,6 @@ class AppState(
             screenState.value = value
         }
 
-    /**
-     * Describes the update status between [Project] state and project file
-     */
-    var projectWriteStatus: ProjectWriteStatus by mutableStateOf(ProjectWriteStatus.Updated)
-        private set
     var isBusy: Boolean by mutableStateOf(false)
         private set
     var shouldExit: Boolean by mutableStateOf(false)
@@ -164,10 +161,8 @@ class AppState(
     fun requestCloseProject() = if (hasUnsavedChanges) askIfSaveBeforeCloseProject() else reset()
     private fun askIfSaveBeforeCloseProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsClosing)
 
-    val hasUnsavedChanges get() = projectWriteStatus == ProjectWriteStatus.Changed
-
     fun requestSave(pendingAction: PendingActionAfterSaved? = null) {
-        projectWriteStatus = ProjectWriteStatus.UpdateRequested
+        requestProjectSave()
         putPendingActionAfterSaved(pendingAction)
     }
 
@@ -177,7 +172,7 @@ class AppState(
         } else consumePendingActionAfterSaved(result.actionAfterSaved)
 
     fun notifySaved() {
-        projectWriteStatus = ProjectWriteStatus.Updated
+        projectSaved()
         consumePendingActionAfterSaved(pendingActionAfterSaved)
     }
 
@@ -292,13 +287,6 @@ class AppState(
     fun confirmIfRemoveCurrentEntry() = openEmbeddedDialog(CommonConfirmationDialogAction.RemoveCurrentEntry)
     private fun removeCurrentEntry() = editProject { removeCurrentEntry() }
 
-    fun projectContentChanged() {
-        projectWriteStatus = ProjectWriteStatus.Changed
-    }
-
-    fun projectPathChanged() {
-        projectWriteStatus = ProjectWriteStatus.Updated
-    }
 
     fun startProcess() {
         isBusy = true
@@ -331,12 +319,6 @@ class AppState(
         object Starter : Screen()
         object ProjectCreator : Screen()
         class Editor(val editorState: EditorState) : Screen()
-    }
-
-    enum class ProjectWriteStatus {
-        Updated,
-        Changed,
-        UpdateRequested
     }
 
     sealed class PendingActionAfterSaved {
