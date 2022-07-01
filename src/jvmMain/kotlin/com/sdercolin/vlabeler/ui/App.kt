@@ -21,8 +21,8 @@ fun App(
 ) {
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         when (val screen = appState.screen) {
-            is AppState.Screen.Starter -> Starter(mainScope, appState)
-            is AppState.Screen.ProjectCreator ->
+            is Screen.Starter -> Starter(mainScope, appState)
+            is Screen.ProjectCreator ->
                 ProjectCreator(
                     create = { openCreatedProject(mainScope, it, appState) },
                     cancel = { appState.closeProjectCreator() },
@@ -30,7 +30,7 @@ fun App(
                     snackbarHostState = appState.snackbarHostState,
                     appRecordStore = appState.appRecordStore
                 )
-            is AppState.Screen.Editor -> Editor(screen.editorState, appState)
+            is Screen.Editor -> Editor(screen.state, appState)
         }
         appState.embeddedDialog?.let { args ->
             EmbeddedDialog(args) { result ->

@@ -15,22 +15,17 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
-import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
-import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
-import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
-import com.sdercolin.vlabeler.ui.editor.EditedEntry
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.io.File
 
 class AppState(
@@ -43,38 +38,20 @@ class AppState(
     appConf: MutableState<AppConf>,
     val availableLabelerConfs: List<LabelerConf>,
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
+    screenState: AppScreenState = AppScreenStateImpl(),
+    projectStore: ProjectStore = ProjectStoreImpl(screenState, scrollFitViewModel),
     unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl(),
-    dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState)
+    dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarHostState)
 ) : AppViewState by viewState,
+    AppScreenState by screenState,
+    ProjectStore by projectStore,
     AppUnsavedChangesState by unsavedChangesState,
     AppDialogState by dialogState {
-
-    private val editorState get() = (screen as? Screen.Editor)?.editorState
 
     var appConf: AppConf by appConf
         private set
 
     val appRecord: AppRecord get() = appRecordStore.value
-
-    private val projectState: MutableState<Project?> = mutableStateOf(null)
-    var project: Project?
-        get() = projectState.value
-        private set(value) {
-            if (value != null) {
-                editorState?.updateProject(value)
-            }
-            projectState.value = value
-        }
-    var history: ProjectHistory by mutableStateOf(ProjectHistory())
-        private set
-
-    private val screenState = mutableStateOf<Screen>(Screen.Starter)
-    var screen: Screen
-        get() = screenState.value
-        private set(value) {
-            closeAllDialogs()
-            screenState.value = value
-        }
 
     var isBusy: Boolean by mutableStateOf(false)
         private set
@@ -82,11 +59,14 @@ class AppState(
         private set
 
     private fun reset() {
-        project = null
-        history = ProjectHistory()
-        screen = Screen.Starter
-        closeAllDialogs()
+        clearProject()
+        changeScreen(Screen.Starter)
         clearPendingActionAfterSaved()
+    }
+
+    private fun changeScreen(screen: Screen) {
+        this.screen = screen
+        closeAllDialogs()
     }
 
     fun addRecentProject(file: File) {
@@ -97,48 +77,18 @@ class AppState(
         appRecordStore.update { copy(recentProjects = listOf()) }
     }
 
-    val hasProject get() = project != null
-    fun openProject(newProject: Project) {
-        project = newProject
-        history = ProjectHistory.new(newProject)
+    fun openEditor(project: Project) {
+        newProject(project)
         val editor = EditorState(
-            project = newProject,
+            project = project,
             appState = this
         )
-        screen = Screen.Editor(editor)
-    }
-
-    fun editProject(editor: Project.() -> Project) {
-        val edited = project!!.editor()
-        project = edited
-        history = history.push(edited)
-    }
-
-    private fun editNonNullProject(editor: Project.() -> Project?) {
-        val edited = project!!.editor() ?: return
-        project = edited
-        history = history.push(edited)
-    }
-
-    fun editEntry(editedEntry: EditedEntry) = editProject { updateEntry(editedEntry) }
-
-    fun undo() {
-        history = history.undo()
-        project = history.current
-    }
-
-    fun redo() {
-        history = history.redo()
-        project = history.current
+        changeScreen(Screen.Editor(editor))
     }
 
     fun requestOpenProjectCreator() = if (hasUnsavedChanges) askIfSaveBeforeCreateProject() else openProjectCreator()
     private fun askIfSaveBeforeCreateProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsCreatingNew)
-
-    private fun openProjectCreator() {
-        screen = Screen.ProjectCreator
-    }
-
+    private fun openProjectCreator() = changeScreen(Screen.ProjectCreator)
     fun closeProjectCreator() = reset()
 
     fun requestCloseProject() = if (hasUnsavedChanges) askIfSaveBeforeCloseProject() else reset()
@@ -191,85 +141,6 @@ class AppState(
         }
     }
 
-    fun openJumpToEntryDialog() = openEmbeddedDialog(JumpToEntryDialogArgs(project!!))
-
-    val canGoNextEntryOrSample get() = project?.run { currentEntryIndexInTotal < totalEntryCount - 1 } == true
-    val canGoPreviousEntryOrSample get() = project?.run { currentEntryIndexInTotal > 0 } == true
-
-    fun nextEntry() {
-        val previousProject = project
-        editNonNullProject { nextEntry() }
-        if (project!!.hasSwitchedSample(previousProject)) scrollFitViewModel.emitNext()
-    }
-
-    fun previousEntry() {
-        val previous = project
-        editNonNullProject { previousEntry() }
-        if (project!!.hasSwitchedSample(previous)) scrollFitViewModel.emitNext()
-    }
-
-    fun nextSample() {
-        editNonNullProject { nextSample() }
-        scrollFitViewModel.emitNext()
-    }
-
-    fun previousSample() {
-        editNonNullProject { previousSample() }
-        scrollFitViewModel.emitNext()
-    }
-
-    fun jumpToEntry(sampleName: String, entryIndex: Int) {
-        editProject {
-            project!!.copy(
-                currentSampleName = sampleName,
-                currentEntryIndex = entryIndex
-            )
-        }
-        scrollFitViewModel.emitNext()
-    }
-
-    fun openEditEntryNameDialog(
-        duplicate: Boolean,
-        scope: CoroutineScope
-    ) {
-        val project = project!!
-        val sampleName = project.currentSampleName
-        val index = project.currentEntryIndex
-        val entry = project.currentEntry
-        val invalidOptions = if (project.labelerConf.allowSameNameEntry) {
-            listOf()
-        } else {
-            project.allEntries.map { it.name }
-                .run { if (!duplicate) minus(entry.name) else this }
-        }
-        openEmbeddedDialog(
-            EditEntryNameDialogArgs(
-                sampleName = sampleName,
-                index = index,
-                initial = entry.name,
-                invalidOptions = invalidOptions,
-                showSnackbar = { scope.launch { snackbarHostState.showSnackbar(it) } },
-                duplicate = duplicate
-            )
-        )
-    }
-
-    private fun renameEntry(sampleName: String, index: Int, newName: String) = editProject {
-        renameEntry(sampleName, index, newName)
-    }
-
-    private fun duplicateEntry(sampleName: String, index: Int, newName: String) = editProject {
-        duplicateEntry(sampleName, index, newName).copy(currentEntryIndex = index + 1)
-    }
-
-    val canRemoveCurrentEntry
-        get() = project?.let {
-            it.entriesBySampleName.getValue(it.currentSampleName).size > 1
-        } == true
-
-    fun confirmIfRemoveCurrentEntry() = openEmbeddedDialog(CommonConfirmationDialogAction.RemoveCurrentEntry)
-    private fun removeCurrentEntry() = editProject { removeCurrentEntry() }
-
     fun showProgress() {
         isBusy = true
     }
@@ -279,7 +150,7 @@ class AppState(
     }
 
     private fun changeResolution(newValue: Int) {
-        editorState?.changeResolution(newValue)
+        editor?.changeResolution(newValue)
     }
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
@@ -290,18 +161,7 @@ class AppState(
     }
 
     val isEditorActive
-        get() = project != null &&
-            screen is Screen.Editor &&
-            !isShowingOpenProjectDialog &&
-            !isShowingSaveAsProjectDialog &&
-            !isShowingExportDialog &&
-            embeddedDialog == null
-
-    sealed class Screen {
-        object Starter : Screen()
-        object ProjectCreator : Screen()
-        class Editor(val editorState: EditorState) : Screen()
-    }
+        get() = project != null && screen is Screen.Editor && !anyDialogOpening()
 
     sealed class PendingActionAfterSaved {
         object Open : PendingActionAfterSaved()

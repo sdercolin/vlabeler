@@ -1,12 +1,17 @@
 package com.sdercolin.vlabeler.ui
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
+import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
+import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 interface AppDialogState {
@@ -28,11 +33,21 @@ interface AppDialogState {
     fun putPendingActionAfterSaved(action: AppState.PendingActionAfterSaved?)
     fun clearPendingActionAfterSaved()
     fun openEmbeddedDialog(args: EmbeddedDialogArgs)
+    fun openJumpToEntryDialog()
+    fun openEditEntryNameDialog(duplicate: Boolean, scope: CoroutineScope)
+    fun confirmIfRemoveCurrentEntry()
     fun closeEmbeddedDialog()
     fun closeAllDialogs()
+
+    fun anyDialogOpening() =
+        isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || embeddedDialog != null
 }
 
-class AppDialogStateImpl(private val appUnsavedChangesState: AppUnsavedChangesState) : AppDialogState {
+class AppDialogStateImpl(
+    private val appUnsavedChangesState: AppUnsavedChangesState,
+    private val projectStore: ProjectStore,
+    private val snackbarHostState: SnackbarHostState
+) : AppDialogState {
     override var isShowingOpenProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingExportDialog: Boolean by mutableStateOf(false)
@@ -71,7 +86,7 @@ class AppDialogStateImpl(private val appUnsavedChangesState: AppUnsavedChangesSt
         isShowingSaveAsProjectDialog = false
     }
 
-    override  fun requestExport() = if (hasUnsavedChanges) askIfSaveBeforeExport() else openExportDialog()
+    override fun requestExport() = if (hasUnsavedChanges) askIfSaveBeforeExport() else openExportDialog()
     private fun askIfSaveBeforeExport() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExporting)
 
     override fun openExportDialog() {
@@ -93,6 +108,36 @@ class AppDialogStateImpl(private val appUnsavedChangesState: AppUnsavedChangesSt
     override fun openEmbeddedDialog(args: EmbeddedDialogArgs) {
         embeddedDialog = args
     }
+
+    override fun openJumpToEntryDialog() = openEmbeddedDialog(JumpToEntryDialogArgs(projectStore.requireProject()))
+
+    override fun openEditEntryNameDialog(
+        duplicate: Boolean,
+        scope: CoroutineScope
+    ) {
+        val project = projectStore.requireProject()
+        val sampleName = project.currentSampleName
+        val index = project.currentEntryIndex
+        val entry = project.currentEntry
+        val invalidOptions = if (project.labelerConf.allowSameNameEntry) {
+            listOf()
+        } else {
+            project.allEntries.map { it.name }
+                .run { if (!duplicate) minus(entry.name) else this }
+        }
+        openEmbeddedDialog(
+            EditEntryNameDialogArgs(
+                sampleName = sampleName,
+                index = index,
+                initial = entry.name,
+                invalidOptions = invalidOptions,
+                showSnackbar = { scope.launch { snackbarHostState.showSnackbar(it) } },
+                duplicate = duplicate
+            )
+        )
+    }
+
+    override fun confirmIfRemoveCurrentEntry() = openEmbeddedDialog(CommonConfirmationDialogAction.RemoveCurrentEntry)
 
     override fun closeEmbeddedDialog() {
         embeddedDialog = null
