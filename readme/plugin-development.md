@@ -69,6 +69,9 @@ class Entry:
 ```
 Please check [LabelerConf.kt](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) for details of its properties.
 
+**Note that you should create at least one entry for every sample file.**
+
+
 ### Examples
 Check the following built-in plugins as examples:
 - [ust2lab-ja-kana](../resources/common/plugins/template/ust2lab-ja-kana): Use an input ust file to generate sinsy lab entries
