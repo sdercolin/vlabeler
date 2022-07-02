@@ -60,6 +60,7 @@ class PluginDialogState(
 ) {
     val paramDefs = plugin.parameters?.list.orEmpty()
     val params = mutableStateListOf(*paramMap.map { it.value.toString() }.toTypedArray())
+    val hasParams get() = paramDefs.isNotEmpty()
 
     fun apply() {
         val newMap = params.mapIndexed { index, textValue ->
@@ -195,15 +196,17 @@ private fun Content(state: PluginDialogState) {
                     )
                 }
                 Spacer(Modifier.height(25.dp))
-                Params(state)
-                Spacer(Modifier.height(25.dp))
+                if (state.hasParams) {
+                    Params(state)
+                    Spacer(Modifier.height(25.dp))
+                }
                 Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
                     TextButton(
                         onClick = { state.cancel() }
                     ) {
                         Text(string(Strings.CommonCancel))
                     }
-                    Spacer(Modifier.width(25.dp))
+                    Spacer(Modifier.width(40.dp))
                     Button(
                         enabled = state.isAllValid(),
                         onClick = { state.apply() }
