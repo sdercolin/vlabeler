@@ -10,17 +10,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.rememberPlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
@@ -55,6 +53,8 @@ import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.io.File
 
 fun main() = application {
@@ -94,15 +94,19 @@ fun main() = application {
 
     val appRecord = appRecordStore.stateFlow.collectAsState()
     val windowSize = remember { appRecord.value.windowSizeDp }
-    val density = LocalDensity.current
+    val windowState = rememberWindowState(width = windowSize.first.dp, height = windowSize.second.dp)
     Window(
         title = string(Strings.AppName),
         icon = painterResource("icon.ico"),
-        state = WindowState(width = windowSize.first.dp, height = windowSize.second.dp),
+        state = windowState,
         onCloseRequest = { appState.requestExit() },
         onKeyEvent = { keyboardViewModel.onKeyEvent(it) }
     ) {
-        Box(Modifier.fillMaxSize().onSizeChanged { appRecordStore.saveWindowSize(it, density) })
+        LaunchedEffect(windowState) {
+            snapshotFlow { windowState.size }
+                .onEach(appRecordStore::saveWindowSize)
+                .launchIn(this)
+        }
         Menu(mainScope, appState)
         AppTheme {
             App(mainScope, appState)
@@ -208,12 +212,10 @@ private fun rememberAppRecordStore(scope: CoroutineScope) = remember {
     AppRecordStore(appRecord, scope)
 }
 
-private fun AppRecordStore.saveWindowSize(size: IntSize, density: Density) {
-    val width = with(density) { size.width.toDp() }.value
-    val height = with(density) { size.height.toDp() }.value
-    val dpSize = width to height
-    Log.info("Window size changed: $dpSize")
-    update { copy(windowSizeDp = dpSize) }
+private fun AppRecordStore.saveWindowSize(dpSize: DpSize) {
+    val size = dpSize.width.value to dpSize.height.value
+    Log.info("Window size changed: $size")
+    update { copy(windowSizeDp = size) }
 }
 
 @Composable
