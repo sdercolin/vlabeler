@@ -12,6 +12,7 @@ def split(line):
 dict = dict(map(split, dictLines))
 
 ustLines = inputs[0].splitlines()
+sample = samples[0]
 
 
 def get_time_ms(tempo, tick):
@@ -46,44 +47,38 @@ for line in ustLines:
             notes.append(note)
 
 entries = []
-lastEntry = None
+last = None
 for note in notes:
     phonemes = dict.get(note.lyric, [note.lyric])
     # max count of phonemes is 3
     if len(phonemes) == 1:
-        if lastEntry is not None:
-            entries.append(lastEntry)
-        lastEntry = Entry(
-            sample=None, name=phonemes[0], start=note.pos, end=note.pos+note.length, points=[], extras=[])
+        if last is not None:
+            entries.append(last)
+        last = Entry(sample=sample, name=phonemes[0], start=note.pos, end=note.pos + note.length, points=[], extras=[])
     elif len(phonemes) > 1:
-        ovl = 0
-        if lastEntry is not None:
-            if lastEntry.end - lastEntry.start > 100:
-                ovl = 50
+        overlap = 0
+        if last is not None:
+            if last.end - last.start > 100:
+                overlap = 50
             else:
-                ovl = int((lastEntry.end - lastEntry.start)/2)
-            lastEntry.end = lastEntry.end - ovl
-            entries.append(lastEntry)
+                overlap = int((last.end - last.start) / 2)
+            last.end = last.end - overlap
+            entries.append(last)
         if len(phonemes) == 2:
-            entries.append(Entry(
-                sample=None, name=phonemes[0], start=note.pos-ovl, end=note.pos, points=[], extras=[]))
-            lastEntry = Entry(
-                sample=None, name=phonemes[1], start=note.pos, end=note.pos+note.length, points=[], extras=[])
+            entries.append(Entry(sample=sample, name=phonemes[0], start=note.pos-overlap, end=note.pos, points=[], extras=[]))
+            last = Entry(sample=sample, name=phonemes[1], start=note.pos, end=note.pos + note.length, points=[], extras=[])
         else:
             if note.length > 100:
                 preu = 30
             else:
                 preu = int(note.length * 0.3)
-            prefixLength = (ovl + preu)/2
-            midLength = ovl + preu - prefixLength
-            entries.append(Entry(
-                sample=None, name=phonemes[0], start=note.pos-ovl, end=note.pos-ovl+prefixLength, points=[], extras=[]))
-            entries.append(Entry(sample=None, name=phonemes[1], start=note.pos-ovl +
-                           prefixLength, end=note.pos-ovl+prefixLength+midLength, points=[], extras=[]))
-            lastEntry = Entry(sample=None, name=phonemes[2], start=note.pos-ovl +
-                              prefixLength+midLength, end=note.pos+note.length, points=[], extras=[])
+            prefixLength = (overlap + preu)/2
+            midLength = overlap + preu - prefixLength
+            entries.append(Entry(sample=sample, name=phonemes[0], start=note.pos-overlap, end=note.pos-overlap+prefixLength, points=[], extras=[]))
+            entries.append(Entry(sample=sample, name=phonemes[1], start=note.pos-overlap+prefixLength, end=note.pos-overlap+prefixLength+midLength, points=[], extras=[]))
+            last = Entry(sample=sample, name=phonemes[2], start=note.pos - overlap + prefixLength + midLength, end=note.pos + note.length, points=[], extras=[])
 
-if lastEntry is not None:
-    entries.append(lastEntry)
+if last is not None:
+    entries.append(last)
 
 output = entries

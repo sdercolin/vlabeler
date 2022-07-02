@@ -162,10 +162,17 @@ private fun generateEntriesByPlugin(
     labelerConf: LabelerConf,
     sampleNames: List<String>,
     plugin: Plugin,
+    params: Map<String, Any>?,
     inputFile: File?,
     encoding: String
 ): Map<String, List<Entry>> {
-    val entries = runTemplatePlugin(plugin, listOfNotNull(inputFile), encoding)
+    val entries = runTemplatePlugin(plugin, params.orEmpty(), listOfNotNull(inputFile), encoding, sampleNames)
+        .map {
+            it.copy(
+                points = it.points.take(labelerConf.fields.count()),
+                extra = it.extra.take(labelerConf.extraFieldNames.count())
+            )
+        }
         .map { (it.sample ?: sampleNames.first()) to it.toEntry() }
         .groupByFirst()
     return mergeEntriesWithSampleNames(labelerConf, entries, sampleNames)
@@ -209,6 +216,7 @@ suspend fun projectOf(
     projectName: String,
     labelerConf: LabelerConf,
     plugin: Plugin?,
+    pluginParams: Map<String, Any>?,
     inputFilePath: String,
     encoding: String
 ): Result<Project> {
@@ -225,7 +233,7 @@ suspend fun projectOf(
     } else null
 
     val entriesBySample = when {
-        plugin != null -> generateEntriesByPlugin(labelerConf, sampleNames, plugin, inputFile, encoding)
+        plugin != null -> generateEntriesByPlugin(labelerConf, sampleNames, plugin, pluginParams, inputFile, encoding)
         inputFile != null -> {
             fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf, sampleNames)
         }

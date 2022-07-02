@@ -1,0 +1,81 @@
+{
+  "name": "cv-oto-gen",
+  "version": 1,
+  "type": "template",
+  "displayedName": "CV oto generator",
+  "author": "sdercolin",
+  "description": "Generate template for CV oto.",
+  "supportedLabelFileExtension": "ini",
+  "inputFileExtension": null,
+  "parameters": {
+    "list": [
+      {
+        "type": "bool",
+        "name": "fooBool",
+        "label": "A boolean param",
+        "defaultValue": true
+      },
+      {
+        "type": "int",
+        "name": "fooInt",
+        "label": "An integer param",
+        "defaultValue": 5,
+        "min": 1,
+        "max": 10
+      },
+      {
+        "type": "string",
+        "name": "fooString",
+        "label": "A string param",
+        "defaultValue": "default value"
+      },
+      {
+        "type": "enum",
+        "name": "fooEnum",
+        "label": "An enum param",
+        "defaultValue": "B",
+        "options": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      {
+        "type": "float",
+        "name": "offset",
+        "label": "Offset(ms)",
+        "defaultValue": 100,
+        "min": 0
+      },
+      {
+        "type": "float",
+        "name": "overlap",
+        "label": "Overlap(ms)",
+        "defaultValue": 30
+      },
+      {
+        "type": "float",
+        "name": "preutterance",
+        "label": "Preutterance(ms)",
+        "defaultValue": 60,
+        "min": 0
+      },
+      {
+        "type": "float",
+        "name": "fixed",
+        "label": "Fixed(ms)",
+        "defaultValue": 100,
+        "min": 0
+      },
+      {
+        "type": "float",
+        "name": "cutoff",
+        "label": "Cutoff(ms)",
+        "defaultValue": -1000
+      }
+    ]
+  },
+  "scriptFiles": [
+    "cv-oto-gen.py"
+  ]
+}

@@ -73,7 +73,7 @@
     },
     {
       "name": "right",
-      "displayedName": "Blank",
+      "displayedName": "Cutoff",
       "value": "{start} - {end} if {end} > 0 else float({rawRight})"
     },
     {

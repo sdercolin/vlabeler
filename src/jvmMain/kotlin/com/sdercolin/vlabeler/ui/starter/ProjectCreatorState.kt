@@ -48,6 +48,7 @@ class ProjectCreatorState(
     )
         private set
     var templatePlugin: Plugin? by mutableStateOf(null)
+    private var templatePluginParams: Map<String, Any>? by mutableStateOf(null)
     val templateName: String get() = templatePlugin?.displayedName ?: string(Strings.StarterNewTemplatePluginNone)
     var inputFile: String by mutableStateOf("")
         private set
@@ -73,7 +74,7 @@ class ProjectCreatorState(
         if (!projectNameEdited && !workingDirectoryEdited) {
             projectName = if (File(path).absolutePath != HomeDir.absolutePath) path.lastPathSection else ""
         }
-        if (!inputFileEdited) {
+        if (!inputFileEdited && isInputFileEnabled()) {
             inputFile = if (File(path).absolutePath != HomeDir.absolutePath) {
                 val file = labeler.defaultInputFilePath?.let { File(path).resolve(it) }
                 if (file?.exists() == true) file.absolutePath else ""
@@ -116,7 +117,7 @@ class ProjectCreatorState(
         } else false
     }
 
-    fun getSupportedInputFileExtension(): String? {
+    private fun getSupportedInputFileExtension(): String? {
         val plugin = templatePlugin
         if (plugin != null) {
             return plugin.inputFileExtension
@@ -135,6 +136,12 @@ class ProjectCreatorState(
     fun updatePlugin(plugin: Plugin?) {
         templatePlugin = plugin
         resetInputFileIfNeeded()
+        if (plugin != null) loadPluginParams(plugin)
+    }
+
+    private fun loadPluginParams(plugin: Plugin) {
+        templatePluginParams = plugin.getDefaultParams()
+        // TODO: load remembered values
     }
 
     private fun resetInputFileIfNeeded() {
@@ -161,22 +168,15 @@ class ProjectCreatorState(
     fun getInputFileLabelText(): String {
         val extension = getSupportedInputFileExtension()
         return if (extension == null) {
-            string(Strings.StarterNewInputFile)
+            string(Strings.StarterNewInputFileDisabled)
         } else {
-            string(Strings.StarterNewInputFileWithExtension, extension)
+            string(Strings.StarterNewInputFile, extension)
         }
     }
 
     fun getInputFilePlaceholderText(): String? {
-        val plugin = templatePlugin ?: return string(Strings.StarterNewInputFilePlaceholder)
-
-        if (plugin.requireInputFile) {
-            return null
-        }
-        if (plugin.inputFileExtension == null) {
-            return string(Strings.StarterNewInputFilePlaceholderPluginNotRequired)
-        }
-        return null
+        return if (templatePlugin == null) string(Strings.StarterNewInputFilePlaceholder)
+        else null
     }
 
     fun isInputFileValid(): Boolean {
@@ -297,6 +297,7 @@ class ProjectCreatorState(
                 projectName = projectName,
                 labelerConf = labeler,
                 plugin = templatePlugin,
+                pluginParams = templatePluginParams,
                 inputFilePath = inputFile,
                 encoding = encoding
             ).getOrElse {

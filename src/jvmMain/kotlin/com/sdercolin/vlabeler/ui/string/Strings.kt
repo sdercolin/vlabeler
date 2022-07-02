@@ -139,16 +139,13 @@ enum class Strings(val en: String) {
         en = "None"
     ),
     StarterNewInputFile(
-        en = "Input file"
-    ),
-    StarterNewInputFileWithExtension(
         en = "Input file (.%s)"
     ),
     StarterNewInputFilePlaceholder(
         en = "(One would be created if left blank)"
     ),
-    StarterNewInputFilePlaceholderPluginNotRequired(
-        en = "(No input file is required by the selected template generator)"
+    StarterNewInputFileDisabled(
+        en = "No input file is required by the selected template generator"
     ),
     StarterNewEncoding(
         en = "Encoding"
