@@ -84,7 +84,11 @@ fun ProjectCreator(
                         .padding(horizontal = 60.dp, vertical = 40.dp)
                         .verticalScroll(scrollState)
                 ) {
-                    Text(text = string(Strings.StarterNewProject), style = MaterialTheme.typography.h4, maxLines = 1)
+                    Text(
+                        text = string(Strings.StarterNewProjectTitle),
+                        style = MaterialTheme.typography.h4,
+                        maxLines = 1
+                    )
                     Spacer(Modifier.height(25.dp))
                     listOf<@Composable () -> Unit>(
                         { SampleDirectoryTextField(state) },

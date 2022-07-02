@@ -123,6 +123,9 @@ enum class Strings(val en: String) {
     StarterNewWorkingDirectory(
         en = "Working directory"
     ),
+    StarterNewProjectTitle(
+        en = "New Project"
+    ),
     StarterNewProjectName(
         en = "Project name"
     ),
