@@ -114,13 +114,13 @@ data class Plugin(
 
     @Serializable
     enum class ParameterType {
-        @SerialName("int")
+        @SerialName("integer")
         Integer,
 
         @SerialName("float")
         Float,
 
-        @SerialName("bool")
+        @SerialName("boolean")
         Boolean,
 
         @SerialName("string")

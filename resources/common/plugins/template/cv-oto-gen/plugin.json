@@ -10,13 +10,13 @@
   "parameters": {
     "list": [
       {
-        "type": "bool",
+        "type": "boolean",
         "name": "fooBool",
         "label": "A boolean param",
         "defaultValue": true
       },
       {
-        "type": "int",
+        "type": "integer",
         "name": "fooInt",
         "label": "An integer param",
         "defaultValue": 5,
