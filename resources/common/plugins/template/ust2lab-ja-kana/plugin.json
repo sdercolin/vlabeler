@@ -1,0 +1,14 @@
+{
+  "name": "ust2lab-ja-kana",
+  "version": 1,
+  "type": "template",
+  "displayedName": "ust2lab-ja-kana",
+  "author": "sdercolin",
+  "description": "Parse ust with Japanese kana lyrics to sinsy lab style entries. Dictionary powered by https://github.com/oatsu-gh/oto2lab.",
+  "supportedLabelFileExtension": "lab",
+  "inputFileExtension": "ust",
+  "requireInputFile": true,
+  "scriptFiles": [
+    "ust2lab-ja-kana.py"
+  ]
+}

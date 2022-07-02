@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.util
 
 import org.python.util.PythonInterpreter
+import java.io.OutputStream
 import java.util.Properties
 
 class Python {
@@ -10,7 +11,17 @@ class Python {
         PythonInterpreter.initialize(System.getProperties(), props, arrayOf())
     }
 
-    private val interpreter = PythonInterpreter()
+    private val interpreter = PythonInterpreter().apply {
+        systemState.setdefaultencoding("utf8")
+    }
+
+    fun setOutputStream(outputStream: OutputStream) {
+        interpreter.setOut(outputStream)
+    }
+
+    fun setCurrentWorkingDirectory(path: String) {
+        interpreter.systemState.currentWorkingDir = path
+    }
 
     fun exec(script: String) {
         interpreter.exec(script)
@@ -35,4 +46,6 @@ class Python {
     fun eval(text: String): Double {
         return interpreter.eval(text).asDouble()
     }
+
+    fun close() = interpreter.close()
 }

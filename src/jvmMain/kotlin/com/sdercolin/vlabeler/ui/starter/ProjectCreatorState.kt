@@ -9,7 +9,9 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.model.projectOf
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -25,7 +27,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
-class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val appRecordStore: AppRecordStore) {
+class ProjectCreatorState(
+    availableLabelerConfs: List<LabelerConf>,
+    private val appRecordStore: AppRecordStore
+) {
     private val appRecord get() = appRecordStore.stateFlow.value
     var isLoading: Boolean by mutableStateOf(false)
     var sampleDirectory: String by mutableStateOf(appRecord.sampleDirectory ?: HomeDir.absolutePath)
@@ -41,9 +46,12 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
     var labeler: LabelerConf by mutableStateOf(
         availableLabelerConfs.firstOrNull { it.name == appRecord.labelerName } ?: availableLabelerConfs.first()
     )
-    var inputLabelFile: String by mutableStateOf("")
         private set
-    private var inputLabelFileEdited: Boolean by mutableStateOf(false)
+    var templatePlugin: Plugin? by mutableStateOf(null)
+    val templateName: String get() = templatePlugin?.displayedName ?: string(Strings.StarterNewTemplatePluginNone)
+    var inputFile: String by mutableStateOf("")
+        private set
+    private var inputFileEdited: Boolean by mutableStateOf(false)
     val encodings = AvailableEncodings
 
     private val encodingState = mutableStateOf(
@@ -65,8 +73,8 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
         if (!projectNameEdited && !workingDirectoryEdited) {
             projectName = if (File(path).absolutePath != HomeDir.absolutePath) path.lastPathSection else ""
         }
-        if (!inputLabelFileEdited) {
-            inputLabelFile = if (File(path).absolutePath != HomeDir.absolutePath) {
+        if (!inputFileEdited) {
+            inputFile = if (File(path).absolutePath != HomeDir.absolutePath) {
                 val file = labeler.defaultInputFilePath?.let { File(path).resolve(it) }
                 if (file?.exists() == true) file.absolutePath else ""
             } else ""
@@ -108,10 +116,38 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
         } else false
     }
 
-    fun updateInputLabelFile(scope: CoroutineScope, path: String) {
+    fun getSupportedInputFileExtension(): String? {
+        val plugin = templatePlugin
+        if (plugin != null) {
+            return plugin.inputFileExtension
+        }
+        return labeler.extension
+    }
+
+    fun updateLabeler(labeler: LabelerConf) {
+        this.labeler = labeler
+        if (templatePlugin?.supportedLabelFileExtension != labeler.extension) {
+            templatePlugin = null
+        }
+        resetInputFileIfNeeded()
+    }
+
+    fun updatePlugin(plugin: Plugin?) {
+        templatePlugin = plugin
+        resetInputFileIfNeeded()
+    }
+
+    private fun resetInputFileIfNeeded() {
+        val supportedExtension = getSupportedInputFileExtension()
+        if (supportedExtension == null || inputFile.endsWith(supportedExtension).not()) {
+            inputFile = ""
+        }
+    }
+
+    fun updateInputFile(scope: CoroutineScope, path: String) {
         scope.launch(Dispatchers.IO) {
-            inputLabelFileEdited = true
-            inputLabelFile = path
+            inputFileEdited = true
+            inputFile = path
             val file = File(path)
             if (file.isFile && file.exists()) {
                 val detectedEncoding = file.readBytes().detectEncoding() ?: return@launch
@@ -120,13 +156,48 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
         }
     }
 
-    fun isInputLabelFileValid(): Boolean {
-        if (inputLabelFile == "") return true
-        val file = File(inputLabelFile)
-        return file.extension == labeler.extension && file.exists()
+    fun isInputFileEnabled(): Boolean = getSupportedInputFileExtension() != null
+
+    fun getInputFileLabelText(): String {
+        val extension = getSupportedInputFileExtension()
+        return if (extension == null) {
+            string(Strings.StarterNewInputFile)
+        } else {
+            string(Strings.StarterNewInputFileWithExtension, extension)
+        }
     }
 
-    fun isValid(): Boolean = isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid()
+    fun getInputFilePlaceholderText(): String? {
+        val plugin = templatePlugin ?: return string(Strings.StarterNewInputFilePlaceholder)
+
+        if (plugin.requireInputFile) {
+            return null
+        }
+        if (plugin.inputFileExtension == null) {
+            return string(Strings.StarterNewInputFilePlaceholderPluginNotRequired)
+        }
+        return null
+    }
+
+    fun isInputFileValid(): Boolean {
+        val plugin = templatePlugin
+        if (plugin == null) {
+            if (inputFile == "") {
+                // Use default template in labeler
+                return true
+            }
+            val file = File(inputFile)
+            return file.extension == labeler.extension && file.exists()
+        } else {
+            if (inputFile == "") return plugin.requireInputFile.not()
+
+            val file = File(inputFile)
+            return file.extension == plugin.inputFileExtension && file.exists()
+        }
+    }
+
+    fun isValid(): Boolean = isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid() &&
+        isInputFileValid()
 
     fun pickSampleDirectory() {
         currentPathPicker = PathPicker.SampleDirectory
@@ -140,7 +211,7 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
         currentPathPicker = PathPicker.InputFile
     }
 
-    val isEncodingSelectionEnabled get() = inputLabelFile != ""
+    val isEncodingSelectionEnabled get() = inputFile != ""
 
     fun getFilePickerDirectoryMode(picker: PathPicker) =
         picker != PathPicker.InputFile
@@ -150,7 +221,7 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
     ) = when (picker) {
         PathPicker.SampleDirectory -> listOf(Project.SampleFileExtension)
         PathPicker.WorkingDirectory -> null
-        PathPicker.InputFile -> listOf(labeler.extension)
+        PathPicker.InputFile -> getSupportedInputFileExtension()?.let { listOf(it) }
     }
 
     fun getFilePickerInitialDirectory(
@@ -158,8 +229,8 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
     ) = when (picker) {
         PathPicker.SampleDirectory -> sampleDirectory
         PathPicker.WorkingDirectory -> workingDirectory
-        PathPicker.InputFile -> if (inputLabelFile != "" && isInputLabelFileValid()) {
-            File(inputLabelFile).parent.orEmpty()
+        PathPicker.InputFile -> if (inputFile != "" && isInputFileValid()) {
+            File(inputFile).parent.orEmpty()
         } else {
             sampleDirectory
         }
@@ -168,7 +239,7 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
     fun getFilePickerTitle(picker: PathPicker) = when (picker) {
         PathPicker.SampleDirectory -> string(Strings.ChooseSampleDirectoryDialogTitle)
         PathPicker.WorkingDirectory -> string(Strings.ChooseWorkingDirectoryDialogTitle)
-        PathPicker.InputFile -> string(Strings.ChooseInputLabelFileDialogTitle)
+        PathPicker.InputFile -> string(Strings.ChooseInputFileDialogTitle)
     }
 
     fun handleFilePickerResult(
@@ -188,10 +259,15 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
                 updateWorkingDirectory(file.getDirectory().absolutePath)
             }
             PathPicker.InputFile -> {
-                updateInputLabelFile(coroutineScope, file.absolutePath)
+                updateInputFile(coroutineScope, file.absolutePath)
             }
         }
     }
+
+    fun getSupportedPlugins(plugins: List<Plugin>) = plugins
+        .filter { it.type == Plugin.Type.Template }
+        .filter { it.supportedLabelFileExtension == labeler.extension }
+        .sortedBy { it.displayedName }
 
     fun create(
         coroutineScope: CoroutineScope,
@@ -205,7 +281,7 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
                     "workingDir=$workingDirectory, " +
                     "projectName=$projectName, " +
                     "labeler=${labeler.name}, " +
-                    "input=$inputLabelFile, " +
+                    "input=$inputFile, " +
                     "encoding=$encoding"
             )
             appRecordStore.update {
@@ -215,12 +291,13 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
                     labelerName = this@ProjectCreatorState.labeler.name
                 )
             }
-            val project = Project.from(
+            val project = projectOf(
                 sampleDirectory = sampleDirectory,
                 workingDirectory = workingDirectory,
                 projectName = projectName,
                 labelerConf = labeler,
-                inputLabelFile = inputLabelFile,
+                plugin = templatePlugin,
+                inputFilePath = inputFile,
                 encoding = encoding
             ).getOrElse {
                 val message = when (it) {
@@ -243,7 +320,7 @@ class ProjectCreatorState(availableLabelerConfs: List<LabelerConf>, private val 
 fun rememberProjectCreatorState(
     availableLabelerConfs: List<LabelerConf>,
     appRecordStore: AppRecordStore
-) = remember(availableLabelerConfs) {
+) = remember(appRecordStore) {
     ProjectCreatorState(availableLabelerConfs, appRecordStore)
 }
 

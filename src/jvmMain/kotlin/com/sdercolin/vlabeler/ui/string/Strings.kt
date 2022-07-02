@@ -132,11 +132,23 @@ enum class Strings(val en: String) {
     StarterNewLabeler(
         en = "Labeler"
     ),
-    StarterNewInputLabelFile(
-        en = "Input label file"
+    StarterNewTemplatePlugin(
+        en = "Template generator"
     ),
-    StarterNewInputLabelFilePlaceholder(
+    StarterNewTemplatePluginNone(
+        en = "None"
+    ),
+    StarterNewInputFile(
+        en = "Input file"
+    ),
+    StarterNewInputFileWithExtension(
+        en = "Input file (.%s)"
+    ),
+    StarterNewInputFilePlaceholder(
         en = "(One would be created if left blank)"
+    ),
+    StarterNewInputFilePlaceholderPluginNotRequired(
+        en = "(No input file is required by the selected template generator)"
     ),
     StarterNewEncoding(
         en = "Encoding"
@@ -147,8 +159,8 @@ enum class Strings(val en: String) {
     ChooseWorkingDirectoryDialogTitle(
         en = "Choose working directory"
     ),
-    ChooseInputLabelFileDialogTitle(
-        en = "Choose input label file"
+    ChooseInputFileDialogTitle(
+        en = "Choose input file"
     ),
     OpenProjectDialogTitle(
         en = "Open project"

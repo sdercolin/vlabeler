@@ -11,12 +11,14 @@ private const val AppNamePath = "vLabeler"
 private const val AppConfFileName = "app.conf.json"
 private const val AppRecordFileName = "app.record.json"
 private const val LabelerFolderName = "labelers"
+private const val PluginFolderName = "plugins"
 private const val RecordFolderName = ".record"
 
 // Internal files
 val ResourceDir get() = File(System.getProperty("compose.application.resources.dir"))
 val DefaultAppConfFile get() = ResourceDir.resolve(AppConfFileName)
 val DefaultLabelerDir get() = ResourceDir.resolve(LabelerFolderName)
+val DefaultPluginDir get() = ResourceDir.resolve(PluginFolderName)
 val RecordDir get() = if (isLinux) AppDir.resolve(RecordFolderName) else ResourceDir.resolve(RecordFolderName)
 val AppRecordFile get() = RecordDir.resolve(AppRecordFileName)
 

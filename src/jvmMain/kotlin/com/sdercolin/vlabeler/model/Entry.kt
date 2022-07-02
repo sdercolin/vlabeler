@@ -36,3 +36,17 @@ data class Entry(
         )
     }
 }
+
+/**
+ * For input usages
+ */
+data class FlatEntry(
+    val sample: String?,
+    val name: String,
+    val start: Float,
+    val end: Float,
+    val points: List<Float>,
+    val extra: List<String>
+) {
+    fun toEntry() = Entry(name, start, end, points, extra)
+}

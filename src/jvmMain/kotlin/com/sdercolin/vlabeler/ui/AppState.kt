@@ -14,6 +14,7 @@ import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
@@ -38,6 +39,7 @@ class AppState(
     val snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
     val availableLabelerConfs: List<LabelerConf>,
+    private val plugins: List<Plugin>,
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
     screenState: AppScreenState = AppScreenStateImpl(),
     projectStore: ProjectStore = ProjectStoreImpl(screenState, scrollFitViewModel),
@@ -64,6 +66,8 @@ class AppState(
         changeScreen(Screen.Starter)
         clearPendingActionAfterSaved()
     }
+
+    fun getPlugins(type: Plugin.Type) = plugins.filter { it.type == type }
 
     private fun changeScreen(screen: Screen) {
         this.screen = screen
@@ -195,7 +199,8 @@ fun rememberAppState(
     appRecordStore: AppRecordStore,
     snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
-    availableLabelerConfs: List<LabelerConf>
+    availableLabelerConfs: List<LabelerConf>,
+    plugins: List<Plugin>
 ) = remember {
     AppState(
         playerState,
@@ -205,6 +210,7 @@ fun rememberAppState(
         appRecordStore,
         snackbarHostState,
         appConf,
-        availableLabelerConfs
+        availableLabelerConfs,
+        plugins
     )
 }

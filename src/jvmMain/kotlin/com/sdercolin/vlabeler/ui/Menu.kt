@@ -176,7 +176,7 @@ fun FrameWindowScope.Menu(
         if (isDebug) {
             Menu("Debug") {
                 Item(
-                    "Throw exception",
+                    "Throw Exception",
                     onClick = { throw IllegalStateException("Test exception from menu") }
                 )
             }

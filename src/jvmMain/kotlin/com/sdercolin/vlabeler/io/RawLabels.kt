@@ -4,7 +4,9 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.model.mergeEntriesWithSampleNames
 import com.sdercolin.vlabeler.util.Python
+import com.sdercolin.vlabeler.util.groupByFirst
 import com.sdercolin.vlabeler.util.matchGroups
 import com.sdercolin.vlabeler.util.replaceWithVariables
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
@@ -16,10 +18,10 @@ fun fromRawLabels(
 ): Map<String, List<Entry>> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
+    val python = Python()
     val entriesBySampleName = sources.mapNotNull { source ->
         runCatching {
             val groups = source.matchGroups(extractor)
-            val python = Python()
             parser.variableNames.mapIndexed { i, name ->
                 python.set(name, groups[i])
             }
@@ -59,32 +61,11 @@ fun fromRawLabels(
             null
         }
     }
-        .groupBy { it.first }
-        .map { group -> group.key to group.value.map { it.second } }
-        .toMap()
+        .groupByFirst()
 
-    val sampleNamesNotUsed = sampleNames.filterNot { it in entriesBySampleName.keys }
-    val additionalSampleMap = sampleNamesNotUsed.associateWith { sampleName ->
-        listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues, labelerConf.defaultExtras))
-            .also {
-                Log.info("Sample $sampleName doesn't have entries, created default: ${it.first()}")
-            }
-    }
+    python.close()
 
-    return (entriesBySampleName + additionalSampleMap)
-        .mapValues { it.value.toContinuous(labelerConf.continuous) }
-}
-
-private fun List<Entry>.toContinuous(continuous: Boolean): List<Entry> {
-    if (!continuous) return this
-    return this
-        .sortedBy { it.start }
-        .distinctBy { it.start }
-        .let {
-            it.zipWithNext { current, next ->
-                current.copy(end = next.start)
-            }.plus(it.last())
-        }
+    return mergeEntriesWithSampleNames(labelerConf, entriesBySampleName, sampleNames)
 }
 
 fun Project.toRawLabels(): String {
@@ -116,6 +97,7 @@ fun Project.toRawLabels(): String {
                 format.replaceWithVariables(variables)
             }
         }
+    python.close()
     return lines.joinToString("\n")
 }
 

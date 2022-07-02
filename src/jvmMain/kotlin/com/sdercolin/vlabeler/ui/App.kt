@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.io.openCreatedProject
+import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
@@ -34,6 +35,7 @@ fun App(
                     create = { openCreatedProject(mainScope, it, appState) },
                     cancel = { appState.closeProjectCreator() },
                     availableLabelerConfs = appState.availableLabelerConfs,
+                    availableTemplatePlugins = appState.getPlugins(Plugin.Type.Template),
                     snackbarHostState = appState.snackbarHostState,
                     appRecordStore = appState.appRecordStore
                 )

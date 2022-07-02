@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.common.CircularProgress
@@ -58,9 +59,13 @@ fun ProjectCreator(
     create: (Project) -> Unit,
     cancel: () -> Unit,
     availableLabelerConfs: List<LabelerConf>,
+    availableTemplatePlugins: List<Plugin>,
     snackbarHostState: SnackbarHostState,
     appRecordStore: AppRecordStore,
-    state: ProjectCreatorState = rememberProjectCreatorState(availableLabelerConfs, appRecordStore),
+    state: ProjectCreatorState = rememberProjectCreatorState(
+        availableLabelerConfs,
+        appRecordStore
+    ),
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -104,7 +109,7 @@ fun ProjectCreator(
                 }, {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         OutlinedTextField(
-                            modifier = Modifier.widthIn(min = 300.dp),
+                            modifier = Modifier.widthIn(min = 400.dp),
                             value = state.projectName,
                             onValueChange = state::updateProjectName,
                             label = { Text(string(Strings.StarterNewProjectName)) },
@@ -135,34 +140,77 @@ fun ProjectCreator(
                         }
                     }
                 }, {
-                    var expanded by remember { mutableStateOf(false) }
-                    Box {
-                        TextField(
-                            modifier = Modifier.widthIn(min = 400.dp),
-                            value = state.labeler.displayedName,
-                            onValueChange = { },
-                            readOnly = true,
-                            label = { Text(string(Strings.StarterNewLabeler)) },
-                            maxLines = 1,
-                            leadingIcon = {
-                                IconButton(onClick = { expanded = true }) {
-                                    Icon(Icons.Default.ExpandMore, null)
+                    Row {
+                        Box {
+                            var expanded by remember { mutableStateOf(false) }
+                            TextField(
+                                modifier = Modifier.widthIn(min = 400.dp),
+                                value = state.labeler.displayedName,
+                                onValueChange = { },
+                                readOnly = true,
+                                label = { Text(string(Strings.StarterNewLabeler)) },
+                                maxLines = 1,
+                                leadingIcon = {
+                                    IconButton(onClick = { expanded = true }) {
+                                        Icon(Icons.Default.ExpandMore, null)
+                                    }
+                                }
+                            )
+                            DropdownMenu(
+                                modifier = Modifier.align(Alignment.CenterEnd),
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                availableLabelerConfs.forEach { conf ->
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            state.updateLabeler(conf)
+                                            expanded = false
+                                        }
+                                    ) {
+                                        Text(text = conf.displayedName)
+                                    }
                                 }
                             }
-                        )
-                        DropdownMenu(
-                            modifier = Modifier.align(Alignment.CenterEnd),
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            availableLabelerConfs.forEach { conf ->
+                        }
+                        Spacer(Modifier.width(60.dp))
+                        Box {
+                            var expanded by remember { mutableStateOf(false) }
+                            TextField(
+                                modifier = Modifier.widthIn(min = 400.dp),
+                                value = state.templateName,
+                                onValueChange = { },
+                                readOnly = true,
+                                label = { Text(string(Strings.StarterNewTemplatePlugin)) },
+                                maxLines = 1,
+                                leadingIcon = {
+                                    IconButton(onClick = { expanded = true }) {
+                                        Icon(Icons.Default.ExpandMore, null)
+                                    }
+                                }
+                            )
+                            DropdownMenu(
+                                modifier = Modifier.align(Alignment.CenterEnd),
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
                                 DropdownMenuItem(
                                     onClick = {
-                                        state.labeler = conf
+                                        state.updatePlugin(null)
                                         expanded = false
                                     }
                                 ) {
-                                    Text(text = conf.displayedName)
+                                    Text(text = string(Strings.StarterNewTemplatePluginNone))
+                                }
+                                state.getSupportedPlugins(availableTemplatePlugins).forEach { plugin ->
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            state.updatePlugin(plugin)
+                                            expanded = false
+                                        }
+                                    ) {
+                                        Text(text = plugin.displayedName)
+                                    }
                                 }
                             }
                         }
@@ -170,17 +218,18 @@ fun ProjectCreator(
                 }, {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = state.inputLabelFile,
-                        onValueChange = { state.updateInputLabelFile(coroutineScope, it) },
-                        label = { Text(string(Strings.StarterNewInputLabelFile)) },
-                        placeholder = { Text(string(Strings.StarterNewInputLabelFilePlaceholder)) },
+                        value = state.inputFile,
+                        onValueChange = { state.updateInputFile(coroutineScope, it) },
+                        label = { Text(state.getInputFileLabelText()) },
+                        placeholder = state.getInputFilePlaceholderText()?.let { { Text(it) } },
+                        enabled = state.isInputFileEnabled(),
                         maxLines = 2,
                         trailingIcon = {
-                            IconButton(onClick = { state.pickInputFile() }) {
+                            IconButton(onClick = { state.pickInputFile() }, enabled = state.isInputFileEnabled()) {
                                 Icon(Icons.Default.FolderOpen, null)
                             }
                         },
-                        isError = state.isInputLabelFileValid().not()
+                        isError = state.isInputFileValid().not()
                     )
                 }, {
                     var expanded by remember { mutableStateOf(false) }

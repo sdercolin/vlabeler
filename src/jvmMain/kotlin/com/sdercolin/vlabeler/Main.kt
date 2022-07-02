@@ -27,9 +27,11 @@ import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.shouldTogglePlayer
+import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
@@ -68,6 +70,7 @@ fun main() = application {
     val appConf = rememberAppConf()
     val availableLabelerConfs = rememberAvailableLabelerConfs()
     val appRecordStore = rememberAppRecordStore(mainScope)
+    val plugins = rememberPlugins()
 
     val appState = rememberAppState(
         playerState,
@@ -77,7 +80,8 @@ fun main() = application {
         appRecordStore,
         snackbarHostState,
         appConf,
-        availableLabelerConfs
+        availableLabelerConfs,
+        plugins
     )
 
     LaunchedEffect(Unit) {
@@ -210,6 +214,11 @@ private fun AppRecordStore.saveWindowSize(size: IntSize, density: Density) {
     val dpSize = width to height
     Log.info("Window size changed: $dpSize")
     update { copy(windowSizeDp = dpSize) }
+}
+
+@Composable
+private fun rememberPlugins() = remember {
+    loadPlugins(Plugin.Type.Template)
 }
 
 @Composable

@@ -1,9 +1,11 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.editor.EditedEntry
+import com.sdercolin.vlabeler.util.groupByFirst
 import kotlinx.serialization.Serializable
 import java.io.File
 import java.nio.charset.Charset
@@ -153,46 +155,96 @@ data class Project(
     companion object {
         const val SampleFileExtension = "wav"
         const val ProjectFileExtension = "lbp"
+    }
+}
 
-        fun from(
-            sampleDirectory: String,
-            workingDirectory: String,
-            projectName: String,
-            labelerConf: LabelerConf,
-            inputLabelFile: String,
-            encoding: String
-        ): Result<Project> {
-            val sampleDirectoryFile = File(sampleDirectory)
-            val sampleNames = sampleDirectoryFile.listFiles().orEmpty()
-                .filter { it.extension == SampleFileExtension }
-                .map { it.nameWithoutExtension }
-                .sorted()
+private fun generateEntriesByPlugin(
+    labelerConf: LabelerConf,
+    sampleNames: List<String>,
+    plugin: Plugin,
+    inputFile: File?,
+    encoding: String
+): Map<String, List<Entry>> {
+    val entries = runTemplatePlugin(plugin, listOfNotNull(inputFile), encoding)
+        .map { (it.sample ?: sampleNames.first()) to it.toEntry() }
+        .groupByFirst()
+    return mergeEntriesWithSampleNames(labelerConf, entries, sampleNames)
+}
 
-            if (sampleNames.isEmpty()) return Result.failure(EmptySampleDirectoryException())
-
-            val inputFile = if (inputLabelFile != "") {
-                File(inputLabelFile)
-            } else null
-
-            val entriesBySample = if (inputFile != null) {
-                fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf, sampleNames)
-            } else {
-                sampleNames.associateWith {
-                    listOf(Entry.fromDefaultValues(it, labelerConf.defaultValues, labelerConf.defaultExtras))
-                }
+fun mergeEntriesWithSampleNames(
+    labelerConf: LabelerConf,
+    entries: Map<String, List<Entry>>,
+    sampleNames: List<String>
+): Map<String, List<Entry>> {
+    val sampleNamesNotUsed = sampleNames.filterNot { it in entries.keys }
+    val additionalSampleMap = sampleNamesNotUsed.associateWith { sampleName ->
+        listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues, labelerConf.defaultExtras))
+            .also {
+                Log.info("Sample $sampleName doesn't have entries, created default: ${it.first()}")
             }
+    }
+    return (entries + additionalSampleMap)
+        .mapValues { it.value.toContinuous(labelerConf.continuous) }
+}
 
-            val project = Project(
-                sampleDirectory = sampleDirectory,
-                workingDirectory = workingDirectory,
-                projectName = projectName,
-                entriesBySampleName = entriesBySample,
-                labelerConf = labelerConf,
-                currentSampleName = sampleNames.first(),
-                currentEntryIndex = 0,
-                encoding = encoding
-            )
-            return Result.success(project)
+private fun List<Entry>.toContinuous(continuous: Boolean): List<Entry> {
+    if (!continuous) return this
+    return this
+        .sortedBy { it.start }
+        .distinctBy { it.start }
+        .let {
+            it.zipWithNext { current, next ->
+                current.copy(end = next.start)
+            }.plus(it.last())
+        }
+}
+
+/**
+ * Should be called from IO threads, because this function runs scripting and may take time
+ */
+@Suppress("RedundantSuspendModifier")
+suspend fun projectOf(
+    sampleDirectory: String,
+    workingDirectory: String,
+    projectName: String,
+    labelerConf: LabelerConf,
+    plugin: Plugin?,
+    inputFilePath: String,
+    encoding: String
+): Result<Project> {
+    val sampleDirectoryFile = File(sampleDirectory)
+    val sampleNames = sampleDirectoryFile.listFiles().orEmpty()
+        .filter { it.extension == Project.SampleFileExtension }
+        .map { it.nameWithoutExtension }
+        .sorted()
+
+    if (sampleNames.isEmpty()) return Result.failure(EmptySampleDirectoryException())
+
+    val inputFile = if (inputFilePath != "") {
+        File(inputFilePath)
+    } else null
+
+    val entriesBySample = when {
+        plugin != null -> generateEntriesByPlugin(labelerConf, sampleNames, plugin, inputFile, encoding)
+        inputFile != null -> {
+            fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf, sampleNames)
+        }
+        else -> {
+            sampleNames.associateWith {
+                listOf(Entry.fromDefaultValues(it, labelerConf.defaultValues, labelerConf.defaultExtras))
+            }
         }
     }
+
+    val project = Project(
+        sampleDirectory = sampleDirectory,
+        workingDirectory = workingDirectory,
+        projectName = projectName,
+        entriesBySampleName = entriesBySample,
+        labelerConf = labelerConf,
+        currentSampleName = sampleNames.first(),
+        currentEntryIndex = 0,
+        encoding = encoding
+    )
+    return Result.success(project)
 }
