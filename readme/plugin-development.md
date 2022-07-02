@@ -44,7 +44,7 @@ The object has the following properties:
 - Standard modules available (tested modules include `codecs`, `json`, `math`)
 
 ## Template Generation Scripts
-A plugin with `template` type is selected and executed in the `New Proejct` page.
+A plugin with `template` type is selected and executed in the `New Project` page.
 It should create a list of entries for subsequent edition.
 
 ### Input
