@@ -2,9 +2,11 @@ package com.sdercolin.vlabeler.audio
 
 import com.sdercolin.vlabeler.env.Log
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import java.io.File
 import javax.sound.sampled.AudioSystem
 
@@ -15,16 +17,21 @@ class Player(
     private var file: File? = null
     private val clip = AudioSystem.getClip()
 
+    private var openJob: Job? = null
     private var countingJob: Job? = null
 
-    fun load(file: File) {
-        Log.info("Player.load(\"${file.absolutePath}\")")
-        if (this.file != null) {
-            clip.flush()
-            clip.close()
+    fun load(newFile: File) {
+        openJob?.cancel()
+        openJob = coroutineScope.launch(Dispatchers.IO) {
+            Log.info("Player.load(\"${newFile.absolutePath}\")")
+            if (file != null) {
+                clip.flush()
+                clip.close()
+            }
+            yield()
+            file = newFile
+            AudioSystem.getAudioInputStream(newFile).use { clip.open(it) }
         }
-        this.file = file
-        AudioSystem.getAudioInputStream(file).use { clip.open(it) }
     }
 
     fun toggle() {
