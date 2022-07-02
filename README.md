@@ -103,7 +103,7 @@ Built-in configuration UI is not available yet. (Please wait!)
 
 ## Plugins
 Currently, only template generator plugins are available.
-You can copy a plugin folder to `.../vLabeler/plugins/template/` where `vLabeler` is the app's external directory described in the `Configure` section to enable it.
+You can copy a plugin folder to `.../vLabeler/plugins/template/` to enable it, where `vLabeler` is the app's external directory described in the `Configure` section.
 
 All valid template generators which support the selected labeler can be chosen in the `New Project` page. 
 
