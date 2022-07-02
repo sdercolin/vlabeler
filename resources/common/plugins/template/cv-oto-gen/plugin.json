@@ -10,67 +10,36 @@
   "parameters": {
     "list": [
       {
-        "type": "boolean",
-        "name": "fooBool",
-        "label": "A boolean param",
-        "defaultValue": true
-      },
-      {
-        "type": "integer",
-        "name": "fooInt",
-        "label": "An integer param",
-        "defaultValue": 5,
-        "min": 1,
-        "max": 10
-      },
-      {
-        "type": "string",
-        "name": "fooString",
-        "label": "A string param",
-        "defaultValue": "default value"
-      },
-      {
-        "type": "enum",
-        "name": "fooEnum",
-        "label": "An enum param",
-        "defaultValue": "B",
-        "options": [
-          "A",
-          "B",
-          "C"
-        ]
-      },
-      {
         "type": "float",
         "name": "offset",
-        "label": "Offset(ms)",
+        "label": "Offset (ms)",
         "defaultValue": 100,
         "min": 0
       },
       {
         "type": "float",
         "name": "overlap",
-        "label": "Overlap(ms)",
+        "label": "Overlap (ms)",
         "defaultValue": 30
       },
       {
         "type": "float",
         "name": "preutterance",
-        "label": "Preutterance(ms)",
+        "label": "Preutterance (ms)",
         "defaultValue": 60,
         "min": 0
       },
       {
         "type": "float",
         "name": "fixed",
-        "label": "Fixed(ms)",
+        "label": "Fixed (ms)",
         "defaultValue": 100,
         "min": 0
       },
       {
         "type": "float",
         "name": "cutoff",
-        "label": "Cutoff(ms)",
+        "label": "Cutoff (ms)",
         "defaultValue": -1000
       }
     ]

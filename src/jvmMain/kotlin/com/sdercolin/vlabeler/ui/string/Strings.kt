@@ -198,6 +198,21 @@ enum class Strings(val en: String) {
     AskIfLoadAutoSavedProjectDialogDescription(
         en = "Auto-saved project file found. Do you want to load it? If not, the file will be discarded."
     ),
+    PluginDialogTitle(
+        en = "vLabeler - Plugin"
+    ),
+    PluginDialogInfo(
+        en = "author: %s  version: %d"
+    ),
+    PluginDialogLabelMin(
+        en = " (min: %s)"
+    ),
+    PluginDialogLabelMax(
+        en = " (max: %s)"
+    ),
+    PluginDialogLabelMinMax(
+        en = " (min: %s, max: %s)"
+    ),
     CanvasLengthOverflowError(
         en = "The charts are too long to be painted." +
             " Please use \"-\" button to reduce data length, or divide the input files priorly."

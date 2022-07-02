@@ -36,6 +36,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,6 +54,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
+import com.sdercolin.vlabeler.ui.dialog.PluginDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.CoroutineScope
@@ -110,7 +112,6 @@ fun ProjectCreator(
     }
 }
 
-
 @Composable
 private fun SampleDirectoryTextField(state: ProjectCreatorState) {
     OutlinedTextField(
@@ -127,7 +128,6 @@ private fun SampleDirectoryTextField(state: ProjectCreatorState) {
         isError = state.isSampleDirectoryValid().not()
     )
 }
-
 
 @Composable
 private fun WorkingDirectoryTextField(state: ProjectCreatorState) {
@@ -188,10 +188,28 @@ private fun LabelerSelectorRow(
     availableLabelerConfs: List<LabelerConf>,
     availableTemplatePlugins: List<Plugin>
 ) {
-    Row {
+    var pluginDialogShown by remember { mutableStateOf(false) }
+    Row(verticalAlignment = Alignment.CenterVertically) {
         LabelerSelector(state, availableLabelerConfs)
         Spacer(Modifier.width(60.dp))
         TemplatePluginSelector(state, availableTemplatePlugins)
+        Spacer(Modifier.width(10.dp))
+        IconButton(
+            enabled = state.templatePlugin != null,
+            onClick = { pluginDialogShown = true }
+        ) {
+            Icon(Icons.Default.Settings, null)
+        }
+    }
+    if (pluginDialogShown) {
+        PluginDialog(
+            plugin = state.templatePlugin!!,
+            paramMap = state.templatePluginParams!!,
+            submit = {
+                if (it != null) state.templatePluginParams = it
+                pluginDialogShown = false
+            }
+        )
     }
 }
 
@@ -203,7 +221,7 @@ private fun LabelerSelector(
     Box {
         var expanded by remember { mutableStateOf(false) }
         TextField(
-            modifier = Modifier.widthIn(min = 400.dp),
+            modifier = Modifier.widthIn(min = 250.dp),
             value = state.labeler.displayedName,
             onValueChange = { },
             readOnly = true,
@@ -242,7 +260,7 @@ private fun TemplatePluginSelector(
     Box {
         var expanded by remember { mutableStateOf(false) }
         TextField(
-            modifier = Modifier.widthIn(min = 400.dp),
+            modifier = Modifier.widthIn(min = 250.dp),
             value = state.templateName,
             onValueChange = { },
             readOnly = true,

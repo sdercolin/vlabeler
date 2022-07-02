@@ -17,6 +17,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.HomeDir
+import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.detectEncoding
 import com.sdercolin.vlabeler.util.encodingNameEquals
 import com.sdercolin.vlabeler.util.getDirectory
@@ -48,7 +49,7 @@ class ProjectCreatorState(
     )
         private set
     var templatePlugin: Plugin? by mutableStateOf(null)
-    private var templatePluginParams: Map<String, Any>? by mutableStateOf(null)
+    var templatePluginParams: ParamMap? by mutableStateOf(null)
     val templateName: String get() = templatePlugin?.displayedName ?: string(Strings.StarterNewTemplatePluginNone)
     var inputFile: String by mutableStateOf("")
         private set

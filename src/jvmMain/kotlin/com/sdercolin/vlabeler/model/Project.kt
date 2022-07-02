@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.editor.EditedEntry
+import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.groupByFirst
 import kotlinx.serialization.Serializable
 import java.io.File
@@ -162,7 +163,7 @@ private fun generateEntriesByPlugin(
     labelerConf: LabelerConf,
     sampleNames: List<String>,
     plugin: Plugin,
-    params: Map<String, Any>?,
+    params: ParamMap?,
     inputFile: File?,
     encoding: String
 ): Map<String, List<Entry>> {
@@ -216,7 +217,7 @@ suspend fun projectOf(
     projectName: String,
     labelerConf: LabelerConf,
     plugin: Plugin?,
-    pluginParams: Map<String, Any>?,
+    pluginParams: ParamMap?,
     inputFilePath: String,
     encoding: String
 ): Result<Project> {

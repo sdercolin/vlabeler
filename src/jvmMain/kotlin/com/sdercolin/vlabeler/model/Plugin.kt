@@ -5,6 +5,7 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.res.useResource
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Python
 import com.sdercolin.vlabeler.util.json
 import com.sdercolin.vlabeler.util.parseJson
@@ -101,7 +102,9 @@ data class Plugin(
         class StringParam(
             name: String,
             label: String,
-            defaultValue: String
+            defaultValue: String,
+            val multiLine: Boolean,
+            val optional: Boolean
         ) : Parameter<String>(ParameterType.String, name, label, defaultValue)
 
         class EnumParam(
@@ -173,7 +176,9 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
             }
             Plugin.ParameterType.String -> {
                 val default = defaultPrimitive.content
-                Plugin.Parameter.StringParam(name, label, default)
+                val optional = requireNotNull(element["optional"]).jsonPrimitive.boolean
+                val multiLine = element["multiLine"]?.jsonPrimitive?.boolean ?: false
+                Plugin.Parameter.StringParam(name, label, default, multiLine, optional)
             }
             Plugin.ParameterType.Enum -> {
                 val default = defaultPrimitive.content
@@ -192,7 +197,7 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
 
 fun runTemplatePlugin(
     plugin: Plugin,
-    params: Map<String, Any>,
+    params: ParamMap,
     inputFiles: List<File>,
     encoding: String,
     sampleNames: List<String>
