@@ -73,3 +73,8 @@ Please check [LabelerConf.kt](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model
 Check the following built-in plugins as examples:
 - [ust2lab-ja-kana](../resources/common/plugins/template/ust2lab-ja-kana): Use an input ust file to generate sinsy lab entries
 - [cv-oto-gen](../resources/common/plugins/template/cv-oto-gen): Generate CV oto entries from parameters
+
+### Debugging
+You can use logs to help debug your scripts.
+The standard output (e.g. `print()`) is written to `.logs/info.log` and the error output is written to `.logs/error.log`.
+If the plugin is not shown in the list, there are probably some errors while loading the plugin (i.e. parsing `plugin.json`).
