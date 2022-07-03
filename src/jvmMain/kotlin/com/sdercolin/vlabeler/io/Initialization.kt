@@ -1,12 +1,19 @@
 package com.sdercolin.vlabeler.io
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import com.sdercolin.vlabeler.audio.Player
+import com.sdercolin.vlabeler.audio.PlayerState
+import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.ui.AppRecordStore
+import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.CustomLabelerDir
@@ -16,6 +23,7 @@ import com.sdercolin.vlabeler.util.getCustomLabelers
 import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
+import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
 fun loadAppConf(): MutableState<AppConf> {
@@ -102,4 +110,30 @@ fun ensureDirectories() {
         RecordDir.mkdir()
         Log.info("$RecordDir created")
     }
+}
+
+fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecordStore): AppState {
+    val playerState = PlayerState()
+    val player = Player(mainScope, playerState)
+    val keyboardViewModel = KeyboardViewModel(mainScope)
+    val scrollFitViewModel = ScrollFitViewModel(mainScope)
+    val snackbarHostState = SnackbarHostState()
+    ensureDirectories()
+    Log.init()
+
+    val appConf = loadAppConf()
+    val availableLabelerConfs = loadAvailableLabelerConfs()
+    val plugins = loadPlugins()
+
+    return AppState(
+        playerState,
+        player,
+        keyboardViewModel,
+        scrollFitViewModel,
+        appRecordStore,
+        snackbarHostState,
+        appConf,
+        availableLabelerConfs,
+        plugins
+    )
 }

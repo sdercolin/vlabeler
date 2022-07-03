@@ -10,9 +10,11 @@ import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.ui.theme.Black50
 
 @Composable
-fun CircularProgress() {
+fun CircularProgress(darkenBackground: Boolean = true) {
     Box(
-        modifier = Modifier.fillMaxSize().background(color = Black50).plainClickable(),
+        modifier = Modifier.fillMaxSize()
+            .run { if (darkenBackground) background(color = Black50) else this }
+            .plainClickable(),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()

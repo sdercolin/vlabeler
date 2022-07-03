@@ -28,6 +28,7 @@ import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.shouldTogglePlayer
+import com.sdercolin.vlabeler.io.produceAppState
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppRecordStore
@@ -37,7 +38,6 @@ import com.sdercolin.vlabeler.ui.ProjectChangesListener
 import com.sdercolin.vlabeler.ui.ProjectWriter
 import com.sdercolin.vlabeler.ui.Splash
 import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
-import com.sdercolin.vlabeler.ui.produceAppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme

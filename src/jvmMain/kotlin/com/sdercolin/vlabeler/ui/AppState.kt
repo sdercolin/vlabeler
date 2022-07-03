@@ -33,32 +33,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
-fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecordStore): AppState {
-    val playerState = PlayerState()
-    val player = Player(mainScope, playerState)
-    val keyboardViewModel = KeyboardViewModel(mainScope)
-    val scrollFitViewModel = ScrollFitViewModel(mainScope)
-    val snackbarHostState = SnackbarHostState()
-    ensureDirectories()
-    Log.init()
-
-    val appConf = loadAppConf()
-    val availableLabelerConfs = loadAvailableLabelerConfs()
-    val plugins = loadPlugins()
-
-    return AppState(
-        playerState,
-        player,
-        keyboardViewModel,
-        scrollFitViewModel,
-        appRecordStore,
-        snackbarHostState,
-        appConf,
-        availableLabelerConfs,
-        plugins
-    )
-}
-
 class AppState(
     val playerState: PlayerState,
     val player: Player,

@@ -30,7 +30,7 @@ fun StandaloneDialogs(
             title = string(Strings.SaveAsProjectDialogTitle),
             extensions = listOf(Project.ProjectFileExtension),
             initialDirectory = appState.project!!.workingDirectory,
-            initialFileName = appState.project!!.projectFile.name
+            initialFileName = appState.project.projectFile.name
         ) { directory, fileName ->
             appState.closeSaveAsProjectDialog()
             if (directory != null && fileName != null) {
