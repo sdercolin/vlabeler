@@ -8,6 +8,24 @@
   "supportedLabelFileExtension": "lab",
   "inputFileExtension": "ust",
   "requireInputFile": true,
+  "parameters": {
+    "list": [
+      {
+        "type": "integer",
+        "name": "overlap",
+        "label": "Overlap (ms)",
+        "defaultValue": 50,
+        "min": 10
+      },
+      {
+        "type": "integer",
+        "name": "vowelDelay",
+        "label": "Vowel delay when semivowel exists (ms)",
+        "defaultValue": 30,
+        "min": 10
+      }
+    ]
+  },
   "scriptFiles": [
     "ust2lab-ja-kana.py"
   ]

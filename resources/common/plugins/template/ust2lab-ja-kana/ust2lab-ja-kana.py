@@ -54,29 +54,40 @@ for note in notes:
     if len(phonemes) == 1:
         if last is not None:
             entries.append(last)
-        last = Entry(sample=sample, name=phonemes[0], start=note.pos, end=note.pos + note.length, points=[], extras=[])
+        start = note.pos
+        end = note.pos + note.length
+        last = Entry(sample=sample, name=phonemes[0], start=start, end=end, points=[], extras=[])
     elif len(phonemes) > 1:
         overlap = 0
         if last is not None:
-            if last.end - last.start > 100:
-                overlap = 50
-            else:
-                overlap = int((last.end - last.start) / 2)
+            overlap = params["overlap"]
+            lastLength = last.end - last.start
+            if lastLength < overlap * 2:
+                overlap = int(lastLength / 2)
             last.end = last.end - overlap
             entries.append(last)
         if len(phonemes) == 2:
-            entries.append(Entry(sample=sample, name=phonemes[0], start=note.pos-overlap, end=note.pos, points=[], extras=[]))
-            last = Entry(sample=sample, name=phonemes[1], start=note.pos, end=note.pos + note.length, points=[], extras=[])
+            consonantStart = note.pos - overlap
+            consonantEnd = note.pos
+            vowelStart = consonantEnd
+            vowelEnd = note.pos + note.length
+            entries.append(Entry(sample=sample, name=phonemes[0], start=consonantStart, end=consonantEnd, points=[], extras=[]))
+            last = Entry(sample=sample, name=phonemes[1], start=vowelStart, end=vowelEnd, points=[], extras=[])
         else:
-            if note.length > 100:
-                preu = 30
-            else:
-                preu = int(note.length * 0.3)
-            prefixLength = (overlap + preu)/2
-            midLength = overlap + preu - prefixLength
-            entries.append(Entry(sample=sample, name=phonemes[0], start=note.pos-overlap, end=note.pos-overlap+prefixLength, points=[], extras=[]))
-            entries.append(Entry(sample=sample, name=phonemes[1], start=note.pos-overlap+prefixLength, end=note.pos-overlap+prefixLength+midLength, points=[], extras=[]))
-            last = Entry(sample=sample, name=phonemes[2], start=note.pos - overlap + prefixLength + midLength, end=note.pos + note.length, points=[], extras=[])
+            vowelDelay = params["vowelDelay"]
+            if note.length < vowelDelay * 3:
+                vowelDelay = int(note.length / 3)
+            consonantLength = (overlap + vowelDelay) / 2
+            semivowelLength = overlap + vowelDelay - consonantLength
+            consonantStart = note.pos - overlap
+            consonantEnd = consonantStart + consonantLength
+            semivowelStart = consonantEnd
+            semivowelEnd = semivowelStart +semivowelLength
+            vowelStart = semivowelEnd
+            vowelEnd = note.pos + note.length
+            entries.append(Entry(sample=sample, name=phonemes[0], start=consonantStart, end=consonantEnd, points=[], extras=[]))
+            entries.append(Entry(sample=sample, name=phonemes[1], start=semivowelStart, end=semivowelEnd, points=[], extras=[]))
+            last = Entry(sample=sample, name=phonemes[2], start=vowelStart, end=vowelEnd, points=[], extras=[])
 
 if last is not None:
     entries.append(last)
