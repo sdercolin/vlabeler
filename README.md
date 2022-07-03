@@ -7,7 +7,7 @@
 - Customizable labeling/import/export, to be used by different types of voice editor apps
 - High performance with multiplatforms
 
-**The project is now in Alpha stage.
+**The project is now in Alpha.
 For helps, suggestions, issue reports etc. please join our [Discord](https://discord.gg/yrTqG2SrRd).** 
 
 ## Download
@@ -67,7 +67,7 @@ Note that following `Ctrl` means `Command` if you are using macOS.
 ### Move parameter lines
 - Mouse drag on normal parameters: move itself
 - Mouse drag on primary parameters: move all the lines together
-- `Shift`: revert the primary settings
+- `Shift`: invert normal/primary. e.g. mouse drag on primary parameters with Shift pressed only moves itself.
 
 ### Audio playback
 - `Space`: play from the beginning / Stop
