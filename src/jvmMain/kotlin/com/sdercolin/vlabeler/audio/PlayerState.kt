@@ -1,9 +1,7 @@
 package com.sdercolin.vlabeler.audio
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
 class PlayerState {
@@ -26,6 +24,3 @@ class PlayerState {
         framePosition = position
     }
 }
-
-@Composable
-fun rememberPlayerState() = remember { PlayerState() }

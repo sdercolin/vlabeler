@@ -1,15 +1,18 @@
 package com.sdercolin.vlabeler.ui
 
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.io.ensureDirectories
+import com.sdercolin.vlabeler.io.loadAppConf
+import com.sdercolin.vlabeler.io.loadAvailableLabelerConfs
+import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
@@ -29,6 +32,32 @@ import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
+
+fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecordStore): AppState {
+    val playerState = PlayerState()
+    val player = Player(mainScope, playerState)
+    val keyboardViewModel = KeyboardViewModel(mainScope)
+    val scrollFitViewModel = ScrollFitViewModel(mainScope)
+    val snackbarHostState = SnackbarHostState()
+    ensureDirectories()
+    Log.init()
+
+    val appConf = loadAppConf()
+    val availableLabelerConfs = loadAvailableLabelerConfs()
+    val plugins = loadPlugins()
+
+    return AppState(
+        playerState,
+        player,
+        keyboardViewModel,
+        scrollFitViewModel,
+        appRecordStore,
+        snackbarHostState,
+        appConf,
+        availableLabelerConfs,
+        plugins
+    )
+}
 
 class AppState(
     val playerState: PlayerState,
@@ -188,29 +217,4 @@ class AppState(
         object CreatingNew : PendingActionAfterSaved()
         object Exit : PendingActionAfterSaved()
     }
-}
-
-@Composable
-fun rememberAppState(
-    playerState: PlayerState,
-    player: Player,
-    keyboardViewModel: KeyboardViewModel,
-    scrollFitViewModel: ScrollFitViewModel,
-    appRecordStore: AppRecordStore,
-    snackbarHostState: SnackbarHostState,
-    appConf: MutableState<AppConf>,
-    availableLabelerConfs: List<LabelerConf>,
-    plugins: List<Plugin>
-) = remember {
-    AppState(
-        playerState,
-        player,
-        keyboardViewModel,
-        scrollFitViewModel,
-        appRecordStore,
-        snackbarHostState,
-        appConf,
-        availableLabelerConfs,
-        plugins
-    )
 }
