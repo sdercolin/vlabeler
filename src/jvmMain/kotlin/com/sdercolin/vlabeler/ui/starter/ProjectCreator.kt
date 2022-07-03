@@ -67,12 +67,13 @@ fun ProjectCreator(
     availableTemplatePlugins: List<Plugin>,
     snackbarHostState: SnackbarHostState,
     appRecordStore: AppRecordStore,
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     state: ProjectCreatorState = rememberProjectCreatorState(
+        coroutineScope,
         availableLabelerConfs,
         appRecordStore
     ),
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
     Surface(Modifier.fillMaxSize()) {
@@ -212,7 +213,8 @@ private fun LabelerSelectorRow(
             submit = {
                 if (it != null) state.templatePluginParams = it
                 pluginDialogShown = false
-            }
+            },
+            save = { plugin, params -> state.savePluginParams(plugin, params) }
         )
     }
 }

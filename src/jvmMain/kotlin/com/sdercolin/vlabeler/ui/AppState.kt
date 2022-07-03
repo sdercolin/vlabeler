@@ -8,11 +8,6 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
-import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.io.ensureDirectories
-import com.sdercolin.vlabeler.io.loadAppConf
-import com.sdercolin.vlabeler.io.loadAvailableLabelerConfs
-import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord

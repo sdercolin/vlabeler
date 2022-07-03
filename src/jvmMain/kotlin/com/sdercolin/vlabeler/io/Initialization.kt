@@ -24,9 +24,11 @@ import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 
-fun loadAppConf(): MutableState<AppConf> {
+suspend fun loadAppConf(): MutableState<AppConf> = withContext(Dispatchers.IO) {
     val customAppConf = if (CustomAppConfFile.exists() && !isDebug) {
         Log.info("Custom app conf found")
         val customAppConfText = CustomAppConfFile.readText()
@@ -38,10 +40,10 @@ fun loadAppConf(): MutableState<AppConf> {
     val appConf = customAppConf ?: parseJson(DefaultAppConfFile.readText())
     CustomAppConfFile.writeText(toJson(appConf))
     Log.info("AppConf: $appConf")
-    return mutableStateOf(appConf)
+    mutableStateOf(appConf)
 }
 
-fun loadAvailableLabelerConfs(): List<LabelerConf> {
+suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatchers.IO) {
     val defaultLabelers = getDefaultLabelers().associateWith {
         it.asLabelerConf().getOrThrow() // default items should always be parsed
     }.toList()
@@ -77,11 +79,11 @@ fun loadAvailableLabelerConfs(): List<LabelerConf> {
     }
 
     Log.info("Labelers: ${availableLabelers.joinToString { it.toString() }}")
-    return availableLabelers.sortedBy { it.name }
+    availableLabelers.sortedBy { it.name }
 }
 
-fun loadPlugins(): List<Plugin> {
-    return loadPlugins(Plugin.Type.Template)
+suspend fun loadPlugins(): List<Plugin> = withContext(Dispatchers.IO) {
+    loadPlugins(Plugin.Type.Template)
 }
 
 private fun File.asLabelerConf(): Result<LabelerConf> {
@@ -97,7 +99,7 @@ private fun File.asLabelerConf(): Result<LabelerConf> {
     return result
 }
 
-fun ensureDirectories() {
+suspend fun ensureDirectories() = withContext(Dispatchers.IO) {
     if (AppDir.exists().not()) {
         AppDir.mkdir()
         Log.info("$AppDir created")
@@ -112,7 +114,7 @@ fun ensureDirectories() {
     }
 }
 
-fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecordStore): AppState {
+suspend fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecordStore): AppState {
     val playerState = PlayerState()
     val player = Player(mainScope, playerState)
     val keyboardViewModel = KeyboardViewModel(mainScope)

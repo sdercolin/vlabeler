@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidthIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -33,6 +34,8 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.RestartAlt
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -47,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogState
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.ui.common.ReversedRow
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
@@ -55,26 +59,31 @@ import com.sdercolin.vlabeler.util.ParamMap
 
 class PluginDialogState(
     val plugin: Plugin,
-    paramMap: ParamMap,
-    private val submit: (ParamMap?) -> Unit
+    private val paramMap: ParamMap,
+    private val submit: (ParamMap?) -> Unit,
+    private val save: (ParamMap) -> Unit
 ) {
     val paramDefs = plugin.parameters?.list.orEmpty()
     val params = mutableStateListOf(*paramMap.map { it.value.toString() }.toTypedArray())
     val hasParams get() = paramDefs.isNotEmpty()
 
+    private fun getCurrentParamMap() = params.mapIndexed { index, textValue ->
+        val def = paramDefs[index]
+        def.name to parseTextValue(textValue, def)
+    }.toMap()
+
     fun apply() {
-        val newMap = params.mapIndexed { index, textValue ->
-            val def = paramDefs[index]
-            val value = when (def) {
-                is Plugin.Parameter.BooleanParam -> textValue.toBooleanStrict()
-                is Plugin.Parameter.EnumParam -> textValue
-                is Plugin.Parameter.FloatParam -> textValue.toFloat()
-                is Plugin.Parameter.IntParam -> textValue.toInt()
-                is Plugin.Parameter.StringParam -> textValue
-            }
-            def.name to value
+        submit(getCurrentParamMap())
+    }
+
+    private fun parseTextValue(textValue: String, def: Plugin.Parameter<*>): Any {
+        return when (def) {
+            is Plugin.Parameter.BooleanParam -> textValue.toBooleanStrict()
+            is Plugin.Parameter.EnumParam -> textValue
+            is Plugin.Parameter.FloatParam -> textValue.toFloat()
+            is Plugin.Parameter.IntParam -> textValue.toInt()
+            is Plugin.Parameter.StringParam -> textValue
         }
-        submit(newMap.toMap())
     }
 
     fun cancel() {
@@ -134,21 +143,44 @@ class PluginDialogState(
     fun update(index: Int, value: String) {
         params[index] = value
     }
+
+    fun canReset() = paramDefs.indices.all {
+        params[it] == paramDefs[it].defaultValue.toString()
+    }
+
+    fun reset() {
+        paramDefs.indices.forEach {
+            params[it] = paramDefs[it].defaultValue.toString()
+        }
+    }
+
+    fun canSave(): Boolean {
+        val current = getCurrentParamMap().toList()
+        val saved = paramMap.toList()
+        val changed = saved.indices.all { saved[it] == current[it] }.not()
+        return changed && isAllValid()
+    }
+
+    fun save() {
+        save(getCurrentParamMap())
+    }
 }
 
 @Composable
 private fun rememberState(
     plugin: Plugin,
     paramMap: ParamMap,
-    submit: (ParamMap?) -> Unit
-) = remember { PluginDialogState(plugin, paramMap, submit) }
+    submit: (ParamMap?) -> Unit,
+    save: (ParamMap) -> Unit
+) = remember(paramMap) { PluginDialogState(plugin, paramMap, submit, save) }
 
 @Composable
 fun PluginDialog(
     plugin: Plugin,
     paramMap: ParamMap,
     submit: (ParamMap?) -> Unit,
-    state: PluginDialogState = rememberState(plugin, paramMap, submit)
+    save: (Plugin, ParamMap) -> Unit,
+    state: PluginDialogState = rememberState(plugin, paramMap, submit, save = { save(plugin, it) })
 ) {
     Dialog(
         title = string(Strings.PluginDialogTitle),
@@ -173,27 +205,30 @@ private fun Content(state: PluginDialogState) {
                     .padding(horizontal = 45.dp, vertical = 30.dp)
                     .verticalScroll(scrollState)
             ) {
-                Text(
-                    text = plugin.displayedName,
-                    style = MaterialTheme.typography.h4,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                ReversedRow(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Row(Modifier.requiredWidthIn(min = 116.dp)) {
+                        IconButton(
+                            modifier = Modifier.padding(start = 10.dp),
+                            onClick = state::reset,
+                            enabled = !state.canReset()
+                        ) {
+                            Icon(Icons.Default.RestartAlt, null)
+                        }
+                        IconButton(
+                            modifier = Modifier.padding(start = 10.dp),
+                            onClick = state::save,
+                            enabled = state.canSave()
+                        ) {
+                            Icon(Icons.Default.Save, null)
+                        }
+                    }
+                    Title(plugin)
+                }
                 Spacer(Modifier.height(15.dp))
-                Text(
-                    text = string(Strings.PluginDialogInfo, plugin.author, plugin.version),
-                    style = MaterialTheme.typography.caption,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Info(plugin)
                 Spacer(Modifier.height(5.dp))
                 if (plugin.description.isNotBlank()) {
-                    Text(
-                        text = plugin.description,
-                        style = MaterialTheme.typography.caption,
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Description(plugin.description)
                 }
                 Spacer(Modifier.height(25.dp))
                 if (state.hasParams) {
@@ -218,6 +253,36 @@ private fun Content(state: PluginDialogState) {
             VerticalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.width(15.dp))
         }
     }
+}
+
+@Composable
+private fun Title(plugin: Plugin) {
+    Text(
+        text = plugin.displayedName,
+        style = MaterialTheme.typography.h4,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+private fun Info(plugin: Plugin) {
+    Text(
+        text = string(Strings.PluginDialogInfo, plugin.author, plugin.version),
+        style = MaterialTheme.typography.caption,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+private fun Description(description: String) {
+    Text(
+        text = description,
+        style = MaterialTheme.typography.caption,
+        maxLines = 3,
+        overflow = TextOverflow.Ellipsis
+    )
 }
 
 @Composable

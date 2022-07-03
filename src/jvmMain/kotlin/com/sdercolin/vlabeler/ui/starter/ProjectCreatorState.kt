@@ -8,6 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
+import com.sdercolin.vlabeler.io.loadSavedParams
+import com.sdercolin.vlabeler.io.saveParams
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
@@ -29,6 +31,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class ProjectCreatorState(
+    private val coroutineScope: CoroutineScope,
     availableLabelerConfs: List<LabelerConf>,
     private val appRecordStore: AppRecordStore
 ) {
@@ -135,14 +138,20 @@ class ProjectCreatorState(
     }
 
     fun updatePlugin(plugin: Plugin?) {
-        templatePlugin = plugin
-        resetInputFileIfNeeded()
-        if (plugin != null) loadPluginParams(plugin)
+        if (plugin != null) {
+            coroutineScope.launch {
+                templatePluginParams = plugin.loadSavedParams()
+                templatePlugin = plugin
+                resetInputFileIfNeeded()
+            }
+        }
     }
 
-    private fun loadPluginParams(plugin: Plugin) {
-        templatePluginParams = plugin.getDefaultParams()
-        // TODO: load remembered values
+    fun savePluginParams(plugin: Plugin, params: ParamMap) {
+        coroutineScope.launch {
+            plugin.saveParams(params)
+            templatePluginParams = params
+        }
     }
 
     private fun resetInputFileIfNeeded() {
@@ -320,10 +329,11 @@ class ProjectCreatorState(
 
 @Composable
 fun rememberProjectCreatorState(
+    coroutineScope: CoroutineScope,
     availableLabelerConfs: List<LabelerConf>,
     appRecordStore: AppRecordStore
 ) = remember(appRecordStore) {
-    ProjectCreatorState(availableLabelerConfs, appRecordStore)
+    ProjectCreatorState(coroutineScope, availableLabelerConfs, appRecordStore)
 }
 
 enum class PathPicker {
