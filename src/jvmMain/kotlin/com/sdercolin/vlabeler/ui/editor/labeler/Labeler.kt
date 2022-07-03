@@ -21,6 +21,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +40,7 @@ fun Labeler(
     val project = editorState.project
     val entry = editorState.editedEntry.entry
     val scope = rememberCoroutineScope()
+    val openEditEntryNameDialog = remember { { editorState.openEditEntryNameDialog(duplicate = false, scope = scope) } }
     val horizontalScrollState = rememberScrollState(0)
 
     LaunchedEffect(Unit) {
@@ -51,9 +53,7 @@ fun Labeler(
         EntryTitleBar(
             entryName = entry.name,
             sampleName = project.currentSampleName,
-            openEditEntryNameDialog = {
-                editorState.openEditEntryNameDialog(duplicate = false, scope = scope)
-            }
+            openEditEntryNameDialog = openEditEntryNameDialog
         )
         Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Black50)) {
             Canvas(
