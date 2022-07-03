@@ -78,12 +78,7 @@ class ProjectCreatorState(
         if (!projectNameEdited && !workingDirectoryEdited) {
             projectName = if (File(path).absolutePath != HomeDir.absolutePath) path.lastPathSection else ""
         }
-        if (!inputFileEdited && isInputFileEnabled()) {
-            inputFile = if (File(path).absolutePath != HomeDir.absolutePath) {
-                val file = labeler.defaultInputFilePath?.let { File(path).resolve(it) }
-                if (file?.exists() == true) file.absolutePath else ""
-            } else ""
-        }
+        updateInputFileIfNeeded()
     }
 
     fun updateWorkingDirectory(path: String) {
@@ -134,7 +129,7 @@ class ProjectCreatorState(
         if (templatePlugin?.supportedLabelFileExtension != labeler.extension) {
             templatePlugin = null
         }
-        resetInputFileIfNeeded()
+        updateInputFileIfNeeded()
     }
 
     fun updatePlugin(plugin: Plugin?) {
@@ -142,8 +137,12 @@ class ProjectCreatorState(
             coroutineScope.launch {
                 templatePluginParams = plugin.loadSavedParams()
                 templatePlugin = plugin
-                resetInputFileIfNeeded()
+                updateInputFileIfNeeded()
             }
+        } else {
+            templatePluginParams = null
+            templatePlugin = null
+            updateInputFileIfNeeded()
         }
     }
 
@@ -154,16 +153,24 @@ class ProjectCreatorState(
         }
     }
 
-    private fun resetInputFileIfNeeded() {
+    private fun updateInputFileIfNeeded() {
         val supportedExtension = getSupportedInputFileExtension()
-        if (supportedExtension == null || inputFile.endsWith(supportedExtension).not()) {
-            inputFile = ""
+        if (supportedExtension == null) {
+            updateInputFile("", editedByUser = false)
+            return
+        }
+        if (inputFileEdited) return
+        if (supportedExtension == labeler.extension) {
+            val file = labeler.defaultInputFilePath?.let { File(sampleDirectory).resolve(it) }
+            val inputFilePath = if (file?.exists() == true) file.absolutePath else ""
+            updateInputFile(inputFilePath, editedByUser = false)
         }
     }
 
-    fun updateInputFile(scope: CoroutineScope, path: String) {
-        scope.launch(Dispatchers.IO) {
-            inputFileEdited = true
+    fun updateInputFile(path: String, editedByUser: Boolean) {
+        if (editedByUser) inputFileEdited = true
+        if (path == inputFile) return
+        coroutineScope.launch(Dispatchers.IO) {
             inputFile = path
             val file = File(path)
             if (file.isFile && file.exists()) {
@@ -255,8 +262,7 @@ class ProjectCreatorState(
     fun handleFilePickerResult(
         picker: PathPicker,
         parent: String?,
-        name: String?,
-        coroutineScope: CoroutineScope
+        name: String?
     ) {
         currentPathPicker = null
         if (parent == null || name == null) return
@@ -269,7 +275,7 @@ class ProjectCreatorState(
                 updateWorkingDirectory(file.getDirectory().absolutePath)
             }
             PathPicker.InputFile -> {
-                updateInputFile(coroutineScope, file.absolutePath)
+                updateInputFile(file.absolutePath, editedByUser = true)
             }
         }
     }
@@ -280,7 +286,6 @@ class ProjectCreatorState(
         .sortedBy { it.displayedName }
 
     fun create(
-        coroutineScope: CoroutineScope,
         snackbarHostState: SnackbarHostState,
         create: (Project) -> Unit
     ) {

@@ -96,14 +96,14 @@ fun ProjectCreator(
                         { WorkingDirectoryTextField(state) },
                         { ProjectNameTextField(state) },
                         { LabelerSelectorRow(state, availableLabelerConfs, availableTemplatePlugins) },
-                        { InputFileTextField(state, coroutineScope) },
+                        { InputFileTextField(state) },
                         { EncodingSelector(state) }
                     ).forEach {
                         it.invoke()
                         Spacer(Modifier.height(20.dp))
                     }
                     Spacer(Modifier.height(30.dp))
-                    ButtonBar(cancel, state, coroutineScope, snackbarHostState, create)
+                    ButtonBar(cancel, state, snackbarHostState, create)
                 }
                 VerticalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.width(15.dp))
             }
@@ -111,7 +111,7 @@ fun ProjectCreator(
                 CircularProgress()
             }
             state.currentPathPicker?.let { picker ->
-                PickerDialog(state, picker, coroutineScope)
+                PickerDialog(state, picker)
             }
         }
     }
@@ -306,14 +306,11 @@ private fun TemplatePluginSelector(
 }
 
 @Composable
-private fun InputFileTextField(
-    state: ProjectCreatorState,
-    coroutineScope: CoroutineScope
-) {
+private fun InputFileTextField(state: ProjectCreatorState) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = state.inputFile,
-        onValueChange = { state.updateInputFile(coroutineScope, it) },
+        onValueChange = { state.updateInputFile(it, editedByUser = true) },
         label = { Text(state.getInputFileLabelText()) },
         placeholder = state.getInputFilePlaceholderText()?.let { { Text(it) } },
         enabled = state.isInputFileEnabled(),
@@ -368,7 +365,6 @@ private fun EncodingSelector(state: ProjectCreatorState) {
 private fun ButtonBar(
     cancel: () -> Unit,
     state: ProjectCreatorState,
-    coroutineScope: CoroutineScope,
     snackbarHostState: SnackbarHostState,
     create: (Project) -> Unit
 ) {
@@ -377,7 +373,7 @@ private fun ButtonBar(
             Text(string(Strings.CommonCancel))
         }
         Button(
-            onClick = { state.create(coroutineScope, snackbarHostState, create) },
+            onClick = { state.create(snackbarHostState, create) },
             enabled = state.isValid()
         ) {
             Text(string(Strings.CommonOkay))
@@ -388,8 +384,7 @@ private fun ButtonBar(
 @Composable
 private fun PickerDialog(
     state: ProjectCreatorState,
-    picker: PathPicker,
-    coroutineScope: CoroutineScope
+    picker: PathPicker
 ) {
     val title = state.getFilePickerTitle(picker)
     val initial = state.getFilePickerInitialDirectory(picker)
@@ -401,6 +396,6 @@ private fun PickerDialog(
         extensions = extensions,
         directoryMode = directoryMode
     ) { parent, name ->
-        state.handleFilePickerResult(picker, parent, name, coroutineScope)
+        state.handleFilePickerResult(picker, parent, name)
     }
 }
