@@ -8,11 +8,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,14 +48,18 @@ import kotlinx.coroutines.flow.onEach
 fun main() = application {
     val mainScope = rememberCoroutineScope()
     val appRecordStore = rememberAppRecordStore(mainScope)
-    var onCloseRequest: () -> Unit by mutableStateOf({ exitApplication() })
-    var onKeyEvent: (KeyEvent) -> Boolean by mutableStateOf({ false })
 
     val appRecord = appRecordStore.stateFlow.collectAsState()
     val windowState = rememberResizableWindowState(appRecord)
 
     val appState by produceState(null as AppState?) {
         value = produceAppState(mainScope, appRecordStore)
+    }
+    val onCloseRequest = {
+        appState?.requestExit() ?: exitApplication()
+    }
+    val onKeyEvent: (KeyEvent) -> Boolean = {
+        appState?.keyboardViewModel?.onKeyEvent(it) ?: false
     }
 
     Window(
@@ -73,10 +75,6 @@ fun main() = application {
         }
 
         appState?.let { state ->
-            LaunchedEffect(state) {
-                onCloseRequest = { state.requestExit() }
-                onKeyEvent = state.keyboardViewModel::onKeyEvent
-            }
             LaunchKeyboardEvent(state.keyboardViewModel, state, state.player)
             LaunchExit(state, ::exitApplication)
 
