@@ -14,6 +14,7 @@ interface AppUnsavedChangesState {
     fun projectContentChanged()
     fun projectPathChanged()
     fun projectSaved()
+    fun projectClosed()
 }
 
 /**
@@ -52,6 +53,10 @@ class AppUnsavedChangesStateImpl : AppUnsavedChangesState {
 
     override fun projectSaved() {
         hasLoadedAutoSavedProject = false
+        projectWriteStatus = ProjectWriteStatus.Updated
+    }
+
+    override fun projectClosed() {
         projectWriteStatus = ProjectWriteStatus.Updated
     }
 }

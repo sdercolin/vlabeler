@@ -64,6 +64,7 @@ class AppState(
         clearProject()
         changeScreen(Screen.Starter)
         clearPendingActionAfterSaved()
+        projectClosed()
     }
 
     fun getPlugins(type: Plugin.Type) = plugins.filter { it.type == type }
