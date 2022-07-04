@@ -44,7 +44,7 @@ class EditorState(
     fun updateProject(newProject: Project) {
         val previous = project
         project = newProject
-        if (newProject.currentEntryIndexInTotal != previous.currentEntryIndexInTotal ||
+        if (newProject.currentIndex != previous.currentIndex ||
             newProject.currentEntry != previous.currentEntry
         ) {
             loadNewEntry()
@@ -121,10 +121,10 @@ class EditorState(
         val updatedProject = when {
             yDelta > 0 -> if (shouldSwitchSample) project.nextSample() else project.nextEntry()
             yDelta < 0 -> if (shouldSwitchSample) project.previousSample() else project.previousEntry()
-            else -> null
+            else -> return false
         }
 
-        if (updatedProject != null) {
+        if (updatedProject != project) {
             val previousProject = project
             appState.editProject { updatedProject }
             if (project.hasSwitchedSample(previousProject)) {

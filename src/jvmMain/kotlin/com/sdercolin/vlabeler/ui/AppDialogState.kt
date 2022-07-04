@@ -118,18 +118,16 @@ class AppDialogStateImpl(
         scope: CoroutineScope
     ) {
         val project = projectStore.requireProject()
-        val sampleName = project.currentSampleName
-        val index = project.currentEntryIndex
+        val index = project.currentIndex
         val entry = project.currentEntry
         val invalidOptions = if (project.labelerConf.allowSameNameEntry) {
             listOf()
         } else {
-            project.allEntries.map { it.name }
+            project.entries.map { it.name }
                 .run { if (!duplicate) minus(entry.name) else this }
         }
         openEmbeddedDialog(
             EditEntryNameDialogArgs(
-                sampleName = sampleName,
                 index = index,
                 initial = entry.name,
                 invalidOptions = invalidOptions,

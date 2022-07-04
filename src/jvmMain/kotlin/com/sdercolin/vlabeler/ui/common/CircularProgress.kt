@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.common
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,3 +21,7 @@ fun CircularProgress(darkenBackground: Boolean = true) {
         CircularProgressIndicator()
     }
 }
+
+@Composable
+@Preview
+private fun Preview() = CircularProgress()

@@ -37,16 +37,16 @@ fun rememberBottomBarState(
     appState: AppState,
     editorState: EditorState
 ) = remember(
-    project.currentEntryIndexInTotal,
-    project.totalEntryCount,
+    project.currentIndex,
+    project.entryCount,
     editorState.canvasResolution,
     appState.appConf,
     appState.canGoNextEntryOrSample,
     appState.canGoPreviousEntryOrSample
 ) {
     BottomBarState(
-        currentEntryIndexInTotal = project.currentEntryIndexInTotal,
-        totalEntryCount = project.totalEntryCount,
+        currentEntryIndexInTotal = project.currentIndex,
+        totalEntryCount = project.entryCount,
         resolution = editorState.canvasResolution,
         onChangeResolution = { editorState.changeResolution(it) },
         openSetResolutionDialog = {

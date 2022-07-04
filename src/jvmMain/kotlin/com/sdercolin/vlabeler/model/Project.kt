@@ -6,7 +6,6 @@ import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.editor.EditedEntry
 import com.sdercolin.vlabeler.util.ParamMap
-import com.sdercolin.vlabeler.util.groupByFirst
 import kotlinx.serialization.Serializable
 import java.io.File
 import java.nio.charset.Charset
@@ -17,138 +16,108 @@ data class Project(
     val sampleDirectory: String,
     val workingDirectory: String,
     val projectName: String,
-    val entriesBySampleName: Map<String, List<Entry>>,
+    val entries: List<Entry>,
+    val currentIndex: Int,
     val labelerConf: LabelerConf,
-    val currentSampleName: String,
-    val currentEntryIndex: Int,
     val encoding: String? = null
 ) {
 
-    val currentSampleFile: File
+    val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
+    val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
+    val currentEntry: Entry = entries[currentIndex]
+    val currentGroupIndex: Int = getGroupIndex(currentIndex)
+    val currentEntryGroup: List<Entry> = entryGroups[currentGroupIndex].second
+    val currentSampleName: String = currentEntry.sample
+
+    val currentSampleFile: File // TODO: nullable if not existing
         get() = File(sampleDirectory).resolve("$currentSampleName.$SampleFileExtension")
 
-    val currentEntry: Entry
-        get() = getEntry()
-
-    val entriesInCurrentSample: List<Entry>
-        get() = entriesBySampleName.getValue(currentSampleName)
-
-    val entriesWithSampleName: List<Pair<Entry, String>>
-        get() = entriesBySampleName.flatMap { (sampleName, entries) ->
-            entries.map { it to sampleName }
-        }
-
-    val allEntries = entriesBySampleName.flatMap { it.value }
-
-    val totalEntryCount: Int
-        get() = allEntries.size
-
-    val currentEntryIndexInTotal: Int
-        get() = allEntries.indexOf(currentEntry)
+    val entryCount: Int = entries.size
 
     val projectFile: File
         get() = File(workingDirectory).resolve("$projectName.$ProjectFileExtension")
 
-    fun getEntry(sampleName: String = currentSampleName, index: Int = currentEntryIndex) =
-        entriesBySampleName.getValue(sampleName)[index]
+    fun getGroupIndex(entryIndex: Int) = entryIndexGroups.indexOfFirst { it.second.contains(entryIndex) }
 
-    fun getEntryForEditing(sampleName: String = currentSampleName, index: Int = currentEntryIndex) = EditedEntry(
-        entry = getEntry(sampleName, index),
-        sampleName = sampleName,
+    fun getEntryForEditing(index: Int = currentIndex) = EditedEntry(
+        entry = entries[index],
         index = index
     )
 
     fun updateEntry(editedEntry: EditedEntry): Project {
-        val map = entriesBySampleName.toMutableMap()
-        val entries = map.getValue(editedEntry.sampleName).toMutableList()
-        entries[editedEntry.index] = editedEntry.entry
+        val entries = entries.toMutableList()
         if (labelerConf.continuous) {
             val previousIndex = editedEntry.index - 1
-            entries.getOrNull(previousIndex)?.copy(end = editedEntry.entry.start)
+            entries.getOrNull(previousIndex)
+                ?.takeIf { it.sample == editedEntry.entry.sample }
+                ?.copy(end = editedEntry.entry.start)
                 ?.let { entries[previousIndex] = it }
             val nextIndex = editedEntry.index + 1
-            entries.getOrNull(nextIndex)?.copy(start = editedEntry.entry.end)
+            entries.getOrNull(nextIndex)
+                ?.takeIf { it.sample == editedEntry.entry.sample }
+                ?.copy(start = editedEntry.entry.end)
                 ?.let { entries[nextIndex] = it }
         }
-        map[editedEntry.sampleName] = entries.toList()
-        return copy(entriesBySampleName = map.toMap())
+        entries[editedEntry.index] = editedEntry.entry
+        return copy(entries = entries)
     }
 
-    fun renameEntry(sampleName: String, index: Int, newName: String): Project {
-        val editedEntry = getEntryForEditing(sampleName, index)
+    fun renameEntry(index: Int, newName: String): Project {
+        val editedEntry = getEntryForEditing(index)
         val renamed = editedEntry.entry.copy(name = newName)
         return updateEntry(editedEntry.edit(renamed))
     }
 
-    fun duplicateEntry(sampleName: String, position: Int, newName: String): Project {
-        val map = entriesBySampleName.toMutableMap()
-        val entries = map.getValue(sampleName).toMutableList()
-        var original = getEntry(sampleName, position)
+    fun duplicateEntry(index: Int, newName: String): Project {
+        val entries = entries.toMutableList()
+        var original = entries[index]
         var duplicated = original.copy(name = newName)
         if (labelerConf.continuous) {
             val splitPoint = (original.start + original.end) / 2
             original = original.copy(end = splitPoint)
             duplicated = duplicated.copy(start = splitPoint)
-            entries[position] = original
+            entries[index] = original
         }
-        entries.add(position + 1, duplicated)
-        map[sampleName] = entries.toList()
-        return copy(entriesBySampleName = map.toMap())
+        entries.add(index + 1, duplicated)
+        return copy(entries = entries, currentIndex = index)
     }
 
     fun removeCurrentEntry(): Project {
-        val map = entriesBySampleName.toMutableMap()
-        val entries = map.getValue(currentSampleName).toMutableList()
-        val index = currentEntryIndex
-        val removed = entries.removeAt(index)
+        val index = currentIndex
+        val entries = entries.toMutableList()
+        val removed = requireNotNull(entries.removeAt(index))
         val newIndex = index - 1
         if (labelerConf.continuous) {
             val previousIndex = index - 1
-            entries.getOrNull(previousIndex)?.copy(end = removed.end)
+            entries.getOrNull(previousIndex)
+                ?.takeIf { it.sample == removed.sample }
+                ?.copy(end = removed.end)
                 ?.let { entries[previousIndex] = it }
         }
-        map[currentSampleName] = entries.toList()
-        return copy(entriesBySampleName = map.toMap(), currentEntryIndex = newIndex)
+        return copy(entries = entries, currentIndex = newIndex)
     }
 
     fun nextEntry() = switchEntry(reverse = false)
     fun previousEntry() = switchEntry(reverse = true)
-    private fun switchEntry(reverse: Boolean): Project? {
-        val currentSampleEntryBorderIndex = if (reverse) {
-            0
-        } else {
-            entriesBySampleName.getValue(currentSampleName).lastIndex
-        }
-        if (currentEntryIndex == currentSampleEntryBorderIndex) {
-            val newProject = switchSample(reverse, atEntryBorder = true) ?: return null
-            val entriesInNewSample = entriesBySampleName.getValue(newProject.currentSampleName)
-            val entryIndex = if (reverse) entriesInNewSample.lastIndex else 0
-            return newProject.copy(currentEntryIndex = entryIndex)
-        }
-        val targetIndex = currentEntryIndex + (if (reverse) -1 else 1)
-        return copy(currentEntryIndex = targetIndex)
+    private fun switchEntry(reverse: Boolean): Project {
+        val targetIndex = (currentIndex + if (reverse) -1 else 1).coerceIn(0..entries.lastIndex)
+        return copy(currentIndex = targetIndex)
     }
 
     fun nextSample() = switchSample(reverse = false)
     fun previousSample() = switchSample(reverse = true)
-    private fun switchSample(reverse: Boolean, atEntryBorder: Boolean = false): Project? {
-        val sampleNames = entriesBySampleName.keys.toList()
-        val sampleBorderIndex = if (reverse) 0 else sampleNames.lastIndex
-        val currentIndex = sampleNames.indexOf(currentSampleName)
-        if (currentIndex == sampleBorderIndex) {
-            if (atEntryBorder) return null
-            val entryBorderIndex = if (reverse) {
-                0
-            } else {
-                entriesBySampleName.getValue(currentSampleName).lastIndex
+    private fun switchSample(reverse: Boolean): Project {
+        val currentGroupIndex = getGroupIndex(currentIndex)
+        val targetGroupIndex = currentGroupIndex + if (reverse) -1 else 1
+        val targetEntryIndex = when {
+            targetGroupIndex < 0 -> 0
+            targetGroupIndex > entryGroups.lastIndex -> entries.lastIndex
+            else -> {
+                val indexesInTargetGroup = entryIndexGroups[targetGroupIndex].second
+                if (reverse) indexesInTargetGroup.last() else indexesInTargetGroup.first()
             }
-            return copy(currentEntryIndex = entryBorderIndex)
         }
-        val targetIndex = currentIndex + (if (reverse) -1 else 1)
-        val targetName = sampleNames[targetIndex]
-        val targetEntries = entriesBySampleName.getValue(targetName)
-        val targetEntryIndex = if (reverse) targetEntries.lastIndex else 0
-        return copy(currentSampleName = sampleNames[targetIndex], currentEntryIndex = targetEntryIndex)
+        return copy(currentIndex = targetEntryIndex)
     }
 
     fun hasSwitchedSample(previous: Project?) = previous != null && previous.currentSampleName != currentSampleName
@@ -166,7 +135,7 @@ private fun generateEntriesByPlugin(
     params: ParamMap?,
     inputFile: File?,
     encoding: String
-): Map<String, List<Entry>> {
+): List<Entry> {
     val entries = runTemplatePlugin(plugin, params.orEmpty(), listOfNotNull(inputFile), encoding, sampleNames)
         .map {
             it.copy(
@@ -174,36 +143,54 @@ private fun generateEntriesByPlugin(
                 extra = it.extra.take(labelerConf.extraFieldNames.count())
             )
         }
-        .map { (it.sample ?: sampleNames.first()) to it.toEntry() }
-        .groupByFirst()
+        .map { it.toEntry(sampleName = it.sample ?: sampleNames.first()) }
     return mergeEntriesWithSampleNames(labelerConf, entries, sampleNames)
 }
 
 fun mergeEntriesWithSampleNames(
     labelerConf: LabelerConf,
-    entries: Map<String, List<Entry>>,
+    entries: List<Entry>,
     sampleNames: List<String>
-): Map<String, List<Entry>> {
-    val sampleNamesNotUsed = sampleNames.filterNot { it in entries.keys }
-    val additionalSampleMap = sampleNamesNotUsed.associateWith { sampleName ->
-        listOf(Entry.fromDefaultValues(sampleName, labelerConf.defaultValues, labelerConf.defaultExtras))
+): List<Entry> {
+    val sampleNameUsed = entries.map { it.sample }.toSet()
+    val sampleNamesNotUsed = sampleNames.filterNot { it in sampleNameUsed }
+    val additionalEntries = sampleNamesNotUsed.map { sampleName ->
+        Entry.fromDefaultValues(sampleName, sampleName, labelerConf.defaultValues, labelerConf.defaultExtras)
             .also {
-                Log.info("Sample $sampleName doesn't have entries, created default: ${it.first()}")
+                Log.info("Sample $sampleName doesn't have entries, created default: $it")
             }
+        // TODO: notify
     }
-    return (entries + additionalSampleMap)
-        .mapValues { it.value.toContinuous(labelerConf.continuous) }
+    return (entries + additionalEntries).toContinuous(labelerConf.continuous)
+}
+
+private fun List<Entry>.indexGroupsConnected(): List<Pair<String, List<Int>>> = withIndex()
+    .fold(listOf<Pair<String, MutableList<IndexedValue<Entry>>>>()) { acc, entry ->
+        val lastGroup = acc.lastOrNull()
+        if (lastGroup == null || lastGroup.first != entry.value.sample) {
+            acc.plus(entry.value.sample to mutableListOf(entry))
+        } else {
+            lastGroup.second.add(entry)
+            acc
+        }
+    }.map { group -> group.first to group.second.map { it.index } }
+
+private fun List<Entry>.entryGroupsConnected() = indexGroupsConnected().map { group ->
+    group.first to group.second.map { this[it] }
 }
 
 private fun List<Entry>.toContinuous(continuous: Boolean): List<Entry> {
     if (!continuous) return this
-    return this
-        .sortedBy { it.start }
-        .distinctBy { it.start }
-        .let {
-            it.zipWithNext { current, next ->
-                current.copy(end = next.start)
-            }.plus(it.last())
+    return entryGroupsConnected()
+        .flatMap { (_, entries) ->
+            entries
+                .sortedBy { it.start }
+                .distinctBy { it.start }
+                .let {
+                    it.zipWithNext { current, next ->
+                        current.copy(end = next.start)
+                    }.plus(it.last())
+                }
         }
 }
 
@@ -233,14 +220,14 @@ suspend fun projectOf(
         File(inputFilePath)
     } else null
 
-    val entriesBySample = when {
+    val entries = when {
         plugin != null -> generateEntriesByPlugin(labelerConf, sampleNames, plugin, pluginParams, inputFile, encoding)
         inputFile != null -> {
             fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf, sampleNames)
         }
         else -> {
-            sampleNames.associateWith {
-                listOf(Entry.fromDefaultValues(it, labelerConf.defaultValues, labelerConf.defaultExtras))
+            sampleNames.map {
+                Entry.fromDefaultValues(it, it, labelerConf.defaultValues, labelerConf.defaultExtras)
             }
         }
     }
@@ -249,10 +236,9 @@ suspend fun projectOf(
         sampleDirectory = sampleDirectory,
         workingDirectory = workingDirectory,
         projectName = projectName,
-        entriesBySampleName = entriesBySample,
+        entries = entries,
+        currentIndex = 0,
         labelerConf = labelerConf,
-        currentSampleName = sampleNames.first(),
-        currentEntryIndex = 0,
         encoding = encoding
     )
     return Result.success(project)

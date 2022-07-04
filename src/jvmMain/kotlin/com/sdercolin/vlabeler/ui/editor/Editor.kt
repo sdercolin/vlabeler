@@ -65,8 +65,8 @@ fun Editor(state: EditorState, appState: AppState) {
                 EntryList(
                     pinned = true,
                     project = state.project,
-                    jumpToEntry = { sampleName, entryIndex ->
-                        appState.jumpToEntry(sampleName, entryIndex)
+                    jumpToEntry = { index ->
+                        appState.jumpToEntry(index)
                         labelerFocusRequester.requestFocus()
                     }
                 )

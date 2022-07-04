@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.io
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.dialog.ErrorDialogContent
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomLabelerDir
@@ -11,6 +12,7 @@ import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -27,7 +29,13 @@ fun loadProject(
             return@launch
         }
         appState.showProgress()
-        val project = parseJson<Project>(file.readText())
+        val project = runCatching { parseJson<Project>(file.readText()) }
+            .getOrElse {
+                appState.openEmbeddedDialog(ErrorDialogContent.FailedToParseProject)
+                Log.error(it)
+                appState.hideProgress()
+                return@launch
+            }
         val existingLabelerConf = appState.availableLabelerConfs.find { it.name == project.labelerConf.name }
         val labelerConf = when {
             existingLabelerConf == null -> {

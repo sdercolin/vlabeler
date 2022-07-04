@@ -31,7 +31,6 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
 data class EditEntryNameDialogArgs(
-    val sampleName: String,
     val index: Int,
     val initial: String,
     val invalidOptions: List<String>,
@@ -40,7 +39,6 @@ data class EditEntryNameDialogArgs(
 ) : EmbeddedDialogArgs
 
 data class EditEntryNameDialogResult(
-    val sampleName: String,
     val index: Int,
     val name: String,
     val duplicate: Boolean
@@ -53,7 +51,7 @@ fun EditEntryNameDialog(
 ) {
     val dismiss = { finish(null) }
     val submit = { name: String ->
-        finish(EditEntryNameDialogResult(args.sampleName, args.index, name, args.duplicate))
+        finish(EditEntryNameDialogResult(args.index, name, args.duplicate))
     }
 
     var input by remember { mutableStateOf(args.initial) }

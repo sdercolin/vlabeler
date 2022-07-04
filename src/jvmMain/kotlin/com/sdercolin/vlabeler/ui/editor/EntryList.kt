@@ -55,25 +55,20 @@ import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
 
 @Composable
-fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (sampleName: String, index: Int) -> Unit) {
-    val entries = project.entriesWithSampleName
-    val currentIndex = project.currentEntryIndexInTotal
+fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
+    val entries = project.entries
+    val currentIndex = project.currentIndex
 
     val focusRequester = remember { FocusRequester() }
-
-    val submit = { flattenedIndex: Int ->
-        val (entry, sampleName) = entries[flattenedIndex]
-        val entryIndex = project.entriesBySampleName.getValue(sampleName).indexOf(entry)
-        jumpToEntry(sampleName, entryIndex)
-    }
+    val submit = { index: Int -> jumpToEntry(index) }
 
     var searchText by remember { mutableStateOf<String?>(null) }
     var searchResult by remember(project) { mutableStateOf(entries) }
-    var selectedIndex by remember(project.currentEntryIndexInTotal) { mutableStateOf(currentIndex) }
+    var selectedIndex by remember(project.currentIndex) { mutableStateOf(currentIndex) }
 
     fun search(text: String?) {
         searchText = text
-        val newResults = if (text == null) entries else entries.filter { it.first.name.contains(text) }
+        val newResults = if (text == null) entries else entries.filter { it.name.contains(text) }
         if (searchResult == newResults) return
         searchResult = newResults
         selectedIndex = 0
@@ -132,7 +127,7 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (sampleName: Strin
 
 @Composable
 private fun ColumnScope.List(
-    searchResult: List<Pair<Entry, String>>,
+    searchResult: List<Entry>,
     currentIndex: Int,
     selectedIndex: Int,
     select: (Int) -> Unit,
@@ -192,13 +187,13 @@ private fun ColumnScope.List(
                         style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f))
                     )
                     BasicText(
-                        text = item.first.name,
+                        text = item.name,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
                         style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground)
                     )
                     BasicText(
-                        text = item.second,
+                        text = item.sample,
                         modifier = Modifier.padding(start = 10.dp, top = 3.dp),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,

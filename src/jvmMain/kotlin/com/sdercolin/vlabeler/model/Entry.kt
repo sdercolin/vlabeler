@@ -6,6 +6,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Immutable
 data class Entry(
+    /**
+     * File name of the sample wav file without extension
+     */
+    val sample: String,
+    /**
+     * Name or Alias of the entry
+     */
     val name: String,
     /**
      * Label start time (milliseconds)
@@ -27,13 +34,15 @@ data class Entry(
     val extra: List<String>
 ) {
     companion object {
-        fun fromDefaultValues(name: String, defaultValues: List<Float>, defaultExtras: List<String>) = Entry(
-            name = name,
-            start = defaultValues.first(),
-            end = defaultValues.last(),
-            points = defaultValues.drop(1).dropLast(1),
-            extra = defaultExtras
-        )
+        fun fromDefaultValues(sample: String, name: String, defaultValues: List<Float>, defaultExtras: List<String>) =
+            Entry(
+                sample = sample,
+                name = name,
+                start = defaultValues.first(),
+                end = defaultValues.last(),
+                points = defaultValues.drop(1).dropLast(1),
+                extra = defaultExtras
+            )
     }
 }
 
@@ -48,5 +57,5 @@ data class FlatEntry(
     val points: List<Float>,
     val extra: List<String>
 ) {
-    fun toEntry() = Entry(name, start, end, points, extra)
+    fun toEntry(sampleName: String) = Entry(sampleName, name, start, end, points, extra)
 }

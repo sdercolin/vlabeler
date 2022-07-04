@@ -6,7 +6,6 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.mergeEntriesWithSampleNames
 import com.sdercolin.vlabeler.util.Python
-import com.sdercolin.vlabeler.util.groupByFirst
 import com.sdercolin.vlabeler.util.matchGroups
 import com.sdercolin.vlabeler.util.replaceWithVariables
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
@@ -15,7 +14,7 @@ fun fromRawLabels(
     sources: List<String>,
     labelerConf: LabelerConf,
     sampleNames: List<String>
-): Map<String, List<Entry>> {
+): List<Entry> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
     val python = Python()
@@ -47,21 +46,19 @@ fun fromRawLabels(
                 python.getOrNull<Any>(extraName)?.toString() ?: labelerConf.defaultExtras[index]
             }
 
-            val entry = if (start == null || end == null || points.size != labelerConf.fields.size) {
+            if (start == null || end == null || points.size != labelerConf.fields.size) {
                 // use default except name if data size is not enough
-                Entry.fromDefaultValues(name, labelerConf.defaultValues, labelerConf.defaultExtras).also {
+                Entry.fromDefaultValues(sampleName, name, labelerConf.defaultValues, labelerConf.defaultExtras).also {
                     Log.info("Entry parse failed, fallback to default: $it")
                 }
             } else {
-                Entry(name = name, start = start, end = end, points = points, extra = extra)
+                Entry(sample = sampleName, name = name, start = start, end = end, points = points, extra = extra)
             }
-            sampleName to entry
         }.getOrElse {
             Log.debug(it)
             null
         }
     }
-        .groupByFirst()
 
     python.close()
 
@@ -70,8 +67,8 @@ fun fromRawLabels(
 
 fun Project.toRawLabels(): String {
     val python = Python()
-    val lines = entriesWithSampleName
-        .map { (entry, sample) ->
+    val lines = entries
+        .map { entry ->
             val fields = labelerConf.getFieldMap(entry)
             val extra = labelerConf.getExtraMap(entry)
             val properties = labelerConf.getPropertyMap(fields, extra, python)
@@ -82,7 +79,7 @@ fun Project.toRawLabels(): String {
                     properties.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
                     extra +
                     mapOf(
-                        "sample" to sample,
+                        "sample" to entry.sample,
                         "name" to entry.name
                     )
             val scripts = labelerConf.writer.scripts

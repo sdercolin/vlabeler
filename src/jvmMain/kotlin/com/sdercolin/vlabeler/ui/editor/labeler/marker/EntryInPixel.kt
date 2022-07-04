@@ -9,6 +9,7 @@ import kotlin.math.absoluteValue
 
 @Immutable
 data class EntryInPixel(
+    val sample: String,
     val name: String,
     val start: Float,
     val end: Float,

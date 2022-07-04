@@ -35,11 +35,12 @@ fun rememberMarkerState(
 ): MarkerState {
     val sampleRate = sample.info.sampleRate
     val sampleLengthMillis = sample.info.lengthMillis
+    val entryIndex = editorState.editedEntry.index
     val entry = editorState.editedEntry.entry
     val project = editorState.project
-    val entriesInSample = project.entriesInCurrentSample
+    val entriesInSample = project.currentEntryGroup
     val labelerConf = project.labelerConf
-    val currentIndexInSample = project.currentEntryIndex
+    val currentIndexInSample = project.entryIndexGroups[project.getGroupIndex(entryIndex)].second.indexOf(entryIndex)
     val entryConverter = EntryConverter(sample.info.sampleRate, canvasParams.resolution)
     val entryInPixel =
         entryConverter.convertToPixel(entry, sampleLengthMillis).validate(canvasParams.lengthInPixel)

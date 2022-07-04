@@ -27,10 +27,7 @@ data class ProjectHistory(
         } else this
     }
 
-    private fun Project.contentEquals(other: Project) = copy(
-        currentSampleName = other.currentSampleName,
-        currentEntryIndex = other.currentEntryIndex
-    ) == other
+    private fun Project.contentEquals(other: Project) = copy(currentIndex = other.currentIndex) == other
 
     fun undo() = copy(index = index.minus(1).coerceAtLeast(0))
 

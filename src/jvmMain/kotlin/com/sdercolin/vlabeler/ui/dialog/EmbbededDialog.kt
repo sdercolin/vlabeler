@@ -32,12 +32,15 @@ fun EmbeddedDialog(args: EmbeddedDialogArgs, submit: (EmbeddedDialogResult?) -> 
                 modifier = Modifier
                     .run { if (!args.customMargin) padding(horizontal = 50.dp, vertical = 20.dp) else this }
             ) {
+                @Suppress("REDUNDANT_ELSE_IN_WHEN")
                 when (args) {
                     is SetResolutionDialogArgs -> SetResolutionDialog(args, submit)
                     is AskIfSaveDialogPurpose -> AskIfSaveDialog(args, submit)
                     is JumpToEntryDialogArgs -> JumpToEntryDialog(args, submit)
                     is EditEntryNameDialogArgs -> EditEntryNameDialog(args, submit)
                     is CommonConfirmationDialogAction -> CommonConfirmationDialog(args, submit)
+                    is ErrorDialogContent -> ErrorDialog(args, submit)
+                    else -> TODO("Dialog args handler is not implemented")
                 }
             }
         }

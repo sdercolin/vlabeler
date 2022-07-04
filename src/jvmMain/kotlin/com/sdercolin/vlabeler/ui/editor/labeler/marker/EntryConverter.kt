@@ -9,6 +9,7 @@ class EntryConverter(
     private val resolution: Int
 ) {
     fun convertToPixel(entry: Entry, sampleFileLengthMillis: Float) = EntryInPixel(
+        sample = entry.sample,
         name = entry.name,
         start = convertToPixel(entry.start),
         end = if (entry.end <= 0) {
@@ -24,6 +25,7 @@ class EntryConverter(
         toFrame(millis, sampleRate).div(resolution)
 
     fun convertToMillis(entry: EntryInPixel) = Entry(
+        sample = entry.sample,
         name = entry.name,
         start = convertToMillis(entry.start),
         end = convertToMillis(entry.end),

@@ -20,6 +20,7 @@ import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
+import com.sdercolin.vlabeler.ui.dialog.ErrorDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
@@ -126,17 +127,18 @@ class AppState(
         result: EmbeddedDialogResult,
         mainScope: CoroutineScope
     ) {
+        @Suppress("REDUNDANT_ELSE_IN_WHEN")
         when (result) {
             is SetResolutionDialogResult -> changeResolution(result.newValue)
             is AskIfSaveDialogResult -> takeAskIfSaveResult(result)
             is JumpToEntryDialogArgsResult -> {
-                jumpToEntry(result.sampleName, result.index)
+                jumpToEntry(result.index)
             }
             is EditEntryNameDialogResult -> run {
                 if (result.duplicate) {
-                    duplicateEntry(result.sampleName, result.index, result.name)
+                    duplicateEntry(result.index, result.name)
                 } else {
-                    renameEntry(result.sampleName, result.index, result.name)
+                    renameEntry(result.index, result.name)
                 }
             }
             is CommonConfirmationDialogResult -> when (val action = result.action) {
@@ -146,6 +148,8 @@ class AppState(
                     hasLoadedAutoSavedProject = true
                 }
             }
+            is ErrorDialogResult -> Unit
+            else -> TODO("Dialog result handler is not implemented")
         }
     }
 

@@ -37,9 +37,9 @@ interface ProjectStore {
     fun previousEntry()
     fun nextSample()
     fun previousSample()
-    fun jumpToEntry(sampleName: String, entryIndex: Int)
-    fun renameEntry(sampleName: String, index: Int, newName: String)
-    fun duplicateEntry(sampleName: String, index: Int, newName: String)
+    fun jumpToEntry(index: Int)
+    fun renameEntry(index: Int, newName: String)
+    fun duplicateEntry(index: Int, newName: String)
     val canRemoveCurrentEntry: Boolean
     fun removeCurrentEntry()
     fun getAutoSavedProjectFile(): File?
@@ -98,8 +98,8 @@ class ProjectStoreImpl(
         project = history.current
     }
 
-    override val canGoNextEntryOrSample get() = project?.run { currentEntryIndexInTotal < totalEntryCount - 1 } == true
-    override val canGoPreviousEntryOrSample get() = project?.run { currentEntryIndexInTotal > 0 } == true
+    override val canGoNextEntryOrSample get() = project?.run { currentIndex < entryCount - 1 } == true
+    override val canGoPreviousEntryOrSample get() = project?.run { currentIndex > 0 } == true
 
     override fun nextEntry() {
         val previousProject = project
@@ -123,28 +123,23 @@ class ProjectStoreImpl(
         scrollFitViewModel.emitNext()
     }
 
-    override fun jumpToEntry(sampleName: String, entryIndex: Int) {
+    override fun jumpToEntry(index: Int) {
         editProject {
-            requireProject().copy(
-                currentSampleName = sampleName,
-                currentEntryIndex = entryIndex
-            )
+            requireProject().copy(currentIndex = index)
         }
         scrollFitViewModel.emitNext()
     }
 
-    override fun renameEntry(sampleName: String, index: Int, newName: String) = editProject {
-        renameEntry(sampleName, index, newName)
+    override fun renameEntry(index: Int, newName: String) = editProject {
+        renameEntry(index, newName)
     }
 
-    override fun duplicateEntry(sampleName: String, index: Int, newName: String) = editProject {
-        duplicateEntry(sampleName, index, newName).copy(currentEntryIndex = index + 1)
+    override fun duplicateEntry(index: Int, newName: String) = editProject {
+        duplicateEntry(index, newName).copy(currentIndex = index + 1)
     }
 
-    override val canRemoveCurrentEntry
-        get() = project?.let {
-            it.entriesBySampleName.getValue(it.currentSampleName).size > 1
-        } == true
+    override val canRemoveCurrentEntry // TODO: Allow cancel to remove sample from project
+        get() = project?.let { it.currentEntryGroup.size > 1 } == true
 
     override fun removeCurrentEntry() = editProject { removeCurrentEntry() }
 
