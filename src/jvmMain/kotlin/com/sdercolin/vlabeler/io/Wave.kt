@@ -19,7 +19,7 @@ class Wave(val channels: List<Channel>) {
     val length get() = channels[0].data.size
 }
 
-fun loadSampleFile(file: File, appConf: AppConf): Sample {
+fun loadSampleFile(file: File, appConf: AppConf): Result<Sample> = runCatching {
     val stream = AudioSystem.getAudioInputStream(file)
     val format = stream.format
     Log.debug("Sample file loaded: $format")
@@ -75,9 +75,11 @@ fun loadSampleFile(file: File, appConf: AppConf): Sample {
         wave.toSpectrogram(appConf.painter.spectrogram, info)
     } else null
     System.gc()
-    return Sample(
-        info = info,
-        wave = wave,
-        spectrogram = spectrogram
+    return Result.success(
+        Sample(
+            info = info,
+            wave = wave,
+            spectrogram = spectrogram
+        )
     )
 }

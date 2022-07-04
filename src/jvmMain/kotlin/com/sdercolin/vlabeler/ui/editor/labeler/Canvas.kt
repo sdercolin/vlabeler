@@ -56,44 +56,49 @@ fun Canvas(
     appState: AppState
 ) {
     val currentDensity = LocalDensity.current
-    val sample = editorState.sample
+    val sampleResult = editorState.sampleResult
     val resolution = editorState.canvasResolution
 
-    if (sample != null) {
-        val chunkCount = remember(sample, appState.appConf) {
-            ceil(sample.wave.length.toFloat() / appState.appConf.painter.maxDataChunkSize).toInt()
-        }
-        val canvasParams = CanvasParams(sample.wave.length, resolution, currentDensity)
-        if (canvasParams.lengthInPixel > CanvasParams.MaxCanvasLengthInPixel) {
-            LengthOverflowError()
-        } else {
-            Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
-                Column(Modifier.fillMaxSize()) {
-                    val weightOfEachChannel = 1f / sample.wave.channels.size
-                    sample.wave.channels.forEach { channel ->
-                        Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
-                            Waveforms(appState.appConf, canvasParams, channel, chunkCount)
+    if (sampleResult != null) {
+        val sample = sampleResult.getOrNull()
+        if (sample != null) {
+            val chunkCount = remember(sample, appState.appConf) {
+                ceil(sample.wave.length.toFloat() / appState.appConf.painter.maxDataChunkSize).toInt()
+            }
+            val canvasParams = CanvasParams(sample.wave.length, resolution, currentDensity)
+            if (canvasParams.lengthInPixel > CanvasParams.MaxCanvasLengthInPixel) {
+                Error(string(Strings.CanvasLengthOverflowError))
+            } else {
+                Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
+                    Column(Modifier.fillMaxSize()) {
+                        val weightOfEachChannel = 1f / sample.wave.channels.size
+                        sample.wave.channels.forEach { channel ->
+                            Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
+                                Waveforms(appState.appConf, canvasParams, channel, chunkCount)
+                            }
+                        }
+                        sample.spectrogram?.let {
+                            Box(Modifier.weight(appState.appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
+                                Spectrogram(canvasParams, it, chunkCount)
+                            }
                         }
                     }
-                    sample.spectrogram?.let {
-                        Box(Modifier.weight(appState.appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
-                            Spectrogram(canvasParams, it, chunkCount)
-                        }
+                    if (appState.isMarkerDisplayed) {
+                        MarkerCanvas(
+                            sample = sample,
+                            canvasParams = canvasParams,
+                            horizontalScrollState = horizontalScrollState,
+                            editorState = editorState,
+                            appState = appState
+                        )
                     }
-                }
-                if (appState.isMarkerDisplayed) {
-                    MarkerCanvas(
-                        sample = sample,
-                        canvasParams = canvasParams,
-                        horizontalScrollState = horizontalScrollState,
-                        editorState = editorState,
-                        appState = appState
-                    )
-                }
-                if (appState.playerState.isPlaying) {
-                    PlayerCursor(canvasParams, appState.playerState)
+                    if (appState.playerState.isPlaying) {
+                        PlayerCursor(canvasParams, appState.playerState)
+                    }
                 }
             }
+        } else {
+            Error(string(Strings.FailedToLoadSampleFileError))
         }
     }
 }
@@ -233,14 +238,14 @@ private fun PlayerCursor(canvasParams: CanvasParams, playerState: PlayerState) {
 }
 
 @Composable
-private fun LengthOverflowError() {
+private fun Error(text: String) {
     Box(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.error.copy(alpha = 0.3f)),
         contentAlignment = Alignment.Center
     ) {
         Text(
             modifier = Modifier.widthIn(max = 600.dp),
-            text = string(Strings.CanvasLengthOverflowError),
+            text = text,
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.onBackground
         )

@@ -24,9 +24,9 @@ class EditorState(
     project: Project,
     private val appState: AppState
 ) {
-    private val sampleState: MutableState<Sample?> = mutableStateOf(null)
-    val sample get() = sampleState.value
-    val isLoading get() = sample == null
+    private val sampleState: MutableState<Result<Sample>?> = mutableStateOf(null)
+    val sampleResult get() = sampleState.value
+    val isLoading get() = sampleState.value == null
     var project: Project by mutableStateOf(project)
     var editedEntry: EditedEntry by mutableStateOf(project.getEntryForEditing())
     private val isActive get() = appState.isEditorActive
@@ -74,7 +74,9 @@ class EditorState(
         withContext(Dispatchers.IO) {
             val sample = com.sdercolin.vlabeler.io.loadSampleFile(project.currentSampleFile, appConf)
             sampleState.value = sample
-            player.load(sample.info.file)
+            sample.getOrNull()?.let {
+                player.load(it.info.file)
+            }
         }
     }
 

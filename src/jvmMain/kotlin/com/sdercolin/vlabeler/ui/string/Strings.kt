@@ -220,6 +220,9 @@ enum class Strings(val en: String) {
         en = "The charts are too long to be painted." +
             " Please use \"-\" button to reduce data length, or divide the input files priorly."
     ),
+    FailedToLoadSampleFileError(
+        en = "Could not load the sample file. It may not exist, or is not a supported format."
+    ),
     FailedToParseProjectError(
         en = "Could not load the project. It was probably created by an incompatible version of vLabeler."
     ),

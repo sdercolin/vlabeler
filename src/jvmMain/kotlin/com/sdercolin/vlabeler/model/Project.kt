@@ -23,13 +23,13 @@ data class Project(
 ) {
 
     val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
-    val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
+    private val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
     val currentEntry: Entry = entries[currentIndex]
-    val currentGroupIndex: Int = getGroupIndex(currentIndex)
+    private val currentGroupIndex: Int = getGroupIndex(currentIndex)
     val currentEntryGroup: List<Entry> = entryGroups[currentGroupIndex].second
     val currentSampleName: String = currentEntry.sample
 
-    val currentSampleFile: File // TODO: nullable if not existing
+    val currentSampleFile: File
         get() = File(sampleDirectory).resolve("$currentSampleName.$SampleFileExtension")
 
     val entryCount: Int = entries.size
