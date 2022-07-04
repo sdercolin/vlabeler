@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
+import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.editor.EditedEntry
 import com.sdercolin.vlabeler.util.ParamMap
@@ -135,7 +136,7 @@ private fun generateEntriesByPlugin(
     params: ParamMap?,
     inputFile: File?,
     encoding: String
-): List<Entry> {
+): Result<List<Entry>> = runCatching {
     val entries = runTemplatePlugin(plugin, params.orEmpty(), listOfNotNull(inputFile), encoding, sampleNames)
         .map {
             it.copy(
@@ -144,7 +145,7 @@ private fun generateEntriesByPlugin(
             )
         }
         .map { it.toEntry(sampleName = it.sample ?: sampleNames.first()) }
-    return mergeEntriesWithSampleNames(labelerConf, entries, sampleNames)
+    mergeEntriesWithSampleNames(labelerConf, entries, sampleNames)
 }
 
 fun mergeEntriesWithSampleNames(
@@ -221,7 +222,12 @@ suspend fun projectOf(
     } else null
 
     val entries = when {
-        plugin != null -> generateEntriesByPlugin(labelerConf, sampleNames, plugin, pluginParams, inputFile, encoding)
+        plugin != null -> {
+            generateEntriesByPlugin(labelerConf, sampleNames, plugin, pluginParams, inputFile, encoding)
+                .getOrElse {
+                    return Result.failure(PluginRuntimeException(it))
+                }
+        }
         inputFile != null -> {
             fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf, sampleNames)
         }

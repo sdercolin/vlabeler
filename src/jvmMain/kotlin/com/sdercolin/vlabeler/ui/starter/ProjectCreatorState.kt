@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.io.loadSavedParams
 import com.sdercolin.vlabeler.io.saveParams
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -316,17 +315,13 @@ class ProjectCreatorState(
                 inputFilePath = inputFile,
                 encoding = encoding
             ).getOrElse {
-                val message = when (it) {
-                    is EmptySampleDirectoryException -> string(
-                        Strings.EmptySampleDirectoryException
-                    )
-                    else -> it.message.orEmpty()
-                }
+                val message = it.message.orEmpty()
                 Log.error(it)
+                isLoading = false
                 snackbarHostState.showSnackbar(message)
-                null
+                return@launch
             }
-            project?.let(create)
+            create(project)
             isLoading = false
         }
     }

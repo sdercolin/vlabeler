@@ -228,6 +228,9 @@ enum class Strings(val en: String) {
     ),
     EmptySampleDirectoryException(
         en = "Could not create project because no sample files are found in the given sample directory."
+    ),
+    PluginRuntimeException(
+        en = "An error occurred during the plugin execution. Please contact the author for more information."
     );
 
     fun get(language: Language): String = when (language) {
