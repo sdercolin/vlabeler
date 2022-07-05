@@ -198,11 +198,14 @@ enum class Strings(val en: String) {
     AskIfSaveBeforeExitDialogDescription(
         en = "You have unsaved changes. Do you want to save them before exiting?"
     ),
-    EditEntryNameDialogDescription(
+    InputEntryNameDialogDescription(
         en = "Rename this entry"
     ),
-    EditEntryNameDuplicateDialogDescription(
-        en = "Input the name of the new entry"
+    InputEntryNameDuplicateDialogDescription(
+        en = "Input the name for the new entry"
+    ),
+    InputEntryNameCutDialogDescription(
+        en = "Input the name for the latter entry"
     ),
     EditEntryNameDialogExistingError(
         en = "The name you input already exists."

@@ -98,6 +98,22 @@ data class Project(
         return copy(entries = entries, currentIndex = newIndex)
     }
 
+    fun cutEntry(index: Int, position: Float, newName: String, goToNewEntry: Boolean): Project {
+        val entries = this.entries.toMutableList()
+        val entry = entries[index]
+        val editedCurrentEntry = entry.copy(
+            end = position
+        )
+        val newEntry = entry.copy(
+            name = newName,
+            start = position
+        )
+        entries[index] = editedCurrentEntry
+        entries.add(index + 1, newEntry)
+        val newIndex = if (goToNewEntry) index + 1 else index
+        return copy(entries = entries, currentIndex = newIndex)
+    }
+
     fun nextEntry() = switchEntry(reverse = false)
     fun previousEntry() = switchEntry(reverse = true)
     private fun switchEntry(reverse: Boolean): Project {

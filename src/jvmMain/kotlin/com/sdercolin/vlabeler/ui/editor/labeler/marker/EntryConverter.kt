@@ -33,6 +33,6 @@ class EntryConverter(
         extra = entry.extra
     )
 
-    private fun convertToMillis(px: Float) = toMillisecond(convertToFrame(px), sampleRate)
+    fun convertToMillis(px: Float) = toMillisecond(convertToFrame(px), sampleRate)
     fun convertToFrame(px: Float) = px.times(resolution)
 }

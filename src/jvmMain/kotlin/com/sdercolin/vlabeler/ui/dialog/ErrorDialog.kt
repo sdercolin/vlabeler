@@ -26,12 +26,12 @@ enum class ErrorDialogContent(val stringKey: Strings) : EmbeddedDialogArgs {
     FailedToParseProject(Strings.FailedToParseProjectError)
 }
 
-object ErrorDialogResult : EmbeddedDialogResult
+object ErrorDialogResult : EmbeddedDialogResult<ErrorDialogContent>
 
 @Composable
 fun ErrorDialog(
     content: ErrorDialogContent,
-    finish: (EmbeddedDialogResult) -> Unit,
+    finish: (ErrorDialogResult) -> Unit,
 ) {
     val submit = { finish(ErrorDialogResult) }
 

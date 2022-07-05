@@ -1,7 +1,6 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
-import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.util.asPathRelativeToHome
 import com.sdercolin.vlabeler.util.asSimplifiedPaths
 import kotlinx.serialization.Serializable
@@ -14,7 +13,6 @@ data class AppRecord(
     val isPropertyViewDisplayed: Boolean = false,
     val isEntryListPinned: Boolean = false,
     val isToolboxDisplayed: Boolean = false,
-    val tool: Tool = Tool.Cursor,
     val sampleDirectory: String? = null,
     val workingDirectory: String? = null,
     val labelerName: String? = null

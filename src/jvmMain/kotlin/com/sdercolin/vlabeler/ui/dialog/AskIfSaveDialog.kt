@@ -52,7 +52,7 @@ sealed class AskIfSaveDialogPurpose(
 data class AskIfSaveDialogResult(
     val save: Boolean,
     val actionAfterSaved: AppState.PendingActionAfterSaved
-) : EmbeddedDialogResult
+) : EmbeddedDialogResult<AskIfSaveDialogPurpose>
 
 @Composable
 fun AskIfSaveDialog(

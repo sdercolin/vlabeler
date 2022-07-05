@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.ui.editor.labeler.marker
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class MarkerMouseState(
+data class MarkerCursorState(
     val mouse: Mouse = Mouse.None,
     val pointIndex: Int = NonePointIndex, // starts from 0 for custom points
     val lockedDrag: Boolean = false

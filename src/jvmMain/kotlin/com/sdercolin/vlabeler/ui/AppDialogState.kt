@@ -1,30 +1,42 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.sdercolin.vlabeler.ui
 
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
-import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogRequest
+import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
+import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 
 interface AppDialogState {
+
+    fun initDialogState(appState: AppState)
+
     val isShowingOpenProjectDialog: Boolean
     val isShowingSaveAsProjectDialog: Boolean
     val isShowingExportDialog: Boolean
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
-    val embeddedDialog: EmbeddedDialogArgs?
+    val embeddedDialog: EmbeddedDialogRequest<*>?
 
     fun requestOpenProject()
     fun openOpenProjectDialog()
     fun closeOpenProjectDialog()
-    fun requestOpenRecentProject(scope: CoroutineScope, file: File, appState: AppState)
+    fun requestOpenRecentProject(scope: CoroutineScope, file: File)
     fun openSaveAsProjectDialog()
     fun closeSaveAsProjectDialog()
     fun requestExport()
@@ -32,7 +44,8 @@ interface AppDialogState {
     fun closeExportDialog()
     fun putPendingActionAfterSaved(action: AppState.PendingActionAfterSaved?)
     fun clearPendingActionAfterSaved()
-    fun openEmbeddedDialog(args: EmbeddedDialogArgs)
+    fun <T : EmbeddedDialogArgs> openEmbeddedDialog(args: T)
+    suspend fun <T : EmbeddedDialogArgs> awaitEmbeddedDialog(args: T): EmbeddedDialogResult<T>?
     fun openJumpToEntryDialog()
     fun openEditEntryNameDialog(duplicate: Boolean, scope: CoroutineScope)
     fun askIfSaveBeforeExit()
@@ -50,11 +63,17 @@ class AppDialogStateImpl(
     private val projectStore: ProjectStore,
     private val snackbarHostState: SnackbarHostState
 ) : AppDialogState {
+    private lateinit var state: AppState
+
+    override fun initDialogState(appState: AppState) {
+        state = appState
+    }
+
     override var isShowingOpenProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingExportDialog: Boolean by mutableStateOf(false)
     override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
-    override var embeddedDialog: EmbeddedDialogArgs? by mutableStateOf(null)
+    override var embeddedDialog: EmbeddedDialogRequest<*>? by mutableStateOf(null)
 
     private val hasUnsavedChanges get() = appUnsavedChangesState.hasUnsavedChanges
 
@@ -70,11 +89,11 @@ class AppDialogStateImpl(
         isShowingOpenProjectDialog = false
     }
 
-    override fun requestOpenRecentProject(scope: CoroutineScope, file: File, appState: AppState) =
+    override fun requestOpenRecentProject(scope: CoroutineScope, file: File) =
         if (hasUnsavedChanges) {
             askIfSaveBeforeOpenRecentProject(scope, file)
         } else {
-            loadProject(scope, file, appState)
+            loadProject(scope, file, state)
         }
 
     private fun askIfSaveBeforeOpenRecentProject(scope: CoroutineScope, file: File) =
@@ -107,9 +126,23 @@ class AppDialogStateImpl(
         pendingActionAfterSaved = null
     }
 
-    override fun openEmbeddedDialog(args: EmbeddedDialogArgs) {
-        embeddedDialog = args
+    override fun <T : EmbeddedDialogArgs> openEmbeddedDialog(args: T) {
+        embeddedDialog = EmbeddedDialogRequest(args) {
+            state.closeEmbeddedDialog()
+            if (it != null) state.handleDialogResult(it)
+        }
     }
+
+    override suspend fun <T : EmbeddedDialogArgs> awaitEmbeddedDialog(args: T): EmbeddedDialogResult<T>? =
+        suspendCancellableCoroutine { continuation ->
+            val request = EmbeddedDialogRequest(args) {
+                state.closeEmbeddedDialog()
+                continuation.resume(it) { t ->
+                    if (t !is CancellationException) Log.error(t)
+                }
+            }
+            embeddedDialog = request
+        }
 
     override fun openJumpToEntryDialog() = openEmbeddedDialog(JumpToEntryDialogArgs(projectStore.requireProject()))
 
@@ -127,12 +160,12 @@ class AppDialogStateImpl(
                 .run { if (!duplicate) minus(entry.name) else this }
         }
         openEmbeddedDialog(
-            EditEntryNameDialogArgs(
+            InputEntryNameDialogArgs(
                 index = index,
                 initial = entry.name,
                 invalidOptions = invalidOptions,
                 showSnackbar = { scope.launch { snackbarHostState.showSnackbar(it) } },
-                duplicate = duplicate
+                purpose = InputEntryNameDialogPurpose.Duplicate
             )
         )
     }

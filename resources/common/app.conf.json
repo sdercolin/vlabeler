@@ -22,5 +22,9 @@
       "windowType": "Hamming"
     }
   },
-  "autoSaveIntervalSecond": 30
+  "autoSaveIntervalSecond": 30,
+  "editor": {
+    "scissorsColor": "#FFFF00",
+    "actionAfterScissors": "GoToAndRenameNew"
+  }
 }

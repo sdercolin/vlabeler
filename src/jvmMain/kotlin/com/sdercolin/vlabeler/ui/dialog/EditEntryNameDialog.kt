@@ -30,28 +30,34 @@ import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
-data class EditEntryNameDialogArgs(
+data class InputEntryNameDialogArgs(
     val index: Int,
     val initial: String,
     val invalidOptions: List<String>,
     val showSnackbar: (String) -> Unit,
-    val duplicate: Boolean
+    val purpose: InputEntryNameDialogPurpose
 ) : EmbeddedDialogArgs
 
-data class EditEntryNameDialogResult(
+enum class InputEntryNameDialogPurpose(val stringKey: Strings) {
+    Rename(Strings.InputEntryNameDialogDescription),
+    Duplicate(Strings.InputEntryNameDuplicateDialogDescription),
+    Cut(Strings.InputEntryNameCutDialogDescription)
+}
+
+data class InputEntryNameDialogResult(
     val index: Int,
     val name: String,
-    val duplicate: Boolean
-) : EmbeddedDialogResult
+    val purpose: InputEntryNameDialogPurpose
+) : EmbeddedDialogResult<InputEntryNameDialogArgs>
 
 @Composable
-fun EditEntryNameDialog(
-    args: EditEntryNameDialogArgs,
-    finish: (EditEntryNameDialogResult?) -> Unit,
+fun InputEntryNameDialog(
+    args: InputEntryNameDialogArgs,
+    finish: (InputEntryNameDialogResult?) -> Unit,
 ) {
     val dismiss = { finish(null) }
     val submit = { name: String ->
-        finish(EditEntryNameDialogResult(args.index, name, args.duplicate))
+        finish(InputEntryNameDialogResult(args.index, name, args.purpose))
     }
 
     var input by remember { mutableStateOf(args.initial) }
@@ -67,13 +73,7 @@ fun EditEntryNameDialog(
     Column(Modifier.widthIn(min = 350.dp)) {
         Spacer(Modifier.height(15.dp))
         Text(
-            text = string(
-                if (args.duplicate) {
-                    Strings.EditEntryNameDuplicateDialogDescription
-                } else {
-                    Strings.EditEntryNameDialogDescription
-                }
-            ),
+            text = string(args.purpose.stringKey),
             style = MaterialTheme.typography.body2,
             fontWeight = FontWeight.Bold
         )

@@ -1,18 +1,22 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.ui.theme.Yellow
+import com.sdercolin.vlabeler.util.hexString
 import kotlinx.serialization.Serializable
 
 /**
  * Basic configurations of app
  * @param painter Configurations about chart painting
  * @param autoSaveIntervalSecond Interval in second to auto-save the project; never do auto-save if the value is null
+ * @param editor Configurations about editor behaviors
  */
 @Serializable
 @Immutable
 data class AppConf(
     val painter: Painter = Painter(),
-    val autoSaveIntervalSecond: Int? = 30
+    val autoSaveIntervalSecond: Int? = 30,
+    val editor: Editor = Editor()
 ) {
     /**
      * Configurations about chart painting
@@ -93,5 +97,24 @@ data class AppConf(
         Triangular,
         Blackman,
         Bartlett
+    }
+
+    /**
+     * Configurations about editor behaviors
+     * @param actionAfterScissors Action taken after a successful click with scissors
+     */
+    @Serializable
+    @Immutable
+    data class Editor(
+        val scissorsColor: String = Yellow.hexString,
+        val actionAfterScissors: ActionAfterScissors = ActionAfterScissors.GoToAndRenameNew
+    ) {
+        @Serializable
+        enum class ActionAfterScissors(val goToNew: Boolean, val askForNewName: Boolean) {
+            None(false, false),
+            GoToNew(true, false),
+            RenameNew(false, true),
+            GoToAndRenameNew(true, true)
+        }
     }
 }

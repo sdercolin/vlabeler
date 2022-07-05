@@ -34,6 +34,7 @@ class EditorState(
     val keyboardViewModel = appState.keyboardViewModel
     val scrollFitViewModel = appState.scrollFitViewModel
     private val player = appState.player
+    var tool: Tool by mutableStateOf(Tool.Cursor)
 
     var canvasResolution: Int by mutableStateOf(appState.appConf.painter.canvasResolution.default)
         private set
@@ -60,6 +61,10 @@ class EditorState(
 
     fun updateEntry(entry: Entry) {
         editedEntry = editedEntry.edit(entry)
+    }
+
+    fun cutEntry(position: Float) {
+        appState.requestCutEntry(project.currentIndex, position)
     }
 
     private fun loadNewEntry() {

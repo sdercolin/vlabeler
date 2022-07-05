@@ -18,18 +18,23 @@ import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
-import com.sdercolin.vlabeler.ui.dialog.EditEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.ErrorDialogResult
+import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
+import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
+import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import java.io.File
 
 class AppState(
+    val mainScope: CoroutineScope,
     val playerState: PlayerState,
     val player: Player,
     val keyboardViewModel: KeyboardViewModel,
@@ -49,6 +54,10 @@ class AppState(
     ProjectStore by projectStore,
     AppUnsavedChangesState by unsavedChangesState,
     AppDialogState by dialogState {
+
+    init {
+        initDialogState(this)
+    }
 
     var appConf: AppConf by appConf
         private set
@@ -114,6 +123,38 @@ class AppState(
         consumePendingActionAfterSaved(pendingActionAfterSaved)
     }
 
+    fun requestCutEntry(index: Int, position: Float) {
+        mainScope.launch {
+            val sourceEntry = requireProject().entries[index]
+            val newName = if (appConf.editor.actionAfterScissors.askForNewName) {
+                val invalidOptions = if (requireProject().labelerConf.allowSameNameEntry) {
+                    listOf()
+                } else {
+                    requireProject().entries.map { it.name }
+                }
+                val showSnackbar = { message: String ->
+                    mainScope.launch { snackbarHostState.showSnackbar(message) }
+                    Unit
+                }
+                val result = awaitEmbeddedDialog(
+                    InputEntryNameDialogArgs(
+                        index = index,
+                        initial = "",
+                        invalidOptions = invalidOptions,
+                        showSnackbar = showSnackbar,
+                        purpose = InputEntryNameDialogPurpose.Cut
+                    )
+                )
+                (result as InputEntryNameDialogResult?)?.name ?: return@launch
+            } else getDefaultNewEntryName(
+                sourceEntry.name,
+                requireProject().entries.map { it.name },
+                requireProject().labelerConf.allowSameNameEntry
+            )
+            cutEntry(index, position, newName, appConf.editor.actionAfterScissors.goToNew)
+        }
+    }
+
     private fun consumePendingActionAfterSaved(action: PendingActionAfterSaved?) = when (action) {
         PendingActionAfterSaved.Open -> openOpenProjectDialog()
         PendingActionAfterSaved.Export -> openExportDialog()
@@ -124,10 +165,7 @@ class AppState(
         null -> Unit
     }
 
-    fun handleDialogResult(
-        result: EmbeddedDialogResult,
-        mainScope: CoroutineScope
-    ) {
+    fun handleDialogResult(result: EmbeddedDialogResult<*>) {
         @Suppress("REDUNDANT_ELSE_IN_WHEN")
         when (result) {
             is SetResolutionDialogResult -> changeResolution(result.newValue)
@@ -135,11 +173,13 @@ class AppState(
             is JumpToEntryDialogArgsResult -> {
                 jumpToEntry(result.index)
             }
-            is EditEntryNameDialogResult -> run {
-                if (result.duplicate) {
-                    duplicateEntry(result.index, result.name)
-                } else {
-                    renameEntry(result.index, result.name)
+            is InputEntryNameDialogResult -> run {
+                when (result.purpose) {
+                    InputEntryNameDialogPurpose.Rename -> renameEntry(result.index, result.name)
+                    InputEntryNameDialogPurpose.Duplicate -> duplicateEntry(result.index, result.name)
+                    InputEntryNameDialogPurpose.Cut -> {
+                        // handled on caller side
+                    }
                 }
             }
             is CommonConfirmationDialogResult -> when (val action = result.action) {

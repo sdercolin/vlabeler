@@ -41,11 +41,8 @@ fun App(
                 )
             is Screen.Editor -> Editor(screen.state, appState)
         }
-        appState.embeddedDialog?.let { args ->
-            EmbeddedDialog(args) { result ->
-                appState.closeEmbeddedDialog()
-                if (result != null) appState.handleDialogResult(result, mainScope)
-            }
+        appState.embeddedDialog?.let { request ->
+            EmbeddedDialog(request)
         }
     }
     if (appState.isBusy) {

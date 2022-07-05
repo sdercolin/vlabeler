@@ -14,6 +14,8 @@ import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.CustomAppConfFile
+import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
@@ -40,7 +42,7 @@ fun FrameWindowScope.Menu(
                 appRecord.recentProjectPathsWithDisplayNames.forEach { (path, displayName) ->
                     Item(
                         text = displayName,
-                        onClick = { appState.requestOpenRecentProject(mainScope, File(path), appState) }
+                        onClick = { appState.requestOpenRecentProject(mainScope, File(path)) }
                     )
                 }
                 Separator()
@@ -90,9 +92,10 @@ fun FrameWindowScope.Menu(
                 Tool.values().forEachIndexed { index, tool ->
                     CheckboxItem(
                         string(tool.stringKey),
-                        checked = appState.tool == tool,
+                        checked = appState.editor?.let { it.tool == tool } ?: false,
                         shortcut = getKeyShortCut(getNumberKey(index + 1), alt = true),
-                        onCheckedChange = { if (it) appState.tool = tool }
+                        onCheckedChange = { if (it) appState.editor?.tool = tool },
+                        enabled = appState.isEditorActive
                     )
                 }
             }
@@ -197,6 +200,10 @@ fun FrameWindowScope.Menu(
                 Item(
                     "Throw Exception",
                     onClick = { throw IllegalStateException("Test exception from menu") }
+                )
+                Item(
+                    "Export AppConfig",
+                    onClick = { CustomAppConfFile.writeText(toJson(appState.appConf)) }
                 )
             }
         }

@@ -18,13 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.ui.AppViewState
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.Black80
 import com.sdercolin.vlabeler.ui.theme.White20
 
 @Composable
-fun BoxScope.ToolboxView(viewState: AppViewState) {
+fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
     Column(
         modifier = Modifier
             .padding(10.dp)
@@ -32,12 +31,12 @@ fun BoxScope.ToolboxView(viewState: AppViewState) {
             .align(Alignment.BottomEnd)
     ) {
         Tool.values().forEach { tool ->
-            val checked = viewState.tool == tool
+            val checked = selectedTool == tool
             val backgroundColor = if (!checked) Color.Transparent else White20
             Box(
                 modifier = Modifier.size(40.dp)
                     .background(backgroundColor, shape = RoundedCornerShape(5.dp))
-                    .plainClickable { viewState.tool = tool }
+                    .plainClickable { select(tool) }
                     .padding(5.dp),
                 contentAlignment = Alignment.Center
             ) {

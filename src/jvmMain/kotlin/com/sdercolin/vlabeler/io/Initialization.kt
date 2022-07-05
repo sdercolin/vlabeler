@@ -128,6 +128,7 @@ suspend fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecord
     val plugins = loadPlugins()
 
     return AppState(
+        mainScope,
         playerState,
         player,
         keyboardViewModel,

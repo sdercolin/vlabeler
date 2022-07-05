@@ -21,7 +21,8 @@ class MarkerState(
     val entryInPixel: EntryInPixel,
     val leftBorder: Float,
     val rightBorder: Float,
-    val mouseState: MutableState<MarkerMouseState>,
+    val cursorState: MutableState<MarkerCursorState>,
+    val scissorsState: MutableState<MarkerScissorsState?>,
     val canvasHeightState: MutableState<Float>,
     val waveformsHeightRatio: Float
 )
@@ -65,7 +66,8 @@ fun rememberMarkerState(
             )
             ?: canvasParams.lengthInPixel.toFloat()
     }
-    val mouseState = remember { mutableStateOf(MarkerMouseState()) }
+    val cursorState = remember { mutableStateOf(MarkerCursorState()) }
+    val scissorsState = remember { mutableStateOf<MarkerScissorsState?>(null) }
     val canvasHeightState = remember { mutableStateOf(0f) }
     val waveformsHeightRatio = remember(appState.appConf.painter.spectrogram) {
         val spectrogram = appState.appConf.painter.spectrogram
@@ -86,7 +88,8 @@ fun rememberMarkerState(
         entriesInSampleInPixel,
         leftBorder,
         rightBorder,
-        mouseState,
+        cursorState,
+        scissorsState,
         canvasHeightState,
         waveformsHeightRatio
     ) {
@@ -100,7 +103,8 @@ fun rememberMarkerState(
             entryInPixel,
             leftBorder,
             rightBorder,
-            mouseState,
+            cursorState,
+            scissorsState,
             canvasHeightState,
             waveformsHeightRatio
         )

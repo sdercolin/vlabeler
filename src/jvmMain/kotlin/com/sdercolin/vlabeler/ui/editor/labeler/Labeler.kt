@@ -67,7 +67,10 @@ fun Labeler(
                 PropertyView(editorState.project)
             }
             if (appState.isToolboxDisplayed) {
-                ToolboxView(appState)
+                ToolboxView(
+                    selectedTool = editorState.tool,
+                    select = { editorState.tool = it }
+                )
             }
         }
         HorizontalScrollbar(

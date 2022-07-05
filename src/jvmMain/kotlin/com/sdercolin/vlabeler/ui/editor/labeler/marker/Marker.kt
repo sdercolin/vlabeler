@@ -41,16 +41,20 @@ import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerMouseState.Companion.EndPointIndex
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerMouseState.Companion.NonePointIndex
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerMouseState.Companion.StartPointIndex
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerMouseState.Mouse
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.EndPointIndex
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.NonePointIndex
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.StartPointIndex
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Mouse
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.ui.theme.White
+import com.sdercolin.vlabeler.util.clear
 import com.sdercolin.vlabeler.util.parseColor
+import com.sdercolin.vlabeler.util.requireValue
 import com.sdercolin.vlabeler.util.update
+import com.sdercolin.vlabeler.util.updateNonNull
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -74,7 +78,6 @@ fun MarkerCanvas(
     appState: AppState,
     state: MarkerState = rememberMarkerState(sample, canvasParams, editorState, appState)
 ) {
-
     FieldBorderCanvas(editorState, appState, state)
     FieldLabelCanvas(state)
     if (state.labelerConf.continuous) {
@@ -86,6 +89,13 @@ fun MarkerCanvas(
         horizontalScrollState,
         appState.scrollFitViewModel
     )
+    LaunchedEffect(editorState.tool) {
+        if (editorState.tool == Tool.Scissors) {
+            state.scissorsState.update { MarkerScissorsState() }
+        } else {
+            state.scissorsState.clear()
+        }
+    }
 }
 
 @Composable
@@ -94,24 +104,25 @@ private fun FieldBorderCanvas(
     appState: AppState,
     state: MarkerState
 ) {
-    val updateEntry = editorState::updateEntry
-    val submitEntry = editorState::submitEntry
     val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
+    val tool = editorState.tool
 
     Canvas(
         Modifier.fillMaxHeight()
             .width(state.canvasParams.canvasWidthInDp)
             .onPointerEvent(PointerEventType.Move) { event ->
-                handleMouseMove(event, updateEntry, state)
+                handleMouseMove(tool, event, editorState::updateEntry, state)
             }
             .onPointerEvent(PointerEventType.Press) {
-                handleMousePress(keyboardState, state.mouseState, state.labelerConf)
+                handleMousePress(tool, keyboardState, state.cursorState, state.labelerConf)
             }
             .onPointerEvent(PointerEventType.Release) { event ->
                 handleMouseRelease(
+                    tool,
                     event,
-                    submitEntry,
+                    editorState::submitEntry,
                     appState.player::playSection,
+                    editorState::cutEntry,
                     keyboardState,
                     state
                 )
@@ -125,7 +136,7 @@ private fun FieldBorderCanvas(
             val canvasHeight = size.height
             val leftBorder = state.leftBorder
             val rightBorder = state.rightBorder
-            val mouseState = state.mouseState
+            val mouseState = state.cursorState
             val labelerConf = state.labelerConf
             state.canvasHeightState.value = canvasHeight
 
@@ -228,6 +239,18 @@ private fun FieldBorderCanvas(
                     strokeWidth = StrokeWidth
                 )
             }
+
+            // Draw scissors
+            state.scissorsState.value?.position?.let {
+                if (state.entryInPixel.isValidCutPosition(it)) {
+                    drawLine(
+                        color = parseColor(appState.appConf.editor.scissorsColor),
+                        start = Offset(it, 0f),
+                        end = Offset(it, canvasHeight),
+                        strokeWidth = StrokeWidth * 2
+                    )
+                }
+            }
         } catch (t: Throwable) {
             Log.debug(t)
         }
@@ -243,7 +266,7 @@ private fun FieldLabelCanvas(state: MarkerState) = FieldLabelCanvasLayout(
 ) {
     for (i in state.labelerConf.fields.indices) {
         val field = state.labelerConf.fields[i]
-        val alpha = if (state.mouseState.value.pointIndex != i) IdleLineAlpha else 1f
+        val alpha = if (state.cursorState.value.pointIndex != i) IdleLineAlpha else 1f
         Box(
             modifier = Modifier.requiredSize(LabelSize),
             contentAlignment = Alignment.Center
@@ -353,6 +376,18 @@ private fun NameLabelCanvasLayout(
 }
 
 private fun handleMouseMove(
+    tool: Tool,
+    event: PointerEvent,
+    editEntry: (Entry) -> Unit,
+    state: MarkerState
+) {
+    when (tool) {
+        Tool.Cursor -> handleCursorMove(event, editEntry, state)
+        Tool.Scissors -> handleScissorsMove(event, state)
+    }
+}
+
+private fun handleCursorMove(
     event: PointerEvent,
     editEntry: (Entry) -> Unit,
     state: MarkerState
@@ -361,7 +396,7 @@ private fun handleMouseMove(
     val entryInPixel = state.entryInPixel
     val leftBorder = state.leftBorder
     val rightBorder = state.rightBorder
-    val mouseState = state.mouseState
+    val mouseState = state.cursorState
     val labelerConf = state.labelerConf
     val x = eventChange.position.x.coerceIn(0f, state.canvasParams.lengthInPixel.toFloat())
     val y = eventChange.position.y.coerceIn(0f, state.canvasHeightState.value.coerceAtLeast(0f))
@@ -393,9 +428,30 @@ private fun handleMouseMove(
     }
 }
 
+private fun handleScissorsMove(
+    event: PointerEvent,
+    state: MarkerState
+) {
+    val scissorsState = state.scissorsState
+    val x = event.changes.first().position.x
+    scissorsState.updateNonNull { copy(position = x) }
+}
+
 private fun handleMousePress(
+    tool: Tool,
     keyboardState: KeyboardState,
-    state: MutableState<MarkerMouseState>,
+    state: MutableState<MarkerCursorState>,
+    labelerConf: LabelerConf
+) {
+    when (tool) {
+        Tool.Cursor -> handleCursorPress(keyboardState, state, labelerConf)
+        Tool.Scissors -> Unit
+    }
+}
+
+private fun handleCursorPress(
+    keyboardState: KeyboardState,
+    state: MutableState<MarkerCursorState>,
     labelerConf: LabelerConf
 ) {
     if (!keyboardState.isCtrlPressed) {
@@ -412,13 +468,28 @@ private fun handleMousePress(
 }
 
 private fun handleMouseRelease(
+    tool: Tool,
+    event: PointerEvent,
+    submitEntry: () -> Unit,
+    playSampleSection: (Float, Float) -> Unit,
+    cutEntry: (Float) -> Unit,
+    keyboardState: KeyboardState,
+    state: MarkerState
+) {
+    when (tool) {
+        Tool.Cursor -> handleCursorRelease(event, submitEntry, playSampleSection, keyboardState, state)
+        Tool.Scissors -> handleScissorsRelease(cutEntry, state)
+    }
+}
+
+private fun handleCursorRelease(
     event: PointerEvent,
     submitEntry: () -> Unit,
     playSampleSection: (Float, Float) -> Unit,
     keyboardState: KeyboardState,
     state: MarkerState
 ) {
-    val mouseState = state.mouseState
+    val mouseState = state.cursorState
     val entryConverter = state.entryConverter
     if (keyboardState.isCtrlPressed) {
         val x = event.changes.first().position.x
@@ -432,6 +503,18 @@ private fun handleMouseRelease(
     } else {
         submitEntry()
         mouseState.update { finishDragging() }
+    }
+}
+
+private fun handleScissorsRelease(
+    cutEntry: (Float) -> Unit,
+    state: MarkerState
+) {
+    val scissorsState = state.scissorsState
+    val position = scissorsState.requireValue().position
+    if (position != null) {
+        val timePosition = state.entryConverter.convertToMillis(position)
+        cutEntry(timePosition)
     }
 }
 

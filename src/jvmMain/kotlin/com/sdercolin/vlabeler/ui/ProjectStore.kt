@@ -27,6 +27,7 @@ interface ProjectStore {
     fun clearProject()
     fun editProject(editor: Project.() -> Project)
     fun editEntry(editedEntry: EditedEntry)
+    fun cutEntry(index: Int, position: Float, newName: String, goToNewEntry: Boolean)
     val canUndo: Boolean
     fun undo()
     val canRedo: Boolean
@@ -85,6 +86,8 @@ class ProjectStoreImpl(
     }
 
     override fun editEntry(editedEntry: EditedEntry) = editProject { updateEntry(editedEntry) }
+    override fun cutEntry(index: Int, position: Float, newName: String, goToNewEntry: Boolean) =
+        editProject { cutEntry(index, position, newName, goToNewEntry) }
 
     override val canUndo get() = history.canUndo
     override fun undo() {

@@ -31,7 +31,7 @@ sealed class CommonConfirmationDialogAction(
 
 data class CommonConfirmationDialogResult(
     val action: CommonConfirmationDialogAction,
-) : EmbeddedDialogResult
+) : EmbeddedDialogResult<CommonConfirmationDialogAction>
 
 @Composable
 fun CommonConfirmationDialog(

@@ -32,12 +32,12 @@ import com.sdercolin.vlabeler.ui.string.string
 
 data class SetResolutionDialogArgs(val current: Int, val min: Int, val max: Int) : EmbeddedDialogArgs
 
-data class SetResolutionDialogResult(val newValue: Int) : EmbeddedDialogResult
+data class SetResolutionDialogResult(val newValue: Int) : EmbeddedDialogResult<SetResolutionDialogArgs>
 
 @Composable
 fun SetResolutionDialog(
     args: SetResolutionDialogArgs,
-    finish: (EmbeddedDialogResult?) -> Unit,
+    finish: (EmbeddedDialogResult<SetResolutionDialogArgs>?) -> Unit
 ) {
     val dismiss = { finish(null) }
     val submit = { newValue: Int -> finish(SetResolutionDialogResult(newValue)) }

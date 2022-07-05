@@ -12,19 +12,22 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.Black50
 
+data class EmbeddedDialogRequest<T : EmbeddedDialogArgs>(val args: T, val onResult: (EmbeddedDialogResult<T>?) -> Unit)
+
 sealed interface EmbeddedDialogArgs {
     val customMargin: Boolean get() = false
     val cancellableOnClickOutside: Boolean get() = false
 }
 
-sealed interface EmbeddedDialogResult
+interface EmbeddedDialogResult<T : EmbeddedDialogArgs>
 
 @Composable
-fun EmbeddedDialog(args: EmbeddedDialogArgs, submit: (EmbeddedDialogResult?) -> Unit) {
+fun <T : EmbeddedDialogArgs> EmbeddedDialog(request: EmbeddedDialogRequest<T>) {
+    val args = request.args
     Box(
         modifier = Modifier.fillMaxSize()
             .background(color = Black50)
-            .plainClickable { if (args.cancellableOnClickOutside) submit(null) },
+            .plainClickable { if (args.cancellableOnClickOutside) request.onResult(null) },
         contentAlignment = Alignment.Center
     ) {
         Surface {
@@ -32,17 +35,31 @@ fun EmbeddedDialog(args: EmbeddedDialogArgs, submit: (EmbeddedDialogResult?) -> 
                 modifier = Modifier
                     .run { if (!args.customMargin) padding(horizontal = 50.dp, vertical = 20.dp) else this }
             ) {
-                @Suppress("REDUNDANT_ELSE_IN_WHEN")
-                when (args) {
-                    is SetResolutionDialogArgs -> SetResolutionDialog(args, submit)
-                    is AskIfSaveDialogPurpose -> AskIfSaveDialog(args, submit)
-                    is JumpToEntryDialogArgs -> JumpToEntryDialog(args, submit)
-                    is EditEntryNameDialogArgs -> EditEntryNameDialog(args, submit)
-                    is CommonConfirmationDialogAction -> CommonConfirmationDialog(args, submit)
-                    is ErrorDialogContent -> ErrorDialog(args, submit)
-                    else -> TODO("Dialog args handler is not implemented")
-                }
+                TypedDialog(args, request)
             }
         }
+    }
+}
+
+@Composable
+private fun <T : EmbeddedDialogArgs> TypedDialog(
+    args: T,
+    request: EmbeddedDialogRequest<T>
+) {
+    @Suppress("REDUNDANT_ELSE_IN_WHEN", "UNCHECKED_CAST")
+    when (args) {
+        is SetResolutionDialogArgs ->
+            SetResolutionDialog(args, (request as EmbeddedDialogRequest<SetResolutionDialogArgs>).onResult)
+        is AskIfSaveDialogPurpose ->
+            AskIfSaveDialog(args, (request as EmbeddedDialogRequest<AskIfSaveDialogPurpose>).onResult)
+        is JumpToEntryDialogArgs ->
+            JumpToEntryDialog(args, (request as EmbeddedDialogRequest<JumpToEntryDialogArgs>).onResult)
+        is InputEntryNameDialogArgs ->
+            InputEntryNameDialog(args, (request as EmbeddedDialogRequest<InputEntryNameDialogArgs>).onResult)
+        is CommonConfirmationDialogAction ->
+            CommonConfirmationDialog(args, (request as EmbeddedDialogRequest<CommonConfirmationDialogAction>).onResult)
+        is ErrorDialogContent ->
+            ErrorDialog(args, (request as EmbeddedDialogRequest<ErrorDialogContent>).onResult)
+        else -> TODO("Dialog args handler is not implemented")
     }
 }
