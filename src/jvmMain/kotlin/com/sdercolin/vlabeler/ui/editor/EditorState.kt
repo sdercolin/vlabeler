@@ -15,8 +15,8 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -158,7 +158,7 @@ class EditorState(
         if (updatedResolution != null) changeResolution(updatedResolution)
     }
 
-    fun openEditEntryNameDialog(duplicate: Boolean, scope: CoroutineScope) {
-        appState.openEditEntryNameDialog(duplicate, scope)
+    fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose) {
+        appState.openEditEntryNameDialog(index, purpose)
     }
 }

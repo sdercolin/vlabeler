@@ -199,13 +199,13 @@ enum class Strings(val en: String) {
         en = "You have unsaved changes. Do you want to save them before exiting?"
     ),
     InputEntryNameDialogDescription(
-        en = "Rename this entry"
+        en = "Rename entry"
     ),
     InputEntryNameDuplicateDialogDescription(
-        en = "Input the name for the new entry"
+        en = "Input name for the new entry"
     ),
     InputEntryNameCutDialogDescription(
-        en = "Input the name for the latter entry"
+        en = "Input name for the latter entry"
     ),
     EditEntryNameDialogExistingError(
         en = "The name you input already exists."

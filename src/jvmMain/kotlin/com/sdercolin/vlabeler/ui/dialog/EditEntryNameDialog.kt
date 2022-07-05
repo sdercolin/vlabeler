@@ -15,6 +15,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,9 +23,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -60,14 +65,23 @@ fun InputEntryNameDialog(
         finish(InputEntryNameDialogResult(args.index, name, args.purpose))
     }
 
-    var input by remember { mutableStateOf(args.initial) }
+    var input by remember {
+        mutableStateOf(
+            TextFieldValue(args.initial, selection = TextRange(0, args.initial.length))
+        )
+    }
 
     val trySubmit = {
-        if (args.invalidOptions.contains(input)) {
+        if (args.invalidOptions.contains(input.text)) {
             args.showSnackbar(string(Strings.EditEntryNameDialogExistingError))
         } else {
-            submit(input)
+            submit(input.text)
         }
+    }
+
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 
     Column(Modifier.widthIn(min = 350.dp)) {
@@ -80,6 +94,7 @@ fun InputEntryNameDialog(
         Spacer(Modifier.height(20.dp))
         OutlinedTextField(
             modifier = Modifier.width(150.dp)
+                .focusRequester(focusRequester)
                 .onKeyEvent {
                     if (it.isReleased(Key.Enter)) {
                         trySubmit()
@@ -90,7 +105,7 @@ fun InputEntryNameDialog(
                 },
             value = input,
             singleLine = true,
-            isError = args.invalidOptions.contains(input),
+            isError = args.invalidOptions.contains(input.text),
             onValueChange = { input = it }
         )
         Spacer(Modifier.height(25.dp))

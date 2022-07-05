@@ -11,6 +11,7 @@ import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.env.getNumberKey
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isMacOS
+import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -104,8 +105,8 @@ fun FrameWindowScope.Menu(
                 shortcut = getKeyShortCut(Key.R, ctrl = true),
                 onClick = {
                     appState.openEditEntryNameDialog(
-                        duplicate = false,
-                        scope = mainScope
+                        index = appState.requireProject().currentIndex,
+                        purpose = InputEntryNameDialogPurpose.Rename
                     )
                 },
                 enabled = appState.isEditorActive
@@ -115,8 +116,8 @@ fun FrameWindowScope.Menu(
                 shortcut = getKeyShortCut(Key.D, ctrl = true),
                 onClick = {
                     appState.openEditEntryNameDialog(
-                        duplicate = true,
-                        scope = mainScope
+                        index = appState.requireProject().currentIndex,
+                        purpose = InputEntryNameDialogPurpose.Duplicate
                     )
                 },
                 enabled = appState.isEditorActive

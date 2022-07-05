@@ -99,7 +99,7 @@ data class Project(
     }
 
     fun cutEntry(index: Int, position: Float, newName: String, goToNewEntry: Boolean): Project {
-        val entries = this.entries.toMutableList()
+        val entries = entries.toMutableList()
         val entry = entries[index]
         val editedCurrentEntry = entry.copy(
             end = position

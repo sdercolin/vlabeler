@@ -22,11 +22,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.editor.ToolboxView
@@ -40,8 +40,9 @@ fun Labeler(
 ) {
     val project = editorState.project
     val entry = editorState.editedEntry.entry
-    val scope = rememberCoroutineScope()
-    val openEditEntryNameDialog = remember { { editorState.openEditEntryNameDialog(duplicate = false, scope = scope) } }
+    val openEditEntryNameDialog = remember {
+        { editorState.openEditEntryNameDialog(project.currentIndex, InputEntryNameDialogPurpose.Rename) }
+    }
     val horizontalScrollState = rememberScrollState(0)
 
     LaunchedEffect(Unit) {

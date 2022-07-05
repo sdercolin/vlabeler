@@ -47,7 +47,7 @@ interface AppDialogState {
     fun <T : EmbeddedDialogArgs> openEmbeddedDialog(args: T)
     suspend fun <T : EmbeddedDialogArgs> awaitEmbeddedDialog(args: T): EmbeddedDialogResult<T>?
     fun openJumpToEntryDialog()
-    fun openEditEntryNameDialog(duplicate: Boolean, scope: CoroutineScope)
+    fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose)
     fun askIfSaveBeforeExit()
     fun confirmIfRemoveCurrentEntry()
     fun confirmIfLoadAutoSavedProject(file: File)
@@ -146,26 +146,22 @@ class AppDialogStateImpl(
 
     override fun openJumpToEntryDialog() = openEmbeddedDialog(JumpToEntryDialogArgs(projectStore.requireProject()))
 
-    override fun openEditEntryNameDialog(
-        duplicate: Boolean,
-        scope: CoroutineScope
-    ) {
+    override fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose) {
         val project = projectStore.requireProject()
-        val index = project.currentIndex
-        val entry = project.currentEntry
+        val entry = project.entries[index]
         val invalidOptions = if (project.labelerConf.allowSameNameEntry) {
             listOf()
         } else {
             project.entries.map { it.name }
-                .run { if (!duplicate) minus(entry.name) else this }
+                .run { if (purpose == InputEntryNameDialogPurpose.Rename) minus(entry.name) else this }
         }
         openEmbeddedDialog(
             InputEntryNameDialogArgs(
                 index = index,
                 initial = entry.name,
                 invalidOptions = invalidOptions,
-                showSnackbar = { scope.launch { snackbarHostState.showSnackbar(it) } },
-                purpose = InputEntryNameDialogPurpose.Duplicate
+                showSnackbar = { state.mainScope.launch { snackbarHostState.showSnackbar(it) } },
+                purpose = purpose
             )
         )
     }

@@ -4,11 +4,14 @@ package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +42,7 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.editor.Tool
@@ -66,8 +70,6 @@ private const val IdleLineAlpha = 0.7f
 private const val StrokeWidth = 2f
 private val LabelSize = DpSize(40.dp, 25.dp)
 private val LabelShiftUp = 8.dp
-private val NameLabelLeftMargin = 5.dp
-private val NameLabelTopMargin = 2.dp
 
 @Composable
 fun MarkerCanvas(
@@ -81,7 +83,11 @@ fun MarkerCanvas(
     FieldBorderCanvas(editorState, appState, state)
     FieldLabelCanvas(state)
     if (state.labelerConf.continuous) {
-        NameLabelCanvas(state)
+        NameLabelCanvas(
+            editorState = editorState,
+            state = state,
+            requestRename = { appState.openEditEntryNameDialog(it, InputEntryNameDialogPurpose.Rename) }
+        )
     }
     LaunchAdjustScrollPosition(
         state.entryInPixel,
@@ -313,7 +319,7 @@ private fun FieldLabelCanvasLayout(
 }
 
 @Composable
-private fun NameLabelCanvas(state: MarkerState) {
+private fun NameLabelCanvas(editorState: EditorState, state: MarkerState, requestRename: (Int) -> Unit) {
     val leftName = state.entriesInSample.getOrNull(state.currentIndexInSample - 1)?.name
     val rightName = state.entriesInSample.getOrNull(state.currentIndexInSample + 1)?.name
     NameLabelCanvasLayout(
@@ -323,19 +329,22 @@ private fun NameLabelCanvas(state: MarkerState) {
         rightBorder = state.rightBorder.takeIf { rightName != null }
     ) {
         if (leftName != null) {
-            NameLabel(leftName, Black)
+            NameLabel(leftName, Black) { requestRename(editorState.project.currentIndex - 1) }
         }
-        NameLabel(state.entryInPixel.name, DarkYellow)
+        NameLabel(state.entryInPixel.name, DarkYellow) { requestRename(editorState.project.currentIndex) }
         if (rightName != null) {
-            NameLabel(rightName, Black)
+            NameLabel(rightName, Black) { requestRename(editorState.project.currentIndex + 1) }
         }
     }
 }
 
 @Composable
-private fun NameLabel(name: String, color: Color) {
+private fun NameLabel(name: String, color: Color, requestRename: () -> Unit) {
     Text(
-        modifier = Modifier.widthIn(max = 100.dp),
+        modifier = Modifier.widthIn(max = 100.dp)
+            .wrapContentSize()
+            .clickable(onClick = requestRename)
+            .padding(vertical = 2.dp, horizontal = 5.dp),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         text = name,
@@ -352,24 +361,21 @@ private fun NameLabelCanvasLayout(
     rightBorder: Float?,
     content: @Composable () -> Unit
 ) {
-    val labelTopMargin = with(LocalDensity.current) { NameLabelTopMargin.toPx() }
-    val labelLeftMargin = with(LocalDensity.current) { NameLabelLeftMargin.toPx() }
     Layout(modifier = modifier, content = content) { measurables, constraints ->
         val placeables = measurables.map { measurable ->
-            measurable.measure(constraints)
+            measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))
         }
 
         // Set the size of the layout as big as it can
         layout(constraints.maxWidth, constraints.maxHeight) {
-            val y = labelTopMargin.toInt()
             val xs = listOfNotNull(
                 leftBorder,
                 entry.start,
                 rightBorder?.let { entry.end }
             )
             placeables.forEachIndexed { index, placeable ->
-                val x = xs[index] + labelLeftMargin
-                placeable.place(x.toInt(), y)
+                val x = xs[index]
+                placeable.place(x.toInt(), 0)
             }
         }
     }
@@ -434,7 +440,8 @@ private fun handleScissorsMove(
 ) {
     val scissorsState = state.scissorsState
     val x = event.changes.first().position.x
-    scissorsState.updateNonNull { copy(position = x) }
+    val position = x.takeIf { state.entryInPixel.isValidCutPosition(it) }
+    scissorsState.updateNonNull { copy(position = position) }
 }
 
 private fun handleMousePress(
