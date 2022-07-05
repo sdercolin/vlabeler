@@ -45,6 +45,7 @@ fun Labeler(
 
     LaunchedEffect(Unit) {
         editorState.scrollFitViewModel.eventFlow.collectLatest {
+            if (appState.isScrollFitEnabled.not()) return@collectLatest
             horizontalScrollState.animateScrollTo(it)
         }
     }

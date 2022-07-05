@@ -170,7 +170,7 @@ fun FrameWindowScope.Menu(
                 string(Strings.MenuNavigateScrollFit),
                 shortcut = getKeyShortCut(Key.F),
                 onClick = { appState.scrollFitViewModel.emit() },
-                enabled = appState.isEditorActive
+                enabled = appState.isEditorActive && appState.isScrollFitEnabled
             )
         }
         if (isDebug) {
