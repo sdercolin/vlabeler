@@ -102,11 +102,13 @@ data class Project(
         val entries = entries.toMutableList()
         val entry = entries[index]
         val editedCurrentEntry = entry.copy(
-            end = position
+            end = position,
+            points = entry.points.map { it.coerceAtMost(position) }
         )
         val newEntry = entry.copy(
             name = newName,
-            start = position
+            start = position,
+            points = entry.points.map { it.coerceAtLeast(position) }
         )
         entries[index] = editedCurrentEntry
         entries.add(index + 1, newEntry)
