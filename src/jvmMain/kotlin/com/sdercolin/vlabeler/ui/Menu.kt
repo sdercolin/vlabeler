@@ -8,8 +8,10 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
+import com.sdercolin.vlabeler.env.getNumberKey
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isMacOS
+import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.CoroutineScope
@@ -84,6 +86,16 @@ fun FrameWindowScope.Menu(
                 onClick = { appState.redo() },
                 enabled = appState.history.canRedo
             )
+            Menu(string(Strings.MenuEditTools)) {
+                Tool.values().forEachIndexed { index, tool ->
+                    CheckboxItem(
+                        string(tool.stringKey),
+                        checked = appState.tool == tool,
+                        shortcut = getKeyShortCut(getNumberKey(index + 1), alt = true),
+                        onCheckedChange = { if (it) appState.tool = tool }
+                    )
+                }
+            }
             Item(
                 string(Strings.MenuEditRenameEntry),
                 shortcut = getKeyShortCut(Key.R, ctrl = true),
@@ -133,6 +145,13 @@ fun FrameWindowScope.Menu(
                 checked = appState.isEntryListPinned,
                 enabled = appState.isEditorActive,
                 onCheckedChange = { appState.isEntryListPinned = it }
+            )
+            CheckboxItem(
+                string(Strings.MenuViewToggleToolbox),
+                shortcut = getKeyShortCut(Key.Three, ctrl = true),
+                checked = appState.isToolboxDisplayed,
+                enabled = appState.isEditorActive,
+                onCheckedChange = { appState.isToolboxDisplayed = it }
             )
         }
         Menu(string(Strings.MenuNavigate), mnemonic = 'N') {

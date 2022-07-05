@@ -45,6 +45,15 @@ enum class Strings(val en: String) {
     MenuEditRedo(
         en = "Redo"
     ),
+    MenuEditTools(
+        en = "Tools"
+    ),
+    MenuEditToolsCursor(
+        en = "Cursor"
+    ),
+    MenuEditToolsScissors(
+        en = "Scissors"
+    ),
     MenuEditRenameEntry(
         en = "Rename Current Entry..."
     ),
@@ -65,6 +74,9 @@ enum class Strings(val en: String) {
     ),
     MenuViewToggleProperties(
         en = "Show Properties"
+    ),
+    MenuViewToggleToolbox(
+        en = "Show Toolbox"
     ),
     MenuNavigate(
         en = "Navigate"

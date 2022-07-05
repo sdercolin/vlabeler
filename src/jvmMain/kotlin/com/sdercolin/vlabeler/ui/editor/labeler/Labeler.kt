@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.PropertyView
+import com.sdercolin.vlabeler.ui.editor.ToolboxView
 import com.sdercolin.vlabeler.ui.theme.Black50
 import kotlinx.coroutines.flow.collectLatest
 
@@ -64,6 +65,9 @@ fun Labeler(
             )
             if (appState.isPropertyViewDisplayed) {
                 PropertyView(editorState.project)
+            }
+            if (appState.isToolboxDisplayed) {
+                ToolboxView(appState)
             }
         }
         HorizontalScrollbar(

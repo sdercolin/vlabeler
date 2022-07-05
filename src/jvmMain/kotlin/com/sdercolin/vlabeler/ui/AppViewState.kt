@@ -3,12 +3,15 @@ package com.sdercolin.vlabeler.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.util.savedMutableStateOf
 
 interface AppViewState {
     var isMarkerDisplayed: Boolean
     var isPropertyViewDisplayed: Boolean
     var isEntryListPinned: Boolean
+    var isToolboxDisplayed: Boolean
+    var tool: Tool
 }
 
 class AppViewStateImpl(appRecord: AppRecordStore) : AppViewState {
@@ -22,5 +25,15 @@ class AppViewStateImpl(appRecord: AppRecordStore) : AppViewState {
     override var isEntryListPinned: Boolean
         by savedMutableStateOf(appRecord.stateFlow.value.isEntryListPinned) {
             appRecord.update { copy(isEntryListPinned = it) }
+        }
+
+    override var isToolboxDisplayed: Boolean
+        by savedMutableStateOf(appRecord.stateFlow.value.isToolboxDisplayed) {
+            appRecord.update { copy(isToolboxDisplayed = it) }
+        }
+
+    override var tool: Tool
+        by savedMutableStateOf(appRecord.stateFlow.value.tool) {
+            appRecord.update { copy(tool = it) }
         }
 }

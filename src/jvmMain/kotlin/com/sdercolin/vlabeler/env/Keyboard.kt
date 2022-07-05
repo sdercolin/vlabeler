@@ -95,3 +95,18 @@ val KeyEvent.shouldIncreaseResolution get() = (key == Key.Minus || key == Key.Nu
 val KeyEvent.shouldDecreaseResolution get() = (key == Key.Equals || key == Key.NumPadAdd) && released
 val KeyEvent.shouldBeCaught
     get() = shouldTogglePlayer || shouldIncreaseResolution || shouldDecreaseResolution
+
+fun getNumberKey(number: Int) =
+    when (number) {
+        0 -> Key.Zero
+        1 -> Key.One
+        2 -> Key.Two
+        3 -> Key.Three
+        4 -> Key.Four
+        5 -> Key.Five
+        6 -> Key.Six
+        7 -> Key.Seven
+        8 -> Key.Eight
+        9 -> Key.Nine
+        else -> throw IllegalArgumentException("Cannot get number key for number $number")
+    }
