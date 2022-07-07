@@ -157,7 +157,7 @@ class AppState(
                 val result = awaitEmbeddedDialog(
                     InputEntryNameDialogArgs(
                         index = index,
-                        initial = "",
+                        initial = sourceEntry.name,
                         invalidOptions = invalidOptions,
                         showSnackbar = showSnackbar,
                         purpose = InputEntryNameDialogPurpose.CutFormer
