@@ -104,7 +104,11 @@ class AppState(
 
     fun requestOpenProjectCreator() = if (hasUnsavedChanges) askIfSaveBeforeCreateProject() else openProjectCreator()
     private fun askIfSaveBeforeCreateProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsCreatingNew)
-    private fun openProjectCreator() = changeScreen(Screen.ProjectCreator)
+    private fun openProjectCreator() {
+        reset()
+        changeScreen(Screen.ProjectCreator)
+    }
+
     fun closeProjectCreator() = reset()
 
     fun requestCloseProject() = if (hasUnsavedChanges) askIfSaveBeforeCloseProject() else reset()
