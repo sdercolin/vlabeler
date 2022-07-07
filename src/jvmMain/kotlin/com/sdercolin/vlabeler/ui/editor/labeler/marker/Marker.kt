@@ -97,6 +97,7 @@ fun MarkerCanvas(
     }
     LaunchAdjustScrollPosition(
         state.entriesInPixel,
+        editorState.project.currentIndex,
         canvasParams.lengthInPixel,
         horizontalScrollState,
         appState.scrollFitViewModel
@@ -568,15 +569,17 @@ private fun MarkerState.handleScissorsRelease(
 @Composable
 private fun LaunchAdjustScrollPosition(
     entriesInPixel: List<EntryInPixel>,
+    currentIndex: Int,
     canvasLength: Int,
     horizontalScrollState: ScrollState,
     scrollFitViewModel: ScrollFitViewModel
 ) {
-    LaunchedEffect(entriesInPixel.map { it.index }, canvasLength, horizontalScrollState.maxValue) {
+    LaunchedEffect(currentIndex, canvasLength, horizontalScrollState.maxValue) {
         val scrollMax = horizontalScrollState.maxValue
         val screenLength = canvasLength.toFloat() - scrollMax
-        val start = entriesInPixel.first().start
-        val end = entriesInPixel.last().end
+        val entry = entriesInPixel.find { it.index == currentIndex } ?: return@LaunchedEffect
+        val start = entry.start
+        val end = entry.end
         val center = (start + end) / 2
         val target = (center - screenLength / 2).toInt().coerceAtMost(scrollMax).coerceAtLeast(0)
         scrollFitViewModel.update(target)
