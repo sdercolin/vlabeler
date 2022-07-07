@@ -5,7 +5,14 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class MarkerCursorState(
     val mouse: Mouse = Mouse.None,
-    val pointIndex: Int = NonePointIndex, // starts from 0 for custom points
+    /**
+     * Flattened controllable point index.
+     * For multi-entry mode, we have indexes of [-2, 0, 1, 2, 3, ..., -1] for
+     * [entries[0].start, entries[0].points[0], entries[0].points[1], entries[0].end, entries[1].points[1], ... ]
+     * where the size of points is 2.
+     * It's ensured that: entry's end is equal to the next entry's start.
+     */
+    val pointIndex: Int = NonePointIndex,
     val lockedDrag: Boolean = false
 ) {
 

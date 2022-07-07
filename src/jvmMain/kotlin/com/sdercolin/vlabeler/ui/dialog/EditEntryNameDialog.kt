@@ -105,7 +105,7 @@ fun InputEntryNameDialog(
                 },
             value = input,
             singleLine = true,
-            isError = args.invalidOptions.contains(input.text),
+            isError = args.invalidOptions.contains(input.text) || input.text.isBlank(),
             onValueChange = { input = it }
         )
         Spacer(Modifier.height(25.dp))
@@ -117,6 +117,7 @@ fun InputEntryNameDialog(
             }
             Spacer(Modifier.width(25.dp))
             Button(
+                enabled = input.text.isNotBlank(),
                 onClick = { trySubmit() }
             ) {
                 Text(string(Strings.CommonOkay))

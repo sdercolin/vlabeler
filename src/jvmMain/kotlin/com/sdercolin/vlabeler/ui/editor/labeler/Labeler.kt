@@ -39,7 +39,6 @@ fun Labeler(
     appState: AppState
 ) {
     val project = editorState.project
-    val entry = editorState.editedEntry.entry
     val openEditEntryNameDialog = remember {
         { editorState.openEditEntryNameDialog(project.currentIndex, InputEntryNameDialogPurpose.Rename) }
     }
@@ -54,7 +53,7 @@ fun Labeler(
 
     Column(Modifier.fillMaxSize()) {
         EntryTitleBar(
-            entryName = entry.name,
+            entryName = editorState.entryName,
             sampleName = project.currentSampleName,
             openEditEntryNameDialog = openEditEntryNameDialog
         )

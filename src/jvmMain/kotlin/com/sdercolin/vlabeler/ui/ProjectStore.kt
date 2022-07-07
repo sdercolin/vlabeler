@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.io.autoSaveProjectFile
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
-import com.sdercolin.vlabeler.ui.editor.EditedEntry
+import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.savedMutableStateOf
@@ -26,7 +26,7 @@ interface ProjectStore {
     fun newProject(newProject: Project)
     fun clearProject()
     fun editProject(editor: Project.() -> Project)
-    fun editEntry(editedEntry: EditedEntry)
+    fun editEntries(editedEntries: List<IndexedEntry>)
     fun cutEntry(index: Int, position: Float, newName: String, goToNewEntry: Boolean)
     val canUndo: Boolean
     fun undo()
@@ -85,7 +85,7 @@ class ProjectStoreImpl(
         history = history.push(edited)
     }
 
-    override fun editEntry(editedEntry: EditedEntry) = editProject { updateEntry(editedEntry) }
+    override fun editEntries(editedEntries: List<IndexedEntry>) = editProject { updateEntries(editedEntries) }
     override fun cutEntry(index: Int, position: Float, newName: String, goToNewEntry: Boolean) =
         editProject { cutEntry(index, position, newName, goToNewEntry) }
 

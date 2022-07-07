@@ -1,5 +1,11 @@
 package com.sdercolin.vlabeler.util
 
-fun <K, V> Iterable<Pair<K, V>>.groupByFirst(): Map<K, List<V>> = groupBy { it.first }
-    .map { group -> group.key to group.value.map { it.second } }
-    .toMap()
+fun <T> List<T>.getPreviousOrNull(item: T): T? {
+    val index = indexOf(item).takeIf { it >= 0 } ?: return null
+    return getOrNull(index - 1)
+}
+
+fun <T> List<T>.getNextOrNull(item: T): T? {
+    val index = indexOf(item).takeIf { it >= 0 } ?: return null
+    return getOrNull(index + 1)
+}

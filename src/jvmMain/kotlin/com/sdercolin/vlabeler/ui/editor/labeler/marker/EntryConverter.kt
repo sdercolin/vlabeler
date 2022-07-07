@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import com.sdercolin.vlabeler.model.Entry
+import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.toFrame
 import com.sdercolin.vlabeler.util.toMillisecond
 
@@ -8,7 +9,8 @@ class EntryConverter(
     private val sampleRate: Float,
     private val resolution: Int
 ) {
-    fun convertToPixel(entry: Entry, sampleFileLengthMillis: Float) = EntryInPixel(
+    fun convertToPixel(entry: IndexedEntry, sampleFileLengthMillis: Float) = EntryInPixel(
+        index = entry.index,
         sample = entry.sample,
         name = entry.name,
         start = convertToPixel(entry.start),
@@ -24,13 +26,16 @@ class EntryConverter(
     private fun convertToPixel(millis: Float) =
         toFrame(millis, sampleRate).div(resolution)
 
-    fun convertToMillis(entry: EntryInPixel) = Entry(
-        sample = entry.sample,
-        name = entry.name,
-        start = convertToMillis(entry.start),
-        end = convertToMillis(entry.end),
-        points = entry.points.map { convertToMillis(it) },
-        extra = entry.extra
+    fun convertToMillis(entry: EntryInPixel) = IndexedEntry(
+        index = entry.index,
+        entry = Entry(
+            sample = entry.sample,
+            name = entry.name,
+            start = convertToMillis(entry.start),
+            end = convertToMillis(entry.end),
+            points = entry.points.map { convertToMillis(it) },
+            extra = entry.extra
+        )
     )
 
     fun convertToMillis(px: Float) = toMillisecond(convertToFrame(px), sampleRate)

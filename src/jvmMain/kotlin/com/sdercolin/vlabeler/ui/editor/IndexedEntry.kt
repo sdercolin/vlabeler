@@ -4,9 +4,15 @@ import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.Entry
 
 @Immutable
-data class EditedEntry(
+data class IndexedEntry(
     val entry: Entry,
     val index: Int
 ) {
+    val sample get() = entry.sample
+    val name get() = entry.name
+    val start get() = entry.start
+    val end get() = entry.end
+    val points get() = entry.points
+    val extra get() = entry.extra
     fun edit(entry: Entry) = copy(entry = entry)
 }

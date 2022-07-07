@@ -11,7 +11,6 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.shouldDecreaseResolution
 import com.sdercolin.vlabeler.env.shouldIncreaseResolution
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
@@ -28,7 +27,7 @@ class EditorState(
     val sampleResult get() = sampleState.value
     val isLoading get() = sampleState.value == null
     var project: Project by mutableStateOf(project)
-    var editedEntry: EditedEntry by mutableStateOf(project.getEntryForEditing())
+    var editedEntries: List<IndexedEntry> by mutableStateOf(project.getEntriesForEditing())
     private val isActive get() = appState.isEditorActive
     private val appConf = appState.appConf
     val keyboardViewModel = appState.keyboardViewModel
@@ -39,39 +38,49 @@ class EditorState(
     var canvasResolution: Int by mutableStateOf(appState.appConf.painter.canvasResolution.default)
         private set
 
+    val entryName: String
+        get() {
+            return if (editedEntries.size == 1) {
+                editedEntries.first().name
+            } else {
+                val firstName = editedEntries.first().name
+                val lastName = editedEntries.last().name
+                "$firstName..$lastName"
+            }
+        }
+
     /**
      * Called from upstream
      */
     fun updateProject(newProject: Project) {
         val previous = project
         project = newProject
-        if (newProject.currentIndex != previous.currentIndex ||
-            newProject.currentEntry != previous.currentEntry
-        ) {
-            loadNewEntry()
+        if (newProject.getEntriesForEditing() != previous.getEntriesForEditing()) {
+            loadNewEntries()
         }
     }
 
-    fun submitEntry() {
-        if (editedEntry.entry != project.currentEntry) {
-            Log.info("Submit entry: $editedEntry")
-            appState.editEntry(editedEntry)
+    fun submitEntries() {
+        val changedEntries = editedEntries - project.getEntriesForEditing().toSet()
+        if (changedEntries.isNotEmpty()) {
+            Log.info("Submit entries: $changedEntries")
+            appState.editEntries(changedEntries)
         }
     }
 
-    fun updateEntry(entry: Entry) {
-        editedEntry = editedEntry.edit(entry)
+    fun updateEntries(editedEntries: List<IndexedEntry>) {
+        this.editedEntries = editedEntries
     }
 
-    fun cutEntry(position: Float) {
-        appState.requestCutEntry(project.currentIndex, position)
+    fun cutEntry(index: Int, position: Float) {
+        appState.requestCutEntry(index, position)
     }
 
-    private fun loadNewEntry() {
-        val newValue = project.getEntryForEditing()
-        if (newValue != editedEntry) {
-            Log.info("Load new entry: $newValue")
-            editedEntry = newValue
+    private fun loadNewEntries() {
+        val newValues = project.getEntriesForEditing()
+        if (newValues != editedEntries) {
+            Log.info("Load new entries: $newValues")
+            editedEntries = newValues
         }
     }
 

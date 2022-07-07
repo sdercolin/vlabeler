@@ -5,7 +5,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.io.fromRawLabels
-import com.sdercolin.vlabeler.ui.editor.EditedEntry
+import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.ParamMap
 import kotlinx.serialization.Serializable
 import java.io.File
@@ -20,8 +20,12 @@ data class Project(
     val entries: List<Entry>,
     val currentIndex: Int,
     val labelerConf: LabelerConf,
-    val encoding: String? = null
+    val encoding: String? = null,
+    val multiMode: Boolean = labelerConf.continuous
 ) {
+    init {
+        requireValid()
+    }
 
     val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
     private val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
@@ -40,28 +44,46 @@ data class Project(
 
     fun getGroupIndex(entryIndex: Int) = entryIndexGroups.indexOfFirst { it.second.contains(entryIndex) }
 
-    fun getEntryForEditing(index: Int = currentIndex) = EditedEntry(
+    fun getEntriesForEditing(index: Int = currentIndex) = if (!multiMode) {
+        listOf(getEntryForEditing(index))
+    } else {
+        getEntriesInGroupForEditing(getGroupIndex(index))
+    }
+
+    fun getEntryForEditing(index: Int = currentIndex) = IndexedEntry(
         entry = entries[index],
         index = index
     )
 
-    fun updateEntry(editedEntry: EditedEntry): Project {
+    fun getEntriesInGroupForEditing(groupIndex: Int = currentGroupIndex) = entryIndexGroups[groupIndex].second
+        .map {
+            IndexedEntry(
+                entry = entries[it],
+                index = it
+            )
+        }
+
+    fun updateEntries(editedEntries: List<IndexedEntry>): Project {
         val entries = entries.toMutableList()
         if (labelerConf.continuous) {
-            val previousIndex = editedEntry.index - 1
+            val previousIndex = editedEntries.first().index - 1
             entries.getOrNull(previousIndex)
-                ?.takeIf { it.sample == editedEntry.entry.sample }
-                ?.copy(end = editedEntry.entry.start)
+                ?.takeIf { it.sample == editedEntries.first().sample }
+                ?.copy(end = editedEntries.first().start)
                 ?.let { entries[previousIndex] = it }
-            val nextIndex = editedEntry.index + 1
+            val nextIndex = editedEntries.last().index + 1
             entries.getOrNull(nextIndex)
-                ?.takeIf { it.sample == editedEntry.entry.sample }
-                ?.copy(start = editedEntry.entry.end)
+                ?.takeIf { it.sample == editedEntries.last().sample }
+                ?.copy(start = editedEntries.last().end)
                 ?.let { entries[nextIndex] = it }
         }
-        entries[editedEntry.index] = editedEntry.entry
+        editedEntries.forEach {
+            entries[it.index] = it.entry
+        }
         return copy(entries = entries)
     }
+
+    private fun updateEntry(editedEntry: IndexedEntry) = updateEntries(listOf(editedEntry))
 
     fun renameEntry(index: Int, newName: String): Project {
         val editedEntry = getEntryForEditing(index)
@@ -140,6 +162,44 @@ data class Project(
     }
 
     fun hasSwitchedSample(previous: Project?) = previous != null && previous.currentSampleName != currentSampleName
+
+    private fun requireValid() {
+        // Check multiMode enabled
+        if (multiMode) require(labelerConf.continuous) { "Multi-entry mode can only be used in continuous labelers." }
+
+        // Check currentIndex valid
+        requireNotNull(entries.getOrNull(currentIndex)) { "Invalid currentIndex: $currentIndex" }
+
+        // Check points
+        entries.forEach {
+            require(it.points.size == labelerConf.fields.size) {
+                "Point size doesn't match in entry: $it. Required point size = ${labelerConf.fields.size}"
+            }
+            require(it.extra.size == labelerConf.extraFieldNames.size) {
+                "Extra size doesn't match in entry: $it. Required extra size = ${labelerConf.extraFieldNames.size}"
+            }
+            it.points.forEach { point ->
+                require(point >= it.start) {
+                    "Point $point is smaller than start in entry: $it"
+                }
+                if (it.end > 0) require(point <= it.end) {
+                    "Point $point is greater than end in entry: $it"
+                }
+            }
+            if (it.end > 0) require(it.start <= it.end) {
+                "Start is greater than end in entry: $it"
+            }
+        }
+
+        // Check continuous
+        if (labelerConf.continuous) {
+            entries.zipWithNext().forEach {
+                require(it.first.end == it.second.start) {
+                    "Not continuous between entries: $it"
+                }
+            }
+        }
+    }
 
     companion object {
         const val SampleFileExtension = "wav"
