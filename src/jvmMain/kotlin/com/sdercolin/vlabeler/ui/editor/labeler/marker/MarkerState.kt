@@ -131,7 +131,8 @@ class MarkerState(
                     .minOfOrNull { points[it.second] }
                     ?: entry.end
                 val newPoints = points.toMutableList()
-                newPoints[pointIndex] = x.coerceIn(min, max)
+                val pointInsideIndex = pointIndex % (labelerConf.fields.size + 1)
+                newPoints[pointInsideIndex] = x.coerceIn(min, max)
                 val newEntry = entry.copy(points = newPoints)
                 entries[entryIndex] = newEntry
             }

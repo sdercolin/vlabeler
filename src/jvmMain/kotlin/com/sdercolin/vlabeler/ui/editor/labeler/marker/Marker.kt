@@ -354,9 +354,10 @@ private fun FieldLabelCanvasLayout(
         // Set the size of the layout as big as it can
         layout(constraints.maxWidth, constraints.maxHeight) {
             placeables.forEachIndexed { index, placeable ->
-                val field = fields[index % fields.size]
+                val fieldIndex = index % fields.size
+                val field = fields[fieldIndex]
                 val entry = entries[index / fields.size]
-                val x = entry.points[index] - (constraints.maxWidth) / 2
+                val x = entry.points[fieldIndex] - (constraints.maxWidth) / 2
                 val canvasHeight = constraints.maxHeight.toFloat()
                 val waveformsHeight = canvasHeight * waveformsHeightRatio
                 val restCanvasHeight = canvasHeight - waveformsHeight
