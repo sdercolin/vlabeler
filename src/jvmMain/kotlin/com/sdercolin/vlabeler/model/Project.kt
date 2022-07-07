@@ -117,10 +117,11 @@ data class Project(
         return copy(entries = entries, currentIndex = newIndex)
     }
 
-    fun cutEntry(index: Int, position: Float, newName: String, goToNewEntry: Boolean): Project {
+    fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?): Project {
         val entries = entries.toMutableList()
         val entry = entries[index]
         val editedCurrentEntry = entry.copy(
+            name = rename ?: entry.name,
             end = position,
             points = entry.points.map { it.coerceAtMost(position) }
         )
@@ -131,7 +132,7 @@ data class Project(
         )
         entries[index] = editedCurrentEntry
         entries.add(index + 1, newEntry)
-        val newIndex = if (goToNewEntry) index + 1 else index
+        val newIndex = targetEntryIndex ?: index
         return copy(entries = entries, currentIndex = newIndex)
     }
 
@@ -162,7 +163,9 @@ data class Project(
 
     fun requireValid() {
         // Check multiMode enabled
-        if (multipleEditMode) require(labelerConf.continuous) { "Multi-entry mode can only be used in continuous labelers." }
+        if (multipleEditMode) require(
+            labelerConf.continuous
+        ) { "Multi-entry mode can only be used in continuous labelers." }
 
         // Check currentIndex valid
         requireNotNull(entries.getOrNull(currentIndex)) { "Invalid currentIndex: $currentIndex" }

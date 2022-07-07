@@ -46,7 +46,8 @@ data class InputEntryNameDialogArgs(
 enum class InputEntryNameDialogPurpose(val stringKey: Strings) {
     Rename(Strings.InputEntryNameDialogDescription),
     Duplicate(Strings.InputEntryNameDuplicateDialogDescription),
-    Cut(Strings.InputEntryNameCutDialogDescription)
+    CutFormer(Strings.InputEntryNameCutFormerDialogDescription),
+    CutLatter(Strings.InputEntryNameCutLatterDialogDescription)
 }
 
 data class InputEntryNameDialogResult(

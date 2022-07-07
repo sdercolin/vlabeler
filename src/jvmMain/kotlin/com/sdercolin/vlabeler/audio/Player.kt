@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.audio
 
+import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,6 +11,7 @@ import kotlinx.coroutines.yield
 import java.io.File
 import javax.sound.sampled.AudioSystem
 
+@Stable
 class Player(
     private val coroutineScope: CoroutineScope,
     private val state: PlayerState

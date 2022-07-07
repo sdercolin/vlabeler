@@ -146,7 +146,7 @@ private fun Waveforms(
             .background(MaterialTheme.colors.background)
     ) {
         repeat(chunkCount) { i ->
-            println("WaveformsChunk $i: composed")
+            Log.info("WaveformsChunk $i: composed")
             ChunkImage(canvasParams, chunkCount, imageBitmaps[i], i, "Waveforms")
         }
     }
@@ -174,7 +174,7 @@ private fun Spectrogram(
                 val height = chunk.first().size.toFloat()
                 val size = Size(width, height)
                 val newBitmap = ImageBitmap(width.toInt(), height.toInt())
-                println("Spectrogram chunk $i: draw bitmap")
+                Log.info("Spectrogram chunk $i: draw bitmap")
                 CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
                     chunk.forEachIndexed { xIndex, yArray ->
                         yArray.forEachIndexed { yIndex, z ->

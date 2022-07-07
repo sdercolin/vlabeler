@@ -29,7 +29,7 @@ interface ProjectStore {
     fun clearProject()
     fun editProject(editor: Project.() -> Project)
     fun editEntries(editedEntries: List<IndexedEntry>)
-    fun cutEntry(index: Int, position: Float, newName: String, goToNewEntry: Boolean)
+    fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?)
     val canUndo: Boolean
     fun undo()
     val canRedo: Boolean
@@ -95,8 +95,12 @@ class ProjectStoreImpl(
     }
 
     override fun editEntries(editedEntries: List<IndexedEntry>) = editProject { updateEntries(editedEntries) }
-    override fun cutEntry(index: Int, position: Float, newName: String, goToNewEntry: Boolean) =
-        editProject { cutEntry(index, position, newName, goToNewEntry) }
+    override fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?) {
+        if (appConf.value.editor.autoScroll.onSwitchedInMultipleEditMode && targetEntryIndex != project?.currentIndex) {
+            scrollFitViewModel.emitNext()
+        }
+        editProject { cutEntry(index, position, rename, newName, targetEntryIndex) }
+    }
 
     override val canUndo get() = history.canUndo
     override fun undo() {

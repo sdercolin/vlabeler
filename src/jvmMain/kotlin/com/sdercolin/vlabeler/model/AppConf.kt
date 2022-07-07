@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.ui.theme.Yellow
 import com.sdercolin.vlabeler.util.hexString
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -101,23 +102,42 @@ data class AppConf(
 
     /**
      * Configurations about editor behaviors
-     * @param scissorsColor Color hex string of the scissors cursor position
-     * @param actionAfterScissors Action taken after a successful click with scissors
+     * @param scissorsColor Color hex string of the scissors' cursor position
+     * @param scissorsActions Actions taken with a successful scissors click
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted
      */
     @Serializable
     @Immutable
     data class Editor(
         val scissorsColor: String = Yellow.hexString,
-        val actionAfterScissors: ActionAfterScissors = ActionAfterScissors.GoToAndRenameNew,
+        val scissorsActions: ScissorsActions = ScissorsActions(),
         val autoScroll: AutoScroll = AutoScroll()
+    )
+
+    /**
+     * Actions taken with a successful scissors click
+     * @param goTo True if the editor goes to the given target entry
+     * @param askForName True if a renaming dialog is opened for the target entry
+     * @param play True if the target entry's audio is played
+     */
+    @Serializable
+    @Immutable
+    data class ScissorsActions(
+        val goTo: Target? = Target.Former,
+        val askForName: Target? = Target.Former,
+        val play: Target? = Target.Former
     ) {
+        /**
+         * Targets of the actions.
+         * Either of the two entries created by the scissors' cut
+         */
         @Serializable
-        enum class ActionAfterScissors(val goToNew: Boolean, val askForNewName: Boolean) {
-            None(false, false),
-            GoToNew(true, false),
-            RenameNew(false, true),
-            GoToAndRenameNew(true, true)
+        enum class Target {
+            @SerialName("former")
+            Former,
+
+            @SerialName("latter")
+            Latter
         }
     }
 

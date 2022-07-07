@@ -121,6 +121,12 @@ private fun FieldBorderCanvas(
     val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
     val tool = editorState.tool
 
+    LaunchedEffect(keyboardState.isCtrlPressed, tool) {
+        if (tool == Tool.Scissors) {
+            state.scissorsState.updateNonNull { copy(disabled = keyboardState.isCtrlPressed) }
+        }
+    }
+
     Canvas(
         Modifier.fillMaxHeight()
             .width(state.canvasParams.canvasWidthInDp)
@@ -164,7 +170,7 @@ private fun FieldBorderCanvas(
             val canvasHeight = size.height
             val leftBorder = state.leftBorder
             val rightBorder = state.rightBorder
-            val mouseState = state.cursorState
+            val cursorState = state.cursorState
             val labelerConf = state.labelerConf
             state.canvasHeightState.value = canvasHeight
 
@@ -193,7 +199,7 @@ private fun FieldBorderCanvas(
                 topLeft = Offset(leftBorder, 0f),
                 size = Size(width = start - leftBorder, height = canvasHeight)
             )
-            val startLineAlpha = if (mouseState.value.usingStartPoint) 1f else IdleLineAlpha
+            val startLineAlpha = if (cursorState.value.usingStartPoint) 1f else IdleLineAlpha
             drawLine(
                 color = startColor.copy(alpha = startLineAlpha),
                 start = Offset(start, 0f),
@@ -207,7 +213,7 @@ private fun FieldBorderCanvas(
                 if (entryIndex != 0) {
                     val border = state.entryBorders[entryIndex - 1]
                     val borderColor = EditableOutsideRegionColor
-                    val pointIndex = mouseState.value.pointIndex
+                    val pointIndex = cursorState.value.pointIndex
                     val borderLineAlpha =
                         if (state.isBorderIndex(pointIndex) &&
                             state.getEntryIndexesByBorderIndex(pointIndex).second == entryIndex
@@ -243,7 +249,7 @@ private fun FieldBorderCanvas(
                             size = Size(width = width, height = height)
                         )
                     }
-                    val lineAlpha = if (mouseState.value.pointIndex != fieldIndex) IdleLineAlpha else 1f
+                    val lineAlpha = if (cursorState.value.pointIndex != fieldIndex) IdleLineAlpha else 1f
                     drawLine(
                         color = color.copy(alpha = lineAlpha),
                         start = Offset(x, top),
@@ -261,7 +267,7 @@ private fun FieldBorderCanvas(
                 topLeft = Offset(end, 0f),
                 size = Size(width = rightBorder - end, height = canvasHeight)
             )
-            val endLineAlpha = if (mouseState.value.usingEndPoint) 1f else IdleLineAlpha
+            val endLineAlpha = if (cursorState.value.usingEndPoint) 1f else IdleLineAlpha
             drawLine(
                 color = endColor.copy(alpha = endLineAlpha),
                 start = Offset(end, 0f),
@@ -287,12 +293,13 @@ private fun FieldBorderCanvas(
             }
 
             // Draw scissors
-            state.scissorsState.value?.position?.let {
-                if (state.isValidCutPosition(it)) {
+            state.scissorsState.value?.let { scissors ->
+                val position = scissors.position
+                if (scissors.disabled.not() && position != null && state.isValidCutPosition(position)) {
                     drawLine(
                         color = parseColor(appState.appConf.editor.scissorsColor),
-                        start = Offset(it, 0f),
-                        end = Offset(it, canvasHeight),
+                        start = Offset(position, 0f),
+                        end = Offset(position, canvasHeight),
                         strokeWidth = StrokeWidth * 2
                     )
                 }
@@ -525,20 +532,6 @@ private fun MarkerState.handleMouseRelease(
     cutEntry: (Int, Float) -> Unit,
     keyboardState: KeyboardState
 ) {
-    when (tool) {
-        Tool.Cursor -> handleCursorRelease(event, submitEntry, playSampleSection, keyboardState)
-        Tool.Scissors -> handleScissorsRelease(cutEntry)
-    }
-}
-
-private fun MarkerState.handleCursorRelease(
-    event: PointerEvent,
-    submitEntry: () -> Unit,
-    playSampleSection: (Float, Float) -> Unit,
-    keyboardState: KeyboardState
-) {
-    val mouseState = cursorState
-    val entryConverter = entryConverter
     if (keyboardState.isCtrlPressed) {
         val x = event.changes.first().position.x
         val clickedRange = getClickedAudioRange(x, leftBorder, rightBorder)
@@ -549,15 +542,23 @@ private fun MarkerState.handleCursorRelease(
             playSampleSection(start, end)
         }
     } else {
-        submitEntry()
-        mouseState.update { finishDragging() }
+        when (tool) {
+            Tool.Cursor -> handleCursorRelease(submitEntry)
+            Tool.Scissors -> handleScissorsRelease(cutEntry)
+        }
     }
+}
+
+private fun MarkerState.handleCursorRelease(submitEntry: () -> Unit) {
+    submitEntry()
+    cursorState.update { finishDragging() }
 }
 
 private fun MarkerState.handleScissorsRelease(
     cutEntry: (Int, Float) -> Unit
 ) {
     val scissorsState = scissorsState
+
     val position = scissorsState.requireValue().position
     if (position != null) {
         val timePosition = entryConverter.convertToMillis(position)

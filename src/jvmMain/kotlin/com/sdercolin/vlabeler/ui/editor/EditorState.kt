@@ -41,9 +41,7 @@ class EditorState(
         private set
 
     val entryTitle: String
-        get() = if (editedEntries.size == 1) {
-            editedEntries.first().name
-        } else "..."
+        get() = project.currentEntry.name
 
     val entrySubTitle: String
         get() = if (editedEntries.size == 1) {
@@ -76,7 +74,8 @@ class EditorState(
     }
 
     fun cutEntry(index: Int, position: Float) {
-        appState.requestCutEntry(index, position)
+        val sample = sampleResult?.getOrNull() ?: return
+        appState.requestCutEntry(index, position, player, sample.info)
     }
 
     private fun loadNewEntries() {

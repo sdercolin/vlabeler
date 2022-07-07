@@ -9,8 +9,8 @@
   "continuous": true,
   "allowSameNameEntry": true,
   "defaultValues": [
-    100,
-    500
+    0,
+    0
   ],
   "defaultExtras": [],
   "fields": [],

@@ -14,6 +14,7 @@ import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
@@ -28,6 +29,7 @@ import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
+import com.sdercolin.vlabeler.util.toFrame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -123,18 +125,34 @@ class AppState(
         consumePendingActionAfterSaved(pendingActionAfterSaved)
     }
 
-    fun requestCutEntry(index: Int, position: Float) {
+    fun requestCutEntry(index: Int, position: Float, player: Player, sampleInfo: SampleInfo) {
         mainScope.launch {
             val sourceEntry = requireProject().entries[index]
-            val newName = if (appConf.editor.actionAfterScissors.askForNewName) {
+            val showSnackbar = { message: String ->
+                mainScope.launch { snackbarHostState.showSnackbar(message) }
+                Unit
+            }
+
+            val actions = appConf.editor.scissorsActions
+            if (actions.play != null) {
+                val startFrame = toFrame(sourceEntry.start, sampleInfo.sampleRate)
+                val endFrame = toFrame(sourceEntry.end, sampleInfo.sampleRate)
+                val cutFrame = toFrame(position, sampleInfo.sampleRate)
+                when (actions.play) {
+                    AppConf.ScissorsActions.Target.Former -> {
+                        player.playSection(startFrame, cutFrame)
+                    }
+                    AppConf.ScissorsActions.Target.Latter -> {
+                        player.playSection(cutFrame, endFrame)
+                    }
+                }
+            }
+
+            val rename = if (actions.askForName == AppConf.ScissorsActions.Target.Former) {
                 val invalidOptions = if (requireProject().labelerConf.allowSameNameEntry) {
                     listOf()
                 } else {
-                    requireProject().entries.map { it.name }
-                }
-                val showSnackbar = { message: String ->
-                    mainScope.launch { snackbarHostState.showSnackbar(message) }
-                    Unit
+                    requireProject().entries.map { it.name }.minus(sourceEntry.name)
                 }
                 val result = awaitEmbeddedDialog(
                     InputEntryNameDialogArgs(
@@ -142,7 +160,25 @@ class AppState(
                         initial = "",
                         invalidOptions = invalidOptions,
                         showSnackbar = showSnackbar,
-                        purpose = InputEntryNameDialogPurpose.Cut
+                        purpose = InputEntryNameDialogPurpose.CutFormer
+                    )
+                )
+                (result as InputEntryNameDialogResult?)?.name ?: return@launch
+            } else null
+            val newName = if (actions.askForName == AppConf.ScissorsActions.Target.Latter) {
+                val invalidOptions = if (requireProject().labelerConf.allowSameNameEntry) {
+                    listOf()
+                } else {
+                    requireProject().entries.map { it.name }
+                }
+
+                val result = awaitEmbeddedDialog(
+                    InputEntryNameDialogArgs(
+                        index = index,
+                        initial = "",
+                        invalidOptions = invalidOptions,
+                        showSnackbar = showSnackbar,
+                        purpose = InputEntryNameDialogPurpose.CutLatter
                     )
                 )
                 (result as InputEntryNameDialogResult?)?.name ?: return@launch
@@ -151,7 +187,12 @@ class AppState(
                 requireProject().entries.map { it.name },
                 requireProject().labelerConf.allowSameNameEntry
             )
-            cutEntry(index, position, newName, appConf.editor.actionAfterScissors.goToNew)
+            val targetIndex = when (actions.goTo) {
+                AppConf.ScissorsActions.Target.Former -> index
+                AppConf.ScissorsActions.Target.Latter -> index + 1
+                null -> null
+            }
+            cutEntry(index, position, rename, newName, targetIndex)
         }
     }
 
@@ -177,7 +218,10 @@ class AppState(
                 when (result.purpose) {
                     InputEntryNameDialogPurpose.Rename -> renameEntry(result.index, result.name)
                     InputEntryNameDialogPurpose.Duplicate -> duplicateEntry(result.index, result.name)
-                    InputEntryNameDialogPurpose.Cut -> {
+                    InputEntryNameDialogPurpose.CutFormer -> {
+                        // handled on caller side
+                    }
+                    InputEntryNameDialogPurpose.CutLatter -> {
                         // handled on caller side
                     }
                 }

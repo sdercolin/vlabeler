@@ -207,8 +207,11 @@ enum class Strings(val en: String) {
     InputEntryNameDuplicateDialogDescription(
         en = "Input name for the new entry"
     ),
-    InputEntryNameCutDialogDescription(
-        en = "Input name for the latter entry"
+    InputEntryNameCutFormerDialogDescription(
+        en = "Input name for the former entry after cutting"
+    ),
+    InputEntryNameCutLatterDialogDescription(
+        en = "Input name for the latter entry after cutting"
     ),
     EditEntryNameDialogExistingError(
         en = "The name you input already exists."
