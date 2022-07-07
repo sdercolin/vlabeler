@@ -1,6 +1,8 @@
 package com.sdercolin.vlabeler.ui.editor
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Stable
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.EntryInPixel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -15,7 +17,27 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
     private var pendingValue: Int = 0
     private var waitingNext = false
 
-    fun update(value: Int) {
+    fun update(
+        horizontalScrollState: ScrollState,
+        canvasLength: Int,
+        entriesInPixel: List<EntryInPixel>,
+        currentIndex: Int
+    ) {
+        val scrollMax = horizontalScrollState.maxValue
+        val screenLength = canvasLength.toFloat() - scrollMax
+        val entry = entriesInPixel.find { it.index == currentIndex } ?: return
+        val start = entry.start
+        val end = entry.end
+        val center = if (end - start <= screenLength - (2 * screenLength / MinScreenRatioOffset)) {
+            (start + end) / 2
+        } else {
+            start + screenLength / 2 - screenLength / MinScreenRatioOffset
+        }
+        val target = (center - screenLength / 2).toInt().coerceAtMost(scrollMax).coerceAtLeast(0)
+        update(target)
+    }
+
+    private fun update(value: Int) {
         pendingValue = value
         if (waitingNext) {
             waitingNext = false
@@ -31,5 +53,9 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
 
     fun emitNext() {
         waitingNext = true
+    }
+
+    companion object {
+        private const val MinScreenRatioOffset = 20
     }
 }

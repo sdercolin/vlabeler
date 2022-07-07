@@ -575,13 +575,6 @@ private fun LaunchAdjustScrollPosition(
     scrollFitViewModel: ScrollFitViewModel
 ) {
     LaunchedEffect(currentIndex, canvasLength, horizontalScrollState.maxValue) {
-        val scrollMax = horizontalScrollState.maxValue
-        val screenLength = canvasLength.toFloat() - scrollMax
-        val entry = entriesInPixel.find { it.index == currentIndex } ?: return@LaunchedEffect
-        val start = entry.start
-        val end = entry.end
-        val center = (start + end) / 2
-        val target = (center - screenLength / 2).toInt().coerceAtMost(scrollMax).coerceAtLeast(0)
-        scrollFitViewModel.update(target)
+        scrollFitViewModel.update(horizontalScrollState, canvasLength, entriesInPixel, currentIndex)
     }
 }
