@@ -127,6 +127,13 @@ fun FrameWindowScope.Menu(
                 onClick = { appState.confirmIfRemoveCurrentEntry() },
                 enabled = appState.isEditorActive && appState.canRemoveCurrentEntry
             )
+            CheckboxItem(
+                string(Strings.MenuEditMultipleEditMode),
+                shortcut = getKeyShortCut(Key.M, ctrl = true),
+                checked = appState.project?.multipleEditMode == true,
+                onCheckedChange = { appState.toggleMultipleEditMode(it) },
+                enabled = appState.isEditorActive && appState.project?.labelerConf?.continuous == true
+            )
         }
         Menu(string(Strings.MenuView), mnemonic = 'V') {
             CheckboxItem(

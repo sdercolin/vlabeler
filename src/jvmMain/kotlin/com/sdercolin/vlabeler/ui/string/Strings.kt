@@ -63,6 +63,9 @@ enum class Strings(val en: String) {
     MenuEditRemoveEntry(
         en = "Remove Current Entry"
     ),
+    MenuEditMultipleEditMode(
+        en = "Edit All Connected Entries"
+    ),
     MenuView(
         en = "View"
     ),

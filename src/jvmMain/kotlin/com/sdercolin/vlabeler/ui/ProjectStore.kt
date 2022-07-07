@@ -45,6 +45,7 @@ interface ProjectStore {
     fun duplicateEntry(index: Int, newName: String)
     val canRemoveCurrentEntry: Boolean
     fun removeCurrentEntry()
+    fun toggleMultipleEditMode(on: Boolean)
     fun getAutoSavedProjectFile(): File?
     fun discardAutoSavedProjects()
     fun enableAutoSaveProject(intervalSecond: Int?, scope: CoroutineScope, unsavedChangesState: AppUnsavedChangesState)
@@ -173,6 +174,8 @@ class ProjectStoreImpl(
         get() = project?.let { it.currentEntryGroup.size > 1 } == true
 
     override fun removeCurrentEntry() = editProject { removeCurrentEntry() }
+
+    override fun toggleMultipleEditMode(on: Boolean) = editProject { copy(multipleEditMode = on) }
 
     private fun listAutoSavedProjectFiles() = RecordDir.listFiles().orEmpty()
         .filter { it.extension == Project.ProjectFileExtension && it.name.startsWith("_") }
