@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.io.autoSaveProjectFile
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
+import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.RecordDir
@@ -28,6 +29,7 @@ interface ProjectStore {
     fun newProject(newProject: Project)
     fun clearProject()
     fun editProject(editor: Project.() -> Project)
+    fun updateProjectOnLoadedSample(sampleInfo: SampleInfo)
     fun editEntries(editedEntries: List<IndexedEntry>)
     fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?)
     val canUndo: Boolean
@@ -85,6 +87,13 @@ class ProjectStoreImpl(
         edited.requireValid()
         project = edited
         history = history.push(edited)
+    }
+
+    override fun updateProjectOnLoadedSample(sampleInfo: SampleInfo) {
+        val updated = requireProject().updateOnLoadedSample(sampleInfo)
+        if (updated == requireProject()) return
+        project = updated
+        history = history.replaceTop(updated)
     }
 
     private fun editNonNullProject(editor: Project.() -> Project?) {

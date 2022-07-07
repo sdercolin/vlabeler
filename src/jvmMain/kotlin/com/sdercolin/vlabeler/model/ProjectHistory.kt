@@ -8,6 +8,12 @@ data class ProjectHistory(
     val canUndo get() = index > 0
     val canRedo get() = index >= 0 && index < list.lastIndex
 
+    fun replaceTop(project: Project): ProjectHistory {
+        val list = list.toMutableList()
+        list[index] = project
+        return copy(list = list)
+    }
+
     fun push(project: Project) = (list.subList(0, index + 1) + project)
         .squashLatest()
         .takeLast(MaxStackSize)

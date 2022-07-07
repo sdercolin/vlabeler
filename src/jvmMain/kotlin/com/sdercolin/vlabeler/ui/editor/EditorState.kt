@@ -92,6 +92,7 @@ class EditorState(
             sampleState.value = sample
             sample.getOrNull()?.let {
                 player.load(it.info.file)
+                appState.updateProjectOnLoadedSample(it.info)
             }
         }
     }
