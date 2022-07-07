@@ -18,9 +18,12 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CenterFocusWeak
+import androidx.compose.material.icons.filled.Expand
+import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -109,6 +112,23 @@ fun BottomBar(state: BottomBarState) {
                     imageVector = Icons.Default.CenterFocusWeak,
                     contentDescription = null
                 )
+            }
+            if (state.isMultipleEditModeEnabled) {
+                Box(
+                    Modifier.fillMaxHeight()
+                        .clickable { state.toggleMultipleEditMode() }
+                        .padding(horizontal = 15.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier.size(15.dp).align(Alignment.Center).rotate(90f),
+                        imageVector = if (state.isMultipleEditMode) {
+                            Icons.Default.UnfoldLess
+                        } else {
+                            Icons.Default.Expand
+                        },
+                        contentDescription = null
+                    )
+                }
             }
 
             Spacer(Modifier.weight(1f))

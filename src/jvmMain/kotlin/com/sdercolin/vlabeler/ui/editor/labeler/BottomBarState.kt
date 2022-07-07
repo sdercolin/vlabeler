@@ -22,6 +22,9 @@ class BottomBarState(
     val goPreviousSample: () -> Unit,
     val openJumpToEntryDialog: () -> Unit,
     val scrollFit: () -> Unit,
+    val isMultipleEditModeEnabled: Boolean,
+    val isMultipleEditMode: Boolean,
+    val toggleMultipleEditMode: () -> Unit,
     val appConf: AppConf
 ) {
     private val resolutionRange = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
@@ -37,8 +40,10 @@ fun rememberBottomBarState(
     appState: AppState,
     editorState: EditorState
 ) = remember(
+    project.labelerConf,
     project.currentIndex,
     project.entryCount,
+    project.multipleEditMode,
     editorState.canvasResolution,
     appState.appConf,
     appState.canGoNextEntryOrSample,
@@ -66,6 +71,9 @@ fun rememberBottomBarState(
         goPreviousSample = { appState.previousSample() },
         openJumpToEntryDialog = { appState.openJumpToEntryDialog() },
         scrollFit = { appState.scrollFitViewModel.emit() },
+        isMultipleEditModeEnabled = project.labelerConf.continuous,
+        isMultipleEditMode = project.multipleEditMode,
+        toggleMultipleEditMode = { appState.toggleMultipleEditMode(!project.multipleEditMode) },
         appConf = appState.appConf
     )
 }
