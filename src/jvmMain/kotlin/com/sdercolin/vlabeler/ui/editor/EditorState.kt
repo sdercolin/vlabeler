@@ -16,6 +16,8 @@ import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -38,15 +40,20 @@ class EditorState(
     var canvasResolution: Int by mutableStateOf(appState.appConf.painter.canvasResolution.default)
         private set
 
-    val entryName: String
-        get() {
-            return if (editedEntries.size == 1) {
-                editedEntries.first().name
-            } else {
-                val firstName = editedEntries.first().name
-                val lastName = editedEntries.last().name
-                "$firstName..$lastName"
-            }
+    val entryTitle: String
+        get() = if (editedEntries.size == 1) {
+            editedEntries.first().name
+        } else {
+            val firstName = editedEntries.first().name
+            val lastName = editedEntries.last().name
+            "$firstName..$lastName"
+        }
+
+    val entrySubTitle: String
+        get() = if (editedEntries.size == 1) {
+            project.currentSampleName
+        } else {
+            string(Strings.EditorSubTitleMultiple, editedEntries.size, project.currentSampleName)
         }
 
     /**

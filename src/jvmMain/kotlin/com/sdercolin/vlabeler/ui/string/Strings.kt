@@ -231,6 +231,9 @@ enum class Strings(val en: String) {
     PluginDialogLabelMinMax(
         en = " (min: %s, max: %s)"
     ),
+    EditorSubTitleMultiple(
+        en = "editing %d entries in sample %s"
+    ),
     CanvasLengthOverflowError(
         en = "The charts are too long to be painted." +
             " Please use \"-\" button to reduce data length, or divide the input files priorly."

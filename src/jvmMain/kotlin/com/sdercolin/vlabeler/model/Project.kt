@@ -22,9 +22,9 @@ data class Project(
     val currentIndex: Int,
     val labelerConf: LabelerConf,
     val encoding: String? = null,
-    val multiMode: Boolean = labelerConf.continuous
+    val multipleEditMode: Boolean = labelerConf.continuous
 ) {
-    val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
+    private val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
     private val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
     val currentEntry: Entry = entries[currentIndex]
     private val currentGroupIndex: Int = getGroupIndex(currentIndex)
@@ -39,15 +39,15 @@ data class Project(
     val projectFile: File
         get() = File(workingDirectory).resolve("$projectName.$ProjectFileExtension")
 
-    fun getGroupIndex(entryIndex: Int) = entryIndexGroups.indexOfFirst { it.second.contains(entryIndex) }
+    private fun getGroupIndex(entryIndex: Int) = entryIndexGroups.indexOfFirst { it.second.contains(entryIndex) }
 
-    fun getEntriesForEditing(index: Int = currentIndex) = if (!multiMode) {
+    fun getEntriesForEditing(index: Int = currentIndex) = if (!multipleEditMode) {
         listOf(getEntryForEditing(index))
     } else {
         getEntriesInGroupForEditing(getGroupIndex(index))
     }
 
-    fun getEntryForEditing(index: Int = currentIndex) = IndexedEntry(
+    private fun getEntryForEditing(index: Int = currentIndex) = IndexedEntry(
         entry = entries[index],
         index = index
     )
@@ -162,7 +162,7 @@ data class Project(
 
     fun requireValid() {
         // Check multiMode enabled
-        if (multiMode) require(labelerConf.continuous) { "Multi-entry mode can only be used in continuous labelers." }
+        if (multipleEditMode) require(labelerConf.continuous) { "Multi-entry mode can only be used in continuous labelers." }
 
         // Check currentIndex valid
         requireNotNull(entries.getOrNull(currentIndex)) { "Invalid currentIndex: $currentIndex" }

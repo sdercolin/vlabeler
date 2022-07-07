@@ -39,7 +39,7 @@ fun Labeler(
     appState: AppState
 ) {
     val project = editorState.project
-    val openEditEntryNameDialog = remember {
+    val openEditEntryNameDialog = remember(editorState, project) {
         { editorState.openEditEntryNameDialog(project.currentIndex, InputEntryNameDialogPurpose.Rename) }
     }
     val horizontalScrollState = rememberScrollState(0)
@@ -53,8 +53,9 @@ fun Labeler(
 
     Column(Modifier.fillMaxSize()) {
         EntryTitleBar(
-            entryName = editorState.entryName,
-            sampleName = project.currentSampleName,
+            title = editorState.entryTitle,
+            subTitle = editorState.entrySubTitle,
+            multiple = editorState.editedEntries.size > 1,
             openEditEntryNameDialog = openEditEntryNameDialog
         )
         Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Black50)) {
@@ -82,7 +83,7 @@ fun Labeler(
 }
 
 @Composable
-private fun EntryTitleBar(entryName: String, sampleName: String, openEditEntryNameDialog: () -> Unit) {
+private fun EntryTitleBar(title: String, subTitle: String, multiple: Boolean, openEditEntryNameDialog: () -> Unit) {
     Surface {
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -93,15 +94,15 @@ private fun EntryTitleBar(entryName: String, sampleName: String, openEditEntryNa
             Row(modifier = Modifier.align(Alignment.CenterStart)) {
                 Text(
                     modifier = Modifier.alignByBaseline()
-                        .clickable { openEditEntryNameDialog() },
-                    text = entryName,
+                        .clickable(enabled = !multiple) { openEditEntryNameDialog() },
+                    text = title,
                     style = MaterialTheme.typography.h3,
                     maxLines = 1
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
                     modifier = Modifier.alignByBaseline(),
-                    text = "（$sampleName）",
+                    text = "（$subTitle）",
                     style = MaterialTheme.typography.h5,
                     maxLines = 1
                 )
