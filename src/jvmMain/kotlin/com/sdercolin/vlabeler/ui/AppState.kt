@@ -174,7 +174,7 @@ class AppState(
 
                 val result = awaitEmbeddedDialog(
                     InputEntryNameDialogArgs(
-                        index = index,
+                        index = index + 1,
                         initial = "",
                         invalidOptions = invalidOptions,
                         showSnackbar = showSnackbar,
