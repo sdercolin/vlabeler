@@ -64,12 +64,14 @@ class ProjectStoreImpl(
         private set
 
     override fun newProject(newProject: Project) {
+        project?.let { discardAutoSavedProject(it) }
         project = newProject
         newProject.requireValid()
         history = ProjectHistory.new(newProject)
     }
 
     override fun clearProject() {
+        project?.let { discardAutoSavedProject(it) }
         project = null
         history = ProjectHistory()
     }
@@ -110,13 +112,17 @@ class ProjectStoreImpl(
     override fun nextEntry() {
         val previousProject = project
         editNonNullProject { nextEntry() }
-        if (requireProject().hasSwitchedSample(previousProject)) scrollFitViewModel.emitNext()
+        if (requireProject().hasSwitchedSample(previousProject) || requireProject().multipleEditMode) {
+            scrollFitViewModel.emitNext()
+        }
     }
 
     override fun previousEntry() {
-        val previous = project
+        val previousProject = project
         editNonNullProject { previousEntry() }
-        if (requireProject().hasSwitchedSample(previous)) scrollFitViewModel.emitNext()
+        if (requireProject().hasSwitchedSample(previousProject) || requireProject().multipleEditMode) {
+            scrollFitViewModel.emitNext()
+        }
     }
 
     override fun nextSample() {
@@ -158,6 +164,10 @@ class ProjectStoreImpl(
         autoSaveJob?.cancel()
         autoSaveJob = null
         listAutoSavedProjectFiles().forEach { it.delete() }
+    }
+
+    private fun discardAutoSavedProject(project: Project) {
+        RecordDir.resolve("_" + project.projectFile.name).takeIf { it.exists() }?.delete()
     }
 
     private var autoSaveJob: Job? = null
