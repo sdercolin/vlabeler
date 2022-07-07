@@ -373,10 +373,10 @@ private fun NameLabelCanvas(state: MarkerState, requestRename: (Int) -> Unit) {
     val entryIndexes = state.entries.map { it.index }
     val entryNames = state.entries.map { it.name }
     val leftEntry = remember(entryIndexes, entryNames) {
-        state.entriesInSample.getPreviousOrNull(state.entries.first())
+        state.entriesInSample.getPreviousOrNull { it.index == state.entries.first().index }
     }
     val rightEntry = remember(entryIndexes, entryNames) {
-        state.entriesInSample.getNextOrNull(state.entries.last())
+        state.entriesInSample.getNextOrNull { it.index == state.entries.last().index }
     }
     NameLabelCanvasLayout(
         modifier = Modifier.fillMaxHeight().width(state.canvasParams.canvasWidthInDp),
@@ -430,7 +430,7 @@ private fun NameLabelCanvasLayout(
             val xs = listOf(
                 listOfNotNull(leftBorder),
                 entries.map { it.start },
-                listOfNotNull(rightBorder)
+                listOfNotNull(entries.last().end.takeIf { rightBorder != null })
             ).flatten()
             placeables.forEachIndexed { index, placeable ->
                 val x = xs[index]
