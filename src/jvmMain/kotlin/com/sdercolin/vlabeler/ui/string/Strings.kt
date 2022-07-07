@@ -246,6 +246,9 @@ enum class Strings(val en: String) {
     ),
     PluginRuntimeException(
         en = "An error occurred during the plugin execution. Please contact the author for more information."
+    ),
+    InvalidProjectException(
+        en = "The created project is not valid. Please contact author of the labeler/plugin for more information."
     );
 
     fun get(language: Language): String = when (language) {

@@ -136,7 +136,7 @@
       "if(preu != ''):",
       "    points.append(float(preu) + left)",
       "if(ovl != ''):",
-      "    points.append(float(ovl) + left)",
+      "    points.append(ovl + left)",
       "if(left != ''):",
       "    points.append(float(left))"
     ]

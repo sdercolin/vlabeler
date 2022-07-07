@@ -118,7 +118,7 @@
       "    ovl = float(ovl)",
       "    if(ovl < 0):",
       "        ovl = 0",
-      "    points.append(float(ovl) + start)"
+      "    points.append(ovl + start)"
     ]
   },
   "writer": {

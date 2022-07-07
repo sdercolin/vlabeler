@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
+import com.sdercolin.vlabeler.exception.InvalidProjectException
 import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
@@ -23,10 +24,6 @@ data class Project(
     val encoding: String? = null,
     val multiMode: Boolean = labelerConf.continuous
 ) {
-    init {
-        requireValid()
-    }
-
     val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
     private val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
     val currentEntry: Entry = entries[currentIndex]
@@ -163,7 +160,7 @@ data class Project(
 
     fun hasSwitchedSample(previous: Project?) = previous != null && previous.currentSampleName != currentSampleName
 
-    private fun requireValid() {
+    fun requireValid() {
         // Check multiMode enabled
         if (multiMode) require(labelerConf.continuous) { "Multi-entry mode can only be used in continuous labelers." }
 
@@ -316,14 +313,17 @@ suspend fun projectOf(
         }
     }
 
-    val project = Project(
-        sampleDirectory = sampleDirectory,
-        workingDirectory = workingDirectory,
-        projectName = projectName,
-        entries = entries,
-        currentIndex = 0,
-        labelerConf = labelerConf,
-        encoding = encoding
-    )
-    return Result.success(project)
+    return runCatching {
+        Project(
+            sampleDirectory = sampleDirectory,
+            workingDirectory = workingDirectory,
+            projectName = projectName,
+            entries = entries,
+            currentIndex = 0,
+            labelerConf = labelerConf,
+            encoding = encoding
+        ).also { it.requireValid() }
+    }.onFailure {
+        return Result.failure(InvalidProjectException(it))
+    }
 }

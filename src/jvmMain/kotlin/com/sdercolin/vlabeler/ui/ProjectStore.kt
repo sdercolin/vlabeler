@@ -65,6 +65,7 @@ class ProjectStoreImpl(
 
     override fun newProject(newProject: Project) {
         project = newProject
+        newProject.requireValid()
         history = ProjectHistory.new(newProject)
     }
 
@@ -75,12 +76,14 @@ class ProjectStoreImpl(
 
     override fun editProject(editor: Project.() -> Project) {
         val edited = requireProject().editor()
+        edited.requireValid()
         project = edited
         history = history.push(edited)
     }
 
     private fun editNonNullProject(editor: Project.() -> Project?) {
         val edited = requireProject().editor() ?: return
+        edited.requireValid()
         project = edited
         history = history.push(edited)
     }
