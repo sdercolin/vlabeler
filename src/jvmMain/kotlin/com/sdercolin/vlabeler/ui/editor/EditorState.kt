@@ -43,11 +43,7 @@ class EditorState(
     val entryTitle: String
         get() = if (editedEntries.size == 1) {
             editedEntries.first().name
-        } else {
-            val firstName = editedEntries.first().name
-            val lastName = editedEntries.last().name
-            "$firstName..$lastName"
-        }
+        } else "..."
 
     val entrySubTitle: String
         get() = if (editedEntries.size == 1) {
@@ -150,7 +146,7 @@ class EditorState(
         if (updatedProject != project) {
             val previousProject = project
             appState.editProject { updatedProject }
-            if (project.hasSwitchedSample(previousProject)) {
+            if (project.hasSwitchedSample(previousProject) || project.multipleEditMode) {
                 scrollFitViewModel.emitNext()
             }
             return true
