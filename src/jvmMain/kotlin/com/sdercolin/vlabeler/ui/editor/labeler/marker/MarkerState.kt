@@ -260,11 +260,15 @@ fun rememberMarkerState(
         }
     }
     val leftBorder = remember(entriesInPixel) {
-        val previousEntry = entriesInSampleInPixel.getPreviousOrNull { it.index == entriesInPixel.first().index }
+        val previousEntry = if (labelerConf.continuous) {
+            entriesInSampleInPixel.getPreviousOrNull { it.index == entriesInPixel.first().index }
+        } else null
         previousEntry?.start ?: 0f
     }
     val rightBorder = remember(entriesInPixel) {
-        val nextEntry = entriesInSampleInPixel.getNextOrNull { it.index == entriesInPixel.last().index }
+        val nextEntry = if (labelerConf.continuous) {
+            entriesInSampleInPixel.getNextOrNull { it.index == entriesInPixel.last().index }
+        } else null
         nextEntry?.end ?: canvasParams.lengthInPixel.toFloat()
     }
     val cursorState = remember { mutableStateOf(MarkerCursorState()) }
