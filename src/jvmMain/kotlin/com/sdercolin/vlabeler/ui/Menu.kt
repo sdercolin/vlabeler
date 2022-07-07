@@ -94,7 +94,7 @@ fun FrameWindowScope.Menu(
                     CheckboxItem(
                         string(tool.stringKey),
                         checked = appState.editor?.let { it.tool == tool } ?: false,
-                        shortcut = getKeyShortCut(getNumberKey(index + 1), alt = true),
+                        shortcut = getKeyShortCut(getNumberKey(index + 1)),
                         onCheckedChange = { if (it) appState.editor?.tool = tool },
                         enabled = appState.isEditorActive
                     )
