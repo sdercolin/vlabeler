@@ -25,6 +25,11 @@
   "autoSaveIntervalSecond": 30,
   "editor": {
     "scissorsColor": "#FFFF00",
-    "actionAfterScissors": "GoToAndRenameNew"
+    "actionAfterScissors": "GoToAndRenameNew",
+    "autoScroll": {
+      "onLoadedNewSample": true,
+      "onJumpedToEntry": true,
+      "onSwitchedInMultipleEditMode": true
+    }
   }
 }

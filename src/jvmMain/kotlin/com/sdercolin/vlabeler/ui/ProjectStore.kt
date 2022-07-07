@@ -1,9 +1,11 @@
 package com.sdercolin.vlabeler.ui
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.io.autoSaveProjectFile
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
@@ -49,6 +51,7 @@ interface ProjectStore {
 }
 
 class ProjectStoreImpl(
+    private val appConf: State<AppConf>,
     private val screenState: AppScreenState,
     private val scrollFitViewModel: ScrollFitViewModel
 ) : ProjectStore {
@@ -109,37 +112,53 @@ class ProjectStoreImpl(
     override val canGoNextEntryOrSample get() = project?.run { currentIndex < entryCount - 1 } == true
     override val canGoPreviousEntryOrSample get() = project?.run { currentIndex > 0 } == true
 
+    private fun scrollIfNeededWhenSwitchedEntry(previousProject: Project?) {
+        val autoScrollConf = appConf.value.editor.autoScroll
+        if ((autoScrollConf.onLoadedNewSample && requireProject().hasSwitchedSample(previousProject)) ||
+            (autoScrollConf.onSwitchedInMultipleEditMode && requireProject().multipleEditMode)
+        ) {
+            scrollFitViewModel.emitNext()
+        }
+    }
+
     override fun nextEntry() {
         val previousProject = project
         editNonNullProject { nextEntry() }
-        if (requireProject().hasSwitchedSample(previousProject) || requireProject().multipleEditMode) {
-            scrollFitViewModel.emitNext()
-        }
+        scrollIfNeededWhenSwitchedEntry(previousProject)
     }
 
     override fun previousEntry() {
         val previousProject = project
         editNonNullProject { previousEntry() }
-        if (requireProject().hasSwitchedSample(previousProject) || requireProject().multipleEditMode) {
+        scrollIfNeededWhenSwitchedEntry(previousProject)
+    }
+
+    private fun scrollIfNeededWhenSwitchedSample() {
+        val autoScrollConf = appConf.value.editor.autoScroll
+        if (autoScrollConf.onLoadedNewSample ||
+            (autoScrollConf.onSwitchedInMultipleEditMode && requireProject().multipleEditMode)
+        ) {
             scrollFitViewModel.emitNext()
         }
     }
 
     override fun nextSample() {
         editNonNullProject { nextSample() }
-        scrollFitViewModel.emitNext()
+        scrollIfNeededWhenSwitchedSample()
     }
 
     override fun previousSample() {
         editNonNullProject { previousSample() }
-        scrollFitViewModel.emitNext()
+        scrollIfNeededWhenSwitchedSample()
     }
 
     override fun jumpToEntry(index: Int) {
         editProject {
             requireProject().copy(currentIndex = index)
         }
-        scrollFitViewModel.emitNext()
+        if (appConf.value.editor.autoScroll.onJumpedToEntry) {
+            scrollFitViewModel.emitNext()
+        }
     }
 
     override fun renameEntry(index: Int, newName: String) = editProject {

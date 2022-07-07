@@ -52,7 +52,9 @@ fun loadProject(
         Log.info("Project loaded: $project")
         appState.openEditor(project.copy(labelerConf = labelerConf))
         appState.addRecentProject(project.projectFile)
-        appState.scrollFitViewModel.emitNext()
+        if (appState.appConf.editor.autoScroll.onLoadedNewSample) {
+            appState.scrollFitViewModel.emitNext()
+        }
         appState.hideProgress()
     }
 }
@@ -66,7 +68,9 @@ fun openCreatedProject(
         val file = saveProjectFile(project)
         appState.openEditor(project)
         appState.addRecentProject(file)
-        appState.scrollFitViewModel.emitNext()
+        if (appState.appConf.editor.autoScroll.onLoadedNewSample) {
+            appState.scrollFitViewModel.emitNext()
+        }
     }
 }
 

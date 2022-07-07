@@ -137,21 +137,12 @@ class EditorState(
     ): Boolean {
         val yDelta = event.changes.first().scrollDelta.y
         val shouldSwitchSample = keyboardState.isCtrlPressed
-        val updatedProject = when {
-            yDelta > 0 -> if (shouldSwitchSample) project.nextSample() else project.nextEntry()
-            yDelta < 0 -> if (shouldSwitchSample) project.previousSample() else project.previousEntry()
+        when {
+            yDelta > 0 -> if (shouldSwitchSample) appState.nextSample() else appState.nextEntry()
+            yDelta < 0 -> if (shouldSwitchSample) appState.previousSample() else appState.previousEntry()
             else -> return false
         }
-
-        if (updatedProject != project) {
-            val previousProject = project
-            appState.editProject { updatedProject }
-            if (project.hasSwitchedSample(previousProject) || project.multipleEditMode) {
-                scrollFitViewModel.emitNext()
-            }
-            return true
-        }
-        return false
+        return true
     }
 
     private fun changeResolutionByPointerEvent(

@@ -46,7 +46,7 @@ class AppState(
     private val plugins: List<Plugin>,
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
     screenState: AppScreenState = AppScreenStateImpl(),
-    projectStore: ProjectStore = ProjectStoreImpl(screenState, scrollFitViewModel),
+    projectStore: ProjectStore = ProjectStoreImpl(appConf, screenState, scrollFitViewModel),
     unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl(),
     dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarHostState)
 ) : AppViewState by viewState,

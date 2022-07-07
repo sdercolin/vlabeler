@@ -101,13 +101,16 @@ data class AppConf(
 
     /**
      * Configurations about editor behaviors
+     * @param scissorsColor Color hex string of the scissors cursor position
      * @param actionAfterScissors Action taken after a successful click with scissors
+     * @param autoScroll Timings when `scroll to editable area` is automatically conducted
      */
     @Serializable
     @Immutable
     data class Editor(
         val scissorsColor: String = Yellow.hexString,
-        val actionAfterScissors: ActionAfterScissors = ActionAfterScissors.GoToAndRenameNew
+        val actionAfterScissors: ActionAfterScissors = ActionAfterScissors.GoToAndRenameNew,
+        val autoScroll: AutoScroll = AutoScroll()
     ) {
         @Serializable
         enum class ActionAfterScissors(val goToNew: Boolean, val askForNewName: Boolean) {
@@ -117,4 +120,19 @@ data class AppConf(
             GoToAndRenameNew(true, true)
         }
     }
+
+    /**
+     * Define when should `scroll to editable area` automatically fire
+     * @param onLoadedNewSample True if the action is conducted when a new sample file is loaded
+     * @param onJumpedToEntry True if the action is conducted when jumped to an entry via entry list
+     * @param onSwitchedInMultipleEditMode True if action is conducted in multiple edit mode when
+     * switch to another entry
+     */
+    @Serializable
+    @Immutable
+    data class AutoScroll(
+        val onLoadedNewSample: Boolean = true,
+        val onJumpedToEntry: Boolean = true,
+        val onSwitchedInMultipleEditMode: Boolean = true
+    )
 }
