@@ -92,6 +92,31 @@ Note that following `Ctrl` means `Command` if you are using macOS.
 - `<<`/`>>` buttons in the bottom: go to previous/next sample
 - `Ctrl` + `G` or entry number button in the bottom bar: show `Go to entry...` dialog
 
+## Multiple editing mode
+For labelers with `continuous: true` (currently only the sinsy lab labeler), you can switch between the normal editing mode and
+a multiple editing mode which shows and allows you to edit all the connected entries in the same sample file.
+It's enabled by default. You can toggle the menu item `Edit` -> `Edit All Connected Entries` to enable or disable it.
+
+## Tools
+The following editing tool is provided.
+You can use shortcuts or menu items under `Edit` -> `Tools` to switch tools, or toggle the Toolbox view by menu `View`
+-> `Show Toolbox`.
+
+Note that you can use the `Play the clicked section` feature by `Ctrl + Click` with any tool.
+
+### Cursor
+The normal cursor tool to drag parameter controllers (lines or the labels).
+
+### Scissors
+Cut the current entry into two parts by your click position.
+By default, when you click on a valid position with the scissors:
+1. Audio of the former (left) part after cutting is played so that you can confirm the phoneme
+2. A dialog is shown, requesting you rename of former entry
+3. Cutting and renaming is conducted
+4. The editor navigates to the former entry if needed
+
+These actions can be configured, see the `Configure` section for details.
+
 ## Configure
 After the first run, you can find `app.conf.json` and `labelers/*.labeler.json` under `.../<user>/vLabeler` directory. (For macOS it's `~/Library/vLabeler`)
 Check [LabelerConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) and [AppConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/AppConf.kt) 
