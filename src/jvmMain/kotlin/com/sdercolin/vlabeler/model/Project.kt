@@ -207,9 +207,11 @@ data class Project(
 
         // Check continuous
         if (labelerConf.continuous) {
-            entries.zipWithNext().forEach {
-                require(it.first.end == it.second.start) {
-                    "Not continuous between entries: $it"
+            entryGroups.forEach { (_, entries) ->
+                entries.zipWithNext().forEach {
+                    require(it.first.end == it.second.start) {
+                        "Not continuous between entries: $it"
+                    }
                 }
             }
         }
