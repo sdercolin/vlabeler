@@ -30,7 +30,7 @@ object Log {
 
     fun init() {
         val loggingDir = File(LoggingPath)
-        if (loggingDir.exists().not()) loggingDir.mkdir()
+        if (loggingDir.exists().not()) loggingDir.mkdirs()
 
         val infoHandler = FileHandler("$LoggingPath/$InfoLogFileName", true)
         infoHandler.formatter = formatter
