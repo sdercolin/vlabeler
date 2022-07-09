@@ -74,6 +74,8 @@ fun main() = application {
         onKeyEvent = onKeyEvent
     ) {
         LaunchSaveWindowSize(windowState, appRecordStore)
+        Menu(mainScope, appState)
+
         if (appState == null) {
             AppTheme { Splash() }
         }
@@ -81,8 +83,6 @@ fun main() = application {
         appState?.let { state ->
             LaunchKeyboardEvent(state.keyboardViewModel, state, state.player)
             LaunchExit(state, ::exitApplication)
-
-            Menu(mainScope, state)
             AppTheme { App(mainScope, state) }
             StandaloneDialogs(mainScope, state)
             ProjectChangesListener(state)
