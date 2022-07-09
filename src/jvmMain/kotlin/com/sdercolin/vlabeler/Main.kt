@@ -47,8 +47,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 fun main() = application {
-    ensureDirectories()
     Log.init()
+    ensureDirectories()
 
     val mainScope = rememberCoroutineScope()
     val appRecordStore = rememberAppRecordStore(mainScope)

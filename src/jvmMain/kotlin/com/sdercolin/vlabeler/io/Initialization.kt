@@ -99,7 +99,7 @@ private fun File.asLabelerConf(): Result<LabelerConf> {
     return result
 }
 
-suspend fun ensureDirectories() = withContext(Dispatchers.IO) {
+fun ensureDirectories() {
     if (AppDir.exists().not()) {
         AppDir.mkdir()
         Log.info("$AppDir created")
