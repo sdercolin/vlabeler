@@ -115,7 +115,7 @@ The normal cursor tool to drag parameter controllers (lines or the labels).
 Cut the current entry into two parts by your click position.
 By default, when you click on a valid position with the scissors:
 1. Audio of the former (left) part after cutting is played so that you can confirm the phoneme
-2. A dialog is shown, requesting you rename of former entry
+2. A dialog is shown, asking you to rename the former entry
 3. Cutting and renaming is conducted
 4. The editor navigates to the former entry if needed
 
