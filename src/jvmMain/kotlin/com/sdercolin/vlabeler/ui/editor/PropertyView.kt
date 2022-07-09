@@ -12,7 +12,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
@@ -26,12 +25,18 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.theme.Black80
 import com.sdercolin.vlabeler.util.Python
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun BoxScope.PropertyView(project: Project) {
-    val python = remember { Python() }
-    val text by produceState(project.buildEmptyPropertyText(), project.currentEntry) {
-        value = project.buildPropertyText(python)
+    val python by produceState(null as Python?) {
+        value = withContext(Dispatchers.IO) { Python() }
+    }
+    val text by produceState(project.buildEmptyPropertyText(), project.currentEntry, python) {
+        python?.let {
+            value = project.buildPropertyText(it)
+        }
     }
     Box(
         Modifier
