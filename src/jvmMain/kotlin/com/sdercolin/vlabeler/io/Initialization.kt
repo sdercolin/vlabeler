@@ -120,8 +120,6 @@ suspend fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecord
     val keyboardViewModel = KeyboardViewModel(mainScope)
     val scrollFitViewModel = ScrollFitViewModel(mainScope)
     val snackbarHostState = SnackbarHostState()
-    ensureDirectories()
-    Log.init()
 
     val appConf = loadAppConf()
     val availableLabelerConfs = loadAvailableLabelerConfs()

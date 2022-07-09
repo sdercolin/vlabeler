@@ -26,6 +26,7 @@ import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.shouldTogglePlayer
+import com.sdercolin.vlabeler.io.ensureDirectories
 import com.sdercolin.vlabeler.io.produceAppState
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.ui.App
@@ -46,6 +47,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 fun main() = application {
+    ensureDirectories()
+    Log.init()
+
     val mainScope = rememberCoroutineScope()
     val appRecordStore = rememberAppRecordStore(mainScope)
 
