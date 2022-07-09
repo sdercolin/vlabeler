@@ -97,6 +97,10 @@ For labelers with `continuous: true` (currently only the sinsy lab labeler), you
 a multiple editing mode which shows and allows you to edit all the connected entries in the same sample file.
 It's enabled by default. You can toggle the menu item `Edit` -> `Edit All Connected Entries` to enable or disable it.
 
+**If your sample file is long, the editor may spend time rendering while you move parameter controllers. Please decide
+a mode to use according to your device's specifications for the present.** 
+
+
 ## Tools
 The following editing tool is provided.
 You can use shortcuts or menu items under `Edit` -> `Tools` to switch tools, or toggle the Toolbox view by menu `View`
