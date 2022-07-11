@@ -38,8 +38,6 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerLabels
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerPointEventContainer
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.rememberMarkerState
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Yellow
 import com.sdercolin.vlabeler.util.getScreenRange
 import kotlin.math.ceil
@@ -69,50 +67,44 @@ fun Canvas(
             val markerState = rememberMarkerState(sample, canvasParams, editorState, appState)
             val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
 
-            if (false) { // if (canvasParams.lengthInPixel > CanvasParams.MaxCanvasLengthInPixel) {
-                Error(string(Strings.CanvasLengthOverflowError))
-            } else {
-                MarkerPointEventContainer(
-                    horizontalScrollState,
-                    keyboardState,
-                    markerState,
-                    editorState,
-                    appState
-                ) {
-                    Box(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
-                        Row {
-                            repeat(chunkCount) { chunkIndex ->
-                                Chunk(
-                                    chunkIndex,
-                                    chunkCount,
-                                    canvasParams,
-                                    sample,
-                                    appState,
-                                    editorState
-                                )
-                            }
-                        }
-                        if (appState.isMarkerDisplayed) {
-                            MarkerLabels(appState, markerState)
+            MarkerPointEventContainer(
+                horizontalScrollState,
+                keyboardState,
+                markerState,
+                editorState,
+                appState
+            ) {
+                Box(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
+                    Row {
+                        repeat(chunkCount) { chunkIndex ->
+                            Chunk(
+                                chunkIndex,
+                                chunkCount,
+                                canvasParams,
+                                sample,
+                                appState,
+                                editorState
+                            )
                         }
                     }
                     if (appState.isMarkerDisplayed) {
-                        MarkerCanvas(
-                            canvasParams,
-                            horizontalScrollState,
-                            keyboardState,
-                            markerState,
-                            editorState,
-                            appState
-                        )
-                    }
-                    if (appState.playerState.isPlaying) {
-                        PlayerCursor(canvasParams, appState.playerState, horizontalScrollState)
+                        MarkerLabels(appState, markerState)
                     }
                 }
+                if (appState.isMarkerDisplayed) {
+                    MarkerCanvas(
+                        canvasParams,
+                        horizontalScrollState,
+                        keyboardState,
+                        markerState,
+                        editorState,
+                        appState
+                    )
+                }
+                if (appState.playerState.isPlaying) {
+                    PlayerCursor(canvasParams, appState.playerState, horizontalScrollState)
+                }
             }
-        } else {
-            Error(string(Strings.FailedToLoadSampleFileError))
         }
     }
 }

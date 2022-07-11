@@ -240,10 +240,6 @@ enum class Strings(val en: String) {
     EditorSubTitleMultiple(
         en = "editing %d entries in sample %s"
     ),
-    CanvasLengthOverflowError(
-        en = "The charts are too long to be painted." +
-            " Please use \"-\" button to reduce data length, or divide the input files priorly."
-    ),
     FailedToLoadSampleFileError(
         en = "Could not load the sample file. It may not exist, or is not a supported format."
     ),
