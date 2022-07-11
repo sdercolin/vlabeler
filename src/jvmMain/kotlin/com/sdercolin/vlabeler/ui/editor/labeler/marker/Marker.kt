@@ -19,7 +19,6 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.areAnyPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.KeyboardState
@@ -49,6 +48,7 @@ import com.sdercolin.vlabeler.util.requireValue
 import com.sdercolin.vlabeler.util.update
 import com.sdercolin.vlabeler.util.updateNonNull
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.min
 
 private const val RegionAlpha = 0.3f
@@ -146,11 +146,10 @@ fun MarkerLabels(
     }
 
     val maxChunkLength = 5000 // TODO: move to appConfig
-    val chunkCount = state.canvasParams.lengthInPixel / maxChunkLength
+    val chunkCount = ceil(state.canvasParams.lengthInPixel.toFloat() / maxChunkLength).toInt()
     val chunkLength = state.canvasParams.lengthInPixel.toFloat() / chunkCount
-    val chunkLengthDp = with(LocalDensity.current) {
-        chunkLength.toDp()
-    }
+    val chunkLengthDp = state.canvasParams.canvasWidthInDp / chunkCount
+
     val chunkVisibleList = List(chunkCount) {
         val range = (it * chunkLength)..((it + 1) * chunkLength)
         screenRange?.contains(range) == true

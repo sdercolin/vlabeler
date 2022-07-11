@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -66,7 +66,7 @@ fun FieldLabels(
         List(chunkCount) { FieldLabelModelChunk(groups[it]?.toList() ?: listOf()) }
     }
 
-    val modifier = Modifier.fillMaxHeight().width(chunkLengthDp)
+    val modifier = Modifier.fillMaxHeight().requiredWidth(chunkLengthDp)
     Row {
         repeat(chunkCount) { index ->
             if (chunkVisibleList[index]) {

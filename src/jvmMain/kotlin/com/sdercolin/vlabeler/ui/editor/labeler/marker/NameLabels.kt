@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.MaterialTheme
@@ -62,7 +62,7 @@ fun NameLabels(
         }
     }
 
-    val modifier = Modifier.fillMaxHeight().width(chunkLengthDp)
+    val modifier = Modifier.fillMaxHeight().requiredWidth(chunkLengthDp)
     Row {
         repeat(chunkCount) { index ->
             if (chunkVisibleList[index]) {
