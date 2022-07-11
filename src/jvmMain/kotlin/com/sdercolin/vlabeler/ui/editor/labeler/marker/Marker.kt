@@ -115,7 +115,7 @@ fun MarkerLabels(
     val requestRename: (Int) -> Unit = remember(appState) {
         { appState.openEditEntryNameDialog(it, InputEntryNameDialogPurpose.Rename) }
     }
-    //FieldLabels(state)
+    FieldLabels(state)
     if (state.labelerConf.continuous) {
         NameLabels(state, requestRename)
     }
@@ -358,8 +358,15 @@ private fun FieldLabels(state: MarkerState) {
         }
     }
 
+    // Content are put in the layout no matter it's width
+    // So just give a safe width
+    val width = state.canvasParams.lengthInPixel.coerceAtMost(CanvasParams.MaxCanvasLengthInPixel)
+    val widthDp = with(LocalDensity.current){
+        width.toDp()
+    }
+
     FieldLabelCanvasLayout(
-        modifier = Modifier.fillMaxHeight().width(state.canvasParams.canvasWidthInDp),
+        modifier = Modifier.fillMaxHeight().width(widthDp),
         waveformsHeightRatio = state.waveformsHeightRatio,
         fields = state.labelerConf.fields,
         entries = state.entriesInPixel,
@@ -375,10 +382,11 @@ private fun FieldLabelCanvasLayout(
     fields: List<LabelerConf.Field>,
     entries: List<EntryInPixel>,
     labelIndexes: List<Pair<Int, Int>>,
-    state: MarkerState
+    state: MarkerState,
 ) {
     val labelShiftUp = with(LocalDensity.current) { LabelShiftUp.toPx() }
-    Layout(modifier = modifier,
+    Layout(
+        modifier = modifier,
         content = {
             labelIndexes.forEach { (entryIndex, fieldIndex) ->
                 val field = state.labelerConf.fields[fieldIndex]
