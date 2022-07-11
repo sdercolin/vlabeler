@@ -7,7 +7,6 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,11 +38,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
@@ -59,9 +58,13 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Mouse
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.ui.theme.White
+import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.clear
+import com.sdercolin.vlabeler.util.contains
 import com.sdercolin.vlabeler.util.getNextOrNull
 import com.sdercolin.vlabeler.util.getPreviousOrNull
+import com.sdercolin.vlabeler.util.getScreenRange
+import com.sdercolin.vlabeler.util.length
 import com.sdercolin.vlabeler.util.parseColor
 import com.sdercolin.vlabeler.util.requireValue
 import com.sdercolin.vlabeler.util.update
@@ -86,7 +89,7 @@ fun MarkerCanvas(
     appState: AppState,
     state: MarkerState
 ) {
-    FieldBorderCanvas(editorState, appState, state)
+    FieldBorderCanvas(editorState, appState, state, horizontalScrollState)
     LaunchAdjustScrollPosition(
         state.entriesInPixel,
         editorState.project.currentIndex,
@@ -106,17 +109,15 @@ fun MarkerCanvas(
 
 @Composable
 fun MarkerLabels(
-    chunkOffset: Float,
-    chunkSize: Float,
     appState: AppState,
     state: MarkerState
 ) {
     val requestRename: (Int) -> Unit = remember(appState) {
         { appState.openEditEntryNameDialog(it, InputEntryNameDialogPurpose.Rename) }
     }
-    FieldLabelCanvas(chunkOffset, chunkSize, state)
+    //FieldLabels(state)
     if (state.labelerConf.continuous) {
-        NameLabelCanvas(chunkOffset, chunkSize, state, requestRename)
+        NameLabels(state, requestRename)
     }
 }
 
@@ -124,8 +125,10 @@ fun MarkerLabels(
 private fun FieldBorderCanvas(
     editorState: EditorState,
     appState: AppState,
-    state: MarkerState
+    state: MarkerState,
+    horizontalScrollState: ScrollState
 ) {
+    val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
     val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
     val tool = editorState.tool
 
@@ -135,46 +138,46 @@ private fun FieldBorderCanvas(
         }
     }
 
-    Canvas(
-        Modifier.fillMaxHeight()
-            .width(state.canvasParams.canvasWidthInDp)
-            .onPointerEvent(PointerEventType.Move) { event ->
-                if (editorState.tool == Tool.Cursor &&
-                    state.cursorState.value.mouse == Mouse.Dragging &&
-                    event.buttons.areAnyPressed.not()
-                ) {
-                    state.handleMouseRelease(
-                        tool,
-                        event,
-                        editorState::submitEntries,
-                        appState.player::playSection,
-                        editorState::cutEntry,
-                        keyboardState
-                    )
-                    Log.info("Handled release in PointerEventType.Move type")
-                    return@onPointerEvent
-                }
-                state.handleMouseMove(tool, event, editorState::updateEntries)
-            }
-            .onPointerEvent(PointerEventType.Press) {
-                state.cursorState.handleMousePress(tool, keyboardState, state.labelerConf)
-            }
-            .onPointerEvent(PointerEventType.Release) { event ->
+    Canvas(Modifier.fillMaxSize()
+        .onPointerEvent(PointerEventType.Move) { event ->
+            if (editorState.tool == Tool.Cursor &&
+                state.cursorState.value.mouse == Mouse.Dragging &&
+                event.buttons.areAnyPressed.not()
+            ) {
                 state.handleMouseRelease(
                     tool,
                     event,
                     editorState::submitEntries,
                     appState.player::playSection,
                     editorState::cutEntry,
-                    keyboardState
+                    keyboardState,
+                    screenRange
                 )
+                return@onPointerEvent
             }
+            state.handleMouseMove(tool, event, editorState::updateEntries, screenRange)
+        }
+        .onPointerEvent(PointerEventType.Press) {
+            state.cursorState.handleMousePress(tool, keyboardState, state.labelerConf)
+        }
+        .onPointerEvent(PointerEventType.Release) { event ->
+            state.handleMouseRelease(
+                tool,
+                event,
+                editorState::submitEntries,
+                appState.player::playSection,
+                editorState::cutEntry,
+                keyboardState,
+                screenRange
+            )
+        }
     ) {
+        screenRange ?: return@Canvas
         try {
             val entriesInPixel = state.entriesInPixel
             val start = entriesInPixel.first().start
             val end = entriesInPixel.last().end
-            val canvasWidth = size.width
+            val canvasActualWidth = state.canvasParams.lengthInPixel.toFloat()
             val canvasHeight = size.height
             val leftBorder = state.leftBorder
             val rightBorder = state.rightBorder
@@ -183,41 +186,48 @@ private fun FieldBorderCanvas(
             state.canvasHeightState.value = canvasHeight
 
             // Draw left border
-            if (leftBorder > 0) {
+            if (leftBorder >= 0 && (0f..leftBorder in screenRange)) {
                 val leftBorderColor = UneditableRegionColor
+                val relativeLeftBorder = leftBorder - screenRange.start
                 drawRect(
                     color = leftBorderColor,
                     alpha = UneditableRegionAlpha,
                     topLeft = Offset.Zero,
-                    size = Size(width = leftBorder, height = canvasHeight)
+                    size = Size(width = relativeLeftBorder, height = canvasHeight)
                 )
                 drawLine(
                     color = leftBorderColor.copy(alpha = IdleLineAlpha),
-                    start = Offset(leftBorder, 0f),
-                    end = Offset(leftBorder, canvasHeight),
+                    start = Offset(relativeLeftBorder, 0f),
+                    end = Offset(relativeLeftBorder, canvasHeight),
                     strokeWidth = StrokeWidth
                 )
             }
 
             // Draw start
-            val startColor = EditableOutsideRegionColor
-            drawRect(
-                color = startColor,
-                alpha = RegionAlpha,
-                topLeft = Offset(leftBorder, 0f),
-                size = Size(width = start - leftBorder, height = canvasHeight)
-            )
-            val startLineAlpha = if (cursorState.value.usingStartPoint) 1f else IdleLineAlpha
-            drawLine(
-                color = startColor.copy(alpha = startLineAlpha),
-                start = Offset(start, 0f),
-                end = Offset(start, canvasHeight),
-                strokeWidth = StrokeWidth
-            )
+            if (leftBorder..start in screenRange) {
+                val startColor = EditableOutsideRegionColor
+                val relativeLeftBorder = leftBorder - screenRange.start
+                val relativeStart = start - screenRange.start
+                val coercedLeftBorder = relativeLeftBorder.coerceAtLeast(0f)
+                val coercedStart = relativeStart.coerceAtMost(screenRange.length)
+                drawRect(
+                    color = startColor,
+                    alpha = RegionAlpha,
+                    topLeft = Offset(coercedLeftBorder, 0f),
+                    size = Size(width = coercedStart - coercedLeftBorder, height = canvasHeight)
+                )
+                val startLineAlpha = if (cursorState.value.usingStartPoint) 1f else IdleLineAlpha
+                drawLine(
+                    color = startColor.copy(alpha = startLineAlpha),
+                    start = Offset(coercedStart, 0f),
+                    end = Offset(coercedStart, canvasHeight),
+                    strokeWidth = StrokeWidth
+                )
+            }
 
             // Draw custom fields and borders
-            for (entryIndex in entriesInPixel.indices) {
-                val entryInPixel = entriesInPixel[entryIndex]
+            for (entryIndex in state.entriesInPixel.indices) {
+                val entryInPixel = state.entriesInPixel[entryIndex]
                 if (entryIndex != 0) {
                     val border = state.entryBorders[entryIndex - 1]
                     val borderColor = EditableOutsideRegionColor
@@ -226,12 +236,15 @@ private fun FieldBorderCanvas(
                         if (state.isBorderIndex(pointIndex) &&
                             state.getEntryIndexesByBorderIndex(pointIndex).second == entryIndex
                         ) 1f else IdleLineAlpha
-                    drawLine(
-                        color = borderColor.copy(alpha = borderLineAlpha),
-                        start = Offset(border, 0f),
-                        end = Offset(border, canvasHeight),
-                        strokeWidth = StrokeWidth
-                    )
+                    if (border in screenRange) {
+                        val relativeBorder = border - screenRange.start
+                        drawLine(
+                            color = borderColor.copy(alpha = borderLineAlpha),
+                            start = Offset(relativeBorder, 0f),
+                            end = Offset(relativeBorder, canvasHeight),
+                            strokeWidth = StrokeWidth
+                        )
+                    }
                 }
                 for (fieldIndex in labelerConf.fields.indices) {
                     val field = labelerConf.fields[fieldIndex]
@@ -250,52 +263,67 @@ private fun FieldBorderCanvas(
                         val targetX = entryInPixel.getPoint(fillTargetIndex)
                         val left = min(targetX, x)
                         val width = abs(targetX - x)
-                        drawRect(
-                            color = color,
-                            alpha = RegionAlpha,
-                            topLeft = Offset(left, top),
-                            size = Size(width = width, height = height)
-                        )
+                        val right = left + width
+                        if (left..right in screenRange) {
+                            val coercedRelativeLeft = (left - screenRange.start).coerceAtLeast(0f)
+                            val coercedRelativeRight = (right - screenRange.start).coerceAtMost(screenRange.length)
+                            drawRect(
+                                color = color,
+                                alpha = RegionAlpha,
+                                topLeft = Offset(coercedRelativeLeft, top),
+                                size = Size(width = coercedRelativeRight - coercedRelativeLeft, height = height)
+                            )
+                        }
                     }
                     val lineAlpha = if (cursorState.value.pointIndex != fieldIndex) IdleLineAlpha else 1f
-                    drawLine(
-                        color = color.copy(alpha = lineAlpha),
-                        start = Offset(x, top),
-                        end = Offset(x, canvasHeight),
-                        strokeWidth = StrokeWidth
-                    )
+                    if (x in screenRange) {
+                        val relativeX = x - screenRange.start
+                        drawLine(
+                            color = color.copy(alpha = lineAlpha),
+                            start = Offset(relativeX, top),
+                            end = Offset(relativeX, canvasHeight),
+                            strokeWidth = StrokeWidth
+                        )
+                    }
                 }
             }
 
             // Draw end
-            val endColor = EditableOutsideRegionColor
-            drawRect(
-                color = endColor,
-                alpha = RegionAlpha,
-                topLeft = Offset(end, 0f),
-                size = Size(width = rightBorder - end, height = canvasHeight)
-            )
-            val endLineAlpha = if (cursorState.value.usingEndPoint) 1f else IdleLineAlpha
-            drawLine(
-                color = endColor.copy(alpha = endLineAlpha),
-                start = Offset(end, 0f),
-                end = Offset(end, canvasHeight),
-                strokeWidth = StrokeWidth
-            )
+            if (end..rightBorder in screenRange) {
+                val endColor = EditableOutsideRegionColor
+                val relativeEnd = end - screenRange.start
+                val relativeRightBorder = rightBorder - screenRange.start
+                val coercedEnd = relativeEnd.coerceAtLeast(0f)
+                val coercedRightBorder = relativeRightBorder.coerceAtMost(screenRange.length)
+                drawRect(
+                    color = endColor,
+                    alpha = RegionAlpha,
+                    topLeft = Offset(coercedEnd, 0f),
+                    size = Size(width = coercedRightBorder - coercedEnd, height = canvasHeight)
+                )
+                val endLineAlpha = if (cursorState.value.usingEndPoint) 1f else IdleLineAlpha
+                drawLine(
+                    color = endColor.copy(alpha = endLineAlpha),
+                    start = Offset(coercedEnd, 0f),
+                    end = Offset(coercedEnd, canvasHeight),
+                    strokeWidth = StrokeWidth
+                )
+            }
 
             // Draw right border
-            if (rightBorder < canvasWidth) {
+            if (rightBorder < canvasActualWidth && (rightBorder..canvasActualWidth in screenRange)) {
                 val rightBorderColor = UneditableRegionColor
+                val relativeRightBorder = rightBorder - screenRange.start
                 drawRect(
                     color = rightBorderColor,
                     alpha = UneditableRegionAlpha,
-                    topLeft = Offset(rightBorder, 0f),
-                    size = Size(width = canvasWidth - rightBorder, height = canvasHeight)
+                    topLeft = Offset(relativeRightBorder, 0f),
+                    size = Size(width = screenRange.endInclusive - relativeRightBorder, height = canvasHeight)
                 )
                 drawLine(
                     color = rightBorderColor.copy(alpha = IdleLineAlpha),
-                    start = Offset(rightBorder, 0f),
-                    end = Offset(rightBorder, canvasHeight),
+                    start = Offset(relativeRightBorder, 0f),
+                    end = Offset(relativeRightBorder, canvasHeight),
                     strokeWidth = StrokeWidth
                 )
             }
@@ -304,33 +332,31 @@ private fun FieldBorderCanvas(
             state.scissorsState.value?.let { scissors ->
                 val position = scissors.position
                 if (scissors.disabled.not() && position != null && state.isValidCutPosition(position)) {
-                    drawLine(
-                        color = parseColor(appState.appConf.editor.scissorsColor),
-                        start = Offset(position, 0f),
-                        end = Offset(position, canvasHeight),
-                        strokeWidth = StrokeWidth * 2
-                    )
+                    if (position in screenRange) {
+                        val relativePosition = position - screenRange.start
+                        drawLine(
+                            color = parseColor(appState.appConf.editor.scissorsColor),
+                            start = Offset(relativePosition, 0f),
+                            end = Offset(relativePosition, canvasHeight),
+                            strokeWidth = StrokeWidth * 2
+                        )
+                    }
                 }
             }
         } catch (t: Throwable) {
+            if (isDebug) throw t
             Log.debug(t)
         }
     }
 }
 
 @Composable
-private fun FieldLabelCanvas(chunkOffset: Float, chunkSize: Float, state: MarkerState) {
+private fun FieldLabels(state: MarkerState) {
     val labelIndexes = state.entriesInPixel.indices.flatMap { entryIndex ->
         state.labelerConf.fields.indices.map { fieldIndex ->
-            val entry = state.entriesInPixel[entryIndex]
-            val fieldPosition = entry.points[fieldIndex]
-            if (fieldPosition < chunkOffset || fieldPosition >= chunkOffset + chunkSize) {
-                null
-            } else {
-                entryIndex to fieldIndex
-            }
+            entryIndex to fieldIndex
         }
-    }.filterNotNull()
+    }
 
     FieldLabelCanvasLayout(
         modifier = Modifier.fillMaxHeight().width(state.canvasParams.canvasWidthInDp),
@@ -402,28 +428,17 @@ private fun FieldLabelText(entryIndex: Int, field: LabelerConf.Field, alpha: Flo
 }
 
 @Composable
-private fun NameLabelCanvas(chunkOffset: Float, chunkSize: Float, state: MarkerState, requestRename: (Int) -> Unit) {
-    fun isInThisChunk(position: Float) = (position < chunkOffset || position >= chunkOffset + chunkSize).not()
-
+private fun NameLabels(state: MarkerState, requestRename: (Int) -> Unit) {
     val leftEntry = remember(state.entriesInSample, state.entries.first().index) {
         val entry = state.entriesInSample.getPreviousOrNull { it.index == state.entries.first().index }
         entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
-            ?.takeIf { isInThisChunk(it.start) }
     }
     val rightEntry = remember(state.entriesInSample, state.entries.last().index) {
         val entry = state.entriesInSample.getNextOrNull { it.index == state.entries.last().index }
         entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
-            ?.takeIf { isInThisChunk(it.start) }
     }
-    val labelIndexes = state.entriesInPixel.indices.mapNotNull { entryIndex ->
-        val position = state.entriesInPixel[entryIndex].start
-        entryIndex.takeIf { isInThisChunk(position) }
-    }
-    NameLabelCanvasLayout(
-        modifier = Modifier.fillMaxSize(),
-        chunkOffset = chunkOffset,
+    NameLabelsContent(
         entries = state.entriesInPixel,
-        entryIndexes = labelIndexes,
         leftEntry = leftEntry,
         rightEntry = rightEntry,
         requestRename = requestRename
@@ -431,45 +446,79 @@ private fun NameLabelCanvas(chunkOffset: Float, chunkSize: Float, state: MarkerS
 }
 
 @Composable
-private fun NameLabel(offset: Float, absoluteIndex: Int, name: String, color: Color, requestRename: (Int) -> Unit) {
-    Log.info("NameLabel of entry $absoluteIndex composed, offset=$offset")
+private fun NameLabel(index: Int, name: String, color: Color, requestRename: (Int) -> Unit) {
+    Log.info("NameLabel of entry $index composed")
     Text(
-        modifier = Modifier.absoluteOffset { IntOffset(offset.toInt(), 0) }
-            .widthIn(max = 100.dp)
+        modifier = Modifier.widthIn(max = 100.dp)
             .wrapContentSize()
-            .clickable { requestRename(absoluteIndex) }
+            .clickable { requestRename(index) }
             .padding(vertical = 2.dp, horizontal = 5.dp),
         maxLines = 1,
-        overflow = TextOverflow.Visible,
-        text = name.repeat(5),
+        text = name,
         color = color,
         style = MaterialTheme.typography.caption
     )
 }
 
 @Composable
-private fun NameLabelCanvasLayout(
-    modifier: Modifier,
-    chunkOffset: Float,
+private fun NameLabelsContent(
     entries: List<EntryInPixel>,
-    entryIndexes: List<Int>,
     leftEntry: EntryInPixel?,
     rightEntry: EntryInPixel?,
     requestRename: (Int) -> Unit
 ) {
-    Row(modifier) {
-        if (leftEntry != null) {
-            val offset = leftEntry.start - chunkOffset
-            NameLabel(offset, leftEntry.index, leftEntry.name, Black, requestRename)
-        }
-        entryIndexes.forEach { index ->
-            val entry = entries[index]
-            val offset = entry.start - chunkOffset
-            NameLabel(offset, entry.index, entry.name, DarkYellow, requestRename)
-        }
-        if (rightEntry != null) {
-            val offset = rightEntry.start - chunkOffset
-            NameLabel(offset, rightEntry.index, rightEntry.name, Black, requestRename)
+    val maxSectionWidth = 10000f
+    val items = remember(leftEntry, entries, rightEntry) {
+        listOf(
+            listOfNotNull(leftEntry),
+            entries,
+            listOfNotNull(rightEntry)
+        ).flatten()
+    }
+    val colors = remember(leftEntry, entries, rightEntry) {
+        listOf(
+            listOfNotNull(leftEntry).map { Black },
+            entries.map { DarkYellow },
+            listOfNotNull(rightEntry).map { Black }
+        ).flatten()
+    }
+    val sectionStartPointsWithItemIndex = remember(items) {
+        items.map { it.start }
+            .withIndex()
+            .fold(listOf<Pair<Float, Int?>>()) { acc, (index, start) ->
+                val last = acc.lastOrNull()?.first ?: 0f
+                val lastWidth = start - last
+                val splitCount = (lastWidth / maxSectionWidth).toInt()
+                acc + List(splitCount) {
+                    (maxSectionWidth * (it + 1) + last) to null
+                } + listOf(start to index)
+            }
+    }
+    val sectionWidthsWithItemIndex = remember(sectionStartPointsWithItemIndex) {
+        sectionStartPointsWithItemIndex.zipWithNext()
+            .map { (current, next) ->
+                ((next.first - current.first) as Float? to current.second)
+            }
+            .run {
+                val last = sectionStartPointsWithItemIndex.lastOrNull()
+                if (last == null) {
+                    this
+                } else {
+                    this + (null to last.second)
+                }
+            }
+    }
+
+    Row(modifier = Modifier.fillMaxHeight()) {
+        sectionWidthsWithItemIndex.forEach { (width, itemIndex) ->
+            val widthDp = with(LocalDensity.current) { width?.toDp() }
+            Box(Modifier.run { if (widthDp != null) width(widthDp) else this }) {
+                if (itemIndex != null) {
+                    val item = items[itemIndex]
+                    val color = colors[itemIndex]
+                    NameLabel(item.index, item.name, color, requestRename)
+                }
+            }
         }
     }
 }
@@ -477,26 +526,30 @@ private fun NameLabelCanvasLayout(
 private fun MarkerState.handleMouseMove(
     tool: Tool,
     event: PointerEvent,
-    editEntries: (List<IndexedEntry>) -> Unit
+    editEntries: (List<IndexedEntry>) -> Unit,
+    screenRange: FloatRange?
 ) {
+    screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(event, editEntries)
-        Tool.Scissors -> handleScissorsMove(event)
+        Tool.Cursor -> handleCursorMove(event, editEntries, screenRange)
+        Tool.Scissors -> handleScissorsMove(event, screenRange)
     }
 }
 
 private fun MarkerState.handleCursorMove(
     event: PointerEvent,
-    editEntries: (List<IndexedEntry>) -> Unit
+    editEntries: (List<IndexedEntry>) -> Unit,
+    screenRange: FloatRange
 ) {
     val eventChange = event.changes.first()
     val x = eventChange.position.x.coerceIn(0f, canvasParams.lengthInPixel.toFloat())
+    val actualX = x + screenRange.start
     val y = eventChange.position.y.coerceIn(0f, canvasHeightState.value.coerceAtLeast(0f))
     if (cursorState.value.mouse == Mouse.Dragging) {
         val updated = if (cursorState.value.lockedDrag) {
-            getLockedDraggedEntries(cursorState.value.pointIndex, x, leftBorder, rightBorder)
+            getLockedDraggedEntries(cursorState.value.pointIndex, actualX, leftBorder, rightBorder)
         } else {
-            getDraggedEntries(cursorState.value.pointIndex, x, leftBorder, rightBorder, labelerConf)
+            getDraggedEntries(cursorState.value.pointIndex, actualX, leftBorder, rightBorder, labelerConf)
         }
         if (updated != entriesInPixel) {
             val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
@@ -504,7 +557,7 @@ private fun MarkerState.handleCursorMove(
         }
     } else {
         val newPointIndex = getPointIndexForHovering(
-            x = x,
+            x = actualX,
             y = y,
             conf = labelerConf,
             canvasHeight = canvasHeightState.value,
@@ -522,10 +575,11 @@ private fun MarkerState.handleCursorMove(
 }
 
 private fun MarkerState.handleScissorsMove(
-    event: PointerEvent
+    event: PointerEvent,
+    screenRange: FloatRange
 ) {
     val scissorsState = scissorsState
-    val x = event.changes.first().position.x
+    val x = event.changes.first().position.x + screenRange.start
     val position = x.takeIf { isValidCutPosition(it) }
     scissorsState.updateNonNull { copy(position = position) }
 }
@@ -564,11 +618,14 @@ private fun MarkerState.handleMouseRelease(
     submitEntry: () -> Unit,
     playSampleSection: (Float, Float) -> Unit,
     cutEntry: (Int, Float) -> Unit,
-    keyboardState: KeyboardState
+    keyboardState: KeyboardState,
+    screenRange: FloatRange?
 ) {
+    screenRange ?: return
     if (keyboardState.isCtrlPressed) {
         val x = event.changes.first().position.x
-        val clickedRange = getClickedAudioRange(x, leftBorder, rightBorder)
+        val actualX = x + screenRange.start
+        val clickedRange = getClickedAudioRange(actualX, leftBorder, rightBorder)
         if (clickedRange != null) {
             val start = clickedRange.first?.let { entryConverter.convertToFrame(it) } ?: 0f
             val end = clickedRange.second?.let { entryConverter.convertToFrame(it) }
