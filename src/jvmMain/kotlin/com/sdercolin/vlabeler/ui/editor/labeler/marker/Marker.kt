@@ -6,7 +6,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -37,6 +36,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -115,9 +115,17 @@ fun MarkerLabels(
     val requestRename: (Int) -> Unit = remember(appState) {
         { appState.openEditEntryNameDialog(it, InputEntryNameDialogPurpose.Rename) }
     }
-    FieldLabels(state)
+
+    // Content are put in the layout no matter it's width
+    // So just give a safe width
+    val width = state.canvasParams.lengthInPixel.coerceAtMost(CanvasParams.MaxCanvasLengthInPixel)
+    val widthDp = with(LocalDensity.current) {
+        width.toDp()
+    }
+
+    FieldLabels(state, widthDp)
     if (state.labelerConf.continuous) {
-        NameLabels(state, requestRename)
+        NameLabels(state, requestRename, widthDp)
     }
 }
 
@@ -275,7 +283,9 @@ private fun FieldBorderCanvas(
                             )
                         }
                     }
-                    val lineAlpha = if (cursorState.value.pointIndex != fieldIndex) IdleLineAlpha else 1f
+
+                    val pointIndex = fieldIndex + entryIndex * (state.labelerConf.fields.size + 1)
+                    val lineAlpha = if (cursorState.value.pointIndex != pointIndex) IdleLineAlpha else 1f
                     if (x in screenRange) {
                         val relativeX = x - screenRange.start
                         drawLine(
@@ -351,21 +361,14 @@ private fun FieldBorderCanvas(
 }
 
 @Composable
-private fun FieldLabels(state: MarkerState) {
+private fun FieldLabels(state: MarkerState, widthDp: Dp) {
     val labelIndexes = state.entriesInPixel.indices.flatMap { entryIndex ->
         state.labelerConf.fields.indices.map { fieldIndex ->
             entryIndex to fieldIndex
         }
     }
 
-    // Content are put in the layout no matter it's width
-    // So just give a safe width
-    val width = state.canvasParams.lengthInPixel.coerceAtMost(CanvasParams.MaxCanvasLengthInPixel)
-    val widthDp = with(LocalDensity.current){
-        width.toDp()
-    }
-
-    FieldLabelCanvasLayout(
+    FieldLabelsContent(
         modifier = Modifier.fillMaxHeight().width(widthDp),
         waveformsHeightRatio = state.waveformsHeightRatio,
         fields = state.labelerConf.fields,
@@ -376,7 +379,7 @@ private fun FieldLabels(state: MarkerState) {
 }
 
 @Composable
-private fun FieldLabelCanvasLayout(
+private fun FieldLabelsContent(
     modifier: Modifier,
     waveformsHeightRatio: Float,
     fields: List<LabelerConf.Field>,
@@ -390,7 +393,8 @@ private fun FieldLabelCanvasLayout(
         content = {
             labelIndexes.forEach { (entryIndex, fieldIndex) ->
                 val field = state.labelerConf.fields[fieldIndex]
-                val alpha = if (state.cursorState.value.pointIndex != fieldIndex) IdleLineAlpha else 1f
+                val pointIndex = fieldIndex + entryIndex * (state.labelerConf.fields.size + 1)
+                val alpha = if (state.cursorState.value.pointIndex != pointIndex) IdleLineAlpha else 1f
                 Box(
                     modifier = Modifier.requiredSize(LabelSize),
                     contentAlignment = Alignment.Center
@@ -436,7 +440,7 @@ private fun FieldLabelText(entryIndex: Int, field: LabelerConf.Field, alpha: Flo
 }
 
 @Composable
-private fun NameLabels(state: MarkerState, requestRename: (Int) -> Unit) {
+private fun NameLabels(state: MarkerState, requestRename: (Int) -> Unit, widthDp: Dp) {
     val leftEntry = remember(state.entriesInSample, state.entries.first().index) {
         val entry = state.entriesInSample.getPreviousOrNull { it.index == state.entries.first().index }
         entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
@@ -446,6 +450,7 @@ private fun NameLabels(state: MarkerState, requestRename: (Int) -> Unit) {
         entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
     }
     NameLabelsContent(
+        modifier = Modifier.fillMaxHeight().width(widthDp),
         entries = state.entriesInPixel,
         leftEntry = leftEntry,
         rightEntry = rightEntry,
@@ -470,12 +475,12 @@ private fun NameLabel(index: Int, name: String, color: Color, requestRename: (In
 
 @Composable
 private fun NameLabelsContent(
+    modifier: Modifier,
     entries: List<EntryInPixel>,
     leftEntry: EntryInPixel?,
     rightEntry: EntryInPixel?,
     requestRename: (Int) -> Unit
 ) {
-    val maxSectionWidth = 10000f
     val items = remember(leftEntry, entries, rightEntry) {
         listOf(
             listOfNotNull(leftEntry),
@@ -490,42 +495,26 @@ private fun NameLabelsContent(
             listOfNotNull(rightEntry).map { Black }
         ).flatten()
     }
-    val sectionStartPointsWithItemIndex = remember(items) {
-        items.map { it.start }
-            .withIndex()
-            .fold(listOf<Pair<Float, Int?>>()) { acc, (index, start) ->
-                val last = acc.lastOrNull()?.first ?: 0f
-                val lastWidth = start - last
-                val splitCount = (lastWidth / maxSectionWidth).toInt()
-                acc + List(splitCount) {
-                    (maxSectionWidth * (it + 1) + last) to null
-                } + listOf(start to index)
-            }
-    }
-    val sectionWidthsWithItemIndex = remember(sectionStartPointsWithItemIndex) {
-        sectionStartPointsWithItemIndex.zipWithNext()
-            .map { (current, next) ->
-                ((next.first - current.first) as Float? to current.second)
-            }
-            .run {
-                val last = sectionStartPointsWithItemIndex.lastOrNull()
-                if (last == null) {
-                    this
-                } else {
-                    this + (null to last.second)
-                }
-            }
-    }
 
-    Row(modifier = Modifier.fillMaxHeight()) {
-        sectionWidthsWithItemIndex.forEach { (width, itemIndex) ->
-            val widthDp = with(LocalDensity.current) { width?.toDp() }
-            Box(Modifier.run { if (widthDp != null) width(widthDp) else this }) {
-                if (itemIndex != null) {
-                    val item = items[itemIndex]
-                    val color = colors[itemIndex]
-                    NameLabel(item.index, item.name, color, requestRename)
-                }
+    Layout(
+        modifier = modifier,
+        content = {
+            items.indices.forEach { itemIndex ->
+                val item = items[itemIndex]
+                val color = colors[itemIndex]
+                NameLabel(item.index, item.name, color, requestRename)
+            }
+        }
+    ) { measurables, constraints ->
+        val placeables = measurables.map { measurable ->
+            measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))
+        }
+
+        // Set the size of the layout as big as it can
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            placeables.forEachIndexed { index, placeable ->
+                val x = items[index].start
+                placeable.place(x.toInt(), 0)
             }
         }
     }
