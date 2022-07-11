@@ -31,13 +31,15 @@ class ChartStore {
 
     private var job: Job? = null
 
-    private fun clear() {
+    fun getWaveform(channelIndex: Int, chunkIndex: Int) = waveformChartsList[channelIndex to chunkIndex]
+    fun getSpectrogram(chunkIndex: Int) = spectrogramCharts[chunkIndex]
+
+    fun clear() {
+        job?.cancel()
+        job = null
         waveformChartsList.clear()
         spectrogramCharts.clear()
     }
-
-    fun getWaveform(channelIndex: Int, chunkIndex: Int) = waveformChartsList[channelIndex to chunkIndex]
-    fun getSpectrogram(chunkIndex: Int) = spectrogramCharts[chunkIndex]
 
     fun load(
         scope: CoroutineScope,
@@ -49,7 +51,6 @@ class ChartStore {
         startingChunkIndex: Int
     ) {
         job?.cancel()
-        clear()
         val channels = sample.wave.channels
         job = scope.launch(Dispatchers.IO) {
 

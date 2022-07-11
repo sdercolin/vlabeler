@@ -92,6 +92,7 @@ class EditorState(
     }
 
     suspend fun loadSampleFile() {
+        chartStore.clear()
         withContext(Dispatchers.IO) {
             val sample = com.sdercolin.vlabeler.io.loadSampleFile(project.currentSampleFile, appConf)
             sampleState.value = sample
