@@ -4,41 +4,24 @@ package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.areAnyPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
@@ -55,13 +38,10 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Compani
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.StartPointIndex
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Mouse
 import com.sdercolin.vlabeler.ui.theme.Black
-import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.clear
 import com.sdercolin.vlabeler.util.contains
-import com.sdercolin.vlabeler.util.getNextOrNull
-import com.sdercolin.vlabeler.util.getPreviousOrNull
 import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.length
 import com.sdercolin.vlabeler.util.parseColor
@@ -75,10 +55,10 @@ private const val RegionAlpha = 0.3f
 private val EditableOutsideRegionColor = White
 private const val UneditableRegionAlpha = 0.9f
 private val UneditableRegionColor = Black
-private const val IdleLineAlpha = 0.7f
+const val IdleLineAlpha = 0.7f
 private const val StrokeWidth = 2f
-private val LabelSize = DpSize(40.dp, 25.dp)
-private val LabelShiftUp = 8.dp
+val LabelSize = DpSize(40.dp, 25.dp)
+val LabelShiftUp = 8.dp
 
 @Composable
 fun MarkerPointEventContainer(
@@ -165,16 +145,16 @@ fun MarkerLabels(
         { appState.openEditEntryNameDialog(it, InputEntryNameDialogPurpose.Rename) }
     }
 
-    // Content are put in the layout no matter it's width
-    // So just give a safe width
-    val width = state.canvasParams.lengthInPixel.coerceAtMost(CanvasParams.MaxCanvasLengthInPixel)
-    val widthDp = with(LocalDensity.current) {
-        width.toDp()
+    val maxChunkLength = 5000 // TODO: move to appConfig
+    val chunkCount = state.canvasParams.lengthInPixel / maxChunkLength
+    val chunkLength = state.canvasParams.lengthInPixel.toFloat() / chunkCount
+    val chunkLengthDp = with(LocalDensity.current) {
+        chunkLength.toDp()
     }
 
-    FieldLabels(state, widthDp)
+    FieldLabels(state, chunkCount, chunkLength, chunkLengthDp)
     if (state.labelerConf.continuous) {
-        NameLabels(state, requestRename, widthDp)
+        NameLabels(state, requestRename, chunkCount, chunkLength, chunkLengthDp)
     }
 }
 
@@ -372,166 +352,6 @@ private fun FieldBorderCanvas(
         } catch (t: Throwable) {
             if (isDebug) throw t
             Log.debug(t)
-        }
-    }
-}
-
-@Composable
-private fun FieldLabels(state: MarkerState, widthDp: Dp) {
-    val labelIndexes = state.entriesInPixel.indices.flatMap { entryIndex ->
-        state.labelerConf.fields.indices.map { fieldIndex ->
-            entryIndex to fieldIndex
-        }
-    }
-
-    FieldLabelsContent(
-        modifier = Modifier.fillMaxHeight().width(widthDp),
-        waveformsHeightRatio = state.waveformsHeightRatio,
-        fields = state.labelerConf.fields,
-        entries = state.entriesInPixel,
-        labelIndexes = labelIndexes,
-        state = state
-    )
-}
-
-@Composable
-private fun FieldLabelsContent(
-    modifier: Modifier,
-    waveformsHeightRatio: Float,
-    fields: List<LabelerConf.Field>,
-    entries: List<EntryInPixel>,
-    labelIndexes: List<Pair<Int, Int>>,
-    state: MarkerState,
-) {
-    val labelShiftUp = with(LocalDensity.current) { LabelShiftUp.toPx() }
-    Layout(
-        modifier = modifier,
-        content = {
-            labelIndexes.forEach { (entryIndex, fieldIndex) ->
-                val field = state.labelerConf.fields[fieldIndex]
-                val pointIndex = fieldIndex + entryIndex * (state.labelerConf.fields.size + 1)
-                val alpha = if (state.cursorState.value.pointIndex != pointIndex) IdleLineAlpha else 1f
-                Box(
-                    modifier = Modifier.requiredSize(LabelSize),
-                    contentAlignment = Alignment.Center
-                ) {
-                    FieldLabelText(entries[entryIndex].index, field, alpha)
-                }
-            }
-        }
-    ) { measurables, constraints ->
-        val placeables = measurables.map { measurable ->
-            measurable.measure(constraints)
-        }
-
-        // Set the size of the layout as big as it can
-        layout(constraints.maxWidth, constraints.maxHeight) {
-            placeables.forEachIndexed { index, placeable ->
-                val (entryIndex, fieldIndex) = labelIndexes[index]
-                val entry = entries[entryIndex]
-                val field = fields[fieldIndex]
-                val x = entry.points[fieldIndex] - (constraints.maxWidth) / 2
-                val canvasHeight = constraints.maxHeight.toFloat()
-                val waveformsHeight = canvasHeight * waveformsHeightRatio
-                val restCanvasHeight = canvasHeight - waveformsHeight
-                val height = waveformsHeight * field.height + restCanvasHeight
-                val y = canvasHeight - height - labelShiftUp - canvasHeight / 2
-                placeable.place(x.toInt(), y.toInt())
-            }
-        }
-    }
-}
-
-@Composable
-private fun FieldLabelText(entryIndex: Int, field: LabelerConf.Field, alpha: Float) {
-    Log.info("FieldLabel(${field.name}) of entry $entryIndex composed")
-    Text(
-        text = field.label,
-        textAlign = TextAlign.Center,
-        color = parseColor(field.color).copy(alpha = alpha),
-        fontWeight = FontWeight.Bold,
-        style = MaterialTheme.typography.caption.copy(fontSize = 14.sp),
-        overflow = TextOverflow.Visible
-    )
-}
-
-@Composable
-private fun NameLabels(state: MarkerState, requestRename: (Int) -> Unit, widthDp: Dp) {
-    val leftEntry = remember(state.entriesInSample, state.entries.first().index) {
-        val entry = state.entriesInSample.getPreviousOrNull { it.index == state.entries.first().index }
-        entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
-    }
-    val rightEntry = remember(state.entriesInSample, state.entries.last().index) {
-        val entry = state.entriesInSample.getNextOrNull { it.index == state.entries.last().index }
-        entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
-    }
-    NameLabelsContent(
-        modifier = Modifier.fillMaxHeight().width(widthDp),
-        entries = state.entriesInPixel,
-        leftEntry = leftEntry,
-        rightEntry = rightEntry,
-        requestRename = requestRename
-    )
-}
-
-@Composable
-private fun NameLabel(index: Int, name: String, color: Color, requestRename: (Int) -> Unit) {
-    Log.info("NameLabel of entry $index composed")
-    Text(
-        modifier = Modifier.widthIn(max = 100.dp)
-            .wrapContentSize()
-            .clickable { requestRename(index) }
-            .padding(vertical = 2.dp, horizontal = 5.dp),
-        maxLines = 1,
-        text = name,
-        color = color,
-        style = MaterialTheme.typography.caption
-    )
-}
-
-@Composable
-private fun NameLabelsContent(
-    modifier: Modifier,
-    entries: List<EntryInPixel>,
-    leftEntry: EntryInPixel?,
-    rightEntry: EntryInPixel?,
-    requestRename: (Int) -> Unit
-) {
-    val items = remember(leftEntry, entries, rightEntry) {
-        listOf(
-            listOfNotNull(leftEntry),
-            entries,
-            listOfNotNull(rightEntry)
-        ).flatten()
-    }
-    val colors = remember(leftEntry, entries, rightEntry) {
-        listOf(
-            listOfNotNull(leftEntry).map { Black },
-            entries.map { DarkYellow },
-            listOfNotNull(rightEntry).map { Black }
-        ).flatten()
-    }
-
-    Layout(
-        modifier = modifier,
-        content = {
-            items.indices.forEach { itemIndex ->
-                val item = items[itemIndex]
-                val color = colors[itemIndex]
-                NameLabel(item.index, item.name, color, requestRename)
-            }
-        }
-    ) { measurables, constraints ->
-        val placeables = measurables.map { measurable ->
-            measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))
-        }
-
-        // Set the size of the layout as big as it can
-        layout(constraints.maxWidth, constraints.maxHeight) {
-            placeables.forEachIndexed { index, placeable ->
-                val x = items[index].start
-                placeable.place(x.toInt(), 0)
-            }
         }
     }
 }
