@@ -6,6 +6,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,8 +19,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -82,14 +81,64 @@ private val LabelSize = DpSize(40.dp, 25.dp)
 private val LabelShiftUp = 8.dp
 
 @Composable
+fun MarkerPointEventContainer(
+    horizontalScrollState: ScrollState,
+    keyboardState: KeyboardState,
+    state: MarkerState,
+    editorState: EditorState,
+    appState: AppState,
+    content: @Composable BoxScope.() -> Unit
+) {
+    val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
+    val tool = editorState.tool
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .onPointerEvent(PointerEventType.Move) { event ->
+                if (tool == Tool.Cursor &&
+                    state.cursorState.value.mouse == MarkerCursorState.Mouse.Dragging &&
+                    event.buttons.areAnyPressed.not()
+                ) {
+                    state.handleMouseRelease(
+                        tool,
+                        event,
+                        editorState::submitEntries,
+                        appState.player::playSection,
+                        editorState::cutEntry,
+                        keyboardState,
+                        screenRange
+                    )
+                    return@onPointerEvent
+                }
+                state.handleMouseMove(tool, event, editorState::updateEntries, screenRange)
+            }
+            .onPointerEvent(PointerEventType.Press) {
+                state.cursorState.handleMousePress(tool, keyboardState, state.labelerConf)
+            }
+            .onPointerEvent(PointerEventType.Release) { event ->
+                state.handleMouseRelease(
+                    tool,
+                    event,
+                    editorState::submitEntries,
+                    appState.player::playSection,
+                    editorState::cutEntry,
+                    keyboardState,
+                    screenRange
+                )
+            },
+        content = content
+    )
+}
+
+@Composable
 fun MarkerCanvas(
     canvasParams: CanvasParams,
     horizontalScrollState: ScrollState,
+    keyboardState: KeyboardState,
+    state: MarkerState,
     editorState: EditorState,
-    appState: AppState,
-    state: MarkerState
+    appState: AppState
 ) {
-    FieldBorderCanvas(editorState, appState, state, horizontalScrollState)
+    FieldBorderCanvas(horizontalScrollState, keyboardState, state, editorState, appState)
     LaunchAdjustScrollPosition(
         state.entriesInPixel,
         editorState.project.currentIndex,
@@ -131,13 +180,13 @@ fun MarkerLabels(
 
 @Composable
 private fun FieldBorderCanvas(
-    editorState: EditorState,
-    appState: AppState,
+    horizontalScrollState: ScrollState,
+    keyboardState: KeyboardState,
     state: MarkerState,
-    horizontalScrollState: ScrollState
+    editorState: EditorState,
+    appState: AppState
 ) {
     val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
-    val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
     val tool = editorState.tool
 
     LaunchedEffect(keyboardState.isCtrlPressed, tool) {
@@ -146,40 +195,7 @@ private fun FieldBorderCanvas(
         }
     }
 
-    Canvas(Modifier.fillMaxSize()
-        .onPointerEvent(PointerEventType.Move) { event ->
-            if (editorState.tool == Tool.Cursor &&
-                state.cursorState.value.mouse == Mouse.Dragging &&
-                event.buttons.areAnyPressed.not()
-            ) {
-                state.handleMouseRelease(
-                    tool,
-                    event,
-                    editorState::submitEntries,
-                    appState.player::playSection,
-                    editorState::cutEntry,
-                    keyboardState,
-                    screenRange
-                )
-                return@onPointerEvent
-            }
-            state.handleMouseMove(tool, event, editorState::updateEntries, screenRange)
-        }
-        .onPointerEvent(PointerEventType.Press) {
-            state.cursorState.handleMousePress(tool, keyboardState, state.labelerConf)
-        }
-        .onPointerEvent(PointerEventType.Release) { event ->
-            state.handleMouseRelease(
-                tool,
-                event,
-                editorState::submitEntries,
-                appState.player::playSection,
-                editorState::cutEntry,
-                keyboardState,
-                screenRange
-            )
-        }
-    ) {
+    Canvas(Modifier.fillMaxSize()) {
         screenRange ?: return@Canvas
         try {
             val entriesInPixel = state.entriesInPixel

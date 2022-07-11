@@ -18,6 +18,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +36,7 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerLabels
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerPointEventContainer
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.rememberMarkerState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -64,38 +67,48 @@ fun Canvas(
             }
             val canvasParams = CanvasParams(sample.wave.length, resolution, currentDensity)
             val markerState = rememberMarkerState(sample, canvasParams, editorState, appState)
+            val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
 
             if (false) { // if (canvasParams.lengthInPixel > CanvasParams.MaxCanvasLengthInPixel) {
                 Error(string(Strings.CanvasLengthOverflowError))
             } else {
-                Box(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
-                    Row(modifier = Modifier.fillMaxSize()) {
-                        repeat(chunkCount) { chunkIndex ->
-                            Chunk(
-                                chunkIndex,
-                                chunkCount,
-                                canvasParams,
-                                sample,
-                                appState,
-                                editorState
-                            )
+                MarkerPointEventContainer(
+                    horizontalScrollState,
+                    keyboardState,
+                    markerState,
+                    editorState,
+                    appState
+                ) {
+                    Box(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
+                        Row {
+                            repeat(chunkCount) { chunkIndex ->
+                                Chunk(
+                                    chunkIndex,
+                                    chunkCount,
+                                    canvasParams,
+                                    sample,
+                                    appState,
+                                    editorState
+                                )
+                            }
+                        }
+                        if (appState.isMarkerDisplayed) {
+                            MarkerLabels(appState, markerState)
                         }
                     }
                     if (appState.isMarkerDisplayed) {
-                        MarkerLabels(appState, markerState)
+                        MarkerCanvas(
+                            canvasParams,
+                            horizontalScrollState,
+                            keyboardState,
+                            markerState,
+                            editorState,
+                            appState
+                        )
                     }
-                }
-                if (appState.isMarkerDisplayed) {
-                    MarkerCanvas(
-                        canvasParams,
-                        horizontalScrollState,
-                        editorState,
-                        appState,
-                        markerState
-                    )
-                }
-                if (appState.playerState.isPlaying) {
-                    PlayerCursor(canvasParams, appState.playerState, horizontalScrollState)
+                    if (appState.playerState.isPlaying) {
+                        PlayerCursor(canvasParams, appState.playerState, horizontalScrollState)
+                    }
                 }
             }
         } else {
