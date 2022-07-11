@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
@@ -36,7 +37,8 @@ fun NameLabels(
     requestRename: (Int) -> Unit,
     chunkCount: Int,
     chunkLength: Float,
-    chunkLengthDp: Dp
+    chunkLengthDp: Dp,
+    chunkVisibleList: List<Boolean>
 ) {
     val leftEntry = remember(state.entriesInSample, state.entries.first().index) {
         val entry = state.entriesInSample.getPreviousOrNull { it.index == state.entries.first().index }
@@ -47,7 +49,7 @@ fun NameLabels(
         entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
     }
 
-    val chunks = remember(leftEntry, rightEntry, state.entriesInPixel, chunkCount, chunkLength) {
+    val chunks = remember(leftEntry, rightEntry, state.entriesInPixel, chunkCount, chunkLength, chunkVisibleList) {
         val totalChunk = NameLabelEntryChunk(leftEntry, state.entriesInPixel, rightEntry)
         List(chunkCount) { chunkIndex ->
             val chunkStart = chunkIndex * chunkLength
@@ -60,15 +62,20 @@ fun NameLabels(
         }
     }
 
+    val modifier = Modifier.fillMaxHeight().width(chunkLengthDp)
     Row {
         repeat(chunkCount) { index ->
-            NameLabelsChunk(
-                modifier = Modifier.fillMaxHeight().width(chunkLengthDp),
-                index = index,
-                entryChunk = chunks[index],
-                offset = index * chunkLength,
-                requestRename = requestRename
-            )
+            if (chunkVisibleList[index]) {
+                NameLabelsChunk(
+                    modifier = modifier,
+                    index = index,
+                    entryChunk = chunks[index],
+                    offset = index * chunkLength,
+                    requestRename = requestRename
+                )
+            } else {
+                Box(modifier)
+            }
         }
     }
 }

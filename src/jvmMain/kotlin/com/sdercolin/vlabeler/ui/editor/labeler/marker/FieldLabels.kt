@@ -37,7 +37,13 @@ private data class FieldLabelModelChunk(
 )
 
 @Composable
-fun FieldLabels(state: MarkerState, chunkCount: Int, chunkLength: Float, chunkLengthDp: Dp) {
+fun FieldLabels(
+    state: MarkerState,
+    chunkCount: Int,
+    chunkLength: Float,
+    chunkLengthDp: Dp,
+    chunkVisibleList: List<Boolean>
+) {
     val labelIndexes = remember(state.entriesInPixel.indices, state.labelerConf.fields) {
         state.entriesInPixel.indices.flatMap { entryIndex ->
             state.labelerConf.fields.indices.map { fieldIndex ->
@@ -60,15 +66,20 @@ fun FieldLabels(state: MarkerState, chunkCount: Int, chunkLength: Float, chunkLe
         List(chunkCount) { FieldLabelModelChunk(groups[it]?.toList() ?: listOf()) }
     }
 
+    val modifier = Modifier.fillMaxHeight().width(chunkLengthDp)
     Row {
         repeat(chunkCount) { index ->
-            FieldLabelsChunk(
-                modifier = Modifier.fillMaxHeight().width(chunkLengthDp),
-                index = index,
-                offset = index * chunkLength,
-                modelChunk = chunks[index],
-                waveformsHeightRatio = state.waveformsHeightRatio
-            )
+            if (chunkVisibleList[index]) {
+                FieldLabelsChunk(
+                    modifier = modifier,
+                    index = index,
+                    offset = index * chunkLength,
+                    modelChunk = chunks[index],
+                    waveformsHeightRatio = state.waveformsHeightRatio
+                )
+            } else {
+                Box(modifier)
+            }
         }
     }
 }

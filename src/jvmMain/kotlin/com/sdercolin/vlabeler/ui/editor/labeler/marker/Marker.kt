@@ -62,14 +62,13 @@ val LabelShiftUp = 8.dp
 
 @Composable
 fun MarkerPointEventContainer(
-    horizontalScrollState: ScrollState,
+    screenRange: FloatRange?,
     keyboardState: KeyboardState,
     state: MarkerState,
     editorState: EditorState,
     appState: AppState,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
     val tool = editorState.tool
     Box(
         modifier = Modifier.fillMaxSize()
@@ -138,6 +137,7 @@ fun MarkerCanvas(
 
 @Composable
 fun MarkerLabels(
+    screenRange: FloatRange?,
     appState: AppState,
     state: MarkerState
 ) {
@@ -151,10 +151,13 @@ fun MarkerLabels(
     val chunkLengthDp = with(LocalDensity.current) {
         chunkLength.toDp()
     }
-
-    FieldLabels(state, chunkCount, chunkLength, chunkLengthDp)
+    val chunkVisibleList = List(chunkCount) {
+        val range = (it * chunkLength)..((it + 1) * chunkLength)
+        screenRange?.contains(range) == true
+    }
+    FieldLabels(state, chunkCount, chunkLength, chunkLengthDp, chunkVisibleList)
     if (state.labelerConf.continuous) {
-        NameLabels(state, requestRename, chunkCount, chunkLength, chunkLengthDp)
+        NameLabels(state, requestRename, chunkCount, chunkLength, chunkLengthDp, chunkVisibleList)
     }
 }
 

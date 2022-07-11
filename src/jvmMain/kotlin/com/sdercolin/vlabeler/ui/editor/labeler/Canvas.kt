@@ -66,9 +66,10 @@ fun Canvas(
             val canvasParams = CanvasParams(sample.wave.length, resolution, currentDensity)
             val markerState = rememberMarkerState(sample, canvasParams, editorState, appState)
             val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
+            val screenRange = horizontalScrollState.getScreenRange(markerState.canvasParams.lengthInPixel)
 
             MarkerPointEventContainer(
-                horizontalScrollState,
+                screenRange,
                 keyboardState,
                 markerState,
                 editorState,
@@ -88,7 +89,7 @@ fun Canvas(
                         }
                     }
                     if (appState.isMarkerDisplayed) {
-                        MarkerLabels(appState, markerState)
+                        MarkerLabels(screenRange, appState, markerState)
                     }
                 }
                 if (appState.isMarkerDisplayed) {
