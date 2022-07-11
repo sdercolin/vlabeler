@@ -18,35 +18,27 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.PointMode
-import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.io.Spectrogram
-import com.sdercolin.vlabeler.io.Wave
-import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.rememberMarkerState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.ui.theme.Yellow
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlin.math.absoluteValue
+import com.sdercolin.vlabeler.util.getScreenRange
 import kotlin.math.ceil
 
 @Composable
@@ -65,36 +57,33 @@ fun Canvas(
             val chunkCount = remember(sample, appState.appConf) {
                 ceil(sample.wave.length.toFloat() / appState.appConf.painter.maxDataChunkSize).toInt()
             }
+            val density = LocalDensity.current
+            val layoutDirection = LocalLayoutDirection.current
+            LaunchedEffect(sample) {
+                editorState.renderCharts(this, chunkCount, sample, appState.appConf, density, layoutDirection)
+            }
             val canvasParams = CanvasParams(sample.wave.length, resolution, currentDensity)
-            if (canvasParams.lengthInPixel > CanvasParams.MaxCanvasLengthInPixel) {
+            val markerState = rememberMarkerState(sample, canvasParams, editorState, appState)
+
+            if (false) { // if (canvasParams.lengthInPixel > CanvasParams.MaxCanvasLengthInPixel) {
                 Error(string(Strings.CanvasLengthOverflowError))
             } else {
-                Box(Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
-                    Column(Modifier.fillMaxSize()) {
-                        val weightOfEachChannel = 1f / sample.wave.channels.size
-                        sample.wave.channels.forEach { channel ->
-                            Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
-                                Waveforms(appState.appConf, canvasParams, channel, chunkCount)
-                            }
-                        }
-                        sample.spectrogram?.let {
-                            Box(Modifier.weight(appState.appConf.painter.spectrogram.heightWeight).fillMaxWidth()) {
-                                Spectrogram(canvasParams, it, chunkCount)
-                            }
-                        }
-                    }
-                    if (appState.isMarkerDisplayed) {
-                        MarkerCanvas(
-                            sample = sample,
-                            canvasParams = canvasParams,
-                            horizontalScrollState = horizontalScrollState,
-                            editorState = editorState,
-                            appState = appState
+                Row(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
+                    repeat(chunkCount) { chunkIndex ->
+                        Chunk(
+                            horizontalScrollState,
+                            chunkIndex,
+                            chunkCount,
+                            canvasParams,
+                            sample,
+                            appState,
+                            editorState,
+                            markerState
                         )
                     }
-                    if (appState.playerState.isPlaying) {
-                        PlayerCursor(canvasParams, appState.playerState)
-                    }
+                }
+                if (appState.playerState.isPlaying) {
+                    PlayerCursor(canvasParams, appState.playerState, horizontalScrollState)
                 }
             }
         } else {
@@ -104,117 +93,88 @@ fun Canvas(
 }
 
 @Composable
-private fun Waveforms(
-    appConf: AppConf,
+private fun Chunk(
+    horizontalScrollState: ScrollState,
+    chunkIndex: Int,
+    chunkCount: Int,
     canvasParams: CanvasParams,
-    channel: Wave.Channel,
-    chunkCount: Int
+    sample: Sample,
+    appState: AppState,
+    editorState: EditorState,
+    markerState: MarkerState
 ) {
-    Log.info("Waveforms: composed")
-    val chunkSize = remember(channel, chunkCount) { channel.data.size / chunkCount }
-    val dataChunks = remember(channel, chunkSize) { channel.data.chunked(chunkSize) }
-    val waveformsColor = MaterialTheme.colors.onBackground
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-    val imageBitmaps = remember(channel, appConf) { List(chunkSize) { mutableStateOf<ImageBitmap?>(null) } }
-
-    LaunchedEffect(channel) {
-        repeat(chunkCount) { i ->
-            withContext(Dispatchers.IO) {
-                val data = dataChunks[i]
-                val dataDensity = appConf.painter.amplitude.unitSize
-                val width = data.size / dataDensity
-                val maxRawY = data.maxOfOrNull { it.absoluteValue } ?: 0f
-                val height = appConf.painter.amplitude.intensityAccuracy
-                val size = Size(width.toFloat(), height.toFloat())
-                val newBitmap = ImageBitmap(width, height)
-                CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
-                    Log.info("Waveforms chunk $i: draw bitmap")
-                    val yScale = maxRawY / height * 2 * (1 + appConf.painter.amplitude.yAxisBlankRate)
-                    val points = data
-                        .map { height / 2 - it / yScale }
-                        .withIndex().map { Offset(it.index.toFloat() / dataDensity, it.value) }
-                    drawPoints(points, pointMode = PointMode.Polygon, color = waveformsColor)
-                }
-                imageBitmaps[i].value = newBitmap
-            }
-        }
-    }
-    Row(
-        Modifier.fillMaxHeight()
-            .width(canvasParams.canvasWidthInDp)
-            .background(MaterialTheme.colors.background)
-    ) {
-        repeat(chunkCount) { i ->
-            Log.info("WaveformsChunk $i: composed")
-            ChunkImage(canvasParams, chunkCount, imageBitmaps[i], i, "Waveforms")
-        }
-    }
-}
-
-@Composable
-private fun Spectrogram(
-    canvasParams: CanvasParams,
-    spectrogram: Spectrogram,
-    chunkCount: Int
-) {
-    Log.info("Spectrogram: composed")
-    val data = spectrogram.data
-    val chunkSize = remember(spectrogram, chunkCount) { data.size / chunkCount }
-    val dataChunks = remember(spectrogram, chunkSize) { data.toList().chunked(chunkSize) }
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-    val imageBitmaps = remember(spectrogram) { List(chunkSize) { mutableStateOf<ImageBitmap?>(null) } }
-
-    LaunchedEffect(spectrogram) {
-        repeat(chunkCount) { i ->
-            withContext(Dispatchers.IO) {
-                val chunk = dataChunks[i]
-                val width = chunk.size.toFloat()
-                val height = chunk.first().size.toFloat()
-                val size = Size(width, height)
-                val newBitmap = ImageBitmap(width.toInt(), height.toInt())
-                Log.info("Spectrogram chunk $i: draw bitmap")
-                CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
-                    chunk.forEachIndexed { xIndex, yArray ->
-                        yArray.forEachIndexed { yIndex, z ->
-                            val color = White.copy(alpha = z.toFloat())
-                            drawRect(
-                                color = color,
-                                topLeft = Offset(xIndex.toFloat(), height - yIndex.toFloat()),
-                                size = Size(1f, 1f)
-                            )
-                        }
+    val chunkOffset = chunkIndex * canvasParams.lengthInPixel.toFloat() / chunkCount
+    Box(Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp / chunkCount)) {
+        Column(Modifier.fillMaxSize()) {
+            val weightOfEachChannel = 1f / sample.wave.channels.size
+            sample.wave.channels.indices.forEach { channelIndex ->
+                Box(
+                    Modifier.weight(weightOfEachChannel)
+                        .fillMaxWidth()
+                ) {
+                    val image = editorState.chartStore.getWaveform(channelIndex, chunkIndex)
+                    if (image != null) {
+                        WaveformChunk(image, channelIndex, chunkIndex)
                     }
                 }
-                imageBitmaps[i].value = newBitmap
+            }
+            sample.spectrogram?.let {
+                Box(
+                    Modifier.weight(appState.appConf.painter.spectrogram.heightWeight)
+                        .fillMaxWidth()
+                ) {
+                    val image = editorState.chartStore.getSpectrogram(chunkIndex)
+                    if (image != null) {
+                        SpectrogramChunk(image, chunkIndex)
+                    }
+                }
             }
         }
-    }
-    Row(
-        Modifier.fillMaxHeight()
-            .width(canvasParams.canvasWidthInDp)
-            .background(MaterialTheme.colors.background)
-    ) {
-        repeat(chunkCount) { i ->
-            ChunkImage(canvasParams, chunkCount, imageBitmaps[i], i, "Spectrogram")
+        if (appState.isMarkerDisplayed) {
+            MarkerCanvas(
+                chunkOffset,
+                canvasParams,
+                horizontalScrollState,
+                editorState,
+                appState,
+                markerState
+            )
         }
     }
 }
 
 @Composable
-private fun ChunkImage(
-    canvasParams: CanvasParams,
-    chunkCount: Int,
-    bitmap: State<ImageBitmap?>,
-    index: Int,
-    chunkType: String
+private fun WaveformChunk(
+    image: State<ImageBitmap?>,
+    channelIndex: Int,
+    chunkIndex: Int
 ) {
-    Log.info("$chunkType chunk $index: composed")
-    bitmap.value?.let {
+    Log.info("Waveform (channel $channelIndex, chunk $chunkIndex): composed")
+    Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
+        image.value?.let {
+            ChunkImage(it)
+        }
+    }
+}
+
+@Composable
+private fun SpectrogramChunk(
+    image: State<ImageBitmap?>,
+    chunkIndex: Int
+) {
+    Log.info("Spectrogram (chunk $chunkIndex): composed")
+    Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
+        image.value?.let {
+            ChunkImage(it)
+        }
+    }
+}
+
+@Composable
+private fun ChunkImage(bitmap: ImageBitmap?) {
+    bitmap?.let {
         Image(
-            modifier = Modifier.fillMaxHeight()
-                .width(canvasParams.canvasWidthInDp / chunkCount),
+            modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds,
             bitmap = it,
             contentDescription = null
@@ -223,17 +183,21 @@ private fun ChunkImage(
 }
 
 @Composable
-private fun PlayerCursor(canvasParams: CanvasParams, playerState: PlayerState) {
+private fun PlayerCursor(canvasParams: CanvasParams, playerState: PlayerState, scrollState: ScrollState) {
+    val screenRange = scrollState.getScreenRange(canvasParams.lengthInPixel)
     Canvas(
         Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp)
     ) {
-        val x = (playerState.framePosition / canvasParams.resolution).toFloat()
-        drawLine(
-            color = Yellow,
-            start = Offset(x, 0f),
-            end = Offset(x, center.y * 2),
-            strokeWidth = 2f
-        )
+        val actualPosition = (playerState.framePosition / canvasParams.resolution).toFloat()
+        if (screenRange != null && actualPosition in screenRange) {
+            val position = actualPosition - screenRange.start
+            drawLine(
+                color = Yellow,
+                start = Offset(position, 0f),
+                end = Offset(position, center.y * 2),
+                strokeWidth = 2f
+            )
+        }
     }
 }
 

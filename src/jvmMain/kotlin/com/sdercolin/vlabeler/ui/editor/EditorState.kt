@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.shouldDecreaseResolution
@@ -18,6 +20,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -49,6 +52,8 @@ class EditorState(
         } else {
             string(Strings.EditorSubTitleMultiple, editedEntries.size, project.currentSampleName)
         }
+
+    val chartStore = ChartStore()
 
     /**
      * Called from upstream
@@ -95,6 +100,19 @@ class EditorState(
                 appState.updateProjectOnLoadedSample(it.info)
             }
         }
+    }
+
+    fun renderCharts(
+        scope: CoroutineScope,
+        chunkCount: Int,
+        sample: Sample,
+        appConf: AppConf,
+        density: Density,
+        layoutDirection: LayoutDirection,
+    ) {
+        val chunkSizeInMilliSec = sample.info.lengthMillis / chunkCount
+        val startingChunkIndex = (project.currentEntry.start / chunkSizeInMilliSec).toInt()
+        chartStore.load(scope, chunkCount, sample, appConf, density, layoutDirection, startingChunkIndex)
     }
 
     fun changeResolution(resolution: Int) {
