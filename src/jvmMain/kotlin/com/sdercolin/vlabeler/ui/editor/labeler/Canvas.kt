@@ -184,9 +184,7 @@ private fun ChunkImage(bitmap: ImageBitmap?) {
 @Composable
 private fun PlayerCursor(canvasParams: CanvasParams, playerState: PlayerState, scrollState: ScrollState) {
     val screenRange = scrollState.getScreenRange(canvasParams.lengthInPixel)
-    Canvas(
-        Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp)
-    ) {
+    Canvas(Modifier.fillMaxSize()) {
         val actualPosition = (playerState.framePosition / canvasParams.resolution).toFloat()
         if (screenRange != null && actualPosition in screenRange) {
             val position = actualPosition - screenRange.start
