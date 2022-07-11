@@ -6,7 +6,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
@@ -36,12 +39,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.EditorState
@@ -77,24 +80,13 @@ private val LabelShiftUp = 8.dp
 
 @Composable
 fun MarkerCanvas(
-    sample: Sample,
     canvasParams: CanvasParams,
     horizontalScrollState: ScrollState,
     editorState: EditorState,
     appState: AppState,
-    state: MarkerState = rememberMarkerState(sample, canvasParams, editorState, appState)
+    state: MarkerState
 ) {
-    val requestRename: (Int) -> Unit = remember(appState) {
-        { appState.openEditEntryNameDialog(it, InputEntryNameDialogPurpose.Rename) }
-    }
     FieldBorderCanvas(editorState, appState, state)
-    FieldLabelCanvas(state)
-    if (state.labelerConf.continuous) {
-        NameLabelCanvas(
-            state = state,
-            requestRename = requestRename
-        )
-    }
     LaunchAdjustScrollPosition(
         state.entriesInPixel,
         editorState.project.currentIndex,
@@ -109,6 +101,22 @@ fun MarkerCanvas(
         } else {
             state.scissorsState.clear()
         }
+    }
+}
+
+@Composable
+fun MarkerLabels(
+    chunkOffset: Float,
+    chunkSize: Float,
+    appState: AppState,
+    state: MarkerState
+) {
+    val requestRename: (Int) -> Unit = remember(appState) {
+        { appState.openEditEntryNameDialog(it, InputEntryNameDialogPurpose.Rename) }
+    }
+    FieldLabelCanvas(chunkOffset, chunkSize, state)
+    if (state.labelerConf.continuous) {
+        NameLabelCanvas(chunkOffset, chunkSize, state, requestRename)
     }
 }
 
@@ -311,30 +319,27 @@ private fun FieldBorderCanvas(
 }
 
 @Composable
-private fun FieldLabelCanvas(state: MarkerState) = FieldLabelCanvasLayout(
-    modifier = Modifier.fillMaxHeight().width(state.canvasParams.canvasWidthInDp),
-    waveformsHeightRatio = state.waveformsHeightRatio,
-    fields = state.labelerConf.fields,
-    entries = state.entriesInPixel
-) {
-    repeat(state.entriesInPixel.size) {
-        state.labelerConf.fields.indices.forEach { i ->
-            val field = state.labelerConf.fields[i]
-            val alpha = if (state.cursorState.value.pointIndex != i) IdleLineAlpha else 1f
-            Box(
-                modifier = Modifier.requiredSize(LabelSize),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = field.label,
-                    textAlign = TextAlign.Center,
-                    color = parseColor(field.color).copy(alpha = alpha),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.caption.copy(fontSize = 14.sp)
-                )
+private fun FieldLabelCanvas(chunkOffset: Float, chunkSize: Float, state: MarkerState) {
+    val labelIndexes = state.entriesInPixel.indices.flatMap { entryIndex ->
+        state.labelerConf.fields.indices.map { fieldIndex ->
+            val entry = state.entriesInPixel[entryIndex]
+            val fieldPosition = entry.points[fieldIndex]
+            if (fieldPosition < chunkOffset || fieldPosition >= chunkOffset + chunkSize) {
+                null
+            } else {
+                entryIndex to fieldIndex
             }
         }
-    }
+    }.filterNotNull()
+
+    FieldLabelCanvasLayout(
+        modifier = Modifier.fillMaxHeight().width(state.canvasParams.canvasWidthInDp),
+        waveformsHeightRatio = state.waveformsHeightRatio,
+        fields = state.labelerConf.fields,
+        entries = state.entriesInPixel,
+        labelIndexes = labelIndexes,
+        state = state
+    )
 }
 
 @Composable
@@ -343,10 +348,24 @@ private fun FieldLabelCanvasLayout(
     waveformsHeightRatio: Float,
     fields: List<LabelerConf.Field>,
     entries: List<EntryInPixel>,
-    content: @Composable () -> Unit
+    labelIndexes: List<Pair<Int, Int>>,
+    state: MarkerState
 ) {
     val labelShiftUp = with(LocalDensity.current) { LabelShiftUp.toPx() }
-    Layout(modifier = modifier, content = content) { measurables, constraints ->
+    Layout(modifier = modifier,
+        content = {
+            labelIndexes.forEach { (entryIndex, fieldIndex) ->
+                val field = state.labelerConf.fields[fieldIndex]
+                val alpha = if (state.cursorState.value.pointIndex != fieldIndex) IdleLineAlpha else 1f
+                Box(
+                    modifier = Modifier.requiredSize(LabelSize),
+                    contentAlignment = Alignment.Center
+                ) {
+                    FieldLabelText(entries[entryIndex].index, field, alpha)
+                }
+            }
+        }
+    ) { measurables, constraints ->
         val placeables = measurables.map { measurable ->
             measurable.measure(constraints)
         }
@@ -354,9 +373,9 @@ private fun FieldLabelCanvasLayout(
         // Set the size of the layout as big as it can
         layout(constraints.maxWidth, constraints.maxHeight) {
             placeables.forEachIndexed { index, placeable ->
-                val fieldIndex = index % fields.size
+                val (entryIndex, fieldIndex) = labelIndexes[index]
+                val entry = entries[entryIndex]
                 val field = fields[fieldIndex]
-                val entry = entries[index / fields.size]
                 val x = entry.points[fieldIndex] - (constraints.maxWidth) / 2
                 val canvasHeight = constraints.maxHeight.toFloat()
                 val waveformsHeight = canvasHeight * waveformsHeightRatio
@@ -370,44 +389,59 @@ private fun FieldLabelCanvasLayout(
 }
 
 @Composable
-private fun NameLabelCanvas(state: MarkerState, requestRename: (Int) -> Unit) {
-    val entryIndexes = state.entries.map { it.index }
-    val entryNames = state.entries.map { it.name }
-    val leftEntry = remember(entryIndexes, entryNames) {
-        state.entriesInSample.getPreviousOrNull { it.index == state.entries.first().index }
-    }
-    val rightEntry = remember(entryIndexes, entryNames) {
-        state.entriesInSample.getNextOrNull { it.index == state.entries.last().index }
-    }
-    NameLabelCanvasLayout(
-        modifier = Modifier.fillMaxHeight().width(state.canvasParams.canvasWidthInDp),
-        entries = state.entriesInPixel,
-        leftBorder = state.leftBorder.takeIf { leftEntry != null },
-        rightBorder = state.rightBorder.takeIf { rightEntry != null }
-    ) {
-        if (leftEntry != null) {
-            NameLabel(leftEntry.index, leftEntry.name, Black, requestRename)
-        }
-        entryIndexes.zip(entryNames).forEach { (index, name) ->
-            NameLabel(index, name, DarkYellow, requestRename)
-        }
-        if (rightEntry != null) {
-            NameLabel(rightEntry.index, rightEntry.name, Black, requestRename)
-        }
-    }
+private fun FieldLabelText(entryIndex: Int, field: LabelerConf.Field, alpha: Float) {
+    Log.info("FieldLabel(${field.name}) of entry $entryIndex composed")
+    Text(
+        text = field.label,
+        textAlign = TextAlign.Center,
+        color = parseColor(field.color).copy(alpha = alpha),
+        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.caption.copy(fontSize = 14.sp),
+        overflow = TextOverflow.Visible
+    )
 }
 
 @Composable
-private fun NameLabel(index: Int, name: String, color: Color, requestRename: (Int) -> Unit) {
-    Log.info("NameLabel($name) composed")
+private fun NameLabelCanvas(chunkOffset: Float, chunkSize: Float, state: MarkerState, requestRename: (Int) -> Unit) {
+    fun isInThisChunk(position: Float) = (position < chunkOffset || position >= chunkOffset + chunkSize).not()
+
+    val leftEntry = remember(state.entriesInSample, state.entries.first().index) {
+        val entry = state.entriesInSample.getPreviousOrNull { it.index == state.entries.first().index }
+        entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
+            ?.takeIf { isInThisChunk(it.start) }
+    }
+    val rightEntry = remember(state.entriesInSample, state.entries.last().index) {
+        val entry = state.entriesInSample.getNextOrNull { it.index == state.entries.last().index }
+        entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
+            ?.takeIf { isInThisChunk(it.start) }
+    }
+    val labelIndexes = state.entriesInPixel.indices.mapNotNull { entryIndex ->
+        val position = state.entriesInPixel[entryIndex].start
+        entryIndex.takeIf { isInThisChunk(position) }
+    }
+    NameLabelCanvasLayout(
+        modifier = Modifier.fillMaxSize(),
+        chunkOffset = chunkOffset,
+        entries = state.entriesInPixel,
+        entryIndexes = labelIndexes,
+        leftEntry = leftEntry,
+        rightEntry = rightEntry,
+        requestRename = requestRename
+    )
+}
+
+@Composable
+private fun NameLabel(offset: Float, absoluteIndex: Int, name: String, color: Color, requestRename: (Int) -> Unit) {
+    Log.info("NameLabel of entry $absoluteIndex composed, offset=$offset")
     Text(
-        modifier = Modifier.widthIn(max = 100.dp)
+        modifier = Modifier.absoluteOffset { IntOffset(offset.toInt(), 0) }
+            .widthIn(max = 100.dp)
             .wrapContentSize()
-            .clickable { requestRename(index) }
+            .clickable { requestRename(absoluteIndex) }
             .padding(vertical = 2.dp, horizontal = 5.dp),
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        text = name,
+        overflow = TextOverflow.Visible,
+        text = name.repeat(5),
         color = color,
         style = MaterialTheme.typography.caption
     )
@@ -416,27 +450,26 @@ private fun NameLabel(index: Int, name: String, color: Color, requestRename: (In
 @Composable
 private fun NameLabelCanvasLayout(
     modifier: Modifier,
+    chunkOffset: Float,
     entries: List<EntryInPixel>,
-    leftBorder: Float?,
-    rightBorder: Float?,
-    content: @Composable () -> Unit
+    entryIndexes: List<Int>,
+    leftEntry: EntryInPixel?,
+    rightEntry: EntryInPixel?,
+    requestRename: (Int) -> Unit
 ) {
-    Layout(modifier = modifier, content = content) { measurables, constraints ->
-        val placeables = measurables.map { measurable ->
-            measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))
+    Row(modifier) {
+        if (leftEntry != null) {
+            val offset = leftEntry.start - chunkOffset
+            NameLabel(offset, leftEntry.index, leftEntry.name, Black, requestRename)
         }
-
-        // Set the size of the layout as big as it can
-        layout(constraints.maxWidth, constraints.maxHeight) {
-            val xs = listOf(
-                listOfNotNull(leftBorder),
-                entries.map { it.start },
-                listOfNotNull(entries.last().end.takeIf { rightBorder != null })
-            ).flatten()
-            placeables.forEachIndexed { index, placeable ->
-                val x = xs[index]
-                placeable.place(x.toInt(), 0)
-            }
+        entryIndexes.forEach { index ->
+            val entry = entries[index]
+            val offset = entry.start - chunkOffset
+            NameLabel(offset, entry.index, entry.name, DarkYellow, requestRename)
+        }
+        if (rightEntry != null) {
+            val offset = rightEntry.start - chunkOffset
+            NameLabel(offset, rightEntry.index, rightEntry.name, Black, requestRename)
         }
     }
 }

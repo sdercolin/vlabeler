@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -32,7 +34,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerLabels
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.rememberMarkerState
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -71,7 +73,6 @@ fun Canvas(
                 Row(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
                     repeat(chunkCount) { chunkIndex ->
                         Chunk(
-                            horizontalScrollState,
                             chunkIndex,
                             chunkCount,
                             canvasParams,
@@ -81,6 +82,15 @@ fun Canvas(
                             markerState
                         )
                     }
+                }
+                if (appState.isMarkerDisplayed) {
+                    /*MarkerCanvas(
+                        canvasParams,
+                        horizontalScrollState,
+                        editorState,
+                        appState,
+                        markerState
+                    )*/
                 }
                 if (appState.playerState.isPlaying) {
                     PlayerCursor(canvasParams, appState.playerState, horizontalScrollState)
@@ -94,7 +104,6 @@ fun Canvas(
 
 @Composable
 private fun Chunk(
-    horizontalScrollState: ScrollState,
     chunkIndex: Int,
     chunkCount: Int,
     canvasParams: CanvasParams,
@@ -103,8 +112,9 @@ private fun Chunk(
     editorState: EditorState,
     markerState: MarkerState
 ) {
-    val chunkOffset = chunkIndex * canvasParams.lengthInPixel.toFloat() / chunkCount
-    Box(Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp / chunkCount)) {
+    val chunkSize = canvasParams.lengthInPixel.toFloat() / chunkCount
+    val chunkOffset = chunkIndex * chunkSize
+    Box(Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp / chunkCount).border(1.dp, color = Color.Red)) {
         Column(Modifier.fillMaxSize()) {
             val weightOfEachChannel = 1f / sample.wave.channels.size
             sample.wave.channels.indices.forEach { channelIndex ->
@@ -131,14 +141,7 @@ private fun Chunk(
             }
         }
         if (appState.isMarkerDisplayed) {
-            MarkerCanvas(
-                chunkOffset,
-                canvasParams,
-                horizontalScrollState,
-                editorState,
-                appState,
-                markerState
-            )
+            MarkerLabels(chunkOffset, chunkSize, appState, markerState)
         }
     }
 }
