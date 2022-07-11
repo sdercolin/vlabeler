@@ -29,7 +29,7 @@ import com.sdercolin.vlabeler.ui.editor.labeler.Labeler
 fun Editor(state: EditorState, appState: AppState) {
     val keyboardState by state.keyboardViewModel.keyboardStateFlow.collectAsState()
 
-    LaunchedEffect(state.project.currentSampleName) {
+    LaunchedEffect(state.project.currentSampleName, state) {
         state.loadSampleFile()
     }
     LaunchedEffect(Unit) {
