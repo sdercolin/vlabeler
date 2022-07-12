@@ -6,11 +6,6 @@ import java.util.Properties
 
 class Python {
 
-    init {
-        val props = Properties().apply { put("python.console.encoding", "UTF-8") }
-        PythonInterpreter.initialize(System.getProperties(), props, arrayOf())
-    }
-
     private val interpreter = PythonInterpreter().apply {
         systemState.setdefaultencoding("utf8")
     }
@@ -48,4 +43,11 @@ class Python {
     }
 
     fun close() = interpreter.close()
+
+    companion object {
+        fun init() {
+            val props = Properties().apply { put("python.console.encoding", "UTF-8") }
+            PythonInterpreter.initialize(System.getProperties(), props, arrayOf())
+        }
+    }
 }

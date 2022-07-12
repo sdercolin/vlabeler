@@ -41,6 +41,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.util.AppRecordFile
+import com.sdercolin.vlabeler.util.Python
 import com.sdercolin.vlabeler.util.parseJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
@@ -48,6 +49,7 @@ import kotlinx.coroutines.flow.onEach
 
 fun main() = application {
     Log.init()
+    Python.init()
     ensureDirectories()
 
     val mainScope = rememberCoroutineScope()
