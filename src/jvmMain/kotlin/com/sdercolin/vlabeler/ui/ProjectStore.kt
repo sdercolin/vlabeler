@@ -192,7 +192,6 @@ class ProjectStoreImpl(
 
         editProject { removeCurrentEntry() }
         if (requireProject().hasSwitchedSample(previousProject) && appConf.value.editor.autoScroll.onLoadedNewSample) {
-
         }
     }
 
