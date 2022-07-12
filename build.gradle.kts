@@ -34,6 +34,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
                 implementation("com.github.psambit9791:jdsp:1.0.0")
                 implementation("org.python:jython-standalone:2.7.2")
+                implementation("org.graalvm.js:js:22.1.0")
                 implementation("org.apache.tika:tika-parser-text-module:2.4.1")
 
                 val lwjglVersion = "3.3.1"
