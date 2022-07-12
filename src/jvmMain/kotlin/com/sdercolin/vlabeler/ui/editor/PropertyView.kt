@@ -20,22 +20,26 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.getPropertyMap
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.theme.Black80
-import com.sdercolin.vlabeler.util.Python
+import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
 fun BoxScope.PropertyView(project: Project) {
-    val python by produceState(null as Python?) {
-        value = withContext(Dispatchers.IO) { Python() }
+    val js by produceState(null as JavaScript?) {
+        value = withContext(Dispatchers.IO) { JavaScript() }
     }
-    val text by produceState(project.buildEmptyPropertyText(), project.currentEntry, python) {
-        python?.let {
-            value = project.buildPropertyText(it)
+    val text by produceState(project.buildEmptyPropertyText(), project.currentEntry, js) {
+        js?.let {
+            value = runCatching { project.buildPropertyText(it) }.getOrElse {
+                Log.error(it)
+                project.buildEmptyPropertyText()
+            }
         }
     }
     Box(
@@ -64,8 +68,8 @@ private fun Project.buildEmptyPropertyText() = buildAnnotatedString {
     }
 }
 
-private fun Project.buildPropertyText(python: Python) = buildAnnotatedString {
-    val propertyMap = labelerConf.getPropertyMap(currentEntry, python)
+private fun Project.buildPropertyText(js: JavaScript) = buildAnnotatedString {
+    val propertyMap = labelerConf.getPropertyMap(currentEntry, js)
     propertyMap.toList().forEachIndexed { index, (property, value) ->
         if (index != 0) append("\n")
         append(AnnotatedString(property.displayedName, SpanStyle(fontWeight = FontWeight.SemiBold)))

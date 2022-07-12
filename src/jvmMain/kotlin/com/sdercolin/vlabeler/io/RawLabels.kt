@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.mergeEntriesWithSampleNames
+import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.Python
 import com.sdercolin.vlabeler.util.matchGroups
 import com.sdercolin.vlabeler.util.replaceWithVariables
@@ -115,8 +116,14 @@ private fun LabelerConf.getPropertyBaseMap(fields: Map<String, Float>, extras: M
         it.value.replaceWithVariables(fields + extras).let(python::eval)
     }
 
+private fun LabelerConf.getPropertyBaseMap(fields: Map<String, Float>, extras: Map<String, String>, js: JavaScript) =
+    properties.associateWith {
+        val expression = it.value.replaceWithVariables(fields + extras)
+        js.eval(expression)!!.asDouble()
+    }
+
 private fun LabelerConf.getPropertyMap(fields: Map<String, Float>, extras: Map<String, String>, python: Python) =
     getPropertyBaseMap(fields, extras, python).mapKeys { it.key.name }
 
-fun LabelerConf.getPropertyMap(entry: Entry, python: Python) =
-    getPropertyBaseMap(getFieldMap(entry), getExtraMap(entry), python)
+fun LabelerConf.getPropertyMap(entry: Entry, js: JavaScript) =
+    getPropertyBaseMap(getFieldMap(entry), getExtraMap(entry), js)

@@ -76,7 +76,7 @@
     {
       "name": "right",
       "displayedName": "Cutoff",
-      "value": "{start} - {end} if {end} > 0 else float({rawRight})"
+      "value": "{end} > 0 ? {start} - {end} : parseFloat({rawRight})"
     },
     {
       "name": "preu",
