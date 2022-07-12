@@ -18,33 +18,33 @@ fun fromRawLabels(
 ): List<Entry> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
-    val python = Python()
+    val js = JavaScript()
     val entriesBySampleName = sources.mapNotNull { source ->
         runCatching {
             val groups = source.matchGroups(extractor)
             parser.variableNames.mapIndexed { i, name ->
-                python.set(name, groups[i])
+                js.set(name, groups[i])
             }
             val script = parser.scripts.joinToString("\n")
-            python.exec(script)
+            js.eval(script)
 
             // when "sample" is not set, using the first sample's name
             // because the label file will not contain the sample name if there is only one
-            val sampleName = python.getOrNull<String>("sample")?.takeUnless { it.isEmpty() }
+            val sampleName = js.getOrNull<String>("sample")?.takeUnless { it.isEmpty() }
                 ?: sampleNames.first()
 
             // require name, otherwise ignore the entry
-            val name = python.get<String>("name")
+            val name = js.get<String>("name")
             require(name.isNotEmpty()) { "Cannot get `name` from parser in `$source`" }
 
             // optional start, end, points
-            val start = python.getOrNull<Float>("start")
-            val end = python.getOrNull<Float>("end")
-            val points = python.getOrNull<List<Float>>("points") ?: listOf()
+            val start = js.getOrNull<Double>("start")?.toFloat()
+            val end = js.getOrNull<Double>("end")?.toFloat()
+            val points = js.getOrNull<List<Double>>("points")?.map { it.toFloat() } ?: listOf()
 
             // optional extra
             val extra = labelerConf.extraFieldNames.mapIndexed { index, extraName ->
-                python.getOrNull<Any>(extraName)?.toString() ?: labelerConf.defaultExtras[index]
+                js.getOrNull<Any>(extraName)?.toString() ?: labelerConf.defaultExtras[index]
             }
 
             if (start == null || end == null || points.size != labelerConf.fields.size) {
@@ -61,7 +61,7 @@ fun fromRawLabels(
         }
     }
 
-    python.close()
+    js.close()
 
     return mergeEntriesWithSampleNames(labelerConf, entriesBySampleName, sampleNames)
 }

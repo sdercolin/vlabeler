@@ -41,8 +41,8 @@
       "name"
     ],
     "scripts": [
-      "start = float(left) / 10000",
-      "end = float(right) / 10000"
+      "start = parseFloat(left) / 10000",
+      "end = parseFloat(right) / 10000"
     ]
   },
   "writer": {
