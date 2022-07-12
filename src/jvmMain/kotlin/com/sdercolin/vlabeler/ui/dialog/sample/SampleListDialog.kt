@@ -1,0 +1,303 @@
+package com.sdercolin.vlabeler.ui.dialog.sample
+
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.Entry
+import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.IncludedSample
+import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.Sample
+import com.sdercolin.vlabeler.ui.editor.EditorState
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.ui.theme.LightGray
+import com.sdercolin.vlabeler.util.animateScrollToShowItem
+
+@Composable
+private fun rememberState(editorState: EditorState) = remember(editorState) {
+    SampleListDialogState(editorState)
+}
+
+@Composable
+fun SampleListDialog(
+    editorState: EditorState,
+    finish: () -> Unit,
+    state: SampleListDialogState = rememberState(editorState)
+) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .background(color = Black50)
+            .plainClickable { },
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(modifier = Modifier.fillMaxSize(0.8f)) {
+            Box(modifier = Modifier.padding(vertical = 20.dp, horizontal = 30.dp)) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Content(state)
+                    Spacer(Modifier.height(25.dp))
+                    ButtonBar(finish)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.Content(state: SampleListDialogState) {
+    Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
+        Column(modifier = Modifier.fillMaxHeight().weight(1f)) { Samples(state) }
+        Spacer(Modifier.width(30.dp))
+        Column(modifier = Modifier.fillMaxHeight().weight(1f)) { Entries(state) }
+    }
+}
+
+@Composable
+private fun ColumnScope.Samples(state: SampleListDialogState) {
+    GroupTitle(Strings.SampleListIncludedHeader)
+    Spacer(Modifier.height(7.dp))
+    val items = state.includedSampleItems
+    val selectedIndex = items.indexOfFirst { it.isSelected(state.selectedSampleName) }.takeIf { it >= 0 }
+    GroupLazyColumn(weight = 0.65f, selectedIndex = selectedIndex) {
+        items(state.includedSampleItems) { item ->
+            val isSelected = item.isSelected(state.selectedSampleName)
+            val textColor = if (item.valid) {
+                MaterialTheme.colors.onBackground
+            } else {
+                MaterialTheme.colors.error
+            }
+            ItemRow(
+                item,
+                isSelected,
+                textColor,
+                onClick = { state.select(item.name) }
+            )
+        }
+    }
+    Spacer(Modifier.height(20.dp))
+    GroupTitle(Strings.SampleListExcludedHeader)
+    Spacer(Modifier.height(7.dp))
+    GroupLazyColumn(
+        weight = 0.35f,
+        placeholder = {
+            PlaceholderText(Strings.SampleListExcludedPlaceholder)
+        }
+    ) {
+        items(state.excludedSampleItems) { item ->
+            val isSelected = item.isSelected(state.selectedSampleName)
+            val textColor = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
+            ItemRow(
+                item,
+                isSelected,
+                textColor,
+                onClick = { state.select(item.name) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.Entries(state: SampleListDialogState) {
+    GroupTitle(Strings.SampleListEntryHeader)
+    Spacer(Modifier.height(7.dp))
+    GroupLazyColumn(
+        weight = 1f,
+        placeholder = {
+            if (state.selectedSampleName == null) {
+                PlaceholderText(Strings.SampleListEntriesPlaceholderUnselected)
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    PlaceholderText(Strings.SampleListEntriesPlaceholderNoEntry)
+                    Spacer(Modifier.height(10.dp))
+                    Button(
+                        onClick = { state.createDefaultEntry() }
+                    ) {
+                        Text(string(Strings.SampleListEntriesPlaceholderNoEntryButton))
+                    }
+                }
+            }
+        }
+    ) {
+        items(state.entryItems) { item ->
+            val isSelected = false
+            val textColor = MaterialTheme.colors.onBackground
+            ItemRow(
+                item,
+                isSelected,
+                textColor
+            )
+        }
+    }
+}
+
+@Composable
+private fun ItemRow(
+    item: SampleListDialogItem,
+    isSelect: Boolean,
+    textColor: Color,
+    onClick: (() -> Unit)? = null
+) {
+    val backgroundModifier = if (isSelect) {
+        Modifier.background(MaterialTheme.colors.primaryVariant)
+    } else Modifier
+
+    Row(
+        modifier = backgroundModifier
+            .fillMaxWidth()
+            .height(35.dp)
+            .run { if (onClick != null) plainClickable(onClick) else this }
+            .padding(horizontal = 15.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val mainStyle = MaterialTheme.typography.body2.copy(color = textColor)
+        val subStyle = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f))
+        when (item) {
+            is Entry -> {
+                BasicText(
+                    text = "${item.entry.index + 1}",
+                    modifier = Modifier.padding(end = 15.dp, top = 3.dp).widthIn(20.dp),
+                    maxLines = 1,
+                    style = subStyle
+                )
+                BasicText(
+                    text = item.name,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = mainStyle
+                )
+                BasicText(
+                    text = "${item.entry.start}...${item.entry.end}",
+                    modifier = Modifier.padding(start = 10.dp, top = 3.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = subStyle
+                )
+            }
+            is Sample -> {
+                BasicText(
+                    text = item.fileName,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = mainStyle
+                )
+                if (item is IncludedSample) {
+                    val text = if (item.entryCount > 1) {
+                        string(Strings.SampleListIncludedItemEntryCountPlural, item.entryCount)
+                    } else {
+                        string(Strings.SampleListIncludedItemEntryCountSingle, item.entryCount)
+                    }
+                    BasicText(
+                        text = text,
+                        modifier = Modifier.padding(start = 10.dp, top = 3.dp),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        style = subStyle
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PlaceholderText(stringKey: Strings) {
+    Text(
+        text = string(stringKey),
+        style = MaterialTheme.typography.caption,
+        color = MaterialTheme.colors.onBackground
+    )
+}
+
+@Composable
+private fun GroupTitle(stringKey: Strings) {
+    BasicText(
+        modifier = Modifier.padding(vertical = 5.dp, horizontal = 2.dp),
+        text = string(stringKey),
+        style = MaterialTheme.typography.body2.copy(
+            color = MaterialTheme.colors.onBackground,
+            fontWeight = FontWeight.Bold
+        ),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+private fun ColumnScope.GroupLazyColumn(
+    weight: Float,
+    placeholder: @Composable BoxScope.() -> Unit = {},
+    selectedIndex: Int? = null,
+    content: LazyListScope.() -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxHeight()
+            .weight(weight)
+            .background(color = MaterialTheme.colors.background)
+    ) {
+        val lazyListState = rememberLazyListState()
+        LaunchedEffect(selectedIndex) {
+            if (selectedIndex != null) {
+                lazyListState.animateScrollToShowItem(selectedIndex)
+            }
+        }
+        LazyColumn(modifier = Modifier.fillMaxSize(), state = lazyListState, content = content)
+        if (lazyListState.layoutInfo.totalItemsCount == 0) {
+            Box(
+                modifier = Modifier.fillMaxSize(0.8f).align(Alignment.Center),
+                contentAlignment = Alignment.Center
+            ) {
+                placeholder()
+            }
+        }
+        VerticalScrollbar(
+            adapter = rememberScrollbarAdapter(lazyListState),
+            modifier = Modifier.align(Alignment.TopEnd).fillMaxHeight().width(15.dp)
+        )
+    }
+}
+
+@Composable
+private fun ButtonBar(finish: () -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        Button(
+            onClick = { finish() }
+        ) {
+            Text(string(Strings.CommonOkay))
+        }
+    }
+}

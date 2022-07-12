@@ -48,7 +48,7 @@ fun fromRawLabels(
 
             if (start == null || end == null || points.size != labelerConf.fields.size) {
                 // use default except name if data size is not enough
-                Entry.fromDefaultValues(sampleName, name, labelerConf.defaultValues, labelerConf.defaultExtras).also {
+                Entry.fromDefaultValues(sampleName, name, labelerConf).also {
                     Log.info("Entry parse failed, fallback to default: $it")
                 }
             } else {

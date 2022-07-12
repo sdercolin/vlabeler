@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.env.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -25,6 +26,7 @@ class Player(
     fun load(newFile: File) {
         openJob?.cancel()
         openJob = coroutineScope.launch(Dispatchers.IO) {
+            openJob?.cancelAndJoin()
             Log.info("Player.load(\"${newFile.absolutePath}\")")
             if (file != null) {
                 clip.flush()

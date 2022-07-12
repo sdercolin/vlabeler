@@ -34,14 +34,14 @@ data class Entry(
     val extra: List<String>
 ) {
     companion object {
-        fun fromDefaultValues(sample: String, name: String, defaultValues: List<Float>, defaultExtras: List<String>) =
+        fun fromDefaultValues(sample: String, name: String, labelerConf: LabelerConf) =
             Entry(
                 sample = sample,
                 name = name,
-                start = defaultValues.first(),
-                end = defaultValues.last(),
-                points = defaultValues.drop(1).dropLast(1),
-                extra = defaultExtras
+                start = labelerConf.defaultValues.first(),
+                end = labelerConf.defaultValues.last(),
+                points = labelerConf.defaultValues.drop(1).dropLast(1),
+                extra = labelerConf.defaultExtras
             )
     }
 }

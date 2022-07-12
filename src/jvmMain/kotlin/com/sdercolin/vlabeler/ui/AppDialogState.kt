@@ -30,6 +30,7 @@ interface AppDialogState {
     val isShowingOpenProjectDialog: Boolean
     val isShowingSaveAsProjectDialog: Boolean
     val isShowingExportDialog: Boolean
+    val isShowingSampleListDialog: Boolean
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
     val embeddedDialog: EmbeddedDialogRequest<*>?
 
@@ -51,11 +52,15 @@ interface AppDialogState {
     fun askIfSaveBeforeExit()
     fun confirmIfRemoveCurrentEntry(isLastEntry: Boolean)
     fun confirmIfLoadAutoSavedProject(file: File)
+    fun openSampleListDialog()
+    fun closeSampleListDialog()
+
     fun closeEmbeddedDialog()
     fun closeAllDialogs()
 
     fun anyDialogOpening() =
-        isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || embeddedDialog != null
+        isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog ||
+            isShowingSampleListDialog || embeddedDialog != null
 }
 
 class AppDialogStateImpl(
@@ -72,6 +77,7 @@ class AppDialogStateImpl(
     override var isShowingOpenProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingExportDialog: Boolean by mutableStateOf(false)
+    override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
     override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
     override var embeddedDialog: EmbeddedDialogRequest<*>? by mutableStateOf(null)
 
@@ -173,6 +179,14 @@ class AppDialogStateImpl(
 
     override fun confirmIfLoadAutoSavedProject(file: File) =
         openEmbeddedDialog(CommonConfirmationDialogAction.LoadAutoSavedProject(file))
+
+    override fun openSampleListDialog() {
+        isShowingSampleListDialog = true
+    }
+
+    override fun closeSampleListDialog() {
+        isShowingSampleListDialog = false
+    }
 
     override fun closeEmbeddedDialog() {
         embeddedDialog = null

@@ -53,6 +53,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
+import com.sdercolin.vlabeler.util.animateScrollToShowItem
 
 @Composable
 fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
@@ -138,15 +139,7 @@ private fun ColumnScope.List(
     val scrollbarAdapter = remember { ScrollbarAdapter(scrollState) }
 
     LaunchedEffect(selectedIndex, searchResult) {
-        val height = scrollState.layoutInfo.visibleItemsInfo.first().size
-        val first = scrollState.firstVisibleItemIndex
-        val last = scrollState.layoutInfo.visibleItemsInfo.size + first - 1
-        if (selectedIndex >= last) {
-            val target = first + (selectedIndex - last)
-            scrollState.animateScrollToItem(target, height)
-        } else if (selectedIndex < first) {
-            scrollState.animateScrollToItem(selectedIndex)
-        }
+        scrollState.animateScrollToShowItem(selectedIndex)
     }
     Box(Modifier.weight(1f)) {
         LazyColumn(state = scrollState) {

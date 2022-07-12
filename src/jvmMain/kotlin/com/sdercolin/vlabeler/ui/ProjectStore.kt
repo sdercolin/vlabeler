@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.io.autoSaveProjectFile
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -47,6 +48,7 @@ interface ProjectStore {
     fun duplicateEntry(index: Int, newName: String)
     val canRemoveCurrentEntry: Boolean
     fun removeCurrentEntry()
+    fun createDefaultEntry(sampleName: String)
     fun isCurrentEntryTheLast(): Boolean
     fun toggleMultipleEditMode(on: Boolean)
     fun getAutoSavedProjectFile(): File?
@@ -192,7 +194,14 @@ class ProjectStoreImpl(
 
         editProject { removeCurrentEntry() }
         if (requireProject().hasSwitchedSample(previousProject) && appConf.value.editor.autoScroll.onLoadedNewSample) {
+            scrollFitViewModel.emitNext()
         }
+    }
+
+    override fun createDefaultEntry(sampleName: String) {
+        val project = requireProject()
+        val newEntry = Entry.fromDefaultValues(sampleName, sampleName, project.labelerConf)
+        editProject { copy(entries = project.entries + newEntry) }
     }
 
     override fun isCurrentEntryTheLast(): Boolean {

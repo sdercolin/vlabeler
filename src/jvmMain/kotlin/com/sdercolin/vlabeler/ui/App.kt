@@ -11,6 +11,7 @@ import com.sdercolin.vlabeler.io.openCreatedProject
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
+import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
@@ -43,6 +44,9 @@ fun App(
         }
         appState.embeddedDialog?.let { request ->
             EmbeddedDialog(request)
+        }
+        if (appState.isShowingSampleListDialog) {
+            appState.editor?.let { SampleListDialog(it, finish = { appState.closeSampleListDialog() }) }
         }
     }
     if (appState.isBusy) {

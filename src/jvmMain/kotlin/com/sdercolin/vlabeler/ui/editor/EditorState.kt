@@ -183,4 +183,8 @@ class EditorState(
     fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose) {
         appState.openEditEntryNameDialog(index, purpose)
     }
+
+    fun createDefaultEntry(sampleName: String) {
+        appState.createDefaultEntry(sampleName)
+    }
 }

@@ -171,6 +171,33 @@ enum class Strings(val en: String) {
     StarterNewEncoding(
         en = "Encoding"
     ),
+    SampleListIncludedHeader(
+        en = "Project sample files"
+    ),
+    SampleListIncludedItemEntryCountSingle(
+        en = "%d entry"
+    ),
+    SampleListIncludedItemEntryCountPlural(
+        en = "%d entries"
+    ),
+    SampleListExcludedHeader(
+        en = "Other sample files"
+    ),
+    SampleListExcludedPlaceholder(
+        en = "There are no unreferred sample files in the sample directory."
+    ),
+    SampleListEntryHeader(
+        en = "Entries"
+    ),
+    SampleListEntriesPlaceholderUnselected(
+        en = "Select a sample file in the left to show entries bound to it."
+    ),
+    SampleListEntriesPlaceholderNoEntry(
+        en = "There are no entries bound to the selected sample file."
+    ),
+    SampleListEntriesPlaceholderNoEntryButton(
+        en = "Create Default"
+    ),
     ChooseSampleDirectoryDialogTitle(
         en = "Choose sample directory"
     ),

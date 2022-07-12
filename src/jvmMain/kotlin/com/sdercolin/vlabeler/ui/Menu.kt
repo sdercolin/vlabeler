@@ -169,6 +169,12 @@ fun FrameWindowScope.Menu(
                     enabled = appState.isEditorActive,
                     onCheckedChange = { appState.isToolboxDisplayed = it }
                 )
+                Item(
+                    string(Strings.MenuViewOpenSampleList),
+                    shortcut = getKeyShortCut(Key.Nine, ctrl = true),
+                    enabled = appState.isEditorActive,
+                    onClick = { appState.openSampleListDialog() }
+                )
             }
         }
         Menu(string(Strings.MenuNavigate), mnemonic = 'N') {
