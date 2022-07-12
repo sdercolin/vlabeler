@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.ParamMap
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import java.io.File
 import java.nio.charset.Charset
 
@@ -24,16 +25,25 @@ data class Project(
     val encoding: String? = null,
     val multipleEditMode: Boolean = labelerConf.continuous
 ) {
+    @Transient
     private val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
+
+    @Transient
     private val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
+
+    @Transient
     val currentEntry: Entry = entries[currentIndex]
+
+    @Transient
     private val currentGroupIndex: Int = getGroupIndex(currentIndex)
-    val currentEntryGroup: List<Entry> = entryGroups[currentGroupIndex].second
+
+    @Transient
     val currentSampleName: String = currentEntry.sample
 
     val currentSampleFile: File
         get() = File(sampleDirectory).resolve("$currentSampleName.$SampleFileExtension")
 
+    @Transient
     val entryCount: Int = entries.size
 
     val projectFile: File
@@ -250,7 +260,7 @@ fun mergeEntriesWithSampleNames(
     val sampleNameUsed = entries.map { it.sample }.toSet()
     val sampleNamesNotUsed = sampleNames.filterNot { it in sampleNameUsed }
     val additionalEntries = sampleNamesNotUsed.map { sampleName ->
-        Entry.fromDefaultValues(sampleName, sampleName, labelerConf.defaultValues, labelerConf.defaultExtras)
+        Entry.fromDefaultValues(sampleName, sampleName, labelerConf)
             .also {
                 Log.info("Sample $sampleName doesn't have entries, created default: $it")
             }
@@ -327,7 +337,7 @@ suspend fun projectOf(
         }
         else -> {
             sampleNames.map {
-                Entry.fromDefaultValues(it, it, labelerConf.defaultValues, labelerConf.defaultExtras)
+                Entry.fromDefaultValues(it, it, labelerConf)
             }
         }
     }
