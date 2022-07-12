@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
@@ -41,6 +42,9 @@ fun BoxScope.PropertyView(project: Project) {
                 project.buildEmptyPropertyText()
             }
         }
+    }
+    DisposableEffect(Unit) {
+        onDispose { js?.close() }
     }
     Box(
         Modifier
