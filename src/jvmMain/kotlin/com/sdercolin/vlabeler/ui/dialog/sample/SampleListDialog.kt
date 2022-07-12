@@ -26,6 +26,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -68,7 +69,14 @@ fun SampleListDialog(
                 Column(modifier = Modifier.fillMaxSize()) {
                     Content(state)
                     Spacer(Modifier.height(25.dp))
-                    ButtonBar(finish)
+                    ButtonBar(
+                        finish = finish,
+                        hasSelectedEntry = state.selectedEntryIndex != null,
+                        jumpToSelectedEntry = {
+                            state.jumpToSelectedEntry()
+                            finish()
+                        }
+                    )
                 }
             }
         }
@@ -102,7 +110,7 @@ private fun ColumnScope.Samples(state: SampleListDialogState) {
                 item,
                 isSelected,
                 textColor,
-                onClick = { state.select(item.name) }
+                onClick = { state.selectSample(item.name) }
             )
         }
     }
@@ -122,7 +130,7 @@ private fun ColumnScope.Samples(state: SampleListDialogState) {
                 item,
                 isSelected,
                 textColor,
-                onClick = { state.select(item.name) }
+                onClick = { state.selectSample(item.name) }
             )
         }
     }
@@ -154,12 +162,13 @@ private fun ColumnScope.Entries(state: SampleListDialogState) {
         }
     ) {
         items(state.entryItems) { item ->
-            val isSelected = false
+            val isSelected = state.selectedEntryIndex == item.entry.index
             val textColor = MaterialTheme.colors.onBackground
             ItemRow(
                 item,
                 isSelected,
-                textColor
+                textColor,
+                onClick = { state.selectEntry(item.entry.index) }
             )
         }
     }
@@ -168,11 +177,11 @@ private fun ColumnScope.Entries(state: SampleListDialogState) {
 @Composable
 private fun ItemRow(
     item: SampleListDialogItem,
-    isSelect: Boolean,
+    isSelected: Boolean,
     textColor: Color,
     onClick: (() -> Unit)? = null
 ) {
-    val backgroundModifier = if (isSelect) {
+    val backgroundModifier = if (isSelected) {
         Modifier.background(MaterialTheme.colors.primaryVariant)
     } else Modifier
 
@@ -292,8 +301,15 @@ private fun ColumnScope.GroupLazyColumn(
 }
 
 @Composable
-private fun ButtonBar(finish: () -> Unit) {
+private fun ButtonBar(finish: () -> Unit, hasSelectedEntry: Boolean, jumpToSelectedEntry: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        TextButton(
+            enabled = hasSelectedEntry,
+            onClick = { jumpToSelectedEntry() }
+        ) {
+            Text(string(Strings.SampleListJumpToSelectedEntryButton))
+        }
+        Spacer(Modifier.width(25.dp))
         Button(
             onClick = { finish() }
         ) {

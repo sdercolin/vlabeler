@@ -187,4 +187,8 @@ class EditorState(
     fun createDefaultEntry(sampleName: String) {
         appState.createDefaultEntry(sampleName)
     }
+
+    fun jumpToEntry(index: Int) {
+        appState.jumpToEntry(index)
+    }
 }

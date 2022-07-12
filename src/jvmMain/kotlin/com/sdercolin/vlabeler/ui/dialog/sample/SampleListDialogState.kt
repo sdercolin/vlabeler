@@ -48,21 +48,33 @@ class SampleListDialogState(
             )
         }
         excludedSampleItems = (existing - projectSamples.toSet()).map { SampleListDialogItem.ExcludedSample(it) }
-        selectedSampleName?.let { select(it) }
+        selectedSampleName?.let { selectSample(it) }
     }
 
-    fun select(name: String) {
+    fun selectSample(name: String) {
         selectedSampleName = name
         val entries = editorState.project.entries
         entryItems = entries.indices.filter { entries[it].sample == name }.map {
             val indexedEntry = IndexedEntry(entries[it], it)
             SampleListDialogItem.Entry(name = indexedEntry.name, entry = indexedEntry)
         }
+        if (selectedEntryIndex !in entryItems.map { it.entry.index }) {
+            selectedEntryIndex = null
+        }
+    }
+
+    fun selectEntry(index: Int) {
+        selectedEntryIndex = index
     }
 
     fun createDefaultEntry() {
         val sampleName = requireNotNull(selectedSampleName)
         editorState.createDefaultEntry(sampleName)
         fetch()
+    }
+
+    fun jumpToSelectedEntry() {
+        val index = requireNotNull(selectedEntryIndex)
+        editorState.jumpToEntry(index)
     }
 }

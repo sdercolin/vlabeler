@@ -198,6 +198,9 @@ enum class Strings(val en: String) {
     SampleListEntriesPlaceholderNoEntryButton(
         en = "Create Default"
     ),
+    SampleListJumpToSelectedEntryButton(
+        en = "Go to selected entry"
+    ),
     ChooseSampleDirectoryDialogTitle(
         en = "Choose sample directory"
     ),
