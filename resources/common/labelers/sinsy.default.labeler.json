@@ -47,7 +47,7 @@
   },
   "writer": {
     "scripts": [
-      "output = str(int(start*10000)) + \" \" + str(int(end*10000)) + \" \" + name"
+      "output = (start * 10000).toFixed().toString() + \" \" + (end * 10000).toFixed().toString() + \" \"+ name"
     ]
   }
 }

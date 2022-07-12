@@ -6,7 +6,6 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.mergeEntriesWithSampleNames
 import com.sdercolin.vlabeler.util.JavaScript
-import com.sdercolin.vlabeler.util.Python
 import com.sdercolin.vlabeler.util.matchGroups
 import com.sdercolin.vlabeler.util.replaceWithVariables
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
@@ -67,12 +66,12 @@ fun fromRawLabels(
 }
 
 fun Project.toRawLabels(): String {
-    val python = Python()
+    val js = JavaScript()
     val lines = entries
         .map { entry ->
             val fields = labelerConf.getFieldMap(entry)
             val extra = labelerConf.getExtraMap(entry)
-            val properties = labelerConf.getPropertyMap(fields, extra, python)
+            val properties = labelerConf.getPropertyMap(fields, extra, js)
             val variables: Map<String, Any> =
                 fields.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
                     // if a name is shared in fields and properties, its value will be overwritten by properties
@@ -86,16 +85,16 @@ fun Project.toRawLabels(): String {
             val scripts = labelerConf.writer.scripts
             if (scripts != null) {
                 for (variable in variables) {
-                    python.set(variable.key, variable.value)
+                    js.set(variable.key, variable.value)
                 }
-                python.exec(scripts.joinToString("\n"))
-                python.get("output")
+                js.eval(scripts.joinToString("\n"))
+                js.get("output")
             } else {
                 val format = labelerConf.writer.format!!
                 format.replaceWithVariables(variables)
             }
         }
-    python.close()
+    js.close()
     return lines.joinToString("\n")
 }
 
@@ -111,19 +110,14 @@ private fun LabelerConf.getExtraMap(entry: Entry) = extraFieldNames.mapIndexed {
     name to entry.extra[index]
 }.toMap()
 
-private fun LabelerConf.getPropertyBaseMap(fields: Map<String, Float>, extras: Map<String, String>, python: Python) =
-    properties.associateWith {
-        it.value.replaceWithVariables(fields + extras).let(python::eval)
-    }
-
 private fun LabelerConf.getPropertyBaseMap(fields: Map<String, Float>, extras: Map<String, String>, js: JavaScript) =
     properties.associateWith {
         val expression = it.value.replaceWithVariables(fields + extras)
         js.eval(expression)!!.asDouble()
     }
 
-private fun LabelerConf.getPropertyMap(fields: Map<String, Float>, extras: Map<String, String>, python: Python) =
-    getPropertyBaseMap(fields, extras, python).mapKeys { it.key.name }
+private fun LabelerConf.getPropertyMap(fields: Map<String, Float>, extras: Map<String, String>, js: JavaScript) =
+    getPropertyBaseMap(fields, extras, js).mapKeys { it.key.name }
 
 fun LabelerConf.getPropertyMap(entry: Entry, js: JavaScript) =
     getPropertyBaseMap(getFieldMap(entry), getExtraMap(entry), js)
