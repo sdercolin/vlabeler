@@ -47,6 +47,7 @@ interface ProjectStore {
     fun duplicateEntry(index: Int, newName: String)
     val canRemoveCurrentEntry: Boolean
     fun removeCurrentEntry()
+    fun isCurrentEntryTheLast(): Boolean
     fun toggleMultipleEditMode(on: Boolean)
     fun getAutoSavedProjectFile(): File?
     fun discardAutoSavedProjects()
@@ -183,10 +184,22 @@ class ProjectStoreImpl(
         duplicateEntry(index, newName).copy(currentIndex = index + 1)
     }
 
-    override val canRemoveCurrentEntry // TODO: Allow cancel to remove sample from project
-        get() = project?.let { it.currentEntryGroup.size > 1 } == true
+    override val canRemoveCurrentEntry
+        get() = requireProject().entries.size > 1
 
-    override fun removeCurrentEntry() = editProject { removeCurrentEntry() }
+    override fun removeCurrentEntry() {
+        val previousProject = requireProject()
+
+        editProject { removeCurrentEntry() }
+        if (requireProject().hasSwitchedSample(previousProject) && appConf.value.editor.autoScroll.onLoadedNewSample) {
+
+        }
+    }
+
+    override fun isCurrentEntryTheLast(): Boolean {
+        val project = requireProject()
+        return project.entries.count { it.sample == project.currentSampleName } == 1
+    }
 
     override fun toggleMultipleEditMode(on: Boolean) = editProject { copy(multipleEditMode = on) }
 

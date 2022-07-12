@@ -24,7 +24,15 @@ import java.io.File
 sealed class CommonConfirmationDialogAction(
     val stringKey: Strings
 ) : EmbeddedDialogArgs {
-    object RemoveCurrentEntry : CommonConfirmationDialogAction(Strings.AskIfRemoveEntryDialogDescription)
+    class RemoveCurrentEntry(isLastEntry: Boolean) :
+        CommonConfirmationDialogAction(
+            if (isLastEntry) {
+                Strings.AskIfRemoveEntryLastDialogDescription
+            } else {
+                Strings.AskIfRemoveEntryDialogDescription
+            }
+        )
+
     class LoadAutoSavedProject(val file: File) :
         CommonConfirmationDialogAction(Strings.AskIfLoadAutoSavedProjectDialogDescription)
 }
@@ -67,4 +75,4 @@ fun CommonConfirmationDialog(
 
 @Composable
 @Preview
-private fun Preview() = CommonConfirmationDialog(CommonConfirmationDialogAction.RemoveCurrentEntry) {}
+private fun Preview() = CommonConfirmationDialog(CommonConfirmationDialogAction.RemoveCurrentEntry(true)) {}

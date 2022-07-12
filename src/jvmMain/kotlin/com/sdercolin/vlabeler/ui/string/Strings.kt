@@ -81,6 +81,9 @@ enum class Strings(val en: String) {
     MenuViewToggleToolbox(
         en = "Show Toolbox"
     ),
+    MenuViewOpenSampleList(
+        en = "Sample List"
+    ),
     MenuNavigate(
         en = "Navigate"
     ),
@@ -218,6 +221,10 @@ enum class Strings(val en: String) {
     ),
     AskIfRemoveEntryDialogDescription(
         en = "Removing current entry..."
+    ),
+    AskIfRemoveEntryLastDialogDescription(
+        en = "Removing current entry...\nThis entry is the only one that has reference of the current sample file." +
+            "\nIf you need to add an entry on it later, please see menu `View` -> `Sample List`."
     ),
     AskIfLoadAutoSavedProjectDialogDescription(
         en = "Auto-saved project file found. Do you want to load it? If not, the file will be discarded."

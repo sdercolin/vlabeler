@@ -49,7 +49,7 @@ interface AppDialogState {
     fun openJumpToEntryDialog()
     fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose)
     fun askIfSaveBeforeExit()
-    fun confirmIfRemoveCurrentEntry()
+    fun confirmIfRemoveCurrentEntry(isLastEntry: Boolean)
     fun confirmIfLoadAutoSavedProject(file: File)
     fun closeEmbeddedDialog()
     fun closeAllDialogs()
@@ -167,7 +167,10 @@ class AppDialogStateImpl(
     }
 
     override fun askIfSaveBeforeExit() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExiting)
-    override fun confirmIfRemoveCurrentEntry() = openEmbeddedDialog(CommonConfirmationDialogAction.RemoveCurrentEntry)
+
+    override fun confirmIfRemoveCurrentEntry(isLastEntry: Boolean) =
+        openEmbeddedDialog(CommonConfirmationDialogAction.RemoveCurrentEntry(isLastEntry))
+
     override fun confirmIfLoadAutoSavedProject(file: File) =
         openEmbeddedDialog(CommonConfirmationDialogAction.LoadAutoSavedProject(file))
 

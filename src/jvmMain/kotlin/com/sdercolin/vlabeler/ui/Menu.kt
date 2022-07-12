@@ -127,8 +127,8 @@ fun FrameWindowScope.Menu(
                 )
                 Item(
                     string(Strings.MenuEditRemoveEntry),
-                    onClick = { appState.confirmIfRemoveCurrentEntry() },
-                    enabled = appState.isEditorActive && appState.canRemoveCurrentEntry
+                    onClick = { appState.confirmIfRemoveCurrentEntry(appState.isCurrentEntryTheLast()) },
+                    enabled = appState.isEditorActive
                 )
                 CheckboxItem(
                     string(Strings.MenuEditMultipleEditMode),
