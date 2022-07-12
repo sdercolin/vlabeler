@@ -13,7 +13,9 @@
     200,
     500
   ],
-  "defaultExtras": ["500"],
+  "defaultExtras": [
+    "500"
+  ],
   "fields": [
     {
       "name": "fixed",

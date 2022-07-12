@@ -10,7 +10,7 @@ if cutoff < 0:
     end = start - cutoff
 else:
     end = -cutoff
-extra = [str(cutoff)] # rawRight is required as extra in the oto labeler
+extra = [str(cutoff)]  # rawRight is required as extra in the oto labeler
 fixed = start + fixed
 preutterance = start + preutterance
 overlap = start + overlap

@@ -71,7 +71,8 @@ for note in notes:
             consonantEnd = note.pos
             vowelStart = consonantEnd
             vowelEnd = note.pos + note.length
-            entries.append(Entry(sample=sample, name=phonemes[0], start=consonantStart, end=consonantEnd, points=[], extras=[]))
+            entries.append(
+                Entry(sample=sample, name=phonemes[0], start=consonantStart, end=consonantEnd, points=[], extras=[]))
             last = Entry(sample=sample, name=phonemes[1], start=vowelStart, end=vowelEnd, points=[], extras=[])
         else:
             vowelDelay = params["vowelDelay"]
@@ -82,11 +83,13 @@ for note in notes:
             consonantStart = note.pos - overlap
             consonantEnd = consonantStart + consonantLength
             semivowelStart = consonantEnd
-            semivowelEnd = semivowelStart +semivowelLength
+            semivowelEnd = semivowelStart + semivowelLength
             vowelStart = semivowelEnd
             vowelEnd = note.pos + note.length
-            entries.append(Entry(sample=sample, name=phonemes[0], start=consonantStart, end=consonantEnd, points=[], extras=[]))
-            entries.append(Entry(sample=sample, name=phonemes[1], start=semivowelStart, end=semivowelEnd, points=[], extras=[]))
+            entries.append(
+                Entry(sample=sample, name=phonemes[0], start=consonantStart, end=consonantEnd, points=[], extras=[]))
+            entries.append(
+                Entry(sample=sample, name=phonemes[1], start=semivowelStart, end=semivowelEnd, points=[], extras=[]))
             last = Entry(sample=sample, name=phonemes[2], start=vowelStart, end=vowelEnd, points=[], extras=[])
 
 if last is not None:
