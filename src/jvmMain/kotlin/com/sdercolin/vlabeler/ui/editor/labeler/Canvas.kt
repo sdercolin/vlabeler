@@ -38,6 +38,8 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerLabels
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerPointEventContainer
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.rememberMarkerState
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Yellow
 import com.sdercolin.vlabeler.util.getScreenRange
 import kotlin.math.ceil
@@ -106,6 +108,8 @@ fun Canvas(
                     PlayerCursor(canvasParams, appState.playerState, horizontalScrollState)
                 }
             }
+        } else {
+            Error(string(Strings.FailedToLoadSampleFileError))
         }
     }
 }
