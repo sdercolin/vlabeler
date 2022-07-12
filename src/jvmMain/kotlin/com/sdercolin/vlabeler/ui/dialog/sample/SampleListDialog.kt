@@ -162,7 +162,7 @@ private fun ColumnScope.Entries(state: SampleListDialogState) {
         }
     ) {
         items(state.entryItems) { item ->
-            val isSelected = state.selectedEntryIndex == item.entry.index
+            val isSelected = item.isSelected(state.selectedEntryIndex)
             val textColor = MaterialTheme.colors.onBackground
             ItemRow(
                 item,
