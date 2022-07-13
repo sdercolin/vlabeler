@@ -65,7 +65,7 @@ for (const note of notes) {
     let phonemes = dict[note.lyric] || [note.lyric]
     log("on note: " + JSON.stringify(note) + " phonemes: " + JSON.stringify(phonemes))
     // max count of phonemes is 3
-    if (phonemes.length == 1) {
+    if (phonemes.length === 1) {
         if (last) {
             entries.push(last)
             start = note.pos
@@ -85,7 +85,7 @@ for (const note of notes) {
             entries.push(last)
             log("push edited last: " + JSON.stringify(last))
         }
-        if (phonemes.length == 2) {
+        if (phonemes.length === 2) {
             consonantStart = note.pos - overlap
             consonantEnd = note.pos
             vowelStart = consonantEnd

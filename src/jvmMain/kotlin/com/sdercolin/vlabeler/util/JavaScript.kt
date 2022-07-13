@@ -14,7 +14,7 @@ class JavaScript(logHandler: Handler? = null, currentWorkingDirectory: File? = n
     private val context = Context.newBuilder()
         .allowHostAccess(HostAccess.ALL)
         .allowHostClassLookup { true }
-        .logHandler(logHandler)
+        .run { if (logHandler != null) logHandler(logHandler) else this }
         .allowIO(true)
         .currentWorkingDirectory(currentWorkingDirectory?.toPath() ?: HomeDir.toPath())
         .build()
@@ -71,6 +71,15 @@ class JavaScript(logHandler: Handler? = null, currentWorkingDirectory: File? = n
     inline fun <reified T : @Serializable Any> getJson(name: String): T {
         val json = eval("JSON.stringify($name)")!!.asString()
         return parseJson(json)
+    }
+
+    /**
+     * Receive object from JavaScript via JSON deserialization
+     */
+    inline fun <reified T : @Serializable Any> getJsonOrNull(name: String): T? {
+        val undefined = eval("typeof($name) == \"undefined\" || $name == null")?.asBoolean() != false
+        if (undefined) return null
+        return getJson(name)
     }
 
     override fun close() {

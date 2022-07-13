@@ -233,12 +233,12 @@ fun runTemplatePlugin(
 
 @Serializable
 data class FlatEntry(
-    val sample: String?,
+    val sample: String? = null,
     val name: String,
     val start: Float,
     val end: Float,
-    val points: List<Float>,
-    val extra: List<String>
+    val points: List<Float> = listOf(),
+    val extra: List<String> = listOf()
 ) {
     fun toEntry(fallbackSample: String) = Entry(sample ?: fallbackSample, name, start, end, points, extra)
 }

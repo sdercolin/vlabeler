@@ -32,9 +32,24 @@ class JavaScriptTest {
     }
 
     @Test
+    fun testObjectNull() {
+        JavaScript().use {
+            it.set("a", null)
+            assert(it.getJsonOrNull<Pair<String, Int>>("a") == null)
+        }
+    }
+
+    @Test
     fun testUndefined() {
         JavaScript().use {
             assert(it.getOrNull<Any>("a") == null)
+        }
+    }
+
+    @Test
+    fun testObjectUndefined() {
+        JavaScript().use {
+            assert(it.getJsonOrNull<Pair<String, Int>>("a") == null)
         }
     }
 

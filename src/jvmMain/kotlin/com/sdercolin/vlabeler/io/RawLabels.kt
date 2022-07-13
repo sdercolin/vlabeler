@@ -42,9 +42,7 @@ fun fromRawLabels(
             val points = js.getOrNull<List<Double>>("points")?.map { it.toFloat() } ?: listOf()
 
             // optional extra
-            val extra = labelerConf.extraFieldNames.mapIndexed { index, extraName ->
-                js.getOrNull<Any>(extraName)?.toString() ?: labelerConf.defaultExtras[index]
-            }
+            val extra = js.getJsonOrNull("extra") ?: labelerConf.defaultExtras
 
             if (start == null || end == null || points.size != labelerConf.fields.size) {
                 // use default except name if data size is not enough
