@@ -39,7 +39,7 @@ The object has the following properties:
 - `options`: For parameter type `enum`. (Required) List of String. Items of the enumerable.
 
 ## Scripting Environment
-`vLabeler` uses embedded [JavaScript](https://developer.mozilla.org/ja/docs/Web/JavaScript) engined provided by [GraalVM 22.1](https://www.graalvm.org/22.1/reference-manual/js/).
+`vLabeler` uses embedded [JavaScript](https://developer.mozilla.org/ja/docs/Web/JavaScript) engine provided by [GraalVM 22.1](https://www.graalvm.org/22.1/reference-manual/js/).
 
 It implements JavaScript in the ECMAScript (ECMA-262) specification which is fully compatible with the ECMAScript 2021 specification (ES12) 
 Check [JavaScript Compatibility](https://www.graalvm.org/22.1/reference-manual/js/JavaScriptCompatibility/) for detailed info about language specifications.
