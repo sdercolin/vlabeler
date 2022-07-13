@@ -1,6 +1,6 @@
 {
   "name": "sinsy.default",
-  "version": 3,
+  "version": 4,
   "extension": "lab",
   "defaultInputFilePath": null,
   "displayedName": "Sinsy lab labeler",
