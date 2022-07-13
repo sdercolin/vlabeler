@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import launchGcDelayed
 import kotlin.math.absoluteValue
 
 class ChartStore {
@@ -39,6 +40,7 @@ class ChartStore {
         job = null
         waveformChartsList.clear()
         spectrogramCharts.clear()
+        launchGcDelayed()
     }
 
     fun load(

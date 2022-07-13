@@ -7,6 +7,7 @@ import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.model.SampleInfo
+import launchGcDelayed
 import java.io.File
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
@@ -74,7 +75,7 @@ fun loadSampleFile(file: File, appConf: AppConf): Result<Sample> = runCatching {
     val spectrogram = if (appConf.painter.spectrogram.enabled) {
         wave.toSpectrogram(appConf.painter.spectrogram, info)
     } else null
-    System.gc()
+    launchGcDelayed()
     return Result.success(
         Sample(
             info = info,

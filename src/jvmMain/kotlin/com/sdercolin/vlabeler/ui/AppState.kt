@@ -81,6 +81,7 @@ class AppState(
     fun getPlugins(type: Plugin.Type) = plugins.filter { it.type == type }
 
     private fun changeScreen(screen: Screen) {
+        editor?.chartStore?.clear()
         this.screen = screen
         closeAllDialogs()
     }

@@ -228,6 +228,10 @@ fun FrameWindowScope.Menu(
                         "Export AppConfig",
                         onClick = { CustomAppConfFile.writeText(toJson(appState.appConf)) }
                     )
+                    Item(
+                        "GC",
+                        onClick = { System.gc() }
+                    )
                 }
             }
         }
