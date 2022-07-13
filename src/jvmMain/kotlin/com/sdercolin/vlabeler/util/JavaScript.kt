@@ -22,35 +22,48 @@ class JavaScript(outputStream: OutputStream? = null, currentWorkingDirectory: Fi
 
     fun eval(source: String): Value? = context.eval("js", source)
 
+    /**
+     * Only for primitives. For other types, use [getJson]
+     */
     fun <T : Any> getOrNull(name: String, ofClass: Class<T>): T? {
         val value = bindings.getMember(name) ?: return null
         if (value.isNull) return null
         return value.`as`(ofClass)
     }
 
+    /**
+     * Only for primitives. For other types, use [getJson]
+     */
     inline fun <reified T : Any> get(name: String): T {
         return requireNotNull(getOrNull(name, T::class.java))
     }
 
+    /**
+     * Only for primitives. For other types, use [getJson]
+     */
     inline fun <reified T : Any> getOrNull(name: String): T? {
         return getOrNull(name, T::class.java)
     }
 
+    /**
+     * Only for primitives. For other types, use [setJson]
+     */
     fun set(name: String, value: Any?) {
         bindings.putMember(name, value)
     }
 
-    fun <T> setArray(name: String, value: List<T>) {
-        set(name, value)
-        eval("$name = Java.from($name)")
-    }
-
-    inline fun <reified T : @Serializable Any> setObject(name: String, value: T) {
+    /**
+     * Pass object to JavaScript via JSON serialization
+     */
+    inline fun <reified T : @Serializable Any> setJson(name: String, value: T) {
         set(name, toJson(value))
         eval("$name = JSON.parse($name)")
     }
 
-    inline fun <reified T : @Serializable Any> getObject(name: String): T {
+    /**
+     * Receive object from JavaScript via JSON deserialization
+     */
+    inline fun <reified T : @Serializable Any> getJson(name: String): T {
         val json = eval("JSON.stringify($name)")!!.asString()
         return parseJson(json)
     }
