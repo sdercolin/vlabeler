@@ -96,10 +96,6 @@ For labelers with `continuous: true` (currently only the sinsy lab labeler), you
 a multiple editing mode which shows and allows you to edit all the connected entries in the same sample file.
 It's enabled by default. You can toggle the menu item `Edit` -> `Edit All Connected Entries` to enable or disable it.
 
-**If your sample file is long, the editor may spend time rendering while you move parameter controllers. Please decide
-a mode to use according to your device's specifications for the present.** 
-
-
 ## Tools
 The following editing tool is provided.
 You can use shortcuts or menu items under `Edit` -> `Tools` to switch tools, or toggle the Toolbox view by menu `View`
@@ -150,5 +146,4 @@ When reporting issues, please attach the recent log files.
 
 ## Known issues
 1. Audio files with a higher bit depth than 16-bit cannot be played normally. Please convert them priorly.
-2. When the audio file gets very long, the editor may get errors while painting. Please zoom out the editor or split the files. You may find [this tool](https://github.com/sdercolin/LongWavOtoHelper) helpful on Windows.
-3. On Linux, file chooser may not be able to select an empty folder. Please creating something inside, or copy + paste its path.
+2. On Linux, file chooser may not be able to select an empty folder. Please creating something inside, or copy + paste its path.
