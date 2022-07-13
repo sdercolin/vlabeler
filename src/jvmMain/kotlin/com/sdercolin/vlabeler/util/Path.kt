@@ -31,6 +31,7 @@ val AppDir
     }
 val CustomAppConfFile get() = AppDir.resolve(AppConfFileName)
 val CustomLabelerDir get() = AppDir.resolve(LabelerFolderName)
+val CustomPluginDir get() = AppDir.resolve(PluginFolderName)
 
 private val labelerFileFilter = FilenameFilter { _, name -> name.endsWith(".$LabelerFileExtension") }
 fun getDefaultLabelers() = DefaultLabelerDir.listFiles(labelerFileFilter).orEmpty().toList()

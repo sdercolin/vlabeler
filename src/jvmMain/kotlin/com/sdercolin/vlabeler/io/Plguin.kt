@@ -1,7 +1,9 @@
 package com.sdercolin.vlabeler.io
 
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.util.CustomPluginDir
 import com.sdercolin.vlabeler.util.DefaultPluginDir
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.json
@@ -18,9 +20,11 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 fun loadPlugins(type: Plugin.Type): List<Plugin> =
-    DefaultPluginDir.resolve(type.directoryName).listFiles()
-        .orEmpty()
+    listOf(CustomPluginDir, DefaultPluginDir)
+        .let { if (isDebug) it.reversed() else it }
+        .flatMap { it.resolve(type.directoryName).listFiles().orEmpty().toList() }
         .filter { it.isDirectory }
+        .distinctBy { it.name }
         .map { it.resolve(PluginInfoFileName) }
         .filter { it.exists() }
         .map { it to it.readText() }

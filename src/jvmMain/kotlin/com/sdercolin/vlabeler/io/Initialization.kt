@@ -17,6 +17,7 @@ import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.CustomLabelerDir
+import com.sdercolin.vlabeler.util.CustomPluginDir
 import com.sdercolin.vlabeler.util.DefaultAppConfFile
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getCustomLabelers
@@ -66,7 +67,9 @@ suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatc
             // update with default
             availableLabelers.add(default.second)
             default.first.copyTo(CustomLabelerDir.resolve(custom.first.name), overwrite = true)
-            Log.debug("Update ${custom.first.name} to version ${default.second.version}")
+            if (default.second.version > custom.second.version) {
+                Log.debug("Update ${custom.first.name} to version ${default.second.version}")
+            }
         } else {
             availableLabelers.add(custom.second)
         }
@@ -100,17 +103,14 @@ private fun File.asLabelerConf(): Result<LabelerConf> {
 }
 
 fun ensureDirectories() {
-    if (AppDir.exists().not()) {
-        AppDir.mkdir()
-        Log.info("$AppDir created")
-    }
-    if (CustomLabelerDir.exists().not()) {
-        CustomLabelerDir.mkdir()
-        Log.info("$CustomLabelerDir created")
-    }
-    if (RecordDir.exists().not()) {
-        RecordDir.mkdir()
-        Log.info("$RecordDir created")
+    val directories = listOf(AppDir, CustomLabelerDir, CustomPluginDir, RecordDir) +
+        Plugin.Type.values().map { CustomPluginDir.resolve(it.directoryName) }
+
+    directories.forEach {
+        if (it.exists().not()) {
+            it.mkdir()
+            Log.info("$it created")
+        }
     }
 }
 
