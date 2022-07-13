@@ -56,6 +56,7 @@ import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.toParamMap
 
 class PluginDialogState(
     val plugin: Plugin,
@@ -70,7 +71,7 @@ class PluginDialogState(
     private fun getCurrentParamMap() = params.mapIndexed { index, textValue ->
         val def = paramDefs[index]
         def.name to parseTextValue(textValue, def)
-    }.toMap()
+    }.toMap().toParamMap()
 
     fun apply() {
         submit(getCurrentParamMap())

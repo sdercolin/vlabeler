@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.util.DefaultPluginDir
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.json
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonObject
@@ -54,6 +55,7 @@ suspend fun Plugin.loadSavedParams(): ParamMap = withContext(Dispatchers.IO) {
                 it.name to value
             }
         }
+        ?.toParamMap()
         ?: getDefaultParams()
 }
 

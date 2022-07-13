@@ -47,7 +47,7 @@
   },
   "writer": {
     "scripts": [
-      "output = (start * 10000).toFixed().toString() + \" \" + (end * 10000).toFixed().toString() + \" \"+ name"
+      "output = (start * 10000).toFixed() + \" \" + (end * 10000).toFixed() + \" \"+ name"
     ]
   }
 }

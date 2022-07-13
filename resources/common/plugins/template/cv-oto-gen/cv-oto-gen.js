@@ -6,20 +6,23 @@ preutterance = params["preutterance"]
 cutoff = params["cutoff"]
 
 start = offset
-if cutoff < 0:
+if (cutoff < 0) {
     end = start - cutoff
-else:
+} else {
     end = -cutoff
-extra = [str(cutoff)]  # rawRight is required as extra in the oto labeler
+}
+extra = [cutoff.toString()]  // rawRight is required as extra in the oto labeler
 fixed = start + fixed
 preutterance = start + preutterance
 overlap = start + overlap
-if overlap < 0:
+if (overlap < 0) {
     overlap = 0
+}
 points = [fixed, preutterance, overlap]
-# for oto labeler plus, adding start again in the points
-points.append(start)
+// for oto labeler plus, adding start again in the points
+points.push(start)
 
-for sample in samples:
-    entry = Entry(sample, sample, start, end, points, extra)
-    output.append(entry)
+for (sample of samples) {
+    entry = new Entry(sample, sample, start, end, points, extra)
+    output.push(entry)
+}

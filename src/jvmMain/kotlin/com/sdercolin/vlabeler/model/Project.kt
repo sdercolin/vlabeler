@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.orEmpty
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.io.File
@@ -248,7 +249,7 @@ private fun generateEntriesByPlugin(
                 extra = it.extra.take(labelerConf.extraFieldNames.count())
             )
         }
-        .map { it.toEntry(sampleName = it.sample ?: sampleNames.first()) }
+        .map { it.toEntry(fallbackSample = sampleNames.first()) }
     mergeEntriesWithSampleNames(labelerConf, entries, sampleNames)
 }
 

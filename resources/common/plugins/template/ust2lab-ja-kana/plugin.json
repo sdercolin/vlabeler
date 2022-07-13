@@ -1,6 +1,6 @@
 {
   "name": "ust2lab-ja-kana",
-  "version": 1,
+  "version": 2,
   "type": "template",
   "displayedName": "Lab generator with ust (ja-kana)",
   "author": "sdercolin",
@@ -26,7 +26,10 @@
       }
     ]
   },
+  "resourceFiles": [
+    "dict.txt"
+  ],
   "scriptFiles": [
-    "ust2lab-ja-kana.py"
+    "ust2lab-ja-kana.js"
   ]
 }

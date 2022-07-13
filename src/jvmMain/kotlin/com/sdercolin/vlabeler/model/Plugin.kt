@@ -5,10 +5,12 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.res.useResource
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.isDebug
+import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
-import com.sdercolin.vlabeler.util.Python
 import com.sdercolin.vlabeler.util.json
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -24,8 +26,6 @@ import kotlinx.serialization.json.float
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
-import org.python.core.PyObject
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.charset.Charset
 
@@ -47,13 +47,14 @@ data class Plugin(
     val allowMultipleInputFiles: Boolean = false,
     val parameters: Parameters? = null,
     val scriptFiles: List<String>,
+    val resourceFiles: List<String> = listOf(),
     @Transient val directory: File? = null
 ) {
-
+    fun readResourceFiles() = resourceFiles.map { requireNotNull(directory).resolve(it).readText() }
     fun readScriptTexts() = scriptFiles.map { requireNotNull(directory).resolve(it).readText() }
     fun getDefaultParams() = parameters?.list.orEmpty().associate { parameter ->
         parameter.name to requireNotNull(parameter.defaultValue)
-    }
+    }.toParamMap()
 
     @Serializable
     enum class Type(val directoryName: String) {
@@ -202,41 +203,42 @@ fun runTemplatePlugin(
     encoding: String,
     sampleNames: List<String>
 ): List<FlatEntry> {
-    val python = Python()
+    val js = JavaScript(
+        logHandler = Log.infoStreamHandler,
+        currentWorkingDirectory = File(requireNotNull(plugin.directory).absolutePath)
+    )
     val inputTexts = inputFiles.map { it.readText(Charset.forName(encoding)) }
-    python.setCurrentWorkingDirectory(requireNotNull(plugin.directory).absolutePath)
+    val resourceTexts = plugin.readResourceFiles()
 
-    val outputStream = ByteArrayOutputStream()
-    python.setOutputStream(outputStream)
+    js.set("debug", isDebug)
+    js.setJson("inputs", inputTexts)
+    js.setJson("samples", sampleNames)
+    js.setJson("params", params.toJsonObject())
+    js.setJson("resources", resourceTexts)
 
-    python.set("inputs", inputTexts)
-    python.set("samples", sampleNames)
-    python.set("params", params)
+    val entryDefCode = useResource("template_entry.js") { String(it.readAllBytes()) }
+    js.eval(entryDefCode)
 
-    val entryDefCode = useResource("template_entry.py") { String(it.readAllBytes()) }
-    python.exec(entryDefCode)
-
-    plugin.readScriptTexts().forEach {
-        python.exec(it)
+    plugin.scriptFiles.zip(plugin.readScriptTexts()).forEach { (file, source) ->
+        Log.debug("Launch script: $file")
+        js.exec(file, source)
+        Log.debug("Finished script: $file")
     }
 
-    val output = python.get<List<PyObject>>("output")
-        .map { obj ->
-            FlatEntry(
-                sample = obj.__getattr__("sample").asStringOrNull(),
-                name = obj.__getattr__("name").asString(),
-                start = obj.__getattr__("start").asDouble().toFloat(),
-                end = obj.__getattr__("end").asDouble().toFloat(),
-                points = obj.__getattr__("points").asIterable().map { it.asDouble().toFloat() },
-                extra = obj.__getattr__("extras").asIterable().map { it.asString() }
-            )
-        }
+    val output = js.getJson<List<FlatEntry>>("output")
     Log.info("Plugin execution got entries:\n" + output.joinToString("\n"))
-    val printed = outputStream.toByteArray().decodeToString()
-    if (printed.isNotBlank()) {
-        Log.debug("Plugin execution output:\n$printed")
-    }
-    outputStream.close()
-    python.close()
+    js.close()
     return output
+}
+
+@Serializable
+data class FlatEntry(
+    val sample: String?,
+    val name: String,
+    val start: Float,
+    val end: Float,
+    val points: List<Float>,
+    val extra: List<String>
+) {
+    fun toEntry(fallbackSample: String) = Entry(sample ?: fallbackSample, name, start, end, points, extra)
 }

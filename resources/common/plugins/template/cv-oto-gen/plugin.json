@@ -1,6 +1,6 @@
 {
   "name": "cv-oto-gen",
-  "version": 1,
+  "version": 2,
   "type": "template",
   "displayedName": "CV oto generator",
   "author": "sdercolin",
@@ -45,6 +45,6 @@
     ]
   },
   "scriptFiles": [
-    "cv-oto-gen.py"
+    "cv-oto-gen.js"
   ]
 }

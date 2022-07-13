@@ -3,24 +3,29 @@ package com.sdercolin.vlabeler.util
 import kotlinx.serialization.Serializable
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.HostAccess
+import org.graalvm.polyglot.Source
 import org.graalvm.polyglot.Value
 import java.io.Closeable
 import java.io.File
-import java.io.OutputStream
+import java.util.logging.Handler
 
-class JavaScript(outputStream: OutputStream? = null, currentWorkingDirectory: File? = null) : Closeable {
+class JavaScript(logHandler: Handler? = null, currentWorkingDirectory: File? = null) : Closeable {
 
     private val context = Context.newBuilder()
         .allowHostAccess(HostAccess.ALL)
         .allowHostClassLookup { true }
+        .logHandler(logHandler)
         .allowIO(true)
         .currentWorkingDirectory(currentWorkingDirectory?.toPath() ?: HomeDir.toPath())
-        .out(outputStream ?: System.out)
         .build()
 
     private val bindings get() = context.getBindings("js")
 
     fun eval(source: String): Value? = context.eval("js", source)
+
+    fun exec(sourceFileName: String, source: String) {
+        context.eval(Source.newBuilder("js", source, sourceFileName).build())
+    }
 
     /**
      * Only for primitives. For other types, use [getJson]
