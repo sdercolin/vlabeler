@@ -250,23 +250,26 @@ private fun generateEntriesByPlugin(
             )
         }
         .map { it.toEntry(fallbackSample = sampleNames.first()) }
-    mergeEntriesWithSampleNames(labelerConf, entries, sampleNames)
+    mergeEntriesWithSampleNames(labelerConf, entries, sampleNames, includeAllSamples = false)
 }
 
 fun mergeEntriesWithSampleNames(
     labelerConf: LabelerConf,
     entries: List<Entry>,
-    sampleNames: List<String>
+    sampleNames: List<String>,
+    includeAllSamples: Boolean = true
 ): List<Entry> {
     val sampleNameUsed = entries.map { it.sample }.toSet()
     val sampleNamesNotUsed = sampleNames.filterNot { it in sampleNameUsed }
-    val additionalEntries = sampleNamesNotUsed.map { sampleName ->
-        Entry.fromDefaultValues(sampleName, sampleName, labelerConf)
-            .also {
-                Log.info("Sample $sampleName doesn't have entries, created default: $it")
-            }
-        // TODO: notify
-    }
+    val additionalEntries = if (includeAllSamples) {
+        sampleNamesNotUsed.map { sampleName ->
+            Entry.fromDefaultValues(sampleName, sampleName, labelerConf)
+                .also {
+                    Log.info("Sample $sampleName doesn't have entries, created default: $it")
+                }
+            // TODO: notify
+        }
+    } else listOf()
     return (entries + additionalEntries).toContinuous(labelerConf.continuous)
 }
 
