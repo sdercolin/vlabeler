@@ -158,12 +158,12 @@ data class LabelerConf(
         val extractionPattern: String,
         val variableNames: List<String>,
         /**
-         * Output variables that the script should set include:
-         * - String "name"
-         * - Float "start"
-         * - Float "end"
-         * - Float List "points"
+         * Output variables that the scripts should set include:
          * - String "sample" (sample file name without extension)
+         * - String "name"
+         * - Float "start" (in millisecond)
+         * - Float "end" (in millisecond)
+         * - Float List "points" (in millisecond)
          * - String "<extra>" defined in [extraFieldNames]
          *
          * If "sample" is not set, the first sample file is used by all entries in case all entries are bound to the

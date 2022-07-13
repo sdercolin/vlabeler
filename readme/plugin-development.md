@@ -6,7 +6,7 @@ Feel free to ask questions or make feature requests if you find the plugin speci
 ## Plugin File Structure
 A plugin for `vLabeler` is a folder containing:
 1. A `plugin.json` file to define the plugin's behaviors
-2. At least one `*.py` file as the scripts
+2. At least one `*.js` file as the scripts
 3. Other files that your scripts use
 
 ## Plugin Definition
@@ -22,7 +22,8 @@ A plugin for `vLabeler` is a folder containing:
 - `inputFileExtension`: Nullable String. Extension of your input file if any. Defaults to `null`.
 - `requireInputFile`: Boolean. Set to `true` if you always require an input file. Defaults to `false`.
 - `parameters`: Nullable Object. See the `Defining Parameters` section for detail. Defaults to `null`.
-- `scriptFiles`: (Required) List<String>. File names of all your scripts files. The files will be executed in the same order as declared.
+- `scriptFiles`: (Required) List of String. File names of all your scripts files. The files will be executed in the same order as declared.
+- `resourceFiles`: List of String. File names of all the files that you use as resources in your scripts. The contents will be passed to your scripts as string values in the same order as declared.
 
 ### Defining Parameters
 `parameters` object contains an array named `list`.
@@ -35,13 +36,13 @@ The object has the following properties:
 - `min`, `max`: For parameter type `integer` and `float`. (Optional) Integer/Float.
 - `multiLine`: For parameter type `string`. (Optional) Boolean. Set to `true` if you want to allow user enter multi-line string values. Defaults to `false`.
 - `optional`: For parameter type `string`. (Required) Boolean. Set to `true` if you want to allow empty string values.
-- `options`: For parameter type `enum`. (Required) List<String>. Items of the enumerable.
+- `options`: For parameter type `enum`. (Required) List of String. Items of the enumerable.
 
 ## Scripting Environment
-`vLabeler` uses embedded Python 2.7.18 interpreter (provided by [Jython 2.7.2](https://www.jython.org/index)).
-- The console encoding is set to `UTF-8`
-- Current working directory is set to the plugin folder
-- Standard modules available (tested modules include `codecs`, `json`, `math`)
+`vLabeler` uses embedded [JavaScript](https://developer.mozilla.org/ja/docs/Web/JavaScript) engined provided by [GraalVM 22.1](https://www.graalvm.org/22.1/reference-manual/js/).
+
+It implements JavaScript in the ECMAScript (ECMA-262) specification which is fully compatible with the ECMAScript 2021 specification (ES12) 
+Check [JavaScript Compatibility](https://www.graalvm.org/22.1/reference-manual/js/JavaScriptCompatibility/) for detailed info about language specifications.
 
 ## Template Generation Scripts
 A plugin with `template` type is selected and executed in the `New Project` page.
@@ -52,25 +53,26 @@ The following variables are provided before your scripts are executed.
 
 - `inputs`: List of texts read from the input files. Check the list size if your input file is optional.
 - `samples`: List of file names of the sample files. Extension `.wav` is not included.
-- `params`: Dictionary. Use `name` of the defined parameters as the key to get values in their actual types.
+- `params`: Dictionary / Object. Use `name` of the defined parameters as the key to get values in their actual types.
+- `resources`: List of texts read from the resources files in the same order as declared in your `plugin.json`.
  
 ### Output
 You have to create a list named `output` to pass the result back to the application.
 The item in the list should be in the following type (the class is defined before your scripts are executed):
-```python
-class Entry:
-    def __init__(self, sample, name, start, end, points, extras):
-        self.sample = sample # Sample file's name without extension 
-        self.name = name # Entry's name/alias
-        self.start = start # float. Absolute time in millisecond of the beginning of the entry
-        self.end = end # float. Absolute time in millisecond of the end of the entry. Zero or minus values are relative to the end of the sample file.
-        self.points = points # float list. Absolute time in millisecond of the other points required by the labeler.
-        self.extras = extras # string list. Other data required by the labeler.
+```javascript
+class Entry {
+    constructor(sample, name, start, end, points, extra) {
+        this.sample = sample // sample file name without extension
+        this.name = name // entry name (alias)
+        this.start = start // float value in millisecond
+        this.end = end // float value in millisecond
+        this.points = points // list of float values in millisecond
+        this.extra = extra // list of string values
+    }
+}
 ```
-Please check [LabelerConf.kt](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) for details of its properties.
 
-**Note that you should create at least one entry for every sample file.**
-
+Please check [LabelerConf.kt](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) for details about its properties.
 
 ### Examples
 Check the following built-in plugins as examples:
