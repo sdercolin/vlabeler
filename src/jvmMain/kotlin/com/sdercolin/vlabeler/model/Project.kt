@@ -200,7 +200,7 @@ data class Project(
             require(it.points.size == labelerConf.fields.size) {
                 "Point size doesn't match in entry: $it. Required point size = ${labelerConf.fields.size}"
             }
-            require(it.extra.size == labelerConf.extraFieldNames.size) {
+            require(it.extras.size == labelerConf.extraFieldNames.size) {
                 "Extra size doesn't match in entry: $it. Required extra size = ${labelerConf.extraFieldNames.size}"
             }
             it.points.forEach { point ->
@@ -246,7 +246,7 @@ private fun generateEntriesByPlugin(
         .map {
             it.copy(
                 points = it.points.take(labelerConf.fields.count()),
-                extra = it.extra.take(labelerConf.extraFieldNames.count())
+                extras = it.extras.take(labelerConf.extraFieldNames.count())
             )
         }
         .map { it.toEntry(fallbackSample = sampleNames.first()) }

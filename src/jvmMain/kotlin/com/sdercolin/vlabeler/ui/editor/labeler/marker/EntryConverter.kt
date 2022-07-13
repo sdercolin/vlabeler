@@ -20,7 +20,7 @@ class EntryConverter(
             convertToPixel(entry.end)
         },
         points = entry.points.map { convertToPixel(it) },
-        extra = entry.extra
+        extras = entry.extras
     )
 
     private fun convertToPixel(millis: Float) =
@@ -34,7 +34,7 @@ class EntryConverter(
             start = convertToMillis(entry.start),
             end = convertToMillis(entry.end),
             points = entry.points.map { convertToMillis(it) },
-            extra = entry.extra
+            extras = entry.extras
         )
     )
 

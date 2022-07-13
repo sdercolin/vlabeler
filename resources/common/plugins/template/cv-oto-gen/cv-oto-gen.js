@@ -11,7 +11,7 @@ if (cutoff < 0) {
 } else {
     end = -cutoff
 }
-extra = [cutoff.toString()]  // rawRight is required as extra in the oto labeler
+extras = [cutoff.toString()]  // rawRight is required as extra in the oto labeler
 fixed = start + fixed
 preutterance = start + preutterance
 overlap = start + overlap
@@ -23,6 +23,6 @@ points = [fixed, preutterance, overlap]
 points.push(start)
 
 for (sample of samples) {
-    entry = new Entry(sample, sample, start, end, points, extra)
+    entry = new Entry(sample, sample, start, end, points, extras)
     output.push(entry)
 }

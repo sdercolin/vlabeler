@@ -61,13 +61,13 @@ You have to create a list named `output` to pass the result back to the applicat
 The item in the list should be in the following type (the class is defined before your scripts are executed):
 ```javascript
 class Entry {
-    constructor(sample, name, start, end, points, extra) {
+    constructor(sample, name, start, end, points, extras) {
         this.sample = sample // sample file name without extension
         this.name = name // entry name (alias)
         this.start = start // float value in millisecond
         this.end = end // float value in millisecond
         this.points = points // list of float values in millisecond
-        this.extra = extra // list of string values
+        this.extras = extras // list of string values
     }
 }
 ```

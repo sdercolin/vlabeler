@@ -31,7 +31,7 @@ data class Entry(
     /**
      * Extra data as [String] defined by [LabelerConf.extraFieldNames]
      */
-    val extra: List<String>
+    val extras: List<String>
 ) {
     companion object {
         fun fromDefaultValues(sample: String, name: String, labelerConf: LabelerConf) =
@@ -41,7 +41,7 @@ data class Entry(
                 start = labelerConf.defaultValues.first(),
                 end = labelerConf.defaultValues.last(),
                 points = labelerConf.defaultValues.drop(1).dropLast(1),
-                extra = labelerConf.defaultExtras
+                extras = labelerConf.defaultExtras
             )
     }
 }

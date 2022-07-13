@@ -164,7 +164,7 @@ data class LabelerConf(
          * - Float "start" (in millisecond)
          * - Float "end" (in millisecond)
          * - Float List "points" (in millisecond)
-         * - String "<extra>" defined in [extraFieldNames]
+         * - String List corresponding values defined in [extraFieldNames]
          *
          * If "sample" is not set, the first sample file is used by all entries in case all entries are bound to the
          * only one sample file, so the file name doesn't exist in the line.

@@ -41,8 +41,8 @@ fun fromRawLabels(
             val end = js.getOrNull<Double>("end")?.toFloat()
             val points = js.getOrNull<List<Double>>("points")?.map { it.toFloat() } ?: listOf()
 
-            // optional extra
-            val extra = js.getJsonOrNull("extra") ?: labelerConf.defaultExtras
+            // optional extras
+            val extras = js.getJsonOrNull("extras") ?: labelerConf.defaultExtras
 
             if (start == null || end == null || points.size != labelerConf.fields.size) {
                 // use default except name if data size is not enough
@@ -50,7 +50,7 @@ fun fromRawLabels(
                     Log.info("Entry parse failed, fallback to default: $it")
                 }
             } else {
-                Entry(sample = sampleName, name = name, start = start, end = end, points = points, extra = extra)
+                Entry(sample = sampleName, name = name, start = start, end = end, points = points, extras = extras)
             }
         }.getOrElse {
             Log.debug(it)
@@ -68,14 +68,14 @@ fun Project.toRawLabels(): String {
     val lines = entries
         .map { entry ->
             val fields = labelerConf.getFieldMap(entry)
-            val extra = labelerConf.getExtraMap(entry)
-            val properties = labelerConf.getPropertyMap(fields, extra, js)
+            val extras = labelerConf.getExtraMap(entry)
+            val properties = labelerConf.getPropertyMap(fields, extras, js)
             val variables: Map<String, Any> =
                 fields.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
                     // if a name is shared in fields and properties, its value will be overwritten by properties
                     // See source of Kotlin's `fun Map<out K, V>.plus(map: Map<out K, V>)`
                     properties.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
-                    extra +
+                    extras +
                     mapOf(
                         "sample" to entry.sample,
                         "name" to entry.name
@@ -105,7 +105,7 @@ private fun LabelerConf.getFieldMap(entry: Entry) =
     }.toMap()
 
 private fun LabelerConf.getExtraMap(entry: Entry) = extraFieldNames.mapIndexed { index, name ->
-    name to entry.extra[index]
+    name to entry.extras[index]
 }.toMap()
 
 private fun LabelerConf.getPropertyBaseMap(fields: Map<String, Float>, extras: Map<String, String>, js: JavaScript) =

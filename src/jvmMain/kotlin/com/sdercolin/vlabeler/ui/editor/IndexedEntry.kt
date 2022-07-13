@@ -13,6 +13,6 @@ data class IndexedEntry(
     val start get() = entry.start
     val end get() = entry.end
     val points get() = entry.points
-    val extra get() = entry.extra
+    val extras get() = entry.extras
     fun edit(entry: Entry) = copy(entry = entry)
 }

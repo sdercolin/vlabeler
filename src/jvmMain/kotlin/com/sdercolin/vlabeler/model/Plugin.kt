@@ -238,7 +238,7 @@ data class FlatEntry(
     val start: Float,
     val end: Float,
     val points: List<Float> = listOf(),
-    val extra: List<String> = listOf()
+    val extras: List<String> = listOf()
 ) {
-    fun toEntry(fallbackSample: String) = Entry(sample ?: fallbackSample, name, start, end, points, extra)
+    fun toEntry(fallbackSample: String) = Entry(sample ?: fallbackSample, name, start, end, points, extras)
 }

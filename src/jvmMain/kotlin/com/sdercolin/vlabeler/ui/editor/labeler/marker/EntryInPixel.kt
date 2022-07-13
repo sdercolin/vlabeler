@@ -12,7 +12,7 @@ data class EntryInPixel(
     val start: Float,
     val end: Float,
     val points: List<Float>,
-    val extra: List<String>
+    val extras: List<String>
 ) {
 
     fun moved(dx: Float) = copy(
