@@ -9,20 +9,19 @@ import com.github.psambit9791.jdsp.windows.Hanning
 import com.github.psambit9791.jdsp.windows.Rectangular
 import com.github.psambit9791.jdsp.windows.Triangular
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.SampleInfo
 import kotlin.math.absoluteValue
 import kotlin.math.log10
 
 @Immutable
 data class Spectrogram(val data: List<DoubleArray>)
 
-fun Wave.toSpectrogram(conf: AppConf.Spectrogram, info: SampleInfo): Spectrogram {
+fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogram {
     val dataLength = channels.minOf { it.data.size }
     val data = DoubleArray(dataLength) { i ->
         channels.sumOf { it.data[i].toDouble() } / channels.size
     }
     val frameSize = conf.frameSize
-    val maxFrequencyRate = conf.maxFrequency / info.sampleRate * 2
+    val maxFrequencyRate = conf.maxFrequency / sampleRate * 2
     val frameCount = data.size / frameSize
     val window = when (conf.windowType) {
         AppConf.WindowType.Hamming -> Hamming(frameSize).window

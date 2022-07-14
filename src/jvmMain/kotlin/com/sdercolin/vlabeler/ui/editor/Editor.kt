@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,6 +35,9 @@ fun Editor(state: EditorState, appState: AppState) {
     }
     LaunchedEffect(Unit) {
         state.updateResolution()
+    }
+    DisposableEffect(Unit) {
+        onDispose { state.clear() }
     }
 
     val labelerFocusRequester = remember { FocusRequester() }

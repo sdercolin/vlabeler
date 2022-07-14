@@ -20,5 +20,7 @@ data class SampleInfo(
     val bitDepth: Int,
     val isFloat: Boolean,
     val channels: Int,
-    val lengthMillis: Float
+    val length: Int,
+    val lengthMillis: Float,
+    val hasSpectrogram: Boolean
 )

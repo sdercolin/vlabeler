@@ -14,7 +14,8 @@ import com.sdercolin.vlabeler.env.shouldDecreaseResolution
 import com.sdercolin.vlabeler.env.shouldIncreaseResolution
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
-import com.sdercolin.vlabeler.model.Sample
+import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.repository.SampleRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
@@ -29,9 +30,9 @@ class EditorState(
     project: Project,
     private val appState: AppState
 ) {
-    private val sampleState: MutableState<Result<Sample>?> = mutableStateOf(null)
-    val sampleResult get() = sampleState.value
-    val isLoading get() = sampleState.value == null
+    private val sampleInfoState: MutableState<Result<SampleInfo>?> = mutableStateOf(null)
+    val sampleInfoResult get() = sampleInfoState.value
+    val isLoading get() = sampleInfoState.value == null
     var project: Project by mutableStateOf(project)
     var editedEntries: List<IndexedEntry> by mutableStateOf(project.getEntriesForEditing())
     private val isActive get() = appState.isEditorActive
@@ -80,8 +81,8 @@ class EditorState(
     }
 
     fun cutEntry(index: Int, position: Float) {
-        val sample = sampleResult?.getOrNull() ?: return
-        appState.requestCutEntry(index, position, player, sample.info)
+        val sample = sampleInfoResult?.getOrNull() ?: return
+        appState.requestCutEntry(index, position, player, sample)
     }
 
     private fun loadNewEntries() {
@@ -95,11 +96,11 @@ class EditorState(
     suspend fun loadSampleFile() {
         chartStore.clear()
         withContext(Dispatchers.IO) {
-            val sample = com.sdercolin.vlabeler.io.loadSampleFile(project.currentSampleFile, appConf)
-            sampleState.value = sample
+            val sample = SampleRepository.load(project.currentSampleFile, appConf)
+            sampleInfoState.value = sample
             sample.getOrNull()?.let {
-                player.load(it.info.file)
-                appState.updateProjectOnLoadedSample(it.info)
+                player.load(it.file)
+                appState.updateProjectOnLoadedSample(it)
             }
             launchGcDelayed()
         }
@@ -108,14 +109,14 @@ class EditorState(
     fun renderCharts(
         scope: CoroutineScope,
         chunkCount: Int,
-        sample: Sample,
+        sampleInfo: SampleInfo,
         appConf: AppConf,
         density: Density,
         layoutDirection: LayoutDirection,
     ) {
-        val chunkSizeInMilliSec = sample.info.lengthMillis / chunkCount
+        val chunkSizeInMilliSec = sampleInfo.lengthMillis / chunkCount
         val startingChunkIndex = (project.currentEntry.start / chunkSizeInMilliSec).toInt()
-        chartStore.load(scope, chunkCount, sample, appConf, density, layoutDirection, startingChunkIndex)
+        chartStore.load(scope, chunkCount, sampleInfo, appConf, density, layoutDirection, startingChunkIndex)
     }
 
     fun changeResolution(resolution: Int) {
@@ -192,5 +193,11 @@ class EditorState(
 
     fun jumpToEntry(index: Int) {
         appState.jumpToEntry(index)
+    }
+
+    fun clear() {
+        SampleRepository.clear()
+        chartStore.clear()
+        player.close()
     }
 }

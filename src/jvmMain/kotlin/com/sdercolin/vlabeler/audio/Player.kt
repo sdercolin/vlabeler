@@ -90,6 +90,13 @@ class Player(
         state.changeFramePosition(0)
     }
 
+    fun close() {
+        Log.info("Player.close()")
+        openJob?.cancel()
+        countingJob?.cancel()
+        clip.close()
+    }
+
     companion object {
         private const val PlayingTimeInterval = 50L
     }

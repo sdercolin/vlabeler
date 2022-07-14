@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.model.Sample
+import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
@@ -237,19 +237,19 @@ class MarkerState(
 
 @Composable
 fun rememberMarkerState(
-    sample: Sample,
+    sampleInfo: SampleInfo,
     canvasParams: CanvasParams,
     editorState: EditorState,
     appState: AppState
 ): MarkerState {
-    val sampleRate = sample.info.sampleRate
-    val sampleLengthMillis = sample.info.lengthMillis
+    val sampleRate = sampleInfo.sampleRate
+    val sampleLengthMillis = sampleInfo.lengthMillis
     val entries = editorState.editedEntries
     val project = editorState.project
     val allEntriesInCurrentGroup = remember(entries) { project.getEntriesInGroupForEditing() }
     val labelerConf = project.labelerConf
-    val entryConverter = remember(sample.info.sampleRate, canvasParams.resolution) {
-        EntryConverter(sample.info.sampleRate, canvasParams.resolution)
+    val entryConverter = remember(sampleInfo.sampleRate, canvasParams.resolution) {
+        EntryConverter(sampleInfo.sampleRate, canvasParams.resolution)
     }
     val entriesInPixel = remember(entries, canvasParams.lengthInPixel, sampleLengthMillis) {
         entries.map {

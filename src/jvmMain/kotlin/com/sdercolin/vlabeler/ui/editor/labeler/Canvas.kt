@@ -31,7 +31,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.model.Sample
+import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
@@ -51,22 +51,22 @@ fun Canvas(
     appState: AppState
 ) {
     val currentDensity = LocalDensity.current
-    val sampleResult = editorState.sampleResult
+    val sampleInfoResult = editorState.sampleInfoResult
     val resolution = editorState.canvasResolution
 
-    if (sampleResult != null) {
-        val sample = sampleResult.getOrNull()
-        if (sample != null) {
-            val chunkCount = remember(sample, appState.appConf) {
-                ceil(sample.wave.length.toFloat() / appState.appConf.painter.maxDataChunkSize).toInt()
+    if (sampleInfoResult != null) {
+        val sampleInfo = sampleInfoResult.getOrNull()
+        if (sampleInfo != null) {
+            val chunkCount = remember(sampleInfo, appState.appConf) {
+                ceil(sampleInfo.length.toFloat() / appState.appConf.painter.maxDataChunkSize).toInt()
             }
             val density = LocalDensity.current
             val layoutDirection = LocalLayoutDirection.current
-            LaunchedEffect(sample) {
-                editorState.renderCharts(this, chunkCount, sample, appState.appConf, density, layoutDirection)
+            LaunchedEffect(sampleInfo) {
+                editorState.renderCharts(this, chunkCount, sampleInfo, appState.appConf, density, layoutDirection)
             }
-            val canvasParams = CanvasParams(sample.wave.length, resolution, currentDensity)
-            val markerState = rememberMarkerState(sample, canvasParams, editorState, appState)
+            val canvasParams = CanvasParams(sampleInfo.length, resolution, currentDensity)
+            val markerState = rememberMarkerState(sampleInfo, canvasParams, editorState, appState)
             val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
             val screenRange = horizontalScrollState.getScreenRange(markerState.canvasParams.lengthInPixel)
 
@@ -84,7 +84,7 @@ fun Canvas(
                                 chunkIndex,
                                 chunkCount,
                                 canvasParams,
-                                sample,
+                                sampleInfo,
                                 appState,
                                 editorState
                             )
@@ -119,14 +119,14 @@ private fun Chunk(
     chunkIndex: Int,
     chunkCount: Int,
     canvasParams: CanvasParams,
-    sample: Sample,
+    sampleInfo: SampleInfo,
     appState: AppState,
     editorState: EditorState
 ) {
     Box(Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp / chunkCount)) {
         Column(Modifier.fillMaxSize()) {
-            val weightOfEachChannel = 1f / sample.wave.channels.size
-            sample.wave.channels.indices.forEach { channelIndex ->
+            val weightOfEachChannel = 1f / sampleInfo.channels
+            repeat(sampleInfo.channels) { channelIndex ->
                 Box(
                     Modifier.weight(weightOfEachChannel)
                         .fillMaxWidth()
@@ -137,7 +137,7 @@ private fun Chunk(
                     }
                 }
             }
-            sample.spectrogram?.let {
+            if (sampleInfo.hasSpectrogram) {
                 Box(
                     Modifier.weight(appState.appConf.painter.spectrogram.heightWeight)
                         .fillMaxWidth()

@@ -271,7 +271,7 @@ class AppState(
 
     val isEditorActive get() = project != null && screen is Screen.Editor && !anyDialogOpening()
 
-    val isScrollFitEnabled get() = isMarkerDisplayed && editor?.sampleResult?.getOrNull() != null
+    val isScrollFitEnabled get() = isMarkerDisplayed && editor?.sampleInfoResult?.getOrNull() != null
 
     sealed class PendingActionAfterSaved {
         object Open : PendingActionAfterSaved()

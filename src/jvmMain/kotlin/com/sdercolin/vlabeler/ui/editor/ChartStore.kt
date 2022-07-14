@@ -14,7 +14,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.Sample
+import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.repository.SampleRepository
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White
 import kotlinx.coroutines.CoroutineScope
@@ -46,16 +47,16 @@ class ChartStore {
     fun load(
         scope: CoroutineScope,
         chunkCount: Int,
-        sample: Sample,
+        sampleInfo: SampleInfo,
         appConf: AppConf,
         density: Density,
         layoutDirection: LayoutDirection,
         startingChunkIndex: Int
     ) {
         job?.cancel()
-        val channels = sample.wave.channels
         job = scope.launch(Dispatchers.IO) {
-
+            val sample = SampleRepository.retrieve(sampleInfo.name)
+            val channels = sample.wave.channels
             initializeStates(chunkCount, channels)
 
             val waveformChannelChunks = channels.map {
