@@ -26,16 +26,16 @@ object Log {
             return listOfNotNull(tag, message, throwable).joinToString(" ") + "\n"
         }
     }
-    val infoStreamHandler = FileHandler("$LoggingPath/$InfoLogFileName", true)
+    val infoFileHandler by lazy { FileHandler("$LoggingPath/$InfoLogFileName", true) }
     val errorStreamHandler = StreamHandler(System.err, formatter)
 
     fun init() {
         val loggingDir = File(LoggingPath)
         if (loggingDir.exists().not()) loggingDir.mkdirs()
 
-        infoStreamHandler.formatter = formatter
+        infoFileHandler.formatter = formatter
         infoLogger.useParentHandlers = false
-        infoLogger.addHandler(infoStreamHandler)
+        infoLogger.addHandler(infoFileHandler)
         infoLogger.level = Level.INFO
 
         val errorHandler = FileHandler("$LoggingPath/$ErrorLogFileName", true)

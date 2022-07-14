@@ -204,7 +204,7 @@ fun runTemplatePlugin(
     sampleNames: List<String>
 ): List<FlatEntry> {
     val js = JavaScript(
-        logHandler = Log.infoStreamHandler,
+        logHandler = Log.infoFileHandler,
         currentWorkingDirectory = File(requireNotNull(plugin.directory).absolutePath)
     )
     val inputTexts = inputFiles.map { it.readText(Charset.forName(encoding)) }
