@@ -23,10 +23,9 @@ class Player(
     private var openJob: Job? = null
     private var countingJob: Job? = null
 
-    fun load(newFile: File) {
-        openJob?.cancel()
+    suspend fun load(newFile: File) {
+        openJob?.cancelAndJoin()
         openJob = coroutineScope.launch(Dispatchers.IO) {
-            openJob?.cancelAndJoin()
             Log.info("Player.load(\"${newFile.absolutePath}\")")
             if (file != null) {
                 clip.flush()
