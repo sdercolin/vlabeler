@@ -1,6 +1,6 @@
 package com.sdercolin.vlabeler.util
 
-import org.python.icu.text.CharsetDetector
+import org.apache.tika.parser.txt.CharsetDetector
 
 val AvailableEncodings = listOf(
     "UTF-8",
