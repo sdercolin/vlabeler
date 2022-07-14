@@ -5,7 +5,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
 import androidx.compose.ui.res.loadImageBitmap
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.util.getCacheDir
 import kotlinx.coroutines.delay
 import org.jetbrains.skiko.toBufferedImage
 import java.io.File
@@ -14,10 +16,10 @@ import javax.imageio.ImageIO
 @Stable
 object ChartRepository {
 
-    private lateinit var workingDirectory: File
+    private lateinit var cacheDirectory: File
 
-    fun setWorkingDirectory(workingDirectory: File) {
-        this.workingDirectory = workingDirectory
+    fun initCacheDirectory(project: Project) {
+        this.cacheDirectory = project.getCacheDir().resolve(ChartsCacheFolderName)
     }
 
     suspend fun getWaveform(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int): ImageBitmap {
@@ -73,14 +75,12 @@ object ChartRepository {
         sampleInfo: SampleInfo,
         channelIndex: Int,
         chunkIndex: Int
-    ) = workingDirectory.resolve(".images").resolve(
-        "${sampleInfo.name}_waveform_${channelIndex}_$chunkIndex.png"
-    )
+    ) = cacheDirectory.resolve("${sampleInfo.name}_waveform_${channelIndex}_$chunkIndex.png")
 
     fun getSpectrogramImageFile(
         sampleInfo: SampleInfo,
         chunkIndex: Int
-    ) = workingDirectory.resolve(".images").resolve(
-        "${sampleInfo.name}_spectrogram_$chunkIndex.png"
-    )
+    ) = cacheDirectory.resolve("${sampleInfo.name}_spectrogram_$chunkIndex.png")
+
+    private const val ChartsCacheFolderName = "charts"
 }

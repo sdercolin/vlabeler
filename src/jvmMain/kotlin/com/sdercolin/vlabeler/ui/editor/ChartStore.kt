@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.repository.SampleRepository
@@ -24,7 +25,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import launchGcDelayed
-import java.io.File
 import kotlin.math.absoluteValue
 
 class ChartStore {
@@ -55,7 +55,7 @@ class ChartStore {
 
     fun load(
         scope: CoroutineScope,
-        workingDirectory: File,
+        project: Project,
         chunkCount: Int,
         sampleInfo: SampleInfo,
         appConf: AppConf,
@@ -64,7 +64,7 @@ class ChartStore {
         startingChunkIndex: Int
     ) {
         Log.info("ChartStore load(${sampleInfo.name})")
-        ChartRepository.setWorkingDirectory(workingDirectory)
+        ChartRepository.initCacheDirectory(project)
         job?.cancel()
         job = scope.launch(Dispatchers.IO) {
             val sample = SampleRepository.retrieve(sampleInfo.name)

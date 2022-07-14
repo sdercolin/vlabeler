@@ -4,6 +4,7 @@ import com.sdercolin.vlabeler.env.isLinux
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.model.LabelerConf.Companion.LabelerFileExtension
+import com.sdercolin.vlabeler.model.Project
 import java.io.File
 import java.io.FilenameFilter
 
@@ -13,6 +14,7 @@ private const val AppRecordFileName = "app.record.json"
 private const val LabelerFolderName = "labelers"
 private const val PluginFolderName = "plugins"
 private const val RecordFolderName = ".record"
+private const val ProjectCacheFolderNameSuffix = "_caches"
 
 // Internal files
 val ResourceDir get() = File(System.getProperty("compose.application.resources.dir"))
@@ -36,6 +38,9 @@ val CustomPluginDir get() = AppDir.resolve(PluginFolderName)
 private val labelerFileFilter = FilenameFilter { _, name -> name.endsWith(".$LabelerFileExtension") }
 fun getDefaultLabelers() = DefaultLabelerDir.listFiles(labelerFileFilter).orEmpty().toList()
 fun getCustomLabelers() = CustomLabelerDir.listFiles(labelerFileFilter).orEmpty().toList()
+
+// Project files
+fun Project.getCacheDir() = File(workingDirectory).resolve(projectFile.name + ProjectCacheFolderNameSuffix)
 
 private val invalidCharsForFileName = arrayOf('"', '*', ':', '<', '>', '?', '\\', '|', Char(0x7F), '\u0000')
 

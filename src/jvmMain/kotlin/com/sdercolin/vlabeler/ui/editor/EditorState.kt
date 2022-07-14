@@ -117,7 +117,7 @@ class EditorState(
         val startingChunkIndex = (project.currentEntry.start / chunkSizeInMilliSec).toInt()
         chartStore.load(
             scope,
-            File(project.workingDirectory),
+            project,
             chunkCount,
             sampleInfo,
             appConf,
