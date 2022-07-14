@@ -98,7 +98,7 @@ class EditorState(
             val sample = SampleRepository.load(project.currentSampleFile, appConf)
             sampleInfoState.value = sample
             sample.getOrNull()?.let {
-                player.load(it.file)
+                player.load(File(it.file))
                 appState.updateProjectOnLoadedSample(it)
             }
         }

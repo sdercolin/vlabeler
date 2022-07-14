@@ -80,14 +80,15 @@ object SampleRepository {
         } else null
         val info = SampleInfo(
             name = file.nameWithoutExtension,
-            file = file,
+            file = file.absolutePath,
             sampleRate = format.sampleRate,
             bitDepth = frameByteSize,
             isFloat = isFloat,
             channels = channels.size,
             length = wave.length,
             lengthMillis = channels[0].size.toFloat() / format.sampleRate * 1000,
-            hasSpectrogram = spectrogram != null
+            hasSpectrogram = spectrogram != null,
+            lastModified = file.lastModified()
         )
         return Result.success(
             Sample(
