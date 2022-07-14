@@ -4,7 +4,9 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
 import androidx.compose.ui.res.loadImageBitmap
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.SampleInfo
+import kotlinx.coroutines.delay
 import org.jetbrains.skiko.toBufferedImage
 import java.io.File
 import javax.imageio.ImageIO
@@ -18,14 +20,23 @@ object ChartRepository {
         this.workingDirectory = workingDirectory
     }
 
-    fun getWaveform(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int): ImageBitmap {
-        val file = getWaveformImageFile(workingDirectory, sampleInfo, channelIndex, chunkIndex)
+    suspend fun getWaveform(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int): ImageBitmap {
+        val file = getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
+        waitingFile(file)
         return file.inputStream().buffered().use(::loadImageBitmap)
     }
 
-    fun getSpectrogram(sampleInfo: SampleInfo, chunkIndex: Int): ImageBitmap {
-        val file = getSpectrogramImageFile(workingDirectory, sampleInfo, chunkIndex)
+    suspend fun getSpectrogram(sampleInfo: SampleInfo, chunkIndex: Int): ImageBitmap {
+        val file = getSpectrogramImageFile(sampleInfo, chunkIndex)
+        waitingFile(file)
         return file.inputStream().buffered().use(::loadImageBitmap)
+    }
+
+    private suspend fun waitingFile(file: File) {
+        while (file.exists().not()) {
+            Log.info("Waiting for $file to be created")
+            delay(100)
+        }
     }
 
     fun putWaveform(
@@ -34,12 +45,12 @@ object ChartRepository {
         chunkIndex: Int,
         waveform: ImageBitmap
     ) {
-        val file = getWaveformImageFile(workingDirectory, sampleInfo, channelIndex, chunkIndex)
+        val file = getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
         saveImage(waveform, file)
     }
 
     fun putSpectrogram(sampleInfo: SampleInfo, chunkIndex: Int, spectrogram: ImageBitmap) {
-        val file = getSpectrogramImageFile(workingDirectory, sampleInfo, chunkIndex)
+        val file = getSpectrogramImageFile(sampleInfo, chunkIndex)
         saveImage(spectrogram, file)
     }
 
@@ -47,15 +58,18 @@ object ChartRepository {
         if (file.parentFile.exists().not()) {
             file.parentFile.mkdirs()
         }
-        ImageIO.write(image.asSkiaBitmap().toBufferedImage(), "png", file)
+        val outputStream = file.outputStream()
+        ImageIO.write(image.asSkiaBitmap().toBufferedImage(), "png", outputStream)
+        outputStream.flush()
+        outputStream.close()
+        Log.debug("Written to $file")
     }
 
     fun clear() {
         // TODO: clear the working directory at a correct time
     }
 
-    private fun getWaveformImageFile(
-        workingDirectory: File,
+    fun getWaveformImageFile(
         sampleInfo: SampleInfo,
         channelIndex: Int,
         chunkIndex: Int
@@ -63,8 +77,7 @@ object ChartRepository {
         "${sampleInfo.name}_waveform_${channelIndex}_$chunkIndex.png"
     )
 
-    private fun getSpectrogramImageFile(
-        workingDirectory: File,
+    fun getSpectrogramImageFile(
         sampleInfo: SampleInfo,
         chunkIndex: Int
     ) = workingDirectory.resolve(".images").resolve(

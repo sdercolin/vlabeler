@@ -10,7 +10,6 @@ import androidx.compose.ui.layout.ContentScale
 import com.sdercolin.vlabeler.env.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.IOException
 
 @Composable
 fun <T> AsyncImage(
@@ -24,8 +23,8 @@ fun <T> AsyncImage(
         value = withContext(Dispatchers.IO) {
             try {
                 load()
-            } catch (e: IOException) {
-                Log.error(e)
+            } catch (t: Throwable) {
+                Log.error(t)
                 null
             }
         }

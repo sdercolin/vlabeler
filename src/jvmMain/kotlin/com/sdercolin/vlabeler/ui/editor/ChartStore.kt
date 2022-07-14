@@ -138,6 +138,15 @@ class ChartStore {
         density: Density,
         layoutDirection: LayoutDirection
     ) {
+        val targetFile = ChartRepository.getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
+        if (targetFile.exists()) {
+            if (targetFile.lastModified() > sampleInfo.lastModified) {
+                waveformStatusList[channelIndex to chunkIndex] = BitmapLoadingStatus.Loaded
+                return
+            } else {
+                targetFile.delete()
+            }
+        }
         val data = waveformChannelChunks[channelIndex][chunkIndex]
         val dataDensity = appConf.painter.amplitude.unitSize
         val width = data.size / dataDensity
@@ -155,6 +164,7 @@ class ChartStore {
         }
         yield()
         ChartRepository.putWaveform(sampleInfo, channelIndex, chunkIndex, newBitmap)
+        yield()
         waveformStatusList[channelIndex to chunkIndex] = BitmapLoadingStatus.Loaded
     }
 
@@ -165,6 +175,15 @@ class ChartStore {
         density: Density,
         layoutDirection: LayoutDirection
     ) {
+        val targetFile = ChartRepository.getSpectrogramImageFile(sampleInfo, chunkIndex)
+        if (targetFile.exists()) {
+            if (targetFile.lastModified() > sampleInfo.lastModified) {
+                spectrogramStatusList[chunkIndex] = BitmapLoadingStatus.Loaded
+                return
+            } else {
+                targetFile.delete()
+            }
+        }
         val chunk = spectrogramDataChunks[chunkIndex]
         val width = chunk.size.toFloat()
         val height = chunk.first().size.toFloat()
@@ -185,6 +204,7 @@ class ChartStore {
         }
         yield()
         ChartRepository.putSpectrogram(sampleInfo, chunkIndex, newBitmap)
+        yield()
         spectrogramStatusList[chunkIndex] = BitmapLoadingStatus.Loaded
     }
 }

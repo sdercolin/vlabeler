@@ -92,7 +92,7 @@ private fun FieldLabelsChunk(
     modelChunk: FieldLabelModelChunk,
     waveformsHeightRatio: Float
 ) {
-    Log.info("FieldLabelsContent $index composed, modelChunk=$modelChunk")
+    Log.info("FieldLabelsContent $index composed")
     val labelShiftUp = with(LocalDensity.current) { LabelShiftUp.toPx() }
     Layout(
         modifier = modifier,
