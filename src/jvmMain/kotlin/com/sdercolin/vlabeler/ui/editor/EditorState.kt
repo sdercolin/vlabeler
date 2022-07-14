@@ -24,6 +24,7 @@ import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class EditorState(
     project: Project,
@@ -114,7 +115,16 @@ class EditorState(
         chartStore.clear()
         val chunkSizeInMilliSec = sampleInfo.lengthMillis / chunkCount
         val startingChunkIndex = (project.currentEntry.start / chunkSizeInMilliSec).toInt()
-        chartStore.load(scope, chunkCount, sampleInfo, appConf, density, layoutDirection, startingChunkIndex)
+        chartStore.load(
+            scope,
+            File(project.workingDirectory),
+            chunkCount,
+            sampleInfo,
+            appConf,
+            density,
+            layoutDirection,
+            startingChunkIndex
+        )
     }
 
     fun changeResolution(resolution: Int) {

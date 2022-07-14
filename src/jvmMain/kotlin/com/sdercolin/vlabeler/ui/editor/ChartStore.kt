@@ -24,6 +24,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import launchGcDelayed
+import java.io.File
 import kotlin.math.absoluteValue
 
 class ChartStore {
@@ -54,6 +55,7 @@ class ChartStore {
 
     fun load(
         scope: CoroutineScope,
+        workingDirectory: File,
         chunkCount: Int,
         sampleInfo: SampleInfo,
         appConf: AppConf,
@@ -62,6 +64,7 @@ class ChartStore {
         startingChunkIndex: Int
     ) {
         Log.info("ChartStore load(${sampleInfo.name})")
+        ChartRepository.setWorkingDirectory(workingDirectory)
         job?.cancel()
         job = scope.launch(Dispatchers.IO) {
             val sample = SampleRepository.retrieve(sampleInfo.name)
@@ -81,10 +84,18 @@ class ChartStore {
 
             reorderedChunkIndexes.forEach { chunkIndex ->
                 channels.indices.map { channelIndex ->
-                    drawWaveform(waveformChannelChunks, channelIndex, chunkIndex, appConf, density, layoutDirection)
+                    drawWaveform(
+                        sampleInfo,
+                        waveformChannelChunks,
+                        channelIndex,
+                        chunkIndex,
+                        appConf,
+                        density,
+                        layoutDirection
+                    )
                 }
                 if (spectrogramDataChunks != null) {
-                    drawSpectrogram(spectrogramDataChunks, chunkIndex, density, layoutDirection)
+                    drawSpectrogram(sampleInfo, spectrogramDataChunks, chunkIndex, density, layoutDirection)
                 }
             }
             launchGcDelayed()
@@ -119,6 +130,7 @@ class ChartStore {
     }
 
     private suspend fun drawWaveform(
+        sampleInfo: SampleInfo,
         waveformChannelChunks: List<List<List<Float>>>,
         channelIndex: Int,
         chunkIndex: Int,
@@ -142,11 +154,12 @@ class ChartStore {
             drawPoints(points, pointMode = PointMode.Polygon, color = LightGray)
         }
         yield()
-        ChartRepository.putWaveform(channelIndex, chunkIndex, newBitmap)
+        ChartRepository.putWaveform(sampleInfo, channelIndex, chunkIndex, newBitmap)
         waveformStatusList[channelIndex to chunkIndex] = BitmapLoadingStatus.Loaded
     }
 
     private suspend fun drawSpectrogram(
+        sampleInfo: SampleInfo,
         spectrogramDataChunks: List<List<DoubleArray>>,
         chunkIndex: Int,
         density: Density,
@@ -171,7 +184,7 @@ class ChartStore {
             }
         }
         yield()
-        ChartRepository.putSpectrogram(chunkIndex, newBitmap)
+        ChartRepository.putSpectrogram(sampleInfo, chunkIndex, newBitmap)
         spectrogramStatusList[chunkIndex] = BitmapLoadingStatus.Loaded
     }
 }
