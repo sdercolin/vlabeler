@@ -15,7 +15,7 @@ import javax.sound.sampled.AudioSystem
 @Immutable
 class Wave(val channels: List<Channel>) {
     @Stable
-    class Channel(val data: List<Float>)
+    class Channel(val data: FloatArray)
 
     val length get() = channels[0].data.size
 }
@@ -71,7 +71,7 @@ fun loadSampleFile(file: File, appConf: AppConf): Result<Sample> = runCatching {
         channels = channels.size,
         lengthMillis = channels[0].size.toFloat() / format.sampleRate * 1000
     )
-    val wave = Wave(channels = channels.map { Wave.Channel(it) })
+    val wave = Wave(channels = channels.map { Wave.Channel(it.toFloatArray()) })
     val spectrogram = if (appConf.painter.spectrogram.enabled) {
         wave.toSpectrogram(appConf.painter.spectrogram, info)
     } else null

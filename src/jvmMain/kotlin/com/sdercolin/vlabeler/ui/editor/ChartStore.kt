@@ -60,7 +60,7 @@ class ChartStore {
 
             val waveformChannelChunks = channels.map {
                 val size = channels.first().data.size / chunkCount
-                it.data.chunked(size)
+                it.data.toList().chunked(size)
             }
             val spectrogramDataChunks = sample.spectrogram?.let {
                 val size = it.data.size / chunkCount
