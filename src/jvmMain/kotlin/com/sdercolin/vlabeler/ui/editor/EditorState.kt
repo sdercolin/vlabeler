@@ -24,7 +24,6 @@ import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import launchGcDelayed
 
 class EditorState(
     project: Project,
@@ -94,7 +93,6 @@ class EditorState(
     }
 
     suspend fun loadSampleFile() {
-        chartStore.clear()
         withContext(Dispatchers.IO) {
             val sample = SampleRepository.load(project.currentSampleFile, appConf)
             sampleInfoState.value = sample
@@ -102,7 +100,6 @@ class EditorState(
                 player.load(it.file)
                 appState.updateProjectOnLoadedSample(it)
             }
-            launchGcDelayed()
         }
     }
 
@@ -114,6 +111,7 @@ class EditorState(
         density: Density,
         layoutDirection: LayoutDirection,
     ) {
+        chartStore.clear()
         val chunkSizeInMilliSec = sampleInfo.lengthMillis / chunkCount
         val startingChunkIndex = (project.currentEntry.start / chunkSizeInMilliSec).toInt()
         chartStore.load(scope, chunkCount, sampleInfo, appConf, density, layoutDirection, startingChunkIndex)
@@ -196,6 +194,7 @@ class EditorState(
     }
 
     fun clear() {
+        Log.info("EditorState clear()")
         SampleRepository.clear()
         chartStore.clear()
         player.close()

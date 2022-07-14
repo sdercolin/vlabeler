@@ -17,7 +17,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -32,7 +31,9 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.editor.ChartStore
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerLabels
@@ -131,9 +132,9 @@ private fun Chunk(
                     Modifier.weight(weightOfEachChannel)
                         .fillMaxWidth()
                 ) {
-                    val image = editorState.chartStore.getWaveform(channelIndex, chunkIndex)
-                    if (image != null) {
-                        WaveformChunk(image, channelIndex, chunkIndex)
+                    val imageStatus = editorState.chartStore.getWaveformStatus(channelIndex, chunkIndex)
+                    if (imageStatus == ChartStore.BitmapLoadingStatus.Loaded) {
+                        WaveformChunk(channelIndex, chunkIndex)
                     }
                 }
             }
@@ -142,9 +143,9 @@ private fun Chunk(
                     Modifier.weight(appState.appConf.painter.spectrogram.heightWeight)
                         .fillMaxWidth()
                 ) {
-                    val image = editorState.chartStore.getSpectrogram(chunkIndex)
-                    if (image != null) {
-                        SpectrogramChunk(image, chunkIndex)
+                    val imageStatus = editorState.chartStore.getSpectrogramStatus(chunkIndex)
+                    if (imageStatus == ChartStore.BitmapLoadingStatus.Loaded) {
+                        SpectrogramChunk(chunkIndex)
                     }
                 }
             }
@@ -153,27 +154,22 @@ private fun Chunk(
 }
 
 @Composable
-private fun WaveformChunk(
-    image: State<ImageBitmap?>,
-    channelIndex: Int,
-    chunkIndex: Int
-) {
+private fun WaveformChunk(channelIndex: Int, chunkIndex: Int) {
     Log.info("Waveform (channel $channelIndex, chunk $chunkIndex): composed")
+    val image = ChartRepository.getWaveform(channelIndex, chunkIndex)
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
-        image.value?.let {
+        image?.let {
             ChunkImage(it)
         }
     }
 }
 
 @Composable
-private fun SpectrogramChunk(
-    image: State<ImageBitmap?>,
-    chunkIndex: Int
-) {
+private fun SpectrogramChunk(chunkIndex: Int) {
     Log.info("Spectrogram (chunk $chunkIndex): composed")
+    val image = ChartRepository.getSpectrogram(chunkIndex)
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
-        image.value?.let {
+        image?.let {
             ChunkImage(it)
         }
     }

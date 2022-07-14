@@ -1,8 +1,7 @@
 package com.sdercolin.vlabeler.ui.editor
 
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
@@ -15,6 +14,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.repository.SampleRepository
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White
@@ -28,19 +28,27 @@ import kotlin.math.absoluteValue
 
 class ChartStore {
 
-    private val waveformChartsList = mutableStateMapOf<Pair<Int, Int>, MutableState<ImageBitmap?>>()
-    private val spectrogramCharts = mutableStateMapOf<Int, MutableState<ImageBitmap?>>()
+    @Immutable
+    enum class BitmapLoadingStatus {
+        Loading,
+        Loaded
+    }
+
+    private val waveformStatusList = mutableStateMapOf<Pair<Int, Int>, BitmapLoadingStatus>()
+    private val spectrogramStatusList = mutableStateMapOf<Int, BitmapLoadingStatus>()
 
     private var job: Job? = null
 
-    fun getWaveform(channelIndex: Int, chunkIndex: Int) = waveformChartsList[channelIndex to chunkIndex]
-    fun getSpectrogram(chunkIndex: Int) = spectrogramCharts[chunkIndex]
+    fun getWaveformStatus(channelIndex: Int, chunkIndex: Int) = waveformStatusList[channelIndex to chunkIndex]
+    fun getSpectrogramStatus(chunkIndex: Int) = spectrogramStatusList[chunkIndex]
 
     fun clear() {
+        Log.info("ChartStore clear()")
         job?.cancel()
         job = null
-        waveformChartsList.clear()
-        spectrogramCharts.clear()
+        ChartRepository.clear()
+        waveformStatusList.clear()
+        spectrogramStatusList.clear()
         launchGcDelayed()
     }
 
@@ -53,6 +61,7 @@ class ChartStore {
         layoutDirection: LayoutDirection,
         startingChunkIndex: Int
     ) {
+        Log.info("ChartStore load(${sampleInfo.name})")
         job?.cancel()
         job = scope.launch(Dispatchers.IO) {
             val sample = SampleRepository.retrieve(sampleInfo.name)
@@ -78,6 +87,7 @@ class ChartStore {
                     drawSpectrogram(spectrogramDataChunks, chunkIndex, density, layoutDirection)
                 }
             }
+            launchGcDelayed()
         }
     }
 
@@ -87,9 +97,9 @@ class ChartStore {
     ) {
         repeat(chunkCount) { chunkIndex ->
             repeat(channels.size) { channelIndex ->
-                waveformChartsList[channelIndex to chunkIndex] = mutableStateOf(null)
+                waveformStatusList[channelIndex to chunkIndex] = BitmapLoadingStatus.Loading
             }
-            spectrogramCharts[chunkIndex] = mutableStateOf(null)
+            spectrogramStatusList[chunkIndex] = BitmapLoadingStatus.Loading
         }
     }
 
@@ -132,7 +142,8 @@ class ChartStore {
             drawPoints(points, pointMode = PointMode.Polygon, color = LightGray)
         }
         yield()
-        waveformChartsList[channelIndex to chunkIndex]?.value = newBitmap
+        ChartRepository.putWaveform(channelIndex, chunkIndex, newBitmap)
+        waveformStatusList[channelIndex to chunkIndex] = BitmapLoadingStatus.Loaded
     }
 
     private suspend fun drawSpectrogram(
@@ -160,6 +171,7 @@ class ChartStore {
             }
         }
         yield()
-        spectrogramCharts[chunkIndex]?.value = newBitmap
+        ChartRepository.putSpectrogram(chunkIndex, newBitmap)
+        spectrogramStatusList[chunkIndex] = BitmapLoadingStatus.Loaded
     }
 }

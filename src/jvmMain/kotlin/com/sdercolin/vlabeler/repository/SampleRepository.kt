@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.repository
 
+import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.io.Wave
@@ -11,6 +12,7 @@ import java.io.File
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
 
+@Stable
 object SampleRepository {
 
     private val map = mutableMapOf<String, Sample>()
@@ -25,7 +27,10 @@ object SampleRepository {
 
     fun retrieve(name: String): Sample = map.getValue(name).also { map.remove(name) }
 
-    fun clear() = map.clear()
+    fun clear() {
+        map.clear()
+        Log.info("SampleRepository clear()")
+    }
 
     private fun loadSampleFile(file: File, appConf: AppConf): Result<Sample> = runCatching {
         val stream = AudioSystem.getAudioInputStream(file)
