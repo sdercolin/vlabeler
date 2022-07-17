@@ -29,5 +29,6 @@ class PlayerState {
 
     fun setFramePositionRelatively(position: Float) {
         framePosition = framePositionOffset + position
+        println("setFramePositionRelatively($position) -> framePosition: $framePosition")
     }
 }
