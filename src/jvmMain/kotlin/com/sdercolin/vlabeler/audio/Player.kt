@@ -85,7 +85,6 @@ class Player(
                 line.write(data, offset, length)
                 line.drain()
                 if (state.isPlaying) {
-                    println("stopping after drain")
                     stop()
                 }
             }.onFailure {
@@ -114,7 +113,6 @@ class Player(
     fun playSection(startFramePosition: Float, endFramePosition: Float) {
         coroutineScope.launch {
             if (state.isPlaying) {
-                println("stopping before playSection")
                 stop()
             }
             Log.info("Player.playSection($startFramePosition, $endFramePosition)")
