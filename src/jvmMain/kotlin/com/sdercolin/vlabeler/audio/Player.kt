@@ -76,9 +76,9 @@ class Player(
     private fun stop() {
         Log.info("Player.stop()")
         clip.stop()
+        state.stopPlaying()
         countingJob?.cancel()
         countingJob = null
-        state.stopPlaying()
     }
 
     private fun reset() {
@@ -97,6 +97,6 @@ class Player(
     }
 
     companion object {
-        private const val PlayingTimeInterval = 50L
+        private const val PlayingTimeInterval = 5L
     }
 }
