@@ -69,7 +69,8 @@ Note that following `Ctrl` means `Command` if you are using macOS.
 - `Shift`: invert normal/primary. e.g. mouse drag on primary parameters with Shift pressed only moves itself.
 
 ### Audio playback
-- `Space`: play from the beginning / Stop
+- `Space`: play the current entry, or stop playing if already playing
+- `Shift` + `Space`: play the current sample file, or stop playing if already playing
 - `Ctrl` + mouse click: play the clicked section
 
 ### Scrolling

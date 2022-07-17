@@ -8,6 +8,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import kotlinx.coroutines.CoroutineScope
@@ -91,6 +93,7 @@ data class KeyboardState(
 fun KeyEvent.isReleased(key: Key) = released && this.key == key
 val KeyEvent.released get() = type == KeyEventType.KeyUp
 val KeyEvent.shouldTogglePlayer get() = key == Key.Spacebar && released
+val KeyEvent.shouldTogglePlayerWithInCurrentEntry get() = shouldTogglePlayer && !isShiftPressed
 val KeyEvent.shouldIncreaseResolution get() = (key == Key.Minus || key == Key.NumPadSubtract) && released
 val KeyEvent.shouldDecreaseResolution get() = (key == Key.Equals || key == Key.NumPadAdd) && released
 val KeyEvent.shouldBeCaught

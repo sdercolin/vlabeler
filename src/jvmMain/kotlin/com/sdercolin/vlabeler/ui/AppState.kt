@@ -5,9 +5,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.input.key.KeyEvent
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.shouldTogglePlayerWithInCurrentEntry
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
@@ -239,6 +241,21 @@ class AppState(
             }
             is ErrorDialogResult -> Unit
             else -> TODO("Dialog result handler is not implemented")
+        }
+    }
+
+    fun handleTogglePlayerEvent(
+        event: KeyEvent,
+        player: Player
+    ) {
+        if (event.shouldTogglePlayerWithInCurrentEntry) {
+            val sampleRate = requireNotNull(editor?.sampleInfoResult?.getOrNull()?.sampleRate)
+            val range = requireProject().currentEntry.run {
+                toFrame(start, sampleRate)..toFrame(end, sampleRate)
+            }
+            player.toggle(range)
+        } else {
+            player.toggle()
         }
     }
 

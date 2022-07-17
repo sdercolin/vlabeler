@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.audio
 
 import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.util.FloatRange
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,10 +52,16 @@ class Player(
         }
     }
 
-    fun toggle() {
+    fun toggle(frameRange: FloatRange? = null) {
         file ?: return
         coroutineScope.launch {
-            if (state.isPlaying) stop() else play()
+            if (state.isPlaying) stop() else {
+                if (frameRange != null) {
+                    playSection(frameRange)
+                } else {
+                    play()
+                }
+            }
         }
     }
 
@@ -104,10 +111,14 @@ class Player(
             state.resetFramePosition(line.framePosition.toFloat(), startFrame.toFloat())
             while (true) {
                 delay(PlayingTimeInterval)
-                if(!state.isPlaying) break
+                if (!state.isPlaying) break
                 state.setFramePositionRelatively(line.framePosition.toFloat())
             }
         }
+    }
+
+    private fun playSection(frameRange: FloatRange) {
+        playSection(frameRange.start, frameRange.endInclusive)
     }
 
     fun playSection(startFramePosition: Float, endFramePosition: Float) {
