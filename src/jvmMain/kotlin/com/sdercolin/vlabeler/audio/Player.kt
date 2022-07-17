@@ -105,6 +105,7 @@ class Player(
             state.resetFramePosition(line.framePosition.toFloat(), startFrame.toFloat())
             while (true) {
                 delay(PlayingTimeInterval)
+                if(!state.isPlaying) break
                 state.setFramePositionRelatively(line.framePosition.toFloat())
             }
         }
