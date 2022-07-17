@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -125,7 +125,7 @@ private fun Chunk(
     appState: AppState,
     editorState: EditorState
 ) {
-    Box(Modifier.fillMaxHeight().width(canvasParams.canvasWidthInDp / chunkCount)) {
+    Box(Modifier.fillMaxHeight().requiredWidth(canvasParams.canvasWidthInDp / chunkCount)) {
         Column(Modifier.fillMaxSize()) {
             val weightOfEachChannel = 1f / sampleInfo.channels
             repeat(sampleInfo.channels) { channelIndex ->
