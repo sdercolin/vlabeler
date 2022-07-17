@@ -53,8 +53,8 @@ class Player(
 
     fun toggle() {
         file ?: return
-        if (state.isPlaying) stop() else {
-            play()
+        coroutineScope.launch {
+            if (state.isPlaying) stop() else play()
         }
     }
 
@@ -72,8 +72,8 @@ class Player(
         }
     }
 
-    private fun startWriting(startFrame: Int = 0, endFrame: Int? = null) {
-        writingJob?.cancel()
+    private suspend fun startWriting(startFrame: Int = 0, endFrame: Int? = null) {
+        writingJob?.cancelAndJoin()
         val line = line ?: return
         val format = format ?: return
         val data = data ?: return
@@ -85,6 +85,7 @@ class Player(
                 line.write(data, offset, length)
                 line.drain()
                 if (state.isPlaying) {
+                    println("stopping after drain")
                     stop()
                 }
             }.onFailure {
@@ -97,8 +98,8 @@ class Player(
         }
     }
 
-    private fun startCounting(startFrame: Int = 0) {
-        countingJob?.cancel()
+    private suspend fun startCounting(startFrame: Int = 0) {
+        countingJob?.cancelAndJoin()
         countingJob = coroutineScope.launch {
             val line = line ?: return@launch
             state.resetFramePosition(line.framePosition.toFloat(), startFrame.toFloat())
@@ -111,29 +112,30 @@ class Player(
 
     fun playSection(startFramePosition: Float, endFramePosition: Float) {
         coroutineScope.launch {
+            if (state.isPlaying) {
+                println("stopping before playSection")
+                stop()
+            }
             Log.info("Player.playSection($startFramePosition, $endFramePosition)")
             awaitLoad()
             val startFrame = startFramePosition.roundToInt()
             val endFrame = endFramePosition.roundToInt()
-            if (state.isPlaying) {
-                stop()
-            }
             state.startPlaying()
             startWriting(startFrame, endFrame)
             startCounting(startFrame)
         }
     }
 
-    private fun stop() {
+    private suspend fun stop() {
         Log.info("Player.stop()")
+        state.stopPlaying()
         line?.run {
             stop()
             flush()
         }
-        state.stopPlaying()
-        writingJob?.cancel()
+        writingJob?.cancelAndJoin()
         writingJob = null
-        countingJob?.cancel()
+        countingJob?.cancelAndJoin()
         countingJob = null
     }
 
