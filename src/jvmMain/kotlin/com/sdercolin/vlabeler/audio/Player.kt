@@ -127,16 +127,16 @@ class Player(
         }
     }
 
-    private suspend fun stop() {
+    private fun stop() {
         Log.info("Player.stop()")
         state.stopPlaying()
         line?.run {
             stop()
             flush()
         }
-        writingJob?.cancelAndJoin()
+        writingJob?.cancel()
         writingJob = null
-        countingJob?.cancelAndJoin()
+        countingJob?.cancel()
         countingJob = null
     }
 
