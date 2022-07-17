@@ -217,7 +217,6 @@ class MarkerState(
         if (x > borders.last()) return borders.last() to null
         for (range in borders.zipWithNext()) {
             if (x > range.first && x < range.second) {
-                println("getClickedAudioRange: $range")
                 return range
             }
         }

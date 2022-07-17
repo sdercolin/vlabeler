@@ -9,8 +9,10 @@ class PlayerState {
     var isPlaying: Boolean by mutableStateOf(false)
         private set
 
-    var framePosition: Int by mutableStateOf(0)
+    var framePosition: Float by mutableStateOf(0f)
         private set
+
+    private var framePositionOffset: Float = 0f
 
     fun startPlaying() {
         isPlaying = true
@@ -20,7 +22,12 @@ class PlayerState {
         isPlaying = false
     }
 
-    fun changeFramePosition(position: Int) {
+    fun resetFramePosition(offset: Float, position: Float) {
+        framePositionOffset = position - offset
         framePosition = position
+    }
+
+    fun setFramePositionRelatively(position: Float) {
+        framePosition = framePositionOffset + position
     }
 }

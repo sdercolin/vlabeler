@@ -2,15 +2,18 @@ package com.sdercolin.vlabeler.audio
 
 import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 import java.io.File
+import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
+import javax.sound.sampled.SourceDataLine
+import kotlin.math.roundToInt
 
 @Stable
 class Player(
@@ -18,82 +21,131 @@ class Player(
     private val state: PlayerState
 ) {
     private var file: File? = null
-    private val clip = AudioSystem.getClip()
-
+    private var format: AudioFormat? = null
+    private val AudioFormat.sampleSize: Int
+        get() {
+            val channelNumber = channels
+            val frameByteSize = sampleSizeInBits / 8
+            return channelNumber * frameByteSize
+        }
+    private var line: SourceDataLine? = null
+    private var data: ByteArray? = null
     private var openJob: Job? = null
     private var countingJob: Job? = null
+    private var writingJob: Job? = null
 
     suspend fun load(newFile: File) {
         openJob?.cancelAndJoin()
+        file = newFile
         openJob = coroutineScope.launch(Dispatchers.IO) {
             Log.info("Player.load(\"${newFile.absolutePath}\")")
-            if (file != null) {
-                clip.flush()
-                clip.close()
+            val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
+                format = stream.format
+                data = stream.readAllBytes().also {
+                    Log.info("Player.load: read ${it.size} bytes")
+                }
+                AudioSystem.getSourceDataLine(stream.format)
             }
-            yield()
-            file = newFile
-            AudioSystem.getAudioInputStream(newFile).use { clip.open(it) }
+            this@Player.line = line
+            line.open()
         }
     }
 
     fun toggle() {
         file ?: return
         if (state.isPlaying) stop() else {
-            reset()
             play()
         }
     }
 
-    private fun play(untilPosition: Int? = null) {
-        Log.info("Player.play()")
-        countingJob = coroutineScope.launch {
-            while (true) {
-                delay(PlayingTimeInterval)
-                state.changeFramePosition(clip.framePosition)
-                if (!clip.isRunning) {
-                    state.stopPlaying()
-                    return@launch
-                }
-                if (untilPosition != null && state.framePosition >= untilPosition) {
+    private suspend fun awaitLoad() {
+        openJob?.join()
+    }
+
+    private fun play() {
+        coroutineScope.launch {
+            Log.info("Player.play()")
+            awaitLoad()
+            state.startPlaying()
+            startWriting()
+            startCounting()
+        }
+    }
+
+    private fun startWriting(startFrame: Int = 0, endFrame: Int? = null) {
+        writingJob?.cancel()
+        val line = line ?: return
+        val format = format ?: return
+        val data = data ?: return
+        line.start()
+        writingJob = coroutineScope.launch(Dispatchers.IO) {
+            runCatching {
+                val offset = startFrame * format.sampleSize
+                val length = endFrame?.let { (it - startFrame) * format.sampleSize } ?: (data.size - offset)
+                line.write(data, offset, length)
+                line.drain()
+                if (state.isPlaying) {
                     stop()
-                    return@launch
+                }
+            }.onFailure {
+                if (it is CancellationException) {
+                    Log.info(it.message ?: "Player::writingJob is Cancelled")
+                } else {
+                    Log.error(it)
                 }
             }
         }
-        state.startPlaying()
-        clip.start()
     }
 
-    fun playSection(startPosition: Float, endPosition: Float) {
-        file ?: return
-        Log.info("Player.playSection($startPosition, $endPosition)")
-        reset()
-        clip.framePosition = startPosition.toInt()
-        play(untilPosition = endPosition.toInt())
+    private fun startCounting(startFrame: Int = 0) {
+        countingJob?.cancel()
+        countingJob = coroutineScope.launch {
+            val line = line ?: return@launch
+            state.resetFramePosition(line.framePosition.toFloat(), startFrame.toFloat())
+            while (true) {
+                delay(PlayingTimeInterval)
+                state.setFramePositionRelatively(line.framePosition.toFloat())
+            }
+        }
+    }
+
+    fun playSection(startFramePosition: Float, endFramePosition: Float) {
+        coroutineScope.launch {
+            Log.info("Player.playSection($startFramePosition, $endFramePosition)")
+            awaitLoad()
+            val startFrame = startFramePosition.roundToInt()
+            val endFrame = endFramePosition.roundToInt()
+            if (state.isPlaying) {
+                stop()
+            }
+            state.startPlaying()
+            startWriting(startFrame, endFrame)
+            startCounting(startFrame)
+        }
     }
 
     private fun stop() {
         Log.info("Player.stop()")
-        clip.stop()
+        line?.run {
+            stop()
+            flush()
+        }
         state.stopPlaying()
+        writingJob?.cancel()
+        writingJob = null
         countingJob?.cancel()
         countingJob = null
-    }
-
-    private fun reset() {
-        Log.info("Player.reset()")
-        clip.close()
-        AudioSystem.getAudioInputStream(file).use { clip.open(it) }
-        clip.framePosition = 0
-        state.changeFramePosition(0)
     }
 
     fun close() {
         Log.info("Player.close()")
         openJob?.cancel()
         countingJob?.cancel()
-        clip.close()
+        line?.run {
+            stop()
+            flush()
+            close()
+        }
     }
 
     companion object {
