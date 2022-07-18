@@ -207,8 +207,9 @@ class AppState(
         PendingActionAfterSaved.Export -> openExportDialog()
         PendingActionAfterSaved.Close -> reset()
         PendingActionAfterSaved.CreatingNew -> openProjectCreator()
+        PendingActionAfterSaved.ClearCaches -> clearCachesAndReopen(mainScope)
         PendingActionAfterSaved.Exit -> exit()
-        is PendingActionAfterSaved.OpenRecent -> loadProject(action.scope, action.file, this)
+        is PendingActionAfterSaved.OpenRecent -> loadProject(mainScope, action.file, this)
         null -> Unit
     }
 
@@ -291,10 +292,11 @@ class AppState(
 
     sealed class PendingActionAfterSaved {
         object Open : PendingActionAfterSaved()
-        class OpenRecent(val scope: CoroutineScope, val file: File) : PendingActionAfterSaved()
+        class OpenRecent(val file: File) : PendingActionAfterSaved()
         object Export : PendingActionAfterSaved()
         object Close : PendingActionAfterSaved()
         object CreatingNew : PendingActionAfterSaved()
+        object ClearCaches : PendingActionAfterSaved()
         object Exit : PendingActionAfterSaved()
     }
 }

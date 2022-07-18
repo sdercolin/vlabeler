@@ -33,6 +33,9 @@ enum class Strings(val en: String) {
     MenuFileExport(
         en = "Export..."
     ),
+    MenuFileInvalidateCaches(
+        en = "Invalidate Caches"
+    ),
     MenuFileClose(
         en = "Close"
     ),

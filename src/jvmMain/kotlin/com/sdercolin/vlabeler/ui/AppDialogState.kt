@@ -16,6 +16,7 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
+import com.sdercolin.vlabeler.util.getCacheDir
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -54,6 +55,8 @@ interface AppDialogState {
     fun confirmIfLoadAutoSavedProject(file: File)
     fun openSampleListDialog()
     fun closeSampleListDialog()
+    fun requestClearCaches(scope: CoroutineScope)
+    fun clearCachesAndReopen(scope: CoroutineScope)
 
     fun closeEmbeddedDialog()
     fun closeAllDialogs()
@@ -97,13 +100,13 @@ class AppDialogStateImpl(
 
     override fun requestOpenRecentProject(scope: CoroutineScope, file: File) =
         if (hasUnsavedChanges) {
-            askIfSaveBeforeOpenRecentProject(scope, file)
+            askIfSaveBeforeOpenRecentProject(file)
         } else {
             loadProject(scope, file, state)
         }
 
-    private fun askIfSaveBeforeOpenRecentProject(scope: CoroutineScope, file: File) =
-        openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpeningRecent(scope, file))
+    private fun askIfSaveBeforeOpenRecentProject(file: File) =
+        openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpeningRecent(file))
 
     override fun openSaveAsProjectDialog() {
         isShowingSaveAsProjectDialog = true
@@ -186,6 +189,16 @@ class AppDialogStateImpl(
 
     override fun closeSampleListDialog() {
         isShowingSampleListDialog = false
+    }
+
+    override fun requestClearCaches(scope: CoroutineScope) =
+        if (hasUnsavedChanges) askIfSaveBeforeClearCaches() else clearCachesAndReopen(scope)
+
+    private fun askIfSaveBeforeClearCaches() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsClearingCaches)
+
+    override fun clearCachesAndReopen(scope: CoroutineScope) {
+        projectStore.requireProject().getCacheDir().deleteRecursively()
+        loadProject(scope, projectStore.requireProject().projectFile, state)
     }
 
     override fun closeEmbeddedDialog() {

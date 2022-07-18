@@ -72,6 +72,11 @@ fun FrameWindowScope.Menu(
                     enabled = appState.hasProject
                 )
                 Item(
+                    string(Strings.MenuFileInvalidateCaches),
+                    onClick = { appState.requestClearCaches(mainScope) },
+                    enabled = appState.hasProject
+                )
+                Item(
                     string(Strings.MenuFileClose),
                     onClick = { appState.requestCloseProject() },
                     enabled = appState.hasProject

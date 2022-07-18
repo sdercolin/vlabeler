@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
 sealed class AskIfSaveDialogPurpose(
@@ -29,10 +28,10 @@ sealed class AskIfSaveDialogPurpose(
     object IsOpening :
         AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeOpenDialogDescription, AppState.PendingActionAfterSaved.Open)
 
-    class IsOpeningRecent(val scope: CoroutineScope, val file: File) :
+    class IsOpeningRecent(val file: File) :
         AskIfSaveDialogPurpose(
             Strings.AskIfSaveBeforeOpenDialogDescription,
-            AppState.PendingActionAfterSaved.OpenRecent(scope, file)
+            AppState.PendingActionAfterSaved.OpenRecent(file)
         )
 
     object IsExporting :
@@ -43,6 +42,10 @@ sealed class AskIfSaveDialogPurpose(
 
     object IsCreatingNew : AskIfSaveDialogPurpose(
         Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.CreatingNew
+    )
+
+    object IsClearingCaches : AskIfSaveDialogPurpose(
+        Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.ClearCaches
     )
 
     object IsExiting :
