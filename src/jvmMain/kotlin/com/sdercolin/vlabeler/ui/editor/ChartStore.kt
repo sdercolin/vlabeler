@@ -19,6 +19,7 @@ import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.repository.SampleRepository
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White
+import com.sdercolin.vlabeler.util.splitAveragely
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -71,13 +72,23 @@ class ChartStore {
             val channels = sample.wave.channels
             initializeStates(chunkCount, channels)
 
-            val waveformChannelChunks = channels.map {
-                val size = channels.first().data.size / chunkCount
-                it.data.toList().chunked(size)
-            }
-            val spectrogramDataChunks = sample.spectrogram?.let {
-                val size = it.data.size / chunkCount
-                it.data.toList().chunked(size)
+            val spectrogramDataChunks = sample.spectrogram?.data?.toList()?.splitAveragely(chunkCount)
+
+            val waveformChannelChunks = channels.map { channel ->
+                if (spectrogramDataChunks == null) {
+                    channel.data.toList().splitAveragely(chunkCount)
+                } else {
+                    var taken = 0
+                    val sizes = spectrogramDataChunks.map { it.size * sample.spectrogram.frameSize }
+                    val data = channel.data.toList()
+                    val chunks = mutableListOf<List<Float>>()
+                    repeat(sizes.size) {
+                        val chunk = data.subList(taken, taken + sizes[it])
+                        taken += sizes[it]
+                        chunks.add(chunk)
+                    }
+                    chunks.toList()
+                }
             }
 
             val reorderedChunkIndexes = reorderChunks(startingChunkIndex, chunkCount)
@@ -206,5 +217,9 @@ class ChartStore {
         ChartRepository.putSpectrogram(sampleInfo, chunkIndex, newBitmap)
         yield()
         spectrogramStatusList[chunkIndex] = BitmapLoadingStatus.Loaded
+    }
+
+    companion object {
+        const val PaintingAlgorithmVersion = 1
     }
 }

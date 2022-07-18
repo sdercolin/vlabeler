@@ -13,7 +13,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.log10
 
 @Immutable
-data class Spectrogram(val data: List<DoubleArray>)
+data class Spectrogram(val data: List<DoubleArray>, val frameSize: Int)
 
 fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogram {
     val dataLength = channels.minOf { it.data.size }
@@ -46,7 +46,7 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
         magnitude.copyOf((magnitude.size * maxFrequencyRate).toInt())
     }
 
-    if (absoluteSpectrogram.isEmpty()) return Spectrogram(listOf())
+    if (absoluteSpectrogram.isEmpty()) return Spectrogram(listOf(), frameSize)
     val frequencySize = absoluteSpectrogram.first().size
 
     val min = conf.minIntensity.toDouble()
@@ -58,5 +58,5 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
                 .let { (it - min) / (max - min) }
         }
     }
-    return Spectrogram(output)
+    return Spectrogram(output, frameSize)
 }
