@@ -65,7 +65,7 @@ class ChartStore {
         startingChunkIndex: Int
     ) {
         Log.info("ChartStore load(${sampleInfo.name})")
-        ChartRepository.initCacheDirectory(project)
+        ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
         job?.cancel()
         job = scope.launch(Dispatchers.IO) {
             val sample = SampleRepository.retrieve(sampleInfo.name)
@@ -220,6 +220,6 @@ class ChartStore {
     }
 
     companion object {
-        const val PaintingAlgorithmVersion = 1
+        private const val PaintingAlgorithmVersion = 1
     }
 }

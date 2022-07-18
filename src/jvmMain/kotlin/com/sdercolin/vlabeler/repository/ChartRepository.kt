@@ -5,10 +5,14 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
 import androidx.compose.ui.res.loadImageBitmap
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.util.getCacheDir
+import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.delay
+import kotlinx.serialization.Serializable
 import org.jetbrains.skiko.toBufferedImage
 import java.io.File
 import javax.imageio.ImageIO
@@ -17,9 +21,23 @@ import javax.imageio.ImageIO
 object ChartRepository {
 
     private lateinit var cacheDirectory: File
+    private val cacheParamsFile get() = cacheDirectory.resolve("params.json")
+    private lateinit var cacheParams: ChartCacheParams
 
-    fun initCacheDirectory(project: Project) {
-        this.cacheDirectory = project.getCacheDir().resolve(ChartsCacheFolderName)
+    fun init(project: Project, appConf: AppConf, version: Int) {
+        cacheDirectory = project.getCacheDir().resolve(ChartsCacheFolderName)
+        cacheParams = ChartCacheParams(
+            version,
+            appConf.painter
+        )
+        val existingCacheParams = runCatching {
+            cacheParamsFile.takeIf { it.exists() }?.readText()?.let { parseJson<ChartCacheParams>(it) }
+        }.getOrNull()
+        if (existingCacheParams != cacheParams) {
+            cacheDirectory.deleteRecursively()
+            cacheDirectory.mkdirs()
+            cacheParamsFile.writeText(toJson(cacheParams))
+        }
     }
 
     suspend fun getWaveform(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int): ImageBitmap {
@@ -84,3 +102,9 @@ object ChartRepository {
 
     private const val ChartsCacheFolderName = "charts"
 }
+
+@Serializable
+data class ChartCacheParams(
+    val algorithmVersion: Int,
+    val painterConfig: AppConf.Painter
+)
