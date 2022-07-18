@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
+import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
@@ -66,6 +67,7 @@ fun openCreatedProject(
 ) {
     mainScope.launch(Dispatchers.IO) {
         val file = saveProjectFile(project)
+        project.getCacheDir().deleteRecursively()
         appState.openEditor(project)
         appState.addRecentProject(file)
         if (appState.appConf.editor.autoScroll.onLoadedNewSample) {
