@@ -85,11 +85,11 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
             listOf(
                 Color.Black,
                 parseColor("#02063e"),
-                Color.Red,
+                parseColor("#f21e07"),
                 Color.Yellow,
                 parseColor("#fcfef0")
             ),
-            listOf(0f, 4f, 3f, 1f, 0.5f)
+            listOf(0f, 4f, 5f, 1f, 0.5f)
         ),
         Midnight(
             listOf(
