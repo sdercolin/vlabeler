@@ -54,6 +54,7 @@ import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
+import com.sdercolin.vlabeler.util.runIf
 
 @Composable
 fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
@@ -147,10 +148,8 @@ private fun ColumnScope.List(
                 Row(
                     modifier = Modifier.fillMaxWidth()
                         .height(30.dp)
-                        .run {
-                            if (index == selectedIndex) {
-                                background(color = MaterialTheme.colors.primaryVariant)
-                            } else this
+                        .runIf(index == selectedIndex) {
+                            background(color = MaterialTheme.colors.primaryVariant)
                         }
                         .padding(end = 20.dp)
                         .onPointerEvent(PointerEventType.Press) {

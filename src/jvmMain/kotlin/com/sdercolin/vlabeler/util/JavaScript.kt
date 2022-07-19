@@ -14,7 +14,7 @@ class JavaScript(logHandler: Handler? = null, currentWorkingDirectory: File? = n
     private val context = Context.newBuilder()
         .allowHostAccess(HostAccess.ALL)
         .allowHostClassLookup { true }
-        .run { if (logHandler != null) logHandler(logHandler) else this }
+        .runIfNotNull(logHandler) { logHandler(it) }
         .allowIO(true)
         .currentWorkingDirectory(currentWorkingDirectory?.toPath() ?: HomeDir.toPath())
         .build()

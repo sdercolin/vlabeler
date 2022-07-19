@@ -8,6 +8,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
+import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.getNumberKey
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isMacOS
@@ -236,6 +237,11 @@ fun FrameWindowScope.Menu(
                     Item(
                         "GC",
                         onClick = { System.gc() }
+                    )
+                    CheckboxItem(
+                        "Show chunk border",
+                        checked = DebugState.isShowingChunkBorder,
+                        onCheckedChange = { DebugState.isShowingChunkBorder = it }
                     )
                 }
             }

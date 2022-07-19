@@ -9,12 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.util.runIf
 
 @Composable
 fun CircularProgress(darkenBackground: Boolean = true) {
     Box(
         modifier = Modifier.fillMaxSize()
-            .run { if (darkenBackground) background(color = Black50) else this }
+            .runIf(darkenBackground) { background(color = Black50) }
             .plainClickable(),
         contentAlignment = Alignment.Center
     ) {

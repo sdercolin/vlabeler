@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.util.runIf
 
 data class EmbeddedDialogRequest<T : EmbeddedDialogArgs>(val args: T, val onResult: (EmbeddedDialogResult<T>?) -> Unit)
 
@@ -33,7 +34,7 @@ fun <T : EmbeddedDialogArgs> EmbeddedDialog(request: EmbeddedDialogRequest<T>) {
         Surface {
             Box(
                 modifier = Modifier
-                    .run { if (!args.customMargin) padding(horizontal = 50.dp, vertical = 20.dp) else this }
+                    .runIf<Modifier>(!args.customMargin) { padding(horizontal = 50.dp, vertical = 20.dp) }
             ) {
                 TypedDialog(args, request)
             }

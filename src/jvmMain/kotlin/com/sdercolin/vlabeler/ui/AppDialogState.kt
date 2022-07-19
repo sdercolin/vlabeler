@@ -17,6 +17,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.util.getCacheDir
+import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -167,7 +168,7 @@ class AppDialogStateImpl(
             listOf()
         } else {
             project.entries.map { it.name }
-                .run { if (purpose == InputEntryNameDialogPurpose.Rename) minus(entry.name) else this }
+                .runIf(purpose == InputEntryNameDialogPurpose.Rename) { minus(entry.name) }
         }
         openEmbeddedDialog(
             InputEntryNameDialogArgs(
