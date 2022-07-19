@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.github.psambit9791.jdsp.transform.FastFourier
 import com.github.psambit9791.jdsp.windows.Bartlett
 import com.github.psambit9791.jdsp.windows.Blackman
+import com.github.psambit9791.jdsp.windows.BlackmanHarris
 import com.github.psambit9791.jdsp.windows.Hamming
 import com.github.psambit9791.jdsp.windows.Hanning
 import com.github.psambit9791.jdsp.windows.Rectangular
@@ -29,6 +30,7 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
         AppConf.WindowType.Rectangular -> Rectangular(frameSize).window
         AppConf.WindowType.Triangular -> Triangular(frameSize).window
         AppConf.WindowType.Blackman -> Blackman(frameSize).window
+        AppConf.WindowType.BlackmanHarris -> BlackmanHarris(frameSize).window
         AppConf.WindowType.Bartlett -> Bartlett(frameSize).window
     }
     val peak = data.maxByOrNull { it.absoluteValue }!!

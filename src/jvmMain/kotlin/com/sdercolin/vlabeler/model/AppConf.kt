@@ -98,6 +98,7 @@ data class AppConf(
         Rectangular,
         Triangular,
         Blackman,
+        BlackmanHarris,
         Bartlett
     }
 
