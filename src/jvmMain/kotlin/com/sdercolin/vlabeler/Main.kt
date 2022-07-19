@@ -131,7 +131,7 @@ private fun LaunchKeyboardEvent(
     appState: AppState,
     player: Player
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(appState, keyboardViewModel, player) {
         keyboardViewModel.keyboardEventFlow.collect { event ->
             if (appState.isEditorActive) {
                 if (event.shouldTogglePlayer) {

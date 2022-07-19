@@ -40,11 +40,14 @@ fun rememberBottomBarState(
     appState: AppState,
     editorState: EditorState
 ) = remember(
+    project,
     project.labelerConf,
     project.currentIndex,
     project.entryCount,
     project.multipleEditMode,
+    editorState,
     editorState.canvasResolution,
+    appState,
     appState.appConf,
     appState.canGoNextEntryOrSample,
     appState.canGoPreviousEntryOrSample

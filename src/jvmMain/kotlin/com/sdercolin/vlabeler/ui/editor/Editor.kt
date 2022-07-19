@@ -33,10 +33,10 @@ fun Editor(state: EditorState, appState: AppState) {
     LaunchedEffect(state.project.currentSampleName, state.project.sampleDirectory, state) {
         state.loadSampleInfo()
     }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(state) {
         state.updateResolution()
     }
-    DisposableEffect(Unit) {
+    DisposableEffect(state) {
         onDispose { state.clear() }
     }
 

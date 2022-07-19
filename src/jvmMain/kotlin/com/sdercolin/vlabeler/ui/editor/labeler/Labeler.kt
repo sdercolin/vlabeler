@@ -45,7 +45,7 @@ fun Labeler(
     }
     val horizontalScrollState = rememberScrollState(0)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(editorState) {
         editorState.scrollFitViewModel.eventFlow.collectLatest {
             if (appState.isScrollFitEnabled.not()) return@collectLatest
             horizontalScrollState.animateScrollTo(it)
@@ -80,7 +80,8 @@ fun Labeler(
             modifier = Modifier.fillMaxWidth().height(20.dp),
             adapter = rememberScrollbarAdapter(horizontalScrollState)
         )
-        BottomBar(rememberBottomBarState(project, appState, editorState))
+        val bottomBarState = rememberBottomBarState(project, appState, editorState)
+        BottomBar(bottomBarState)
     }
 }
 

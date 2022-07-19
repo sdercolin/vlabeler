@@ -22,7 +22,7 @@ fun App(
     mainScope: CoroutineScope,
     appState: AppState
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(appState) {
         appState.checkAutoSavedProject()
     }
     LaunchedEffect(appState.appConf.autoSaveIntervalSecond) {

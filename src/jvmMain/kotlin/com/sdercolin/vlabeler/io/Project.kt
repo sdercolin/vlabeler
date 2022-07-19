@@ -61,7 +61,7 @@ fun loadProject(
             else -> project.workingDirectory
         }
 
-        Log.info("Project loaded: $project")
+        Log.info("Project loaded: ${project.projectFile.absolutePath}")
         val fixedProject = project.copy(labelerConf = labelerConf, workingDirectory = workingDirectory)
         if (fixedProject != project) {
             Log.info("Loaded project is modified to: $fixedProject")
