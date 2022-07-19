@@ -17,4 +17,14 @@ class CollectionTest {
         )
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun testSplitAveragelyRecovering() {
+        val size = 100
+        val source = List(size) { it }
+        repeat(size) {
+            val actual = source.splitAveragely(it + 1).flatten()
+            assertEquals(source, actual)
+        }
+    }
 }

@@ -114,6 +114,7 @@ class ChartStore {
                         spectrogramDataChunks,
                         chunkIndex,
                         density,
+                        appConf,
                         layoutDirection,
                         onRenderProgress
                     )
@@ -261,6 +262,7 @@ class ChartStore {
         spectrogramDataChunks: List<List<DoubleArray>>?,
         chunkIndex: Int,
         density: Density,
+        appConf: AppConf,
         layoutDirection: LayoutDirection,
         onRenderProgress: suspend () -> Unit
     ) {
@@ -274,9 +276,10 @@ class ChartStore {
         requireNotNull(spectrogramDataChunks) {
             "spectrogramDataChunks[$chunkIndex] is required. However it's not loaded."
         }
+        val pixelSize = appConf.painter.spectrogram.pointPixelSize
         val chunk = spectrogramDataChunks[chunkIndex]
-        val width = chunk.size.toFloat()
-        val height = chunk.first().size.toFloat()
+        val width = chunk.size.toFloat() * pixelSize
+        val height = chunk.first().size.toFloat() * pixelSize
         val size = Size(width, height)
         val newBitmap = ImageBitmap(width.toInt(), height.toInt())
         Log.info("Spectrogram chunk $chunkIndex: draw bitmap")
@@ -286,8 +289,8 @@ class ChartStore {
                     val color = White.copy(alpha = z.toFloat())
                     drawRect(
                         color = color,
-                        topLeft = Offset(xIndex.toFloat(), height - yIndex.toFloat()),
-                        size = Size(1f, 1f)
+                        topLeft = Offset(xIndex.toFloat() * pixelSize, (height - yIndex.toFloat() * pixelSize)),
+                        size = Size(pixelSize, pixelSize)
                     )
                 }
             }

@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui.editor.labeler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
+import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.repository.ChartRepository
@@ -42,8 +44,10 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerPointEventContainer
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.rememberMarkerState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.ui.theme.Yellow
 import com.sdercolin.vlabeler.util.getScreenRange
+import com.sdercolin.vlabeler.util.runIf
 
 @Composable
 fun Canvas(
@@ -122,7 +126,11 @@ private fun Chunk(
     appState: AppState,
     editorState: EditorState
 ) {
-    Box(Modifier.fillMaxHeight().requiredWidth(canvasParams.canvasWidthInDp / chunkCount)) {
+    Box(
+        Modifier.fillMaxHeight()
+            .requiredWidth(canvasParams.canvasWidthInDp / chunkCount)
+            .runIf(DebugState.isShowingChunkBorder) { border(1.dp, DarkYellow) }
+    ) {
         Column(Modifier.fillMaxSize()) {
             val weightOfEachChannel = 1f / sampleInfo.channels
             repeat(sampleInfo.channels) { channelIndex ->

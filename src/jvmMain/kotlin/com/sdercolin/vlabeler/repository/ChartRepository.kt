@@ -32,7 +32,7 @@ object ChartRepository {
             appConf.painter
         )
         val existingCacheParams = runCatching {
-            cacheParamsFile.takeIf { it.exists() }?.readText()?.let { it.parseJson<ChartCacheParams>() }
+            cacheParamsFile.takeIf { it.exists() }?.readText()?.parseJson<ChartCacheParams>()
         }.getOrNull()
         if (existingCacheParams != cacheParams) {
             cacheDirectory.deleteRecursively()

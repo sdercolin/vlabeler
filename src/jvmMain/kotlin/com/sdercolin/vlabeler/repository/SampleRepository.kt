@@ -39,7 +39,7 @@ object SampleRepository {
             }
         }
         val existingInfo = runCatching {
-            getSampleInfoFile(file).takeIf { it.exists() }?.readText()?.let { it.parseJson<SampleInfo>() }
+            getSampleInfoFile(file).takeIf { it.exists() }?.readText()?.parseJson<SampleInfo>()
         }.getOrNull()
         if (existingInfo != null &&
             existingInfo.algorithmVersion == WaveLoadingAlgorithmVersion &&

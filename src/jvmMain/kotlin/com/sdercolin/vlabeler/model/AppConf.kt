@@ -82,6 +82,7 @@ data class AppConf(
     data class Spectrogram(
         val enabled: Boolean = false,
         val heightWeight: Float = 0.75f,
+        val pointPixelSize: Float = 5f,
         val frameSize: Int = 300,
         val maxFrequency: Int = 15000,
         val minIntensity: Int = 0,

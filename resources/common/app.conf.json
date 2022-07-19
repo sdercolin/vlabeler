@@ -15,6 +15,7 @@
     "spectrogram": {
       "enabled": true,
       "heightWeight": 0.75,
+      "pointPixelSize": 5,
       "frameSize": 300,
       "maxFrequency": 15000,
       "minIntensity": 0,
