@@ -95,9 +95,7 @@ class Player(
                     stop()
                 }
             }.onFailure {
-                if (it is CancellationException) {
-                    Log.info(it.message ?: "Player::writingJob is Cancelled")
-                } else {
+                if (it !is CancellationException) {
                     Log.error(it)
                 }
             }
