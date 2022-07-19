@@ -21,7 +21,8 @@ import java.nio.charset.Charset
 fun loadProject(
     scope: CoroutineScope,
     file: File,
-    appState: AppState
+    appState: AppState,
+    autoSaved: Boolean = false
 ) {
     scope.launch(Dispatchers.IO) {
         if (file.exists().not()) {
@@ -50,10 +51,14 @@ fun loadProject(
                 project.labelerConf
             }
         }
-        val workingDirectory = if (project.projectFile.absolutePath != file.absolutePath) {
-            Log.info("Reset project's workingDirectory to ${file.absolutePath}")
-            file.absoluteFile.parentFile.absolutePath
-        } else project.workingDirectory
+        val workingDirectory = when {
+            autoSaved -> project.workingDirectory
+            project.projectFile.absolutePath != file.absolutePath -> {
+                Log.info("Reset project's workingDirectory to ${file.absolutePath}")
+                file.absoluteFile.parentFile.absolutePath
+            }
+            else -> project.workingDirectory
+        }
 
         Log.info("Project loaded: $project")
         appState.openEditor(project.copy(labelerConf = labelerConf, workingDirectory = workingDirectory))
