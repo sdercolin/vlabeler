@@ -50,8 +50,13 @@ fun loadProject(
                 project.labelerConf
             }
         }
+        val workingDirectory = if (project.projectFile.absolutePath != file.absolutePath) {
+            Log.info("Reset project's workingDirectory to ${file.absolutePath}")
+            file.absoluteFile.parentFile.absolutePath
+        } else project.workingDirectory
+
         Log.info("Project loaded: $project")
-        appState.openEditor(project.copy(labelerConf = labelerConf))
+        appState.openEditor(project.copy(labelerConf = labelerConf, workingDirectory = workingDirectory))
         appState.addRecentProject(project.projectFile)
         if (appState.appConf.editor.autoScroll.onLoadedNewSample) {
             appState.scrollFitViewModel.emitNext()
