@@ -32,6 +32,7 @@ interface AppDialogState {
     val isShowingSaveAsProjectDialog: Boolean
     val isShowingExportDialog: Boolean
     val isShowingSampleListDialog: Boolean
+    val isShowingSampleDirectoryRedirectDialog: Boolean
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
     val embeddedDialog: EmbeddedDialogRequest<*>?
 
@@ -55,6 +56,8 @@ interface AppDialogState {
     fun confirmIfLoadAutoSavedProject(file: File)
     fun openSampleListDialog()
     fun closeSampleListDialog()
+    fun openSampleDirectoryRedirectDialog()
+    fun closeSampleDirectoryRedirectDialog()
     fun requestClearCaches(scope: CoroutineScope)
     fun clearCachesAndReopen(scope: CoroutineScope)
 
@@ -63,7 +66,7 @@ interface AppDialogState {
 
     fun anyDialogOpening() =
         isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog ||
-            isShowingSampleListDialog || embeddedDialog != null
+            isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || embeddedDialog != null
 }
 
 class AppDialogStateImpl(
@@ -81,6 +84,7 @@ class AppDialogStateImpl(
     override var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingExportDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
+    override var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
     override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
     override var embeddedDialog: EmbeddedDialogRequest<*>? by mutableStateOf(null)
 
@@ -102,7 +106,7 @@ class AppDialogStateImpl(
         if (hasUnsavedChanges) {
             askIfSaveBeforeOpenRecentProject(file)
         } else {
-            loadProject(scope, file, state)
+            loadProject(scope, file, state, true)
         }
 
     private fun askIfSaveBeforeOpenRecentProject(file: File) =
@@ -191,6 +195,14 @@ class AppDialogStateImpl(
         isShowingSampleListDialog = false
     }
 
+    override fun openSampleDirectoryRedirectDialog() {
+        isShowingSampleDirectoryRedirectDialog = true
+    }
+
+    override fun closeSampleDirectoryRedirectDialog() {
+        isShowingSampleDirectoryRedirectDialog = false
+    }
+
     override fun requestClearCaches(scope: CoroutineScope) =
         if (hasUnsavedChanges) askIfSaveBeforeClearCaches() else clearCachesAndReopen(scope)
 
@@ -198,7 +210,7 @@ class AppDialogStateImpl(
 
     override fun clearCachesAndReopen(scope: CoroutineScope) {
         projectStore.requireProject().getCacheDir().deleteRecursively()
-        loadProject(scope, projectStore.requireProject().projectFile, state)
+        loadProject(scope, projectStore.requireProject().projectFile, state, true)
     }
 
     override fun closeEmbeddedDialog() {

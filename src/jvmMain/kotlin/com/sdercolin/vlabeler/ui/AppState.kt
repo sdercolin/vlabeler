@@ -211,7 +211,7 @@ class AppState(
         PendingActionAfterSaved.CreatingNew -> openProjectCreator()
         PendingActionAfterSaved.ClearCaches -> clearCachesAndReopen(mainScope)
         PendingActionAfterSaved.Exit -> exit()
-        is PendingActionAfterSaved.OpenRecent -> loadProject(mainScope, action.file, this)
+        is PendingActionAfterSaved.OpenRecent -> loadProject(mainScope, action.file, this, true)
         null -> Unit
     }
 
@@ -238,7 +238,7 @@ class AppState(
             is CommonConfirmationDialogResult -> when (val action = result.action) {
                 is CommonConfirmationDialogAction.RemoveCurrentEntry -> removeCurrentEntry()
                 is CommonConfirmationDialogAction.LoadAutoSavedProject -> {
-                    loadProject(mainScope, action.file, this)
+                    loadProject(mainScope, action.file, this, autoSaved = true)
                     hasLoadedAutoSavedProject = true
                 }
             }

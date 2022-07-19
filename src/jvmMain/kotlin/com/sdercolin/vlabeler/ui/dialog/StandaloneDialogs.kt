@@ -23,7 +23,7 @@ fun StandaloneDialogs(
         ) { parent, name ->
             appState.closeOpenProjectDialog()
             if (parent != null && name != null) {
-                loadProject(mainScope, File(parent, name), appState)
+                loadProject(mainScope, File(parent, name), appState, true)
             }
         }
         appState.isShowingSaveAsProjectDialog -> SaveFileDialog(
@@ -44,7 +44,7 @@ fun StandaloneDialogs(
             }
         }
         appState.isShowingExportDialog -> {
-            val project = appState.project!!
+            val project = appState.requireProject()
             SaveFileDialog(
                 title = string(Strings.ExportDialogTitle),
                 extensions = listOf(project.labelerConf.extension),
@@ -55,6 +55,23 @@ fun StandaloneDialogs(
                 appState.closeExportDialog()
                 if (parent != null && name != null) {
                     exportProject(mainScope, parent, name, appState)
+                }
+            }
+        }
+        appState.isShowingSampleDirectoryRedirectDialog -> {
+            val project = appState.requireProject()
+            OpenFileDialog(
+                title = string(Strings.ChooseSampleDirectoryDialogTitle),
+                initialDirectory = File(project.sampleDirectory).takeIf { it.exists() }?.absolutePath,
+                extensions = null,
+                directoryMode = true
+            ) { parent, name ->
+                appState.closeSampleDirectoryRedirectDialog()
+                if (parent != null && name != null) {
+                    val newDirectory = File(parent, name)
+                    if (newDirectory.exists() && newDirectory.isDirectory) {
+                        appState.changeSampleDirectory(newDirectory)
+                    }
                 }
             }
         }

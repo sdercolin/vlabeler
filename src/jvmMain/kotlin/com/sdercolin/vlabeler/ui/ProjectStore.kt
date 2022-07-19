@@ -51,6 +51,7 @@ interface ProjectStore {
     fun createDefaultEntry(sampleName: String)
     fun isCurrentEntryTheLast(): Boolean
     fun toggleMultipleEditMode(on: Boolean)
+    fun changeSampleDirectory(directory: File)
     fun getAutoSavedProjectFile(): File?
     fun discardAutoSavedProjects()
     fun enableAutoSaveProject(intervalSecond: Int?, scope: CoroutineScope, unsavedChangesState: AppUnsavedChangesState)
@@ -210,6 +211,10 @@ class ProjectStoreImpl(
     }
 
     override fun toggleMultipleEditMode(on: Boolean) = editProject { copy(multipleEditMode = on) }
+
+    override fun changeSampleDirectory(directory: File) {
+        editProject { copy(sampleDirectory = directory.absolutePath) }
+    }
 
     private fun listAutoSavedProjectFiles() = RecordDir.listFiles().orEmpty()
         .filter { it.extension == Project.ProjectFileExtension && it.name.startsWith("_") }

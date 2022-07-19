@@ -221,6 +221,10 @@ class EditorState(
         appState.jumpToEntry(index)
     }
 
+    fun requestRedirectSampleDirectory() {
+        appState.openSampleDirectoryRedirectDialog()
+    }
+
     fun clear() {
         Log.info("EditorState clear()")
         SampleRepository.clear()

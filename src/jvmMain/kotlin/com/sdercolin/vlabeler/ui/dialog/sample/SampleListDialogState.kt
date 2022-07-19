@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
+import java.awt.Desktop
 import java.io.File
 
 class SampleListDialogState(
@@ -76,5 +77,19 @@ class SampleListDialogState(
     fun jumpToSelectedEntry() {
         val index = requireNotNull(selectedEntryIndex)
         editorState.jumpToEntry(index)
+    }
+
+    val sampleDirectory: File get() = File(editorState.project.sampleDirectory)
+
+    fun isSampleDirectoryExisting() = sampleDirectory.let {
+        it.exists() && it.isDirectory
+    }
+
+    fun openSampleDirectory() {
+        Desktop.getDesktop().open(sampleDirectory)
+    }
+
+    fun requestRedirectSampleDirectory() {
+        editorState.requestRedirectSampleDirectory()
     }
 }

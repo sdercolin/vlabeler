@@ -21,7 +21,10 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -33,7 +36,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.plainClickable
@@ -45,10 +51,12 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.LightGray
+import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
+import java.io.File
 
 @Composable
-private fun rememberState(editorState: EditorState) = remember(editorState) {
+private fun rememberState(editorState: EditorState, sampleDirectory: String) = remember(editorState, sampleDirectory) {
     SampleListDialogState(editorState)
 }
 
@@ -56,7 +64,7 @@ private fun rememberState(editorState: EditorState) = remember(editorState) {
 fun SampleListDialog(
     editorState: EditorState,
     finish: () -> Unit,
-    state: SampleListDialogState = rememberState(editorState)
+    state: SampleListDialogState = rememberState(editorState, editorState.project.sampleDirectory)
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -67,15 +75,26 @@ fun SampleListDialog(
         Surface(modifier = Modifier.fillMaxSize(0.8f)) {
             Box(modifier = Modifier.padding(vertical = 20.dp, horizontal = 30.dp)) {
                 Column(modifier = Modifier.fillMaxSize()) {
+                    Spacer(Modifier.height(5.dp))
+                    SampleDirectoryBar(
+                        directory = state.sampleDirectory,
+                        valid = state.isSampleDirectoryExisting(),
+                        requestRedirectSampleDirectory = {
+                            state.requestRedirectSampleDirectory()
+                        }
+                    )
+                    Spacer(Modifier.height(15.dp))
                     Content(state)
-                    Spacer(Modifier.height(25.dp))
+                    Spacer(Modifier.height(20.dp))
                     ButtonBar(
                         finish = finish,
                         hasSelectedEntry = state.selectedEntryIndex != null,
                         jumpToSelectedEntry = {
                             state.jumpToSelectedEntry()
                             finish()
-                        }
+                        },
+                        canOpenSampleDirectory = state.isSampleDirectoryExisting(),
+                        openSampleDirectory = { state.openSampleDirectory() }
                     )
                 }
             }
@@ -301,8 +320,73 @@ private fun ColumnScope.GroupLazyColumn(
 }
 
 @Composable
-private fun ButtonBar(finish: () -> Unit, hasSelectedEntry: Boolean, jumpToSelectedEntry: () -> Unit) {
+private fun SampleDirectoryBar(
+    directory: File,
+    valid: Boolean,
+    requestRedirectSampleDirectory: () -> Unit
+) {
+    Row(Modifier.fillMaxWidth()) {
+        BasicText(
+            modifier = Modifier.padding(vertical = 5.dp, horizontal = 2.dp).alignByBaseline(),
+            text = string(Strings.SampleListSampleDirectoryLabel),
+            style = MaterialTheme.typography.body2.copy(
+                color = MaterialTheme.colors.onBackground,
+                fontWeight = FontWeight.Bold
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(Modifier.width(5.dp))
+        BasicTextField(
+            modifier = Modifier.alignByBaseline()
+                .weight(1f)
+                .background(color = White20, shape = RoundedCornerShape(2.dp))
+                .padding(horizontal = 10.dp, vertical = 5.dp),
+            value = directory.absolutePath,
+            onValueChange = {},
+            textStyle = MaterialTheme.typography.caption.copy(
+                color = if (valid) MaterialTheme.colors.onBackground else MaterialTheme.colors.error
+            ),
+            readOnly = true
+        )
+        Spacer(Modifier.width(20.dp))
+        ClickableText(
+            modifier = Modifier.alignByBaseline(),
+            text = buildAnnotatedString {
+                val text = string(Strings.SampleListOpenSampleDirectoryButton)
+                append(text)
+                addStyle(
+                    style = SpanStyle(
+                        color = MaterialTheme.colors.primary,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    start = 0,
+                    end = text.length
+                )
+            },
+            style = MaterialTheme.typography.caption,
+            maxLines = 1,
+            onClick = { requestRedirectSampleDirectory() }
+        )
+    }
+}
+
+@Composable
+private fun ButtonBar(
+    finish: () -> Unit,
+    hasSelectedEntry: Boolean,
+    jumpToSelectedEntry: () -> Unit,
+    canOpenSampleDirectory: Boolean,
+    openSampleDirectory: () -> Unit
+) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        TextButton(
+            enabled = canOpenSampleDirectory,
+            onClick = { openSampleDirectory() }
+        ) {
+            Text(string(Strings.SampleListOpenSampleDirectoryButton))
+        }
+        Spacer(Modifier.weight(1f))
         TextButton(
             enabled = hasSelectedEntry,
             onClick = { jumpToSelectedEntry() }
