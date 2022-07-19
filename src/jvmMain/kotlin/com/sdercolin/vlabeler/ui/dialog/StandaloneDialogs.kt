@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.lastPathSection
+import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
@@ -62,7 +63,7 @@ fun StandaloneDialogs(
             val project = appState.requireProject()
             OpenFileDialog(
                 title = string(Strings.ChooseSampleDirectoryDialogTitle),
-                initialDirectory = File(project.sampleDirectory).takeIf { it.exists() }?.absolutePath,
+                initialDirectory = project.sampleDirectory.toFileOrNull()?.absolutePath,
                 extensions = null,
                 directoryMode = true
             ) { parent, name ->

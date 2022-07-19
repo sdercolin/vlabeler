@@ -13,6 +13,7 @@ import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.RecordDir
+import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.savedMutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -216,7 +217,7 @@ class ProjectStoreImpl(
         editProject { copy(sampleDirectory = directory.absolutePath) }
     }
 
-    private fun listAutoSavedProjectFiles() = RecordDir.listFiles().orEmpty()
+    private fun listAutoSavedProjectFiles() = RecordDir.getChildren()
         .filter { it.extension == Project.ProjectFileExtension && it.name.startsWith("_") }
 
     override fun getAutoSavedProjectFile(): File? = listAutoSavedProjectFiles().firstOrNull()

@@ -36,8 +36,8 @@ val CustomLabelerDir get() = AppDir.resolve(LabelerFolderName)
 val CustomPluginDir get() = AppDir.resolve(PluginFolderName)
 
 private val labelerFileFilter = FilenameFilter { _, name -> name.endsWith(".$LabelerFileExtension") }
-fun getDefaultLabelers() = DefaultLabelerDir.listFiles(labelerFileFilter).orEmpty().toList()
-fun getCustomLabelers() = CustomLabelerDir.listFiles(labelerFileFilter).orEmpty().toList()
+fun getDefaultLabelers() = DefaultLabelerDir.getChildren(labelerFileFilter)
+fun getCustomLabelers() = CustomLabelerDir.getChildren(labelerFileFilter)
 
 // Project files
 fun Project.getCacheDir() = File(workingDirectory).resolve(projectFile.name + ProjectCacheFolderNameSuffix)

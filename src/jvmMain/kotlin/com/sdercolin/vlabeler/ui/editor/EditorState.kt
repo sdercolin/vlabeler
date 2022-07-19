@@ -22,6 +22,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -102,7 +103,7 @@ class EditorState(
 
     suspend fun loadSampleInfo() {
         withContext(Dispatchers.IO) {
-            val sampleDirectory = File(project.sampleDirectory)
+            val sampleDirectory = project.sampleDirectory.toFile()
             if (!sampleDirectory.exists()) {
                 sampleInfoState.value = Result.failure(MissingSampleDirectoryException())
                 appState.confirmIfRedirectSampleDirectory(sampleDirectory)

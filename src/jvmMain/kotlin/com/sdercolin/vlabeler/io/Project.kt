@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -107,7 +108,7 @@ fun exportProject(
 }
 
 suspend fun saveProjectFile(project: Project): File = withContext(Dispatchers.IO) {
-    val workingDirectory = File(project.workingDirectory)
+    val workingDirectory = project.workingDirectory.toFile()
     if (!workingDirectory.exists()) {
         workingDirectory.mkdir()
     }

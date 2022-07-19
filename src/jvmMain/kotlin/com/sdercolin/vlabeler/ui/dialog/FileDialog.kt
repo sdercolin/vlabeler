@@ -6,6 +6,7 @@ import androidx.compose.ui.window.AwtWindow
 import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.env.setAwtDirectoryMode
 import com.sdercolin.vlabeler.util.HomeDir
+import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.lwjgl.system.MemoryUtil
@@ -110,9 +111,9 @@ private fun LwjglFileDialog(
                 }
             }
             if (result == NativeFileDialog.NFD_OKAY) {
-                val path = pathPointer.stringUTF8
+                val file = pathPointer.stringUTF8.toFile()
                 NativeFileDialog.nNFD_Free(pathPointer[0])
-                onCloseRequest(File(path).parent, File(path).name)
+                onCloseRequest(file.parent, file.name)
             } else {
                 onCloseRequest(null, null)
             }

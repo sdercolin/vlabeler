@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.orEmpty
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -320,7 +321,7 @@ suspend fun projectOf(
     encoding: String
 ): Result<Project> {
     val sampleDirectoryFile = File(sampleDirectory)
-    val sampleNames = sampleDirectoryFile.listFiles().orEmpty()
+    val sampleNames = sampleDirectoryFile.getChildren()
         .filter { it.extension == Project.SampleFileExtension }
         .map { it.nameWithoutExtension }
         .sorted()

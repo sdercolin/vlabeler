@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.json
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -205,7 +206,7 @@ fun runTemplatePlugin(
 ): List<FlatEntry> {
     val js = JavaScript(
         logHandler = Log.infoFileHandler,
-        currentWorkingDirectory = File(requireNotNull(plugin.directory).absolutePath)
+        currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile()
     )
     val inputTexts = inputFiles.map { it.readText(Charset.forName(encoding)) }
     val resourceTexts = plugin.readResourceFiles()

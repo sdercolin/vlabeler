@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -43,7 +44,7 @@ object SampleRepository {
         if (existingInfo != null &&
             existingInfo.algorithmVersion == WaveLoadingAlgorithmVersion &&
             existingInfo.maxChunkSize == appConf.painter.maxDataChunkSize &&
-            File(existingInfo.file).exists()
+            existingInfo.file.toFile().exists()
         ) {
             // Return file cached sample info
             Log.info("Returning cached sample info for ${file.nameWithoutExtension}")
