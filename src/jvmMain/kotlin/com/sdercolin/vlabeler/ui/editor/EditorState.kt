@@ -23,6 +23,8 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -41,6 +43,10 @@ class EditorState(
     val scrollFitViewModel = appState.scrollFitViewModel
     private val player = appState.player
     var tool: Tool by mutableStateOf(Tool.Cursor)
+
+    private var _renderProgress: Pair<Int, Int> by mutableStateOf(0 to 0)
+    val renderProgress get() = _renderProgress
+    private val renderProgressMutex = Mutex()
 
     var canvasResolution: Int by mutableStateOf(appState.appConf.painter.canvasResolution.default)
         private set
@@ -103,6 +109,8 @@ class EditorState(
             }?.let {
                 player.load(File(it.file))
                 appState.updateProjectOnLoadedSample(it)
+                val renderProgressTotal = it.chunkCount * (it.channels + if (it.hasSpectrogram) 1 else 0)
+                _renderProgress = 0 to renderProgressTotal
             }
         }
     }
@@ -118,6 +126,12 @@ class EditorState(
         chartStore.clear()
         val chunkSizeInMilliSec = sampleInfo.lengthMillis / chunkCount
         val startingChunkIndex = (project.currentEntry.start / chunkSizeInMilliSec).toInt()
+
+        val onRenderProgress = suspend {
+            renderProgressMutex.withLock {
+                _renderProgress = _renderProgress.copy(first = _renderProgress.first + 1)
+            }
+        }
         chartStore.load(
             scope,
             project,
@@ -126,7 +140,8 @@ class EditorState(
             appConf,
             density,
             layoutDirection,
-            startingChunkIndex
+            startingChunkIndex,
+            onRenderProgress
         )
     }
 

@@ -29,6 +29,7 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.PropertyView
+import com.sdercolin.vlabeler.ui.editor.RenderStatusLabel
 import com.sdercolin.vlabeler.ui.editor.ToolboxView
 import com.sdercolin.vlabeler.ui.theme.Black50
 import kotlinx.coroutines.flow.collectLatest
@@ -73,6 +74,7 @@ fun Labeler(
                     select = { editorState.tool = it }
                 )
             }
+            RenderStatusLabel(editorState.renderProgress)
         }
         HorizontalScrollbar(
             modifier = Modifier.fillMaxWidth().height(20.dp),

@@ -204,6 +204,9 @@ enum class Strings(val en: String) {
     SampleListJumpToSelectedEntryButton(
         en = "Go to selected entry"
     ),
+    EditorRenderStatusLabel(
+        en = "%d/%d Rendering..."
+    ),
     ChooseSampleDirectoryDialogTitle(
         en = "Choose sample directory"
     ),

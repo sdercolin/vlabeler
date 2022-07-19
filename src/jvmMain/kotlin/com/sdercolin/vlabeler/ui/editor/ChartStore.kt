@@ -60,7 +60,8 @@ class ChartStore {
         appConf: AppConf,
         density: Density,
         layoutDirection: LayoutDirection,
-        startingChunkIndex: Int
+        startingChunkIndex: Int,
+        onRenderProgress: suspend () -> Unit
     ) {
         Log.info("ChartStore load(${sampleInfo.name})")
         ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
@@ -103,11 +104,19 @@ class ChartStore {
                         chunkIndex,
                         appConf,
                         density,
-                        layoutDirection
+                        layoutDirection,
+                        onRenderProgress
                     )
                 }
                 if (sampleInfo.hasSpectrogram && appConf.painter.spectrogram.enabled) {
-                    drawSpectrogram(sampleInfo, spectrogramDataChunks, chunkIndex, density, layoutDirection)
+                    drawSpectrogram(
+                        sampleInfo,
+                        spectrogramDataChunks,
+                        chunkIndex,
+                        density,
+                        layoutDirection,
+                        onRenderProgress
+                    )
                 }
             }
             launchGcDelayed()
@@ -189,10 +198,12 @@ class ChartStore {
         chunkIndex: Int,
         appConf: AppConf,
         density: Density,
-        layoutDirection: LayoutDirection
+        layoutDirection: LayoutDirection,
+        onRenderProgress: suspend () -> Unit
     ) {
         if (hasCachedWaveform(sampleInfo, channelIndex, chunkIndex)) {
             waveformStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
+            onRenderProgress()
             return
         } else {
             deleteCachedWaveform(sampleInfo, channelIndex, chunkIndex)
@@ -219,6 +230,7 @@ class ChartStore {
         ChartRepository.putWaveform(sampleInfo, channelIndex, chunkIndex, newBitmap)
         yield()
         waveformStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
+        onRenderProgress()
     }
 
     private fun hasCachedSpectrogram(
@@ -249,10 +261,12 @@ class ChartStore {
         spectrogramDataChunks: List<List<DoubleArray>>?,
         chunkIndex: Int,
         density: Density,
-        layoutDirection: LayoutDirection
+        layoutDirection: LayoutDirection,
+        onRenderProgress: suspend () -> Unit
     ) {
         if (hasCachedSpectrogram(sampleInfo, chunkIndex)) {
             spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loaded
+            onRenderProgress()
             return
         } else {
             deleteCachedSpectrogram(sampleInfo, chunkIndex)
@@ -282,6 +296,7 @@ class ChartStore {
         ChartRepository.putSpectrogram(sampleInfo, chunkIndex, newBitmap)
         yield()
         spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loaded
+        onRenderProgress()
     }
 
     companion object {
