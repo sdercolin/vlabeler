@@ -85,10 +85,6 @@ object ChartRepository {
         Log.debug("Written to $file")
     }
 
-    fun clear() {
-        // TODO: clear the working directory at a correct time
-    }
-
     fun getWaveformImageFile(
         sampleInfo: SampleInfo,
         channelIndex: Int,

@@ -48,7 +48,6 @@ class ChartStore {
         Log.info("ChartStore clear()")
         job?.cancel()
         job = null
-        ChartRepository.clear()
         waveformStatusList.clear()
         spectrogramStatusList.clear()
         launchGcDelayed()
