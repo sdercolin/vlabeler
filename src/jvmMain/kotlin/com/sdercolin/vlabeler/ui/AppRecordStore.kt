@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.ui
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.util.AppRecordFile
-import com.sdercolin.vlabeler.util.toJson
+import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,7 +31,7 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
         scope.launch(Dispatchers.IO) {
             _stateFlow.collectLatest {
                 delay(ThrottlePeriodMs)
-                AppRecordFile.writeText(toJson(it))
+                AppRecordFile.writeText(it.stringifyJson())
                 Log.info("Written appRecord: $it")
             }
         }

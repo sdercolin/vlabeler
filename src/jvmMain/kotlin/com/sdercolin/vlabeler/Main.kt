@@ -97,7 +97,7 @@ fun main() = application {
 @Composable
 private fun rememberAppRecordStore(scope: CoroutineScope) = remember {
     val recordText = AppRecordFile.takeIf { it.exists() }?.readText()
-    val appRecord = recordText?.let { parseJson(it) } ?: AppRecord()
+    val appRecord = recordText?.let { it.parseJson() } ?: AppRecord()
     AppRecordStore(appRecord, scope)
 }
 

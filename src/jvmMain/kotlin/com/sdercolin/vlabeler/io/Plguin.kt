@@ -30,7 +30,7 @@ fun loadPlugins(type: Plugin.Type): List<Plugin> =
         .filter { it.exists() }
         .map { it to it.readText() }
         .mapNotNull { (file, text) ->
-            runCatching { parseJson<Plugin>(text) }.getOrElse {
+            runCatching { text.parseJson<Plugin>() }.getOrElse {
                 Log.debug(it)
                 Log.debug("Failed to load plugin: ${file.parent}")
                 null

@@ -10,7 +10,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
-import com.sdercolin.vlabeler.util.toJson
+import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import org.jetbrains.skiko.toBufferedImage
@@ -32,12 +32,12 @@ object ChartRepository {
             appConf.painter
         )
         val existingCacheParams = runCatching {
-            cacheParamsFile.takeIf { it.exists() }?.readText()?.let { parseJson<ChartCacheParams>(it) }
+            cacheParamsFile.takeIf { it.exists() }?.readText()?.let { it.parseJson<ChartCacheParams>() }
         }.getOrNull()
         if (existingCacheParams != cacheParams) {
             cacheDirectory.deleteRecursively()
             cacheDirectory.mkdirs()
-            cacheParamsFile.writeText(toJson(cacheParams))
+            cacheParamsFile.writeText(cacheParams.stringifyJson())
         }
     }
 

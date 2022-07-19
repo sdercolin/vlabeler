@@ -10,8 +10,8 @@ import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
-import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +31,7 @@ fun loadProject(
             return@launch
         }
         appState.showProgress()
-        val project = runCatching { parseJson<Project>(file.readText()) }
+        val project = runCatching { file.readText().parseJson<Project>() }
             .getOrElse {
                 appState.openEmbeddedDialog(ErrorDialogContent.FailedToParseProject)
                 Log.error(it)
@@ -41,7 +41,7 @@ fun loadProject(
         val existingLabelerConf = appState.availableLabelerConfs.find { it.name == project.labelerConf.name }
         val labelerConf = when {
             existingLabelerConf == null -> {
-                CustomLabelerDir.resolve(project.labelerConf.fileName).writeText(toJson(project.labelerConf))
+                CustomLabelerDir.resolve(project.labelerConf.fileName).writeText(project.labelerConf.stringifyJson())
                 project.labelerConf
             }
             existingLabelerConf.version >= project.labelerConf.version -> {
@@ -112,7 +112,7 @@ suspend fun saveProjectFile(project: Project): File = withContext(Dispatchers.IO
     if (!workingDirectory.exists()) {
         workingDirectory.mkdir()
     }
-    val projectContent = toJson(project)
+    val projectContent = project.stringifyJson()
     project.projectFile.writeText(projectContent)
     Log.debug("Project saved to ${project.projectFile}")
     project.projectFile
@@ -120,7 +120,7 @@ suspend fun saveProjectFile(project: Project): File = withContext(Dispatchers.IO
 
 suspend fun autoSaveProjectFile(project: Project): File = withContext(Dispatchers.IO) {
     val file = RecordDir.resolve("_" + project.projectFile.name)
-    val projectContent = toJson(project)
+    val projectContent = project.stringifyJson()
     file.writeText(projectContent)
     Log.debug("Project auto-saved to $file")
     file

@@ -155,7 +155,7 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
         require(decoder is JsonDecoder)
         val element = decoder.decodeJsonElement()
         require(element is JsonObject)
-        val type = parseJson<Plugin.ParameterType>(requireNotNull(element["type"]).jsonPrimitive.content)
+        val type = requireNotNull(element["type"]).jsonPrimitive.content.parseJson<Plugin.ParameterType>()
         val name = requireNotNull(element["name"]).jsonPrimitive.content
         val label = requireNotNull(element["label"]).jsonPrimitive.content
         val defaultPrimitive = requireNotNull(element["defaultValue"]).jsonPrimitive

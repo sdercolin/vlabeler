@@ -61,7 +61,7 @@ class JavaScript(logHandler: Handler? = null, currentWorkingDirectory: File? = n
      * Pass object to JavaScript via JSON serialization
      */
     inline fun <reified T : @Serializable Any> setJson(name: String, value: T) {
-        set(name, toJson(value))
+        set(name, value.stringifyJson())
         eval("$name = JSON.parse($name)")
     }
 
@@ -70,7 +70,7 @@ class JavaScript(logHandler: Handler? = null, currentWorkingDirectory: File? = n
      */
     inline fun <reified T : @Serializable Any> getJson(name: String): T {
         val json = eval("JSON.stringify($name)")!!.asString()
-        return parseJson(json)
+        return json.parseJson()
     }
 
     /**

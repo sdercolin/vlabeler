@@ -23,7 +23,7 @@ import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getCustomLabelers
 import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
-import com.sdercolin.vlabeler.util.toJson
+import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -33,13 +33,13 @@ suspend fun loadAppConf(): MutableState<AppConf> = withContext(Dispatchers.IO) {
     val customAppConf = if (CustomAppConfFile.exists() && !isDebug) {
         Log.info("Custom app conf found")
         val customAppConfText = CustomAppConfFile.readText()
-        runCatching { parseJson<AppConf>(customAppConfText) }.getOrElse {
+        runCatching { customAppConfText.parseJson<AppConf>() }.getOrElse {
             Log.debug("Failed to parse custom app conf: $customAppConfText. Error message: {${it.message}}.")
             null
         }
     } else null
-    val appConf = customAppConf ?: parseJson(DefaultAppConfFile.readText())
-    CustomAppConfFile.writeText(toJson(appConf))
+    val appConf = customAppConf ?: DefaultAppConfFile.readText().parseJson()
+    CustomAppConfFile.writeText(appConf.stringifyJson())
     Log.info("AppConf: $appConf")
     mutableStateOf(appConf)
 }
@@ -92,7 +92,7 @@ suspend fun loadPlugins(): List<Plugin> = withContext(Dispatchers.IO) {
 private fun File.asLabelerConf(): Result<LabelerConf> {
     val text = readText()
     val result = runCatching {
-        parseJson<LabelerConf>(text).copy(
+        text.parseJson<LabelerConf>().copy(
             name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}")
         )
     }

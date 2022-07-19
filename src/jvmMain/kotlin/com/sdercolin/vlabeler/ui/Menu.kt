@@ -16,7 +16,7 @@ import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomAppConfFile
-import com.sdercolin.vlabeler.util.toJson
+import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
@@ -231,7 +231,7 @@ fun FrameWindowScope.Menu(
                     )
                     Item(
                         "Export AppConfig",
-                        onClick = { CustomAppConfFile.writeText(toJson(appState.appConf)) }
+                        onClick = { CustomAppConfFile.writeText(appState.appConf.stringifyJson()) }
                     )
                     Item(
                         "GC",

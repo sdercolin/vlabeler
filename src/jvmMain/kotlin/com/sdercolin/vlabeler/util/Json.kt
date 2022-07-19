@@ -11,10 +11,10 @@ val json = Json {
     encodeDefaults = true
 }
 
-inline fun <reified T> parseJson(string: String): T {
-    return json.decodeFromString(string)
+inline fun <reified T> String.parseJson(): T {
+    return json.decodeFromString(this)
 }
 
-inline fun <reified T> toJson(value: T): String {
-    return json.encodeToString(value)
+inline fun <reified T> T.stringifyJson(): String {
+    return json.encodeToString(this)
 }

@@ -10,8 +10,8 @@ import com.sdercolin.vlabeler.model.Sample
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
-import com.sdercolin.vlabeler.util.toJson
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -39,7 +39,7 @@ object SampleRepository {
             }
         }
         val existingInfo = runCatching {
-            getSampleInfoFile(file).takeIf { it.exists() }?.readText()?.let { parseJson<SampleInfo>(it) }
+            getSampleInfoFile(file).takeIf { it.exists() }?.readText()?.let { it.parseJson<SampleInfo>() }
         }.getOrNull()
         if (existingInfo != null &&
             existingInfo.algorithmVersion == WaveLoadingAlgorithmVersion &&
@@ -60,7 +60,7 @@ object SampleRepository {
         }
         dataMap[sample.info.name] = coroutineScope { async { sample } }
         infoMap[sample.info.name] = sample.info
-        getSampleInfoFile(file).writeText(toJson(sample.info))
+        getSampleInfoFile(file).writeText(sample.info.stringifyJson())
         return Result.success(sample)
     }
 
