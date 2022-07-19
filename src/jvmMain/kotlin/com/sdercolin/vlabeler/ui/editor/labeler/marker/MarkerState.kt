@@ -2,8 +2,10 @@ package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
@@ -50,6 +52,9 @@ class MarkerState(
         listOfNotNull(entryBorders.getOrNull(index - 1)) + entryInPixel.points
     }
     private val middlePointsInPixelSorted = middlePointsInPixel.sorted()
+
+    private val hoveredIndexSet = hashSetOf<Int>()
+    private var isLabelHovered: Boolean by mutableStateOf(false)
 
     fun isBorderIndex(index: Int): Boolean {
         if (index < 0) return false
@@ -151,6 +156,8 @@ class MarkerState(
         labelSize: DpSize,
         labelShiftUp: Dp
     ): Int {
+        if (isLabelHovered) return MarkerCursorState.NonePointIndex
+
         // end
         if ((endInPixel - x).absoluteValue <= NearRadiusStartOrEnd) {
             if (x >= endInPixel) return MarkerCursorState.EndPointIndex
@@ -228,6 +235,15 @@ class MarkerState(
     fun getEntryIndexByCutPosition(position: Float) = entriesInPixel.first {
         it.isValidCutPosition(position)
     }.index
+
+    fun onLabelHovered(index: Int, hovered: Boolean) {
+        if (hovered) {
+            hoveredIndexSet.add(index)
+        } else {
+            hoveredIndexSet.remove(index)
+        }
+        isLabelHovered = hoveredIndexSet.isNotEmpty()
+    }
 
     companion object {
         private const val NearRadiusStartOrEnd = 20f

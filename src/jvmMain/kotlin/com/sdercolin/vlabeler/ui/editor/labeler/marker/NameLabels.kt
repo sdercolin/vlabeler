@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+
 package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,8 +16,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -35,6 +41,8 @@ private data class NameLabelEntryChunk(
 fun NameLabels(
     state: MarkerState,
     requestRename: (Int) -> Unit,
+    jumpToEntry: (Int) -> Unit,
+    onHovered: (Int, Boolean) -> Unit,
     chunkCount: Int,
     chunkLength: Float,
     chunkLengthDp: Dp,
@@ -71,7 +79,9 @@ fun NameLabels(
                     index = index,
                     entryChunk = chunks[index],
                     offset = index * chunkLength,
-                    requestRename = requestRename
+                    requestRename = requestRename,
+                    jumpToEntry = jumpToEntry,
+                    onHovered = onHovered
                 )
             } else {
                 Box(modifier)
@@ -81,12 +91,28 @@ fun NameLabels(
 }
 
 @Composable
-private fun NameLabel(index: Int, name: String, color: Color, requestRename: (Int) -> Unit) {
+private fun NameLabel(
+    index: Int,
+    name: String,
+    color: Color,
+    requestRename: (Int) -> Unit,
+    jumpToEntry: (Int) -> Unit,
+    onHovered: (Int, Boolean) -> Unit
+) {
     Log.info("NameLabel of entry $index composed")
     Text(
         modifier = Modifier.widthIn(max = 100.dp)
             .wrapContentSize()
-            .clickable { requestRename(index) }
+            .combinedClickable(
+                onClick = { requestRename(index) },
+                onLongClick = { jumpToEntry(index) }
+            )
+            .onPointerEvent(eventType = PointerEventType.Enter) {
+                onHovered(index, true)
+            }
+            .onPointerEvent(eventType = PointerEventType.Exit) {
+                onHovered(index, false)
+            }
             .padding(vertical = 2.dp, horizontal = 5.dp),
         maxLines = 1,
         text = name,
@@ -101,7 +127,9 @@ private fun NameLabelsChunk(
     index: Int,
     entryChunk: NameLabelEntryChunk,
     offset: Float,
-    requestRename: (Int) -> Unit
+    requestRename: (Int) -> Unit,
+    jumpToEntry: (Int) -> Unit,
+    onHovered: (Int, Boolean) -> Unit
 ) {
     Log.info("NameLabelsChunk $index composed")
     val items = remember(entryChunk) {
@@ -119,7 +147,7 @@ private fun NameLabelsChunk(
             items.indices.forEach { itemIndex ->
                 val item = items[itemIndex]
                 val color = colors[itemIndex]
-                NameLabel(item.index, item.name, color, requestRename)
+                NameLabel(item.index, item.name, color, requestRename, jumpToEntry, onHovered)
             }
         }
     ) { measurables, constraints ->

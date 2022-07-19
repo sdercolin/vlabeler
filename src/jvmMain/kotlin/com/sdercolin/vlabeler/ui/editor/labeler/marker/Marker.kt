@@ -144,6 +144,12 @@ fun MarkerLabels(
     val requestRename: (Int) -> Unit = remember(appState) {
         { appState.openEditEntryNameDialog(it, InputEntryNameDialogPurpose.Rename) }
     }
+    val jumpToEntry: (Int) -> Unit = remember(appState) {
+        { appState.jumpToEntry(it) }
+    }
+    val onHovered: (Int, Boolean) -> Unit = remember(state) {
+        { index, hovered -> state.onLabelHovered(index, hovered) }
+    }
 
     val maxChunkLength = 5000 // TODO: move to appConfig
     val chunkCount = ceil(state.canvasParams.lengthInPixel.toFloat() / maxChunkLength).toInt()
@@ -156,7 +162,16 @@ fun MarkerLabels(
     }
     FieldLabels(state, chunkCount, chunkLength, chunkLengthDp, chunkVisibleList)
     if (state.labelerConf.continuous) {
-        NameLabels(state, requestRename, chunkCount, chunkLength, chunkLengthDp, chunkVisibleList)
+        NameLabels(
+            state,
+            requestRename,
+            jumpToEntry,
+            onHovered,
+            chunkCount,
+            chunkLength,
+            chunkLengthDp,
+            chunkVisibleList
+        )
     }
 }
 
