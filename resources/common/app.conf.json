@@ -18,8 +18,8 @@
       "pointPixelSize": 1,
       "frameSize": 300,
       "maxFrequency": 15000,
-      "minIntensity": 0,
-      "maxIntensity": 45,
+      "minIntensity": -10,
+      "maxIntensity": 50,
       "windowType": "Hamming"
     }
   },

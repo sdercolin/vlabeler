@@ -17,7 +17,6 @@ import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.repository.SampleRepository
 import com.sdercolin.vlabeler.ui.theme.LightGray
-import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.splitAveragely
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -94,7 +93,7 @@ class ChartStore {
             }
 
             val reorderedChunkIndexes = reorderChunks(startingChunkIndex, chunkCount)
-
+            val colorPalette = SpectrogramColorPalette.Presets.Sunset.create()
             reorderedChunkIndexes.forEach { chunkIndex ->
                 repeat(sampleInfo.channels) { channelIndex ->
                     drawWaveform(
@@ -116,6 +115,7 @@ class ChartStore {
                         density,
                         appConf,
                         layoutDirection,
+                        colorPalette,
                         onRenderProgress
                     )
                 }
@@ -264,6 +264,7 @@ class ChartStore {
         density: Density,
         appConf: AppConf,
         layoutDirection: LayoutDirection,
+        colorPalette: SpectrogramColorPalette,
         onRenderProgress: suspend () -> Unit
     ) {
         if (hasCachedSpectrogram(sampleInfo, chunkIndex)) {
@@ -276,7 +277,7 @@ class ChartStore {
         requireNotNull(spectrogramDataChunks) {
             "spectrogramDataChunks[$chunkIndex] is required. However it's not loaded."
         }
-        val pixelSize = appConf.painter.spectrogram.pointPixelSize
+        val pixelSize = appConf.painter.spectrogram.pointPixelSize.toFloat()
         val chunk = spectrogramDataChunks[chunkIndex]
         val width = chunk.size.toFloat() * pixelSize
         val height = chunk.first().size.toFloat() * pixelSize
@@ -286,7 +287,7 @@ class ChartStore {
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
             chunk.forEachIndexed { xIndex, yArray ->
                 yArray.forEachIndexed { yIndex, z ->
-                    val color = White.copy(alpha = z.toFloat())
+                    val color = colorPalette.get(z.toFloat())
                     drawRect(
                         color = color,
                         topLeft = Offset(xIndex.toFloat() * pixelSize, (height - yIndex.toFloat() * pixelSize)),
