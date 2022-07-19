@@ -39,16 +39,20 @@ class Player(
         openJob?.cancelAndJoin()
         file = newFile
         openJob = coroutineScope.launch(Dispatchers.IO) {
-            Log.info("Player.load(\"${newFile.absolutePath}\")")
-            val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
-                format = stream.format
-                data = stream.readAllBytes().also {
-                    Log.info("Player.load: read ${it.size} bytes")
+            runCatching {
+                Log.info("Player.load(\"${newFile.absolutePath}\")")
+                val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
+                    format = stream.format
+                    data = stream.readAllBytes().also {
+                        Log.info("Player.load: read ${it.size} bytes")
+                    }
+                    AudioSystem.getSourceDataLine(stream.format)
                 }
-                AudioSystem.getSourceDataLine(stream.format)
+                this@Player.line = line
+                line.open()
+            }.onFailure {
+                Log.error(it)
             }
-            this@Player.line = line
-            line.open()
         }
     }
 

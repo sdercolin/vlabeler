@@ -31,16 +31,19 @@ object SampleRepository {
 
     suspend fun load(file: File, appConf: AppConf): Result<SampleInfo> {
         infoMap[file.nameWithoutExtension]?.let {
-            // Return memory cached sample info
-            Log.info("Returning cached sample info for ${file.nameWithoutExtension}")
-            return Result.success(it)
+            if (File(it.file).exists()) {
+                // Return memory cached sample info
+                Log.info("Returning cached sample info for ${file.nameWithoutExtension}")
+                return Result.success(it)
+            }
         }
         val existingInfo = runCatching {
             getSampleInfoFile(file).takeIf { it.exists() }?.readText()?.let { parseJson<SampleInfo>(it) }
         }.getOrNull()
         if (existingInfo != null &&
             existingInfo.algorithmVersion == WaveLoadingAlgorithmVersion &&
-            existingInfo.maxChunkSize == appConf.painter.maxDataChunkSize
+            existingInfo.maxChunkSize == appConf.painter.maxDataChunkSize &&
+            File(existingInfo.file).exists()
         ) {
             // Return file cached sample info
             Log.info("Returning cached sample info for ${file.nameWithoutExtension}")

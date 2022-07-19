@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.shouldDecreaseResolution
 import com.sdercolin.vlabeler.env.shouldIncreaseResolution
+import com.sdercolin.vlabeler.exception.MissingSampleDirectoryException
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -101,6 +102,12 @@ class EditorState(
 
     suspend fun loadSampleInfo() {
         withContext(Dispatchers.IO) {
+            val sampleDirectory = File(project.sampleDirectory)
+            if (!sampleDirectory.exists()) {
+                sampleInfoState.value = Result.failure(MissingSampleDirectoryException())
+                appState.confirmIfRedirectSampleDirectory(sampleDirectory)
+                return@withContext
+            }
             val sampleInfo = SampleRepository.load(project.currentSampleFile, appConf)
             sampleInfoState.value = sampleInfo
             sampleInfo.getOrElse {

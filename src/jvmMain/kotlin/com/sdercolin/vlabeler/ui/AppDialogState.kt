@@ -54,6 +54,7 @@ interface AppDialogState {
     fun askIfSaveBeforeExit()
     fun confirmIfRemoveCurrentEntry(isLastEntry: Boolean)
     fun confirmIfLoadAutoSavedProject(file: File)
+    fun confirmIfRedirectSampleDirectory(currentDirectory: File)
     fun openSampleListDialog()
     fun closeSampleListDialog()
     fun openSampleDirectoryRedirectDialog()
@@ -186,6 +187,10 @@ class AppDialogStateImpl(
 
     override fun confirmIfLoadAutoSavedProject(file: File) =
         openEmbeddedDialog(CommonConfirmationDialogAction.LoadAutoSavedProject(file))
+
+    override fun confirmIfRedirectSampleDirectory(currentDirectory: File) {
+        openEmbeddedDialog(CommonConfirmationDialogAction.RedirectSampleDirectory(currentDirectory))
+    }
 
     override fun openSampleListDialog() {
         isShowingSampleListDialog = true

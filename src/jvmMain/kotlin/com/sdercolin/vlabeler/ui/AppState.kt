@@ -241,6 +241,9 @@ class AppState(
                     loadProject(mainScope, action.file, this, autoSaved = true)
                     hasLoadedAutoSavedProject = true
                 }
+                is CommonConfirmationDialogAction.RedirectSampleDirectory -> {
+                    openSampleDirectoryRedirectDialog()
+                }
             }
             is ErrorDialogResult -> Unit
             else -> TODO("Dialog result handler is not implemented")

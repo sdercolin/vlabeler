@@ -274,6 +274,9 @@ enum class Strings(val en: String) {
     AskIfLoadAutoSavedProjectDialogDescription(
         en = "Auto-saved project file found. Do you want to load it? If not, the file will be discarded."
     ),
+    AskIfRedirectSampleDirectoryDialogDescription(
+        en = "The sample directory of this project (%s) is not found. Do you want to redirect it to a new directory?"
+    ),
     PluginDialogTitle(
         en = "vLabeler - Plugin"
     ),

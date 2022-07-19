@@ -22,8 +22,10 @@ import com.sdercolin.vlabeler.ui.string.string
 import java.io.File
 
 sealed class CommonConfirmationDialogAction(
-    val stringKey: Strings
+    val text: String
 ) : EmbeddedDialogArgs {
+    constructor(stringKey: Strings) : this(string(stringKey))
+
     class RemoveCurrentEntry(isLastEntry: Boolean) :
         CommonConfirmationDialogAction(
             if (isLastEntry) {
@@ -35,6 +37,14 @@ sealed class CommonConfirmationDialogAction(
 
     class LoadAutoSavedProject(val file: File) :
         CommonConfirmationDialogAction(Strings.AskIfLoadAutoSavedProjectDialogDescription)
+
+    class RedirectSampleDirectory(currentDirectory: File) :
+        CommonConfirmationDialogAction(
+            string(
+                Strings.AskIfRedirectSampleDirectoryDialogDescription,
+                currentDirectory.absolutePath
+            )
+        )
 }
 
 data class CommonConfirmationDialogResult(
@@ -52,7 +62,7 @@ fun CommonConfirmationDialog(
     Column(Modifier.widthIn(min = 350.dp)) {
         Spacer(Modifier.height(15.dp))
         Text(
-            text = string(action.stringKey),
+            text = action.text,
             style = MaterialTheme.typography.body2,
             fontWeight = FontWeight.Bold
         )

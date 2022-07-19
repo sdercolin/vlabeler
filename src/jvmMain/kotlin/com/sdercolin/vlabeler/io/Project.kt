@@ -61,8 +61,12 @@ fun loadProject(
         }
 
         Log.info("Project loaded: $project")
-        appState.openEditor(project.copy(labelerConf = labelerConf, workingDirectory = workingDirectory))
-        appState.addRecentProject(project.projectFile)
+        val fixedProject = project.copy(labelerConf = labelerConf, workingDirectory = workingDirectory)
+        if (fixedProject != project) {
+            Log.info("Loaded project is modified to: $fixedProject")
+        }
+        appState.openEditor(fixedProject)
+        appState.addRecentProject(fixedProject.projectFile)
         if (appState.appConf.editor.autoScroll.onLoadedNewSample) {
             appState.scrollFitViewModel.emitNext()
         }
