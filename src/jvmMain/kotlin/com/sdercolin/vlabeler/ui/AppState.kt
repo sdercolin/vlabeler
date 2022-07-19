@@ -211,7 +211,7 @@ class AppState(
         PendingActionAfterSaved.CreatingNew -> openProjectCreator()
         PendingActionAfterSaved.ClearCaches -> clearCachesAndReopen(mainScope)
         PendingActionAfterSaved.Exit -> exit()
-        is PendingActionAfterSaved.OpenRecent -> loadProject(mainScope, action.file, this, true)
+        is PendingActionAfterSaved.OpenRecent -> loadProject(mainScope, action.file, this)
         null -> Unit
     }
 

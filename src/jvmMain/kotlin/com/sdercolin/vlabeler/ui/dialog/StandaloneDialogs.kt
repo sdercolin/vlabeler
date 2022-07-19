@@ -23,7 +23,7 @@ fun StandaloneDialogs(
         ) { parent, name ->
             appState.closeOpenProjectDialog()
             if (parent != null && name != null) {
-                loadProject(mainScope, File(parent, name), appState, true)
+                loadProject(mainScope, File(parent, name), appState)
             }
         }
         appState.isShowingSaveAsProjectDialog -> SaveFileDialog(

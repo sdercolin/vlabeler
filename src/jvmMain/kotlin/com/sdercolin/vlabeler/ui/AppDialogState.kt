@@ -106,7 +106,7 @@ class AppDialogStateImpl(
         if (hasUnsavedChanges) {
             askIfSaveBeforeOpenRecentProject(file)
         } else {
-            loadProject(scope, file, state, true)
+            loadProject(scope, file, state)
         }
 
     private fun askIfSaveBeforeOpenRecentProject(file: File) =
@@ -210,7 +210,7 @@ class AppDialogStateImpl(
 
     override fun clearCachesAndReopen(scope: CoroutineScope) {
         projectStore.requireProject().getCacheDir().deleteRecursively()
-        loadProject(scope, projectStore.requireProject().projectFile, state, true)
+        loadProject(scope, projectStore.requireProject().projectFile, state)
     }
 
     override fun closeEmbeddedDialog() {

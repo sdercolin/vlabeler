@@ -114,7 +114,7 @@ fun BoxScope.Starter(
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 onClick = {
-                                    loadProject(mainScope, file, appState, true)
+                                    loadProject(mainScope, file, appState)
                                 }
                             )
                         }
