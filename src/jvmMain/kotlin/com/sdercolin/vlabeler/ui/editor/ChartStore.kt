@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.io.Wave
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -31,13 +30,13 @@ import kotlin.math.absoluteValue
 class ChartStore {
 
     @Immutable
-    enum class BitmapLoadingStatus {
+    enum class ChartLoadingStatus {
         Loading,
         Loaded
     }
 
-    private val waveformStatusList = mutableStateMapOf<Pair<Int, Int>, BitmapLoadingStatus>()
-    private val spectrogramStatusList = mutableStateMapOf<Int, BitmapLoadingStatus>()
+    private val waveformStatusList = mutableStateMapOf<Pair<Int, Int>, ChartLoadingStatus>()
+    private val spectrogramStatusList = mutableStateMapOf<Int, ChartLoadingStatus>()
 
     private var job: Job? = null
 
@@ -67,13 +66,16 @@ class ChartStore {
         ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
         job?.cancel()
         job = scope.launch(Dispatchers.IO) {
-            val sample = SampleRepository.retrieve(sampleInfo.name)
-            val channels = sample.wave.channels
-            initializeStates(chunkCount, channels)
+            val channelCount = sampleInfo.channels
+            initializeStates(chunkCount, channelCount)
+            val sample = if (needsToLoadSample(sampleInfo)) {
+                SampleRepository.getSample(project.getSampleFile(sampleInfo.name), appConf)
+            } else {
+                null
+            }
+            val spectrogramDataChunks = sample?.spectrogram?.data?.toList()?.splitAveragely(chunkCount)
 
-            val spectrogramDataChunks = sample.spectrogram?.data?.toList()?.splitAveragely(chunkCount)
-
-            val waveformChannelChunks = channels.map { channel ->
+            val waveformChannelChunks = sample?.wave?.channels?.map { channel ->
                 if (spectrogramDataChunks == null) {
                     channel.data.toList().splitAveragely(chunkCount)
                 } else {
@@ -93,7 +95,7 @@ class ChartStore {
             val reorderedChunkIndexes = reorderChunks(startingChunkIndex, chunkCount)
 
             reorderedChunkIndexes.forEach { chunkIndex ->
-                channels.indices.map { channelIndex ->
+                repeat(sampleInfo.channels) { channelIndex ->
                     drawWaveform(
                         sampleInfo,
                         waveformChannelChunks,
@@ -104,7 +106,7 @@ class ChartStore {
                         layoutDirection
                     )
                 }
-                if (spectrogramDataChunks != null) {
+                if (sampleInfo.hasSpectrogram && appConf.painter.spectrogram.enabled) {
                     drawSpectrogram(sampleInfo, spectrogramDataChunks, chunkIndex, density, layoutDirection)
                 }
             }
@@ -114,13 +116,13 @@ class ChartStore {
 
     private fun initializeStates(
         chunkCount: Int,
-        channels: List<Wave.Channel>
+        channelCount: Int
     ) {
         repeat(chunkCount) { chunkIndex ->
-            repeat(channels.size) { channelIndex ->
-                waveformStatusList[channelIndex to chunkIndex] = BitmapLoadingStatus.Loading
+            repeat(channelCount) { channelIndex ->
+                waveformStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loading
             }
-            spectrogramStatusList[chunkIndex] = BitmapLoadingStatus.Loading
+            spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loading
         }
     }
 
@@ -139,23 +141,64 @@ class ChartStore {
         return reorderedChunkIndexes
     }
 
+    private fun needsToLoadSample(sampleInfo: SampleInfo): Boolean {
+        repeat(sampleInfo.channels) { channelIndex ->
+            repeat(sampleInfo.chunkCount) { chunkIndex ->
+                if (!hasCachedWaveform(sampleInfo, channelIndex, chunkIndex)) return true
+            }
+        }
+
+        if (sampleInfo.hasSpectrogram) {
+            repeat(sampleInfo.chunkCount) { chunkIndex ->
+                if (!hasCachedSpectrogram(sampleInfo, chunkIndex)) return true
+            }
+        }
+
+        return false
+    }
+
+    private fun hasCachedWaveform(
+        sampleInfo: SampleInfo,
+        channelIndex: Int,
+        chunkIndex: Int
+    ): Boolean {
+        val targetFile = ChartRepository.getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
+        if (targetFile.exists()) {
+            if (targetFile.lastModified() > sampleInfo.lastModified) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun deleteCachedWaveform(
+        sampleInfo: SampleInfo,
+        channelIndex: Int,
+        chunkIndex: Int
+    ) {
+        val targetFile = ChartRepository.getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
+        if (targetFile.exists()) {
+            targetFile.delete()
+        }
+    }
+
     private suspend fun drawWaveform(
         sampleInfo: SampleInfo,
-        waveformChannelChunks: List<List<List<Float>>>,
+        waveformChannelChunks: List<List<List<Float>>>?,
         channelIndex: Int,
         chunkIndex: Int,
         appConf: AppConf,
         density: Density,
         layoutDirection: LayoutDirection
     ) {
-        val targetFile = ChartRepository.getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
-        if (targetFile.exists()) {
-            if (targetFile.lastModified() > sampleInfo.lastModified) {
-                waveformStatusList[channelIndex to chunkIndex] = BitmapLoadingStatus.Loaded
-                return
-            } else {
-                targetFile.delete()
-            }
+        if (hasCachedWaveform(sampleInfo, channelIndex, chunkIndex)) {
+            waveformStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
+            return
+        } else {
+            deleteCachedWaveform(sampleInfo, channelIndex, chunkIndex)
+        }
+        requireNotNull(waveformChannelChunks) {
+            "waveformChannelChunks[$channelIndex][$chunkIndex] is required. However it's not loaded."
         }
         val data = waveformChannelChunks[channelIndex][chunkIndex]
         val dataDensity = appConf.painter.amplitude.unitSize
@@ -175,24 +218,47 @@ class ChartStore {
         yield()
         ChartRepository.putWaveform(sampleInfo, channelIndex, chunkIndex, newBitmap)
         yield()
-        waveformStatusList[channelIndex to chunkIndex] = BitmapLoadingStatus.Loaded
+        waveformStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
+    }
+
+    private fun hasCachedSpectrogram(
+        sampleInfo: SampleInfo,
+        chunkIndex: Int
+    ): Boolean {
+        val targetFile = ChartRepository.getSpectrogramImageFile(sampleInfo, chunkIndex)
+        if (targetFile.exists()) {
+            if (targetFile.lastModified() > sampleInfo.lastModified) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun deleteCachedSpectrogram(
+        sampleInfo: SampleInfo,
+        chunkIndex: Int
+    ) {
+        val targetFile = ChartRepository.getSpectrogramImageFile(sampleInfo, chunkIndex)
+        if (targetFile.exists()) {
+            targetFile.delete()
+        }
     }
 
     private suspend fun drawSpectrogram(
         sampleInfo: SampleInfo,
-        spectrogramDataChunks: List<List<DoubleArray>>,
+        spectrogramDataChunks: List<List<DoubleArray>>?,
         chunkIndex: Int,
         density: Density,
         layoutDirection: LayoutDirection
     ) {
-        val targetFile = ChartRepository.getSpectrogramImageFile(sampleInfo, chunkIndex)
-        if (targetFile.exists()) {
-            if (targetFile.lastModified() > sampleInfo.lastModified) {
-                spectrogramStatusList[chunkIndex] = BitmapLoadingStatus.Loaded
-                return
-            } else {
-                targetFile.delete()
-            }
+        if (hasCachedSpectrogram(sampleInfo, chunkIndex)) {
+            spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loaded
+            return
+        } else {
+            deleteCachedSpectrogram(sampleInfo, chunkIndex)
+        }
+        requireNotNull(spectrogramDataChunks) {
+            "spectrogramDataChunks[$chunkIndex] is required. However it's not loaded."
         }
         val chunk = spectrogramDataChunks[chunkIndex]
         val width = chunk.size.toFloat()
@@ -215,7 +281,7 @@ class ChartStore {
         yield()
         ChartRepository.putSpectrogram(sampleInfo, chunkIndex, newBitmap)
         yield()
-        spectrogramStatusList[chunkIndex] = BitmapLoadingStatus.Loaded
+        spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loaded
     }
 
     companion object {

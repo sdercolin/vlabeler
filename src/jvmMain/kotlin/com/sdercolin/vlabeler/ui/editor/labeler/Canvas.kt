@@ -44,7 +44,6 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Yellow
 import com.sdercolin.vlabeler.util.getScreenRange
-import kotlin.math.ceil
 
 @Composable
 fun Canvas(
@@ -59,9 +58,7 @@ fun Canvas(
     if (sampleInfoResult != null) {
         val sampleInfo = sampleInfoResult.getOrNull()
         if (sampleInfo != null) {
-            val chunkCount = remember(sampleInfo, appState.appConf) {
-                ceil(sampleInfo.length.toFloat() / appState.appConf.painter.maxDataChunkSize).toInt()
-            }
+            val chunkCount = sampleInfo.chunkCount
             val density = LocalDensity.current
             val layoutDirection = LocalLayoutDirection.current
             LaunchedEffect(sampleInfo) {
@@ -134,18 +131,18 @@ private fun Chunk(
                         .fillMaxWidth()
                 ) {
                     val imageStatus = editorState.chartStore.getWaveformStatus(channelIndex, chunkIndex)
-                    if (imageStatus == ChartStore.BitmapLoadingStatus.Loaded) {
+                    if (imageStatus == ChartStore.ChartLoadingStatus.Loaded) {
                         WaveformChunk(sampleInfo, channelIndex, chunkIndex)
                     }
                 }
             }
-            if (sampleInfo.hasSpectrogram) {
+            if (sampleInfo.hasSpectrogram && appState.appConf.painter.spectrogram.enabled) {
                 Box(
                     Modifier.weight(appState.appConf.painter.spectrogram.heightWeight)
                         .fillMaxWidth()
                 ) {
                     val imageStatus = editorState.chartStore.getSpectrogramStatus(chunkIndex)
-                    if (imageStatus == ChartStore.BitmapLoadingStatus.Loaded) {
+                    if (imageStatus == ChartStore.ChartLoadingStatus.Loaded) {
                         SpectrogramChunk(sampleInfo, chunkIndex)
                     }
                 }

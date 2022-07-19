@@ -93,11 +93,14 @@ class EditorState(
         }
     }
 
-    suspend fun loadSampleFile() {
+    suspend fun loadSampleInfo() {
         withContext(Dispatchers.IO) {
-            val sample = SampleRepository.load(project.currentSampleFile, appConf)
-            sampleInfoState.value = sample
-            sample.getOrNull()?.let {
+            val sampleInfo = SampleRepository.load(project.currentSampleFile, appConf)
+            sampleInfoState.value = sampleInfo
+            sampleInfo.getOrElse {
+                Log.error(it)
+                null
+            }?.let {
                 player.load(File(it.file))
                 appState.updateProjectOnLoadedSample(it)
             }

@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.model.SampleInfo
 import java.io.File
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
+import kotlin.math.ceil
 
 @Immutable
 class Wave(val channels: List<Channel>) {
@@ -65,6 +66,8 @@ fun loadSampleFile(file: File, appConf: AppConf): Result<Sample> = runCatching {
     val spectrogram = if (appConf.painter.spectrogram.enabled) {
         wave.toSpectrogram(appConf.painter.spectrogram, format.sampleRate)
     } else null
+    val maxChunkSize = appConf.painter.maxDataChunkSize
+    val chunkCount = ceil(wave.length.toFloat() / maxChunkSize).toInt()
     val info = SampleInfo(
         name = file.nameWithoutExtension,
         file = file.absolutePath,
@@ -74,8 +77,11 @@ fun loadSampleFile(file: File, appConf: AppConf): Result<Sample> = runCatching {
         channels = channels.size,
         length = wave.length,
         lengthMillis = channels[0].size.toFloat() / format.sampleRate * 1000,
+        maxChunkSize = maxChunkSize,
+        chunkCount = chunkCount,
         hasSpectrogram = spectrogram != null,
-        lastModified = file.lastModified()
+        lastModified = file.lastModified(),
+        algorithmVersion = WaveLoadingAlgorithmVersion
     )
     val sample = Sample(
         info = info,
@@ -84,3 +90,5 @@ fun loadSampleFile(file: File, appConf: AppConf): Result<Sample> = runCatching {
     )
     return Result.success(sample)
 }
+
+const val WaveLoadingAlgorithmVersion = 1

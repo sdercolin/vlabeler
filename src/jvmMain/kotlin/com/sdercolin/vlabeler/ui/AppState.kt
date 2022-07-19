@@ -17,6 +17,7 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.repository.SampleRepository
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
@@ -97,6 +98,7 @@ class AppState(
 
     fun openEditor(project: Project) {
         newProject(project)
+        SampleRepository.init(project)
         val editor = EditorState(
             project = project,
             appState = this

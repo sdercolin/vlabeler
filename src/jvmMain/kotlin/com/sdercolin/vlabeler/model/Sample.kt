@@ -23,6 +23,9 @@ data class SampleInfo(
     val channels: Int,
     val length: Int,
     val lengthMillis: Float,
+    val maxChunkSize: Int,
+    val chunkCount: Int,
     val hasSpectrogram: Boolean,
-    val lastModified: Long
+    val lastModified: Long,
+    val algorithmVersion: Int
 )

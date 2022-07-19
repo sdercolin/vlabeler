@@ -42,7 +42,9 @@ data class Project(
     val currentSampleName: String = currentEntry.sample
 
     val currentSampleFile: File
-        get() = File(sampleDirectory).resolve("$currentSampleName.$SampleFileExtension")
+        get() = getSampleFile(currentSampleName)
+
+    fun getSampleFile(sampleName: String) = File(sampleDirectory).resolve("$sampleName.$SampleFileExtension")
 
     @Transient
     val entryCount: Int = entries.size

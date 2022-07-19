@@ -26,6 +26,7 @@ object ChartRepository {
 
     fun init(project: Project, appConf: AppConf, version: Int) {
         cacheDirectory = project.getCacheDir().resolve(ChartsCacheFolderName)
+        cacheDirectory.mkdirs()
         cacheParams = ChartCacheParams(
             version,
             appConf.painter
