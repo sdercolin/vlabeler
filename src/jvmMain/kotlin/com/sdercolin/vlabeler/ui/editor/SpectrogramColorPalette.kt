@@ -86,7 +86,7 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
                 Color.Black,
                 parseColor("#02063e"),
                 parseColor("#f21e07"),
-                Color.Yellow,
+                parseColor("#eded0c"),
                 parseColor("#fcfef0")
             ),
             listOf(0f, 4f, 5f, 1f, 0.5f)
