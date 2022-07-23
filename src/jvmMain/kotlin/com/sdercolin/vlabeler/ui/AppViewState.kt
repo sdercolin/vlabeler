@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesPage
 import com.sdercolin.vlabeler.util.savedMutableStateOf
 
 interface AppViewState {
@@ -10,6 +11,7 @@ interface AppViewState {
     var isPropertyViewDisplayed: Boolean
     var isEntryListPinned: Boolean
     var isToolboxDisplayed: Boolean
+    var lastViewedPreferencesPage: PreferencesPage?
 }
 
 class AppViewStateImpl(appRecord: AppRecordStore) : AppViewState {
@@ -29,4 +31,6 @@ class AppViewStateImpl(appRecord: AppRecordStore) : AppViewState {
         by savedMutableStateOf(appRecord.stateFlow.value.isToolboxDisplayed) {
             appRecord.update { copy(isToolboxDisplayed = it) }
         }
+
+    override var lastViewedPreferencesPage: PreferencesPage? by mutableStateOf(null)
 }

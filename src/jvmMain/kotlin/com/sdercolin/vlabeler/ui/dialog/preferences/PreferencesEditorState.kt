@@ -6,17 +6,62 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.model.AppConf
 
-class PreferencesEditorState(private val initConf: AppConf, private val submit: (AppConf?) -> Unit) {
+class PreferencesEditorState(
+    private val initConf: AppConf,
+    private val submit: (AppConf?) -> Unit,
+    initialPage: PreferencesPage?,
+    private val onViewPage: (PreferencesPage) -> Unit
+) {
 
     private var savedConf: AppConf by mutableStateOf(initConf)
     private var _conf: AppConf by mutableStateOf(initConf)
     val conf get() = _conf
     private val pageChildrenMap = mutableMapOf<PreferencesPageListItem, List<PreferencesPageListItem>>()
     val pages = mutableStateListOf<PreferencesPageListItem>().apply {
-        val initialItems = PreferencesPage.getRootPages().toTypedArray().map { PreferencesPageListItem(it, 0) }
-        addAll(initialItems)
+        val rootPages = PreferencesPage.getRootPages().toTypedArray().map { PreferencesPageListItem(it, 0) }
+        addAll(rootPages)
+        if (initialPage != null) {
+            val route = mutableListOf<PreferencesPage>()
+
+            fun search(page: PreferencesPage): Boolean {
+                if (page == initialPage) {
+                    return true
+                }
+                route.add(page)
+                val children = page.children
+                if (children.isNotEmpty()) {
+                    for (child in children) {
+                        if (search(child)) {
+                            return true
+                        }
+                    }
+                }
+                route.removeAt(route.lastIndex)
+                return false
+            }
+
+            rootPages.forEach { rootPage ->
+                if (search(rootPage.model)) {
+                    route.forEachIndexed { level, pageModel ->
+                        val page = first { it.model == pageModel }
+                        addAll(
+                            indexOf(page) + 1,
+                            pageModel.children.map { PreferencesPageListItem(it, level + 1) }
+                        )
+                        page.isExpanded = true
+                    }
+                    return@forEach
+                }
+            }
+        }
     }
-    var selectedPage: PreferencesPageListItem by mutableStateOf(pages.first())
+    var selectedPage: PreferencesPageListItem by mutableStateOf(
+        if (initialPage != null) {
+            pages.first { it.model == initialPage }
+        } else {
+            pages.first()
+        }
+    )
 
     val canSave get() = savedConf != _conf
 
@@ -50,26 +95,27 @@ class PreferencesEditorState(private val initConf: AppConf, private val submit: 
         pages.removeAll(children)
         page.isExpanded = false
         if (children.contains(selectedPage)) {
-            selectedPage = page
+            selectPage(page)
         }
     }
 
     fun selectPage(page: PreferencesPageListItem) {
         selectedPage = page
+        onViewPage(page.model)
     }
 
-    fun selectPageByLink(page: PreferencesPage) {
-        val item = pages.firstOrNull { it.page == page }
+    fun selectPageByLink(pageModel: PreferencesPage) {
+        val page = pages.firstOrNull { it.model == pageModel }
             ?: run {
                 val parent = selectedPage
                 expandPage(parent)
-                pages.first { it.page == page }
+                pages.first { it.model == pageModel }
             }
-        selectedPage = item
+        selectPage(page)
     }
 
     private fun PreferencesPageListItem.createChildren() =
-        page.children.map { PreferencesPageListItem(it, level + 1) }
+        model.children.map { PreferencesPageListItem(it, level + 1) }
 
     fun <T> update(item: PreferencesItem<T>, newValue: T) {
         _conf = item.update(conf, newValue)

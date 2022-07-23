@@ -213,7 +213,13 @@ class AppDialogStateImpl(
 
     override fun openPreferencesDialog() {
         val currentConf = state.appConf
-        openEmbeddedDialog(PreferencesDialogArgs(currentConf))
+        openEmbeddedDialog(
+            PreferencesDialogArgs(
+                currentConf = currentConf,
+                initialPage = state.lastViewedPreferencesPage,
+                onViewPage = { state.lastViewedPreferencesPage = it }
+            )
+        )
     }
 
     override fun requestClearCaches(scope: CoroutineScope) =

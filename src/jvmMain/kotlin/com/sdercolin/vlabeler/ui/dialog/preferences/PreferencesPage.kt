@@ -11,6 +11,8 @@ abstract class PreferencesPage(
     open val children: List<PreferencesPage> = listOf()
     open val content: List<PreferencesGroup> = listOf()
 
+    val name: String get() = displayedName.name
+
     object Charts : PreferencesPage(Strings.PreferencesCharts, Strings.PreferencesChartsDescription) {
 
         override val children get() = listOf(ChartsCanvas, ChartsWaveform, ChartsSpectrogram)
@@ -305,6 +307,14 @@ abstract class PreferencesPage(
             Editor,
             AutoSave
         )
+
+        private fun getChildrenRecursively(page: PreferencesPage): List<PreferencesPage> {
+            return listOf(page) + page.children.flatMap { getChildrenRecursively(it) }
+        }
+
+        private fun getAllPages() = getRootPages().flatMap { getChildrenRecursively(it) }
+
+        fun getPage(name: String) = getAllPages().find { it.name == name }
     }
 }
 

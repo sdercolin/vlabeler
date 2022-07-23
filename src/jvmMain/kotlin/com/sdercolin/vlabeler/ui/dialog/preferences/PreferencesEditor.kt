@@ -66,16 +66,28 @@ import com.sdercolin.vlabeler.util.toColorOrNull
 import com.sdercolin.vlabeler.util.toRgbColorOrNull
 
 @Composable
-private fun rememberPreferencesEditorState(currentConf: AppConf, submit: (AppConf?) -> Unit) =
-    remember(currentConf, submit) {
-        PreferencesEditorState(currentConf, submit)
+private fun rememberPreferencesEditorState(
+    currentConf: AppConf,
+    submit: (AppConf?) -> Unit,
+    initialPage: PreferencesPage?,
+    onViewPage: (PreferencesPage) -> Unit
+) =
+    remember(currentConf, submit, initialPage, onViewPage) {
+        PreferencesEditorState(
+            initConf = currentConf,
+            submit = submit,
+            initialPage = initialPage,
+            onViewPage = onViewPage
+        )
     }
 
 @Composable
 fun PreferencesEditor(
     currentConf: AppConf,
     submit: (AppConf?) -> Unit,
-    state: PreferencesEditorState = rememberPreferencesEditorState(currentConf, submit)
+    initialPage: PreferencesPage?,
+    onViewPage: (PreferencesPage) -> Unit,
+    state: PreferencesEditorState = rememberPreferencesEditorState(currentConf, submit, initialPage, onViewPage)
 ) {
     Column(Modifier.fillMaxSize(0.8f).plainClickable()) {
         Content(state)
@@ -108,7 +120,7 @@ private fun RowScope.PageList(state: PreferencesEditorState) {
         LazyColumn(modifier = Modifier.fillMaxSize().padding(vertical = 15.dp), state = lazyListState) {
             items(
                 items = state.pages,
-                key = { it.page }
+                key = { it.model }
             ) { page ->
                 Row(
                     modifier = Modifier
@@ -137,7 +149,7 @@ private fun RowScope.PageList(state: PreferencesEditorState) {
                     }
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        text = string(page.page.displayedName),
+                        text = string(page.model.displayedName),
                         style = MaterialTheme.typography.body2.runIf(page.level == 0) {
                             copy(fontWeight = FontWeight.Bold)
                         },
@@ -156,7 +168,7 @@ private fun RowScope.PageList(state: PreferencesEditorState) {
 
 @Composable
 private fun RowScope.Page(state: PreferencesEditorState) {
-    val page = state.selectedPage.page
+    val page = state.selectedPage.model
     val scrollState = rememberScrollState()
     Box(Modifier.weight(0.75f).fillMaxHeight()) {
         Column(
