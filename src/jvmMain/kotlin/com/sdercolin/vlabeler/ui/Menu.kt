@@ -227,8 +227,7 @@ fun FrameWindowScope.Menu(
             if (appState != null) {
                 Item(
                     string(Strings.MenuSettingsPreferences),
-                    onClick = {
-                    }
+                    onClick = { appState.openPreferencesDialog() }
                 )
             }
         }
