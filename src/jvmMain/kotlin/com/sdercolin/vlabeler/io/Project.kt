@@ -118,10 +118,10 @@ suspend fun saveProjectFile(project: Project): File = withContext(Dispatchers.IO
     project.projectFile
 }
 
-suspend fun autoSaveProjectFile(project: Project): File = withContext(Dispatchers.IO) {
+suspend fun autoSaveTemporaryProjectFile(project: Project): File = withContext(Dispatchers.IO) {
     val file = RecordDir.resolve("_" + project.projectFile.name)
     val projectContent = project.stringifyJson()
     file.writeText(projectContent)
-    Log.debug("Project auto-saved to $file")
+    Log.debug("Project auto-saved temporarily: $file")
     file
 }

@@ -59,6 +59,7 @@ const val IdleLineAlpha = 0.7f
 private const val StrokeWidth = 2f
 val LabelSize = DpSize(40.dp, 25.dp)
 val LabelShiftUp = 8.dp
+private const val LabelMaxChunkLength = 5000
 
 @Composable
 fun MarkerPointEventContainer(
@@ -151,8 +152,7 @@ fun MarkerLabels(
         { index, hovered -> state.onLabelHovered(index, hovered) }
     }
 
-    val maxChunkLength = 5000 // TODO: move to appConfig
-    val chunkCount = ceil(state.canvasParams.lengthInPixel.toFloat() / maxChunkLength).toInt()
+    val chunkCount = ceil(state.canvasParams.lengthInPixel.toFloat() / LabelMaxChunkLength).toInt()
     val chunkLength = state.canvasParams.lengthInPixel.toFloat() / chunkCount
     val chunkLengthDp = state.canvasParams.canvasWidthInDp / chunkCount
 

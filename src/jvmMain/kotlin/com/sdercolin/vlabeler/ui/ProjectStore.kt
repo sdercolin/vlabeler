@@ -4,7 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.sdercolin.vlabeler.io.autoSaveProjectFile
+import com.sdercolin.vlabeler.io.autoSaveTemporaryProjectFile
+import com.sdercolin.vlabeler.io.saveProjectFile
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
@@ -237,7 +238,7 @@ class ProjectStoreImpl(
     }
 
     private var autoSaveJob: Job? = null
-    private var autoSavedProject: Project? = null
+    private var savedTemporaryProject: Project? = null
 
     override fun enableAutoSaveProject(
         autoSave: AppConf.AutoSave,
@@ -252,9 +253,16 @@ class ProjectStoreImpl(
             while (isActive) {
                 delay(autoSave.intervalSec * 1000L)
                 val project = project ?: continue
-                if (unsavedChangesState.hasUnsavedChanges && autoSavedProject != project) {
-                    autoSaveProjectFile(project)
-                    autoSavedProject = project
+                when (autoSave.target) {
+                    AppConf.AutoSave.Target.Project -> if (unsavedChangesState.hasUnsavedChanges) {
+                        saveProjectFile(project)
+                    }
+                    AppConf.AutoSave.Target.Record ->
+                        if (unsavedChangesState.hasUnsavedChanges && savedTemporaryProject != project) {
+                            autoSaveTemporaryProjectFile(project)
+                            savedTemporaryProject = project
+                        }
+                    else -> Unit
                 }
             }
         }

@@ -284,7 +284,7 @@ data class AppConf(
         }
 
         companion object {
-            val DefaultTarget = Target.Project
+            val DefaultTarget = Target.Record
             const val DefaultIntervalSec = 30
             const val MinIntervalSec = 1
         }

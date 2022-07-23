@@ -37,7 +37,7 @@
     }
   },
   "autoSave": {
-    "target": "project",
+    "target": "record",
     "intervalSec": 30
   }
 }
