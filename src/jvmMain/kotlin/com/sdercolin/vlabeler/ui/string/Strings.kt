@@ -129,6 +129,21 @@ enum class Strings(val en: String) {
     CommonNo(
         en = "No"
     ),
+    CommonInputErrorPromptNumber(
+        en = "Please enter a number."
+    ),
+    CommonInputErrorPromptInteger(
+        en = "Please enter an integer number."
+    ),
+    CommonInputErrorPromptNumberRange(
+        en = "Please enter a number between %s and %s."
+    ),
+    CommonInputErrorPromptNumberMin(
+        en = "Please enter a number greater than or equal to %s."
+    ),
+    CommonInputErrorPromptNumberMax(
+        en = "Please enter a number less than or equal to %s."
+    ),
     StarterStart(
         en = "Start"
     ),
@@ -364,7 +379,7 @@ enum class Strings(val en: String) {
         en = "Bitmap height (px)"
     ),
     PreferencesChartsWaveformYAxisBlankRate(
-        en = "Vertical padding (%)"
+        en = "Vertical padding (%%)"
     ),
     PreferencesChartsSpectrogram(
         en = "Spectrogram"
@@ -376,7 +391,7 @@ enum class Strings(val en: String) {
         en = "Show spectrogram"
     ),
     PreferencesChartsSpectrogramHeight(
-        en = "Height relative to waveforms (%)"
+        en = "Height relative to waveforms (%%)"
     ),
     PreferencesChartsSpectrogramPointPixelSize(
         en = "Point size (px)"

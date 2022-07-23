@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.dialog.preferences
 
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
 import com.sdercolin.vlabeler.ui.string.Strings
 
 abstract class PreferencesPage(
@@ -161,13 +162,15 @@ abstract class PreferencesPage(
                     title = Strings.PreferencesChartsSpectrogramWindowType,
                     defaultValue = AppConf.Spectrogram.DefaultWindowType,
                     select = { it.windowType },
-                    update = { copy(windowType = it) }
+                    update = { copy(windowType = it) },
+                    options = AppConf.WindowType.values()
                 )
                 selection(
                     title = Strings.PreferencesChartsSpectrogramColorPalette,
                     defaultValue = AppConf.Spectrogram.DefaultColorPalette,
                     select = { it.colorPalette },
-                    update = { copy(colorPalette = it) }
+                    update = { copy(colorPalette = it) },
+                    options = SpectrogramColorPalette.Presets.values()
                 )
             }
         }
@@ -219,19 +222,22 @@ abstract class PreferencesPage(
                     title = Strings.PreferencesEditorScissorsActionGoTo,
                     defaultValue = AppConf.ScissorsActions.DefaultGoTo,
                     select = { it.goTo },
-                    update = { copy(goTo = it) }
+                    update = { copy(goTo = it) },
+                    options = AppConf.ScissorsActions.Target.values()
                 )
                 selection(
                     title = Strings.PreferencesEditorScissorsActionAskForName,
                     defaultValue = AppConf.ScissorsActions.DefaultAskForName,
                     select = { it.askForName },
-                    update = { copy(askForName = it) }
+                    update = { copy(askForName = it) },
+                    options = AppConf.ScissorsActions.Target.values()
                 )
                 selection(
                     title = Strings.PreferencesEditorScissorsActionPlay,
                     defaultValue = AppConf.ScissorsActions.DefaultPlay,
                     select = { it.play },
-                    update = { copy(play = it) }
+                    update = { copy(play = it) },
+                    options = AppConf.ScissorsActions.Target.values()
                 )
             }
         }
@@ -278,7 +284,8 @@ abstract class PreferencesPage(
                     title = Strings.PreferencesAutoSaveTarget,
                     defaultValue = AppConf.AutoSave.DefaultTarget,
                     select = { it.target },
-                    update = { copy(target = it) }
+                    update = { copy(target = it) },
+                    options = AppConf.AutoSave.Target.values()
                 )
                 integer(
                     title = Strings.PreferencesAutoSaveIntervalSec,
@@ -394,14 +401,16 @@ private class PreferencesItemContext<P>(
         description: Strings? = null,
         defaultValue: T,
         select: (P) -> T,
-        update: P.(T) -> P
+        update: P.(T) -> P,
+        options: Array<T>
     ) = builder.item(
         PreferencesItem.Selection(
             title = title,
             description = description,
             defaultValue = defaultValue,
             select = selectWithContext(select),
-            update = updateWithContext(update)
+            update = updateWithContext(update),
+            options = options
         )
     )
 }

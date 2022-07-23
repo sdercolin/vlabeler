@@ -14,3 +14,5 @@ fun String.toRgbColorOrNull() = runCatching { toRgbColor() }.getOrNull()
 
 val Color.rgbHexString get() = String.format("#%06X", 0xffffff and toArgb())
 val Color.argbHexString get() = String.format("#%08X", 0xffffffff and toArgb().toLong())
+
+val Char.isHexChar get() = this in '0'..'9' || this in 'a'..'f' || this in 'A'..'F'

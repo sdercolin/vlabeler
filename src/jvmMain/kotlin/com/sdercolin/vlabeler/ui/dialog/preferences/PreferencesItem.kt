@@ -54,5 +54,6 @@ sealed class PreferencesItem<T>(
         defaultValue: T,
         select: (AppConf) -> T,
         update: AppConf.(T) -> AppConf,
+        val options: Array<T>
     ) : PreferencesItem<T>(title, description, defaultValue, select, update)
 }

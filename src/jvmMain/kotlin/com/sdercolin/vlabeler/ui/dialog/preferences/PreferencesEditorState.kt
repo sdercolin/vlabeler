@@ -39,9 +39,7 @@ class PreferencesEditorState(private val initConf: AppConf, private val submit: 
 
     private fun expandPage(page: PreferencesPageListItem) {
         val children = pageChildrenMap[page]
-            ?: page.page.children
-                .map { PreferencesPageListItem(it, page.level + 1) }
-                .also { pageChildrenMap[page] = it }
+            ?: page.createChildren().also { pageChildrenMap[page] = it }
         val index = pages.indexOf(page)
         pages.addAll(index + 1, children)
         page.isExpanded = true
@@ -58,5 +56,22 @@ class PreferencesEditorState(private val initConf: AppConf, private val submit: 
 
     fun selectPage(page: PreferencesPageListItem) {
         selectedPage = page
+    }
+
+    fun selectPageByLink(page: PreferencesPage) {
+        val item = pages.firstOrNull { it.page == page }
+            ?: run {
+                val parent = selectedPage
+                expandPage(parent)
+                pages.first { it.page == page }
+            }
+        selectedPage = item
+    }
+
+    private fun PreferencesPageListItem.createChildren() =
+        page.children.map { PreferencesPageListItem(it, level + 1) }
+
+    fun <T> update(item: PreferencesItem<T>, newValue: T) {
+        _conf = item.update(conf, newValue)
     }
 }
