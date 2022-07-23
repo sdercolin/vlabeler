@@ -223,6 +223,15 @@ fun FrameWindowScope.Menu(
                 )
             }
         }
+        Menu(string(Strings.MenuSettings), mnemonic = 'S') {
+            if (appState != null) {
+                Item(
+                    string(Strings.MenuSettingsPreferences),
+                    onClick = {
+                    }
+                )
+            }
+        }
         if (isDebug) {
             Menu("Debug") {
                 if (appState != null) {

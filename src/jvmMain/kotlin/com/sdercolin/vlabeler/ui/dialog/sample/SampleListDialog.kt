@@ -70,7 +70,7 @@ fun SampleListDialog(
     Box(
         modifier = Modifier.fillMaxSize()
             .background(color = Black50)
-            .plainClickable { },
+            .plainClickable(),
         contentAlignment = Alignment.Center
     ) {
         Surface(modifier = Modifier.fillMaxSize(0.8f)) {

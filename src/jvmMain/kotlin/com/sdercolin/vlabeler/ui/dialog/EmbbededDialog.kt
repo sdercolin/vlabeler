@@ -47,7 +47,7 @@ private fun <T : EmbeddedDialogArgs> TypedDialog(
     args: T,
     request: EmbeddedDialogRequest<T>
 ) {
-    @Suppress("REDUNDANT_ELSE_IN_WHEN", "UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     when (args) {
         is SetResolutionDialogArgs ->
             SetResolutionDialog(args, (request as EmbeddedDialogRequest<SetResolutionDialogArgs>).onResult)
@@ -61,6 +61,8 @@ private fun <T : EmbeddedDialogArgs> TypedDialog(
             CommonConfirmationDialog(args, (request as EmbeddedDialogRequest<CommonConfirmationDialogAction>).onResult)
         is ErrorDialogContent ->
             ErrorDialog(args, (request as EmbeddedDialogRequest<ErrorDialogContent>).onResult)
-        else -> TODO("Dialog args handler is not implemented")
+        is PreferencesDialogArgs ->
+            PreferencesDialog(args, (request as EmbeddedDialogRequest<PreferencesDialogArgs>).onResult)
+        else -> throw NotImplementedError("Dialog args handler is not implemented")
     }
 }

@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.util.parseColor
+import com.sdercolin.vlabeler.util.toColor
 
 @Immutable
 private data class FieldLabelModel(
@@ -135,7 +135,7 @@ private fun FieldLabelText(model: FieldLabelModel) {
     Text(
         text = model.field.label,
         textAlign = TextAlign.Center,
-        color = parseColor(model.field.color).copy(alpha = alpha),
+        color = model.field.color.toColor().copy(alpha = alpha),
         fontWeight = FontWeight.Bold,
         style = MaterialTheme.typography.caption.copy(fontSize = 14.sp),
         overflow = TextOverflow.Visible

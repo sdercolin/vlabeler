@@ -55,7 +55,11 @@ interface ProjectStore {
     fun changeSampleDirectory(directory: File)
     fun getAutoSavedProjectFile(): File?
     fun discardAutoSavedProjects()
-    fun enableAutoSaveProject(intervalSecond: Int?, scope: CoroutineScope, unsavedChangesState: AppUnsavedChangesState)
+    fun enableAutoSaveProject(
+        autoSave: AppConf.AutoSave,
+        scope: CoroutineScope,
+        unsavedChangesState: AppUnsavedChangesState
+    )
 }
 
 class ProjectStoreImpl(
@@ -236,16 +240,17 @@ class ProjectStoreImpl(
     private var autoSavedProject: Project? = null
 
     override fun enableAutoSaveProject(
-        intervalSecond: Int?,
+        autoSave: AppConf.AutoSave,
         scope: CoroutineScope,
         unsavedChangesState: AppUnsavedChangesState
     ) {
         autoSaveJob?.cancel()
         autoSaveJob = null
-        if (intervalSecond == null || intervalSecond <= 0) return
+        if (autoSave.target == AppConf.AutoSave.Target.None || autoSave.intervalSec <= 0) return
+        // TODO: implement Target.Project
         autoSaveJob = scope.launch(Dispatchers.IO) {
             while (isActive) {
-                delay(intervalSecond * 1000L)
+                delay(autoSave.intervalSec * 1000L)
                 val project = project ?: continue
                 if (unsavedChangesState.hasUnsavedChanges && autoSavedProject != project) {
                     autoSaveProjectFile(project)

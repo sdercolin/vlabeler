@@ -25,8 +25,8 @@ fun App(
     LaunchedEffect(appState) {
         appState.checkAutoSavedProject()
     }
-    LaunchedEffect(appState.appConf.autoSaveIntervalSecond) {
-        appState.enableAutoSaveProject(appState.appConf.autoSaveIntervalSecond, mainScope, appState)
+    LaunchedEffect(appState.appConf.autoSave) {
+        appState.enableAutoSaveProject(appState.appConf.autoSave, mainScope, appState)
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         when (val screen = appState.screen) {

@@ -9,6 +9,7 @@ import com.github.psambit9791.jdsp.windows.Hamming
 import com.github.psambit9791.jdsp.windows.Hanning
 import com.github.psambit9791.jdsp.windows.Rectangular
 import com.github.psambit9791.jdsp.windows.Triangular
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import kotlin.math.absoluteValue
 import kotlin.math.log10
@@ -53,6 +54,11 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
 
     val min = conf.minIntensity.toDouble()
     val max = conf.maxIntensity.toDouble()
+    runCatching { require(min < max) { "minIntensity must be less than maxIntensity" } }
+        .onFailure {
+            Log.error(it)
+            return Spectrogram(listOf(), frameSize)
+        }
     val output = List(frameCount) { i ->
         DoubleArray(frequencySize) { j ->
             (20 * log10(absoluteSpectrogram[i][j] / frameSize))

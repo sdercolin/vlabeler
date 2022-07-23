@@ -1,0 +1,47 @@
+import androidx.compose.ui.graphics.Color
+import com.sdercolin.vlabeler.util.argbHexString
+import com.sdercolin.vlabeler.util.rgbHexString
+import com.sdercolin.vlabeler.util.toColor
+import com.sdercolin.vlabeler.util.toColorOrNull
+import com.sdercolin.vlabeler.util.toRgbColor
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+
+class ColorTest {
+
+    @Test
+    fun testParseRgb() {
+        val expected = Color(0xffff0000)
+        assertEquals(expected, "#FF0000".toColor())
+        assertEquals(expected, "FF0000".toColor())
+        assertEquals(expected, "ff0000".toColor())
+        assertEquals(expected, "#ffff0000".toColor())
+    }
+
+    @Test
+    fun testParseArgb() {
+        val expected = Color(0xccff0000)
+        assertEquals(expected, "#CCFF0000".toColor())
+        assertEquals(expected, "CCFF0000".toColor())
+        assertEquals(expected, "ccff0000".toColor())
+        assertEquals(expected, "#ccff0000".toColor())
+        assertEquals(null, "#ffwwff0000".toColorOrNull())
+    }
+
+    @Test
+    fun testParseArgbDiscardingAlpha() {
+        assertEquals(Color(0xffff0000), "#ccff0000".toRgbColor())
+    }
+
+    @Test
+    fun testStringifyRgb() {
+        val expected = "#FFAAAA"
+        assertEquals(expected, Color(0xffffaaaa).rgbHexString)
+    }
+
+    @Test
+    fun testStringifyArgb() {
+        val expected = "#AAFFAAAA"
+        assertEquals(expected, Color(0xaaffaaaa).argbHexString)
+    }
+}

@@ -2,8 +2,6 @@
   "painter": {
     "canvasResolution": {
       "default": 40,
-      "min": 10,
-      "max": 400,
       "step": 20
     },
     "maxDataChunkSize": 441000,
@@ -20,11 +18,12 @@
       "maxFrequency": 15000,
       "minIntensity": -10,
       "maxIntensity": 50,
-      "windowType": "Hamming"
+      "windowType": "Hamming",
+      "colorPalette": "Plain"
     }
   },
-  "autoSaveIntervalSecond": 30,
   "editor": {
+    "playerCursorColor": "#FFFF00",
     "scissorsColor": "#FFFF00",
     "scissorsActions": {
       "goTo": "former",
@@ -36,5 +35,9 @@
       "onJumpedToEntry": true,
       "onSwitchedInMultipleEditMode": true
     }
+  },
+  "autoSave": {
+    "target": "project",
+    "intervalSec": 30
   }
 }

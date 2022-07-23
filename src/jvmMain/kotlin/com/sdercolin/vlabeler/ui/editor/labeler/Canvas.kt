@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
@@ -45,9 +46,9 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.rememberMarkerState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.DarkYellow
-import com.sdercolin.vlabeler.ui.theme.Yellow
 import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.runIf
+import com.sdercolin.vlabeler.util.toColor
 
 @Composable
 fun Canvas(
@@ -65,7 +66,7 @@ fun Canvas(
             val chunkCount = sampleInfo.chunkCount
             val density = LocalDensity.current
             val layoutDirection = LocalLayoutDirection.current
-            LaunchedEffect(sampleInfo) {
+            LaunchedEffect(sampleInfo, appState.appConf) {
                 editorState.renderCharts(this, chunkCount, sampleInfo, appState.appConf, density, layoutDirection)
             }
             val canvasParams = CanvasParams(sampleInfo.length, resolution, currentDensity)
@@ -108,7 +109,12 @@ fun Canvas(
                     )
                 }
                 if (appState.playerState.isPlaying) {
-                    PlayerCursor(canvasParams, appState.playerState, horizontalScrollState)
+                    PlayerCursor(
+                        canvasParams,
+                        appState.playerState,
+                        horizontalScrollState,
+                        appState.appConf.editor.playerCursorColor.toColor()
+                    )
                 }
             }
         } else {
@@ -190,14 +196,19 @@ private fun ChunkAsyncImage(load: suspend () -> ImageBitmap) {
 }
 
 @Composable
-private fun PlayerCursor(canvasParams: CanvasParams, playerState: PlayerState, scrollState: ScrollState) {
+private fun PlayerCursor(
+    canvasParams: CanvasParams,
+    playerState: PlayerState,
+    scrollState: ScrollState,
+    color: Color
+) {
     val screenRange = scrollState.getScreenRange(canvasParams.lengthInPixel)
     Canvas(Modifier.fillMaxSize()) {
         val actualPosition = (playerState.framePosition / canvasParams.resolution).toFloat()
         if (screenRange != null && actualPosition in screenRange) {
             val position = actualPosition - screenRange.start
             drawLine(
-                color = Yellow,
+                color = color,
                 start = Offset(position, 0f),
                 end = Offset(position, center.y * 2),
                 strokeWidth = 2f

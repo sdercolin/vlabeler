@@ -16,6 +16,7 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.PreferencesDialogArgs
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.CancellationException
@@ -60,6 +61,7 @@ interface AppDialogState {
     fun closeSampleListDialog()
     fun openSampleDirectoryRedirectDialog()
     fun closeSampleDirectoryRedirectDialog()
+    fun openPreferencesDialog()
     fun requestClearCaches(scope: CoroutineScope)
     fun clearCachesAndReopen(scope: CoroutineScope)
 
@@ -207,6 +209,11 @@ class AppDialogStateImpl(
 
     override fun closeSampleDirectoryRedirectDialog() {
         isShowingSampleDirectoryRedirectDialog = false
+    }
+
+    override fun openPreferencesDialog() {
+        val currentConf = state.appConf
+        openEmbeddedDialog(PreferencesDialogArgs(currentConf))
     }
 
     override fun requestClearCaches(scope: CoroutineScope) =

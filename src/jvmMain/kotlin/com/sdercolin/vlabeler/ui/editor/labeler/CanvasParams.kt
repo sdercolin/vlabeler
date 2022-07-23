@@ -24,8 +24,4 @@ data class CanvasParams(
         fun increaseFrom(resolution: Int) = resolution.plus(conf.step).coerceAtMost(conf.max)
         fun decreaseFrom(resolution: Int) = resolution.minus(conf.step).coerceAtLeast(conf.min)
     }
-
-    companion object {
-        const val MaxCanvasLengthInPixel = 250000
-    }
 }

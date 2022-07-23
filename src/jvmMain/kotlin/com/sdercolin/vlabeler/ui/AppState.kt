@@ -27,7 +27,8 @@ import com.sdercolin.vlabeler.ui.dialog.ErrorDialogResult
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogResult
-import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgsResult
+import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogResult
+import com.sdercolin.vlabeler.ui.dialog.PreferencesDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
@@ -142,7 +143,7 @@ class AppState(
             }
 
             val actions = appConf.editor.scissorsActions
-            if (actions.play != null) {
+            if (actions.play != AppConf.ScissorsActions.Target.None) {
                 val startFrame = toFrame(sourceEntry.start, sampleInfo.sampleRate)
                 val endFrame = toFrame(sourceEntry.end, sampleInfo.sampleRate)
                 val cutFrame = toFrame(position, sampleInfo.sampleRate)
@@ -153,6 +154,7 @@ class AppState(
                     AppConf.ScissorsActions.Target.Latter -> {
                         player.playSection(cutFrame, endFrame)
                     }
+                    else -> Unit
                 }
             }
 
@@ -198,7 +200,7 @@ class AppState(
             val targetIndex = when (actions.goTo) {
                 AppConf.ScissorsActions.Target.Former -> index
                 AppConf.ScissorsActions.Target.Latter -> index + 1
-                null -> null
+                else -> null
             }
             cutEntry(index, position, rename, newName, targetIndex)
         }
@@ -216,11 +218,10 @@ class AppState(
     }
 
     fun handleDialogResult(result: EmbeddedDialogResult<*>) {
-        @Suppress("REDUNDANT_ELSE_IN_WHEN")
         when (result) {
             is SetResolutionDialogResult -> changeResolution(result.newValue)
             is AskIfSaveDialogResult -> takeAskIfSaveResult(result)
-            is JumpToEntryDialogArgsResult -> {
+            is JumpToEntryDialogResult -> {
                 jumpToEntry(result.index)
             }
             is InputEntryNameDialogResult -> run {
@@ -246,7 +247,11 @@ class AppState(
                 }
             }
             is ErrorDialogResult -> Unit
-            else -> TODO("Dialog result handler is not implemented")
+            is PreferencesDialogResult -> {
+                val newConf = result.newConf ?: return
+                updateAppConf(newConf)
+            }
+            else -> throw NotImplementedError("Dialog result handler is not implemented")
         }
     }
 
@@ -282,6 +287,15 @@ class AppState(
         if (file != null) {
             confirmIfLoadAutoSavedProject(file)
         }
+    }
+
+    private fun updateAppConf(newConf: AppConf) {
+        if (appConf.painter != newConf.painter) {
+            mainScope.launch {
+                editor?.loadSample()
+            }
+        }
+        appConf = newConf
     }
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()

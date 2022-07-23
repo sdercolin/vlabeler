@@ -43,8 +43,8 @@ import com.sdercolin.vlabeler.util.clear
 import com.sdercolin.vlabeler.util.contains
 import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.length
-import com.sdercolin.vlabeler.util.parseColor
 import com.sdercolin.vlabeler.util.requireValue
+import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.update
 import com.sdercolin.vlabeler.util.updateNonNull
 import kotlin.math.abs
@@ -273,7 +273,7 @@ private fun FieldBorderCanvas(
                     val waveformsHeight = canvasHeight * state.waveformsHeightRatio
                     val height = waveformsHeight * field.height
                     val top = waveformsHeight - height
-                    val color = parseColor(field.color)
+                    val color = field.color.toColor()
                     val fillTargetIndex = when (field.filling) {
                         "start" -> StartPointIndex
                         "end" -> EndPointIndex
@@ -358,7 +358,7 @@ private fun FieldBorderCanvas(
                     if (position in screenRange) {
                         val relativePosition = position - screenRange.start
                         drawLine(
-                            color = parseColor(appState.appConf.editor.scissorsColor),
+                            color = appState.appConf.editor.scissorsColor.toColor(),
                             start = Offset(relativePosition, 0f),
                             end = Offset(relativePosition, canvasHeight),
                             strokeWidth = StrokeWidth * 2

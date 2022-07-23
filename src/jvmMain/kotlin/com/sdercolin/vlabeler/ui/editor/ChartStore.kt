@@ -93,7 +93,7 @@ class ChartStore {
             }
 
             val reorderedChunkIndexes = reorderChunks(startingChunkIndex, chunkCount)
-            val colorPalette = SpectrogramColorPalette.Presets.Sunset.create()
+            val colorPalette = appConf.painter.spectrogram.colorPalette.create()
             reorderedChunkIndexes.forEach { chunkIndex ->
                 repeat(sampleInfo.channels) { channelIndex ->
                     drawWaveform(

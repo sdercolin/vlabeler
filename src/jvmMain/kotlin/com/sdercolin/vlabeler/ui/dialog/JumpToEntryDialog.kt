@@ -12,16 +12,16 @@ data class JumpToEntryDialogArgs(val project: Project) : EmbeddedDialogArgs {
         get() = true
 }
 
-data class JumpToEntryDialogArgsResult(val index: Int) : EmbeddedDialogResult<JumpToEntryDialogArgs>
+data class JumpToEntryDialogResult(val index: Int) : EmbeddedDialogResult<JumpToEntryDialogArgs>
 
 @Composable
 fun JumpToEntryDialog(
     args: JumpToEntryDialogArgs,
-    finish: (JumpToEntryDialogArgsResult?) -> Unit,
+    finish: (JumpToEntryDialogResult?) -> Unit,
 ) {
     EntryList(
         pinned = false,
         project = args.project,
-        jumpToEntry = { index -> finish(JumpToEntryDialogArgsResult(index)) }
+        jumpToEntry = { index -> finish(JumpToEntryDialogResult(index)) }
     )
 }

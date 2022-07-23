@@ -106,10 +106,19 @@ enum class Strings(val en: String) {
         en = "Go to Entry..."
     ),
     MenuNavigateScrollFit(
-        en = "Scroll to Editable Area"
+        en = "Scroll to Show the Current Entry"
+    ),
+    MenuSettings(
+        en = "Settings"
+    ),
+    MenuSettingsPreferences(
+        en = "Preferences..."
     ),
     CommonOkay(
         en = "OK"
+    ),
+    CommonApply(
+        en = "Apply"
     ),
     CommonCancel(
         en = "Cancel"
@@ -309,6 +318,158 @@ enum class Strings(val en: String) {
     ),
     InvalidProjectException(
         en = "The created project is not valid. Please contact author of the labeler/plugin for more information."
+    ),
+    PreferencesCharts(
+        en = "Charts"
+    ),
+    PreferencesChartsDescription(
+        en = "Customize the charts being rendered in the editor."
+    ),
+    PreferencesChartsCanvas(
+        en = "Canvas"
+    ),
+    PreferencesChartsCanvasDescription(
+        en = "Customize general settings about the canvas where the charts are drawn."
+    ),
+    PreferencesChartsCanvasResolution(
+        en = "Canvas resolution"
+    ),
+    PreferencesChartsCanvasResolutionDescription(
+        en = "Defined as number of sample points included in 1 pixel.\n" +
+            "The bigger the number, the longer time duration the charts show in your screen."
+    ),
+    PreferencesChartsCanvasResolutionDefault(
+        en = "Default resolution"
+    ),
+    PreferencesChartsCanvasResolutionStep(
+        en = "Step"
+    ),
+    PreferencesChartsMaxDataChunkSize(
+        en = "Max data chunk size"
+    ),
+    PreferencesChartsMaxDataChunkSizeDescription(
+        en = "Max frames that will be included in a chart chunk.\n" +
+            "The bigger the number, the less parts your charts will be divided to during rendering."
+    ),
+    PreferencesChartsWaveform(
+        en = "Waveform"
+    ),
+    PreferencesChartsWaveformDescription(
+        en = "Customize the waveform chart."
+    ),
+    PreferencesChartsWaveformUnitSize(
+        en = "Frame size per pixel"
+    ),
+    PreferencesChartsWaveformIntensityAccuracy(
+        en = "Bitmap height (px)"
+    ),
+    PreferencesChartsWaveformYAxisBlankRate(
+        en = "Vertical padding (%)"
+    ),
+    PreferencesChartsSpectrogram(
+        en = "Spectrogram"
+    ),
+    PreferencesChartsSpectrogramDescription(
+        en = "Customize the spectrogram chart."
+    ),
+    PreferencesChartsSpectrogramEnabled(
+        en = "Show spectrogram"
+    ),
+    PreferencesChartsSpectrogramHeight(
+        en = "Height relative to waveforms (%)"
+    ),
+    PreferencesChartsSpectrogramPointPixelSize(
+        en = "Point size (px)"
+    ),
+    PreferencesChartsSpectrogramFrameSize(
+        en = "FFT frame size"
+    ),
+    PreferencesChartsSpectrogramMaxFrequency(
+        en = "Max frequency displayed (Hz)"
+    ),
+    PreferencesChartsSpectrogramMinIntensity(
+        en = "Min intensity displayed (dB)"
+    ),
+    PreferencesChartsSpectrogramMaxIntensity(
+        en = "Max intensity displayed (dB)"
+    ),
+    PreferencesChartsSpectrogramWindowType(
+        en = "Window function"
+    ),
+    PreferencesChartsSpectrogramColorPalette(
+        en = "Colors"
+    ),
+    PreferencesEditor(
+        en = "Editor"
+    ),
+    PreferencesEditorDescription(
+        en = "Customize the editor's appearance and behavior."
+    ),
+    PreferencesEditorPlayerCursorColor(
+        en = "Player cursor color"
+    ),
+    PreferencesEditorScissors(
+        en = "Scissors"
+    ),
+    PreferencesEditorScissorsDescription(
+        en = "Customize appearance and behavior of the scissors tool."
+    ),
+    PreferencesEditorScissorsColor(
+        en = "Color"
+    ),
+    PreferencesEditorScissorsActionTargetNone(
+        en = "None"
+    ),
+    PreferencesEditorScissorsActionTargetFormer(
+        en = "The former entry"
+    ),
+    PreferencesEditorScissorsActionTargetLatter(
+        en = "The latter entry"
+    ),
+    PreferencesEditorScissorsActionGoTo(
+        en = "Go to entry after cutting"
+    ),
+    PreferencesEditorScissorsActionAskForName(
+        en = "Rename entry after cutting"
+    ),
+    PreferencesEditorScissorsActionPlay(
+        en = "Play audio when cutting"
+    ),
+    PreferencesEditorAutoScroll(
+        en = "Auto scroll"
+    ),
+    PreferencesEditorAutoScrollDescription(
+        en = "Define when the editor will automatically scroll to show the current entry."
+    ),
+    PreferencesEditorAutoScrollOnLoadedNewSample(
+        en = "When switched to another sample"
+    ),
+    PreferencesEditorAutoScrollOnJumpedToEntry(
+        en = "When switched to another entry by absolute index"
+    ),
+    PreferencesEditorAutoScrollOnSwitchedInMultipleEditMode(
+        en = "When switched to another entry in multiple edit mode"
+    ),
+    PreferencesAutoSave(
+        en = "Auto save"
+    ),
+    PreferencesAutoSaveDescription(
+        en = "Customize the behavior about project auto-save."
+    ),
+    PreferencesAutoSaveTarget(
+        en = "Location of auto-saved file"
+    ),
+    PreferencesAutoSaveTargetNone(
+        en = "Do not auto-save"
+    ),
+    PreferencesAutoSaveTargetProject(
+        en = "Overwrite project file"
+    ),
+    PreferencesAutoSaveTargetRecord(
+        en = "Save to temporary file"
+    ),
+    PreferencesAutoSaveIntervalSec(
+        en = "Interval (sec)"
     );
 
     fun get(language: Language): String = when (language) {

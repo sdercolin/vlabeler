@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.ui.editor
 import androidx.compose.ui.graphics.Color
 import com.sdercolin.vlabeler.ui.theme.DarkGray
 import com.sdercolin.vlabeler.ui.theme.White
-import com.sdercolin.vlabeler.util.parseColor
+import com.sdercolin.vlabeler.util.toColor
 import kotlin.math.roundToInt
 
 /**
@@ -63,20 +63,20 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
         Plain(listOf(White), listOf(1f)),
         Reversed(listOf(White, DarkGray), listOf(0f, 1f)),
         Foggy(
-            listOf(parseColor("#c76504"), White),
+            listOf("#c76504".toColor(), White),
             listOf(5f, 1f)
         ),
         Snowy(
-            listOf(parseColor("#163eab"), White),
+            listOf("#163eab".toColor(), White),
             listOf(5f, 1f)
         ),
         Dawn(
             listOf(
                 Color.Black,
-                parseColor("#020724"),
-                parseColor("#0286af"),
-                parseColor("#bfcab8"),
-                parseColor("#e6aaab"),
+                "#020724".toColor(),
+                "#0286af".toColor(),
+                "#bfcab8".toColor(),
+                "#e6aaab".toColor(),
                 Color.White
             ),
             listOf(0f, 2f, 4f, 2f, 1f, 0.5f)
@@ -84,19 +84,19 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
         Sunset(
             listOf(
                 Color.Black,
-                parseColor("#02063e"),
-                parseColor("#f21e07"),
-                parseColor("#eded0c"),
-                parseColor("#fcfef0")
+                "#02063e".toColor(),
+                "#f21e07".toColor(),
+                "#eded0c".toColor(),
+                "#fcfef0".toColor()
             ),
             listOf(0f, 4f, 5f, 1f, 0.5f)
         ),
         Midnight(
             listOf(
                 Color.Black,
-                parseColor("#1f1f47"),
-                parseColor("#c45a0f"),
-                parseColor("#f9ca3a"),
+                "#1f1f47".toColor(),
+                "#c45a0f".toColor(),
+                "#f9ca3a".toColor(),
                 White
             ),
             listOf(0f, 3f, 2f, 0.5f, 0.5f)

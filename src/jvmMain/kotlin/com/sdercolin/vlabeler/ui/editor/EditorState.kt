@@ -101,7 +101,7 @@ class EditorState(
         }
     }
 
-    suspend fun loadSampleInfo() {
+    suspend fun loadSample() {
         withContext(Dispatchers.IO) {
             val sampleDirectory = project.sampleDirectory.toFile()
             if (!sampleDirectory.exists()) {
