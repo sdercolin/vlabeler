@@ -168,7 +168,7 @@ class PluginDialogState(
     }
 
     fun canSave(): Boolean {
-        val current = getCurrentParamMap().toList()
+        val current = runCatching { getCurrentParamMap().toList() }.getOrNull() ?: return false
         val saved = paramMap.toList()
         val changed = saved.indices.all { saved[it] == current[it] }.not()
         return changed && isAllValid()
