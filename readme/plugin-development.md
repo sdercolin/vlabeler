@@ -17,7 +17,9 @@ A plugin for `vLabeler` is a folder containing:
 - `type`: (Required) String. Currently only `template`.
 - `displayedName`: String. Defaults to `name`.
 - `author`: (Required) String.
+- `email`: String. Defaults to empty string.
 - `description`: String. Defaults to empty string.
+- `website`: String. Defaults to empty string.
 - `supportedLabelFileExtension`: (Required) String. Extension of your label file (e.g. `ini` for UTAU oto).
 - `inputFileExtension`: Nullable String. Extension of your input file if any. Defaults to `null`.
 - `requireInputFile`: Boolean. Set to `true` if you always require an input file. Defaults to `false`.
