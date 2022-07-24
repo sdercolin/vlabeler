@@ -43,6 +43,7 @@ data class Plugin(
     val author: String,
     val email: String,
     val description: String = "",
+    val website: String = "",
     val supportedLabelFileExtension: String,
     val inputFileExtension: String? = null,
     val requireInputFile: Boolean = false,

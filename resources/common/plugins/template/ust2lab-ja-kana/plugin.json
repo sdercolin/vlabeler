@@ -6,6 +6,7 @@
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": "Parse ust with Japanese kana lyrics to sinsy lab style entries. Dictionary powered by https://github.com/oatsu-gh/oto2lab.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/ust2lab-ja-kana",
   "supportedLabelFileExtension": "lab",
   "inputFileExtension": "ust",
   "requireInputFile": true,

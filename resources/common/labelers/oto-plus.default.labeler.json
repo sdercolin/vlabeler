@@ -7,6 +7,7 @@
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": "Default labeler for UTAU oto. Left is separated from the default start, so Overlap can be set minus.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
   "defaultValues": [
     100,
     400,

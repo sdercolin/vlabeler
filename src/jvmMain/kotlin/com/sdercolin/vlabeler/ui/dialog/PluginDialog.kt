@@ -162,6 +162,11 @@ class PluginDialogState(
         Desktop.getDesktop().browse("mailto:${plugin.email}".toUri())
     }
 
+    fun openWebsite() {
+        val uri = plugin.website.takeIf { it.isNotBlank() }?.toUri() ?: return
+        Desktop.getDesktop().browse(uri)
+    }
+
     fun canSave(): Boolean {
         val current = getCurrentParamMap().toList()
         val saved = paramMap.toList()
@@ -238,6 +243,9 @@ private fun Content(state: PluginDialogState) {
                 if (plugin.description.isNotBlank()) {
                     Description(plugin.description)
                 }
+                if (plugin.website.isNotBlank()) {
+                    Website(plugin.website, state::openWebsite)
+                }
                 Spacer(Modifier.height(25.dp))
                 if (state.hasParams) {
                     Params(state)
@@ -297,8 +305,19 @@ private fun Info(plugin: Plugin, contactAuthor: () -> Unit) {
 }
 
 @Composable
+private fun Website(website: String, openWebsite: () -> Unit) {
+    ClickableText(
+        modifier = Modifier.padding(vertical = 3.dp),
+        text = website,
+        style = MaterialTheme.typography.caption,
+        onClick = openWebsite
+    )
+}
+
+@Composable
 private fun Description(description: String) {
     Text(
+        modifier = Modifier.padding(vertical = 3.dp),
         text = description,
         style = MaterialTheme.typography.caption,
         maxLines = 3,

@@ -6,6 +6,7 @@
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": "Generate template for CV oto.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/cv-oto-gen",
   "supportedLabelFileExtension": "ini",
   "inputFileExtension": null,
   "parameters": {
