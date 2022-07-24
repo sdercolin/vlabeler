@@ -56,12 +56,12 @@ import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.util.argbHexString
 import com.sdercolin.vlabeler.util.isHexChar
 import com.sdercolin.vlabeler.util.rgbHexString
 import com.sdercolin.vlabeler.util.runIf
+import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.toColorOrNull
 import com.sdercolin.vlabeler.util.toRgbColorOrNull
 
@@ -310,8 +310,15 @@ fun SwitchItem(item: PreferencesItem.Switch, state: PreferencesEditorState) {
 
 @Composable
 private fun IntegerInputItem(item: PreferencesItem.IntegerInput, state: PreferencesEditorState) {
+    val loadedValue = item.select(state.conf)
+    val value = if ((item.max != null && loadedValue > item.max) || (item.min != null && loadedValue < item.min)) {
+        item.defaultValue
+    } else {
+        loadedValue
+    }
+
     IntegerInputBox(
-        intValue = item.select(state.conf),
+        intValue = value,
         onValueChange = { state.update(item, it) },
         min = item.min,
         max = item.max
@@ -320,8 +327,15 @@ private fun IntegerInputItem(item: PreferencesItem.IntegerInput, state: Preferen
 
 @Composable
 private fun FloatInputItem(item: PreferencesItem.FloatInput, state: PreferencesEditorState) {
+    val loadedValue = item.select(state.conf)
+    val value = if ((item.max != null && loadedValue > item.max) || (item.min != null && loadedValue < item.min)) {
+        item.defaultValue
+    } else {
+        loadedValue
+    }
+
     FloatInputBox(
-        floatValue = item.select(state.conf),
+        floatValue = value,
         onValueChange = { state.update(item, it) },
         min = item.min,
         max = item.max
@@ -331,11 +345,18 @@ private fun FloatInputItem(item: PreferencesItem.FloatInput, state: PreferencesE
 @Composable
 private fun ColorStringInputItem(item: PreferencesItem.ColorStringInput, state: PreferencesEditorState) {
     val currentValue = item.select(state.conf)
-    var value by remember(currentValue) { mutableStateOf(currentValue) }
 
     fun getColor(text: String) = if (item.useAlpha) text.toColorOrNull() else text.toRgbColorOrNull()
-    var colorPreview by remember(currentValue) { mutableStateOf(getColor(currentValue)) }
 
+    var value by remember(currentValue) {
+        if (getColor(currentValue) == null) {
+            mutableStateOf(item.defaultValue)
+        } else {
+            mutableStateOf(currentValue)
+        }
+    }
+
+    var colorPreview by remember(currentValue) { mutableStateOf(getColor(currentValue)) }
     val valueLength = if (item.useAlpha) 9 else 7
 
     InputBox(
@@ -355,7 +376,7 @@ private fun ColorStringInputItem(item: PreferencesItem.ColorStringInput, state: 
             }
         },
         leadingContent = {
-            Box(Modifier.size(20.dp).background(color = colorPreview ?: Black))
+            Box(Modifier.size(20.dp).background(color = colorPreview ?: item.defaultValue.toColor()))
             Spacer(Modifier.width(15.dp))
         }
     )
