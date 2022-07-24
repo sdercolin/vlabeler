@@ -27,7 +27,7 @@ with your terminal. (sudo command requires your password)
 ## Building
 vLabeler is built by [Compose Multiplatform](https://github.com/JetBrains/compose-jb). You can use Gradle to build the application. [See more](https://github.com/JetBrains/compose-jb/tree/master/tutorials/Native_distributions_and_local_execution)
 
-Currently cross-platform building is not supported. Only packages for your OS are built.
+Currently, cross-platform building is not supported. Only packages for your OS are built.
 
 Please ensure you have **JDK 15+** for building.
 
@@ -41,7 +41,7 @@ Please ensure you have **JDK 15+** for building.
 
 ## Usage
 Many behaviors of vLabeler depend on customizable `labeler`s.
-Currenty built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU) lab labeler`.
+Currently, built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU) lab labeler`.
 
 - oto labeler (Basic mode, SetParam style)
   ![](readme/oto.gif)
@@ -51,14 +51,14 @@ Currenty built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU) l
 
 ## Get started
 1. Click `New project..` 
-2. Select a folder containing your sample files
-3. If you don't want to save vLabeler files (project file, processed wav files etc.) in the sample folder, change the `Working directory`
-4. Change `Project name` if you would like
-5. Select a labeler (e.g. UTAU oto labeler if you are editign UTAU oto)
-6. Select a label file template and its encoding (e.g. a pre-filled oto file), or leave it blank to use the default template (not recommended)
-7. If you don't have a template file, select a template generator along with input file which it requires
-8. Click `OK` and start editing
-9. Click `Export` in the menu to get the edited label file
+1. Select a folder containing your sample files
+1. If you don't want to save vLabeler files (project file, processed wav files etc.) in the sample folder, change the `Working directory`
+1. Change `Project name` if you would like
+1. Select a labeler (e.g. UTAU oto labeler if you are editign UTAU oto)
+1. Select a label file template and its encoding (e.g. a pre-filled oto file), or leave it blank to use the default template (not recommended)
+1. If you don't have a template file, select a template generator along with input file which it requires
+1. Click `OK` and start editing
+1. Click `Export` in the menu to get the edited label file
  
 ## Available keyboard/mouse actions
 Note that following `Ctrl` means `Command` if you are using macOS.
@@ -115,20 +115,34 @@ The normal cursor tool to drag parameter controllers (lines or the labels).
 Cut the current entry into two parts by your click position.
 By default, when you click on a valid position with the scissors:
 1. Audio of the former (left) part after cutting is played so that you can confirm the phoneme
-2. A dialog is shown, asking you to rename the former entry
-3. Cutting and renaming is conducted
-4. The editor navigates to the former entry if needed
+1. A dialog is shown, asking you to rename the former entry
+1. Cutting and renaming is conducted
+1. The editor navigates to the former entry if needed
 
 These actions can be configured, see the `Configure` section for details.
 
-## Configure
-After the first run, you can find `app.conf.json` and `labelers/*.labeler.json` under `.../<user>/vLabeler` directory. (For macOS it's `~/Library/vLabeler`)
-Check [LabelerConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) and [AppConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/AppConf.kt) 
-and make sure you understand the content before you edit them.
+## Labelers
+A "labeler" is a configuration file for `vLabeler` which defines the behavior for a certain type of singing voice generation software.
+For example, the built-in `UTAU oto labeler` is a labeler for editing UTAU's `oto.ini` files.
 
-You can reset configurations by removing the files.
+A labeler defines:
+- what data/fields a voice entry should contain (e.g. for UTAU, you need `fixed`, `pre-utterance`, `overlap`, etc.)
+- how the data/fields are displayed in the editor as parameter controllers
+- whether entries should be connected to each other (e.g. `Sinsy lab Labeler` does)
+- how to parse the label file to a `vLabeler` project
+- how to generate the label file from a `vLabeler` project
+- and more behaviors when editing the certain type of label files
 
-Built-in configuration UI is not available yet. (Please wait!)
+After the first run, you can find built-in labeler files named `labelers/*.labeler.json` under `.../<user>/vLabeler` directory. (For macOS it's `~/Library/vLabeler`)
+You can edit the labelers, but please check [LabelerConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) and make sure you understand the content before you edit them.
+
+If you want to edit the labels for a singing voice generation software which is not supported by `vLabeler`,
+instead of requesting for development supporting that software, you can create a labeler to make it work. (it requires some knowledge of the coding though).
+After you put a new labeler file under the directory and restart the application, it will be available in the `New Project` page.
+You can distribute the labelers created by yourself to other users.
+You are also welcomed to submit your labeler files to our project to make it built-in.
+
+Labeler management UI will be added in the future.
 
 ## Plugins
 Currently, only template generator plugins are available.
@@ -145,10 +159,11 @@ You can distribute your plugin anywhere, or create a pull request to make it bui
 See [Plugin API Document](readme/plugin-development.md) for details.
 
 ## Logs
-Logs are written to files under `.../vLabeler/.logs`.
+Log files are saved under `.../vLabeler/.logs` folder.
 You can check the logs for development/debug/test purposes.
 When reporting issues, please attach the recent log files.
 
 ## Known issues
 1. Audio files with a higher bit depth than 16-bit cannot be played normally. Please convert them priorly.
 2. On Linux, file chooser may not be able to select an empty folder. Please creating something inside, or copy + paste its path.
+3. Sometimes the window freezes unexpectedly. You can resize the window to refresh it.
