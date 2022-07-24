@@ -34,6 +34,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -348,11 +349,18 @@ private fun ColorStringInputItem(item: PreferencesItem.ColorStringInput, state: 
 
     fun getColor(text: String) = if (item.useAlpha) text.toColorOrNull() else text.toRgbColorOrNull()
 
-    var value by remember(currentValue) {
+    var value by remember {
         if (getColor(currentValue) == null) {
             mutableStateOf(item.defaultValue)
         } else {
             mutableStateOf(currentValue)
+        }
+    }
+
+    LaunchedEffect(currentValue) {
+        val inputColor = getColor(currentValue)
+        if (inputColor != null && inputColor != getColor(value)) {
+            value = currentValue
         }
     }
 

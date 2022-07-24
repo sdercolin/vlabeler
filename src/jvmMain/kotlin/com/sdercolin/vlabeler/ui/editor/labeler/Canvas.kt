@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.ui.AppState
@@ -49,6 +50,7 @@ import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toColor
+import com.sdercolin.vlabeler.util.toColorOrNull
 
 @Composable
 fun Canvas(
@@ -139,10 +141,13 @@ private fun Chunk(
     ) {
         Column(Modifier.fillMaxSize()) {
             val weightOfEachChannel = 1f / sampleInfo.channels
+            val backgroundColor = appState.appConf.painter.amplitude.backgroundColor.toColorOrNull()
+                ?: AppConf.Amplitude.DefaultBackgroundColor.toColor()
             repeat(sampleInfo.channels) { channelIndex ->
                 Box(
                     Modifier.weight(weightOfEachChannel)
                         .fillMaxWidth()
+                        .background(backgroundColor)
                 ) {
                     val imageStatus = editorState.chartStore.getWaveformStatus(channelIndex, chunkIndex)
                     if (imageStatus == ChartStore.ChartLoadingStatus.Loaded) {

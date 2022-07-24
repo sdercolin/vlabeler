@@ -67,17 +67,21 @@ data class AppConf(
 
     /**
      * Configurations about amplitude(waveforms) painting
-     * @param unitSize Frame size of one pixel used when drawing the waveforms
+     * @param unitSize Frame size of one pixel used when drawing the waveform
      * @param intensityAccuracy Height of the container bitmap in pixel
      * @param yAxisBlankRate Height rate of the extra blank region displayed in both top and bottom to
      * the height of the waveform
+     * @param color Color of the waveform
+     * @param backgroundColor Background color of the waveform
      */
     @Serializable
     @Immutable
     data class Amplitude(
         val unitSize: Int = DefaultUnitSize,
         val intensityAccuracy: Int = DefaultIntensityAccuracy,
-        val yAxisBlankRate: Float = DefaultYAxisBlankRate
+        val yAxisBlankRate: Float = DefaultYAxisBlankRate,
+        val color: String = DefaultColor,
+        val backgroundColor: String = DefaultBackgroundColor
     ) {
         companion object {
             const val DefaultUnitSize = 40
@@ -89,6 +93,8 @@ data class AppConf(
             const val DefaultYAxisBlankRate = 0.1f
             const val MaxYAxisBlankRate = 1f
             const val MinYAxisBlankRate = 0f
+            const val DefaultColor = "#FFF2F2F2"
+            const val DefaultBackgroundColor = "#00000000"
         }
     }
 

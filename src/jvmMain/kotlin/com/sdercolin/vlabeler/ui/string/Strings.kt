@@ -381,6 +381,12 @@ enum class Strings(val en: String) {
     PreferencesChartsWaveformYAxisBlankRate(
         en = "Vertical padding (%%)"
     ),
+    PreferencesChartsWaveformColor(
+        en = "Color"
+    ),
+    PreferencesChartsWaveformBackgroundColor(
+        en = "Background color"
+    ),
     PreferencesChartsSpectrogram(
         en = "Spectrogram"
     ),

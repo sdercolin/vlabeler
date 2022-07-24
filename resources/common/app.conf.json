@@ -8,7 +8,9 @@
     "amplitude": {
       "unitSize": 40,
       "intensityAccuracy": 1000,
-      "yAxisBlankRate": 0.1
+      "yAxisBlankRate": 0.1,
+      "color": "#FFF2F2F2",
+      "backgroundColor": "#00000000"
     },
     "spectrogram": {
       "enabled": true,

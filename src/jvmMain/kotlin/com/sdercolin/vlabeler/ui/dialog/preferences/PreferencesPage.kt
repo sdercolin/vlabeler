@@ -97,6 +97,20 @@ abstract class PreferencesPage(
                     select = { it.yAxisBlankRate * 100 },
                     update = { copy(yAxisBlankRate = it / 100) }
                 )
+                color(
+                    title = Strings.PreferencesChartsWaveformColor,
+                    defaultValue = AppConf.Amplitude.DefaultColor,
+                    select = { it.color },
+                    update = { copy(color = it) },
+                    useAlpha = true
+                )
+                color(
+                    title = Strings.PreferencesChartsWaveformBackgroundColor,
+                    defaultValue = AppConf.Amplitude.DefaultBackgroundColor,
+                    select = { it.backgroundColor },
+                    update = { copy(backgroundColor = it) },
+                    useAlpha = true
+                )
             }
         }
     }

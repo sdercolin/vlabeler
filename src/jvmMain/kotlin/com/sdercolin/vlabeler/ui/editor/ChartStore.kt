@@ -16,8 +16,9 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.repository.SampleRepository
-import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.util.splitAveragely
+import com.sdercolin.vlabeler.util.toColor
+import com.sdercolin.vlabeler.util.toColorOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -219,13 +220,14 @@ class ChartStore {
         val height = appConf.painter.amplitude.intensityAccuracy
         val size = Size(width.toFloat(), height.toFloat())
         val newBitmap = ImageBitmap(width, height)
+        val color = appConf.painter.amplitude.color.toColorOrNull() ?: AppConf.Amplitude.DefaultColor.toColor()
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
             Log.info("Waveforms chunk $chunkIndex in channel $channelIndex: draw bitmap")
             val yScale = maxRawY / height * 2 * (1 + appConf.painter.amplitude.yAxisBlankRate)
             val points = data
                 .map { height / 2 - it / yScale }
                 .withIndex().map { Offset(it.index.toFloat() / dataDensity, it.value) }
-            drawPoints(points, pointMode = PointMode.Polygon, color = LightGray)
+            drawPoints(points, pointMode = PointMode.Polygon, color = color)
         }
         yield()
         ChartRepository.putWaveform(sampleInfo, channelIndex, chunkIndex, newBitmap)
