@@ -296,11 +296,13 @@ private fun Info(plugin: Plugin, contactAuthor: () -> Unit) {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        ClickableText(
-            text = string(Strings.PluginDialogInfoContact),
-            style = MaterialTheme.typography.caption,
-            onClick = contactAuthor
-        )
+        if (plugin.email.isNotBlank()) {
+            ClickableText(
+                text = string(Strings.PluginDialogInfoContact),
+                style = MaterialTheme.typography.caption,
+                onClick = contactAuthor
+            )
+        }
     }
 }
 

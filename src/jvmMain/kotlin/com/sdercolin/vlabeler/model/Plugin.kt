@@ -41,7 +41,7 @@ data class Plugin(
     val type: Type,
     val displayedName: String = name,
     val author: String,
-    val email: String,
+    val email: String = "",
     val description: String = "",
     val website: String = "",
     val supportedLabelFileExtension: String,

@@ -32,7 +32,7 @@ data class LabelerConf(
      */
     val displayedName: String = name,
     val author: String,
-    val email: String,
+    val email: String = "",
     val description: String = "",
     val website: String = "",
     /**
