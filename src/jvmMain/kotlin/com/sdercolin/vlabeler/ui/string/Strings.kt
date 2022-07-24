@@ -117,6 +117,9 @@ enum class Strings(val en: String) {
     MenuHelpOpenLogDirectory(
         en = "Open Log Directory"
     ),
+    MenuHelpOpenLatestRelease(
+        en = "Open Latest Release"
+    ),
     MenuHelpOpenGitHub(
         en = "Open GitHub Page"
     ),

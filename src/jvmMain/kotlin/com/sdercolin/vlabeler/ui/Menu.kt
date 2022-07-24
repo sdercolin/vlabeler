@@ -242,6 +242,10 @@ fun FrameWindowScope.Menu(
                 onClick = { Desktop.getDesktop().open(Log.LoggingPath.toFile()) }
             )
             Item(
+                string(Strings.MenuHelpOpenLatestRelease),
+                onClick = { Desktop.getDesktop().browse(Url.LatestRelease.toUri()) }
+            )
+            Item(
                 string(Strings.MenuHelpOpenGitHub),
                 onClick = { Desktop.getDesktop().browse(Url.ProjectGitHub.toUri()) }
             )
