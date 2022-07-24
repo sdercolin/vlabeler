@@ -18,8 +18,10 @@ import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomAppConfFile
+import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
+import com.sdercolin.vlabeler.util.toUri
 import kotlinx.coroutines.CoroutineScope
 import java.awt.Desktop
 import java.io.File
@@ -238,6 +240,14 @@ fun FrameWindowScope.Menu(
             Item(
                 string(Strings.MenuHelpOpenLogDirectory),
                 onClick = { Desktop.getDesktop().open(Log.LoggingPath.toFile()) }
+            )
+            Item(
+                string(Strings.MenuHelpOpenGitHub),
+                onClick = { Desktop.getDesktop().browse(Url.ProjectGitHub.toUri()) }
+            )
+            Item(
+                string(Strings.MenuHelpJoinDiscord),
+                onClick = { Desktop.getDesktop().browse(Url.DiscordInvitation.toUri()) }
             )
         }
         if (isDebug) {
