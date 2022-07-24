@@ -258,6 +258,7 @@ class ProjectStoreImpl(
                 when (autoSave.target) {
                     AppConf.AutoSave.Target.Project -> if (unsavedChangesState.hasUnsavedChanges) {
                         saveProjectFile(project)
+                        unsavedChangesState.projectSaved()
                     }
                     AppConf.AutoSave.Target.Record ->
                         if (unsavedChangesState.hasUnsavedChanges && savedTemporaryProject != project) {
