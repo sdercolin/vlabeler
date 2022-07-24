@@ -111,6 +111,12 @@ enum class Strings(val en: String) {
     MenuSettings(
         en = "Settings"
     ),
+    MenuHelp(
+        en = "Help"
+    ),
+    MenuHelpOpenLogDirectory(
+        en = "Open Log Directory"
+    ),
     MenuSettingsPreferences(
         en = "Preferences..."
     ),
@@ -331,8 +337,20 @@ enum class Strings(val en: String) {
     PluginRuntimeException(
         en = "An error occurred during the plugin execution. Please contact the author for more information."
     ),
-    InvalidProjectException(
+    InvalidCreatedProjectException(
         en = "The created project is not valid. Please contact author of the labeler/plugin for more information."
+    ),
+    InvalidOpenedProjectException(
+        en = "Could not open the project because it contains invalid data. Please check error log for more information."
+    ),
+    ProjectParseException(
+        en = "Could not open the project. It may be corrupted or created by an incompatible version of vLabeler."
+    ),
+    ProjectUpdateOnSampleException(
+        en = "Could not update the project with the loaded sample file. Please check error log for more information."
+    ),
+    InvalidEditedProjectException(
+        en = "Invalid edited project. Please check error log for more information."
     ),
     PreferencesCharts(
         en = "Charts"

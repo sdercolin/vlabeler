@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.shouldTogglePlayerWithInCurrentEntry
+import com.sdercolin.vlabeler.exception.InvalidOpenedProjectException
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
@@ -23,7 +24,6 @@ import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
-import com.sdercolin.vlabeler.ui.dialog.ErrorDialogResult
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogResult
@@ -50,12 +50,14 @@ class AppState(
     appConf: MutableState<AppConf>,
     val availableLabelerConfs: List<LabelerConf>,
     private val plugins: List<Plugin>,
+    appErrorState: AppErrorState = AppErrorStateImpl(),
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
     screenState: AppScreenState = AppScreenStateImpl(),
-    projectStore: ProjectStore = ProjectStoreImpl(appConf, screenState, scrollFitViewModel),
+    projectStore: ProjectStore = ProjectStoreImpl(appConf, screenState, scrollFitViewModel, appErrorState),
     unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl(),
-    dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarHostState)
-) : AppViewState by viewState,
+    dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarHostState),
+) : AppErrorState by appErrorState,
+    AppViewState by viewState,
     AppScreenState by screenState,
     ProjectStore by projectStore,
     AppUnsavedChangesState by unsavedChangesState,
@@ -98,7 +100,11 @@ class AppState(
     }
 
     fun openEditor(project: Project) {
-        newProject(project)
+        runCatching { newProject(project) }
+            .onFailure {
+                showError(InvalidOpenedProjectException(it))
+                return
+            }
         SampleRepository.init(project)
         val editor = EditorState(
             project = project,
@@ -246,12 +252,18 @@ class AppState(
                     openSampleDirectoryRedirectDialog()
                 }
             }
-            is ErrorDialogResult -> Unit
             is PreferencesDialogResult -> {
                 val newConf = result.newConf ?: return
                 updateAppConf(newConf)
             }
             else -> throw NotImplementedError("Dialog result handler is not implemented")
+        }
+    }
+
+    fun handleErrorPendingAction(action: AppErrorState.ErrorPendingAction?) {
+        action ?: return
+        when (action) {
+            AppErrorState.ErrorPendingAction.CloseEditor -> reset()
         }
     }
 

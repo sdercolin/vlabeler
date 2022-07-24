@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
-import com.sdercolin.vlabeler.exception.InvalidProjectException
+import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
 import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
@@ -189,7 +189,8 @@ data class Project(
 
     fun hasSwitchedSample(previous: Project?) = previous != null && previous.currentSampleName != currentSampleName
 
-    fun requireValid() {
+    fun validate(): Project {
+
         // Check multiMode enabled
         if (multipleEditMode) require(
             labelerConf.continuous
@@ -197,27 +198,6 @@ data class Project(
 
         // Check currentIndex valid
         requireNotNull(entries.getOrNull(currentIndex)) { "Invalid currentIndex: $currentIndex" }
-
-        // Check points
-        entries.forEach {
-            require(it.points.size == labelerConf.fields.size) {
-                "Point size doesn't match in entry: $it. Required point size = ${labelerConf.fields.size}"
-            }
-            require(it.extras.size == labelerConf.extraFieldNames.size) {
-                "Extra size doesn't match in entry: $it. Required extra size = ${labelerConf.extraFieldNames.size}"
-            }
-            it.points.forEach { point ->
-                require(point >= it.start) {
-                    "Point $point is smaller than start in entry: $it"
-                }
-                if (it.end > 0) require(point <= it.end) {
-                    "Point $point is greater than end in entry: $it"
-                }
-            }
-            if (it.end > 0) require(it.start <= it.end) {
-                "Start is greater than end in entry: $it"
-            }
-        }
 
         // Check continuous
         if (labelerConf.continuous) {
@@ -229,6 +209,61 @@ data class Project(
                 }
             }
         }
+
+        // Check points
+        val entries = entries.map {
+            require(it.points.size == labelerConf.fields.size) {
+                "Point size doesn't match in entry: $it. Required point size = ${labelerConf.fields.size}"
+            }
+            require(it.extras.size == labelerConf.extraFieldNames.size) {
+                "Extra size doesn't match in entry: $it. Required extra size = ${labelerConf.extraFieldNames.size}"
+            }
+            if (it.end > 0) require(it.start <= it.end) {
+                "Start is greater than end in entry: $it"
+            }
+            var entryResult = it
+            it.points.forEachIndexed { index, point ->
+                runCatching {
+                    require(point >= entryResult.start) {
+                        "Point $point is smaller than start in entry: $it"
+                    }
+                }.onFailure { t ->
+                    when (labelerConf.overflowBeforeStart) {
+                        LabelerConf.PointOverflow.AdjustBorder -> {
+                            entryResult = entryResult.copy(start = point)
+                        }
+                        LabelerConf.PointOverflow.AdjustPoint -> {
+                            val points = entryResult.points.toMutableList()
+                            points[index] = entryResult.start
+                            entryResult = entryResult.copy(points = points)
+                        }
+                        LabelerConf.PointOverflow.Error -> throw t
+                    }
+                }
+                if (it.end > 0) {
+                    runCatching {
+                        require(point <= it.end) {
+                            "Point $point is greater than end in entry: $it"
+                        }
+                    }.onFailure { t ->
+                        when (labelerConf.overflowAfterEnd) {
+                            LabelerConf.PointOverflow.AdjustBorder -> {
+                                entryResult = entryResult.copy(end = point)
+                            }
+                            LabelerConf.PointOverflow.AdjustPoint -> {
+                                val points = entryResult.points.toMutableList()
+                                points[index] = entryResult.end
+                                entryResult = entryResult.copy(points = points)
+                            }
+                            LabelerConf.PointOverflow.Error -> throw t
+                        }
+                    }
+                }
+            }
+            entryResult
+        }
+
+        return copy(entries = entries)
     }
 
     companion object {
@@ -358,8 +393,8 @@ suspend fun projectOf(
             currentIndex = 0,
             labelerConf = labelerConf,
             encoding = encoding
-        ).also { it.requireValid() }
+        ).validate()
     }.onFailure {
-        return Result.failure(InvalidProjectException(it))
+        return Result.failure(InvalidCreatedProjectException(it))
     }
 }

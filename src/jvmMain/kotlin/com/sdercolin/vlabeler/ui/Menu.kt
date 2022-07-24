@@ -9,6 +9,7 @@ import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.debug.DebugState
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.getNumberKey
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isMacOS
@@ -18,7 +19,9 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.stringifyJson
+import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
+import java.awt.Desktop
 import java.io.File
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -230,6 +233,12 @@ fun FrameWindowScope.Menu(
                     onClick = { appState.openPreferencesDialog() }
                 )
             }
+        }
+        Menu(string(Strings.MenuHelp), mnemonic = 'H') {
+            Item(
+                string(Strings.MenuHelpOpenLogDirectory),
+                onClick = { Desktop.getDesktop().open(Log.LoggingPath.toFile()) }
+            )
         }
         if (isDebug) {
             Menu("Debug") {

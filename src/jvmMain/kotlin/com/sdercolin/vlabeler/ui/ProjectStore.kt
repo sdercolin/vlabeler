@@ -4,6 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
+import com.sdercolin.vlabeler.exception.ProjectUpdateOnSampleException
 import com.sdercolin.vlabeler.io.autoSaveTemporaryProjectFile
 import com.sdercolin.vlabeler.io.saveProjectFile
 import com.sdercolin.vlabeler.model.AppConf
@@ -66,7 +68,8 @@ interface ProjectStore {
 class ProjectStoreImpl(
     private val appConf: State<AppConf>,
     private val screenState: AppScreenState,
-    private val scrollFitViewModel: ScrollFitViewModel
+    private val scrollFitViewModel: ScrollFitViewModel,
+    private val errorState: AppErrorState
 ) : ProjectStore {
 
     override var project: Project? by savedMutableStateOf(null) {
@@ -81,9 +84,9 @@ class ProjectStoreImpl(
 
     override fun newProject(newProject: Project) {
         project?.let { discardAutoSavedProject(it) }
-        project = newProject
-        newProject.requireValid()
-        history = ProjectHistory.new(newProject)
+        val validatedProject = newProject.validate()
+        project = validatedProject
+        history = ProjectHistory.new(validatedProject)
     }
 
     override fun clearProject() {
@@ -93,24 +96,23 @@ class ProjectStoreImpl(
     }
 
     override fun editProject(editor: Project.() -> Project) {
-        val edited = requireProject().editor()
-        edited.requireValid()
+        val edited = runCatching { requireProject().editor().validate() }.getOrElse {
+            errorState.showError(InvalidEditedProjectException(it))
+            return
+        }
         project = edited
         history = history.push(edited)
     }
 
     override fun updateProjectOnLoadedSample(sampleInfo: SampleInfo) {
-        val updated = requireProject().updateOnLoadedSample(sampleInfo)
+        val updated = runCatching { requireProject().updateOnLoadedSample(sampleInfo).validate() }
+            .getOrElse {
+                errorState.showError(ProjectUpdateOnSampleException(it), AppErrorState.ErrorPendingAction.CloseEditor)
+                return
+            }
         if (updated == requireProject()) return
         project = updated
         history = history.replaceTop(updated)
-    }
-
-    private fun editNonNullProject(editor: Project.() -> Project?) {
-        val edited = requireProject().editor() ?: return
-        edited.requireValid()
-        project = edited
-        history = history.push(edited)
     }
 
     override fun editEntries(editedEntries: List<IndexedEntry>) = editProject { updateEntries(editedEntries) }
@@ -147,13 +149,13 @@ class ProjectStoreImpl(
 
     override fun nextEntry() {
         val previousProject = project
-        editNonNullProject { nextEntry() }
+        editProject { nextEntry() }
         scrollIfNeededWhenSwitchedEntry(previousProject)
     }
 
     override fun previousEntry() {
         val previousProject = project
-        editNonNullProject { previousEntry() }
+        editProject { previousEntry() }
         scrollIfNeededWhenSwitchedEntry(previousProject)
     }
 
@@ -167,12 +169,12 @@ class ProjectStoreImpl(
     }
 
     override fun nextSample() {
-        editNonNullProject { nextSample() }
+        editProject { nextSample() }
         scrollIfNeededWhenSwitchedSample()
     }
 
     override fun previousSample() {
-        editNonNullProject { previousSample() }
+        editProject { previousSample() }
         scrollIfNeededWhenSwitchedSample()
     }
 

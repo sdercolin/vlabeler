@@ -12,7 +12,7 @@ import java.util.logging.StreamHandler
 
 object Log {
 
-    private val LoggingPath = AppDir.resolve(".logs").absolutePath
+    val LoggingPath = AppDir.resolve(".logs").absolutePath
     private const val InfoLogFileName = "info.log"
     private const val ErrorLogFileName = "error.log"
     private val infoLogger = Logger.getLogger("info")

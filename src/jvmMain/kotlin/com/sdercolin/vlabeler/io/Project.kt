@@ -1,9 +1,9 @@
 package com.sdercolin.vlabeler.io
 
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.exception.ProjectParseException
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.dialog.ErrorDialogContent
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomLabelerDir
@@ -33,8 +33,7 @@ fun loadProject(
         appState.showProgress()
         val project = runCatching { file.readText().parseJson<Project>() }
             .getOrElse {
-                appState.openEmbeddedDialog(ErrorDialogContent.FailedToParseProject)
-                Log.error(it)
+                appState.showError(ProjectParseException(it))
                 appState.hideProgress()
                 return@launch
             }

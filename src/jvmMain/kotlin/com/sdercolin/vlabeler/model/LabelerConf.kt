@@ -63,6 +63,14 @@ data class LabelerConf(
      */
     val lockedDrag: LockedDrag = LockedDrag(),
     /**
+     * Action taken when there are points before "start"
+     */
+    val overflowBeforeStart: PointOverflow = PointOverflow.Error,
+    /**
+     * Action taken when there are points after "end"
+     */
+    val overflowAfterEnd: PointOverflow = PointOverflow.Error,
+    /**
      * Decimal digit count of the properties and writer
      */
     val decimalDigit: Int = 2,
@@ -142,6 +150,28 @@ data class LabelerConf(
         val useDragBase: Boolean = false,
         val useStart: Boolean = false
     )
+
+    /**
+     * Action to be taken when points are set outside borders (start/end)
+     */
+    @Serializable
+    @Immutable
+    enum class PointOverflow {
+        /**
+         * Adjust the border to contain the point
+         */
+        AdjustBorder,
+
+        /**
+         * Adjust the overflowing point to the border
+         */
+        AdjustPoint,
+
+        /**
+         * Do nothing, which leads to an error
+         */
+        Error
+    }
 
     /**
      * Definition for parsing the raw label file to local [Entry]

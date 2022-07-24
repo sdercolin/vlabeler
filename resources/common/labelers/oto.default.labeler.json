@@ -1,6 +1,6 @@
 {
   "name": "oto.default",
-  "version": 5,
+  "version": 6,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": "UTAU oto labeler",
@@ -62,6 +62,8 @@
     "useDragBase": true,
     "useStart": false
   },
+  "overflowBeforeStart": "AdjustPoint",
+  "overflowAfterEnd": "AdjustBorder",
   "properties": [
     {
       "name": "left",
@@ -108,7 +110,11 @@
       "points = []",
       "extras = []",
       "if (fixed !== '') {",
-      "    points.push(parseFloat(fixed) + start)",
+      "    fixed = parseFloat(fixed)",
+      "    if (fixed < 0) {",
+      "        fixed = 0",
+      "    }",
+      "    points.push(fixed + start)",
       "}",
       "if (right !== '') {",
       "    right = parseFloat(right)",
@@ -121,7 +127,11 @@
       "    }",
       "}",
       "if (preu !== '') {",
-      "    points.push(parseFloat(preu) + start)",
+      "    preu = parseFloat(preu)",
+      "    if (preu < 0) {",
+      "        preu = 0",
+      "    }",
+      "    points.push(preu + start)",
       "}",
       "if (ovl !== '') {",
       "    ovl = parseFloat(ovl)",
@@ -129,6 +139,11 @@
       "        ovl = 0",
       "    }",
       "    points.push(ovl + start)",
+      "}",
+      "for (var point of points) {",
+      "    if (end < point) {",
+      "        end = point",
+      "    }",
       "}"
     ]
   },
