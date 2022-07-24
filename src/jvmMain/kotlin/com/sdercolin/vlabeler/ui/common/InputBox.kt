@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import toStringTrimmed
+import com.sdercolin.vlabeler.util.toStringTrimmed
 
 @Composable
 fun InputBox(
@@ -84,23 +84,27 @@ fun IntegerInputBox(
 ) {
     var value by remember(intValue) { mutableStateOf(intValue.toString()) }
 
+    val getErrorPrompt = { newValue: String ->
+        val parsed = newValue.toIntOrNull()
+        if (parsed == null) {
+            string(Strings.CommonInputErrorPromptInteger)
+        } else {
+            getPromptWithRange(min, max, parsed)
+        }
+    }
+
     InputBox(
         value = value,
         onValueChange = { newValue ->
             value = newValue
             newValue.toIntOrNull()?.let {
-                onValueChange(it)
+                if (getErrorPrompt(newValue) == null) {
+                    onValueChange(it)
+                }
             }
         },
         leadingContent = leadingContent,
-        errorPrompt = {
-            val parsed = it.toIntOrNull()
-            if (parsed == null) {
-                string(Strings.CommonInputErrorPromptInteger)
-            } else {
-                getPromptWithRange(min, max, parsed)
-            }
-        }
+        errorPrompt = getErrorPrompt
     )
 }
 
@@ -118,24 +122,27 @@ fun FloatInputBox(
             value = floatValue.toStringTrimmed()
         }
     }
+    val getErrorPrompt = { newValue: String ->
+        val parsed = newValue.toFloatOrNull()
+        if (parsed == null) {
+            string(Strings.CommonInputErrorPromptNumber)
+        } else {
+            getPromptWithRange(min, max, parsed)
+        }
+    }
 
     InputBox(
         value = value,
         onValueChange = { newValue ->
             value = newValue
             newValue.toFloatOrNull()?.let {
-                onValueChange(it)
+                if (getErrorPrompt(newValue) == null) {
+                    onValueChange(it)
+                }
             }
         },
         leadingContent = leadingContent,
-        errorPrompt = {
-            val parsed = it.toFloatOrNull()
-            if (parsed == null) {
-                string(Strings.CommonInputErrorPromptNumber)
-            } else {
-                getPromptWithRange(min, max, parsed)
-            }
-        }
+        errorPrompt = getErrorPrompt
     )
 }
 
