@@ -60,7 +60,7 @@ data class AppConf(
         companion object {
             const val Max = 400
             const val Min = 10
-            const val DefaultDefault = 100
+            const val DefaultDefault = 40
             const val DefaultStep = 20
         }
     }

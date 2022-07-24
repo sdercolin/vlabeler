@@ -18,15 +18,15 @@
       "pointPixelSize": 1,
       "frameSize": 300,
       "maxFrequency": 15000,
-      "minIntensity": -10,
-      "maxIntensity": 50,
+      "minIntensity": 0,
+      "maxIntensity": 45,
       "windowType": "Hamming",
       "colorPalette": "Plain"
     }
   },
   "editor": {
     "playerCursorColor": "#FFFF00",
-    "scissorsColor": "#FFFF00",
+    "scissorsColor": "#FFFFFF00",
     "scissorsActions": {
       "goTo": "former",
       "askForName": "former",

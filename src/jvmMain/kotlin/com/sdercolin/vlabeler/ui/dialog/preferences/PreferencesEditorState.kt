@@ -74,6 +74,18 @@ class PreferencesEditorState(
         submit(savedConf.takeIf { it != initConf })
     }
 
+    fun resetPage() {
+        _conf = selectedPage.model.content
+            .flatMap { it.items }
+            .fold(conf) { acc, item ->
+                item.reset(acc)
+            }
+    }
+
+    fun resetAll() {
+        _conf = AppConf()
+    }
+
     fun togglePage(page: PreferencesPageListItem) {
         if (page.isExpanded) {
             collapsePage(page)

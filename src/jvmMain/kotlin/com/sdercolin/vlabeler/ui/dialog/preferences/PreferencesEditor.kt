@@ -25,13 +25,17 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -91,6 +95,8 @@ fun PreferencesEditor(
         Content(state)
         Divider(Modifier.height(1.dp), color = Black50)
         ButtonBar(
+            resetPage = { state.resetPage() },
+            resetAll = { state.resetAll() },
             cancel = { state.finish(false) },
             canApply = state.canSave,
             apply = { state.save() },
@@ -391,12 +397,42 @@ private fun <T> SelectionItem(item: PreferencesItem.Selection<T>, state: Prefere
 
 @Composable
 private fun ButtonBar(
+    resetPage: () -> Unit,
+    resetAll: () -> Unit,
     cancel: () -> Unit,
     canApply: Boolean,
     apply: () -> Unit,
     finish: () -> Unit
 ) {
+    var settingsExpanded by remember { mutableStateOf(false) }
     Row(modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.End) {
+        Box {
+            IconButton(onClick = { settingsExpanded = true }) {
+                Icon(Icons.Default.Settings, null)
+            }
+            DropdownMenu(
+                expanded = settingsExpanded,
+                onDismissRequest = { settingsExpanded = false }
+            ) {
+                DropdownMenuItem(
+                    onClick = {
+                        resetPage()
+                        settingsExpanded = false
+                    }
+                ) {
+                    Text(text = string(Strings.PreferencesEditorResetPage))
+                }
+                DropdownMenuItem(
+                    onClick = {
+                        resetAll()
+                        settingsExpanded = false
+                    }
+                ) {
+                    Text(text = string(Strings.PreferencesEditorResetAll))
+                }
+            }
+        }
+        Spacer(Modifier.weight(1f))
         TextButton(onClick = { cancel() }) {
             Text(string(Strings.CommonCancel))
         }

@@ -343,9 +343,6 @@ enum class Strings(val en: String) {
     FailedToLoadSampleFileError(
         en = "Could not load the sample file. It may not exist, or is not a supported format."
     ),
-    FailedToParseProjectError(
-        en = "Could not load the project. It was probably created by an incompatible version of vLabeler."
-    ),
     EmptySampleDirectoryException(
         en = "Could not create project because no sample files are found in the given sample directory."
     ),
@@ -366,6 +363,12 @@ enum class Strings(val en: String) {
     ),
     InvalidEditedProjectException(
         en = "Invalid edited project. Please check error log for more information."
+    ),
+    PreferencesEditorResetPage(
+        en = "Reset items in this page"
+    ),
+    PreferencesEditorResetAll(
+        en = "Reset all items"
     ),
     PreferencesCharts(
         en = "Charts"

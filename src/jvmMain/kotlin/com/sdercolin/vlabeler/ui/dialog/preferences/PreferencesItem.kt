@@ -11,6 +11,8 @@ sealed class PreferencesItem<T>(
     val update: AppConf.(T) -> AppConf
 ) {
 
+    fun reset(conf: AppConf) = update(conf, defaultValue)
+
     class Switch(
         title: Strings,
         description: Strings?,
