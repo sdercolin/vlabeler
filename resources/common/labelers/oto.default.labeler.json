@@ -5,6 +5,7 @@
   "defaultInputFilePath": "oto.ini",
   "displayedName": "UTAU oto labeler",
   "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
   "description": "Default labeler for UTAU oto. Overlap cannot be negative.",
   "defaultValues": [
     100,

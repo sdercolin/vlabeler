@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
@@ -41,13 +40,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
 import com.sdercolin.vlabeler.ui.common.InputBox
 import com.sdercolin.vlabeler.ui.common.IntegerInputBox
@@ -212,22 +209,8 @@ private fun PageHeader(page: PreferencesPage, state: PreferencesEditorState) {
         page.children.forEach { child ->
             ClickableText(
                 modifier = Modifier.padding(vertical = 5.dp).padding(start = 15.dp),
-                text = buildAnnotatedString {
-                    val text = string(child.displayedName)
-                    append(text)
-                    addStyle(
-                        style = SpanStyle(
-                            color = MaterialTheme.colors.primary,
-                            textDecoration = TextDecoration.Underline
-                        ),
-                        start = 0,
-                        end = text.length
-                    )
-                },
-                onClick = { state.selectPageByLink(child) },
-                style = MaterialTheme.typography.body2,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                text = string(child.displayedName),
+                onClick = { state.selectPageByLink(child) }
             )
         }
         if (page.children.isNotEmpty()) {

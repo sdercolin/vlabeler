@@ -316,8 +316,14 @@ enum class Strings(val en: String) {
     PluginDialogTitle(
         en = "vLabeler - Plugin"
     ),
-    PluginDialogInfo(
-        en = "author: %s  version: %d"
+    PluginDialogInfoAuthor(
+        en = "author: %s"
+    ),
+    PluginDialogInfoVersion(
+        en = "version: %d"
+    ),
+    PluginDialogInfoContact(
+        en = "Contact author"
     ),
     PluginDialogLabelMin(
         en = " (min: %s)"

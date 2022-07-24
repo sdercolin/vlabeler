@@ -59,7 +59,7 @@ suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatc
     val (duplicated, new) = defaultLabelers.partition { it.first.name in validCustomLabelerNames }
     new.forEach {
         availableLabelers.add(it.second)
-        it.first.copyTo(CustomLabelerDir.resolve(it.first.name))
+        it.first.copyTo(CustomLabelerDir.resolve(it.first.name), overwrite = true)
     }
     duplicated.forEach { default ->
         val custom = validCustomLabelers.first { it.first.name == default.first.name }

@@ -32,6 +32,7 @@ data class LabelerConf(
      */
     val displayedName: String = name,
     val author: String,
+    val email: String,
     val description: String = "",
     /**
      * Continuous mode, where the end of entry is forcedly set to the start of its next entry

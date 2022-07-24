@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogState
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.common.ReversedRow
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -57,6 +58,8 @@ import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.toParamMap
+import com.sdercolin.vlabeler.util.toUri
+import java.awt.Desktop
 
 class PluginDialogState(
     val plugin: Plugin,
@@ -155,6 +158,10 @@ class PluginDialogState(
         }
     }
 
+    fun openEmail() {
+        Desktop.getDesktop().browse("mailto:${plugin.email}".toUri())
+    }
+
     fun canSave(): Boolean {
         val current = getCurrentParamMap().toList()
         val saved = paramMap.toList()
@@ -226,7 +233,7 @@ private fun Content(state: PluginDialogState) {
                     Title(plugin)
                 }
                 Spacer(Modifier.height(15.dp))
-                Info(plugin)
+                Info(plugin, contactAuthor = { state.openEmail() })
                 Spacer(Modifier.height(5.dp))
                 if (plugin.description.isNotBlank()) {
                     Description(plugin.description)
@@ -267,13 +274,26 @@ private fun Title(plugin: Plugin) {
 }
 
 @Composable
-private fun Info(plugin: Plugin) {
-    Text(
-        text = string(Strings.PluginDialogInfo, plugin.author, plugin.version),
-        style = MaterialTheme.typography.caption,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-    )
+private fun Info(plugin: Plugin, contactAuthor: () -> Unit) {
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text(
+            text = string(Strings.PluginDialogInfoAuthor, plugin.author),
+            style = MaterialTheme.typography.caption,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            text = string(Strings.PluginDialogInfoVersion, plugin.version),
+            style = MaterialTheme.typography.caption,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        ClickableText(
+            text = string(Strings.PluginDialogInfoContact),
+            style = MaterialTheme.typography.caption,
+            onClick = contactAuthor
+        )
+    }
 }
 
 @Composable

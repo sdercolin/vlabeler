@@ -24,7 +24,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -36,12 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.Entry
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.IncludedSample
@@ -353,20 +350,8 @@ private fun SampleDirectoryBar(
         Spacer(Modifier.width(20.dp))
         ClickableText(
             modifier = Modifier.alignByBaseline(),
-            text = buildAnnotatedString {
-                val text = string(Strings.SampleListOpenSampleDirectoryButton)
-                append(text)
-                addStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colors.primary,
-                        textDecoration = TextDecoration.Underline
-                    ),
-                    start = 0,
-                    end = text.length
-                )
-            },
+            text = string(Strings.SampleListOpenSampleDirectoryButton),
             style = MaterialTheme.typography.caption,
-            maxLines = 1,
             onClick = { requestRedirectSampleDirectory() }
         )
     }

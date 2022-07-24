@@ -5,6 +5,7 @@
   "defaultInputFilePath": null,
   "displayedName": "Sinsy lab labeler",
   "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
   "description": "Default labeler for Sinsy lab file",
   "continuous": true,
   "allowSameNameEntry": true,

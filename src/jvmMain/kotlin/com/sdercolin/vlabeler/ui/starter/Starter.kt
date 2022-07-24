@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -25,13 +24,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.CoroutineScope
@@ -98,21 +94,7 @@ fun BoxScope.Starter(
                         recentFiles.forEachIndexed { index, file ->
                             ClickableText(
                                 modifier = Modifier.padding(bottom = 15.dp),
-                                text = buildAnnotatedString {
-                                    val text = recentPaths[index].second
-                                    append(text)
-                                    addStyle(
-                                        style = SpanStyle(
-                                            color = MaterialTheme.colors.primary,
-                                            textDecoration = TextDecoration.Underline
-                                        ),
-                                        start = 0,
-                                        end = text.length
-                                    )
-                                },
-                                style = MaterialTheme.typography.body2,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                                text = recentPaths[index].second,
                                 onClick = {
                                     loadProject(mainScope, file, appState)
                                 }

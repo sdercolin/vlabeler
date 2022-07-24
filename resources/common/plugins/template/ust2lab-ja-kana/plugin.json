@@ -1,9 +1,10 @@
 {
   "name": "ust2lab-ja-kana",
-  "version": 2,
+  "version": 3,
   "type": "template",
   "displayedName": "Lab generator with ust (ja-kana)",
   "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
   "description": "Parse ust with Japanese kana lyrics to sinsy lab style entries. Dictionary powered by https://github.com/oatsu-gh/oto2lab.",
   "supportedLabelFileExtension": "lab",
   "inputFileExtension": "ust",
