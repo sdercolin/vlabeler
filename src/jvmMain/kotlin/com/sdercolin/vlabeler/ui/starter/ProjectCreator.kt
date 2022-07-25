@@ -213,8 +213,9 @@ private fun LabelerSelectorRow(
     }
     if (pluginDialogShown) {
         PluginDialog(
-            plugin = state.templatePlugin!!,
-            paramMap = state.templatePluginParams!!,
+            plugin = requireNotNull(state.templatePlugin),
+            paramMap = requireNotNull(state.templatePluginParams),
+            savedParamMap = requireNotNull(state.templatePluginSavedParams),
             submit = {
                 if (it != null) state.updatePluginParams(it)
                 pluginDialogShown = false

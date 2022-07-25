@@ -63,7 +63,8 @@ import java.awt.Desktop
 
 class PluginDialogState(
     val plugin: Plugin,
-    private val paramMap: ParamMap,
+    paramMap: ParamMap,
+    private val savedParamMap: ParamMap?,
     private val submit: (ParamMap?) -> Unit,
     private val save: (ParamMap) -> Unit
 ) {
@@ -173,7 +174,7 @@ class PluginDialogState(
 
     fun canSave(): Boolean {
         val current = runCatching { getCurrentParamMap().toList() }.getOrNull() ?: return false
-        val saved = paramMap.toList()
+        val saved = savedParamMap?.toList() ?: return false
         val changed = saved.indices.all { saved[it] == current[it] }.not()
         return changed && isAllValid()
     }
@@ -187,17 +188,27 @@ class PluginDialogState(
 private fun rememberState(
     plugin: Plugin,
     paramMap: ParamMap,
+    savedParamMap: ParamMap?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit
-) = remember(paramMap) { PluginDialogState(plugin, paramMap, submit, save) }
+) = remember(plugin, paramMap, savedParamMap, submit, save) {
+    PluginDialogState(
+        plugin,
+        paramMap,
+        savedParamMap,
+        submit,
+        save
+    )
+}
 
 @Composable
 fun PluginDialog(
     plugin: Plugin,
     paramMap: ParamMap,
+    savedParamMap: ParamMap?,
     submit: (ParamMap?) -> Unit,
     save: (Plugin, ParamMap) -> Unit,
-    state: PluginDialogState = rememberState(plugin, paramMap, submit, save = { save(plugin, it) })
+    state: PluginDialogState = rememberState(plugin, paramMap, savedParamMap, submit, save = { save(plugin, it) })
 ) {
     Dialog(
         title = string(Strings.PluginDialogTitle),

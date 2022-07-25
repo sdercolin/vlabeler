@@ -52,6 +52,7 @@ class ProjectCreatorState(
         private set
     var templatePlugin: Plugin? by mutableStateOf(null)
     var templatePluginParams: ParamMap? by mutableStateOf(null)
+    var templatePluginSavedParams: ParamMap? by mutableStateOf(null)
     var templatePluginError: Boolean by mutableStateOf(false)
     val templateName: String get() = templatePlugin?.displayedName ?: string(Strings.StarterNewTemplatePluginNone)
     var inputFile: String by mutableStateOf("")
@@ -137,12 +138,15 @@ class ProjectCreatorState(
         if (plugin != null) {
             coroutineScope.launch {
                 templatePlugin = plugin
-                updatePluginParams(plugin.loadSavedParams())
+                val savedParams = plugin.loadSavedParams()
+                updatePluginParams(savedParams)
+                templatePluginSavedParams = savedParams
                 updateInputFileIfNeeded()
             }
         } else {
-            templatePluginParams = null
             templatePlugin = null
+            templatePluginParams = null
+            templatePluginSavedParams = null
             templatePluginError = false
             updateInputFileIfNeeded()
         }
@@ -158,7 +162,7 @@ class ProjectCreatorState(
     fun savePluginParams(plugin: Plugin, params: ParamMap) {
         coroutineScope.launch {
             plugin.saveParams(params)
-            updatePluginParams(params)
+            templatePluginSavedParams = params
         }
     }
 
