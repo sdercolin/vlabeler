@@ -36,7 +36,7 @@ data class LabelerConf(
     val description: String = "",
     val website: String = "",
     /**
-     * Continuous mode, where the end of entry is forcedly set to the start of its next entry
+     * Continuous mode, where the end of entry is forced set to the start of its next entry
      */
     val continuous: Boolean = false,
     /**
