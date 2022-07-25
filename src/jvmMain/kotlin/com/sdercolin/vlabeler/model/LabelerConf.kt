@@ -180,8 +180,8 @@ data class LabelerConf(
      * @param defaultEncoding Default text encoding of the input file
      * @param extractionPattern Regex pattern that extract groups
      * @param variableNames Definition of how the extracted string groups will be put into variables later in the parser
-     * python code. Should be in the same order as the extracted groups
-     * @param scripts Python scripts in lines that sets properties of [Entry] using the variables extracted
+     * JavaScript code. Should be in the same order as the extracted groups
+     * @param scripts JavaScript code in lines that sets properties of [Entry] using the variables extracted
      */
     @Serializable
     @Immutable
@@ -213,7 +213,7 @@ data class LabelerConf(
     /**
      * Definition for line format in the raw label file
      * @param format String format to generate the output line
-     * @param scripts Python scripts in lines that generate the output line
+     * @param scripts JavaScript code in lines that generate the output line
      * Either [format] or [scripts] should be given. If both of them are given, [scripts] is used
      */
     @Serializable
@@ -235,7 +235,7 @@ data class LabelerConf(
          */
         val format: String? = null,
         /**
-         * Python scripts text lines that sets "output" variable using the same variables as described in [format]
+         * JavaScript code lines that sets "output" variable using the same variables as described in [format]
          * String type: sample, name, extras
          * Float type: start, end, and others
          */
@@ -247,8 +247,8 @@ data class LabelerConf(
      * @param name Unique name of the property
      * @param displayedName Name displayed in property view UI
      * @param value Mathematical expression text including fields written as "{[Field.name]}" and "{start}", "{end}".
-     * Extra fields of number type defined in [extraFieldNames] are also available. Expression is calculated by Python's
-     * "eval()".
+     * Extra fields of number type defined in [extraFieldNames] are also available. The expression is evaluated in
+     * JavaScript.
      */
     @Serializable
     @Immutable
