@@ -144,14 +144,10 @@ private fun Chunk(
             val backgroundColor = appState.appConf.painter.amplitude.backgroundColor.toColorOrNull()
                 ?: AppConf.Amplitude.DefaultBackgroundColor.toColor()
             repeat(sampleInfo.channels) { channelIndex ->
-                Box(
-                    Modifier.weight(weightOfEachChannel)
-                        .fillMaxWidth()
-                        .background(backgroundColor)
-                ) {
+                Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
                     val imageStatus = editorState.chartStore.getWaveformStatus(channelIndex, chunkIndex)
                     if (imageStatus == ChartStore.ChartLoadingStatus.Loaded) {
-                        WaveformChunk(sampleInfo, channelIndex, chunkIndex)
+                        WaveformChunk(sampleInfo, channelIndex, chunkIndex, backgroundColor)
                     }
                 }
             }
@@ -171,9 +167,9 @@ private fun Chunk(
 }
 
 @Composable
-private fun WaveformChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int) {
+private fun WaveformChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int, backgroundColor: Color) {
     Log.info("Waveform (channel $channelIndex, chunk $chunkIndex): composed")
-    Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
+    Box(Modifier.fillMaxSize().background(backgroundColor)) {
         ChunkAsyncImage(
             load = { ChartRepository.getWaveform(sampleInfo, channelIndex, chunkIndex) }
         )
@@ -183,7 +179,7 @@ private fun WaveformChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex:
 @Composable
 private fun SpectrogramChunk(sampleInfo: SampleInfo, chunkIndex: Int) {
     Log.info("Spectrogram (chunk $chunkIndex): composed")
-    Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
+    Box(Modifier.fillMaxSize()) {
         ChunkAsyncImage(
             load = { ChartRepository.getSpectrogram(sampleInfo, chunkIndex) }
         )
