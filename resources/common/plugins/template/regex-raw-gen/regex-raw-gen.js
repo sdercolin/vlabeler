@@ -1,4 +1,3 @@
-
 regex = new RegExp(params["regex"])
 console.log(regex)
 template = params["template"].split('\n').map(x => x.trim())

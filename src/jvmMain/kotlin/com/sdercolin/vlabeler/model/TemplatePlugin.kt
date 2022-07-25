@@ -35,8 +35,10 @@ fun runTemplatePlugin(
     js.setJson("params", params.toJsonObject())
     js.setJson("resources", resourceTexts)
 
-    val entryDefCode = useResource("template_entry.js") { String(it.readAllBytes()) }
-    js.eval(entryDefCode)
+    if (plugin.outputRawEntry.not()) {
+        val entryDefCode = useResource("template_entry.js") { String(it.readAllBytes()) }
+        js.eval(entryDefCode)
+    }
 
     plugin.scriptFiles.zip(plugin.readScriptTexts()).forEach { (file, source) ->
         Log.debug("Launch script: $file")
