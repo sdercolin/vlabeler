@@ -312,10 +312,11 @@ fun mergeEntriesWithSampleNames(
                 .also {
                     Log.info("Sample $sampleName doesn't have entries, created default: $it")
                 }
-            // TODO: notify
         }
     } else listOf()
-    return (entries + additionalEntries).toContinuous(labelerConf.continuous)
+    return (entries + additionalEntries)
+        .toContinuous(labelerConf.continuous)
+        .distinct(labelerConf.allowSameNameEntry)
 }
 
 private fun List<Entry>.indexGroupsConnected(): List<Pair<String, List<Int>>> = withIndex()
@@ -346,6 +347,11 @@ private fun List<Entry>.toContinuous(continuous: Boolean): List<Entry> {
                     }.plus(it.last())
                 }
         }
+}
+
+private fun List<Entry>.distinct(allowDuplicated: Boolean): List<Entry> {
+    if (allowDuplicated) return this
+    return distinctBy { it.name }
 }
 
 /**
