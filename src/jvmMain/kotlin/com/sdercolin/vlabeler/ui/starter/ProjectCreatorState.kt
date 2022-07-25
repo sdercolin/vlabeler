@@ -52,6 +52,7 @@ class ProjectCreatorState(
         private set
     var templatePlugin: Plugin? by mutableStateOf(null)
     var templatePluginParams: ParamMap? by mutableStateOf(null)
+    var templatePluginError: Boolean by mutableStateOf(false)
     val templateName: String get() = templatePlugin?.displayedName ?: string(Strings.StarterNewTemplatePluginNone)
     var inputFile: String by mutableStateOf("")
         private set
@@ -125,8 +126,9 @@ class ProjectCreatorState(
 
     fun updateLabeler(labeler: LabelerConf) {
         this.labeler = labeler
-        if (templatePlugin?.supportedLabelFileExtension != labeler.extension) {
+        if (templatePlugin?.isLabelFileExtensionSupported(labeler.extension) == false) {
             templatePlugin = null
+            templatePluginError = false
         }
         updateInputFileIfNeeded()
     }
@@ -134,21 +136,29 @@ class ProjectCreatorState(
     fun updatePlugin(plugin: Plugin?) {
         if (plugin != null) {
             coroutineScope.launch {
-                templatePluginParams = plugin.loadSavedParams()
                 templatePlugin = plugin
+                updatePluginParams(plugin.loadSavedParams())
                 updateInputFileIfNeeded()
             }
         } else {
             templatePluginParams = null
             templatePlugin = null
+            templatePluginError = false
             updateInputFileIfNeeded()
+        }
+    }
+
+    fun updatePluginParams(params: ParamMap?) {
+        templatePluginParams = params
+        if (params != null) {
+            templatePluginError = requireNotNull(templatePlugin).checkParams(params) == false
         }
     }
 
     fun savePluginParams(plugin: Plugin, params: ParamMap) {
         coroutineScope.launch {
             plugin.saveParams(params)
-            templatePluginParams = params
+            updatePluginParams(params)
         }
     }
 
@@ -213,7 +223,7 @@ class ProjectCreatorState(
     }
 
     fun isValid(): Boolean = isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid() &&
-        isInputFileValid()
+        isInputFileValid() && !templatePluginError
 
     fun pickSampleDirectory() {
         currentPathPicker = PathPicker.SampleDirectory
@@ -281,7 +291,7 @@ class ProjectCreatorState(
 
     fun getSupportedPlugins(plugins: List<Plugin>) = plugins
         .filter { it.type == Plugin.Type.Template }
-        .filter { it.supportedLabelFileExtension == labeler.extension }
+        .filter { it.isLabelFileExtensionSupported(labeler.extension) }
         .sortedBy { it.displayedName }
 
     fun create(

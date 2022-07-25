@@ -3,14 +3,9 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.res.useResource
-import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.env.isDebug
-import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.json
 import com.sdercolin.vlabeler.util.parseJson
-import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -28,10 +23,10 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import java.io.File
-import java.nio.charset.Charset
 
 /**
  * Only deserialization is supported
+ * See [readme/plugin-development.md] for more information
  */
 @Serializable
 @Immutable
@@ -48,6 +43,7 @@ data class Plugin(
     val inputFileExtension: String? = null,
     val requireInputFile: Boolean = false,
     val allowMultipleInputFiles: Boolean = false,
+    val outputRawEntry: Boolean = false,
     val parameters: Parameters? = null,
     val scriptFiles: List<String>,
     val resourceFiles: List<String> = listOf(),
@@ -58,6 +54,9 @@ data class Plugin(
     fun getDefaultParams() = parameters?.list.orEmpty().associate { parameter ->
         parameter.name to requireNotNull(parameter.defaultValue)
     }.toParamMap()
+
+    fun isLabelFileExtensionSupported(extension: String) =
+        supportedLabelFileExtension == "*" || supportedLabelFileExtension.split('|').contains(extension)
 
     @Serializable
     enum class Type(val directoryName: String) {
@@ -79,44 +78,50 @@ data class Plugin(
         val type: ParameterType,
         val name: String,
         val label: String,
+        val description: String?,
         open val defaultValue: T,
     ) {
         class IntParam(
             name: String,
             label: String,
+            description: String?,
             defaultValue: Int,
             val min: Int?,
             val max: Int?
-        ) : Parameter<Int>(ParameterType.Integer, name, label, defaultValue)
+        ) : Parameter<Int>(ParameterType.Integer, name, label, description, defaultValue)
 
         class FloatParam(
             name: String,
             label: String,
+            description: String?,
             defaultValue: Float,
             val min: Float?,
             val max: Float?
-        ) : Parameter<Float>(ParameterType.Float, name, label, defaultValue)
+        ) : Parameter<Float>(ParameterType.Float, name, label, description, defaultValue)
 
         class BooleanParam(
             name: String,
             label: String,
+            description: String?,
             defaultValue: Boolean
-        ) : Parameter<Boolean>(ParameterType.Boolean, name, label, defaultValue)
+        ) : Parameter<Boolean>(ParameterType.Boolean, name, label, description, defaultValue)
 
         class StringParam(
             name: String,
             label: String,
+            description: String?,
             defaultValue: String,
             val multiLine: Boolean,
             val optional: Boolean
-        ) : Parameter<String>(ParameterType.String, name, label, defaultValue)
+        ) : Parameter<String>(ParameterType.String, name, label, description, defaultValue)
 
         class EnumParam(
             name: String,
             label: String,
+            description: String?,
             defaultValue: String,
             val options: List<String>
-        ) : Parameter<String>(ParameterType.Enum, name, label, defaultValue)
+        ) : Parameter<String>(ParameterType.Enum, name, label, description, defaultValue)
     }
 
     @Serializable
@@ -135,6 +140,27 @@ data class Plugin(
 
         @SerialName("enum")
         Enum
+    }
+
+    fun checkParams(params: ParamMap): Boolean {
+        return parameters?.list.orEmpty().all {
+            when (it) {
+                is Parameter.BooleanParam -> (params[it.name] as? Boolean) != null
+                is Parameter.EnumParam -> (params[it.name] as? String)?.let { enumValue ->
+                    enumValue in it.options
+                } == true
+                is Parameter.FloatParam -> (params[it.name] as? Float)?.let { floatValue ->
+                    floatValue >= (it.min ?: Float.NEGATIVE_INFINITY) &&
+                        floatValue <= (it.max ?: Float.POSITIVE_INFINITY)
+                } == true
+                is Parameter.IntParam -> (params[it.name] as? Int)?.let { intValue ->
+                    intValue >= (it.min ?: Int.MIN_VALUE) && intValue <= (it.max ?: Int.MIN_VALUE)
+                } == true
+                is Parameter.StringParam -> (params[it.name] as? String)?.let { stringValue ->
+                    if (it.optional.not()) stringValue.isNotEmpty() else true
+                } == true
+            }
+        }
     }
 }
 
@@ -160,36 +186,37 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
         val type = requireNotNull(element["type"]).jsonPrimitive.content.parseJson<Plugin.ParameterType>()
         val name = requireNotNull(element["name"]).jsonPrimitive.content
         val label = requireNotNull(element["label"]).jsonPrimitive.content
+        val description = element["description"]?.jsonPrimitive?.content
         val defaultPrimitive = requireNotNull(element["defaultValue"]).jsonPrimitive
         return when (type) {
             Plugin.ParameterType.Integer -> {
                 val default = defaultPrimitive.int
                 val min = element["min"]?.jsonPrimitive?.int
                 val max = element["max"]?.jsonPrimitive?.int
-                Plugin.Parameter.IntParam(name, label, default, min, max)
+                Plugin.Parameter.IntParam(name, label, description, default, min, max)
             }
             Plugin.ParameterType.Float -> {
                 val default = defaultPrimitive.float
                 val min = element["min"]?.jsonPrimitive?.float
                 val max = element["max"]?.jsonPrimitive?.float
-                Plugin.Parameter.FloatParam(name, label, default, min, max)
+                Plugin.Parameter.FloatParam(name, label, description, default, min, max)
             }
             Plugin.ParameterType.Boolean -> {
                 val default = defaultPrimitive.boolean
-                Plugin.Parameter.BooleanParam(name, label, default)
+                Plugin.Parameter.BooleanParam(name, label, description, default)
             }
             Plugin.ParameterType.String -> {
                 val default = defaultPrimitive.content
                 val optional = requireNotNull(element["optional"]).jsonPrimitive.boolean
                 val multiLine = element["multiLine"]?.jsonPrimitive?.boolean ?: false
-                Plugin.Parameter.StringParam(name, label, default, multiLine, optional)
+                Plugin.Parameter.StringParam(name, label, description, default, multiLine, optional)
             }
             Plugin.ParameterType.Enum -> {
                 val default = defaultPrimitive.content
                 val options = requireNotNull(element["options"]).jsonArray.map {
                     it.jsonPrimitive.content
                 }
-                Plugin.Parameter.EnumParam(name, label, default, options)
+                Plugin.Parameter.EnumParam(name, label, description, default, options)
             }
         }
     }
@@ -197,51 +224,4 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
     override fun serialize(encoder: Encoder, value: Plugin.Parameter<*>) {
         // nop
     }
-}
-
-fun runTemplatePlugin(
-    plugin: Plugin,
-    params: ParamMap,
-    inputFiles: List<File>,
-    encoding: String,
-    sampleNames: List<String>
-): List<FlatEntry> {
-    val js = JavaScript(
-        logHandler = Log.infoFileHandler,
-        currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile()
-    )
-    val inputTexts = inputFiles.map { it.readText(Charset.forName(encoding)) }
-    val resourceTexts = plugin.readResourceFiles()
-
-    js.set("debug", isDebug)
-    js.setJson("inputs", inputTexts)
-    js.setJson("samples", sampleNames)
-    js.setJson("params", params.toJsonObject())
-    js.setJson("resources", resourceTexts)
-
-    val entryDefCode = useResource("template_entry.js") { String(it.readAllBytes()) }
-    js.eval(entryDefCode)
-
-    plugin.scriptFiles.zip(plugin.readScriptTexts()).forEach { (file, source) ->
-        Log.debug("Launch script: $file")
-        js.exec(file, source)
-        Log.debug("Finished script: $file")
-    }
-
-    val output = js.getJson<List<FlatEntry>>("output")
-    Log.info("Plugin execution got entries:\n" + output.joinToString("\n"))
-    js.close()
-    return output
-}
-
-@Serializable
-data class FlatEntry(
-    val sample: String? = null,
-    val name: String,
-    val start: Float,
-    val end: Float,
-    val points: List<Float> = listOf(),
-    val extras: List<String> = listOf()
-) {
-    fun toEntry(fallbackSample: String) = Entry(sample ?: fallbackSample, name, start, end, points, extras)
 }

@@ -95,7 +95,11 @@ class PluginDialogState(
     }
 
     fun getLabel(index: Int): String {
-        val label = paramDefs[index].label
+        return paramDefs[index].label
+    }
+
+    fun getDescription(index: Int): String {
+        val description = paramDefs[index].description
         val range: Pair<String?, String?> = when (val def = paramDefs[index]) {
             is Plugin.Parameter.FloatParam -> def.min?.toString() to def.max?.toString()
             is Plugin.Parameter.IntParam -> def.min?.toString() to def.max?.toString()
@@ -103,14 +107,14 @@ class PluginDialogState(
         }
         val suffix = when {
             range.first != null && range.second != null ->
-                string(Strings.PluginDialogLabelMinMax, range.first, range.second)
+                string(Strings.PluginDialogDescriptionMinMax, range.first, range.second)
             range.first != null ->
-                string(Strings.PluginDialogLabelMin, range.first)
+                string(Strings.PluginDialogDescriptionMin, range.first)
             range.second != null ->
-                string(Strings.PluginDialogLabelMax, range.second)
+                string(Strings.PluginDialogDescriptionMax, range.second)
             else -> ""
         }
-        return label + suffix
+        return description?.plus("\n").orEmpty() + suffix
     }
 
     fun isValid(index: Int): Boolean {
@@ -336,13 +340,24 @@ private fun Params(state: PluginDialogState) {
     ) {
         state.params.indices.forEach { i ->
             Row(Modifier.heightIn(min = 60.dp)) {
-                Text(
-                    text = state.getLabel(i),
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier.width(300.dp).align(Alignment.CenterVertically),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                Column(Modifier.width(300.dp).align(Alignment.CenterVertically)) {
+                    Text(
+                        text = state.getLabel(i),
+                        style = MaterialTheme.typography.body2,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    val description = state.getDescription(i)
+                    if (description.isNotBlank()) {
+                        Spacer(Modifier.height(5.dp))
+                        Text(
+                            text = description,
+                            style = MaterialTheme.typography.caption,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
                 Spacer(Modifier.width(20.dp))
                 val def = state.paramDefs[i]
                 val value = state.params[i]

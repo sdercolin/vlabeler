@@ -13,7 +13,8 @@ import com.sdercolin.vlabeler.util.roundToDecimalDigit
 fun fromRawLabels(
     sources: List<String>,
     labelerConf: LabelerConf,
-    sampleNames: List<String>
+    sampleNames: List<String>,
+    includeAllSamples: Boolean
 ): List<Entry> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
@@ -60,7 +61,7 @@ fun fromRawLabels(
 
     js.close()
 
-    return mergeEntriesWithSampleNames(labelerConf, entriesBySampleName, sampleNames)
+    return mergeEntriesWithSampleNames(labelerConf, entriesBySampleName, sampleNames, includeAllSamples)
 }
 
 fun Project.toRawLabels(): String {

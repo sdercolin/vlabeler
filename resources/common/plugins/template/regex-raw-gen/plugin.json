@@ -1,0 +1,37 @@
+{
+  "name": "regex-raw-gen",
+  "version": 1,
+  "type": "template",
+  "displayedName": "Regex raw label generator",
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": "Generate raw label templates using regex replacement.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/regex-raw-gen",
+  "supportedLabelFileExtension": "*",
+  "inputFileExtension": null,
+  "outputRawEntry": true,
+  "parameters": {
+    "list": [
+      {
+        "type": "string",
+        "name": "regex",
+        "label": "Regex for extraction from sample name",
+        "defaultValue": "",
+        "multiLine": false,
+        "optional": false
+      },
+      {
+        "type": "string",
+        "name": "template",
+        "label": "Template lines per sample",
+        "description": "Use `{1}`, `{2}`, etc. to specify the position of the extracted value.",
+        "defaultValue": "",
+        "multiLine": true,
+        "optional": false
+      }
+    ]
+  },
+  "scriptFiles": [
+    "regex-raw-gen.js"
+  ]
+}

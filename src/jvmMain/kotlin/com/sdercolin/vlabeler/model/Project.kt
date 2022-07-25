@@ -280,15 +280,22 @@ private fun generateEntriesByPlugin(
     inputFile: File?,
     encoding: String
 ): Result<List<Entry>> = runCatching {
-    val entries = runTemplatePlugin(plugin, params.orEmpty(), listOfNotNull(inputFile), encoding, sampleNames)
-        .map {
-            it.copy(
-                points = it.points.take(labelerConf.fields.count()),
-                extras = it.extras.take(labelerConf.extraFieldNames.count())
-            )
+    when (
+        val result =
+            runTemplatePlugin(plugin, params.orEmpty(), listOfNotNull(inputFile), encoding, sampleNames)
+    ) {
+        is TemplatePluginResult.Parsed -> {
+            val entries = result.entries.map {
+                it.copy(
+                    points = it.points.take(labelerConf.fields.count()),
+                    extras = it.extras.take(labelerConf.extraFieldNames.count())
+                )
+            }.map { it.toEntry(fallbackSample = sampleNames.first()) }
+
+            mergeEntriesWithSampleNames(labelerConf, entries, sampleNames, includeAllSamples = false)
         }
-        .map { it.toEntry(fallbackSample = sampleNames.first()) }
-    mergeEntriesWithSampleNames(labelerConf, entries, sampleNames, includeAllSamples = false)
+        is TemplatePluginResult.Raw -> fromRawLabels(result.lines, labelerConf, sampleNames, includeAllSamples = false)
+    }
 }
 
 fun mergeEntriesWithSampleNames(
@@ -375,7 +382,12 @@ suspend fun projectOf(
                 }
         }
         inputFile != null -> {
-            fromRawLabels(inputFile.readLines(Charset.forName(encoding)), labelerConf, sampleNames)
+            fromRawLabels(
+                inputFile.readLines(Charset.forName(encoding)),
+                labelerConf,
+                sampleNames,
+                includeAllSamples = true
+            )
         }
         else -> {
             sampleNames.map {
@@ -385,6 +397,9 @@ suspend fun projectOf(
     }
 
     return runCatching {
+        require(entries.isNotEmpty()) {
+            "No entries found"
+        }
         Project(
             sampleDirectory = sampleDirectory,
             workingDirectory = workingDirectory,

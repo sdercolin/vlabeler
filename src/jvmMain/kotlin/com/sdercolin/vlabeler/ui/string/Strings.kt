@@ -328,14 +328,14 @@ enum class Strings(val en: String) {
     PluginDialogInfoContact(
         en = "Contact author"
     ),
-    PluginDialogLabelMin(
-        en = " (min: %s)"
+    PluginDialogDescriptionMin(
+        en = "min: %s"
     ),
-    PluginDialogLabelMax(
-        en = " (max: %s)"
+    PluginDialogDescriptionMax(
+        en = "max: %s"
     ),
-    PluginDialogLabelMinMax(
-        en = " (min: %s, max: %s)"
+    PluginDialogDescriptionMinMax(
+        en = "min: %s, max: %s"
     ),
     EditorSubTitleMultiple(
         en = "editing %d entries in sample %s"

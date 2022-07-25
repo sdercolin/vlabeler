@@ -20,9 +20,10 @@ A plugin for `vLabeler` is a folder containing:
 - `email`: String. Defaults to empty string.
 - `description`: String. Defaults to empty string.
 - `website`: String. Defaults to empty string.
-- `supportedLabelFileExtension`: (Required) String. Extension of your label file (e.g. `ini` for UTAU oto).
+- `supportedLabelFileExtension`: (Required) String. Extension(s) of your label file (e.g. `ini` for UTAU oto). "*" and "|" are supported.
 - `inputFileExtension`: Nullable String. Extension of your input file if any. Defaults to `null`.
 - `requireInputFile`: Boolean. Set to `true` if you always require an input file. Defaults to `false`.
+- `outputRawEntry`: Boolean. Only for `template` type. Set to `true` if you want to output the raw entry instead of parsed object. Defaults to `false`.
 - `parameters`: Nullable Object. See the `Defining Parameters` section for detail. Defaults to `null`.
 - `scriptFiles`: (Required) List of String. File names of all your scripts files. The files will be executed in the same order as declared.
 - `resourceFiles`: List of String. File names of all the files that you use as resources in your scripts. The contents will be passed to your scripts as string values in the same order as declared.
@@ -34,6 +35,7 @@ The object has the following properties:
 - `type`: (Required) String. Can be any one of `integer`, `float`, `boolean`, `string`, `enum`(actually string, but its possible values are limited).
 - `name`: (Required) String. Parameter name for reference in your scripts.
 - `label`: (Required) String. Displayed in the config dialog.
+- `description`: (Optional) String. Displayed in the config dialog.
 - `defaultValue`: (Required) Integer/Float/Boolean/String. Value type is according to the parameter's `type`.
 - `min`, `max`: For parameter type `integer` and `float`. (Optional) Integer/Float.
 - `multiLine`: For parameter type `string`. (Optional) Boolean. Set to `true` if you want to allow user enter multi-line string values. Defaults to `false`.
@@ -75,6 +77,9 @@ class Entry {
 ```
 
 Please check [LabelerConf.kt](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) for details about its properties.
+
+If `outputRawEntry` is set to `true`, instead of the above class, `output` should be set a list of string in the format
+of the label file. They will be parsed by the labeler's parser later.
 
 ### Examples
 Check the following built-in plugins as examples:

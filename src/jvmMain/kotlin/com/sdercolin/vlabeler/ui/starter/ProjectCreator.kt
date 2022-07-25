@@ -203,7 +203,12 @@ private fun LabelerSelectorRow(
             enabled = state.templatePlugin != null,
             onClick = { pluginDialogShown = true }
         ) {
-            Icon(Icons.Default.Settings, null)
+            val color = if (state.templatePluginError) {
+                MaterialTheme.colors.error
+            } else {
+                MaterialTheme.colors.onSurface
+            }
+            Icon(Icons.Default.Settings, null, tint = color)
         }
     }
     if (pluginDialogShown) {
@@ -211,7 +216,7 @@ private fun LabelerSelectorRow(
             plugin = state.templatePlugin!!,
             paramMap = state.templatePluginParams!!,
             submit = {
-                if (it != null) state.templatePluginParams = it
+                if (it != null) state.updatePluginParams(it)
                 pluginDialogShown = false
             },
             save = { plugin, params -> state.savePluginParams(plugin, params) }
