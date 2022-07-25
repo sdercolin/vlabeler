@@ -83,13 +83,13 @@ It should create a list of entries for subsequent edition.
 
 The following variables are provided before your scripts are executed.
 
-| name        | type          | description                                                                                           |
-|-------------|---------------|-------------------------------------------------------------------------------------------------------|
-| `inputs`    | List\<String> | List of texts read from the input files. Check the list size if your input file is optional.          |
-| `samples`   | List\<String> | List of file names of the sample files. Extension `.wav` is not included.                             |
-| `params`    | Dictionary    | Use `name` of the defined parameters as the key to get values in their actual types.                  |
-| `resources` | List\<String> | List of texts read from the resources files in the same order as declared in your `plugin.json`.      |
-| `debug`     | Boolean       | It's set to `true` only when the application is running in the debug environment (Gradle `run` task). |
+| name      | type          | description                                                                                           |
+|-----------|---------------|-------------------------------------------------------------------------------------------------------|
+| inputs    | List\<String> | List of texts read from the input files. Check the list size if your input file is optional.          |
+| samples   | List\<String> | List of file names of the sample files. Extension `.wav` is not included.                             |
+| params    | Dictionary    | Use `name` of the defined parameters as the key to get values in their actual types.                  |
+| resources | List\<String> | List of texts read from the resources files in the same order as declared in your `plugin.json`.      |
+| debug     | Boolean       | It's set to `true` only when the application is running in the debug environment (Gradle `run` task). |
 
 ### Output
 
