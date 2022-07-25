@@ -210,6 +210,12 @@ data class Project(
             }
         }
 
+        // check entry name duplicates
+        if (!labelerConf.allowSameNameEntry) {
+            val names = entries.map { it.name }
+            require(names.distinct().size == names.size) { "Duplicate entry names found." }
+        }
+
         // Check points
         val entries = entries.map {
             require(it.points.size == labelerConf.fields.size) {
