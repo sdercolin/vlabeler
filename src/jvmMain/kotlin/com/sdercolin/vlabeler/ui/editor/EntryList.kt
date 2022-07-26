@@ -64,13 +64,17 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
     val focusRequester = remember { FocusRequester() }
     val submit = { index: Int -> jumpToEntry(index) }
 
+    fun getSearchResult(searchText: String?): List<Entry> {
+        return if (searchText == null) entries else entries.filter { it.name.contains(searchText) }
+    }
+
     var searchText by remember { mutableStateOf<String?>(null) }
-    var searchResult by remember(project) { mutableStateOf(entries) }
+    var searchResult by remember(project) { mutableStateOf(getSearchResult(searchText)) }
     var selectedIndex by remember(project.currentIndex) { mutableStateOf(currentIndex) }
 
     fun search(text: String?) {
         searchText = text
-        val newResults = if (text == null) entries else entries.filter { it.name.contains(text) }
+        val newResults = getSearchResult(text)
         if (searchResult == newResults) return
         searchResult = newResults
         selectedIndex = 0
