@@ -102,11 +102,14 @@ data class AppConf(
      * Configurations about spectrogram painting
      * @param enabled True if spectrogram is calculated and shown
      * @param heightWeight Height weight of the spectrogram to the amplitude form (whose weight is 1)
-     * @param frameSize Number of samples that each FFT-frame should have
+     * @param standardHopSize Distance as the number of samples for which the window is slided when move to the next
+     * frame. This value is used for cases with sample rate 44100 Hz. For other sample rates it is calculated linear to
+     * keep the same time distance between frames.
+     * @param windowSize Number of samples in the window.
+     * @param windowType Window type used in the Short-Time FT. See [WindowType] for options
      * @param maxFrequency Max frequency (Hz) displayed
      * @param minIntensity Min intensity (dB) displayed in the heatmap
      * @param maxIntensity Max intensity (dB) displayed in the heatmap
-     * @param windowType Window type used in the Short-Time FT. See [WindowType] for options
      */
     @Serializable
     @Immutable
@@ -114,11 +117,12 @@ data class AppConf(
         val enabled: Boolean = DefaultEnabled,
         val heightWeight: Float = DefaultHeightWeight,
         val pointPixelSize: Int = DefaultPointPixelSize,
-        val frameSize: Int = DefaultFrameSize,
+        val standardHopSize: Int = DefaultStandardHopSize,
+        val windowSize: Int = DefaultWindowSize,
+        val windowType: WindowType = DefaultWindowType,
         val maxFrequency: Int = DefaultMaxFrequency,
         val minIntensity: Int = DefaultMinIntensity,
         val maxIntensity: Int = DefaultMaxIntensity,
-        val windowType: WindowType = DefaultWindowType,
         val colorPalette: SpectrogramColorPalette.Presets = DefaultColorPalette
     ) {
         companion object {
@@ -129,9 +133,12 @@ data class AppConf(
             const val DefaultPointPixelSize = 1
             const val MaxPointPixelSize = 40
             const val MinPointPixelSize = 1
-            const val DefaultFrameSize = 300
-            const val MaxFrameSize = 2048
-            const val MinFrameSize = 64
+            const val DefaultStandardHopSize = 110
+            const val MaxStandardHopSize = 2048
+            const val MinStandardHopSize = 1
+            const val DefaultWindowSize = 1024
+            const val MaxWindowSize = 2048
+            const val MinWindowSize = 128
             const val DefaultMaxFrequency = 15000
             const val MaxMaxFrequency = 48000
             const val MinMaxFrequency = 5000

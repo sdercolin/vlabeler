@@ -81,7 +81,7 @@ class ChartStore {
                     channel.data.toList().splitAveragely(chunkCount)
                 } else {
                     var taken = 0
-                    val sizes = spectrogramDataChunks.map { it.size * sample.spectrogram.frameSize }
+                    val sizes = spectrogramDataChunks.map { it.size * sample.spectrogram.hopSize }
                     val data = channel.data.toList()
                     val chunks = mutableListOf<List<Float>>()
                     repeat(sizes.size) {

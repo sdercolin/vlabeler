@@ -438,8 +438,11 @@ enum class Strings(val en: String) {
     PreferencesChartsSpectrogramPointPixelSize(
         en = "Point size (px)"
     ),
-    PreferencesChartsSpectrogramFrameSize(
-        en = "FFT frame size"
+    PreferencesChartsSpectrogramHopSize(
+        en = "FFT hop size"
+    ),
+    PreferencesChartsSpectrogramWindowSize(
+        en = "Window size"
     ),
     PreferencesChartsSpectrogramMaxFrequency(
         en = "Max frequency displayed (Hz)"

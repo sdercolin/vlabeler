@@ -147,12 +147,27 @@ abstract class PreferencesPage(
                     update = { copy(pointPixelSize = it) }
                 )
                 integer(
-                    title = Strings.PreferencesChartsSpectrogramFrameSize,
-                    defaultValue = AppConf.Spectrogram.DefaultFrameSize,
-                    min = AppConf.Spectrogram.MinFrameSize,
-                    max = AppConf.Spectrogram.MaxFrameSize,
-                    select = { it.frameSize },
-                    update = { copy(frameSize = it) }
+                    title = Strings.PreferencesChartsSpectrogramHopSize,
+                    defaultValue = AppConf.Spectrogram.DefaultStandardHopSize,
+                    min = AppConf.Spectrogram.MinStandardHopSize,
+                    max = AppConf.Spectrogram.MaxStandardHopSize,
+                    select = { it.standardHopSize },
+                    update = { copy(standardHopSize = it) }
+                )
+                integer(
+                    title = Strings.PreferencesChartsSpectrogramWindowSize,
+                    defaultValue = AppConf.Spectrogram.DefaultWindowSize,
+                    min = AppConf.Spectrogram.MinWindowSize,
+                    max = AppConf.Spectrogram.MaxWindowSize,
+                    select = { it.windowSize },
+                    update = { copy(windowSize = it) }
+                )
+                selection(
+                    title = Strings.PreferencesChartsSpectrogramWindowType,
+                    defaultValue = AppConf.Spectrogram.DefaultWindowType,
+                    select = { it.windowType },
+                    update = { copy(windowType = it) },
+                    options = AppConf.WindowType.values()
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramMaxFrequency,
@@ -173,13 +188,6 @@ abstract class PreferencesPage(
                     defaultValue = AppConf.Spectrogram.DefaultMaxIntensity,
                     select = { it.maxIntensity },
                     update = { copy(maxIntensity = it) }
-                )
-                selection(
-                    title = Strings.PreferencesChartsSpectrogramWindowType,
-                    defaultValue = AppConf.Spectrogram.DefaultWindowType,
-                    select = { it.windowType },
-                    update = { copy(windowType = it) },
-                    options = AppConf.WindowType.values()
                 )
                 selection(
                     title = Strings.PreferencesChartsSpectrogramColorPalette,

@@ -91,4 +91,4 @@ fun loadSampleFile(file: File, appConf: AppConf): Result<Sample> = runCatching {
     return Result.success(sample)
 }
 
-const val WaveLoadingAlgorithmVersion = 1
+const val WaveLoadingAlgorithmVersion = 2

@@ -13,43 +13,45 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import kotlin.math.absoluteValue
 import kotlin.math.log10
+import kotlin.math.roundToInt
 
 @Immutable
-data class Spectrogram(val data: List<DoubleArray>, val frameSize: Int)
+data class Spectrogram(val data: List<DoubleArray>, val hopSize: Int)
+
+private const val StandardSampleRate = 44100
 
 fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogram {
     val dataLength = channels.minOf { it.data.size }
     val data = DoubleArray(dataLength) { i ->
         channels.sumOf { it.data[i].toDouble() } / channels.size
     }
-    val frameSize = conf.frameSize
+    val windowSize = conf.windowSize
     val maxFrequencyRate = conf.maxFrequency / sampleRate * 2
-    val frameCount = data.size / frameSize
+    val hopSize = (conf.standardHopSize * sampleRate / StandardSampleRate).roundToInt()
+
     val window = when (conf.windowType) {
-        AppConf.WindowType.Hamming -> Hamming(frameSize).window
-        AppConf.WindowType.Hanning -> Hanning(frameSize).window
-        AppConf.WindowType.Rectangular -> Rectangular(frameSize).window
-        AppConf.WindowType.Triangular -> Triangular(frameSize).window
-        AppConf.WindowType.Blackman -> Blackman(frameSize).window
-        AppConf.WindowType.BlackmanHarris -> BlackmanHarris(frameSize).window
-        AppConf.WindowType.Bartlett -> Bartlett(frameSize).window
+        AppConf.WindowType.Hamming -> Hamming(windowSize).window
+        AppConf.WindowType.Hanning -> Hanning(windowSize).window
+        AppConf.WindowType.Rectangular -> Rectangular(windowSize).window
+        AppConf.WindowType.Triangular -> Triangular(windowSize).window
+        AppConf.WindowType.Blackman -> Blackman(windowSize).window
+        AppConf.WindowType.BlackmanHarris -> BlackmanHarris(windowSize).window
+        AppConf.WindowType.Bartlett -> Bartlett(windowSize).window
     }
     val peak = data.maxByOrNull { it.absoluteValue }!!
-    val signals: Array<DoubleArray> = Array(frameCount) { i ->
-        DoubleArray(frameSize) { j ->
-            data[i * frameSize + j] * window[j] / peak * Short.MAX_VALUE
-        }
+    val frames = data.toList().windowed(windowSize, hopSize, false) { frame ->
+        frame.mapIndexed { index, point -> point * window[index] / peak * Short.MAX_VALUE }.toDoubleArray()
     }
 
-    val absoluteSpectrogram: Array<DoubleArray> = Array(frameCount) { i ->
-        val signal = signals[i].copyOf()
+    val absoluteSpectrogram: Array<DoubleArray> = Array(frames.size) { i ->
+        val signal = frames[i]
         val fft = FastFourier(signal)
         fft.transform()
         val magnitude = fft.getMagnitude(true)
         magnitude.copyOf((magnitude.size * maxFrequencyRate).toInt())
     }
 
-    if (absoluteSpectrogram.isEmpty()) return Spectrogram(listOf(), frameSize)
+    if (absoluteSpectrogram.isEmpty()) return Spectrogram(listOf(), hopSize)
     val frequencySize = absoluteSpectrogram.first().size
 
     val min = conf.minIntensity.toDouble()
@@ -57,14 +59,14 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
     runCatching { require(min < max) { "minIntensity must be less than maxIntensity" } }
         .onFailure {
             Log.error(it)
-            return Spectrogram(listOf(), frameSize)
+            return Spectrogram(listOf(), hopSize)
         }
-    val output = List(frameCount) { i ->
+    val output = List(frames.size) { i ->
         DoubleArray(frequencySize) { j ->
-            (20 * log10(absoluteSpectrogram[i][j] / frameSize))
+            (20 * log10(absoluteSpectrogram[i][j] / windowSize))
                 .coerceIn(min, max)
                 .let { (it - min) / (max - min) }
         }
     }
-    return Spectrogram(output, frameSize)
+    return Spectrogram(output, hopSize)
 }

@@ -16,12 +16,13 @@
       "enabled": true,
       "heightWeight": 0.75,
       "pointPixelSize": 1,
-      "frameSize": 300,
-      "maxFrequency": 15000,
+      "standardHopSize": 110,
+      "windowSize": 1024,
+      "windowType": "BlackmanHarris",
+      "maxFrequency": 20000,
       "minIntensity": 0,
       "maxIntensity": 45,
-      "windowType": "Hamming",
-      "colorPalette": "Plain"
+      "colorPalette": "Sunset"
     }
   },
   "editor": {
