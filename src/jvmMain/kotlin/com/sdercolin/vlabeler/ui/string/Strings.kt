@@ -441,8 +441,17 @@ enum class Strings(val en: String) {
     PreferencesChartsSpectrogramHopSize(
         en = "FFT hop size"
     ),
+    PreferencesChartsSpectrogramHopSizeDescription(
+        en = "Adapted to the actual sample rate."
+    ),
     PreferencesChartsSpectrogramWindowSize(
         en = "Window size"
+    ),
+    PreferencesChartsSpectrogramWindowSizeDescription(
+        en = "Adapted to the actual sample rate."
+    ),
+    PreferencesChartsSpectrogramMelScaleStep(
+        en = "Frequency resolution (mel)"
     ),
     PreferencesChartsSpectrogramMaxFrequency(
         en = "Max frequency displayed (Hz)"

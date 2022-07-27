@@ -103,10 +103,12 @@ data class AppConf(
      * @param enabled True if spectrogram is calculated and shown
      * @param heightWeight Height weight of the spectrogram to the amplitude form (whose weight is 1)
      * @param standardHopSize Distance as the number of samples for which the window is slided when move to the next
-     * frame. This value is used for cases with sample rate 44100 Hz. For other sample rates it is calculated linear to
-     * keep the same time distance between frames.
-     * @param windowSize Number of samples in the window.
+     * frame. This value is used for cases with sample rate 48000 Hz. For other sample rates it is calculated
+     * linear-proportionally.
+     * @param standardWindowSize Number of samples in the window. This value is used for cases with sample rate 48000
+     * Hz. For other sample rates it is calculated exponential-proportionally (base is 2).
      * @param windowType Window type used in the Short-Time FT. See [WindowType] for options
+     * @param melScaleStep Step of the mel scale for interpolation on the frequency axis
      * @param maxFrequency Max frequency (Hz) displayed
      * @param minIntensity Min intensity (dB) displayed in the heatmap
      * @param maxIntensity Max intensity (dB) displayed in the heatmap
@@ -118,8 +120,9 @@ data class AppConf(
         val heightWeight: Float = DefaultHeightWeight,
         val pointPixelSize: Int = DefaultPointPixelSize,
         val standardHopSize: Int = DefaultStandardHopSize,
-        val windowSize: Int = DefaultWindowSize,
+        val standardWindowSize: Int = DefaultStandardWindowSize,
         val windowType: WindowType = DefaultWindowType,
+        val melScaleStep: Int = DefaultMelScaleStep,
         val maxFrequency: Int = DefaultMaxFrequency,
         val minIntensity: Int = DefaultMinIntensity,
         val maxIntensity: Int = DefaultMaxIntensity,
@@ -136,14 +139,17 @@ data class AppConf(
             const val DefaultStandardHopSize = 110
             const val MaxStandardHopSize = 2048
             const val MinStandardHopSize = 1
-            const val DefaultWindowSize = 1024
-            const val MaxWindowSize = 2048
-            const val MinWindowSize = 128
+            const val DefaultStandardWindowSize = 512
+            const val MaxStandardWindowSize = 4096
+            const val MinStandardWindowSize = 128
             const val DefaultMaxFrequency = 15000
+            const val DefaultMelScaleStep = 10
+            const val MaxMelScaleStep = 100
+            const val MinMelScaleStep = 1
             const val MaxMaxFrequency = 48000
             const val MinMaxFrequency = 5000
             const val DefaultMinIntensity = 0
-            const val DefaultMaxIntensity = 45
+            const val DefaultMaxIntensity = 55
             val DefaultWindowType = WindowType.Hamming
             val DefaultColorPalette = SpectrogramColorPalette.Presets.Plain
         }

@@ -13,6 +13,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import kotlin.math.absoluteValue
 import kotlin.math.log10
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 @Immutable
@@ -25,9 +26,9 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
     val data = DoubleArray(dataLength) { i ->
         channels.sumOf { it.data[i].toDouble() } / channels.size
     }
-    val windowSize = conf.windowSize
     val maxFrequencyRate = conf.maxFrequency / sampleRate * 2
     val hopSize = (conf.standardHopSize * sampleRate / StandardSampleRate).roundToInt()
+    val windowSize = (conf.standardWindowSize * 2.0.pow(sampleRate.toDouble() / StandardSampleRate)).toInt()
 
     val window = when (conf.windowType) {
         AppConf.WindowType.Hamming -> Hamming(windowSize).window
@@ -69,4 +70,10 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
         }
     }
     return Spectrogram(output, hopSize)
+}
+
+object MelScale {
+    fun toMel(frequency: Double): Double {
+        return 2595 * log10(1 + frequency / 700)
+    }
 }

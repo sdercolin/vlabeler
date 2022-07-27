@@ -17,12 +17,13 @@
       "heightWeight": 0.75,
       "pointPixelSize": 1,
       "standardHopSize": 110,
-      "windowSize": 1024,
+      "standardWindowSize": 512,
       "windowType": "BlackmanHarris",
+      "melScaleStep": 10,
       "maxFrequency": 20000,
       "minIntensity": 0,
-      "maxIntensity": 45,
-      "colorPalette": "Sunset"
+      "maxIntensity": 55,
+      "colorPalette": "Plain"
     }
   },
   "editor": {

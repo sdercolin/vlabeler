@@ -149,6 +149,7 @@ abstract class PreferencesPage(
                 integer(
                     title = Strings.PreferencesChartsSpectrogramHopSize,
                     defaultValue = AppConf.Spectrogram.DefaultStandardHopSize,
+                    description = Strings.PreferencesChartsSpectrogramHopSizeDescription,
                     min = AppConf.Spectrogram.MinStandardHopSize,
                     max = AppConf.Spectrogram.MaxStandardHopSize,
                     select = { it.standardHopSize },
@@ -156,11 +157,12 @@ abstract class PreferencesPage(
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramWindowSize,
-                    defaultValue = AppConf.Spectrogram.DefaultWindowSize,
-                    min = AppConf.Spectrogram.MinWindowSize,
-                    max = AppConf.Spectrogram.MaxWindowSize,
-                    select = { it.windowSize },
-                    update = { copy(windowSize = it) }
+                    description = Strings.PreferencesChartsSpectrogramWindowSizeDescription,
+                    defaultValue = AppConf.Spectrogram.DefaultStandardWindowSize,
+                    min = AppConf.Spectrogram.MinStandardWindowSize,
+                    max = AppConf.Spectrogram.MaxStandardWindowSize,
+                    select = { it.standardWindowSize },
+                    update = { copy(standardWindowSize = it) }
                 )
                 selection(
                     title = Strings.PreferencesChartsSpectrogramWindowType,
@@ -168,6 +170,14 @@ abstract class PreferencesPage(
                     select = { it.windowType },
                     update = { copy(windowType = it) },
                     options = AppConf.WindowType.values()
+                )
+                integer(
+                    title = Strings.PreferencesChartsSpectrogramMelScaleStep,
+                    defaultValue = AppConf.Spectrogram.DefaultMelScaleStep,
+                    min = AppConf.Spectrogram.MinMelScaleStep,
+                    max = AppConf.Spectrogram.MaxMelScaleStep,
+                    select = { it.melScaleStep },
+                    update = { copy(melScaleStep = it) }
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramMaxFrequency,

@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.io.MelScale
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -259,6 +260,7 @@ class ChartStore {
         }
     }
 
+    @Suppress("UnnecessaryVariable")
     private suspend fun drawSpectrogram(
         sampleInfo: SampleInfo,
         spectrogramDataChunks: List<List<DoubleArray>>?,
@@ -281,19 +283,40 @@ class ChartStore {
         }
         val pixelSize = appConf.painter.spectrogram.pointPixelSize.toFloat()
         val chunk = spectrogramDataChunks[chunkIndex]
+        val maxFrequency = appConf.painter.spectrogram.maxFrequency
+        val maxMel = MelScale.toMel(maxFrequency.toDouble()).toInt()
         val width = chunk.size.toFloat() * pixelSize
-        val height = chunk.first().size.toFloat() * pixelSize
+        val height = maxMel * pixelSize
         val size = Size(width, height)
         val newBitmap = ImageBitmap(width.toInt(), height.toInt())
         Log.info("Spectrogram chunk $chunkIndex: draw bitmap")
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
             chunk.forEachIndexed { xIndex, yArray ->
-                yArray.forEachIndexed { yIndex, z ->
-                    val color = colorPalette.get(z.toFloat())
+                if (yArray.isEmpty()) return@forEachIndexed
+                val frequencyList = yArray.indices.map { it.toFloat() * maxFrequency / (yArray.size - 1) }
+                val mels = frequencyList.map { MelScale.toMel(it.toDouble()) }
+                val step = appConf.painter.spectrogram.melScaleStep
+                val interpolated = mels.foldIndexed(listOf<Pair<Int, Double>>()) { index, acc, keyMel ->
+                    if (acc.isEmpty()) {
+                        listOf(keyMel.toInt() to yArray[index])
+                    } else {
+                        val thisIntensity = yArray[index]
+                        val (lastMel, lastIntensity) = acc.last()
+                        acc + (lastMel + step..keyMel.toInt() step step).map { mel ->
+                            val intensity = lastIntensity +
+                                (thisIntensity - lastIntensity) * (mel - lastMel) / (keyMel - lastMel)
+                            mel to intensity
+                        }
+                    }
+                }
+                interpolated.forEach { (mel, intensity) ->
+                    val color = colorPalette.get(intensity.toFloat())
+                    val left = xIndex.toFloat() * pixelSize
+                    val top = height - mel * pixelSize
                     drawRect(
                         color = color,
-                        topLeft = Offset(xIndex.toFloat() * pixelSize, (height - yIndex.toFloat() * pixelSize)),
-                        size = Size(pixelSize, pixelSize)
+                        topLeft = Offset(left, top),
+                        size = Size(pixelSize, step * pixelSize)
                     )
                 }
             }
