@@ -142,7 +142,7 @@ By default, when you click on a valid position with the scissors:
 1. Cutting and renaming is conducted
 1. The editor navigates to the former entry if needed
 
-These actions can be configured, see the `Configure` section for details.
+These actions can be customized in the preferences.
 
 ## Labelers
 
@@ -178,8 +178,8 @@ Labeler management UI will be added in the future.
 ## Plugins
 
 Currently, only template generator plugins are available.
-You can copy a plugin folder to `.../vLabeler/plugins/template/` to enable it, where `vLabeler` is the app's external
-directory described in the `Configure` section.
+You can copy a plugin folder to `.../<user>/vLabeler/plugins/template/` to enable it.
+(For macOS it's `~/Library/vLabele/plugins/template/r`)
 
 All valid template generators which support the selected labeler can be chosen in the `New Project` page.
 
