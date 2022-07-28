@@ -58,19 +58,21 @@ import com.sdercolin.vlabeler.util.runIf
 
 @Composable
 fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
-    val entries = project.entries
+    val entries = project.entries.withIndex().toList()
     val currentIndex = project.currentIndex
 
     val focusRequester = remember { FocusRequester() }
     val submit = { index: Int -> jumpToEntry(index) }
 
-    fun getSearchResult(searchText: String?): List<Entry> {
-        return if (searchText == null) entries else entries.filter { it.name.contains(searchText) }
+    fun getSearchResult(searchText: String?): List<IndexedValue<Entry>> {
+        return if (searchText == null) entries else entries.filter { it.value.name.contains(searchText) }
     }
 
     var searchText by remember { mutableStateOf<String?>(null) }
     var searchResult by remember(project) { mutableStateOf(getSearchResult(searchText)) }
-    var selectedIndex by remember(project.currentIndex) { mutableStateOf(currentIndex) }
+    var selectedIndex by remember(project.currentIndex) {
+        mutableStateOf(searchResult.indexOfFirst { it.index == project.currentIndex }.takeIf { it >= 0 })
+    }
 
     fun search(text: String?) {
         searchText = text
@@ -102,17 +104,18 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
                     .focusRequester(focusRequester)
                     .onPreviewKeyEvent {
                         if (searchResult.isEmpty()) return@onPreviewKeyEvent false
+                        val index = selectedIndex ?: return@onPreviewKeyEvent false
                         when {
                             it.isReleased(Key.DirectionDown) -> {
-                                selectedIndex = selectedIndex.plus(1).coerceAtMost(searchResult.lastIndex)
+                                selectedIndex = index.plus(1).coerceAtMost(searchResult.lastIndex)
                                 true
                             }
                             it.isReleased(Key.DirectionUp) -> {
-                                selectedIndex = selectedIndex.minus(1).coerceAtLeast(0)
+                                selectedIndex = index.minus(1).coerceAtLeast(0)
                                 true
                             }
                             it.isReleased(Key.Enter) -> {
-                                submit(selectedIndex)
+                                searchResult[index].index.let(submit)
                                 true
                             }
                             else -> false
@@ -126,16 +129,21 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
         }
         Divider(color = White20)
         if (searchResult.isNotEmpty()) {
-            List(searchResult, currentIndex, selectedIndex, { selectedIndex = it }, submit)
+            List(
+                searchResult = searchResult,
+                currentIndex = currentIndex,
+                selectedIndex = selectedIndex,
+                select = { selectedIndex = it }
+            ) { searchResult[it].index.let(submit) }
         }
     }
 }
 
 @Composable
 private fun ColumnScope.List(
-    searchResult: List<Entry>,
+    searchResult: List<IndexedValue<Entry>>,
     currentIndex: Int,
-    selectedIndex: Int,
+    selectedIndex: Int?,
     select: (Int) -> Unit,
     submit: (Int) -> Unit
 ) {
@@ -144,7 +152,9 @@ private fun ColumnScope.List(
     val scrollbarAdapter = remember { ScrollbarAdapter(scrollState) }
 
     LaunchedEffect(selectedIndex, searchResult) {
-        scrollState.animateScrollToShowItem(selectedIndex)
+        if (selectedIndex != null) {
+            scrollState.animateScrollToShowItem(selectedIndex)
+        }
     }
     Box(Modifier.weight(1f)) {
         LazyColumn(state = scrollState) {
@@ -177,19 +187,19 @@ private fun ColumnScope.List(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     BasicText(
-                        text = "${index + 1}",
+                        text = "${item.index + 1}",
                         modifier = Modifier.padding(start = 20.dp, end = 15.dp, top = 3.dp).widthIn(20.dp),
                         maxLines = 1,
                         style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f))
                     )
                     BasicText(
-                        text = item.name,
+                        text = item.value.name,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
                         style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground)
                     )
                     BasicText(
-                        text = item.sample,
+                        text = item.value.sample,
                         modifier = Modifier.padding(start = 10.dp, top = 3.dp),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
