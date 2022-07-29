@@ -250,7 +250,6 @@ class ProjectStoreImpl(
         autoSaveJob?.cancel()
         autoSaveJob = null
         if (autoSave.target == AppConf.AutoSave.Target.None || autoSave.intervalSec <= 0) return
-        // TODO: implement Target.Project
         autoSaveJob = scope.launch(Dispatchers.IO) {
             while (isActive) {
                 delay(autoSave.intervalSec * 1000L)
