@@ -8,7 +8,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
 
-version = "1.0.0-alpha12"
+version = "1.0.0-alpha13"
 
 repositories {
     google()
