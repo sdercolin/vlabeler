@@ -171,7 +171,10 @@ private fun WaveformChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex:
     Log.info("Waveform (channel $channelIndex, chunk $chunkIndex): composed")
     Box(Modifier.fillMaxSize().background(backgroundColor)) {
         ChunkAsyncImage(
-            load = { ChartRepository.getWaveform(sampleInfo, channelIndex, chunkIndex) }
+            load = { ChartRepository.getWaveform(sampleInfo, channelIndex, chunkIndex) },
+            sampleInfo,
+            channelIndex,
+            chunkIndex
         )
     }
 }
@@ -181,18 +184,21 @@ private fun SpectrogramChunk(sampleInfo: SampleInfo, chunkIndex: Int) {
     Log.info("Spectrogram (chunk $chunkIndex): composed")
     Box(Modifier.fillMaxSize()) {
         ChunkAsyncImage(
-            load = { ChartRepository.getSpectrogram(sampleInfo, chunkIndex) }
+            load = { ChartRepository.getSpectrogram(sampleInfo, chunkIndex) },
+            sampleInfo,
+            chunkIndex
         )
     }
 }
 
 @Composable
-private fun ChunkAsyncImage(load: suspend () -> ImageBitmap) {
+private fun ChunkAsyncImage(load: suspend () -> ImageBitmap, vararg keys: Any) {
     AsyncImage(
         load = load,
         painterFor = { remember { BitmapPainter(it) } },
         modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.FillBounds
+        contentScale = ContentScale.FillBounds,
+        keys = keys
     )
 }
 

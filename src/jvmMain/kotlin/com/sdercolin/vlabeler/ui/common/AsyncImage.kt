@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui.common
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -18,8 +19,9 @@ fun <T> AsyncImage(
     contentDescription: String? = null,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
+    vararg keys: Any
 ) {
-    val image: T? by produceState<T?>(null) {
+    val image: T? by produceState<T?>(null, *keys) {
         value = withContext(Dispatchers.IO) {
             try {
                 load()
@@ -30,12 +32,14 @@ fun <T> AsyncImage(
         }
     }
 
-    image?.let {
-        Image(
-            painter = painterFor(it),
-            contentDescription = contentDescription,
-            contentScale = contentScale,
-            modifier = modifier
-        )
+    key(image) {
+        image?.let {
+            Image(
+                painter = painterFor(it),
+                contentDescription = contentDescription,
+                contentScale = contentScale,
+                modifier = modifier
+            )
+        }
     }
 }
