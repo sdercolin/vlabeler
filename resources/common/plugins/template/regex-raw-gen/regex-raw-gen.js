@@ -13,7 +13,7 @@ output = samples.flatMap(sample => {
         console.log(`Matched ${sample}, match: ${match}`)
     }
     return template.map(line => {
-        return line.replace(/\{(\d)\}/g, (labelMatch, index) => {
+        return line.replace(/\$(\d+)/g, (labelMatch, index) => {
             return match[index]
         })
     })
