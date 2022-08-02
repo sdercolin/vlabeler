@@ -54,7 +54,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
-import com.sdercolin.vlabeler.ui.dialog.PluginDialog
+import com.sdercolin.vlabeler.ui.dialog.plugin.PluginDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.CoroutineScope
