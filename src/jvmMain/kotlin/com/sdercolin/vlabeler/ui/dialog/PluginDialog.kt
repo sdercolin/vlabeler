@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +50,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogState
+import com.sdercolin.vlabeler.model.EntrySelector
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.common.ReversedRow
@@ -65,30 +68,20 @@ class PluginDialogState(
     val plugin: Plugin,
     paramMap: ParamMap,
     private val savedParamMap: ParamMap?,
+    private val labelerConf: LabelerConf?,
     private val submit: (ParamMap?) -> Unit,
     private val save: (ParamMap) -> Unit
 ) {
     val paramDefs = plugin.parameters?.list.orEmpty()
-    val params = mutableStateListOf(*paramMap.map { it.value.toString() }.toTypedArray())
+    val params = mutableStateListOf(*paramMap.map { it.value }.toTypedArray())
     val hasParams get() = paramDefs.isNotEmpty()
 
-    private fun getCurrentParamMap() = params.mapIndexed { index, textValue ->
-        val def = paramDefs[index]
-        def.name to parseTextValue(textValue, def)
+    private fun getCurrentParamMap() = params.mapIndexed { index, value ->
+        paramDefs[index].name to value
     }.toMap().toParamMap()
 
     fun apply() {
         submit(getCurrentParamMap())
-    }
-
-    private fun parseTextValue(textValue: String, def: Plugin.Parameter<*>): Any {
-        return when (def) {
-            is Plugin.Parameter.BooleanParam -> textValue.toBooleanStrict()
-            is Plugin.Parameter.EnumParam -> textValue
-            is Plugin.Parameter.FloatParam -> textValue.toFloat()
-            is Plugin.Parameter.IntParam -> textValue.toInt()
-            is Plugin.Parameter.StringParam -> textValue
-        }
     }
 
     fun cancel() {
@@ -124,42 +117,44 @@ class PluginDialogState(
             is Plugin.Parameter.BooleanParam -> true
             is Plugin.Parameter.EnumParam -> true
             is Plugin.Parameter.FloatParam -> {
-                val floatValue = value.toFloatOrNull()
-                if (floatValue != null) {
-                    floatValue in (def.min ?: Float.NEGATIVE_INFINITY)..(def.max ?: Float.POSITIVE_INFINITY)
-                } else false
+                val floatValue = value as? Float ?: return false
+                floatValue in (def.min ?: Float.NEGATIVE_INFINITY)..(def.max ?: Float.POSITIVE_INFINITY)
             }
             is Plugin.Parameter.IntParam -> {
-                val intValue = value.toIntOrNull()
-                if (intValue != null) {
-                    intValue in (def.min ?: Int.MIN_VALUE)..(def.max ?: Int.MAX_VALUE)
-                } else false
+                val intValue = value as? Int ?: return false
+                intValue in (def.min ?: Int.MIN_VALUE)..(def.max ?: Int.MAX_VALUE)
             }
             is Plugin.Parameter.StringParam -> {
+                val stringValue = value as? String ?: return false
                 val fulfillMultiLine = if (def.multiLine.not()) {
-                    value.lines().size < 2
+                    stringValue.lines().size < 2
                 } else true
                 val fulfillOptional = if (def.optional.not()) {
-                    value.isNotEmpty()
+                    stringValue.isNotEmpty()
                 } else true
                 fulfillMultiLine && fulfillOptional
+            }
+            is Plugin.Parameter.EntrySelectorParam -> {
+                val entrySelectorValue = value as? EntrySelector ?: return false
+                val labelerConf = requireNotNull(labelerConf) { "labelerConf is required for a EntrySelectorParam" }
+                entrySelectorValue.filters.all { it.isValid(labelerConf) }
             }
         }
     }
 
     fun isAllValid() = params.indices.all { isValid(it) }
 
-    fun update(index: Int, value: String) {
+    fun update(index: Int, value: Any) {
         params[index] = value
     }
 
     fun canReset() = paramDefs.indices.all {
-        params[it] == paramDefs[it].defaultValue.toString()
+        params[it] == paramDefs[it].defaultValue
     }
 
     fun reset() {
         paramDefs.indices.forEach {
-            params[it] = paramDefs[it].defaultValue.toString()
+            params[it] = paramDefs[it].defaultValue
         }
     }
 
@@ -189,6 +184,7 @@ private fun rememberState(
     plugin: Plugin,
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
+    labelerConf: LabelerConf?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit
 ) = remember(plugin, paramMap, savedParamMap, submit, save) {
@@ -196,6 +192,7 @@ private fun rememberState(
         plugin,
         paramMap,
         savedParamMap,
+        labelerConf,
         submit,
         save
     )
@@ -206,9 +203,17 @@ fun PluginDialog(
     plugin: Plugin,
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
+    labelerConf: LabelerConf?,
     submit: (ParamMap?) -> Unit,
     save: (Plugin, ParamMap) -> Unit,
-    state: PluginDialogState = rememberState(plugin, paramMap, savedParamMap, submit, save = { save(plugin, it) })
+    state: PluginDialogState = rememberState(
+        plugin,
+        paramMap,
+        savedParamMap,
+        labelerConf,
+        submit,
+        save = { save(plugin, it) }
+    )
 ) {
     Dialog(
         title = string(Strings.PluginDialogTitle),
@@ -373,16 +378,23 @@ private fun Params(state: PluginDialogState) {
                 val def = state.paramDefs[i]
                 val value = state.params[i]
                 val isError = state.isValid(i).not()
-                val onValueChange = { newValue: String -> state.update(i, newValue) }
+                val onValueChange = { newValue: Any -> state.update(i, newValue) }
                 when (def) {
-                    is Plugin.Parameter.BooleanParam -> ParamSwitch(value, onValueChange)
-                    is Plugin.Parameter.EnumParam -> ParamDropDown(def.options, value, onValueChange)
+                    is Plugin.Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange)
+                    is Plugin.Parameter.EnumParam -> ParamDropDown(def.options, value as String, onValueChange)
                     is Plugin.Parameter.FloatParam ->
-                        ParamTextField(value, onValueChange, isError, isLong = false, singleLine = true)
+                        ParamNumberTextField(value as Float, onValueChange, isError, parse = { it.toFloatOrNull() })
                     is Plugin.Parameter.IntParam ->
-                        ParamTextField(value, onValueChange, isError, isLong = false, singleLine = true)
+                        ParamNumberTextField(value as Int, onValueChange, isError, parse = { it.toIntOrNull() })
                     is Plugin.Parameter.StringParam ->
-                        ParamTextField(value, onValueChange, isError, isLong = true, singleLine = def.multiLine.not())
+                        ParamTextField(
+                            value as String,
+                            onValueChange,
+                            isError,
+                            isLong = true,
+                            singleLine = def.multiLine.not()
+                        )
+                    is Plugin.Parameter.EntrySelectorParam -> TODO()
                 }
             }
         }
@@ -391,13 +403,13 @@ private fun Params(state: PluginDialogState) {
 
 @Composable
 private fun RowScope.ParamSwitch(
-    value: String,
-    onValueChange: (String) -> Unit
+    value: Boolean,
+    onValueChange: (Boolean) -> Unit
 ) {
     Switch(
         modifier = Modifier.align(Alignment.CenterVertically),
-        checked = value.toBooleanStrict(),
-        onCheckedChange = { onValueChange(it.toString()) },
+        checked = value,
+        onCheckedChange = onValueChange,
         colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colors.primary)
     )
 }
@@ -438,6 +450,42 @@ private fun ParamDropDown(
             }
         }
     }
+}
+
+@Composable
+private fun <T : Number> ParamNumberTextField(
+    value: T,
+    onValueChange: (T) -> Unit,
+    isError: Boolean,
+    parse: (String) -> T?
+) {
+    var stringValue by remember { mutableStateOf(value.toString()) }
+    var isParsingFailed by remember { mutableStateOf(false) }
+
+    LaunchedEffect(value) {
+        if (parse(stringValue) == value) return@LaunchedEffect
+        isParsingFailed = false
+        stringValue = value.toString()
+    }
+
+    fun onNewStringValue(newValue: String) {
+        stringValue = newValue
+        val parsed = parse(newValue)
+        if (parsed == null) {
+            isParsingFailed = true
+        } else {
+            isParsingFailed = false
+            onValueChange(parsed)
+        }
+    }
+
+    ParamTextField(
+        stringValue,
+        ::onNewStringValue,
+        isError || isParsingFailed,
+        isLong = false,
+        singleLine = true
+    )
 }
 
 @Composable

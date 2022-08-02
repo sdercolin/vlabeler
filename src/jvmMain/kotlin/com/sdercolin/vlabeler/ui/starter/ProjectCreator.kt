@@ -216,6 +216,7 @@ private fun LabelerSelectorRow(
             plugin = requireNotNull(state.templatePlugin),
             paramMap = requireNotNull(state.templatePluginParams),
             savedParamMap = requireNotNull(state.templatePluginSavedParams),
+            labelerConf = null,
             submit = {
                 if (it != null) state.updatePluginParams(it)
                 pluginDialogShown = false

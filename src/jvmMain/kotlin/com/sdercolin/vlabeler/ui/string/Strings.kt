@@ -337,6 +337,42 @@ enum class Strings(val en: String) {
     PluginDialogDescriptionMinMax(
         en = "min: %s, max: %s"
     ),
+    PluginEntrySelectorTextMatchTypeEquals(
+        en = "Equals"
+    ),
+    PluginEntrySelectorTextMatchTypeContains(
+        en = "Contains"
+    ),
+    PluginEntrySelectorTextMatchTypeStartsWith(
+        en = "Starts with"
+    ),
+    PluginEntrySelectorTextMatchTypeEndsWith(
+        en = "Ends with"
+    ),
+    PluginEntrySelectorTextMatchTypeRegex(
+        en = "Regex"
+    ),
+    PluginEntrySelectorNumberMatchTypeEquals(
+        en = "="
+    ),
+    PluginEntrySelectorNumberMatchTypeGreaterThan(
+        en = ">"
+    ),
+    PluginEntrySelectorNumberMatchTypeGreaterThanOrEquals(
+        en = ">="
+    ),
+    PluginEntrySelectorNumberMatchTypeLessThan(
+        en = "<"
+    ),
+    PluginEntrySelectorNumberMatchTypeLessThanOrEquals(
+        en = "<="
+    ),
+    PluginEntrySelectorPreservedSubjectSample(
+        en = "Sample name"
+    ),
+    PluginEntrySelectorPreservedSubjectName(
+        en = "Entry name"
+    ),
     EditorSubTitleMultiple(
         en = "editing %d entries in sample %s"
     ),

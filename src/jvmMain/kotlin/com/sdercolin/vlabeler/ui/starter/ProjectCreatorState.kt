@@ -155,7 +155,7 @@ class ProjectCreatorState(
     fun updatePluginParams(params: ParamMap?) {
         templatePluginParams = params
         if (params != null) {
-            templatePluginError = requireNotNull(templatePlugin).checkParams(params) == false
+            templatePluginError = requireNotNull(templatePlugin).checkParams(params, null) == false
         }
     }
 

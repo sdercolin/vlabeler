@@ -4,7 +4,6 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.util.ParamMap
-import com.sdercolin.vlabeler.util.json
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -74,7 +73,7 @@ data class Plugin(
 
     @Serializable(PluginParameterSerializer::class)
     @Immutable
-    sealed class Parameter<T>(
+    sealed class Parameter<T : Any>(
         val type: ParameterType,
         val name: String,
         val label: String,
@@ -122,6 +121,13 @@ data class Plugin(
             defaultValue: String,
             val options: List<String>
         ) : Parameter<String>(ParameterType.Enum, name, label, description, defaultValue)
+
+        class EntrySelectorParam(
+            name: String,
+            label: String,
+            description: String?,
+            defaultValue: EntrySelector
+        ) : Parameter<EntrySelector>(ParameterType.EntrySelector, name, label, description, defaultValue)
     }
 
     @Serializable
@@ -139,25 +145,31 @@ data class Plugin(
         String,
 
         @SerialName("enum")
-        Enum
+        Enum,
+
+        @SerialName("entrySelector")
+        EntrySelector
     }
 
-    fun checkParams(params: ParamMap): Boolean {
-        return parameters?.list.orEmpty().all {
-            when (it) {
-                is Parameter.BooleanParam -> (params[it.name] as? Boolean) != null
-                is Parameter.EnumParam -> (params[it.name] as? String)?.let { enumValue ->
-                    enumValue in it.options
+    fun checkParams(params: ParamMap, labelerConf: LabelerConf?): Boolean {
+        return parameters?.list.orEmpty().all { param ->
+            when (param) {
+                is Parameter.BooleanParam -> (params[param.name] as? Boolean) != null
+                is Parameter.EnumParam -> (params[param.name] as? String)?.let { enumValue ->
+                    enumValue in param.options
                 } == true
-                is Parameter.FloatParam -> (params[it.name] as? Float)?.let { floatValue ->
-                    floatValue >= (it.min ?: Float.NEGATIVE_INFINITY) &&
-                        floatValue <= (it.max ?: Float.POSITIVE_INFINITY)
+                is Parameter.FloatParam -> (params[param.name] as? Float)?.let { floatValue ->
+                    floatValue >= (param.min ?: Float.NEGATIVE_INFINITY) &&
+                        floatValue <= (param.max ?: Float.POSITIVE_INFINITY)
                 } == true
-                is Parameter.IntParam -> (params[it.name] as? Int)?.let { intValue ->
-                    intValue >= (it.min ?: Int.MIN_VALUE) && intValue <= (it.max ?: Int.MIN_VALUE)
+                is Parameter.IntParam -> (params[param.name] as? Int)?.let { intValue ->
+                    intValue >= (param.min ?: Int.MIN_VALUE) && intValue <= (param.max ?: Int.MIN_VALUE)
                 } == true
-                is Parameter.StringParam -> (params[it.name] as? String)?.let { stringValue ->
-                    if (it.optional.not()) stringValue.isNotEmpty() else true
+                is Parameter.StringParam -> (params[param.name] as? String)?.let { stringValue ->
+                    if (param.optional.not()) stringValue.isNotEmpty() else true
+                } == true
+                is Parameter.EntrySelectorParam -> (params[param.name] as? EntrySelector)?.let { selector ->
+                    selector.filters.all { it.isValid(requireNotNull(labelerConf)) }
                 } == true
             }
         }
@@ -171,7 +183,7 @@ object PluginParameterListSerializer : KSerializer<Plugin.Parameters> {
         val element = decoder.decodeJsonElement()
         require(element is JsonObject)
         val list = requireNotNull(element["list"]).jsonArray.map {
-            json.decodeFromJsonElement(PluginParameterSerializer, it)
+            decoder.json.decodeFromJsonElement(PluginParameterSerializer, it)
         }
         return Plugin.Parameters(list)
     }
@@ -187,36 +199,40 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
         val name = requireNotNull(element["name"]).jsonPrimitive.content
         val label = requireNotNull(element["label"]).jsonPrimitive.content
         val description = element["description"]?.jsonPrimitive?.content
-        val defaultPrimitive = requireNotNull(element["defaultValue"]).jsonPrimitive
+        val defaultValue = requireNotNull(element["defaultValue"])
         return when (type) {
             Plugin.ParameterType.Integer -> {
-                val default = defaultPrimitive.int
+                val default = defaultValue.jsonPrimitive.int
                 val min = element["min"]?.jsonPrimitive?.int
                 val max = element["max"]?.jsonPrimitive?.int
                 Plugin.Parameter.IntParam(name, label, description, default, min, max)
             }
             Plugin.ParameterType.Float -> {
-                val default = defaultPrimitive.float
+                val default = defaultValue.jsonPrimitive.float
                 val min = element["min"]?.jsonPrimitive?.float
                 val max = element["max"]?.jsonPrimitive?.float
                 Plugin.Parameter.FloatParam(name, label, description, default, min, max)
             }
             Plugin.ParameterType.Boolean -> {
-                val default = defaultPrimitive.boolean
+                val default = defaultValue.jsonPrimitive.boolean
                 Plugin.Parameter.BooleanParam(name, label, description, default)
             }
             Plugin.ParameterType.String -> {
-                val default = defaultPrimitive.content
+                val default = defaultValue.jsonPrimitive.content
                 val optional = requireNotNull(element["optional"]).jsonPrimitive.boolean
                 val multiLine = element["multiLine"]?.jsonPrimitive?.boolean ?: false
                 Plugin.Parameter.StringParam(name, label, description, default, multiLine, optional)
             }
             Plugin.ParameterType.Enum -> {
-                val default = defaultPrimitive.content
+                val default = defaultValue.jsonPrimitive.content
                 val options = requireNotNull(element["options"]).jsonArray.map {
                     it.jsonPrimitive.content
                 }
                 Plugin.Parameter.EnumParam(name, label, description, default, options)
+            }
+            Plugin.ParameterType.EntrySelector -> {
+                val default = decoder.json.decodeFromJsonElement(EntrySelector.serializer(), defaultValue)
+                Plugin.Parameter.EntrySelectorParam(name, label, description, default)
             }
         }
     }
