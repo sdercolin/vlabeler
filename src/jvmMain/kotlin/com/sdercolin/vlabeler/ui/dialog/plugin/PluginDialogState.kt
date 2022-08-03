@@ -124,4 +124,10 @@ class PluginDialogState(
     fun save() {
         save(getCurrentParamMap())
     }
+
+    fun isParamInRow(index: Int): Boolean = when (val param = paramDefs[index]) {
+        is Plugin.Parameter.EntrySelectorParam -> false
+        is Plugin.Parameter.StringParam -> param.multiLine.not()
+        else -> true
+    }
 }

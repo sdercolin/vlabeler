@@ -235,49 +235,62 @@ private fun Params(state: PluginDialogState) {
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         state.params.indices.forEach { i ->
-            Row(Modifier.heightIn(min = 60.dp)) {
-                Column(Modifier.width(300.dp).align(Alignment.CenterVertically)) {
-                    Text(
-                        text = state.getLabel(i),
-                        style = MaterialTheme.typography.body2,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    val description = state.getDescription(i)
-                    if (description.isNotBlank()) {
-                        Spacer(Modifier.height(5.dp))
-                        Text(
-                            text = description,
-                            style = MaterialTheme.typography.caption,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+            val labelInRow = state.isParamInRow(i)
+            Column(Modifier.heightIn(min = 60.dp)) {
+                if (!labelInRow) {
+                    ParamLabel(state, i)
                 }
-                Spacer(Modifier.width(20.dp))
-                val def = state.paramDefs[i]
-                val value = state.params[i]
-                val isError = state.isValid(i).not()
-                val onValueChange = { newValue: Any -> state.update(i, newValue) }
-                when (def) {
-                    is Plugin.Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange)
-                    is Plugin.Parameter.EnumParam -> ParamDropDown(def.options, value as String, onValueChange)
-                    is Plugin.Parameter.FloatParam ->
-                        ParamNumberTextField(value as Float, onValueChange, isError, parse = { it.toFloatOrNull() })
-                    is Plugin.Parameter.IntParam ->
-                        ParamNumberTextField(value as Int, onValueChange, isError, parse = { it.toIntOrNull() })
-                    is Plugin.Parameter.StringParam ->
-                        ParamTextField(
-                            value as String,
-                            onValueChange,
-                            isError,
-                            isLong = true,
-                            singleLine = def.multiLine.not()
-                        )
-                    is Plugin.Parameter.EntrySelectorParam -> TODO()
+                Row {
+                    if (labelInRow) {
+                        Column(Modifier.width(300.dp).align(Alignment.CenterVertically)) {
+                            ParamLabel(state, i)
+                        }
+                        Spacer(Modifier.width(20.dp))
+                    }
+                    val def = state.paramDefs[i]
+                    val value = state.params[i]
+                    val isError = state.isValid(i).not()
+                    val onValueChange = { newValue: Any -> state.update(i, newValue) }
+                    when (def) {
+                        is Plugin.Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange)
+                        is Plugin.Parameter.EnumParam -> ParamDropDown(def.options, value as String, onValueChange)
+                        is Plugin.Parameter.FloatParam ->
+                            ParamNumberTextField(value as Float, onValueChange, isError, parse = { it.toFloatOrNull() })
+                        is Plugin.Parameter.IntParam ->
+                            ParamNumberTextField(value as Int, onValueChange, isError, parse = { it.toIntOrNull() })
+                        is Plugin.Parameter.StringParam ->
+                            ParamTextField(
+                                value as String,
+                                onValueChange,
+                                isError,
+                                isLong = true,
+                                singleLine = def.multiLine.not()
+                            )
+                        is Plugin.Parameter.EntrySelectorParam -> TODO()
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ParamLabel(state: PluginDialogState, index: Int) {
+    Text(
+        text = state.getLabel(index),
+        style = MaterialTheme.typography.body2,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+    )
+    val description = state.getDescription(index)
+    if (description.isNotBlank()) {
+        Spacer(Modifier.height(5.dp))
+        Text(
+            text = description,
+            style = MaterialTheme.typography.caption,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
