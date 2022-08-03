@@ -21,6 +21,7 @@ class PluginDialogState(
 ) {
     val paramDefs = plugin.parameters?.list.orEmpty()
     val params = mutableStateListOf(*paramMap.map { it.value }.toTypedArray())
+    private val parseErrors = mutableStateListOf(*paramMap.map { false }.toTypedArray())
     val hasParams get() = paramDefs.isNotEmpty()
 
     private fun getCurrentParamMap() = params.mapIndexed { index, value ->
@@ -89,10 +90,14 @@ class PluginDialogState(
         }
     }
 
-    fun isAllValid() = params.indices.all { isValid(it) }
+    fun isAllValid() = params.indices.all { isValid(it) } && parseErrors.none { it }
 
     fun update(index: Int, value: Any) {
         params[index] = value
+    }
+
+    fun setParseError(index: Int, isError: Boolean) {
+        parseErrors[index] = isError
     }
 
     fun canReset() = paramDefs.indices.all {

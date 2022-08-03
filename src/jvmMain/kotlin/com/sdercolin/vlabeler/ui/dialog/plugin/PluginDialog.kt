@@ -255,9 +255,21 @@ private fun Params(state: PluginDialogState) {
                         is Plugin.Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange)
                         is Plugin.Parameter.EnumParam -> ParamDropDown(def.options, value as String, onValueChange)
                         is Plugin.Parameter.FloatParam ->
-                            ParamNumberTextField(value as Float, onValueChange, isError, parse = { it.toFloatOrNull() })
+                            ParamNumberTextField(
+                                value as Float,
+                                onValueChange,
+                                isError,
+                                parse = { it.toFloatOrNull() },
+                                onParseErrorChange = { state.setParseError(i, it) }
+                            )
                         is Plugin.Parameter.IntParam ->
-                            ParamNumberTextField(value as Int, onValueChange, isError, parse = { it.toIntOrNull() })
+                            ParamNumberTextField(
+                                value as Int,
+                                onValueChange,
+                                isError,
+                                parse = { it.toIntOrNull() },
+                                onParseErrorChange = { state.setParseError(i, it) }
+                            )
                         is Plugin.Parameter.StringParam ->
                             ParamTextField(
                                 value as String,
@@ -350,7 +362,8 @@ private fun <T : Number> ParamNumberTextField(
     value: T,
     onValueChange: (T) -> Unit,
     isError: Boolean,
-    parse: (String) -> T?
+    parse: (String) -> T?,
+    onParseErrorChange: (Boolean) -> Unit
 ) {
     var stringValue by remember { mutableStateOf(value.toString()) }
     var isParsingFailed by remember { mutableStateOf(false) }
@@ -358,6 +371,7 @@ private fun <T : Number> ParamNumberTextField(
     LaunchedEffect(value) {
         if (parse(stringValue) == value) return@LaunchedEffect
         isParsingFailed = false
+        onParseErrorChange(false)
         stringValue = value.toString()
     }
 
@@ -370,6 +384,7 @@ private fun <T : Number> ParamNumberTextField(
             isParsingFailed = false
             onValueChange(parsed)
         }
+        onParseErrorChange(isParsingFailed)
     }
 
     ParamTextField(
