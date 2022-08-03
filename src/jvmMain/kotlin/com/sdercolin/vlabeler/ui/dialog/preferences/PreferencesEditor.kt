@@ -385,7 +385,7 @@ private fun <T> SelectionItem(item: PreferencesItem.Selection<T>, state: Prefere
     SelectionBox(
         value = currentValue,
         onSelect = { state.update(item, it) },
-        options = item.options,
+        options = item.options.toList(),
         getText = { value ->
             when (value) {
                 is LocalizedText -> value.getText()

@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toStringTrimmed
 
 @Composable
@@ -30,7 +31,10 @@ fun InputBox(
     value: String,
     onValueChange: (String) -> Unit,
     leadingContent: @Composable RowScope.() -> Unit = {},
-    errorPrompt: ((String) -> String?)? = null
+    modifier: Modifier = Modifier,
+    errorPrompt: ((String) -> String?)? = null,
+    enabled: Boolean = true,
+    fixedWidth: Boolean = false,
 ) {
     val error = errorPrompt?.invoke(value)
     val borderColor = if (error != null) {
@@ -40,7 +44,7 @@ fun InputBox(
     }
     Row(verticalAlignment = Alignment.CenterVertically) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .border(
                     width = 1.dp,
                     color = borderColor,
@@ -51,15 +55,20 @@ fun InputBox(
         ) {
             leadingContent()
             BasicTextField(
-                modifier = Modifier.widthIn(min = 120.dp),
+                modifier = if (fixedWidth) Modifier.weight(1f) else Modifier.widthIn(min = 120.dp),
                 value = value,
-                textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
+                textStyle = MaterialTheme.typography.body2
+                    .copy(
+                        color = MaterialTheme.colors.onBackground
+                            .runIf(!enabled) { copy(alpha = 0.2f) }
+                    ),
                 onValueChange = onValueChange,
                 maxLines = 1,
-                cursorBrush = SolidColor(MaterialTheme.colors.onBackground)
+                cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+                enabled = enabled
             )
         }
-        if (error != null) {
+        if (error != null && error.isNotEmpty()) {
             BasicText(
                 modifier = Modifier
                     .padding(start = 10.dp)
@@ -68,7 +77,7 @@ fun InputBox(
                 text = error,
                 style = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.onError),
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

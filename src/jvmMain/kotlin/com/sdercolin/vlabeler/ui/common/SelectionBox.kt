@@ -4,8 +4,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
@@ -24,29 +28,52 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.util.runIf
 
 @Composable
-fun <T> SelectionBox(value: T, onSelect: (T) -> Unit, options: Array<T>, getText: (T) -> String) {
+fun <T> SelectionBox(
+    value: T,
+    onSelect: (T) -> Unit,
+    options: Collection<T>,
+    getText: (T) -> String,
+    modifier: Modifier = Modifier,
+    fixedWidth: Boolean = false,
+    customPadding: Boolean = false,
+    showIcon: Boolean = true
+) {
     var expanded by remember { mutableStateOf(false) }
     Box {
         Row(
-            modifier = Modifier.border(
-                width = 1.dp,
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(5.dp)
-            )
+            modifier = modifier
+                .heightIn(min = 46.dp)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(5.dp)
+                )
                 .clickable { expanded = !expanded }
-                .padding(vertical = 10.dp, horizontal = 15.dp),
+                .runIf(!customPadding) { padding(vertical = 10.dp, horizontal = 15.dp) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.widthIn(min = 150.dp),
+                modifier = if (fixedWidth) Modifier.weight(1f) else Modifier.widthIn(min = 120.dp),
                 text = getText(value),
                 style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.onBackground,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Icon(imageVector = Icons.Default.ExpandMore, modifier = Modifier.size(24.dp), contentDescription = null)
+            if (showIcon) {
+                Spacer(Modifier.size(10.dp))
+                Icon(
+                    imageVector = Icons.Default.ExpandMore,
+                    modifier = Modifier.size(24.dp),
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.onBackground
+                )
+            } else {
+                Spacer(Modifier.height(24.dp).width(1.dp))
+            }
         }
         DropdownMenu(
             expanded = expanded,

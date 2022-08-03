@@ -373,6 +373,18 @@ enum class Strings(val en: String) {
     PluginEntrySelectorPreservedSubjectName(
         en = "Entry name"
     ),
+    PluginEntrySelectorComparerValue(
+        en = "Input"
+    ),
+    PluginEntrySelectorPreviewSummaryError(
+        en = "Invalid input"
+    ),
+    PluginEntrySelectorPreviewSummaryInitializing(
+        en = "Initializing..."
+    ),
+    PluginEntrySelectorPreviewSummary(
+        en = "Selects %d/%d"
+    ),
     EditorSubTitleMultiple(
         en = "editing %d entries in sample %s"
     ),

@@ -20,13 +20,13 @@ class EntrySelectorTest {
                 EntrySelector.NumberFilterItem(
                     "fixed",
                     matchType = EntrySelector.NumberMatchType.Equals,
-                    absoluteComparerValue = 1.1,
+                    comparerValue = 1.1,
                     comparerName = null
                 ),
                 EntrySelector.NumberFilterItem(
                     "preu",
                     matchType = EntrySelector.NumberMatchType.LessThan,
-                    absoluteComparerValue = 0.0,
+                    comparerValue = 0.0,
                     comparerName = "overlap"
                 )
             )

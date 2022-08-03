@@ -1,6 +1,8 @@
 package com.sdercolin.vlabeler.model
 
+import com.sdercolin.vlabeler.io.getPropertyMap
 import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.util.JavaScript
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,15 +14,25 @@ data class EntrySelector(
     val filters: List<FilterItem>
 ) {
 
+    fun select(entries: List<Entry>, labelerConf: LabelerConf, js: JavaScript) = filters.fold(entries) { acc, filter ->
+        filter.filter(acc, labelerConf, js)
+    }
+
     /**
      * Model for an item in the entry selector.
-     * @param subject The name of the property being filtered. `sample` and `name` are preserved.
      */
     @Serializable
     sealed class FilterItem {
 
         abstract fun isValid(labelerConf: LabelerConf): Boolean
+        fun filter(entries: List<Entry>, labelerConf: LabelerConf, js: JavaScript): List<Entry> =
+            entries.filter { accept(it, labelerConf, js) }
 
+        abstract fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean
+
+        /**
+         * The name of the property being filtered. `sample` and `name` are preserved.
+         */
         abstract val subject: String
     }
 
@@ -30,9 +42,25 @@ data class EntrySelector(
         val matchType: TextMatchType,
         val matcherText: String
     ) : FilterItem() {
+
         override fun isValid(labelerConf: LabelerConf): Boolean {
             if (subject !in textItemSubjects.map { it.first }) return false
             return matcherText.isNotEmpty()
+        }
+
+        override fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean {
+            val subjectValue = when (subject) {
+                TextItemSubjectEntryName -> entry.sample
+                TextItemSubjectSampleName -> entry.name
+                else -> throw IllegalArgumentException("Unknown subject name as text: $subject")
+            }
+            return when (matchType) {
+                TextMatchType.Equals -> subjectValue == matcherText
+                TextMatchType.Contains -> subjectValue.contains(matcherText)
+                TextMatchType.StartsWith -> subjectValue.startsWith(matcherText)
+                TextMatchType.EndsWith -> subjectValue.endsWith(matcherText)
+                TextMatchType.Regex -> subjectValue.matches(matcherText.toRegex())
+            }
         }
     }
 
@@ -49,14 +77,36 @@ data class EntrySelector(
     data class NumberFilterItem(
         override val subject: String,
         val matchType: NumberMatchType,
-        val absoluteComparerValue: Double,
+        val comparerValue: Double,
         val comparerName: String?
     ) : FilterItem() {
+
         override fun isValid(labelerConf: LabelerConf): Boolean {
             val propertyNames = labelerConf.properties.map { it.name }
             if (subject !in propertyNames) return false
             if (comparerName != null && comparerName !in propertyNames) return false
             return true
+        }
+
+        override fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean {
+            val propertyMap = labelerConf.getPropertyMap(entry, js)
+            val subjectProperty = labelerConf.properties.find { it.name == subject }
+                ?: throw IllegalArgumentException("Unknown subject name as number: $subject")
+            val subjectValue = propertyMap.getValue(subjectProperty)
+            val comparerProperty = if (comparerName != null) {
+                labelerConf.properties.find { it.name == comparerName }
+                    ?: throw IllegalArgumentException("Unknown comparer name as number: $comparerName")
+            } else null
+            val comparerValue = if (comparerProperty != null) {
+                propertyMap.getValue(comparerProperty)
+            } else comparerValue
+            return when (matchType) {
+                NumberMatchType.Equals -> subjectValue == comparerValue
+                NumberMatchType.GreaterThan -> subjectValue > comparerValue
+                NumberMatchType.GreaterThanOrEquals -> subjectValue >= comparerValue
+                NumberMatchType.LessThan -> subjectValue < comparerValue
+                NumberMatchType.LessThanOrEquals -> subjectValue <= comparerValue
+            }
         }
     }
 
@@ -72,8 +122,11 @@ data class EntrySelector(
     companion object {
         val textItemSubjects
             get() = listOf(
-                "sample" to Strings.PluginEntrySelectorPreservedSubjectSample,
-                "name" to Strings.PluginEntrySelectorPreservedSubjectName
+                TextItemSubjectEntryName to Strings.PluginEntrySelectorPreservedSubjectName,
+                TextItemSubjectSampleName to Strings.PluginEntrySelectorPreservedSubjectSample
             )
+
+        private const val TextItemSubjectEntryName = "name"
+        private const val TextItemSubjectSampleName = "sample"
     }
 }
