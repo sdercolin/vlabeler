@@ -15,6 +15,7 @@ import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
+import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -243,7 +244,7 @@ fun FrameWindowScope.Menu(
                     Separator()
                     Item(
                         string(Strings.MenuToolsBatchEditManagePlugins),
-                        onClick = { TODO() }
+                        onClick = { appState.openCustomizableItemManagerDialog(CustomizableItem.Type.MacroPlugin) }
                     )
                 }
             }

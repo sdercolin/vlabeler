@@ -424,6 +424,18 @@ enum class Strings(val en: String) {
     InvalidEditedProjectException(
         en = "Invalid edited project. Please check error log for more information."
     ),
+    CustomizedItemLoadingException(
+        en = "Could not load the selected customized item."
+    ),
+    LabelerManagerTitle(
+        en = "Labelers"
+    ),
+    TemplatePluginManagerTitle(
+        en = "Template generators"
+    ),
+    MacroPluginManagerTitle(
+        en = "Batch Edit Plugins"
+    ),
     PreferencesEditorResetPage(
         en = "Reset items in this page"
     ),

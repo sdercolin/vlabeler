@@ -19,6 +19,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.PreferencesDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.runIf
@@ -40,6 +41,7 @@ interface AppDialogState {
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
     val macroPluginShownInDialog: Pair<Plugin, ParamMap>?
+    val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
     val embeddedDialog: EmbeddedDialogRequest<*>?
 
@@ -70,6 +72,8 @@ interface AppDialogState {
     fun openMacroPluginDialog(plugin: Plugin)
     fun updateMacroPluginDialogInputParams(params: ParamMap)
     fun closeMacroPluginDialog()
+    fun openCustomizableItemManagerDialog(type: CustomizableItem.Type)
+    fun closeCustomizableItemManagerDialog()
     fun requestClearCaches(scope: CoroutineScope)
     fun clearCachesAndReopen(scope: CoroutineScope)
 
@@ -79,7 +83,7 @@ interface AppDialogState {
     fun anyDialogOpening() =
         isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || macroPluginShownInDialog != null ||
-            embeddedDialog != null
+            customizableItemManagerTypeShownInDialog != null || embeddedDialog != null
 }
 
 class AppDialogStateImpl(
@@ -101,6 +105,7 @@ class AppDialogStateImpl(
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
     override var macroPluginShownInDialog: Pair<Plugin, ParamMap>? by mutableStateOf(null)
+    override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
     override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
     override var embeddedDialog: EmbeddedDialogRequest<*>? by mutableStateOf(null)
 
@@ -249,6 +254,14 @@ class AppDialogStateImpl(
         macroPluginShownInDialog = macroPluginShownInDialog?.let { it.first to params }
     }
 
+    override fun openCustomizableItemManagerDialog(type: CustomizableItem.Type) {
+        customizableItemManagerTypeShownInDialog = type
+    }
+
+    override fun closeCustomizableItemManagerDialog() {
+        customizableItemManagerTypeShownInDialog = null
+    }
+
     override fun closeMacroPluginDialog() {
         macroPluginShownInDialog = null
     }
@@ -269,6 +282,7 @@ class AppDialogStateImpl(
         isShowingSampleListDialog = false
         isShowingSampleDirectoryRedirectDialog = false
         macroPluginShownInDialog = null
+        customizableItemManagerTypeShownInDialog = null
         embeddedDialog = null
     }
 }

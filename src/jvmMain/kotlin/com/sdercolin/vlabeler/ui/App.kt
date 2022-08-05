@@ -13,6 +13,7 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.ErrorDialog
+import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
@@ -79,6 +80,12 @@ fun App(
                         plugin.saveParams(it)
                     }
                 }
+            )
+        }
+        appState.customizableItemManagerTypeShownInDialog?.let {
+            CustomizableItemManagerDialog(
+                it,
+                appState
             )
         }
         appState.error?.let { error ->

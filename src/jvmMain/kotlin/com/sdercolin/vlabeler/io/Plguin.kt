@@ -38,7 +38,8 @@ fun loadPlugins(type: Plugin.Type): List<Plugin> =
                 null
             }?.let {
                 Log.info("Loaded plugin: ${file.parent}")
-                it.copy(directory = file.parentFile)
+                val isBuiltIn = file.absolutePath.contains(DefaultPluginDir.absolutePath)
+                it.copy(directory = file.parentFile, builtIn = isBuiltIn)
             }
         }
 

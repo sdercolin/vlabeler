@@ -92,20 +92,22 @@ data class LabelerConf(
 ) {
 
     val fileName get() = "$name.$LabelerFileExtension"
+    val isBuiltIn get() = name.endsWith(".default")
 
     /**
      * Get constraints for canvas usage
      * Pair<a, b> represents "a <= b"
      */
-    val connectedConstraints: List<Pair<Int, Int>> = fields.withIndex()
-        .flatMap { field ->
-            field.value.constraints.flatMap { constraint ->
-                val min = constraint.min?.let { it to field.index }
-                val max = constraint.max?.let { field.index to it }
-                listOfNotNull(min, max)
+    val connectedConstraints: List<Pair<Int, Int>>
+        get() = fields.withIndex()
+            .flatMap { item ->
+                item.value.constraints.flatMap { constraint ->
+                    val min = constraint.min?.let { it to item.index }
+                    val max = constraint.max?.let { item.index to it }
+                    listOfNotNull(min, max)
+                }
             }
-        }
-        .distinct()
+            .distinct()
 
     /**
      * Custom field of the labeler

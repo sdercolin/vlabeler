@@ -46,7 +46,8 @@ data class Plugin(
     val parameters: Parameters? = null,
     val scriptFiles: List<String>,
     val resourceFiles: List<String> = listOf(),
-    @Transient val directory: File? = null
+    @Transient val directory: File? = null,
+    @Transient val builtIn: Boolean = false
 ) {
     fun readResourceFiles() = resourceFiles.map { requireNotNull(directory).resolve(it).readText() }
     fun readScriptTexts() = scriptFiles.map { requireNotNull(directory).resolve(it).readText() }

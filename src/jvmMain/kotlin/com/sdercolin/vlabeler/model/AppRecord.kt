@@ -16,7 +16,9 @@ data class AppRecord(
     val isToolboxDisplayed: Boolean = false,
     val sampleDirectory: String? = null,
     val workingDirectory: String? = null,
-    val labelerName: String? = null
+    val labelerName: String? = null,
+    val disabledLabelerNames: Set<String> = setOf(),
+    val disabledPluginNames: Set<String> = setOf()
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(
@@ -25,6 +27,14 @@ data class AppRecord(
 
     fun addRecent(path: String) = copy(
         recentProjects = (listOf(path) + recentProjects).distinct().take(MaxRecentProjectCount)
+    )
+
+    fun setLabelerDisabled(name: String, disabled: Boolean) = copy(
+        disabledLabelerNames = if (disabled) disabledLabelerNames + name else disabledLabelerNames - name
+    )
+
+    fun setPluginDisabled(name: String, disabled: Boolean) = copy(
+        disabledPluginNames = if (disabled) disabledPluginNames + name else disabledPluginNames - name
     )
 }
 

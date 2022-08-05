@@ -11,6 +11,7 @@ import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.shouldTogglePlayerWithInCurrentEntry
 import com.sdercolin.vlabeler.exception.InvalidOpenedProjectException
+import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
@@ -35,6 +36,7 @@ import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.toFrame
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.File
@@ -49,7 +51,7 @@ class AppState(
     val snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
     val availableLabelerConfs: List<LabelerConf>,
-    private val plugins: List<Plugin>,
+    plugins: List<Plugin>,
     appErrorState: AppErrorState = AppErrorStateImpl(),
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
     screenState: AppScreenState = AppScreenStateImpl(),
@@ -84,7 +86,15 @@ class AppState(
         projectClosed()
     }
 
-    fun getPlugins(type: Plugin.Type) = plugins.filter { it.type == type }
+    private val plugins = mutableStateOf(plugins)
+
+    fun getPlugins(type: Plugin.Type) = plugins.value.filter { it.type == type }
+
+    fun reloadPlugins() {
+        mainScope.launch(Dispatchers.IO) {
+            plugins.value = loadPlugins()
+        }
+    }
 
     private fun changeScreen(screen: Screen) {
         this.screen = screen
