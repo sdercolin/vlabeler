@@ -25,11 +25,11 @@ data class ProjectHistory(
         }
 
     private fun List<Project>.squashLatest(): List<Project> {
-        if (size < 3) return this
-        val (first, second, last) = takeLast(3)
-        return if (first.contentEquals(second) && second.contentEquals(last)) {
+        if (size < 2) return this
+        val (first, second) = takeLast(2)
+        return if (first.contentEquals(second)) {
             // only index changed, remove the previous one
-            dropLast(2) + last
+            dropLast(2) + second
         } else this
     }
 
