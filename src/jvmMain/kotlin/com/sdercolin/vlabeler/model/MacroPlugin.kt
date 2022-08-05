@@ -62,7 +62,7 @@ fun runMacroPlugin(
         js.close()
         project.copy(entries = editedEntries.map { it.entry }).validate()
     }.getOrElse {
-        val expected = js.get<Boolean>("expectedError")
+        val expected = js.getOrNull("expectedError") ?: false
         throw PluginRuntimeException(expected = expected, cause = it)
     }
 }

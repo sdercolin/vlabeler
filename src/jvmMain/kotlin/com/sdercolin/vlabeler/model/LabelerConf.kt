@@ -52,7 +52,8 @@ data class LabelerConf(
      */
     val defaultExtras: List<String>,
     /**
-     * Fields defined except for built-in "start" and "end"
+     * Fields defined except for built-in "start" and "end".
+     * Corresponds to [Entry.points]
      */
     val fields: List<Field> = listOf(),
     /**
