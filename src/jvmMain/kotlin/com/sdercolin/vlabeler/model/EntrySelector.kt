@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.model
 import com.sdercolin.vlabeler.io.getPropertyMap
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.util.JavaScript
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -43,6 +44,7 @@ data class EntrySelector(
     }
 
     @Serializable
+    @SerialName("text")
     data class TextFilterItem(
         override val subject: String,
         val matchType: TextMatchType,
@@ -83,6 +85,7 @@ data class EntrySelector(
     }
 
     @Serializable
+    @SerialName("number")
     data class NumberFilterItem(
         override val subject: String,
         val matchType: NumberMatchType,

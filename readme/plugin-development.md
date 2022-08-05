@@ -20,7 +20,7 @@ A plugin for `vLabeler` is a folder containing:
 |-----------------------------|------------------------|----------------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | name                        | String                 | (Required)     | all                   | Make sure the value is the same as the folder's name.                                                                                                                              |
 | version                     | Integer                | 1              | all                   |                                                                                                                                                                                    |
-| type                        | String                 | (Required)     | all                   | Currently only `template`.                                                                                                                                                         |
+| type                        | String                 | (Required)     | all                   | `template` or `macro`.                                                                                                                                                             |
 | displayedName               | String                 | same as `name` | all                   |                                                                                                                                                                                    |
 | author                      | String                 | (Required)     | all                   |                                                                                                                                                                                    |
 | email                       | String                 | ""             | all                   |                                                                                                                                                                                    |
@@ -51,18 +51,51 @@ A plugin for `vLabeler` is a folder containing:
 Every object in `list` defines a parameter that is shown in the plugin config dialog and passed to your scripts.
 The object has the following properties:
 
-| Property     | Type                                              | Default value | Supported parameter type | Description                                                        |
-|--------------|---------------------------------------------------|---------------|--------------------------|--------------------------------------------------------------------|
-| type         | String                                            | (Required)    | all                      | Can be any one of `integer`, `float`, `boolean`, `string`, `enum`. |
-| name         | String                                            | (Required)    | all                      | Parameter name for reference in your scripts.                      |
-| label        | String                                            | (Required)    | all                      | Displayed in the config dialog.                                    |
-| description  | String                                            | ""            | all                      | Displayed in the config dialog.                                    |
-| defaultValue | Integer &#124; Float &#124; Boolean &#124; String | (Required)    | all                      | Value type is according to the parameter's `type`.                 |
-| min          | Integer &#124; Float &#124; null                  | null          | integer, float           |                                                                    |
-| max          | Integer &#124; Float &#124; null                  | null          | integer, float           |                                                                    |
-| multiLine    | Boolean                                           | false         | string                   | Set to `true` if you want to allow multi-line string values.       |
-| optional     | Boolean                                           | (Required)    | string                   | Set to `true` if you want to allow empty string values.            |
-| options      | List\<String>                                     | (Required)    | enum                     | Items of the enumerable.                                           |
+| Property     | Type                       | Default value | Supported parameter type | Description                                                                             |
+|--------------|----------------------------|---------------|--------------------------|-----------------------------------------------------------------------------------------|
+| type         | String                     | (Required)    | all                      | Can be any one of `integer`, `float`, `boolean`, `string`, `enum` and ,`entrySelector`. |
+| name         | String                     | (Required)    | all                      | Parameter name for reference in your scripts.                                           |
+| label        | String                     | (Required)    | all                      | Displayed in the config dialog.                                                         |
+| description  | String                     | ""            | all                      | Displayed in the config dialog.                                                         |
+| defaultValue | (Actual type of the value) | (Required)    | all                      | Value type is according to the parameter's `type`.                                      |
+| min          | (Actual type of the value) | null          | integer, float           |                                                                                         |
+| max          | (Actual type of the value) | null          | integer, float           |                                                                                         |
+| multiLine    | Boolean                    | false         | string                   | Set to `true` if you want to allow multi-line string values.                            |
+| optional     | Boolean                    | (Required)    | string                   | Set to `true` if you want to allow empty string values.                                 |
+| options      | List\<String>              | (Required)    | enum                     | Items of the enumerable.                                                                |
+
+### Types
+
+- `integer`: Integer value. Should be between `min` and `max` if defined.
+- `float`: Float value. Should be between `min` and `max` if defined.
+- `boolean`: Should be either `true` or `false`.
+- `string`: String value. Should not contain line breaks if `multiLine` is `false`. Should not be empty if `optional`
+  is `false`.
+- `enum`: Enumerable value described as string. Should be one of the items in `options`.
+- `entrySelector`: **Can only be used in a `macro` type plugin.** Instance
+  of [EntrySelector](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/EntrySelector.kt) type:
+
+```
+{
+    "filters": [
+        {
+            "type": "text", // an example of a `text` filter
+            "subject": "name", // `name` for entry name or `sample` for sample name
+            "matchType": "Contains", // `Contains` | `Equals` | `StartsWith` | `EndsWith` | `Regex`
+            "matcherText": "foo"
+        },
+        {
+            "type": "number", // an example of a `number` filter
+            "subject": "overlap", // `name` of any property defined in the labeler
+            "matchType": "GreaterThan", // `Equals` | `GreaterThan`| `LessThan` | `GreaterThanOrEquals` | `LessThanOrEquals`
+            "comparerValue": 0.5, // only used when `comparerName` is null
+            "comparerName": "offset" // nullable, `name` of any property defined in the labeler
+        }
+    ]
+}
+```
+
+####
 
 ## Scripting Environment
 
@@ -83,13 +116,14 @@ It should create a list of entries for subsequent edition.
 
 The following variables are provided before your scripts are executed.
 
-| name      | type          | description                                                                                           |
-|-----------|---------------|-------------------------------------------------------------------------------------------------------|
-| inputs    | List\<String> | List of texts read from the input files. Check the list size if your input file is optional.          |
-| samples   | List\<String> | List of file names of the sample files. Extension `.wav` is not included.                             |
-| params    | Dictionary    | Use `name` of the defined parameters as the key to get values in their actual types.                  |
-| resources | List\<String> | List of texts read from the resources files in the same order as declared in your `plugin.json`.      |
-| debug     | Boolean       | It's set to `true` only when the application is running in the debug environment (Gradle `run` task). |
+| name      | type          | description                                                                                                        |
+|-----------|---------------|--------------------------------------------------------------------------------------------------------------------|
+| inputs    | List\<String> | List of texts read from the input files. Check the list size if your input file is optional.                       |
+| samples   | List\<String> | List of file names of the sample files. Extension `.wav` is not included.                                          |
+| params    | Dictionary    | Use `name` of the defined parameters as the key to get values in their actual types.                               |
+| resources | List\<String> | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
+| labeler   | LabelerConf   | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
+| debug     | Boolean       | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
 
 ### Output
 
@@ -141,6 +175,87 @@ Check the following built-in `template` plugins as examples:
 - [cv-oto-gen](../resources/common/plugins/template/cv-oto-gen): Generate CV oto entries from parameters
 - [regex-raw-gen](../resources/common/plugins/template/regex-raw-gen): Use a regular expression to generate raw entry
   lines. Supports all types of labelers.
+
+## Batch Edit (Macro) Scripts
+
+A plugin with `macro` type is executed by an item in menu `Tools` -> `Batch Edit`. It is only available when editing a
+project.
+
+Basically it takes a list of entry objects and edits them, then sets the result to the `output` list.
+
+### Input
+
+The following variables are provided before your scripts are executed.
+
+| name      | type          | description                                                                                                        |
+|-----------|---------------|--------------------------------------------------------------------------------------------------------------------|
+| entries   | List\<Entry>  | List of current [Entry](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Entry.kt) objects in the project.       |
+| params    | Dictionary    | Use `name` of the defined parameters as the key to get values in their actual types.                               |
+| resources | List\<String> | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
+| labeler   | LabelerConf   | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
+| debug     | Boolean       | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
+
+### Use an entry selector
+
+A parameter with `entrySelector` type is passed in `params` as a list of the selected indexes of the `entries` list.
+
+Following code is an example of using an entry selector:
+
+```javascript
+let selectedIndexes = params["selector"] // use actual name of your parameter
+for (index in entries) {
+    let entry = entries[index]
+    if (selectedIndexes.includes(index)) {
+        // edit the entry and set to the output list
+    }
+}
+```
+
+### Output
+
+You have to create a list named `output` to pass the result back to the application.
+
+`output` needs to be a list of objects in following type:
+
+```javascript
+class EditedEntry {
+    constructor(originalIndex, entry) {
+        this.originalIndex = originalIndex // null for newly added entries
+        this.entry = entry
+    }
+}
+```
+
+### Examples
+
+Check the following built-in `macro` plugins as examples:
+
+- [batch-edit-entry-name](../resources/common/plugins/macro/batch-edit-entry-name): Edit selected entry names for all
+  labelers. You can refer to it for the usage of entry selector
+- [batch-edit-oto-parameter](../resources/common/plugins/macro/batch-edit-oto-parameter): Edit parameters of selected
+  entries for UTAU oto. The `labeler` is used to get the specific settings about `oto.ini`
+- [execute-scripts](../resources/common/plugins/macro/execute-scripts): Execute input scripts to edit the project. It
+  can be used as a debug tool when developing a plugin.
+
+## Error handling
+
+When the scripts encounter illegal inputs, you can show error message to users by throwing an error along with setting
+the `expectedError` property to `true`.
+
+Other errors thrown in the scripts will be displayed as "Unexpected errors" without detailed information, indicating
+that it is more likely to be a bug of the plugin, rather than an illegal input or something else that may happen in
+normal use cases.
+
+If user contacts you with an "Unexpected errors", you can ask for detailed information in the logs to help you solve the
+issue.
+
+```javascript
+let unknownExpressionMatch = expression.match(/\$\{\w+}/)
+if (unknownExpressionMatch) {
+    expectedError = true
+    throw new Error(`Unknown placeholder: ${unknownExpressionMatch[0]}`)
+}
+```
 
 ## Debugging
 

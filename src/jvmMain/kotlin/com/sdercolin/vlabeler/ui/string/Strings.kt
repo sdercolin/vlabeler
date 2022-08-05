@@ -115,7 +115,7 @@ enum class Strings(val en: String) {
         en = "Batch Edit"
     ),
     MenuToolsBatchEditManagePlugins(
-        en = "Manage plugins..."
+        en = "Manage Plugins..."
     ),
     MenuSettings(
         en = "Settings"
