@@ -253,13 +253,13 @@ enum class Strings(val en: String) {
         en = "Go to selected entry"
     ),
     SampleListOpenSampleDirectoryButton(
-        en = "Change sample directory"
+        en = "Open sample directory"
     ),
     SampleListSampleDirectoryLabel(
         en = "Sample directory: "
     ),
     SampleListSampleDirectoryRedirectButton(
-        en = "Redirect..."
+        en = "Change sample directory"
     ),
     EditorRenderStatusLabel(
         en = "%d/%d Rendering..."

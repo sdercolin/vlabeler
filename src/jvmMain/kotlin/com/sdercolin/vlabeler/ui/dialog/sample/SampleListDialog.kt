@@ -350,7 +350,7 @@ private fun SampleDirectoryBar(
         Spacer(Modifier.width(20.dp))
         ClickableText(
             modifier = Modifier.alignByBaseline(),
-            text = string(Strings.SampleListOpenSampleDirectoryButton),
+            text = string(Strings.SampleListSampleDirectoryRedirectButton),
             style = MaterialTheme.typography.caption,
             onClick = { requestRedirectSampleDirectory() }
         )
