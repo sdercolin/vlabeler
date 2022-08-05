@@ -1,0 +1,48 @@
+{
+  "name": "batch-edit-oto-parameter",
+  "version": 1,
+  "type": "macro",
+  "displayedName": "Batch edit oto parameter",
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": "Edit the parameters of multiple entries in UTAU oto.ini at once",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-oto-parameter",
+  "supportedLabelFileExtension": "ini",
+  "parameters": {
+    "list": [
+      {
+        "type": "entrySelector",
+        "name": "selector",
+        "label": "Entries to edit",
+        "description": "Select the entries to edit. Leave blank to edit all entries.",
+        "defaultValue": {
+          "filters": []
+        }
+      },
+      {
+        "type": "enum",
+        "name": "parameter",
+        "label": "Parameter",
+        "defaultValue": "Offset",
+        "options": [
+          "Offset",
+          "Fixed",
+          "Cutoff",
+          "Preutterance",
+          "Overlap"
+        ]
+      },
+      {
+        "type": "string",
+        "name": "expression",
+        "label": "Expression",
+        "description": "Expression to calculate the new value. Parameter placeholders such as \"${Offset}\", \"${Overlap} are available in the calculation.",
+        "defaultValue": "",
+        "optional": false
+      }
+    ]
+  },
+  "scriptFiles": [
+    "batch-edit-oto-parameter.js"
+  ]
+}

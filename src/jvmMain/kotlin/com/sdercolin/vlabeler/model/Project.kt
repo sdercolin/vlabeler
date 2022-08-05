@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
-import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.ParamMap
@@ -288,7 +287,7 @@ private fun generateEntriesByPlugin(
 ): Result<List<Entry>> = runCatching {
     when (
         val result =
-            runTemplatePlugin(plugin, params.orEmpty(), listOfNotNull(inputFile), encoding, sampleNames)
+            runTemplatePlugin(plugin, params.orEmpty(), listOfNotNull(inputFile), encoding, sampleNames, labelerConf)
     ) {
         is TemplatePluginResult.Parsed -> {
             val entries = result.entries.map {
@@ -390,7 +389,7 @@ suspend fun projectOf(
         plugin != null -> {
             generateEntriesByPlugin(labelerConf, sampleNames, plugin, pluginParams, inputFile, encoding)
                 .getOrElse {
-                    return Result.failure(PluginRuntimeException(it))
+                    return Result.failure(it)
                 }
         }
         inputFile != null -> {

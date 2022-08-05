@@ -406,8 +406,8 @@ enum class Strings(val en: String) {
     EmptySampleDirectoryException(
         en = "Could not create project because no sample files are found in the given sample directory."
     ),
-    PluginRuntimeException(
-        en = "An error occurred during the plugin execution. Please contact the author for more information."
+    PluginRuntimeUnexpectedException(
+        en = "An unexpected error occurred during the plugin execution. Please contact the author for more information."
     ),
     InvalidCreatedProjectException(
         en = "The created project is not valid. Please contact author of the labeler/plugin for more information."

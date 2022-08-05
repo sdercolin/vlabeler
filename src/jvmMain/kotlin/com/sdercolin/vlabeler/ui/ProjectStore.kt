@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
-import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.exception.ProjectUpdateOnSampleException
 import com.sdercolin.vlabeler.io.autoSaveTemporaryProjectFile
 import com.sdercolin.vlabeler.io.saveProjectFile
@@ -283,7 +282,7 @@ class ProjectStoreImpl(
     override suspend fun executeMacroPlugin(plugin: Plugin, params: ParamMap) {
         val newProject = runCatching { runMacroPlugin(plugin, params, requireProject()) }
             .getOrElse {
-                errorState.showError(PluginRuntimeException(it))
+                errorState.showError(it)
                 return
             }
         editProject { newProject }

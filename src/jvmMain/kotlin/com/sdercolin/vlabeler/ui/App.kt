@@ -21,6 +21,7 @@ import com.sdercolin.vlabeler.ui.starter.Starter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun App(
@@ -64,6 +65,9 @@ fun App(
                         appState.closeMacroPluginDialog()
                         if (it != null) {
                             appState.showProgress()
+                            withContext(Dispatchers.IO) {
+                                plugin.saveParams(it)
+                            }
                             appState.executeMacroPlugin(plugin, it)
                             appState.hideProgress()
                         }
