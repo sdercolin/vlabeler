@@ -36,7 +36,7 @@ fun runTemplatePlugin(
     js.setJson("resources", resourceTexts)
 
     if (plugin.outputRawEntry.not()) {
-        val entryDefCode = useResource("template_entry.js") { String(it.readAllBytes()) }
+        val entryDefCode = useResource("class_entry.js") { String(it.readAllBytes()) }
         js.eval(entryDefCode)
     }
 

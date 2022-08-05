@@ -1,0 +1,43 @@
+{
+  "name": "batch-edit-entry-name",
+  "version": 1,
+  "type": "macro",
+  "displayedName": "Batch edit entry name",
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": "Generate template for CV oto.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-entry-name",
+  "supportedLabelFileExtension": "*",
+  "parameters": {
+    "list": [
+      {
+        "type": "entrySelector",
+        "name": "selector",
+        "label": "Entries to edit",
+        "description": "Select the entries to edit. Leave blank to edit all entries.",
+        "defaultValue": {
+          "filters": []
+        }
+      },
+      {
+        "type": "string",
+        "name": "from",
+        "label": "From",
+        "description": "Regex is available.",
+        "defaultValue": "",
+        "optional": false
+      },
+      {
+        "type": "string",
+        "name": "to",
+        "label": "To",
+        "description": "Regex captured group placeholders ($1, $2, etc.) are available.",
+        "defaultValue": "",
+        "optional": false
+      }
+    ]
+  },
+  "scriptFiles": [
+    "batch-edit-entry-name.js"
+  ]
+}
