@@ -14,23 +14,16 @@ data class ProjectHistory(
         return copy(list = list)
     }
 
-    fun push(project: Project) = (list.subList(0, index + 1) + project)
-        .squashLatest()
-        .takeLast(MaxStackSize)
-        .let {
-            ProjectHistory(
-                list = it,
-                index = it.lastIndex
-            )
-        }
-
-    private fun List<Project>.squashLatest(): List<Project> {
-        if (size < 2) return this
-        val (first, second) = takeLast(2)
-        return if (first.contentEquals(second)) {
-            // only index changed, remove the previous one
-            dropLast(2) + second
-        } else this
+    fun push(project: Project): ProjectHistory {
+        if (current.contentEquals(project)) return this
+        return (list.subList(0, index + 1) + project)
+            .takeLast(MaxStackSize)
+            .let {
+                ProjectHistory(
+                    list = it,
+                    index = it.lastIndex
+                )
+            }
     }
 
     private fun Project.contentEquals(other: Project) = copy(currentIndex = other.currentIndex) == other
