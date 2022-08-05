@@ -13,6 +13,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.getNumberKey
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isMacOS
+import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -226,6 +227,24 @@ fun FrameWindowScope.Menu(
                     onClick = { appState.scrollFitViewModel.emit() },
                     enabled = appState.isEditorActive && appState.isScrollFitEnabled
                 )
+            }
+        }
+        Menu(string(Strings.MenuTools), mnemonic = 'T') {
+            if (appState != null) {
+                Menu(string(Strings.MenuToolsBatchEdit)) {
+                    appState.getPlugins(Plugin.Type.Macro).forEach {
+                        Item(
+                            it.displayedName,
+                            onClick = { appState.openMacroPluginDialog(it) },
+                            enabled = appState.isEditorActive
+                        )
+                    }
+                    Separator()
+                    Item(
+                        string(Strings.MenuToolsBatchEditManagePlugins),
+                        onClick = { TODO() }
+                    )
+                }
             }
         }
         Menu(string(Strings.MenuSettings), mnemonic = 'S') {

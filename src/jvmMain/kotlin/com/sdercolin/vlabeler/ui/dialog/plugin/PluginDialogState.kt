@@ -1,9 +1,11 @@
 package com.sdercolin.vlabeler.ui.dialog.plugin
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.model.EntrySelector
-import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.ParamMap
@@ -15,7 +17,7 @@ class PluginDialogState(
     val plugin: Plugin,
     paramMap: ParamMap,
     private val savedParamMap: ParamMap?,
-    private val labelerConf: LabelerConf?,
+    val project: Project?,
     private val submit: (ParamMap?) -> Unit,
     private val save: (ParamMap) -> Unit
 ) {
@@ -84,7 +86,9 @@ class PluginDialogState(
             }
             is Plugin.Parameter.EntrySelectorParam -> {
                 val entrySelectorValue = value as? EntrySelector ?: return false
-                val labelerConf = requireNotNull(labelerConf) { "labelerConf is required for a EntrySelectorParam" }
+                val labelerConf = requireNotNull(project?.labelerConf) {
+                    "labelerConf is required for a EntrySelectorParam"
+                }
                 entrySelectorValue.filters.all { it.isValid(labelerConf) }
             }
         }

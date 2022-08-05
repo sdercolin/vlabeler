@@ -5,7 +5,7 @@
   "displayedName": "Batch edit entry name",
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Generate template for CV oto.",
+  "description": "Edit the name of multiple entries at once",
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-entry-name",
   "supportedLabelFileExtension": "*",
   "parameters": {

@@ -1,7 +1,11 @@
 package com.sdercolin.vlabeler.util
 
+import com.sdercolin.vlabeler.model.EntrySelector
+import com.sdercolin.vlabeler.model.Project
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 
 /**
@@ -29,9 +33,9 @@ class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
 
     override fun containsKey(key: String): Boolean = map.containsKey(key)
 
-    fun toJsonObject() = buildJsonObject {
+    fun resolve(project: Project?, js: JavaScript?) = buildJsonObject {
         for ((key, value) in map) {
-            put(key, toJsonPrimitive(value))
+            put(key, resolveItem(value, project, js))
         }
     }
 }
@@ -40,12 +44,21 @@ fun Map<String, Any>.toParamMap() = ParamMap(this)
 
 fun ParamMap?.orEmpty() = this ?: ParamMap(mapOf())
 
-private fun toJsonPrimitive(value: Any?): JsonPrimitive {
+private fun resolveItem(value: Any?, project: Project?, js: JavaScript?): JsonElement {
     if (value == null) return JsonNull
     return when (value) {
         is Number -> JsonPrimitive(value)
         is String -> JsonPrimitive(value)
         is Boolean -> JsonPrimitive(value)
+        is EntrySelector -> {
+            requireNotNull(project) { "Project is required to resolve EntrySelector" }
+            requireNotNull(js) { "JavaScript is required to resolve EntrySelector" }
+            buildJsonArray {
+                for (index in value.select(project.entries, project.labelerConf, js)) {
+                    add(JsonPrimitive(index))
+                }
+            }
+        }
         else -> throw IllegalArgumentException("$value is not supported")
     }
 }

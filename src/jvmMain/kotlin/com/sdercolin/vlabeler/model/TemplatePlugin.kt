@@ -32,7 +32,7 @@ fun runTemplatePlugin(
     js.set("debug", isDebug)
     js.setJson("inputs", inputTexts)
     js.setJson("samples", sampleNames)
-    js.setJson("params", params.toJsonObject())
+    js.setJson("params", params.resolve(project = null, js = null))
     js.setJson("resources", resourceTexts)
 
     if (plugin.outputRawEntry.not()) {

@@ -47,7 +47,7 @@ import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.runIf
 
 @Composable
-fun EntrySelector(
+fun ParamEntrySelector(
     labelerConf: LabelerConf,
     value: EntrySelector,
     onValueChange: (EntrySelector) -> Unit,
@@ -305,7 +305,7 @@ private fun FilterRow(
 @Preview
 private fun Preview() = Box(Modifier.size(800.dp)) {
     AppTheme {
-        EntrySelector(
+        ParamEntrySelector(
             labelerConf = LabelerConf(
                 name = "aaa",
                 extension = "a",

@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 data class AppRecord(
     val recentProjects: List<String> = listOf(),
     val windowSizeDp: Pair<Float, Float> = Pair(1200f, 800f),
+    val pluginDialogSizeDp: Pair<Float, Float> = Pair(900f, 700f),
     val isPropertyViewDisplayed: Boolean = false,
     val isEntryListPinned: Boolean = false,
     val isToolboxDisplayed: Boolean = false,

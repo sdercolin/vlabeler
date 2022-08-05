@@ -14,9 +14,11 @@ data class EntrySelector(
     val filters: List<FilterItem>
 ) {
 
-    fun select(entries: List<Entry>, labelerConf: LabelerConf, js: JavaScript) = filters.fold(entries) { acc, filter ->
-        filter.filter(acc, labelerConf, js)
-    }
+    fun select(entries: List<Entry>, labelerConf: LabelerConf, js: JavaScript) = filters
+        .fold(entries.withIndex().toList()) { acc, filter ->
+            filter.filter(acc, labelerConf, js)
+        }
+        .map { it.index }
 
     /**
      * Model for an item in the entry selector.
@@ -25,8 +27,12 @@ data class EntrySelector(
     sealed class FilterItem {
 
         abstract fun isValid(labelerConf: LabelerConf): Boolean
-        fun filter(entries: List<Entry>, labelerConf: LabelerConf, js: JavaScript): List<Entry> =
-            entries.filter { accept(it, labelerConf, js) }
+
+        fun filter(
+            entries: List<IndexedValue<Entry>>,
+            labelerConf: LabelerConf,
+            js: JavaScript
+        ): List<IndexedValue<Entry>> = entries.filter { accept(it.value, labelerConf, js) }
 
         abstract fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean
 
@@ -45,13 +51,16 @@ data class EntrySelector(
 
         override fun isValid(labelerConf: LabelerConf): Boolean {
             if (subject !in textItemSubjects.map { it.first }) return false
+            if (matchType == TextMatchType.Regex) {
+                runCatching { matcherText.toRegex() }.getOrElse { return false }
+            }
             return matcherText.isNotEmpty()
         }
 
         override fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean {
             val subjectValue = when (subject) {
-                TextItemSubjectEntryName -> entry.sample
-                TextItemSubjectSampleName -> entry.name
+                TextItemSubjectEntryName -> entry.name
+                TextItemSubjectSampleName -> entry.sample
                 else -> throw IllegalArgumentException("Unknown subject name as text: $subject")
             }
             return when (matchType) {

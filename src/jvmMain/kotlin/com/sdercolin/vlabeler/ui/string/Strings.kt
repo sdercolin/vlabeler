@@ -108,6 +108,15 @@ enum class Strings(val en: String) {
     MenuNavigateScrollFit(
         en = "Scroll to Show the Current Entry"
     ),
+    MenuTools(
+        en = "Tools"
+    ),
+    MenuToolsBatchEdit(
+        en = "Batch Edit"
+    ),
+    MenuToolsBatchEditManagePlugins(
+        en = "Manage plugins..."
+    ),
     MenuSettings(
         en = "Settings"
     ),
@@ -336,6 +345,9 @@ enum class Strings(val en: String) {
     ),
     PluginDialogDescriptionMinMax(
         en = "min: %s, max: %s"
+    ),
+    PluginDialogExecute(
+        en = "Execute"
     ),
     PluginEntrySelectorTextMatchTypeEquals(
         en = "Equals"

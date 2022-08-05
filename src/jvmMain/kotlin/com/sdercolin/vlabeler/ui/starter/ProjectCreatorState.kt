@@ -32,7 +32,7 @@ import java.io.File
 class ProjectCreatorState(
     private val coroutineScope: CoroutineScope,
     availableLabelerConfs: List<LabelerConf>,
-    private val appRecordStore: AppRecordStore
+    val appRecordStore: AppRecordStore
 ) {
     private val appRecord get() = appRecordStore.stateFlow.value
     var isLoading: Boolean by mutableStateOf(false)
@@ -159,9 +159,9 @@ class ProjectCreatorState(
         }
     }
 
-    fun savePluginParams(plugin: Plugin, params: ParamMap) {
+    fun savePluginParams(params: ParamMap) {
         coroutineScope.launch {
-            plugin.saveParams(params)
+            templatePlugin?.saveParams(params)
             templatePluginSavedParams = params
         }
     }

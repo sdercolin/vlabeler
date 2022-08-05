@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.loadProject
+import com.sdercolin.vlabeler.io.loadSavedParams
+import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
@@ -17,10 +19,12 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.PreferencesDialogArgs
+import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -35,6 +39,7 @@ interface AppDialogState {
     val isShowingExportDialog: Boolean
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
+    val macroPluginShownInDialog: Pair<Plugin, ParamMap>?
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
     val embeddedDialog: EmbeddedDialogRequest<*>?
 
@@ -62,6 +67,9 @@ interface AppDialogState {
     fun openSampleDirectoryRedirectDialog()
     fun closeSampleDirectoryRedirectDialog()
     fun openPreferencesDialog()
+    fun openMacroPluginDialog(plugin: Plugin)
+    fun updateMacroPluginDialogInputParams(params: ParamMap)
+    fun closeMacroPluginDialog()
     fun requestClearCaches(scope: CoroutineScope)
     fun clearCachesAndReopen(scope: CoroutineScope)
 
@@ -70,7 +78,8 @@ interface AppDialogState {
 
     fun anyDialogOpening() =
         isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog ||
-            isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || embeddedDialog != null
+            isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || macroPluginShownInDialog != null ||
+            embeddedDialog != null
 }
 
 class AppDialogStateImpl(
@@ -79,9 +88,11 @@ class AppDialogStateImpl(
     private val snackbarHostState: SnackbarHostState
 ) : AppDialogState {
     private lateinit var state: AppState
+    private lateinit var scope: CoroutineScope
 
     override fun initDialogState(appState: AppState) {
         state = appState
+        scope = appState.mainScope
     }
 
     override var isShowingOpenProjectDialog: Boolean by mutableStateOf(false)
@@ -89,6 +100,7 @@ class AppDialogStateImpl(
     override var isShowingExportDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
+    override var macroPluginShownInDialog: Pair<Plugin, ParamMap>? by mutableStateOf(null)
     override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
     override var embeddedDialog: EmbeddedDialogRequest<*>? by mutableStateOf(null)
 
@@ -227,6 +239,20 @@ class AppDialogStateImpl(
 
     private fun askIfSaveBeforeClearCaches() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsClearingCaches)
 
+    override fun openMacroPluginDialog(plugin: Plugin) {
+        scope.launch(Dispatchers.IO) {
+            macroPluginShownInDialog = plugin to plugin.loadSavedParams()
+        }
+    }
+
+    override fun updateMacroPluginDialogInputParams(params: ParamMap) {
+        macroPluginShownInDialog = macroPluginShownInDialog?.let { it.first to params }
+    }
+
+    override fun closeMacroPluginDialog() {
+        macroPluginShownInDialog = null
+    }
+
     override fun clearCachesAndReopen(scope: CoroutineScope) {
         projectStore.requireProject().getCacheDir().deleteRecursively()
         loadProject(scope, projectStore.requireProject().projectFile, state)
@@ -240,6 +266,9 @@ class AppDialogStateImpl(
         isShowingOpenProjectDialog = false
         isShowingSaveAsProjectDialog = false
         isShowingExportDialog = false
+        isShowingSampleListDialog = false
+        isShowingSampleDirectoryRedirectDialog = false
+        macroPluginShownInDialog = null
         embeddedDialog = null
     }
 }

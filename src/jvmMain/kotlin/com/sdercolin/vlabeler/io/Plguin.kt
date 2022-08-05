@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.io
 
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
+import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.util.CustomPluginDir
 import com.sdercolin.vlabeler.util.DefaultPluginDir
@@ -15,6 +16,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.float
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
@@ -48,12 +50,16 @@ suspend fun Plugin.loadSavedParams(): ParamMap = withContext(Dispatchers.IO) {
             val jsonObject = json.parseToJsonElement(contentText).jsonObject
             parameters?.list.orEmpty().associate {
                 val value = jsonObject[it.name]
-                    ?.let { literal ->
+                    ?.let { element ->
                         when (it.type) {
-                            Plugin.ParameterType.Integer -> literal.jsonPrimitive.int
-                            Plugin.ParameterType.Float -> literal.jsonPrimitive.float
-                            Plugin.ParameterType.Boolean -> literal.jsonPrimitive.boolean
-                            else -> literal.jsonPrimitive.content
+                            Plugin.ParameterType.Integer -> element.jsonPrimitive.int
+                            Plugin.ParameterType.Float -> element.jsonPrimitive.float
+                            Plugin.ParameterType.Boolean -> element.jsonPrimitive.boolean
+                            Plugin.ParameterType.EntrySelector -> json.decodeFromJsonElement(
+                                EntrySelector.serializer(),
+                                element
+                            )
+                            else -> element.jsonPrimitive.content
                         }
                     }
                     ?: requireNotNull(it.defaultValue)
@@ -70,7 +76,8 @@ suspend fun Plugin.saveParams(paramMap: ParamMap) = withContext(Dispatchers.IO) 
             is Number -> JsonPrimitive(value)
             is Boolean -> JsonPrimitive(value)
             is String -> JsonPrimitive(value)
-            else -> throw IllegalArgumentException("`$value` is not a supported JsonPrimitive value")
+            is EntrySelector -> json.encodeToJsonElement(value)
+            else -> throw IllegalArgumentException("`$value` is not a supported value")
         }
     }
     val contentText = JsonObject(content).toString()

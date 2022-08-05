@@ -8,15 +8,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.io.openCreatedProject
+import com.sdercolin.vlabeler.io.saveParams
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.ErrorDialog
+import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun App(
@@ -48,6 +52,30 @@ fun App(
         }
         if (appState.isShowingSampleListDialog) {
             appState.editor?.let { SampleListDialog(it, finish = { appState.closeSampleListDialog() }) }
+        }
+        appState.macroPluginShownInDialog?.let { (plugin, params) ->
+            MacroPluginDialog(
+                appRecordStore = appState.appRecordStore,
+                plugin = plugin,
+                paramMap = params,
+                project = appState.requireProject(),
+                submit = {
+                    mainScope.launch {
+                        appState.closeMacroPluginDialog()
+                        if (it != null) {
+                            appState.showProgress()
+                            appState.executeMacroPlugin(plugin, it)
+                            appState.hideProgress()
+                        }
+                    }
+                },
+                save = {
+                    mainScope.launch(Dispatchers.IO) {
+                        appState.updateMacroPluginDialogInputParams(it)
+                        plugin.saveParams(it)
+                    }
+                }
+            )
         }
         appState.error?.let { error ->
             ErrorDialog(

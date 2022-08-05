@@ -38,33 +38,48 @@ import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogState
-import com.sdercolin.vlabeler.model.LabelerConf
+import androidx.compose.ui.window.rememberDialogState
+import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.common.ReversedRow
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.White20
+import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 
 @Composable
 private fun rememberState(
     plugin: Plugin,
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
-    labelerConf: LabelerConf?,
+    project: Project?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit
 ) = remember(plugin, paramMap, savedParamMap, submit, save) {
@@ -72,35 +87,75 @@ private fun rememberState(
         plugin,
         paramMap,
         savedParamMap,
-        labelerConf,
+        project,
         submit,
         save
     )
 }
 
 @Composable
-fun PluginDialog(
+fun TemplatePluginDialog(
+    appRecordStore: AppRecordStore,
     plugin: Plugin,
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
-    labelerConf: LabelerConf?,
     submit: (ParamMap?) -> Unit,
-    save: (Plugin, ParamMap) -> Unit,
+    save: (ParamMap) -> Unit
+) = PluginDialog(
+    appRecordStore = appRecordStore,
+    plugin = plugin,
+    paramMap = paramMap,
+    savedParamMap = savedParamMap,
+    project = null,
+    submit = submit,
+    save = save
+)
+
+@Composable
+fun MacroPluginDialog(
+    appRecordStore: AppRecordStore,
+    plugin: Plugin,
+    paramMap: ParamMap,
+    project: Project?,
+    submit: (ParamMap?) -> Unit,
+    save: (ParamMap) -> Unit
+) = PluginDialog(
+    appRecordStore = appRecordStore,
+    plugin = plugin,
+    paramMap = paramMap,
+    savedParamMap = paramMap,
+    project = project,
+    submit = submit,
+    save = save
+)
+
+@Composable
+private fun PluginDialog(
+    appRecordStore: AppRecordStore,
+    plugin: Plugin,
+    paramMap: ParamMap,
+    savedParamMap: ParamMap?,
+    project: Project?,
+    submit: (ParamMap?) -> Unit,
+    save: (ParamMap) -> Unit,
     state: PluginDialogState = rememberState(
         plugin,
         paramMap,
         savedParamMap,
-        labelerConf,
+        project,
         submit,
-        save = { save(plugin, it) }
+        save
     )
 ) {
+    val appRecord = appRecordStore.stateFlow.collectAsState()
+    val dialogState = rememberResizableDialogState(appRecord)
     Dialog(
         title = string(Strings.PluginDialogTitle),
         icon = painterResource("icon.ico"),
         onCloseRequest = { state.cancel() },
-        state = DialogState(width = 800.dp, height = 500.dp)
+        state = dialogState
     ) {
+        LaunchSaveDialogSize(dialogState, appRecordStore)
         AppTheme {
             Content(state)
         }
@@ -108,9 +163,39 @@ fun PluginDialog(
 }
 
 @Composable
+private fun rememberResizableDialogState(appRecord: State<AppRecord>): DialogState {
+    val dialogSize = remember { appRecord.value.pluginDialogSizeDp }
+    return rememberDialogState(width = dialogSize.first.dp, height = dialogSize.second.dp)
+}
+
+private fun AppRecordStore.saveDialogSize(dpSize: DpSize) {
+    val size = dpSize.width.value to dpSize.height.value
+    Log.info("Plugin Dialog size changed: $size")
+    update { copy(pluginDialogSizeDp = size) }
+}
+
+@Composable
+private fun LaunchSaveDialogSize(
+    dialogState: DialogState,
+    appRecordStore: AppRecordStore
+) {
+    LaunchedEffect(dialogState) {
+        snapshotFlow { dialogState.size }
+            .onEach(appRecordStore::saveDialogSize)
+            .launchIn(this)
+    }
+}
+
+@Composable
 private fun Content(state: PluginDialogState) {
     val scrollState = rememberScrollState()
     val plugin = state.plugin
+    val needJsClient = plugin.parameters?.list?.any { it.type == Plugin.ParameterType.EntrySelector } == true
+    val js by produceState(null as JavaScript?, needJsClient) {
+        if (needJsClient && value == null) {
+            value = withContext(Dispatchers.IO) { JavaScript() }
+        }
+    }
     Surface(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
             Column(
@@ -148,7 +233,7 @@ private fun Content(state: PluginDialogState) {
                 }
                 Spacer(Modifier.height(25.dp))
                 if (state.hasParams) {
-                    Params(state)
+                    Params(state, js)
                     Spacer(Modifier.height(25.dp))
                 }
                 Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
@@ -162,7 +247,11 @@ private fun Content(state: PluginDialogState) {
                         enabled = state.isAllValid(),
                         onClick = { state.apply() }
                     ) {
-                        Text(string(Strings.CommonOkay))
+                        val strings = when (plugin.type) {
+                            Plugin.Type.Template -> Strings.CommonOkay
+                            Plugin.Type.Macro -> Strings.PluginDialogExecute
+                        }
+                        Text(string(strings))
                     }
                 }
             }
@@ -228,7 +317,7 @@ private fun Description(description: String) {
 }
 
 @Composable
-private fun Params(state: PluginDialogState) {
+private fun Params(state: PluginDialogState, js: JavaScript?) {
     Column(
         modifier = Modifier.background(color = White20, shape = RoundedCornerShape(10.dp))
             .padding(30.dp),
@@ -278,7 +367,16 @@ private fun Params(state: PluginDialogState) {
                                 isLong = true,
                                 singleLine = def.multiLine.not()
                             )
-                        is Plugin.Parameter.EntrySelectorParam -> TODO()
+                        is Plugin.Parameter.EntrySelectorParam ->
+                            ParamEntrySelector(
+                                requireNotNull(state.project).labelerConf,
+                                value as EntrySelector,
+                                onValueChange,
+                                isError,
+                                onParseErrorChange = { state.setParseError(i, it) },
+                                requireNotNull(state.project).entries,
+                                js
+                            )
                     }
                 }
             }

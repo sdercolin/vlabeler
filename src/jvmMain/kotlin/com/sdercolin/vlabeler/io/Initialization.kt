@@ -86,7 +86,7 @@ suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatc
 }
 
 suspend fun loadPlugins(): List<Plugin> = withContext(Dispatchers.IO) {
-    loadPlugins(Plugin.Type.Template)
+    loadPlugins(Plugin.Type.Template) + loadPlugins(Plugin.Type.Macro)
 }
 
 private fun File.asLabelerConf(): Result<LabelerConf> {
