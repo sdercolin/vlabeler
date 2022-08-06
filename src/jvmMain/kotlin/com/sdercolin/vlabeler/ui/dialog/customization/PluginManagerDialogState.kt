@@ -35,7 +35,7 @@ abstract class PluginManagerDialogState<T : CustomizableItem>(
         val plugin = configFile.readText().parseJson<Plugin>()
         require(plugin.type == pluginType) { "Unexpected Plugin type: ${plugin.type}" }
         val targetFolder = getPluginsDirectory(pluginType).resolve(plugin.name)
-        require(configFile.parentFile.copyRecursively(targetFolder)) {
+        require(configFile.parentFile.copyRecursively(targetFolder, overwrite = true)) {
             "Failed to copy plugin to ${targetFolder.absolutePath}"
         }
     }.getOrElse {

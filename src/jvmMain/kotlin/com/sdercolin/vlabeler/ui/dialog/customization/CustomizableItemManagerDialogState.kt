@@ -1,6 +1,5 @@
 package com.sdercolin.vlabeler.ui.dialog.customization
 
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -22,7 +21,7 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
     protected val appRecordStore: AppRecordStore
 ) {
 
-    val snackbarHostState = SnackbarHostState()
+    val snackbarHostState = appState.snackbarHostState
 
     private val _items = mutableStateListOf<T>()
     val items: List<T> get() = _items
@@ -109,6 +108,6 @@ fun rememberCustomizableItemManagerDialogState(
     appState: AppState
 ) = when (type) {
     CustomizableItem.Type.MacroPlugin -> rememberMacroPluginManagerState(appState)
-    CustomizableItem.Type.TemplatePlugin -> TODO()
-    CustomizableItem.Type.Labeler -> TODO()
+    CustomizableItem.Type.TemplatePlugin -> rememberTemplatePluginManagerState(appState)
+    CustomizableItem.Type.Labeler -> rememberLabelerPluginManagerState(appState)
 }

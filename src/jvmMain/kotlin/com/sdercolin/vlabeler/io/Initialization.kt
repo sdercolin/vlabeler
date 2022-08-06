@@ -80,8 +80,9 @@ suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatc
     if (availableLabelers.isEmpty()) {
         throw IllegalStateException("No labeler configuration files found.")
     }
-
-    Log.info("Labelers: ${availableLabelers.joinToString { it.toString() }}")
+    availableLabelers.forEach {
+        Log.info("Loaded labeler: ${it.name}")
+    }
     availableLabelers.sortedBy { it.name }
 }
 
@@ -89,7 +90,7 @@ suspend fun loadPlugins(): List<Plugin> = withContext(Dispatchers.IO) {
     loadPlugins(Plugin.Type.Template) + loadPlugins(Plugin.Type.Macro)
 }
 
-private fun File.asLabelerConf(): Result<LabelerConf> {
+fun File.asLabelerConf(): Result<LabelerConf> {
     val text = readText()
     val result = runCatching {
         text.parseJson<LabelerConf>().copy(

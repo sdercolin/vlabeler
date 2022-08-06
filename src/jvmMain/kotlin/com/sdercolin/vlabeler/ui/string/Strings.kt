@@ -138,6 +138,12 @@ enum class Strings(val en: String) {
     MenuSettingsPreferences(
         en = "Preferences..."
     ),
+    MenuSettingsLabelers(
+        en = "Labelers..."
+    ),
+    MenuSettingsTemplatePlugins(
+        en = "Template Generators..."
+    ),
     CommonOkay(
         en = "OK"
     ),

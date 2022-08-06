@@ -11,6 +11,7 @@ import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.shouldTogglePlayerWithInCurrentEntry
 import com.sdercolin.vlabeler.exception.InvalidOpenedProjectException
+import com.sdercolin.vlabeler.io.loadAvailableLabelerConfs
 import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
@@ -50,7 +51,7 @@ class AppState(
     val appRecordStore: AppRecordStore,
     val snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
-    val availableLabelerConfs: List<LabelerConf>,
+    availableLabelerConfs: List<LabelerConf>,
     plugins: List<Plugin>,
     appErrorState: AppErrorState = AppErrorStateImpl(),
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
@@ -93,6 +94,15 @@ class AppState(
     fun reloadPlugins() {
         mainScope.launch(Dispatchers.IO) {
             plugins.value = loadPlugins()
+        }
+    }
+
+    private val _availableLabelerConfs = mutableStateOf(availableLabelerConfs)
+    val availableLabelerConfs: List<LabelerConf> get() = _availableLabelerConfs.value
+
+    fun reloadLabelers() {
+        mainScope.launch(Dispatchers.IO) {
+            _availableLabelerConfs.value = loadAvailableLabelerConfs()
         }
     }
 

@@ -173,7 +173,7 @@ the `New Project` page.
 You can distribute the labelers created by yourself to other users.
 You are also welcomed to submit your labeler files to our project to make it built-in.
 
-Labeler management UI will be added in the future.
+You can import/delete/disable labelers in `Settings` -> `Labelers...`.
 
 ## Plugins
 

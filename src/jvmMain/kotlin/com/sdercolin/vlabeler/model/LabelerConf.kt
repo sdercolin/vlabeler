@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.LabelerConf.Property
+import com.sdercolin.vlabeler.util.DefaultLabelerDir
 import kotlinx.serialization.Serializable
 
 /**
@@ -92,7 +93,7 @@ data class LabelerConf(
 ) {
 
     val fileName get() = "$name.$LabelerFileExtension"
-    val isBuiltIn get() = name.endsWith(".default")
+    val isBuiltIn get() = DefaultLabelerDir.listFiles().orEmpty().any { it.name == fileName }
 
     /**
      * Get constraints for canvas usage

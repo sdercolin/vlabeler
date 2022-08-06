@@ -254,6 +254,14 @@ fun FrameWindowScope.Menu(
                     string(Strings.MenuSettingsPreferences),
                     onClick = { appState.openPreferencesDialog() }
                 )
+                Item(
+                    string(Strings.MenuSettingsLabelers),
+                    onClick = { appState.openCustomizableItemManagerDialog(CustomizableItem.Type.Labeler) }
+                )
+                Item(
+                    string(Strings.MenuSettingsTemplatePlugins),
+                    onClick = { appState.openCustomizableItemManagerDialog(CustomizableItem.Type.TemplatePlugin) }
+                )
             }
         }
         Menu(string(Strings.MenuHelp), mnemonic = 'H') {
