@@ -31,7 +31,7 @@ import java.io.File
 
 class ProjectCreatorState(
     private val coroutineScope: CoroutineScope,
-    availableLabelerConfs: List<LabelerConf>,
+    labelerConfs: List<LabelerConf>,
     val appRecordStore: AppRecordStore
 ) {
     private val appRecord get() = appRecordStore.stateFlow.value
@@ -47,7 +47,7 @@ class ProjectCreatorState(
     var currentPathPicker: PathPicker? by mutableStateOf(null)
         private set
     var labeler: LabelerConf by mutableStateOf(
-        availableLabelerConfs.firstOrNull { it.name == appRecord.labelerName } ?: availableLabelerConfs.first()
+        labelerConfs.firstOrNull { it.name == appRecord.labelerName } ?: labelerConfs.first()
     )
         private set
     var templatePlugin: Plugin? by mutableStateOf(null)
@@ -344,10 +344,10 @@ class ProjectCreatorState(
 @Composable
 fun rememberProjectCreatorState(
     coroutineScope: CoroutineScope,
-    availableLabelerConfs: List<LabelerConf>,
+    activeLabelerConfs: List<LabelerConf>,
     appRecordStore: AppRecordStore
 ) = remember(appRecordStore) {
-    ProjectCreatorState(coroutineScope, availableLabelerConfs, appRecordStore)
+    ProjectCreatorState(coroutineScope, activeLabelerConfs, appRecordStore)
 }
 
 enum class PathPicker {

@@ -90,6 +90,9 @@ class AppState(
     private val plugins = mutableStateOf(plugins)
 
     fun getPlugins(type: Plugin.Type) = plugins.value.filter { it.type == type }
+    fun getActivePlugins(type: Plugin.Type) = getPlugins(type).filterNot {
+        appRecordStore.stateFlow.value.disabledPluginNames.contains(it.name)
+    }
 
     fun reloadPlugins() {
         mainScope.launch(Dispatchers.IO) {
@@ -99,6 +102,10 @@ class AppState(
 
     private val _availableLabelerConfs = mutableStateOf(availableLabelerConfs)
     val availableLabelerConfs: List<LabelerConf> get() = _availableLabelerConfs.value
+    val activeLabelerConfs: List<LabelerConf>
+        get() = availableLabelerConfs.filterNot {
+            appRecordStore.stateFlow.value.disabledLabelerNames.contains(it.name)
+        }
 
     fun reloadLabelers() {
         mainScope.launch(Dispatchers.IO) {

@@ -1,5 +1,8 @@
 package com.sdercolin.vlabeler.ui.dialog.customization
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.util.toUri
 import java.awt.Desktop
 import java.io.File
@@ -43,7 +46,7 @@ abstract class CustomizableItem(
         Desktop.getDesktop().browse(uri)
     }
 
-    var disabled: Boolean = disabled
+    var disabled: Boolean by mutableStateOf(disabled)
         private set
 
     fun toggleDisabled() {

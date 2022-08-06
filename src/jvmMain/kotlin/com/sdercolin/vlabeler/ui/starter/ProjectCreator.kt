@@ -63,14 +63,14 @@ import kotlinx.coroutines.CoroutineScope
 fun ProjectCreator(
     create: (Project) -> Unit,
     cancel: () -> Unit,
-    availableLabelerConfs: List<LabelerConf>,
-    availableTemplatePlugins: List<Plugin>,
+    activeLabelerConfs: List<LabelerConf>,
+    activeTemplatePlugins: List<Plugin>,
     snackbarHostState: SnackbarHostState,
     appRecordStore: AppRecordStore,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     state: ProjectCreatorState = rememberProjectCreatorState(
         coroutineScope,
-        availableLabelerConfs,
+        activeLabelerConfs,
         appRecordStore
     ),
 ) {
@@ -95,7 +95,7 @@ fun ProjectCreator(
                         { SampleDirectoryTextField(state) },
                         { WorkingDirectoryTextField(state) },
                         { ProjectNameTextField(state) },
-                        { LabelerSelectorRow(state, availableLabelerConfs, availableTemplatePlugins) },
+                        { LabelerSelectorRow(state, activeLabelerConfs, activeTemplatePlugins) },
                         { InputFileTextField(state) },
                         { EncodingSelector(state) }
                     ).forEach {

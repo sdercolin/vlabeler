@@ -24,6 +24,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Surface
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -60,7 +62,7 @@ fun CustomizableItemManagerDialog(
     Box(
         modifier = Modifier.fillMaxSize()
             .background(color = Black50)
-            .plainClickable(),
+            .plainClickable { state.cancelSelection() },
         contentAlignment = Alignment.Center
     ) {
         Surface(modifier = Modifier.fillMaxSize(0.8f)) {
@@ -117,6 +119,7 @@ private fun MiddleButtonBar(state: CustomizableItemManagerDialogState<*>) {
             tint = getTint(canRemove),
             modifier = Modifier.size(22.dp).clickable(enabled = canRemove) { state.requestRemoveCurrentItem() }
         )
+
         val selectedItem = state.selectedItem
         Icon(
             imageVector = Icons.Default.Search,
@@ -184,50 +187,58 @@ private fun ColumnScope.Content(state: CustomizableItemManagerDialogState<*>) {
 @Composable
 fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialogState<*>) {
     val isSelected = state.selectedIndex == index
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .runIf(isSelected) { background(MaterialTheme.colors.primaryVariant) }
             .plainClickable { state.selectItem(index) }
-            .padding(vertical = 20.dp, horizontal = 15.dp)
+            .padding(vertical = 20.dp, horizontal = 15.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        val textColor = MaterialTheme.colors.onSurface.runIf(item.disabled) { copy(alpha = 0.5f) }
-        Row {
-            Text(
-                text = item.name,
-                style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
-                color = textColor,
-                modifier = Modifier.alignByBaseline(),
-                maxLines = 1
-            )
-            Spacer(Modifier.width(10.dp))
-            Text(
-                text = string(Strings.PluginDialogInfoAuthor, item.author),
-                style = MaterialTheme.typography.caption,
-                color = textColor,
-                modifier = Modifier.alignByBaseline(),
-                maxLines = 1
-            )
-            Spacer(Modifier.width(10.dp))
-            Text(
-                text = string(Strings.PluginDialogInfoVersion, item.version),
-                style = MaterialTheme.typography.caption,
-                color = textColor,
-                modifier = Modifier.alignByBaseline(),
-                maxLines = 1
-            )
+        Column(modifier = Modifier.weight(1f)) {
+            Row {
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.alignByBaseline(),
+                    maxLines = 1
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = string(Strings.PluginDialogInfoAuthor, item.author),
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.alignByBaseline(),
+                    maxLines = 1
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = string(Strings.PluginDialogInfoVersion, item.version),
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.alignByBaseline(),
+                    maxLines = 1
+                )
+            }
+            if (item.description.isNotEmpty()) {
+                Text(
+                    modifier = Modifier.padding(top = 8.dp),
+                    text = item.description,
+                    style = MaterialTheme.typography.caption.copy(
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.75f)
+                    ),
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
-        if (item.description.isNotEmpty()) {
-            Text(
-                modifier = Modifier.padding(top = 8.dp),
-                text = item.description,
-                style = MaterialTheme.typography.caption.copy(
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.75f)
-                ),
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+        Switch(
+            checked = item.disabled.not(),
+            onCheckedChange = { state.toggleItemDisabled(index) },
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colors.primary,
+                uncheckedThumbColor = MaterialTheme.colors.onBackground
+            ),
+            modifier = Modifier.padding(horizontal = 10.dp)
+        )
     }
 }
 

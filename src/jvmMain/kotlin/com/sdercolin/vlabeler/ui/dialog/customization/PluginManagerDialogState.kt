@@ -26,9 +26,9 @@ abstract class PluginManagerDialogState<T : CustomizableItem>(
     appState = appState,
     appRecordStore = appRecordStore
 ) {
-    override fun saveDisabled() {
-        val currentItem = items[requireNotNull(selectedIndex)]
-        appRecordStore.update { setPluginDisabled(currentItem.name, currentItem.disabled) }
+    override fun saveDisabled(index: Int) {
+        val item = items[index]
+        appRecordStore.update { setPluginDisabled(item.name, item.disabled) }
     }
 
     override suspend fun importNewItem(configFile: File) = runCatching {

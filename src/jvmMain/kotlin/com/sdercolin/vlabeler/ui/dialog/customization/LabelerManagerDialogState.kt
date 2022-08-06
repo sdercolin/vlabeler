@@ -24,9 +24,9 @@ class LabelerManagerDialogState(
     appState = appState,
     appRecordStore = appRecordStore
 ) {
-    override fun saveDisabled() {
-        val currentItem = items[requireNotNull(selectedIndex)]
-        appRecordStore.update { setLabelerDisabled(currentItem.name, currentItem.disabled) }
+    override fun saveDisabled(index: Int) {
+        val item = items[index]
+        appRecordStore.update { setLabelerDisabled(item.name, item.disabled) }
     }
 
     override suspend fun importNewItem(configFile: File) = runCatching {

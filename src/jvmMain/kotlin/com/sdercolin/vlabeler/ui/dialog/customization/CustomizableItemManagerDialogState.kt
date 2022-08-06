@@ -36,14 +36,15 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
 
     protected abstract fun reload()
 
-    fun toggleItemDisabled() {
-        items[requireNotNull(selectedIndex)].toggleDisabled()
+    fun toggleItemDisabled(index: Int) {
+        items[index].toggleDisabled()
+        saveDisabled(index)
     }
 
     var isShowingFileSelector: Boolean by mutableStateOf(false)
         protected set
 
-    abstract fun saveDisabled()
+    abstract fun saveDisabled(index: Int)
 
     val selectedItem get() = selectedIndex?.let { items.getOrNull(it) }
 
@@ -71,6 +72,10 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
 
     fun selectItem(index: Int) {
         selectedIndex = index
+    }
+
+    fun cancelSelection() {
+        selectedIndex = null
     }
 
     fun openDirectory() {

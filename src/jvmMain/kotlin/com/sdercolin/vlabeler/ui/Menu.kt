@@ -233,7 +233,7 @@ fun FrameWindowScope.Menu(
         Menu(string(Strings.MenuTools), mnemonic = 'T') {
             if (appState != null) {
                 Menu(string(Strings.MenuToolsBatchEdit)) {
-                    appState.getPlugins(Plugin.Type.Macro).forEach {
+                    appState.getActivePlugins(Plugin.Type.Macro).forEach {
                         Item(
                             it.displayedName,
                             onClick = { appState.openMacroPluginDialog(it) },

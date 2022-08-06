@@ -42,8 +42,8 @@ fun App(
                 ProjectCreator(
                     create = { openCreatedProject(mainScope, it, appState) },
                     cancel = { appState.closeProjectCreator() },
-                    availableLabelerConfs = appState.availableLabelerConfs,
-                    availableTemplatePlugins = appState.getPlugins(Plugin.Type.Template),
+                    activeLabelerConfs = appState.activeLabelerConfs,
+                    activeTemplatePlugins = appState.getActivePlugins(Plugin.Type.Template),
                     snackbarHostState = appState.snackbarHostState,
                     appRecordStore = appState.appRecordStore
                 )
