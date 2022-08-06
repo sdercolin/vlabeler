@@ -264,7 +264,6 @@ class AppDialogStateImpl(
     private fun askIfSaveBeforeClearCaches() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsClearingCaches)
 
     override fun openMacroPluginDialog(plugin: Plugin) {
-        closeAllDialogs()
         scope.launch(Dispatchers.IO) {
             macroPluginShownInDialog = plugin to plugin.loadSavedParams()
         }
