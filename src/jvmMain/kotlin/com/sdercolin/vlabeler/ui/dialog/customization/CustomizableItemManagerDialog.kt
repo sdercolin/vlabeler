@@ -249,6 +249,10 @@ fun BottomButtonBar(state: CustomizableItemManagerDialogState<*>) {
         TextButton(onClick = { state.openDirectory() }) {
             Text(string(Strings.CustomizableItemManagerOpenDirectory))
         }
+        Spacer(Modifier.width(25.dp))
+        TextButton(onClick = { state.reload() }) {
+            Text(string(Strings.CustomizableItemManagerReload))
+        }
         Spacer(Modifier.weight(1f))
         Button(onClick = state::finish) {
             Text(string(Strings.CommonOkay))

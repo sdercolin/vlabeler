@@ -457,6 +457,9 @@ enum class Strings(val en: String) {
     CustomizableItemManagerOpenDirectory(
         en = "Open directory"
     ),
+    CustomizableItemManagerReload(
+        en = "Reload list"
+    ),
     PreferencesEditorResetPage(
         en = "Reset items in this page"
     ),

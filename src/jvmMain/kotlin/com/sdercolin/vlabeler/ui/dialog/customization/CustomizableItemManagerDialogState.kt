@@ -34,7 +34,7 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
         _items.addAll(items)
     }
 
-    protected abstract fun reload()
+    abstract fun reload()
 
     fun toggleItemDisabled(index: Int) {
         items[index].toggleDisabled()
