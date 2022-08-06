@@ -261,6 +261,9 @@ class AppState(
                 is CommonConfirmationDialogAction.RedirectSampleDirectory -> {
                     openSampleDirectoryRedirectDialog()
                 }
+                is CommonConfirmationDialogAction.RemoveCustomizableItem -> {
+                    action.state.removeItem(action.item)
+                }
             }
             is PreferencesDialogResult -> {
                 val newConf = result.newConf ?: return
@@ -328,6 +331,8 @@ class AppState(
     }
 
     val isEditorActive get() = project != null && screen is Screen.Editor && !anyDialogOpening()
+    val isMacroPluginAvailable
+        get() = project != null && screen is Screen.Editor && !anyDialogOpeningExceptMacroPluginManager()
 
     val isScrollFitEnabled get() = isMarkerDisplayed && editor?.sampleInfoResult?.getOrNull() != null
 

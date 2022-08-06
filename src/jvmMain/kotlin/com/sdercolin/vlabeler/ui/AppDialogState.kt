@@ -20,6 +20,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.PreferencesDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
+import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.runIf
@@ -64,6 +65,7 @@ interface AppDialogState {
     fun confirmIfRemoveCurrentEntry(isLastEntry: Boolean)
     fun confirmIfLoadAutoSavedProject(file: File)
     fun confirmIfRedirectSampleDirectory(currentDirectory: File)
+    fun confirmIfRemoveCustomizableItem(state: CustomizableItemManagerDialogState<*>, item: CustomizableItem)
     fun openSampleListDialog()
     fun closeSampleListDialog()
     fun openSampleDirectoryRedirectDialog()
@@ -84,6 +86,15 @@ interface AppDialogState {
         isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || macroPluginShownInDialog != null ||
             customizableItemManagerTypeShownInDialog != null || embeddedDialog != null
+
+    fun anyDialogOpeningExceptMacroPluginManager() =
+        isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog ||
+            isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || macroPluginShownInDialog != null ||
+            (
+                customizableItemManagerTypeShownInDialog != null &&
+                    customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
+                ) ||
+            embeddedDialog != null
 }
 
 class AppDialogStateImpl(
@@ -116,6 +127,7 @@ class AppDialogStateImpl(
     private fun askIfSaveBeforeOpenProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpening)
 
     override fun openOpenProjectDialog() {
+        closeAllDialogs()
         isShowingOpenProjectDialog = true
     }
 
@@ -134,6 +146,7 @@ class AppDialogStateImpl(
         openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpeningRecent(file))
 
     override fun openSaveAsProjectDialog() {
+        closeAllDialogs()
         isShowingSaveAsProjectDialog = true
     }
 
@@ -145,6 +158,7 @@ class AppDialogStateImpl(
     private fun askIfSaveBeforeExport() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExporting)
 
     override fun openExportDialog() {
+        closeAllDialogs()
         isShowingExportDialog = true
     }
 
@@ -161,6 +175,7 @@ class AppDialogStateImpl(
     }
 
     override fun <T : EmbeddedDialogArgs> openEmbeddedDialog(args: T) {
+        closeAllDialogs()
         embeddedDialog = EmbeddedDialogRequest(args) {
             state.closeEmbeddedDialog()
             if (it != null) state.handleDialogResult(it)
@@ -212,6 +227,10 @@ class AppDialogStateImpl(
         openEmbeddedDialog(CommonConfirmationDialogAction.RedirectSampleDirectory(currentDirectory))
     }
 
+    override fun confirmIfRemoveCustomizableItem(state: CustomizableItemManagerDialogState<*>, item: CustomizableItem) {
+        openEmbeddedDialog(CommonConfirmationDialogAction.RemoveCustomizableItem(state, item))
+    }
+
     override fun openSampleListDialog() {
         isShowingSampleListDialog = true
     }
@@ -245,6 +264,7 @@ class AppDialogStateImpl(
     private fun askIfSaveBeforeClearCaches() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsClearingCaches)
 
     override fun openMacroPluginDialog(plugin: Plugin) {
+        closeAllDialogs()
         scope.launch(Dispatchers.IO) {
             macroPluginShownInDialog = plugin to plugin.loadSavedParams()
         }
@@ -255,6 +275,7 @@ class AppDialogStateImpl(
     }
 
     override fun openCustomizableItemManagerDialog(type: CustomizableItem.Type) {
+        closeAllDialogs()
         customizableItemManagerTypeShownInDialog = type
     }
 

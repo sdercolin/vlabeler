@@ -71,30 +71,28 @@ fun SampleListDialog(
         contentAlignment = Alignment.Center
     ) {
         Surface(modifier = Modifier.fillMaxSize(0.8f)) {
-            Box(modifier = Modifier.padding(vertical = 20.dp, horizontal = 30.dp)) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Spacer(Modifier.height(5.dp))
-                    SampleDirectoryBar(
-                        directory = state.sampleDirectory,
-                        valid = state.isSampleDirectoryExisting(),
-                        requestRedirectSampleDirectory = {
-                            state.requestRedirectSampleDirectory()
-                        }
-                    )
-                    Spacer(Modifier.height(15.dp))
-                    Content(state)
-                    Spacer(Modifier.height(20.dp))
-                    ButtonBar(
-                        finish = finish,
-                        hasSelectedEntry = state.selectedEntryIndex != null,
-                        jumpToSelectedEntry = {
-                            state.jumpToSelectedEntry()
-                            finish()
-                        },
-                        canOpenSampleDirectory = state.isSampleDirectoryExisting(),
-                        openSampleDirectory = { state.openSampleDirectory() }
-                    )
-                }
+            Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 30.dp)) {
+                Spacer(Modifier.height(5.dp))
+                SampleDirectoryBar(
+                    directory = state.sampleDirectory,
+                    valid = state.isSampleDirectoryExisting(),
+                    requestRedirectSampleDirectory = {
+                        state.requestRedirectSampleDirectory()
+                    }
+                )
+                Spacer(Modifier.height(15.dp))
+                Content(state)
+                Spacer(Modifier.height(20.dp))
+                ButtonBar(
+                    finish = finish,
+                    hasSelectedEntry = state.selectedEntryIndex != null,
+                    jumpToSelectedEntry = {
+                        state.jumpToSelectedEntry()
+                        finish()
+                    },
+                    canOpenSampleDirectory = state.isSampleDirectoryExisting(),
+                    openSampleDirectory = { state.openSampleDirectory() }
+                )
             }
         }
     }

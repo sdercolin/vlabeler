@@ -237,8 +237,7 @@ fun FrameWindowScope.Menu(
                         Item(
                             it.displayedName,
                             onClick = { appState.openMacroPluginDialog(it) },
-                            enabled = appState.isEditorActive &&
-                                it.isLabelFileExtensionSupported(appState.requireProject().labelerConf.extension)
+                            enabled = it.isMacroExecutable(appState)
                         )
                     }
                     Separator()

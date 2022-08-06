@@ -5,4 +5,4 @@ import com.sdercolin.vlabeler.ui.string.string
 
 class CustomizedItemLoadingException(
     cause: Throwable?
-) : Exception(string(Strings.CustomizedItemLoadingException), cause)
+) : Exception(string(Strings.CustomizableItemLoadingException), cause)

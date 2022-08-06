@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog.customization
 
+import com.sdercolin.vlabeler.util.toUri
 import java.awt.Desktop
 import java.io.File
 
@@ -13,8 +14,7 @@ abstract class CustomizableItem(
     val website: String,
     val rootFile: File,
     val canRemove: Boolean,
-    disabled: Boolean,
-    val executable: Boolean
+    disabled: Boolean
 ) {
 
     fun remove() {
@@ -26,11 +26,32 @@ abstract class CustomizableItem(
         Desktop.getDesktop().open(file)
     }
 
+    fun hasEmail(): Boolean {
+        return email.isNotEmpty()
+    }
+
+    fun openEmail() {
+        Desktop.getDesktop().browse("mailto:$email".toUri())
+    }
+
+    fun hasWebsite(): Boolean {
+        return website.isNotBlank()
+    }
+
+    fun openWebsite() {
+        val uri = website.takeIf { it.isNotBlank() }?.toUri() ?: return
+        Desktop.getDesktop().browse(uri)
+    }
+
     var disabled: Boolean = disabled
         private set
 
     fun toggleDisabled() {
         disabled = !disabled
+    }
+
+    open fun canExecute(): Boolean {
+        return false
     }
 
     open fun execute() {}

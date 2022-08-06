@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
+import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import java.io.File
@@ -44,6 +46,11 @@ sealed class CommonConfirmationDialogAction(
                 Strings.AskIfRedirectSampleDirectoryDialogDescription,
                 currentDirectory.absolutePath
             )
+        )
+
+    class RemoveCustomizableItem(val state: CustomizableItemManagerDialogState<*>, val item: CustomizableItem) :
+        CommonConfirmationDialogAction(
+            string(Strings.CustomizableItemManagerRemoveItemConfirm, item.displayedName)
         )
 }
 

@@ -424,17 +424,32 @@ enum class Strings(val en: String) {
     InvalidEditedProjectException(
         en = "Invalid edited project. Please check error log for more information."
     ),
-    CustomizedItemLoadingException(
+    CustomizableItemLoadingException(
         en = "Could not load the selected customized item."
     ),
     LabelerManagerTitle(
         en = "Labelers"
     ),
+    LabelerManagerImportDialogTitle(
+        en = "Import labeler"
+    ),
     TemplatePluginManagerTitle(
         en = "Template generators"
     ),
+    TemplatePluginManagerImportDialogTitle(
+        en = "Import template generator"
+    ),
     MacroPluginManagerTitle(
         en = "Batch Edit Plugins"
+    ),
+    MacroPluginManagerImportDialogTitle(
+        en = "Import batch edit plugin"
+    ),
+    CustomizableItemManagerRemoveItemConfirm(
+        en = "Are you sure you want to remove \"%s\"? This will remove the file(s) from the disk."
+    ),
+    CustomizableItemManagerOpenDirectory(
+        en = "Open directory"
     ),
     PreferencesEditorResetPage(
         en = "Reset items in this page"

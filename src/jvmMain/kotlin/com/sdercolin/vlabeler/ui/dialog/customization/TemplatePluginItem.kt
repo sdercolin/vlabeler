@@ -15,6 +15,5 @@ class TemplatePluginItem(
     website = plugin.website,
     rootFile = requireNotNull(plugin.directory),
     canRemove = plugin.builtIn.not(),
-    disabled = disabled,
-    executable = false
+    disabled = disabled
 )

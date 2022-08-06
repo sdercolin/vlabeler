@@ -3,6 +3,7 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toParamMap
@@ -54,6 +55,12 @@ data class Plugin(
     fun getDefaultParams() = parameters?.list.orEmpty().associate { parameter ->
         parameter.name to requireNotNull(parameter.defaultValue)
     }.toParamMap()
+
+    fun isMacroExecutable(appState: AppState): Boolean {
+        if (appState.isMacroPluginAvailable.not()) return false
+        if (isLabelFileExtensionSupported(appState.requireProject().labelerConf.extension).not()) return false
+        return true
+    }
 
     fun isLabelFileExtensionSupported(extension: String) =
         supportedLabelFileExtension == "*" || supportedLabelFileExtension.split('|').contains(extension)

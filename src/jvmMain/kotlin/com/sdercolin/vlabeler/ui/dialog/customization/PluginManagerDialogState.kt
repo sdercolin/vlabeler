@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.dialog.customization
 
 import com.sdercolin.vlabeler.exception.CustomizedItemLoadingException
+import com.sdercolin.vlabeler.io.PluginInfoFileName
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
@@ -11,16 +12,18 @@ import java.io.File
 
 abstract class PluginManagerDialogState<T : CustomizableItem>(
     private val pluginType: Plugin.Type,
-    items: List<T>,
-    private val appState: AppState,
     title: Strings,
+    importDialogTitle: Strings,
     allowExecution: Boolean,
+    appState: AppState,
     appRecordStore: AppRecordStore
 ) : CustomizableItemManagerDialogState<T>(
-    items = items,
     title = title,
+    importDialogTitle = importDialogTitle,
+    definitionFileNameSuffix = PluginInfoFileName,
     directory = getPluginsDirectory(pluginType),
     allowExecution = allowExecution,
+    appState = appState,
     appRecordStore = appRecordStore
 ) {
     override fun saveDisabled() {
@@ -35,9 +38,12 @@ abstract class PluginManagerDialogState<T : CustomizableItem>(
         require(configFile.parentFile.copyRecursively(targetFolder)) {
             "Failed to copy plugin to ${targetFolder.absolutePath}"
         }
-        appState.reloadPlugins()
     }.getOrElse {
         throw CustomizedItemLoadingException(it)
+    }
+
+    override fun reload() {
+        appState.reloadPlugins()
     }
 
     companion object {

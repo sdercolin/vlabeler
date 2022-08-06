@@ -63,7 +63,7 @@ private fun FileDialog(
             if (extensions != null) {
                 filenameFilter = FilenameFilter { _, name ->
                     extensions.any {
-                        name.endsWith(".$it")
+                        name.endsWith(it)
                     }
                 }
             }

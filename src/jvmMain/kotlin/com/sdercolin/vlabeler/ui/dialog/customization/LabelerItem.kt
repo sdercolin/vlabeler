@@ -16,6 +16,5 @@ class LabelerItem(
     website = labelerConf.website,
     rootFile = CustomLabelerDir.resolve(labelerConf.fileName),
     canRemove = labelerConf.isBuiltIn.not(),
-    disabled = disabled,
-    executable = false
+    disabled = disabled
 )

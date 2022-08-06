@@ -49,9 +49,6 @@ fun App(
                 )
             is Screen.Editor -> Editor(screen.state, appState)
         }
-        appState.embeddedDialog?.let { request ->
-            EmbeddedDialog(request)
-        }
         if (appState.isShowingSampleListDialog) {
             appState.editor?.let { SampleListDialog(it, finish = { appState.closeSampleListDialog() }) }
         }
@@ -87,6 +84,9 @@ fun App(
                 it,
                 appState
             )
+        }
+        appState.embeddedDialog?.let { request ->
+            EmbeddedDialog(request)
         }
         appState.error?.let { error ->
             ErrorDialog(

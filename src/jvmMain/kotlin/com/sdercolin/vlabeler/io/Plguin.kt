@@ -86,5 +86,5 @@ suspend fun Plugin.saveParams(paramMap: ParamMap) = withContext(Dispatchers.IO) 
         .writeText(contentText)
 }
 
-private const val PluginInfoFileName = "plugin.json"
+const val PluginInfoFileName = "plugin.json"
 private const val PluginSavedParamsFileName = ".saved.json"
