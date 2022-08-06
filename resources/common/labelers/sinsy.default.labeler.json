@@ -6,7 +6,7 @@
   "displayedName": "Sinsy lab labeler",
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Default labeler for Sinsy lab file",
+  "description": "Default labeler for Sinsy lab file.",
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
   "continuous": true,
   "allowSameNameEntry": true,

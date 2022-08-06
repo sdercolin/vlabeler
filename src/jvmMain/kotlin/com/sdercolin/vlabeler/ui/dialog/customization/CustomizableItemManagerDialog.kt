@@ -67,6 +67,7 @@ fun CustomizableItemManagerDialog(
     ) {
         Surface(modifier = Modifier.fillMaxSize(0.8f)) {
             Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 30.dp)) {
+                Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = string(state.title),
                     style = MaterialTheme.typography.h6
@@ -198,7 +199,7 @@ fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialo
         Column(modifier = Modifier.weight(1f)) {
             Row {
                 Text(
-                    text = item.name,
+                    text = item.displayedName,
                     style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.alignByBaseline(),
                     maxLines = 1

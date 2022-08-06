@@ -5,7 +5,7 @@
   "displayedName": "Execute scripts",
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Execute scripts from input to edit entries",
+  "description": "Execute scripts from input to edit entries.",
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/execute-scripts",
   "supportedLabelFileExtension": "*",
   "parameters": {

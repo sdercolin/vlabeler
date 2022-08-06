@@ -5,7 +5,7 @@
   "displayedName": "Batch edit oto parameter",
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Edit the parameters of multiple entries in UTAU oto.ini at once",
+  "description": "Edit the parameters of multiple entries in UTAU oto.ini at once.",
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-oto-parameter",
   "supportedLabelFileExtension": "ini",
   "parameters": {
