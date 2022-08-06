@@ -5,7 +5,6 @@ package com.sdercolin.vlabeler.ui.starter
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.DropdownMenu
@@ -46,13 +44,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.common.CircularProgress
+import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.TemplatePluginDialog
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -165,21 +163,7 @@ private fun ProjectNameTextField(state: ProjectCreatorState) {
         if (state.isProjectFileExisting()) {
             Spacer(Modifier.width(20.dp))
             TooltipArea(
-                tooltip = {
-                    Box(
-                        Modifier.background(
-                            color = MaterialTheme.colors.background,
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                            .padding(10.dp)
-                            .shadow(elevation = 5.dp, shape = RoundedCornerShape(5.dp))
-                    ) {
-                        Text(
-                            string(Strings.StarterNewProjectNameWarning),
-                            style = MaterialTheme.typography.caption
-                        )
-                    }
-                }
+                tooltip = { Tooltip(string(Strings.StarterNewProjectNameWarning)) }
             ) {
                 Icon(Icons.Default.Warning, null, tint = MaterialTheme.colors.primary)
             }

@@ -460,6 +460,9 @@ enum class Strings(val en: String) {
     CustomizableItemManagerReload(
         en = "Reload list"
     ),
+    CustomizableItemManagerLockedDescription(
+        en = "This item is built-in and cannot be removed."
+    ),
     PreferencesEditorResetPage(
         en = "Reset items in this page"
     ),

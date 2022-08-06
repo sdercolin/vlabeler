@@ -1,5 +1,9 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.sdercolin.vlabeler.ui.dialog.customization
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,6 +34,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.Public
@@ -43,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -231,6 +237,19 @@ fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialo
                 )
             }
         }
+        if (item.canRemove.not()) {
+            Spacer(Modifier.width(10.dp))
+            TooltipArea(
+                tooltip = { Tooltip(string(Strings.CustomizableItemManagerLockedDescription)) }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+        }
+        Spacer(Modifier.width(10.dp))
         Switch(
             checked = item.disabled.not(),
             onCheckedChange = { state.toggleItemDisabled(index) },
