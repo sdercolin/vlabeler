@@ -125,7 +125,10 @@ class ProjectStoreImpl(
 
     override fun editEntries(editedEntries: List<IndexedEntry>) = editProject { updateEntries(editedEntries) }
     override fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?) {
-        if (appConf.value.editor.autoScroll.onSwitchedInMultipleEditMode && targetEntryIndex != project?.currentIndex) {
+        val autoScrollConf = appConf.value.editor.autoScroll
+        if (autoScrollConf.onSwitched ||
+            (autoScrollConf.onSwitchedInMultipleEditMode && targetEntryIndex != project?.currentIndex)
+        ) {
             scrollFitViewModel.emitNext()
         }
         editProject { cutEntry(index, position, rename, newName, targetEntryIndex) }
@@ -148,7 +151,8 @@ class ProjectStoreImpl(
 
     private fun scrollIfNeededWhenSwitchedEntry(previousProject: Project?) {
         val autoScrollConf = appConf.value.editor.autoScroll
-        if ((autoScrollConf.onLoadedNewSample && requireProject().hasSwitchedSample(previousProject)) ||
+        if (autoScrollConf.onSwitched ||
+            (autoScrollConf.onLoadedNewSample && requireProject().hasSwitchedSample(previousProject)) ||
             (autoScrollConf.onSwitchedInMultipleEditMode && requireProject().multipleEditMode)
         ) {
             scrollFitViewModel.emitNext()
@@ -169,7 +173,7 @@ class ProjectStoreImpl(
 
     private fun scrollIfNeededWhenSwitchedSample() {
         val autoScrollConf = appConf.value.editor.autoScroll
-        if (autoScrollConf.onLoadedNewSample ||
+        if (autoScrollConf.onLoadedNewSample || autoScrollConf.onSwitched ||
             (autoScrollConf.onSwitchedInMultipleEditMode && requireProject().multipleEditMode)
         ) {
             scrollFitViewModel.emitNext()
@@ -190,7 +194,7 @@ class ProjectStoreImpl(
         editProject {
             requireProject().copy(currentIndex = index)
         }
-        if (appConf.value.editor.autoScroll.onJumpedToEntry) {
+        if (appConf.value.editor.autoScroll.let { it.onJumpedToEntry || it.onSwitched }) {
             scrollFitViewModel.emitNext()
         }
     }
@@ -210,7 +214,10 @@ class ProjectStoreImpl(
         val previousProject = requireProject()
 
         editProject { removeCurrentEntry() }
-        if (requireProject().hasSwitchedSample(previousProject) && appConf.value.editor.autoScroll.onLoadedNewSample) {
+        val autoScrollConf = appConf.value.editor.autoScroll
+        if ((requireProject().hasSwitchedSample(previousProject) && autoScrollConf.onLoadedNewSample) ||
+            autoScrollConf.onSwitched
+        ) {
             scrollFitViewModel.emitNext()
         }
     }

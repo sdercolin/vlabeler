@@ -8,7 +8,8 @@ sealed class PreferencesItem<T>(
     val description: Strings?,
     val defaultValue: T,
     val select: (AppConf) -> T,
-    val update: AppConf.(T) -> AppConf
+    val update: AppConf.(T) -> AppConf,
+    val enabled: (AppConf) -> Boolean
 ) {
 
     fun reset(conf: AppConf) = update(conf, defaultValue)
@@ -18,8 +19,9 @@ sealed class PreferencesItem<T>(
         description: Strings?,
         defaultValue: Boolean,
         select: (AppConf) -> Boolean,
-        update: AppConf.(Boolean) -> AppConf
-    ) : PreferencesItem<Boolean>(title, description, defaultValue, select, update)
+        update: AppConf.(Boolean) -> AppConf,
+        enabled: (AppConf) -> Boolean
+    ) : PreferencesItem<Boolean>(title, description, defaultValue, select, update, enabled)
 
     class IntegerInput(
         title: Strings,
@@ -27,9 +29,10 @@ sealed class PreferencesItem<T>(
         defaultValue: Int,
         select: (AppConf) -> Int,
         update: AppConf.(Int) -> AppConf,
+        enabled: (AppConf) -> Boolean,
         val min: Int?,
         val max: Int?
-    ) : PreferencesItem<Int>(title, description, defaultValue, select, update)
+    ) : PreferencesItem<Int>(title, description, defaultValue, select, update, enabled)
 
     class FloatInput(
         title: Strings,
@@ -37,9 +40,10 @@ sealed class PreferencesItem<T>(
         defaultValue: Float,
         select: (AppConf) -> Float,
         update: AppConf.(Float) -> AppConf,
+        enabled: (AppConf) -> Boolean,
         val min: Float?,
         val max: Float?
-    ) : PreferencesItem<Float>(title, description, defaultValue, select, update)
+    ) : PreferencesItem<Float>(title, description, defaultValue, select, update, enabled)
 
     class ColorStringInput(
         title: Strings,
@@ -47,8 +51,9 @@ sealed class PreferencesItem<T>(
         defaultValue: String,
         select: (AppConf) -> String,
         update: AppConf.(String) -> AppConf,
+        enabled: (AppConf) -> Boolean,
         val useAlpha: Boolean
-    ) : PreferencesItem<String>(title, description, defaultValue, select, update)
+    ) : PreferencesItem<String>(title, description, defaultValue, select, update, enabled)
 
     class Selection<T>(
         title: Strings,
@@ -56,6 +61,7 @@ sealed class PreferencesItem<T>(
         defaultValue: T,
         select: (AppConf) -> T,
         update: AppConf.(T) -> AppConf,
+        enabled: (AppConf) -> Boolean,
         val options: Array<T>
-    ) : PreferencesItem<T>(title, description, defaultValue, select, update)
+    ) : PreferencesItem<T>(title, description, defaultValue, select, update, enabled)
 }

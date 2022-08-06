@@ -67,7 +67,7 @@ fun loadProject(
         }
         appState.openEditor(fixedProject)
         appState.addRecentProject(fixedProject.projectFile)
-        if (appState.appConf.editor.autoScroll.onLoadedNewSample) {
+        if (appState.appConf.editor.autoScroll.let { it.onSwitched || it.onLoadedNewSample }) {
             appState.scrollFitViewModel.emitNext()
         }
         appState.hideProgress()
@@ -84,7 +84,7 @@ fun openCreatedProject(
         project.getCacheDir().deleteRecursively()
         appState.openEditor(project)
         appState.addRecentProject(file)
-        if (appState.appConf.editor.autoScroll.onLoadedNewSample) {
+        if (appState.appConf.editor.autoScroll.let { it.onSwitched || it.onLoadedNewSample }) {
             appState.scrollFitViewModel.emitNext()
         }
     }

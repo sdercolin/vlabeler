@@ -30,6 +30,8 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -52,7 +54,6 @@ import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
 import com.sdercolin.vlabeler.ui.common.InputBox
 import com.sdercolin.vlabeler.ui.common.IntegerInputBox
-import com.sdercolin.vlabeler.ui.common.PlainSwitch
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.string.LocalizedText
@@ -292,9 +293,14 @@ private fun Item(item: PreferencesItem<*>, state: PreferencesEditorState) {
 
 @Composable
 fun SwitchItem(item: PreferencesItem.Switch, state: PreferencesEditorState) {
-    PlainSwitch(
+    Switch(
+        enabled = item.enabled(state.conf),
         checked = item.select(state.conf),
-        onCheckedChange = { state.update(item, it) }
+        onCheckedChange = { state.update(item, it) },
+        colors = SwitchDefaults.colors(
+            checkedThumbColor = MaterialTheme.colors.primary,
+            uncheckedThumbColor = MaterialTheme.colors.onBackground
+        )
     )
 }
 
@@ -308,6 +314,7 @@ private fun IntegerInputItem(item: PreferencesItem.IntegerInput, state: Preferen
     }
 
     IntegerInputBox(
+        enabled = item.enabled(state.conf),
         intValue = value,
         onValueChange = { state.update(item, it) },
         min = item.min,
@@ -325,6 +332,7 @@ private fun FloatInputItem(item: PreferencesItem.FloatInput, state: PreferencesE
     }
 
     FloatInputBox(
+        enabled = item.enabled(state.conf),
         floatValue = value,
         onValueChange = { state.update(item, it) },
         min = item.min,
@@ -357,6 +365,7 @@ private fun ColorStringInputItem(item: PreferencesItem.ColorStringInput, state: 
     val valueLength = if (item.useAlpha) 9 else 7
 
     InputBox(
+        enabled = item.enabled(state.conf),
         value = value,
         onValueChange = { newValue ->
             var sanitizedValue = newValue
@@ -383,6 +392,7 @@ private fun ColorStringInputItem(item: PreferencesItem.ColorStringInput, state: 
 private fun <T> SelectionItem(item: PreferencesItem.Selection<T>, state: PreferencesEditorState) {
     val currentValue = item.select(state.conf)
     SelectionBox(
+        enabled = item.enabled(state.conf),
         value = currentValue,
         onSelect = { state.update(item, it) },
         options = item.options.toList(),

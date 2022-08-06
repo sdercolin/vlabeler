@@ -239,19 +239,22 @@ data class AppConf(
      * @param onJumpedToEntry True if the action is conducted when jumped to an entry via entry list
      * @param onSwitchedInMultipleEditMode True if action is conducted in multiple edit mode when
      * switch to another entry
+     * @param onSwitched True if action is conducted when switched to another entry
      */
     @Serializable
     @Immutable
     data class AutoScroll(
         val onLoadedNewSample: Boolean = DefaultOnLoadedNewSample,
         val onJumpedToEntry: Boolean = DefaultOnJumpedToEntry,
-        val onSwitchedInMultipleEditMode: Boolean = DefaultOnSwitchedInMultipleEditMode
+        val onSwitchedInMultipleEditMode: Boolean = DefaultOnSwitchedInMultipleEditMode,
+        val onSwitched: Boolean = DefaultOnSwitched
     ) {
 
         companion object {
             const val DefaultOnLoadedNewSample = true
             const val DefaultOnJumpedToEntry = true
             const val DefaultOnSwitchedInMultipleEditMode = true
+            const val DefaultOnSwitched = false
         }
     }
 

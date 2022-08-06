@@ -612,6 +612,9 @@ enum class Strings(val en: String) {
     PreferencesEditorAutoScrollOnSwitchedInMultipleEditMode(
         en = "When switched to another entry in multiple edit mode"
     ),
+    PreferencesEditorAutoScrollOnSwitched(
+        en = "When switched to another entry"
+    ),
     PreferencesAutoSave(
         en = "Auto save"
     ),

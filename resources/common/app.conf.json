@@ -37,7 +37,8 @@
     "autoScroll": {
       "onLoadedNewSample": true,
       "onJumpedToEntry": true,
-      "onSwitchedInMultipleEditMode": true
+      "onSwitchedInMultipleEditMode": true,
+      "onSwitched": false
     }
   },
   "autoSave": {

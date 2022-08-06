@@ -39,7 +39,8 @@ fun <T> SelectionBox(
     modifier: Modifier = Modifier,
     fixedWidth: Boolean = false,
     customPadding: Boolean = false,
-    showIcon: Boolean = true
+    showIcon: Boolean = true,
+    enabled: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
@@ -51,7 +52,7 @@ fun <T> SelectionBox(
                     color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(5.dp)
                 )
-                .clickable { expanded = !expanded }
+                .clickable(enabled) { expanded = !expanded }
                 .runIf(!customPadding) { padding(vertical = 10.dp, horizontal = 15.dp) },
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -59,7 +60,7 @@ fun <T> SelectionBox(
                 modifier = if (fixedWidth) Modifier.weight(1f) else Modifier.widthIn(min = 120.dp),
                 text = getText(value),
                 style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colors.onBackground.runIf(!enabled) { copy(alpha = 0.5f) },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

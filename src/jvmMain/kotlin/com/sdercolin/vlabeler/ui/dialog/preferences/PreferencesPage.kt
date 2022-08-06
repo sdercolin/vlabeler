@@ -290,19 +290,28 @@ abstract class PreferencesPage(
                     title = Strings.PreferencesEditorAutoScrollOnLoadedNewSample,
                     defaultValue = AppConf.AutoScroll.DefaultOnLoadedNewSample,
                     select = { it.onLoadedNewSample },
-                    update = { copy(onLoadedNewSample = it) }
+                    update = { copy(onLoadedNewSample = it) },
+                    enabled = { it.onSwitched.not() }
                 )
                 switch(
                     title = Strings.PreferencesEditorAutoScrollOnJumpedToEntry,
                     defaultValue = AppConf.AutoScroll.DefaultOnJumpedToEntry,
                     select = { it.onJumpedToEntry },
-                    update = { copy(onJumpedToEntry = it) }
+                    update = { copy(onJumpedToEntry = it) },
+                    enabled = { it.onSwitched.not() }
                 )
                 switch(
                     title = Strings.PreferencesEditorAutoScrollOnSwitchedInMultipleEditMode,
                     defaultValue = AppConf.AutoScroll.DefaultOnSwitchedInMultipleEditMode,
                     select = { it.onSwitchedInMultipleEditMode },
-                    update = { copy(onSwitchedInMultipleEditMode = it) }
+                    update = { copy(onSwitchedInMultipleEditMode = it) },
+                    enabled = { it.onSwitched.not() }
+                )
+                switch(
+                    title = Strings.PreferencesEditorAutoScrollOnSwitched,
+                    defaultValue = AppConf.AutoScroll.DefaultOnSwitched,
+                    select = { it.onSwitched },
+                    update = { copy(onSwitched = it) }
                 )
             }
         }
@@ -369,14 +378,16 @@ private class PreferencesItemContext<P>(
         description: Strings? = null,
         defaultValue: Boolean,
         select: (P) -> Boolean,
-        update: P.(Boolean) -> P
+        update: P.(Boolean) -> P,
+        enabled: (P) -> Boolean = { true }
     ) = builder.item(
         PreferencesItem.Switch(
             title = title,
             description = description,
             defaultValue = defaultValue,
             select = selectWithContext(select),
-            update = updateWithContext(update)
+            update = updateWithContext(update),
+            enabled = selectWithContext(enabled)
         )
     )
 
@@ -387,7 +398,8 @@ private class PreferencesItemContext<P>(
         min: Int? = null,
         max: Int? = null,
         select: (P) -> Int,
-        update: P.(Int) -> P
+        update: P.(Int) -> P,
+        enabled: (P) -> Boolean = { true }
     ) = builder.item(
         PreferencesItem.IntegerInput(
             title = title,
@@ -396,7 +408,8 @@ private class PreferencesItemContext<P>(
             min = min,
             max = max,
             select = selectWithContext(select),
-            update = updateWithContext(update)
+            update = updateWithContext(update),
+            enabled = selectWithContext(enabled)
         )
     )
 
@@ -407,7 +420,8 @@ private class PreferencesItemContext<P>(
         min: Float? = null,
         max: Float? = null,
         select: (P) -> Float,
-        update: P.(Float) -> P
+        update: P.(Float) -> P,
+        enabled: (P) -> Boolean = { true }
     ) = builder.item(
         PreferencesItem.FloatInput(
             title = title,
@@ -416,7 +430,8 @@ private class PreferencesItemContext<P>(
             min = min,
             max = max,
             select = selectWithContext(select),
-            update = updateWithContext(update)
+            update = updateWithContext(update),
+            enabled = selectWithContext(enabled)
         )
     )
 
@@ -426,6 +441,7 @@ private class PreferencesItemContext<P>(
         defaultValue: String,
         select: (P) -> String,
         update: P.(String) -> P,
+        enabled: (P) -> Boolean = { true },
         useAlpha: Boolean
     ) = builder.item(
         PreferencesItem.ColorStringInput(
@@ -434,7 +450,8 @@ private class PreferencesItemContext<P>(
             defaultValue = defaultValue,
             select = selectWithContext(select),
             update = updateWithContext(update),
-            useAlpha = useAlpha
+            enabled = selectWithContext(enabled),
+            useAlpha = useAlpha,
         )
     )
 
@@ -444,6 +461,7 @@ private class PreferencesItemContext<P>(
         defaultValue: T,
         select: (P) -> T,
         update: P.(T) -> P,
+        enabled: (P) -> Boolean = { true },
         options: Array<T>
     ) = builder.item(
         PreferencesItem.Selection(
@@ -452,6 +470,7 @@ private class PreferencesItemContext<P>(
             defaultValue = defaultValue,
             select = selectWithContext(select),
             update = updateWithContext(update),
+            enabled = selectWithContext(enabled),
             options = options
         )
     )

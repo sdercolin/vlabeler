@@ -85,6 +85,7 @@ fun InputBox(
 
 @Composable
 fun IntegerInputBox(
+    enabled: Boolean,
     intValue: Int,
     onValueChange: (Int) -> Unit,
     min: Int?,
@@ -103,6 +104,7 @@ fun IntegerInputBox(
     }
 
     InputBox(
+        enabled = enabled,
         value = value,
         onValueChange = { newValue ->
             value = newValue
@@ -119,6 +121,7 @@ fun IntegerInputBox(
 
 @Composable
 fun FloatInputBox(
+    enabled: Boolean,
     floatValue: Float,
     onValueChange: (Float) -> Unit,
     min: Float?,
@@ -141,6 +144,7 @@ fun FloatInputBox(
     }
 
     InputBox(
+        enabled = enabled,
         value = value,
         onValueChange = { newValue ->
             value = newValue
