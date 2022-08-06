@@ -175,7 +175,6 @@ class AppDialogStateImpl(
     }
 
     override fun <T : EmbeddedDialogArgs> openEmbeddedDialog(args: T) {
-        closeAllDialogs()
         embeddedDialog = EmbeddedDialogRequest(args) {
             state.closeEmbeddedDialog()
             if (it != null) state.handleDialogResult(it)
@@ -249,6 +248,7 @@ class AppDialogStateImpl(
 
     override fun openPreferencesDialog() {
         val currentConf = state.appConf
+        closeAllDialogs()
         openEmbeddedDialog(
             PreferencesDialogArgs(
                 currentConf = currentConf,
