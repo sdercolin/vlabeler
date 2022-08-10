@@ -35,7 +35,6 @@ import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.EndPointIndex
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.NonePointIndex
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.StartPointIndex
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Mouse
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.FloatRange
@@ -71,6 +70,16 @@ fun MarkerPointEventContainer(
     content: @Composable BoxScope.() -> Unit
 ) {
     val tool = editorState.tool
+    val playByCursor = remember(appState.appConf.playback.playOnDragging, appState.player) {
+        if (appState.appConf.playback.playOnDragging.enabled) {
+            { appState.player.playByCursor(it) }
+        } else {
+            { _: Float -> }
+        }
+    }
+    val playSection = remember(appState.player) {
+        { start: Float, end: Float -> appState.player.playSection(start, end) }
+    }
     Box(
         modifier = Modifier.fillMaxSize()
             .onPointerEvent(PointerEventType.Move) { event ->
@@ -82,14 +91,20 @@ fun MarkerPointEventContainer(
                         tool,
                         event,
                         editorState::submitEntries,
-                        appState.player::playSection,
+                        playSection,
                         editorState::cutEntry,
                         keyboardState,
                         screenRange
                     )
                     return@onPointerEvent
                 }
-                state.handleMouseMove(tool, event, editorState::updateEntries, screenRange)
+                state.handleMouseMove(
+                    tool,
+                    event,
+                    editorState::updateEntries,
+                    screenRange,
+                    playByCursor
+                )
             }
             .onPointerEvent(PointerEventType.Press) {
                 state.cursorState.handleMousePress(tool, keyboardState, state.labelerConf)
@@ -377,11 +392,12 @@ private fun MarkerState.handleMouseMove(
     tool: Tool,
     event: PointerEvent,
     editEntries: (List<IndexedEntry>) -> Unit,
-    screenRange: FloatRange?
+    screenRange: FloatRange?,
+    playByCursor: (Float) -> Unit
 ) {
     screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(event, editEntries, screenRange)
+        Tool.Cursor -> handleCursorMove(event, editEntries, screenRange, playByCursor)
         Tool.Scissors -> handleScissorsMove(event, screenRange)
     }
 }
@@ -389,13 +405,14 @@ private fun MarkerState.handleMouseMove(
 private fun MarkerState.handleCursorMove(
     event: PointerEvent,
     editEntries: (List<IndexedEntry>) -> Unit,
-    screenRange: FloatRange
+    screenRange: FloatRange,
+    playByCursor: (Float) -> Unit
 ) {
     val eventChange = event.changes.first()
     val x = eventChange.position.x.coerceIn(0f, canvasParams.lengthInPixel.toFloat())
     val actualX = x + screenRange.start
     val y = eventChange.position.y.coerceIn(0f, canvasHeightState.value.coerceAtLeast(0f))
-    if (cursorState.value.mouse == Mouse.Dragging) {
+    if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
         val updated = if (cursorState.value.lockedDrag) {
             getLockedDraggedEntries(cursorState.value.pointIndex, actualX, leftBorder, rightBorder)
         } else {
@@ -405,6 +422,7 @@ private fun MarkerState.handleCursorMove(
             val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
             editEntries(updatedInMillis)
         }
+        playByCursor(entryConverter.convertToFrame(actualX))
     } else {
         val newPointIndex = getPointIndexForHovering(
             x = actualX,
@@ -450,7 +468,7 @@ private fun MutableState<MarkerCursorState>.handleCursorPress(
     labelerConf: LabelerConf
 ) {
     if (!keyboardState.isCtrlPressed) {
-        if (value.mouse == Mouse.Hovering) {
+        if (value.mouse == MarkerCursorState.Mouse.Hovering) {
             val lockedDragByBaseField =
                 labelerConf.lockedDrag.useDragBase &&
                     labelerConf.fields.getOrNull(value.pointIndex)?.dragBase == true

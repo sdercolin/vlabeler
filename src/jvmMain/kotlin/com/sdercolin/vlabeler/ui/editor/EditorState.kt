@@ -43,7 +43,7 @@ class EditorState(
     private val appConf = appState.appConf
     val keyboardViewModel = appState.keyboardViewModel
     val scrollFitViewModel = appState.scrollFitViewModel
-    private val player = appState.player
+    private val player get() = appState.player
     var tool: Tool by mutableStateOf(Tool.Cursor)
 
     private var _renderProgress: Pair<Int, Int> by mutableStateOf(0 to 0)

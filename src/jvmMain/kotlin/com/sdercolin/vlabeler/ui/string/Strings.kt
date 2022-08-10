@@ -621,6 +621,27 @@ enum class Strings(val en: String) {
     PreferencesEditorAutoScrollOnSwitched(
         en = "When switched to another entry"
     ),
+    PreferencesPlayback(
+        en = "Playback"
+    ),
+    PreferencesPlaybackDescription(
+        en = "Customize the behavior about audio playback."
+    ),
+    PreferencesPlaybackPlayOnDragging(
+        en = "Preview on dragging"
+    ),
+    PreferencesPlaybackPlayOnDraggingDescription(
+        en = "When dragging any parameter lines, play the audio range near the cursor."
+    ),
+    PreferencesPlaybackPlayOnDraggingEnabled(
+        en = "Enabled"
+    ),
+    PreferencesPlaybackPlayOnDraggingRangeRadiusMillis(
+        en = "Radius (ms)"
+    ),
+    PreferencesPlaybackPlayOnDraggingEventQueueSize(
+        en = "Retain drag events"
+    ),
     PreferencesAutoSave(
         en = "Auto save"
     ),

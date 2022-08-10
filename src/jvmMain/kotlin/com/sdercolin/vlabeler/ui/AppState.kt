@@ -44,8 +44,6 @@ import java.io.File
 
 class AppState(
     val mainScope: CoroutineScope,
-    val playerState: PlayerState,
-    val player: Player,
     val keyboardViewModel: KeyboardViewModel,
     val scrollFitViewModel: ScrollFitViewModel,
     val appRecordStore: AppRecordStore,
@@ -78,6 +76,12 @@ class AppState(
     var isBusy: Boolean by mutableStateOf(false)
         private set
     var shouldExit: Boolean by mutableStateOf(false)
+        private set
+
+    var playerState: PlayerState by mutableStateOf(PlayerState())
+        private set
+
+    var player: Player by mutableStateOf(Player(appConf.value.playback, mainScope, playerState))
         private set
 
     private fun reset() {
@@ -337,7 +341,13 @@ class AppState(
                 editor?.loadSample()
             }
         }
+        if (appConf.playback != newConf.playback) {
+            player.close()
+            playerState = PlayerState()
+            player = Player(newConf.playback, mainScope, playerState)
+        }
         appConf = newConf
+
     }
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()

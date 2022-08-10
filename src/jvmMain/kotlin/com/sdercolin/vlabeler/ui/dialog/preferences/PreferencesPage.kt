@@ -317,6 +317,44 @@ abstract class PreferencesPage(
         }
     }
 
+    object Playback : PreferencesPage(Strings.PreferencesPlayback, Strings.PreferencesPlaybackDescription) {
+
+        override val content: List<PreferencesGroup> = buildPageContent {
+            group(
+                Strings.PreferencesPlaybackPlayOnDragging,
+                Strings.PreferencesPlaybackPlayOnDraggingDescription
+            ) {
+                withContext(
+                    selector = { it.playback.playOnDragging },
+                    updater = { copy(playback = playback.copy(playOnDragging = it)) }
+                ) {
+                    switch(
+                        title = Strings.PreferencesPlaybackPlayOnDragging,
+                        defaultValue = AppConf.PlayOnDragging.DefaultPlayOnDraggingEnabled,
+                        select = { it.enabled },
+                        update = { copy(enabled = it) }
+                    )
+                    integer(
+                        title = Strings.PreferencesPlaybackPlayOnDraggingRangeRadiusMillis,
+                        defaultValue = AppConf.PlayOnDragging.DefaultPlayOnDraggingRangeRadiusMillis,
+                        min = AppConf.PlayOnDragging.MinPlayOnDraggingRangeRadiusMillis,
+                        max = AppConf.PlayOnDragging.MaxPlayOnDraggingRangeRadiusMillis,
+                        select = { it.rangeRadiusMillis },
+                        update = { copy(rangeRadiusMillis = it) }
+                    )
+                    integer(
+                        title = Strings.PreferencesPlaybackPlayOnDraggingEventQueueSize,
+                        defaultValue = AppConf.PlayOnDragging.DefaultPlayOnDraggingEventQueueSize,
+                        min = AppConf.PlayOnDragging.MinPlayOnDraggingEventQueueSize,
+                        max = AppConf.PlayOnDragging.MaxPlayOnDraggingEventQueueSize,
+                        select = { it.eventQueueSize },
+                        update = { copy(eventQueueSize = it) }
+                    )
+                }
+            }
+        }
+    }
+
     object AutoSave : PreferencesPage(Strings.PreferencesAutoSave, Strings.PreferencesAutoSaveDescription) {
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
@@ -346,6 +384,7 @@ abstract class PreferencesPage(
         fun getRootPages() = listOf(
             Charts,
             Editor,
+            Playback,
             AutoSave
         )
 
@@ -354,8 +393,6 @@ abstract class PreferencesPage(
         }
 
         private fun getAllPages() = getRootPages().flatMap { getChildrenRecursively(it) }
-
-        fun getPage(name: String) = getAllPages().find { it.name == name }
     }
 }
 

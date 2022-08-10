@@ -12,13 +12,15 @@ import kotlinx.serialization.Serializable
  * @param painter Configurations about chart painting
  * @param editor Configurations about editor
  * @param autoSave Configurations about auto-save
+ * @param playback Configurations about audio playback
  */
 @Serializable
 @Immutable
 data class AppConf(
     val painter: Painter = Painter(),
     val editor: Editor = Editor(),
-    val autoSave: AutoSave = AutoSave()
+    val autoSave: AutoSave = AutoSave(),
+    val playback: Playback = Playback()
 ) {
     /**
      * Configurations about chart painting
@@ -142,7 +144,7 @@ data class AppConf(
             const val DefaultStandardWindowSize = 512
             const val MaxStandardWindowSize = 4096
             const val MinStandardWindowSize = 128
-            const val DefaultMaxFrequency = 15000
+            const val DefaultMaxFrequency = 20000
             const val DefaultMelScaleStep = 10
             const val MaxMelScaleStep = 100
             const val MinMelScaleStep = 1
@@ -150,7 +152,7 @@ data class AppConf(
             const val MinMaxFrequency = 5000
             const val DefaultMinIntensity = 0
             const val DefaultMaxIntensity = 55
-            val DefaultWindowType = WindowType.Hamming
+            val DefaultWindowType = WindowType.BlackmanHarris
             val DefaultColorPalette = SpectrogramColorPalette.Presets.Plain
         }
     }
@@ -309,6 +311,40 @@ data class AppConf(
             val DefaultTarget = Target.Record
             const val DefaultIntervalSec = 30
             const val MinIntervalSec = 1
+        }
+    }
+
+    /**
+     * Configurations about playback
+     * @param playOnDragging Configurations about playback preview on dragging
+     */
+    @Serializable
+    @Immutable
+    data class Playback(
+        val playOnDragging: PlayOnDragging = PlayOnDragging()
+    )
+
+    /**
+     * Configurations about playback preview on dragging
+     * @param enabled True if the preview is enabled
+     * @param rangeRadiusMillis Radius of the preview half-range (in milliseconds)
+     * @param eventQueueSize Max size of retained drag events
+     */
+    @Serializable
+    @Immutable
+    data class PlayOnDragging(
+        val enabled: Boolean = DefaultPlayOnDraggingEnabled,
+        val rangeRadiusMillis: Int = DefaultPlayOnDraggingRangeRadiusMillis,
+        val eventQueueSize: Int = DefaultPlayOnDraggingEventQueueSize
+    ) {
+        companion object {
+            const val DefaultPlayOnDraggingEnabled = false
+            const val DefaultPlayOnDraggingRangeRadiusMillis = 10
+            const val MaxPlayOnDraggingRangeRadiusMillis = 100
+            const val MinPlayOnDraggingRangeRadiusMillis = 1
+            const val DefaultPlayOnDraggingEventQueueSize = 5
+            const val MaxPlayOnDraggingEventQueueSize = 100
+            const val MinPlayOnDraggingEventQueueSize = 1
         }
     }
 }

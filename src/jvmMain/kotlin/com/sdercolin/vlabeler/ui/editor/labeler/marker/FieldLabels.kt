@@ -72,7 +72,6 @@ fun FieldLabels(
             if (chunkVisibleList[index]) {
                 FieldLabelsChunk(
                     modifier = modifier,
-                    index = index,
                     offset = index * chunkLength,
                     modelChunk = chunks[index],
                     waveformsHeightRatio = state.waveformsHeightRatio
@@ -87,12 +86,10 @@ fun FieldLabels(
 @Composable
 private fun FieldLabelsChunk(
     modifier: Modifier,
-    index: Int,
     offset: Float,
     modelChunk: FieldLabelModelChunk,
     waveformsHeightRatio: Float
 ) {
-    Log.info("FieldLabelsContent $index composed")
     val labelShiftUp = with(LocalDensity.current) { LabelShiftUp.toPx() }
     Layout(
         modifier = modifier,
@@ -130,7 +127,6 @@ private fun FieldLabelsChunk(
 
 @Composable
 private fun FieldLabelText(model: FieldLabelModel) {
-    Log.info("FieldLabel(${model.field.name}) of entry ${model.entryAbsoluteIndex} composed")
     val alpha = if (model.isActive) 1f else IdleLineAlpha
     Text(
         text = model.field.label,

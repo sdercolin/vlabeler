@@ -2,7 +2,9 @@ package com.sdercolin.vlabeler.audio
 
 import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.util.FloatRange
+import com.sdercolin.vlabeler.util.JobQueue
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +20,7 @@ import kotlin.math.roundToInt
 
 @Stable
 class Player(
+    private val playbackConfig: AppConf.Playback,
     private val coroutineScope: CoroutineScope,
     private val state: PlayerState
 ) {
@@ -83,8 +86,8 @@ class Player(
         }
     }
 
-    private suspend fun startWriting(startFrame: Int = 0, endFrame: Int? = null) {
-        writingJob?.cancelAndJoin()
+    private suspend fun startWriting(startFrame: Int = 0, endFrame: Int? = null, cancelFormer: Boolean = true) {
+        if (cancelFormer) writingJob?.cancelAndJoin() else writingJob?.join()
         val line = line ?: return
         val format = format ?: return
         val data = data ?: return
@@ -135,6 +138,33 @@ class Player(
             state.startPlaying()
             startWriting(startFrame, endFrame)
             startCounting(startFrame)
+        }
+    }
+
+    private val playByCursorJobQueue = JobQueue(coroutineScope, playbackConfig.playOnDragging.eventQueueSize)
+
+    fun playByCursor(frame: Float) {
+        playByCursorJobQueue.post {
+            coroutineScope.launch {
+                if (state.isPlaying) {
+                    stop()
+                }
+                Log.info("Player.playByCursor($frame)")
+                awaitLoad()
+                val format = format ?: return@launch
+                val data = data ?: return@launch
+                val totalFrameCount = (data.size - 1) / format.sampleSize
+                val radius = playbackConfig.playOnDragging.rangeRadiusMillis
+                val centerFrame = frame.roundToInt()
+                if (centerFrame < 0 || centerFrame >= totalFrameCount) return@launch
+                val radiusFrame = radius * format.sampleRate / 1000
+                val startFrame = (centerFrame - radiusFrame).roundToInt().coerceAtLeast(0)
+                val endFrame = (centerFrame + radiusFrame)
+                    .roundToInt()
+                    .coerceAtMost(totalFrameCount)
+
+                startWriting(startFrame, endFrame, cancelFormer = false)
+            }
         }
     }
 

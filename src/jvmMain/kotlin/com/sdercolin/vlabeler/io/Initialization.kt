@@ -116,8 +116,6 @@ fun ensureDirectories() {
 }
 
 suspend fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecordStore): AppState {
-    val playerState = PlayerState()
-    val player = Player(mainScope, playerState)
     val keyboardViewModel = KeyboardViewModel(mainScope)
     val scrollFitViewModel = ScrollFitViewModel(mainScope)
     val snackbarHostState = SnackbarHostState()
@@ -128,8 +126,6 @@ suspend fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecord
 
     return AppState(
         mainScope,
-        playerState,
-        player,
         keyboardViewModel,
         scrollFitViewModel,
         appRecordStore,

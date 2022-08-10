@@ -44,5 +44,12 @@
   "autoSave": {
     "target": "record",
     "intervalSec": 30
+  },
+  "playback": {
+    "playOnDragging": {
+      "enabled": false,
+      "rangeRadiusMillis": 10,
+      "eventQueueSize": 5
+    }
   }
 }
