@@ -40,7 +40,8 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
         AppConf.WindowType.Bartlett -> Bartlett(windowSize).window
     }
     val peak = data.maxByOrNull { it.absoluteValue }!!
-    val frames = data.toList().windowed(windowSize, hopSize, false) { frame ->
+    val paddedData = List(windowSize / 2) { 0.0 } + data.toList() + List(windowSize / 2) { 0.0 }
+    val frames = paddedData.windowed(windowSize, hopSize) { frame ->
         frame.mapIndexed { index, point -> point * window[index] / peak * Short.MAX_VALUE }.toDoubleArray()
     }
 

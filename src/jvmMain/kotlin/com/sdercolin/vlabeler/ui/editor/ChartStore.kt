@@ -86,9 +86,14 @@ class ChartStore {
                     val data = channel.data.toList()
                     val chunks = mutableListOf<List<Float>>()
                     repeat(sizes.size) {
-                        val chunk = data.subList(taken, taken + sizes[it])
-                        taken += sizes[it]
-                        chunks.add(chunk)
+                        val until = taken + sizes[it]
+                        if (data.lastIndex < until) {
+                            chunks.add(data.subList(taken, data.lastIndex))
+                            taken = data.lastIndex
+                        } else {
+                            chunks.add(data.subList(taken, until))
+                            taken = until
+                        }
                     }
                     chunks.toList()
                 }
