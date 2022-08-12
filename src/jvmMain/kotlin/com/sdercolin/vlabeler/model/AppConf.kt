@@ -1,6 +1,8 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.model.key.KeySet
 import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -13,6 +15,7 @@ import kotlinx.serialization.Serializable
  * @param editor Configurations about editor
  * @param autoSave Configurations about auto-save
  * @param playback Configurations about audio playback
+ * @param keymaps Custom keymap
  */
 @Serializable
 @Immutable
@@ -20,7 +23,8 @@ data class AppConf(
     val painter: Painter = Painter(),
     val editor: Editor = Editor(),
     val autoSave: AutoSave = AutoSave(),
-    val playback: Playback = Playback()
+    val playback: Playback = Playback(),
+    val keymaps: Keymaps = Keymaps()
 ) {
     /**
      * Configurations about chart painting
@@ -347,4 +351,14 @@ data class AppConf(
             const val MinPlayOnDraggingEventQueueSize = 1
         }
     }
+
+    /**
+     * Custom keymaps
+     * @param keyActionMap Custom keymap for [KeyAction]s
+     */
+    @Serializable
+    @Immutable
+    data class Keymaps(
+        val keyActionMap: Map<KeyAction, List<KeySet>> = mapOf()
+    )
 }

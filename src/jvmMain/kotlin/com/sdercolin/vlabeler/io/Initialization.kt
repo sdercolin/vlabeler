@@ -114,13 +114,13 @@ fun ensureDirectories() {
 }
 
 suspend fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecordStore): AppState {
-    val keyboardViewModel = KeyboardViewModel(mainScope)
-    val scrollFitViewModel = ScrollFitViewModel(mainScope)
-    val snackbarHostState = SnackbarHostState()
-
     val appConf = loadAppConf()
     val availableLabelerConfs = loadAvailableLabelerConfs()
     val plugins = loadPlugins()
+
+    val scrollFitViewModel = ScrollFitViewModel(mainScope)
+    val snackbarHostState = SnackbarHostState()
+    val keyboardViewModel = KeyboardViewModel(mainScope, appConf.value.keymaps)
 
     return AppState(
         mainScope,

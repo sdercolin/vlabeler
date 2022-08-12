@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package com.sdercolin.vlabeler.model.key
 
 import androidx.compose.runtime.Immutable
@@ -10,9 +12,17 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.env.released
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
-@Serializable
+@Serializable(KeySet.KeySetSerializer::class)
 @Immutable
 data class KeySet(
     val mainKey: Key?,
@@ -58,5 +68,29 @@ data class KeySet(
         if (hasAlt && !event.isAltPressed) return false
         if (hasShift && !event.isShiftPressed) return false
         return true
+    }
+
+    @Serializer(KeySet::class)
+    object KeySetSerializer : KSerializer<KeySet> {
+        override val descriptor: SerialDescriptor
+            get() = PrimitiveSerialDescriptor("KeySet", PrimitiveKind.STRING)
+
+        override fun deserialize(decoder: Decoder): KeySet {
+            val text = decoder.decodeString()
+            val keys = text.split("+").map { Key.valueOf(it) }
+            val mainKey = keys.firstOrNull { it.isMainKey }
+            val subKeys = keys.filter { it.isMainKey.not() }.toSet()
+            return KeySet(mainKey, subKeys)
+        }
+
+        override fun serialize(encoder: Encoder, value: KeySet) {
+            val subKeysText = value.subKeys.toList()
+                .sortedBy { Key.values().indexOf(it) }
+                .joinToString("+") { it.name }
+            val mainKeyText = value.mainKey?.name
+            val text = subKeysText + (if (mainKeyText != null) "+$mainKeyText" else "")
+            encoder.encodeString(text)
+        }
+
     }
 }

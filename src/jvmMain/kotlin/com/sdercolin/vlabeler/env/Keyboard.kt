@@ -6,6 +6,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.*
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.key.KeySet
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @Stable
-class KeyboardViewModel(private val coroutineScope: CoroutineScope) {
+class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: AppConf.Keymaps) {
     private var isLeftCtrlPressed: Boolean = false
     private var isRightCtrlPressed: Boolean = false
     private var isLeftShiftPressed: Boolean = false
@@ -24,13 +25,17 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope) {
     private val isCtrlPressed get() = isLeftCtrlPressed || isRightCtrlPressed
     private val isShiftPressed get() = isLeftShiftPressed || isRightShiftPressed
 
-    private val actions: List<Pair<KeySet, KeyAction>> by lazy { KeyAction.getNonMenuKeySets() }
+    private var actions: List<Pair<KeySet, KeyAction>> = KeyAction.getNonMenuKeySets(keymaps)
 
     private val _keyboardActionFlow = MutableSharedFlow<KeyAction>(replay = 0)
     val keyboardActionFlow = _keyboardActionFlow.asSharedFlow()
 
     private val _keyboardStateFlow = MutableStateFlow(KeyboardState())
     val keyboardStateFlow = _keyboardStateFlow.asStateFlow()
+
+    fun updateKeymaps(keymaps: AppConf.Keymaps) {
+        actions = KeyAction.getNonMenuKeySets(keymaps)
+    }
 
     private suspend fun emitEvent(action: KeyAction) {
         _keyboardActionFlow.emit(action)
@@ -91,5 +96,3 @@ data class KeyboardState(
 
 fun KeyEvent.isReleased(key: Key) = released && this.key == key
 val KeyEvent.released get() = type == KeyEventType.KeyUp
-val KeyEvent.shouldIncreaseResolution get() = (key == Key.Minus || key == Key.NumPadSubtract) && released
-val KeyEvent.shouldDecreaseResolution get() = (key == Key.Equals || key == Key.NumPadAdd) && released

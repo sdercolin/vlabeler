@@ -29,6 +29,12 @@ fun FrameWindowScope.Menu(
     mainScope: CoroutineScope,
     appState: AppState?
 ) {
+    val keymap = appState?.appConf?.keymaps?.keyActionMap ?: mapOf()
+
+    fun KeyAction.getKeyShortCut() = keymap.getOrElse(this) { this.defaultKeySets }
+        .firstOrNull()
+        ?.toShortCut()
+
     MenuBar {
         Menu(string(Strings.MenuFile), mnemonic = 'F') {
             if (appState != null) {
@@ -315,5 +321,3 @@ fun FrameWindowScope.Menu(
         }
     }
 }
-
-private fun KeyAction.getKeyShortCut() = defaultKeySets.firstOrNull()?.toShortCut()

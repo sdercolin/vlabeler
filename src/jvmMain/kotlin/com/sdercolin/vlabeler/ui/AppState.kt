@@ -345,6 +345,9 @@ class AppState(
             playerState = PlayerState()
             player = Player(newConf.playback, mainScope, playerState)
         }
+        if (appConf.keymaps != newConf.keymaps) {
+            keyboardViewModel.updateKeymaps(newConf.keymaps)
+        }
         appConf = newConf
     }
 

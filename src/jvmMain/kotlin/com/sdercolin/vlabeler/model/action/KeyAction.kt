@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.model.action
 
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -201,9 +202,12 @@ enum class KeyAction(
 
     companion object {
 
-        fun getNonMenuKeySets(): List<Pair<KeySet, KeyAction>> = values()
+        fun getNonMenuKeySets(keymaps: AppConf.Keymaps): List<Pair<KeySet, KeyAction>> = values()
             .filter { !it.isInMenu }
-            .flatMap { it.defaultKeySets.map { keySet -> keySet to it } }
+            .flatMap {
+                keymaps.keyActionMap.getOrElse(it) { it.defaultKeySets }
+                    .map { keySet -> keySet to it }
+            }
             .groupBy { it.first.mainKey }
             .flatMap { it.value.sortedByDescending { it.first.subKeys.count() } }
     }
