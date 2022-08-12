@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
-import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.util.toColor
 

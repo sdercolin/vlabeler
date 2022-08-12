@@ -347,7 +347,6 @@ class AppState(
             player = Player(newConf.playback, mainScope, playerState)
         }
         appConf = newConf
-
     }
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
