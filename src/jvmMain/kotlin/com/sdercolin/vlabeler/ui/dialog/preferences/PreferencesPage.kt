@@ -329,7 +329,7 @@ abstract class PreferencesPage(
                     updater = { copy(playback = playback.copy(playOnDragging = it)) }
                 ) {
                     switch(
-                        title = Strings.PreferencesPlaybackPlayOnDragging,
+                        title = Strings.PreferencesPlaybackPlayOnDraggingEnabled,
                         defaultValue = AppConf.PlayOnDragging.DefaultPlayOnDraggingEnabled,
                         select = { it.enabled },
                         update = { copy(enabled = it) }
