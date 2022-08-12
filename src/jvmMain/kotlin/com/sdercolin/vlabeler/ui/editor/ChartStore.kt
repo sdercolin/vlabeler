@@ -283,8 +283,9 @@ class ChartStore {
         }
         val pixelSize = appConf.painter.spectrogram.pointPixelSize.toFloat()
         val chunk = spectrogramDataChunks[chunkIndex]
-        val maxFrequency = appConf.painter.spectrogram.maxFrequency
-        val maxMel = MelScale.toMel(maxFrequency.toDouble()).toInt()
+        val maxFrequency = sampleInfo.sampleRate / 2
+        val maxFrequencyToDisplay = appConf.painter.spectrogram.maxFrequency
+        val maxMel = MelScale.toMel(maxFrequencyToDisplay.toDouble()).toInt()
         val width = chunk.size.toFloat() * pixelSize
         val height = maxMel * pixelSize
         val size = Size(width, height)
@@ -294,13 +295,27 @@ class ChartStore {
             chunk.forEachIndexed { xIndex, yArray ->
                 if (yArray.isEmpty()) return@forEachIndexed
                 val frequencyList = yArray.indices.map { it.toFloat() * maxFrequency / (yArray.size - 1) }
-                val mels = frequencyList.map { MelScale.toMel(it.toDouble()) }
+
                 val step = appConf.painter.spectrogram.melScaleStep
+                val mels = frequencyList.map { MelScale.toMel(it.toDouble()) }
+                    .let { mels ->
+                        val firstOverIndex = mels.indexOfFirst { it > maxMel }
+                        if (firstOverIndex >= 0) {
+                            mels.subList(0, firstOverIndex)
+                        } else {
+                            val lastMel = mels.last()
+                            if (lastMel + step < maxMel) {
+                                mels + listOf(lastMel + step, maxMel.toDouble())
+                            } else {
+                                mels + listOf(maxMel.toDouble())
+                            }
+                        }
+                    }
                 val interpolated = mels.foldIndexed(listOf<Pair<Int, Double>>()) { index, acc, keyMel ->
                     if (acc.isEmpty()) {
-                        listOf(keyMel.toInt() to yArray[index])
+                        listOf(keyMel.toInt() to yArray.getOrElse(index) { 0.0 })
                     } else {
-                        val thisIntensity = yArray[index]
+                        val thisIntensity = yArray.getOrElse(index) { 0.0 }
                         val (lastMel, lastIntensity) = acc.last()
                         acc + (lastMel + step..keyMel.toInt() step step).map { mel ->
                             val intensity = lastIntensity +
@@ -329,6 +344,6 @@ class ChartStore {
     }
 
     companion object {
-        private const val PaintingAlgorithmVersion = 1
+        private const val PaintingAlgorithmVersion = 2
     }
 }
