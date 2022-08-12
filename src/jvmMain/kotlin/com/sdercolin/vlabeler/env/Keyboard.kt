@@ -5,13 +5,9 @@ package com.sdercolin.vlabeler.env
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isCtrlPressed
-import androidx.compose.ui.input.key.isShiftPressed
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.key.*
+import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.model.key.KeySet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,14 +24,16 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope) {
     private val isCtrlPressed get() = isLeftCtrlPressed || isRightCtrlPressed
     private val isShiftPressed get() = isLeftShiftPressed || isRightShiftPressed
 
-    private val _keyboardEventFlow = MutableSharedFlow<KeyEvent>(replay = 0)
-    val keyboardEventFlow = _keyboardEventFlow.asSharedFlow()
+    private val actions: List<Pair<KeySet, KeyAction>> by lazy { KeyAction.getNonMenuKeySets() }
+
+    private val _keyboardActionFlow = MutableSharedFlow<KeyAction>(replay = 0)
+    val keyboardActionFlow = _keyboardActionFlow.asSharedFlow()
 
     private val _keyboardStateFlow = MutableStateFlow(KeyboardState())
     val keyboardStateFlow = _keyboardStateFlow.asStateFlow()
 
-    private suspend fun emitEvent(event: KeyEvent) {
-        _keyboardEventFlow.emit(event)
+    private suspend fun emitEvent(action: KeyAction) {
+        _keyboardActionFlow.emit(action)
     }
 
     private suspend fun emitState() {
@@ -74,13 +72,14 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope) {
                 isRightShiftPressed = true
             }
         }
-        val eventCaught = event.shouldBeCaught
+
+        val caughtAction = actions.firstOrNull { it.first.shouldCatch(event) }?.second
 
         coroutineScope.launch {
             emitState()
-            if (eventCaught) emitEvent(event)
+            caughtAction?.let { emitEvent(it) }
         }
-        return eventCaught
+        return caughtAction != null
     }
 }
 
@@ -92,24 +91,5 @@ data class KeyboardState(
 
 fun KeyEvent.isReleased(key: Key) = released && this.key == key
 val KeyEvent.released get() = type == KeyEventType.KeyUp
-val KeyEvent.shouldTogglePlayer get() = key == Key.Spacebar && released
-val KeyEvent.shouldTogglePlayerWithInCurrentEntry get() = shouldTogglePlayer && !isShiftPressed
 val KeyEvent.shouldIncreaseResolution get() = (key == Key.Minus || key == Key.NumPadSubtract) && released
 val KeyEvent.shouldDecreaseResolution get() = (key == Key.Equals || key == Key.NumPadAdd) && released
-val KeyEvent.shouldBeCaught
-    get() = shouldTogglePlayer || shouldIncreaseResolution || shouldDecreaseResolution
-
-fun getNumberKey(number: Int) =
-    when (number) {
-        0 -> Key.Zero
-        1 -> Key.One
-        2 -> Key.Two
-        3 -> Key.Three
-        4 -> Key.Four
-        5 -> Key.Five
-        6 -> Key.Six
-        7 -> Key.Seven
-        8 -> Key.Eight
-        9 -> Key.Nine
-        else -> throw IllegalArgumentException("Cannot get number key for number $number")
-    }

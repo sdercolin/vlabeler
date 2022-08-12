@@ -289,7 +289,7 @@ enum class Strings(val en: String) {
         en = "Export"
     ),
     SetResolutionDialogDescription(
-        en = "Input horizontal resolution (points per pixel) for the editor (%d ~ %d)"
+        en = "Input canvas resolution (points per pixel) for the editor (%d ~ %d)"
     ),
     AskIfSaveBeforeOpenDialogDescription(
         en = "You have unsaved changes. Do you want to save them before opening a new project?"
@@ -662,6 +662,24 @@ enum class Strings(val en: String) {
     ),
     PreferencesAutoSaveIntervalSec(
         en = "Interval (sec)"
+    ),
+    ActionToggleSamplePlayback(
+        en = "Toggle Playback of Current Sample"
+    ),
+    ActionToggleEntryPlayback(
+        en = "Toggle Playback of Current Entry"
+    ),
+    ActionIncreaseResolution(
+        en = "Zoom In"
+    ),
+    ActionDecreaseResolution(
+        en = "Zoom Out"
+    ),
+    ActionInputResolution(
+        en = "Input Canvas Resolution"
+    ),
+    ActionCancelDialog(
+        en = "Close Dialog"
     );
 
     fun get(language: Language): String = when (language) {

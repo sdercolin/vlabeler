@@ -24,6 +24,7 @@ import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDia
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.runIf
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -181,8 +182,11 @@ class AppDialogStateImpl(
         }
     }
 
+    private var awaitEmbeddedDialogContinuation: CancellableContinuation<*>? = null
+
     override suspend fun <T : EmbeddedDialogArgs> awaitEmbeddedDialog(args: T): EmbeddedDialogResult<T>? =
         suspendCancellableCoroutine { continuation ->
+            awaitEmbeddedDialogContinuation = continuation
             val request = EmbeddedDialogRequest(args) {
                 state.closeEmbeddedDialog()
                 continuation.resume(it) { t ->
@@ -292,6 +296,8 @@ class AppDialogStateImpl(
     }
 
     override fun closeEmbeddedDialog() {
+        awaitEmbeddedDialogContinuation?.cancel()
+        awaitEmbeddedDialogContinuation = null
         embeddedDialog = null
     }
 
@@ -303,6 +309,6 @@ class AppDialogStateImpl(
         isShowingSampleDirectoryRedirectDialog = false
         macroPluginShownInDialog = null
         customizableItemManagerTypeShownInDialog = null
-        embeddedDialog = null
+        closeEmbeddedDialog()
     }
 }

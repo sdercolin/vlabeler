@@ -25,10 +25,10 @@ import androidx.compose.ui.window.rememberWindowState
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.env.shouldTogglePlayer
 import com.sdercolin.vlabeler.io.ensureDirectories
 import com.sdercolin.vlabeler.io.produceAppState
 import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
@@ -132,11 +132,14 @@ private fun LaunchKeyboardEvent(
     player: Player
 ) {
     LaunchedEffect(appState, keyboardViewModel, player) {
-        keyboardViewModel.keyboardEventFlow.collect { event ->
+        keyboardViewModel.keyboardActionFlow.collect { action ->
             if (appState.isEditorActive) {
-                if (event.shouldTogglePlayer) {
-                    appState.handleTogglePlayerEvent(event, player)
+                if (action == KeyAction.ToggleEntryPlayback || action == KeyAction.ToggleSamplePlayback) {
+                    appState.handleTogglePlayerAction(action, player)
                 }
+            }
+            if (action == KeyAction.CancelDialog) {
+                appState.closeAllDialogs()
             }
         }
     }

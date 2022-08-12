@@ -167,5 +167,44 @@ enum class KeyAction(
     OpenLogDirectory(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLogDirectory), listOf(), true),
     OpenLatestRelease(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLatestRelease), listOf(), true),
     OpenGitHub(listOf(Strings.MenuHelp, Strings.MenuHelpOpenGitHub), listOf(), true),
-    JoinDiscord(listOf(Strings.MenuHelp, Strings.MenuHelpJoinDiscord), listOf(), true)
+    JoinDiscord(listOf(Strings.MenuHelp, Strings.MenuHelpJoinDiscord), listOf(), true),
+    ToggleSamplePlayback(
+        listOf(Strings.ActionToggleSamplePlayback),
+        listOf(KeySet(Key.Space, setOf(Key.Shift))),
+        false
+    ),
+    ToggleEntryPlayback(
+        listOf(Strings.ActionToggleEntryPlayback),
+        listOf(KeySet(Key.Space)),
+        false
+    ),
+    IncreaseResolution(
+        listOf(Strings.ActionIncreaseResolution),
+        listOf(KeySet(Key.Minus), KeySet(Key.NumPadSubtract)),
+        false
+    ),
+    DecreaseResolution(
+        listOf(Strings.ActionDecreaseResolution),
+        listOf(KeySet(Key.Equals), KeySet(Key.NumPadAdd)),
+        false
+    ),
+    InputResolution(
+        listOf(Strings.ActionInputResolution),
+        listOf(KeySet(Key.Slash), KeySet(Key.NumPadDivide)),
+        false
+    ),
+    CancelDialog(
+        listOf(Strings.ActionCancelDialog),
+        listOf(KeySet(Key.Escape)),
+        false
+    );
+
+    companion object {
+
+        fun getNonMenuKeySets(): List<Pair<KeySet, KeyAction>> = values()
+            .filter { !it.isInMenu }
+            .flatMap { it.defaultKeySets.map { keySet -> keySet to it } }
+            .groupBy { it.first.mainKey }
+            .flatMap { it.value.sortedByDescending { it.first.subKeys.count() } }
+    }
 }

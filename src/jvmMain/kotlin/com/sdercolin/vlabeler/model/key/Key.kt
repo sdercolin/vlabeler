@@ -159,7 +159,7 @@ enum class Key(
     Period(".", listOf(ActualKey.Period)),
     Slash("/", listOf(ActualKey.Slash)),
     Minus("-", listOf(ActualKey.Minus)),
-    Equal("=", listOf(ActualKey.Equals)),
+    Equals("=", listOf(ActualKey.Equals)),
     NumPadAdd("NumPad+", listOf(ActualKey.NumPadAdd)),
     NumPadSubtract("NumPad-", listOf(ActualKey.NumPadSubtract)),
     NumPadMultiply("NumPad*", listOf(ActualKey.NumPadMultiply)),

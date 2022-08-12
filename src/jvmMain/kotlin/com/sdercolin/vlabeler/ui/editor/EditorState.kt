@@ -4,18 +4,16 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.env.shouldDecreaseResolution
-import com.sdercolin.vlabeler.env.shouldIncreaseResolution
 import com.sdercolin.vlabeler.exception.MissingSampleDirectoryException
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.repository.SampleRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
@@ -158,22 +156,24 @@ class EditorState(
     }
 
     suspend fun updateResolution() {
-        keyboardViewModel.keyboardEventFlow.collect {
+        keyboardViewModel.keyboardActionFlow.collect {
             if (appState.isEditorActive.not()) return@collect
-            updateResolutionByKeyEvent(it, appConf)
+            updateResolutionByKeyAction(it, appConf)
         }
     }
 
-    private fun updateResolutionByKeyEvent(
-        event: KeyEvent,
+    private fun updateResolutionByKeyAction(
+        action: KeyAction,
         appConf: AppConf
     ) {
         val resolution = canvasResolution
         val range = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
-        val updatedResolution = if (event.shouldIncreaseResolution) range.increaseFrom(resolution)
-        else if (event.shouldDecreaseResolution) range.decreaseFrom(resolution)
-        else null
-        if (updatedResolution != null) changeResolution(updatedResolution)
+        val updatedResolution = when (action) {
+            KeyAction.IncreaseResolution -> range.increaseFrom(resolution)
+            KeyAction.DecreaseResolution -> range.decreaseFrom(resolution)
+            else -> return
+        }
+        changeResolution(updatedResolution)
     }
 
     fun handlePointerEvent(

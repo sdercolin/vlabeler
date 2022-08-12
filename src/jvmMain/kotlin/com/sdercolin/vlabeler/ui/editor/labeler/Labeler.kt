@@ -81,7 +81,7 @@ fun Labeler(
             adapter = rememberScrollbarAdapter(horizontalScrollState)
         )
         val bottomBarState = rememberBottomBarState(project, appState, editorState)
-        BottomBar(bottomBarState)
+        BottomBar(bottomBarState, appState.keyboardViewModel)
     }
 }
 

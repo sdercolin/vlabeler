@@ -5,11 +5,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.input.key.KeyEvent
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
-import com.sdercolin.vlabeler.env.shouldTogglePlayerWithInCurrentEntry
 import com.sdercolin.vlabeler.exception.InvalidOpenedProjectException
 import com.sdercolin.vlabeler.io.loadAvailableLabelerConfs
 import com.sdercolin.vlabeler.io.loadPlugins
@@ -20,6 +18,7 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.repository.SampleRepository
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
@@ -301,11 +300,11 @@ class AppState(
         }
     }
 
-    fun handleTogglePlayerEvent(
-        event: KeyEvent,
+    fun handleTogglePlayerAction(
+        action: KeyAction,
         player: Player
     ) {
-        if (event.shouldTogglePlayerWithInCurrentEntry) {
+        if (action == KeyAction.ToggleEntryPlayback) {
             val sampleRate = requireNotNull(editor?.sampleInfoResult?.getOrNull()?.sampleRate)
             val range = requireProject().currentEntry.run {
                 toFrame(start, sampleRate)..toFrame(end, sampleRate)

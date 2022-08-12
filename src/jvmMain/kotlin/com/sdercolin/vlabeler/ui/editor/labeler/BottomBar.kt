@@ -21,14 +21,24 @@ import androidx.compose.material.icons.filled.CenterFocusWeak
 import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.model.action.KeyAction
 
 @Composable
-fun BottomBar(state: BottomBarState) {
+fun BottomBar(state: BottomBarState, keyboardViewModel: KeyboardViewModel) {
+    LaunchedEffect(keyboardViewModel.keyboardActionFlow) {
+        keyboardViewModel.keyboardActionFlow.collect {
+            if (it == KeyAction.InputResolution) {
+                state.openSetResolutionDialog()
+            }
+        }
+    }
     Surface {
         Row(
             modifier = Modifier.fillMaxWidth().height(30.dp),
