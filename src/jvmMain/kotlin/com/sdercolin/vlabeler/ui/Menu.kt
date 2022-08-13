@@ -17,6 +17,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.Url
+import com.sdercolin.vlabeler.util.getNullableOrElse
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toUri
@@ -31,9 +32,7 @@ fun FrameWindowScope.Menu(
 ) {
     val keymap = appState?.appConf?.keymaps?.keyActionMap ?: mapOf()
 
-    fun KeyAction.getKeyShortCut() = keymap.getOrElse(this) { this.defaultKeySets }
-        .firstOrNull()
-        ?.toShortCut()
+    fun KeyAction.getKeyShortCut() = keymap.getNullableOrElse(this) { this.defaultKeySet }?.toShortCut()
 
     MenuBar {
         Menu(string(Strings.MenuFile), mnemonic = 'F') {

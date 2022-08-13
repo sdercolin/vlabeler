@@ -38,6 +38,14 @@ data class KeySet(
 
     val isComplete get() = mainKey != null
 
+    val displayedKeyNames: List<String>
+        get() {
+            val names = mutableListOf<String>()
+            names += subKeys.toList().sortedBy { Key.values().indexOf(it) }.map { it.displayedName }
+            if (mainKey != null) names += mainKey.displayedName
+            return names
+        }
+
     private val hasCtrl = subKeys.contains(Key.Ctrl)
     private val hasAlt = subKeys.contains(Key.Alt)
     private val hasShift = subKeys.contains(Key.Shift)
@@ -87,8 +95,9 @@ data class KeySet(
             val subKeysText = value.subKeys.toList()
                 .sortedBy { Key.values().indexOf(it) }
                 .joinToString("+") { it.name }
-            val mainKeyText = value.mainKey?.name
-            val text = subKeysText + (if (mainKeyText != null) "+$mainKeyText" else "")
+                .ifEmpty { null }
+            val mainKeyText = value.mainKey?.name?.ifEmpty { null }
+            val text = listOfNotNull(subKeysText, mainKeyText).joinToString("+")
             encoder.encodeString(text)
         }
     }

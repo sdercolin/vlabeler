@@ -567,6 +567,18 @@ enum class Strings(val en: String) {
     PreferencesChartsSpectrogramColorPalette(
         en = "Colors"
     ),
+    PreferencesKeymap(
+        en = "Keymap"
+    ),
+    PreferencesKeymapDescription(
+        en = "Customize key bindings for key/mouse actions."
+    ),
+    PreferencesKeymapKeyAction(
+        en = "Key actions"
+    ),
+    PreferencesKeymapKeyActionDescription(
+        en = "Customize key bindings for key actions."
+    ),
     PreferencesEditor(
         en = "Editor"
     ),
@@ -670,10 +682,10 @@ enum class Strings(val en: String) {
         en = "Toggle Playback of Current Entry"
     ),
     ActionIncreaseResolution(
-        en = "Zoom In"
+        en = "Zoom Out"
     ),
     ActionDecreaseResolution(
-        en = "Zoom Out"
+        en = "Zoom In"
     ),
     ActionInputResolution(
         en = "Input Canvas Resolution"

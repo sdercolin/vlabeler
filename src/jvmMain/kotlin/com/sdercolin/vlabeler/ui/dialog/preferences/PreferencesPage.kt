@@ -1,12 +1,16 @@
 package com.sdercolin.vlabeler.ui.dialog.preferences
 
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.action.ActionKeyBind
+import com.sdercolin.vlabeler.model.action.ActionType
+import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
 import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
 import com.sdercolin.vlabeler.ui.string.Strings
 
 abstract class PreferencesPage(
     val displayedName: Strings,
-    val description: Strings
+    val description: Strings,
+    val scrollable: Boolean = true
 ) {
     open val children: List<PreferencesPage> = listOf()
     open val content: List<PreferencesGroup> = listOf()
@@ -210,6 +214,32 @@ abstract class PreferencesPage(
         }
     }
 
+    object Keymap : PreferencesPage(Strings.PreferencesKeymap, Strings.PreferencesKeymapDescription) {
+
+        override val children: List<PreferencesPage>
+            get() = listOf(KeymapKeyAction)
+    }
+
+    object KeymapKeyAction : PreferencesPage(
+        Strings.PreferencesKeymapKeyAction,
+        Strings.PreferencesKeymapKeyActionDescription,
+        scrollable = false
+    ) {
+        override val content: List<PreferencesGroup> = buildPageContent {
+            withContext(
+                selector = { it.keymaps },
+                updater = { copy(keymaps = it) }
+            ) {
+                keymap(
+                    actionType = ActionType.Key,
+                    defaultValue = listOf(),
+                    select = { parent -> parent.keyActionMap.map { KeyActionKeyBind(it.key, it.value) } },
+                    update = { list -> copy(keyActionMap = list.associate { it.action to it.keySet }) }
+                )
+            }
+        }
+    }
+
     object Editor : PreferencesPage(Strings.PreferencesEditor, Strings.PreferencesEditorDescription) {
 
         override val children: List<PreferencesPage>
@@ -383,6 +413,7 @@ abstract class PreferencesPage(
 
         fun getRootPages() = listOf(
             Charts,
+            Keymap,
             Editor,
             Playback,
             AutoSave
@@ -509,6 +540,20 @@ private class PreferencesItemContext<P>(
             update = updateWithContext(update),
             enabled = selectWithContext(enabled),
             options = options
+        )
+    )
+
+    fun <T : Any> keymap(
+        actionType: ActionType,
+        defaultValue: List<ActionKeyBind<T>>,
+        select: (P) -> List<ActionKeyBind<T>>,
+        update: P.(List<ActionKeyBind<T>>) -> P
+    ) = builder.item(
+        PreferencesItem.Keymap(
+            actionType = actionType,
+            defaultValue = defaultValue,
+            select = selectWithContext(select),
+            update = updateWithContext(update),
         )
     )
 }

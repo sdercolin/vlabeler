@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.action.ActionKeyBind
+import com.sdercolin.vlabeler.model.action.ActionType
 
 class PreferencesEditorState(
     private val initConf: AppConf,
@@ -131,5 +133,8 @@ class PreferencesEditorState(
 
     fun <T> update(item: PreferencesItem<T>, newValue: T) {
         _conf = item.update(conf, newValue)
+    }
+
+    fun openKeymapItemEditDialog(actionKeyBind: ActionKeyBind<*>, actionType: ActionType) {
     }
 }

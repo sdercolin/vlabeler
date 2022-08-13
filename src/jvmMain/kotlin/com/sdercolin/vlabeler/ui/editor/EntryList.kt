@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,12 +20,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,10 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
@@ -50,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
@@ -91,42 +84,30 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
     }
 
     Column(sizeModifier.plainClickable()) {
-        Row(
-            modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 15.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Default.Search, null, tint = MaterialTheme.colors.onSurface)
-            Spacer(Modifier.width(15.dp))
-            BasicTextField(
-                value = searchText.orEmpty(),
-                modifier = Modifier.fillMaxWidth()
-                    .padding(vertical = 10.dp)
-                    .focusRequester(focusRequester)
-                    .onPreviewKeyEvent {
-                        if (searchResult.isEmpty()) return@onPreviewKeyEvent false
-                        val index = selectedIndex ?: return@onPreviewKeyEvent false
-                        when {
-                            it.isReleased(Key.DirectionDown) -> {
-                                selectedIndex = index.plus(1).coerceAtMost(searchResult.lastIndex)
-                                true
-                            }
-                            it.isReleased(Key.DirectionUp) -> {
-                                selectedIndex = index.minus(1).coerceAtLeast(0)
-                                true
-                            }
-                            it.isReleased(Key.Enter) -> {
-                                searchResult[index].index.let(submit)
-                                true
-                            }
-                            else -> false
-                        }
-                    },
-                onValueChange = { text -> search(text.takeIf { it.isNotEmpty() }) },
-                textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
-                cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
-                singleLine = true
-            )
-        }
+        SearchBar(
+            text = searchText.orEmpty(),
+            onTextChange = { text -> search(text.takeIf { it.isNotEmpty() }) },
+            focusRequester = focusRequester,
+            onPreviewKeyEvent = {
+                if (searchResult.isEmpty()) return@SearchBar false
+                val index = selectedIndex ?: return@SearchBar false
+                when {
+                    it.isReleased(Key.DirectionDown) -> {
+                        selectedIndex = index.plus(1).coerceAtMost(searchResult.lastIndex)
+                        true
+                    }
+                    it.isReleased(Key.DirectionUp) -> {
+                        selectedIndex = index.minus(1).coerceAtLeast(0)
+                        true
+                    }
+                    it.isReleased(Key.Enter) -> {
+                        searchResult[index].index.let(submit)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        )
         Divider(color = White20)
         if (searchResult.isNotEmpty()) {
             List(

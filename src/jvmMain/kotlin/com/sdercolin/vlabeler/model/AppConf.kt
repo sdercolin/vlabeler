@@ -359,6 +359,6 @@ data class AppConf(
     @Serializable
     @Immutable
     data class Keymaps(
-        val keyActionMap: Map<KeyAction, List<KeySet>> = mapOf()
+        val keyActionMap: Map<KeyAction, KeySet?> = mapOf()
     )
 }

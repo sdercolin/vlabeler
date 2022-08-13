@@ -25,3 +25,6 @@ fun <T> Iterable<T>.splitAveragely(count: Int): List<List<T>> {
     }
     return result
 }
+
+fun <K, V> Map<K, V?>.getNullableOrElse(key: K, defaultValue: () -> V): V? =
+    if (containsKey(key)) get(key) else defaultValue()

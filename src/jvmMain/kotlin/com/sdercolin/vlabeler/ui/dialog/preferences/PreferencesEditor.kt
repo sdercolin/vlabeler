@@ -50,10 +50,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.action.ActionType
+import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
 import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
 import com.sdercolin.vlabeler.ui.common.InputBox
 import com.sdercolin.vlabeler.ui.common.IntegerInputBox
+import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.string.LocalizedText
@@ -179,7 +183,7 @@ private fun RowScope.Page(state: PreferencesEditorState) {
         Column(
             modifier = Modifier.fillMaxSize()
                 .padding(horizontal = 20.dp, vertical = 10.dp)
-                .verticalScroll(scrollState)
+                .runIf(page.scrollable) { verticalScroll(scrollState) }
         ) {
             PageHeader(page, state)
             page.content.forEachIndexed { index, group ->
@@ -189,10 +193,12 @@ private fun RowScope.Page(state: PreferencesEditorState) {
                 Group(group, state)
             }
         }
-        VerticalScrollbar(
-            adapter = rememberScrollbarAdapter(scrollState),
-            modifier = Modifier.align(Alignment.CenterEnd).width(30.dp)
-        )
+        if (page.scrollable) {
+            VerticalScrollbar(
+                adapter = rememberScrollbarAdapter(scrollState),
+                modifier = Modifier.align(Alignment.CenterEnd).width(30.dp)
+            )
+        }
     }
 }
 
@@ -258,23 +264,25 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
             if (group.name != null) {
                 Spacer(Modifier.widthIn(30.dp))
             }
-            Column(Modifier.widthIn(min = 200.dp, max = 400.dp)) {
-                Text(
-                    modifier = Modifier.padding(vertical = 14.dp),
-                    text = string(item.title),
-                    style = MaterialTheme.typography.body2,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (item.description != null) {
+            if (item.title != null) {
+                Column(Modifier.widthIn(min = 200.dp, max = 400.dp)) {
                     Text(
-                        text = string(item.description),
-                        style = MaterialTheme.typography.caption,
-                        softWrap = true
+                        modifier = Modifier.padding(vertical = 14.dp),
+                        text = string(item.title),
+                        style = MaterialTheme.typography.body2,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    if (item.description != null) {
+                        Text(
+                            text = string(item.description),
+                            style = MaterialTheme.typography.caption,
+                            softWrap = true
+                        )
+                    }
                 }
+                Spacer(Modifier.width(25.dp))
             }
-            Spacer(Modifier.width(25.dp))
             Item(item, state)
         }
     }
@@ -288,6 +296,7 @@ private fun Item(item: PreferencesItem<*>, state: PreferencesEditorState) {
         is PreferencesItem.FloatInput -> FloatInputItem(item, state)
         is PreferencesItem.ColorStringInput -> ColorStringInputItem(item, state)
         is PreferencesItem.Selection -> SelectionItem(item, state)
+        is PreferencesItem.Keymap<*> -> Keymap(item, state)
     }
 }
 
@@ -403,6 +412,45 @@ private fun <T> SelectionItem(item: PreferencesItem.Selection<T>, state: Prefere
             }
         }
     )
+}
+
+@Composable
+private fun <T : Any> Keymap(item: PreferencesItem.Keymap<T>, state: PreferencesEditorState) {
+    val customKeyBinds = remember(item, state.conf) { item.select(state.conf) }
+    val customKeyActions = remember(customKeyBinds) {
+        customKeyBinds.map { it.action }.filterIsInstance<KeyAction>()
+    }
+    val allKeyBinds = remember(item, customKeyBinds, customKeyActions) {
+        when (item.actionType) {
+            ActionType.Key -> KeyAction.values().filterNot { customKeyActions.contains(it) }
+                .map { KeyActionKeyBind(it, it.defaultKeySet) }
+                .plus(customKeyBinds.filterIsInstance<KeyActionKeyBind>())
+        }
+    }
+    val lazyListState = rememberLazyListState()
+    var searchText by remember { mutableStateOf("") }
+    val displayedKeyBinds = remember(searchText, allKeyBinds) {
+        allKeyBinds.filter { it.title.contains(searchText, ignoreCase = true) }
+    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        SearchBar(
+            text = searchText,
+            onTextChange = { searchText = it },
+            modifier = Modifier.background(color = MaterialTheme.colors.background)
+        )
+        Spacer(Modifier.height(8.dp))
+        Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background),
+                state = lazyListState
+            ) {
+                items(displayedKeyBinds, key = { it.action }) { keyBind ->
+                    PreferencesKeymapItem(keyBind, item.actionType, state::openKeymapItemEditDialog)
+                }
+            }
+            VerticalScrollbar(rememberScrollbarAdapter(lazyListState), Modifier.width(15.dp).align(Alignment.CenterEnd))
+        }
+    }
 }
 
 @Composable
