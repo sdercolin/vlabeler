@@ -76,6 +76,7 @@ import com.sdercolin.vlabeler.util.toRgbColorOrNull
 private fun rememberPreferencesEditorState(
     currentConf: AppConf,
     submit: (AppConf?) -> Unit,
+    apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit
 ) =
@@ -83,6 +84,7 @@ private fun rememberPreferencesEditorState(
         PreferencesEditorState(
             initConf = currentConf,
             submit = submit,
+            apply = apply,
             initialPage = initialPage,
             onViewPage = onViewPage
         )
@@ -92,9 +94,10 @@ private fun rememberPreferencesEditorState(
 fun PreferencesEditor(
     currentConf: AppConf,
     submit: (AppConf?) -> Unit,
+    apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit,
-    state: PreferencesEditorState = rememberPreferencesEditorState(currentConf, submit, initialPage, onViewPage)
+    state: PreferencesEditorState = rememberPreferencesEditorState(currentConf, submit, apply, initialPage, onViewPage)
 ) {
     Column(Modifier.fillMaxSize(0.8f).plainClickable()) {
         Content(state)
@@ -103,7 +106,7 @@ fun PreferencesEditor(
             resetPage = { state.resetPage() },
             resetAll = { state.resetAll() },
             cancel = { state.finish(false) },
-            canApply = state.canSave,
+            canApply = state.needSave,
             apply = { state.save() },
             finish = { state.finish(true) }
         )

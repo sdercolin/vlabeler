@@ -18,7 +18,6 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
-import com.sdercolin.vlabeler.ui.dialog.PreferencesDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
 import com.sdercolin.vlabeler.util.ParamMap
@@ -40,6 +39,7 @@ interface AppDialogState {
     val isShowingOpenProjectDialog: Boolean
     val isShowingSaveAsProjectDialog: Boolean
     val isShowingExportDialog: Boolean
+    val isShowingPreferencesDialog: Boolean
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
     val macroPluginShownInDialog: Pair<Plugin, ParamMap>?
@@ -72,6 +72,7 @@ interface AppDialogState {
     fun openSampleDirectoryRedirectDialog()
     fun closeSampleDirectoryRedirectDialog()
     fun openPreferencesDialog()
+    fun closePreferencesDialog()
     fun openMacroPluginDialog(plugin: Plugin)
     fun updateMacroPluginDialogInputParams(params: ParamMap)
     fun closeMacroPluginDialog()
@@ -84,12 +85,12 @@ interface AppDialogState {
     fun closeAllDialogs()
 
     fun anyDialogOpening() =
-        isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog ||
+        isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || macroPluginShownInDialog != null ||
             customizableItemManagerTypeShownInDialog != null || embeddedDialog != null
 
     fun anyDialogOpeningExceptMacroPluginManager() =
-        isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog ||
+        isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || macroPluginShownInDialog != null ||
             (
                 customizableItemManagerTypeShownInDialog != null &&
@@ -114,6 +115,7 @@ class AppDialogStateImpl(
     override var isShowingOpenProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingExportDialog: Boolean by mutableStateOf(false)
+    override var isShowingPreferencesDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
     override var macroPluginShownInDialog: Pair<Plugin, ParamMap>? by mutableStateOf(null)
@@ -251,15 +253,12 @@ class AppDialogStateImpl(
     }
 
     override fun openPreferencesDialog() {
-        val currentConf = state.appConf
         closeAllDialogs()
-        openEmbeddedDialog(
-            PreferencesDialogArgs(
-                currentConf = currentConf,
-                initialPage = state.lastViewedPreferencesPage,
-                onViewPage = { state.lastViewedPreferencesPage = it }
-            )
-        )
+        isShowingPreferencesDialog = true
+    }
+
+    override fun closePreferencesDialog() {
+        isShowingPreferencesDialog = false
     }
 
     override fun requestClearCaches(scope: CoroutineScope) =
@@ -306,6 +305,7 @@ class AppDialogStateImpl(
         isShowingSaveAsProjectDialog = false
         isShowingExportDialog = false
         isShowingSampleListDialog = false
+        isShowingPreferencesDialog = false
         isShowingSampleDirectoryRedirectDialog = false
         macroPluginShownInDialog = null
         customizableItemManagerTypeShownInDialog = null

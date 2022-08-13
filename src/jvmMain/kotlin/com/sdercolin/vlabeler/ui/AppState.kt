@@ -29,7 +29,6 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogResult
-import com.sdercolin.vlabeler.ui.dialog.PreferencesDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
@@ -285,10 +284,6 @@ class AppState(
                     action.state.removeItem(action.item)
                 }
             }
-            is PreferencesDialogResult -> {
-                val newConf = result.newConf ?: return
-                updateAppConf(newConf)
-            }
             else -> throw NotImplementedError("Dialog result handler is not implemented")
         }
     }
@@ -334,7 +329,7 @@ class AppState(
         }
     }
 
-    private fun updateAppConf(newConf: AppConf) {
+    fun updateAppConf(newConf: AppConf) {
         if (appConf.painter != newConf.painter) {
             mainScope.launch {
                 editor?.loadSample()

@@ -11,6 +11,7 @@ import com.sdercolin.vlabeler.model.action.ActionType
 class PreferencesEditorState(
     private val initConf: AppConf,
     private val submit: (AppConf?) -> Unit,
+    private val apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     private val onViewPage: (PreferencesPage) -> Unit
 ) {
@@ -65,15 +66,19 @@ class PreferencesEditorState(
         }
     )
 
-    val canSave get() = savedConf != _conf
+    val needSave get() = savedConf != _conf
 
     fun save() {
+        apply(_conf)
         savedConf = _conf
     }
 
     fun finish(positive: Boolean) {
-        if (positive) save()
-        submit(savedConf.takeIf { it != initConf })
+        if (positive && needSave) {
+            submit(_conf)
+        } else {
+            submit(null)
+        }
     }
 
     fun resetPage() {

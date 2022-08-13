@@ -15,6 +15,7 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.ErrorDialog
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
+import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
@@ -51,6 +52,9 @@ fun App(
         }
         if (appState.isShowingSampleListDialog) {
             appState.editor?.let { SampleListDialog(it, finish = { appState.closeSampleListDialog() }) }
+        }
+        if (appState.isShowingPreferencesDialog) {
+            PreferencesDialog(appState)
         }
         appState.macroPluginShownInDialog?.let { (plugin, params) ->
             MacroPluginDialog(

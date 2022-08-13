@@ -63,7 +63,8 @@ enum class Key(
             "↵"
         } else {
             "Enter"
-        }, listOf(ActualKey.Enter)
+        },
+        listOf(ActualKey.Enter)
     ),
     Backspace(
         if (isMacOS) {
