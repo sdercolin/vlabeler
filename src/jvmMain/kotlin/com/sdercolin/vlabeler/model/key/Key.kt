@@ -58,7 +58,13 @@ enum class Key(
         isMainKey = false
     ),
     Space("Space", listOf(ActualKey.Spacebar)),
-    Enter("Enter", listOf(ActualKey.Enter)),
+    Enter(
+        if (isMacOS) {
+            "↵"
+        } else {
+            "Enter"
+        }, listOf(ActualKey.Enter)
+    ),
     Backspace(
         if (isMacOS) {
             "⌫"

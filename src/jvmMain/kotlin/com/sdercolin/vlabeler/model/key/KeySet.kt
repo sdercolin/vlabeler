@@ -38,12 +38,12 @@ data class KeySet(
 
     val isComplete get() = mainKey != null
 
-    val displayedKeyNames: List<String>
+    val displayedKeyName: String
         get() {
             val names = mutableListOf<String>()
             names += subKeys.toList().sortedBy { Key.values().indexOf(it) }.map { it.displayedName }
             if (mainKey != null) names += mainKey.displayedName
-            return names
+            return names.joinToString(if (isMacOS) "" else "+")
         }
 
     private val hasCtrl = subKeys.contains(Key.Ctrl)

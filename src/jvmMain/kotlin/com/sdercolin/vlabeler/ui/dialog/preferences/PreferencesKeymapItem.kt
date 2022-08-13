@@ -49,20 +49,18 @@ fun PreferencesKeymapItem(
         val keySet = keyBind.keySet
         if (keySet != null) {
             Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                keySet.displayedKeyNames.forEach { keyText ->
-                    Text(
-                        modifier = Modifier.background(
-                            color = MaterialTheme.colors.primaryVariant,
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                            .padding(horizontal = 5.dp, vertical = 3.dp),
-                        text = keyText,
-                        style = MaterialTheme.typography.body2,
-                        color = MaterialTheme.colors.onBackground,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                Text(
+                    modifier = Modifier.background(
+                        color = MaterialTheme.colors.primaryVariant,
+                        shape = RoundedCornerShape(5.dp)
                     )
-                }
+                        .padding(horizontal = 5.dp, vertical = 3.dp),
+                    text = keySet.displayedKeyName,
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onBackground,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }
