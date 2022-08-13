@@ -91,6 +91,5 @@ data class KeySet(
             val text = subKeysText + (if (mainKeyText != null) "+$mainKeyText" else "")
             encoder.encodeString(text)
         }
-
     }
 }

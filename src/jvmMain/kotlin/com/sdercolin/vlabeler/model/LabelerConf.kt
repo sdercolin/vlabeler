@@ -194,7 +194,12 @@ data class LabelerConf(
         val extractionPattern: String,
         val variableNames: List<String>,
         /**
-         * Output variables that the scripts should set include:
+         * Available input variables:
+         * - String "inputFileName": Name of the input file without extension
+         * - String List "sampleNames": Names of the samples without extension in the folder
+         * - String "<item in [variableNames]>": Values extracted by [extractionPattern]
+         *
+         * Output variables that the scripts should set:
          * - String "sample" (sample file name without extension)
          * - String "name"
          * - Float "start" (in millisecond)
@@ -207,9 +212,7 @@ data class LabelerConf(
          *
          * If "name" is not set, this entry is ignored.
          * If any of "start", "end" is not set, or points don't have a same size with [fields], this entry will fall
-         * back to default values except the entry name
-         *
-         * String values with names defined in [variableNames] are available as input
+         * back to default values except the entry name.
          */
         val scripts: List<String>,
     )

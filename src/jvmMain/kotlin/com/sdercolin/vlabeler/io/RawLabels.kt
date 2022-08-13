@@ -4,17 +4,18 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
-import com.sdercolin.vlabeler.model.mergeEntriesWithSampleNames
+import com.sdercolin.vlabeler.model.postApplyLabelerConf
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.matchGroups
 import com.sdercolin.vlabeler.util.replaceWithVariables
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
+import java.io.File
 
 fun fromRawLabels(
     sources: List<String>,
+    inputFile: File?,
     labelerConf: LabelerConf,
-    sampleNames: List<String>,
-    includeAllSamples: Boolean
+    sampleNames: List<String>
 ): List<Entry> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
@@ -25,6 +26,8 @@ fun fromRawLabels(
             parser.variableNames.mapIndexed { i, name ->
                 js.set(name, groups[i])
             }
+            js.set("inputFileName", inputFile?.nameWithoutExtension)
+            js.set("sampleNames", sampleNames)
             val script = parser.scripts.joinToString("\n")
             js.eval(script)
 
@@ -61,7 +64,7 @@ fun fromRawLabels(
 
     js.close()
 
-    return mergeEntriesWithSampleNames(labelerConf, entriesBySampleName, sampleNames, includeAllSamples)
+    return entriesBySampleName.postApplyLabelerConf(labelerConf)
 }
 
 fun Project.toRawLabels(): String {

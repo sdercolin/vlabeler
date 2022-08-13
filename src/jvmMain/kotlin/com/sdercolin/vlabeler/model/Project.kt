@@ -1,7 +1,6 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
-import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
 import com.sdercolin.vlabeler.io.fromRawLabels
@@ -297,32 +296,16 @@ private fun generateEntriesByPlugin(
                 )
             }.map { it.toEntry(fallbackSample = sampleNames.first()) }
 
-            mergeEntriesWithSampleNames(labelerConf, entries, sampleNames, includeAllSamples = false)
+            entries.postApplyLabelerConf(labelerConf)
         }
-        is TemplatePluginResult.Raw -> fromRawLabels(result.lines, labelerConf, sampleNames, includeAllSamples = false)
+        is TemplatePluginResult.Raw -> fromRawLabels(result.lines, inputFile, labelerConf, sampleNames)
     }
 }
 
-fun mergeEntriesWithSampleNames(
-    labelerConf: LabelerConf,
-    entries: List<Entry>,
-    sampleNames: List<String>,
-    includeAllSamples: Boolean = true
-): List<Entry> {
-    val sampleNameUsed = entries.map { it.sample }.toSet()
-    val sampleNamesNotUsed = sampleNames.filterNot { it in sampleNameUsed }
-    val additionalEntries = if (includeAllSamples) {
-        sampleNamesNotUsed.map { sampleName ->
-            Entry.fromDefaultValues(sampleName, sampleName, labelerConf)
-                .also {
-                    Log.info("Sample $sampleName doesn't have entries, created default: $it")
-                }
-        }
-    } else listOf()
-    return (entries + additionalEntries)
-        .toContinuous(labelerConf.continuous)
-        .distinct(labelerConf.allowSameNameEntry)
-}
+fun List<Entry>.postApplyLabelerConf(
+    labelerConf: LabelerConf
+): List<Entry> = toContinuous(labelerConf.continuous)
+    .distinct(labelerConf.allowSameNameEntry)
 
 private fun List<Entry>.indexGroupsConnected(): List<Pair<String, List<Int>>> = withIndex()
     .fold(listOf<Pair<String, MutableList<IndexedValue<Entry>>>>()) { acc, entry ->
@@ -395,9 +378,9 @@ suspend fun projectOf(
         inputFile != null -> {
             fromRawLabels(
                 inputFile.readLines(Charset.forName(encoding)),
+                inputFile,
                 labelerConf,
-                sampleNames,
-                includeAllSamples = true
+                sampleNames
             )
         }
         else -> {

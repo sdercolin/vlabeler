@@ -1,6 +1,6 @@
 {
   "name": "sinsy.default",
-  "version": 4,
+  "version": 5,
   "extension": "lab",
   "defaultInputFilePath": null,
   "displayedName": "Sinsy lab labeler",
@@ -43,6 +43,11 @@
       "name"
     ],
     "scripts": [
+      "if (inputFileName) {",
+      "    if(sampleNames.contains(inputFileName)) {",
+      "        sample = inputFileName",
+      "    }",
+      "}",
       "start = parseFloat(left) / 10000",
       "end = parseFloat(right) / 10000"
     ]
