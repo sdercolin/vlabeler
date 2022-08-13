@@ -50,9 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.action.ActionType
-import com.sdercolin.vlabeler.model.action.KeyAction
-import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
+import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
 import com.sdercolin.vlabeler.ui.common.InputBox
@@ -99,17 +97,25 @@ fun PreferencesEditor(
     onViewPage: (PreferencesPage) -> Unit,
     state: PreferencesEditorState = rememberPreferencesEditorState(currentConf, submit, apply, initialPage, onViewPage)
 ) {
-    Column(Modifier.fillMaxSize(0.8f).plainClickable()) {
-        Content(state)
-        Divider(Modifier.height(1.dp), color = Black50)
-        ButtonBar(
-            resetPage = { state.resetPage() },
-            resetAll = { state.resetAll() },
-            cancel = { state.finish(false) },
-            canApply = state.needSave,
-            apply = { state.save() },
-            finish = { state.finish(true) }
-        )
+    Box(Modifier.fillMaxSize(0.8f).plainClickable()) {
+        Column(Modifier.fillMaxSize()) {
+            Content(state)
+            Divider(Modifier.height(1.dp), color = Black50)
+            ButtonBar(
+                resetPage = { state.resetPage() },
+                resetAll = { state.resetAll() },
+                cancel = { state.finish(false) },
+                canApply = state.needSave,
+                apply = { state.save() },
+                finish = { state.finish(true) }
+            )
+        }
+        state.keymapItemEditDialogArgs?.let {
+            KeymapItemEditDialog(it)
+        }
+        state.keymapItemEditConflictDialogArgs?.let {
+            KeymapItemEditConflictDialog(it)
+        }
     }
 }
 
@@ -418,27 +424,20 @@ private fun <T> SelectionItem(item: PreferencesItem.Selection<T>, state: Prefere
 }
 
 @Composable
-private fun <T : Any> Keymap(item: PreferencesItem.Keymap<T>, state: PreferencesEditorState) {
-    val customKeyBinds = remember(item, state.conf) { item.select(state.conf) }
-    val customKeyActions = remember(customKeyBinds) {
-        customKeyBinds.map { it.action }.filterIsInstance<KeyAction>()
+private fun <K : Action> Keymap(
+    item: PreferencesItem.Keymap<K>,
+    state: PreferencesEditorState,
+    keymapState: PreferencesKeymapState<K> = remember(item) { PreferencesKeymapState(item, state) }
+) {
+    LaunchedEffect(state.conf) {
+        keymapState.update(state.conf)
     }
-    val allKeyBinds = remember(item, customKeyBinds, customKeyActions) {
-        when (item.actionType) {
-            ActionType.Key -> KeyAction.values().filterNot { customKeyActions.contains(it) }
-                .map { KeyActionKeyBind(it, it.defaultKeySet) }
-                .plus(customKeyBinds.filterIsInstance<KeyActionKeyBind>())
-        }
-    }
+
     val lazyListState = rememberLazyListState()
-    var searchText by remember { mutableStateOf("") }
-    val displayedKeyBinds = remember(searchText, allKeyBinds) {
-        allKeyBinds.filter { it.title.contains(searchText, ignoreCase = true) }
-    }
     Column(modifier = Modifier.fillMaxSize()) {
         SearchBar(
-            text = searchText,
-            onTextChange = { searchText = it },
+            text = keymapState.searchText,
+            onTextChange = keymapState::search,
             modifier = Modifier.background(color = MaterialTheme.colors.background)
         )
         Spacer(Modifier.height(8.dp))
@@ -447,8 +446,18 @@ private fun <T : Any> Keymap(item: PreferencesItem.Keymap<T>, state: Preferences
                 modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background),
                 state = lazyListState
             ) {
-                items(displayedKeyBinds, key = { it.action }) { keyBind ->
-                    PreferencesKeymapItem(keyBind, item.actionType, state::openKeymapItemEditDialog)
+                items(keymapState.displayedKeyBinds, key = { it.action }) { keyBind ->
+                    PreferencesKeymapItem(
+                        keyBind = keyBind,
+                        keymap = item,
+                        onClickItem = { keyBindItem, keymapItem ->
+                            state.openKeymapItemEditDialog(
+                                keyBindItem,
+                                keymapItem,
+                                keymapState.allKeyBinds
+                            )
+                        }
+                    )
                 }
             }
             VerticalScrollbar(rememberScrollbarAdapter(lazyListState), Modifier.width(15.dp).align(Alignment.CenterEnd))

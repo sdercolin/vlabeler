@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.dialog.preferences
 
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.ActionType
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -67,10 +68,10 @@ sealed class PreferencesItem<T>(
         val options: Array<T>
     ) : PreferencesItem<T>(title, description, defaultValue, select, update, enabled)
 
-    class Keymap<T : Any>(
+    class Keymap<K : Action>(
         val actionType: ActionType,
-        defaultValue: List<ActionKeyBind<T>>,
-        select: (AppConf) -> List<ActionKeyBind<T>>,
-        update: AppConf.(List<ActionKeyBind<T>>) -> AppConf,
-    ) : PreferencesItem<List<ActionKeyBind<T>>>(null, null, defaultValue, select, update, { true })
+        defaultValue: List<ActionKeyBind<K>>,
+        select: (AppConf) -> List<ActionKeyBind<K>>,
+        update: AppConf.(List<ActionKeyBind<K>>) -> AppConf,
+    ) : PreferencesItem<List<ActionKeyBind<K>>>(null, null, defaultValue, select, update, { true })
 }

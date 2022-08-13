@@ -11,6 +11,8 @@ import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import com.sdercolin.vlabeler.env.isMacOS
+import com.sdercolin.vlabeler.env.isNativeCtrlPressed
+import com.sdercolin.vlabeler.env.isNativeMetaPressed
 import com.sdercolin.vlabeler.env.released
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -33,6 +35,7 @@ data class KeySet(
         if (mainKey != null && mainKey.isMainKey.not()) return false
         if (subKeys.distinct().size != subKeys.size) return false
         if (subKeys.any { it.isMainKey }) return false
+        if (mainKey == null && subKeys.isEmpty()) return false
         return true
     }
 
@@ -99,6 +102,26 @@ data class KeySet(
             val mainKeyText = value.mainKey?.name?.ifEmpty { null }
             val text = listOfNotNull(subKeysText, mainKeyText).joinToString("+")
             encoder.encodeString(text)
+        }
+    }
+
+    companion object {
+        fun fromKeyEvent(keyEvent: KeyEvent): KeySet {
+            val mainKey = Key.fromActualKey(keyEvent.key)
+            val subKeys = mutableSetOf<Key>()
+            if (keyEvent.isNativeCtrlPressed || mainKey == Key.Ctrl) {
+                subKeys += Key.Ctrl
+            }
+            if (keyEvent.isNativeMetaPressed || mainKey == Key.Windows) {
+                subKeys += Key.Windows
+            }
+            if (keyEvent.isShiftPressed || mainKey == Key.Shift) {
+                subKeys += Key.Shift
+            }
+            if (keyEvent.isAltPressed || mainKey == Key.Alt) {
+                subKeys += Key.Alt
+            }
+            return KeySet(mainKey?.takeIf { it.isMainKey }, subKeys)
         }
     }
 }

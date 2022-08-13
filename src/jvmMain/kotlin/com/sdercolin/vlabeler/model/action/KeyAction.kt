@@ -4,13 +4,14 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
 import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.getNullableOrElse
 
 enum class KeyAction(
     val displayedNameSections: List<Strings>,
     val defaultKeySet: KeySet?,
     val isInMenu: Boolean
-) {
+) : Action {
     NewProject(
         listOf(Strings.MenuFile, Strings.MenuFileNewProject),
         KeySet(Key.N, setOf(Key.Ctrl, Key.Shift)),
@@ -200,6 +201,12 @@ enum class KeyAction(
         KeySet(Key.Escape),
         false
     );
+
+    override val displayOrder: Int
+        get() = values().indexOf(this)
+
+    override val title: String
+        get() = displayedNameSections.joinToString(" > ") { string(it) }
 
     companion object {
 

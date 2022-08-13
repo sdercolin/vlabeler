@@ -5,8 +5,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
-import com.sdercolin.vlabeler.model.action.ActionType
+import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
 
 class PreferencesEditorState(
     private val initConf: AppConf,
@@ -140,6 +141,83 @@ class PreferencesEditorState(
         _conf = item.update(conf, newValue)
     }
 
-    fun openKeymapItemEditDialog(actionKeyBind: ActionKeyBind<*>, actionType: ActionType) {
+    var keymapItemEditDialogArgs: KeymapItemEditDialogArgs<*>? by mutableStateOf(null)
+        private set
+    var keymapItemEditConflictDialogArgs: KeymapItemEditConflictDialogArgs<*>? by mutableStateOf(null)
+        private set
+
+    data class KeymapItemEditDialogArgs<K : Action>(
+        val actionKeyBind: ActionKeyBind<K>,
+        val keymapItem: PreferencesItem.Keymap<K>,
+        val allKeyBinds: List<ActionKeyBind<K>>,
+        val submit: (ActionKeyBind<K>?) -> Unit
+    )
+
+    data class KeymapItemEditConflictDialogArgs<K : Action>(
+        val editedKeyBind: ActionKeyBind<K>,
+        val conflictingKeyBinds: List<ActionKeyBind<K>>,
+        val cancel: () -> Unit,
+        val keep: () -> Unit,
+        val remove: () -> Unit
+    )
+
+    fun <K : Action> openKeymapItemEditDialog(
+        actionKeyBind: ActionKeyBind<K>,
+        keymap: PreferencesItem.Keymap<K>,
+        allKeyBinds: List<ActionKeyBind<K>>
+    ) {
+        keymapItemEditDialogArgs = KeymapItemEditDialogArgs(
+            actionKeyBind = actionKeyBind,
+            keymapItem = keymap,
+            allKeyBinds = allKeyBinds,
+            submit = { edited ->
+                submitKeymapItemEditDialog(edited, keymap, allKeyBinds)
+            }
+        )
+    }
+
+    private fun <K : Action> submitKeymapItemEditDialog(
+        edited: ActionKeyBind<K>?,
+        keymap: PreferencesItem.Keymap<K>,
+        allKeyBinds: List<ActionKeyBind<K>>
+    ) {
+        keymapItemEditDialogArgs = null
+        if (edited == null) return
+        val editedKeymap = keymap.select(conf).associateBy { it.action }.toMutableMap()
+        editedKeymap.update(edited)
+        val updatedConf = keymap.update(conf, editedKeymap.map { it.value })
+        val conflictingKeyBinds = allKeyBinds.getConflictingKeyBinds(edited.keySet, edited.action)
+        if (conflictingKeyBinds.isEmpty()) {
+            _conf = updatedConf
+            return
+        }
+        keymapItemEditConflictDialogArgs = KeymapItemEditConflictDialogArgs(
+            editedKeyBind = edited,
+            conflictingKeyBinds = conflictingKeyBinds,
+            cancel = {
+                keymapItemEditConflictDialogArgs = null
+            },
+            keep = {
+                keymapItemEditConflictDialogArgs = null
+                _conf = updatedConf
+            },
+            remove = {
+                keymapItemEditConflictDialogArgs = null
+                conflictingKeyBinds.forEach {
+                    editedKeymap.update(it.update(null))
+                }
+                _conf = keymap.update(conf, editedKeymap.map { it.value })
+            }
+        )
+    }
+
+    private fun <K : Action> MutableMap<K, ActionKeyBind<K>>.update(
+        edited: ActionKeyBind<K>
+    ) {
+        if (edited.equalsDefault) {
+            remove(edited.action)
+        } else {
+            this[edited.action] = edited
+        }
     }
 }

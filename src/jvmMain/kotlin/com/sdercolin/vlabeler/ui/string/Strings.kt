@@ -159,6 +159,12 @@ enum class Strings(val en: String) {
     CommonNo(
         en = "No"
     ),
+    CommonWarning(
+        en = "Warning"
+    ),
+    CommonError(
+        en = "Error"
+    ),
     CommonInputErrorPromptNumber(
         en = "Please enter a number."
     ),
@@ -407,28 +413,30 @@ enum class Strings(val en: String) {
         en = "editing %d entries in sample %s"
     ),
     FailedToLoadSampleFileError(
-        en = "Could not load the sample file. It may not exist, or is not a supported format."
+        en = "Could not load the sample file.\nIt may not exist, or is not a supported format."
     ),
     EmptySampleDirectoryException(
         en = "Could not create project because no sample files are found in the given sample directory."
     ),
     PluginRuntimeUnexpectedException(
-        en = "An unexpected error occurred during the plugin execution. Please contact the author for more information."
+        en = "An unexpected error occurred during the plugin execution.\n" +
+            "Please contact the author for more information."
     ),
     InvalidCreatedProjectException(
-        en = "The created project is not valid. Please contact author of the labeler/plugin for more information."
+        en = "The created project is not valid.\nPlease contact author of the labeler/plugin for more information."
     ),
     InvalidOpenedProjectException(
-        en = "Could not open the project because it contains invalid data. Please check error log for more information."
+        en = "Could not open the project because it contains invalid data.\n" +
+            "Please check error log for more information."
     ),
     ProjectParseException(
-        en = "Could not open the project. It may be corrupted or created by an incompatible version of vLabeler."
+        en = "Could not open the project.\nIt may be corrupted or created by an incompatible version of vLabeler."
     ),
     ProjectUpdateOnSampleException(
-        en = "Could not update the project with the loaded sample file. Please check error log for more information."
+        en = "Could not update the project with the loaded sample file.\nPlease check error log for more information."
     ),
     InvalidEditedProjectException(
-        en = "Invalid edited project. Please check error log for more information."
+        en = "Invalid edited project.\nPlease check error log for more information."
     ),
     CustomizableItemLoadingException(
         en = "Could not load the selected customized item."
@@ -578,6 +586,21 @@ enum class Strings(val en: String) {
     ),
     PreferencesKeymapKeyActionDescription(
         en = "Customize key bindings for key actions."
+    ),
+    PreferencesKeymapEditDialogTitle(
+        en = "Editing key bind for:"
+    ),
+    PreferencesKeymapEditDialogConflictingLabel(
+        en = "Already assigned to:"
+    ),
+    PreferencesKeymapEditDialogConflictingWarning(
+        en = "This shortcut is already assigned to other actions.\nDo you want to remove the other assignments?"
+    ),
+    PreferencesKeymapEditDialogConflictingWarningKeep(
+        en = "Keep"
+    ),
+    PreferencesKeymapEditDialogConflictingWarningRemove(
+        en = "Remove"
     ),
     PreferencesEditor(
         en = "Editor"

@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.dialog.preferences
 
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.ActionType
 import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
@@ -543,11 +544,11 @@ private class PreferencesItemContext<P>(
         )
     )
 
-    fun <T : Any> keymap(
+    fun <K : Action> keymap(
         actionType: ActionType,
-        defaultValue: List<ActionKeyBind<T>>,
-        select: (P) -> List<ActionKeyBind<T>>,
-        update: P.(List<ActionKeyBind<T>>) -> P
+        defaultValue: List<ActionKeyBind<K>>,
+        select: (P) -> List<ActionKeyBind<K>>,
+        update: P.(List<ActionKeyBind<K>>) -> P
     ) = builder.item(
         PreferencesItem.Keymap(
             actionType = actionType,

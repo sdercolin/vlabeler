@@ -55,6 +55,7 @@ import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.TemplatePluginDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -165,7 +166,7 @@ private fun ProjectNameTextField(state: ProjectCreatorState) {
             TooltipArea(
                 tooltip = { Tooltip(string(Strings.StarterNewProjectNameWarning)) }
             ) {
-                Icon(Icons.Default.Warning, null, tint = MaterialTheme.colors.primary)
+                Icon(Icons.Default.Warning, null, tint = DarkYellow)
             }
         }
     }

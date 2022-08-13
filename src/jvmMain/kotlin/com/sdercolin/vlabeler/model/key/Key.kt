@@ -108,7 +108,7 @@ enum class Key(
     ),
     Left(
         if (isMacOS) {
-            "◄"
+            "◀"
         } else {
             "Left"
         },
@@ -116,7 +116,7 @@ enum class Key(
     ),
     Right(
         if (isMacOS) {
-            "►"
+            "▶"
         } else {
             "Right"
         },
@@ -188,7 +188,19 @@ enum class Key(
     Backslash("\\", listOf(ActualKey.Backslash)),
     Semicolon(";", listOf(ActualKey.Semicolon)),
     Apostrophe("'", listOf(ActualKey.Apostrophe)),
-    Grave("`", listOf(ActualKey.Grave));
+    Grave("`", listOf(ActualKey.Grave)),
+    F1("F1", listOf(ActualKey.F1)),
+    F2("F2", listOf(ActualKey.F2)),
+    F3("F3", listOf(ActualKey.F3)),
+    F4("F4", listOf(ActualKey.F4)),
+    F5("F5", listOf(ActualKey.F5)),
+    F6("F6", listOf(ActualKey.F6)),
+    F7("F7", listOf(ActualKey.F7)),
+    F8("F8", listOf(ActualKey.F8)),
+    F9("F9", listOf(ActualKey.F9)),
+    F10("F10", listOf(ActualKey.F10)),
+    F11("F11", listOf(ActualKey.F11)),
+    F12("F12", listOf(ActualKey.F12));
 
     fun isKey(actualKey: ActualKey) = actualKeys.contains(actualKey)
 

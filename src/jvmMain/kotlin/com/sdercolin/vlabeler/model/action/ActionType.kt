@@ -1,5 +1,5 @@
 package com.sdercolin.vlabeler.model.action
 
-enum class ActionType {
-    Key
+enum class ActionType(val requiresCompleteKeySet: Boolean) {
+    Key(true)
 }

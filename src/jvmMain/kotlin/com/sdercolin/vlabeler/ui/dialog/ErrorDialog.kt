@@ -10,20 +10,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.ui.common.WarningText
+import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -43,22 +40,13 @@ fun ErrorDialog(
         Surface {
             Box(
                 modifier = Modifier
-                    .padding(horizontal = 50.dp, vertical = 20.dp)
+                    .padding(horizontal = 35.dp, vertical = 20.dp)
             ) {
                 Column(Modifier.widthIn(min = 350.dp)) {
                     Spacer(Modifier.height(15.dp))
-                    Icon(
-                        imageVector = Icons.Default.Error,
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.error,
-                        modifier = Modifier.size(50.dp).align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(Modifier.height(15.dp))
-                    Text(
+                    WarningText(
                         text = error.message ?: error.toString(),
-                        style = MaterialTheme.typography.body2,
-                        fontWeight = FontWeight.Bold,
-                        softWrap = true
+                        style = WarningTextStyle.Error
                     )
                     Spacer(Modifier.height(25.dp))
                     Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {

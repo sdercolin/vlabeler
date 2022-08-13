@@ -29,8 +29,7 @@ fun PreferencesDialog(appState: AppState) {
         }
     }
     Box(
-        modifier = Modifier.fillMaxSize()
-            .background(color = Black50),
+        modifier = Modifier.fillMaxSize().background(color = Black50),
         contentAlignment = Alignment.Center
     ) {
         Surface {
