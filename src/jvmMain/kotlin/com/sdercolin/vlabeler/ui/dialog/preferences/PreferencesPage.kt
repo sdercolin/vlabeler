@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.ActionType
 import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
+import com.sdercolin.vlabeler.model.action.MouseClickActionKeyBind
 import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
 import com.sdercolin.vlabeler.ui.string.Strings
 
@@ -218,7 +219,7 @@ abstract class PreferencesPage(
     object Keymap : PreferencesPage(Strings.PreferencesKeymap, Strings.PreferencesKeymapDescription) {
 
         override val children: List<PreferencesPage>
-            get() = listOf(KeymapKeyAction)
+            get() = listOf(KeymapKeyAction, KeymapMouseClickAction)
     }
 
     object KeymapKeyAction : PreferencesPage(
@@ -236,6 +237,26 @@ abstract class PreferencesPage(
                     defaultValue = listOf(),
                     select = { parent -> parent.keyActionMap.map { KeyActionKeyBind(it.key, it.value) } },
                     update = { list -> copy(keyActionMap = list.associate { it.action to it.keySet }) }
+                )
+            }
+        }
+    }
+
+    object KeymapMouseClickAction : PreferencesPage(
+        Strings.PreferencesKeymapMouseClickAction,
+        Strings.PreferencesKeymapMouseClickActionDescription,
+        scrollable = false
+    ) {
+        override val content: List<PreferencesGroup> = buildPageContent {
+            withContext(
+                selector = { it.keymaps },
+                updater = { copy(keymaps = it) }
+            ) {
+                keymap(
+                    actionType = ActionType.MouseClick,
+                    defaultValue = listOf(),
+                    select = { parent -> parent.mouseClickActionMap.map { MouseClickActionKeyBind(it.key, it.value) } },
+                    update = { list -> copy(mouseClickActionMap = list.associate { it.action to it.keySet }) }
                 )
             }
         }

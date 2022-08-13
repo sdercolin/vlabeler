@@ -587,6 +587,13 @@ enum class Strings(val en: String) {
     PreferencesKeymapKeyActionDescription(
         en = "Customize key bindings for key actions."
     ),
+    PreferencesKeymapMouseClickAction(
+        en = "Mouse click actions"
+    ),
+    PreferencesKeymapMouseClickActionDescription(
+        en = "Customize key bindings for mouse click actions.\n" +
+            "An action is conducted only while all the keys in the key bindings are pressed."
+    ),
     PreferencesKeymapEditDialogTitle(
         en = "Editing key bind for:"
     ),
@@ -715,6 +722,18 @@ enum class Strings(val en: String) {
     ),
     ActionCancelDialog(
         en = "Close Dialog"
+    ),
+    ActionMoveParameter(
+        en = "Drag Parameter Line"
+    ),
+    ActionMoveParameterWithPlaybackPreview(
+        en = "Drag Parameter Line with Playback Preview"
+    ),
+    ActionMoveParameterInvertingPrimary(
+        en = "Drag Parameter Line with Primary/Normal Inverted"
+    ),
+    ActionPlayAudioSection(
+        en = "Play the Clicked Audio Part"
     );
 
     fun get(language: Language): String = when (language) {

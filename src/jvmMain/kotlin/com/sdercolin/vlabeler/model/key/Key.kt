@@ -57,6 +57,11 @@ enum class Key(
         },
         isMainKey = false
     ),
+
+    /**
+     * A special sub key to indicate no sub keys are needed for the action (only for mouse actions)
+     */
+    None("No Key Needed", listOf(), isMainKey = false),
     Space("Space", listOf(ActualKey.Spacebar)),
     Enter(
         if (isMacOS) {

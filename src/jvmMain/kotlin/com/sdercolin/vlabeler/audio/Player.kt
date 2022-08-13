@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
 
 @Stable
 class Player(
-    private val playbackConfig: AppConf.Playback,
+    private var playbackConfig: AppConf.Playback,
     private val coroutineScope: CoroutineScope,
     private val state: PlayerState
 ) {
@@ -190,6 +190,10 @@ class Player(
             flush()
             close()
         }
+    }
+
+    fun loadNewConf(playback: AppConf.Playback) {
+        playbackConfig = playback
     }
 
     companion object {

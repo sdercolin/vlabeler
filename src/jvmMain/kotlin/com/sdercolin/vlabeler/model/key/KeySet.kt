@@ -58,10 +58,10 @@ data class KeySet(
 
     fun toShortCut(): KeyShortcut? {
         if (isValid().not()) return null
-        val mainKey = mainKey ?: return null
+        val mainKey = mainKey?.actualKeys?.firstOrNull() ?: return null
 
         return KeyShortcut(
-            mainKey.actualKeys.first(),
+            mainKey,
             ctrl = hasMappedCtrl,
             alt = hasAlt,
             shift = hasShift,
@@ -69,8 +69,8 @@ data class KeySet(
         )
     }
 
-    fun shouldCatch(event: KeyEvent): Boolean {
-        if (event.released.not()) return false
+    fun shouldCatch(event: KeyEvent, onlyForRelease: Boolean): Boolean {
+        if (onlyForRelease && event.released.not()) return false
         if (mainKey != null) {
             if (event.key !in mainKey.actualKeys) return false
         }
@@ -80,6 +80,8 @@ data class KeySet(
         if (hasShift && !event.isShiftPressed) return false
         return true
     }
+
+    fun needNoKeys() = this == None
 
     @Serializer(KeySet::class)
     object KeySetSerializer : KSerializer<KeySet> {
@@ -106,8 +108,10 @@ data class KeySet(
     }
 
     companion object {
+        val None get() = KeySet(null, setOf(Key.None))
+
         fun fromKeyEvent(keyEvent: KeyEvent): KeySet {
-            val mainKey = Key.fromActualKey(keyEvent.key)
+            val mainKey = Key.fromActualKey(keyEvent.key).takeUnless { keyEvent.released }
             val subKeys = mutableSetOf<Key>()
             if (keyEvent.isNativeCtrlPressed || mainKey == Key.Ctrl) {
                 subKeys += Key.Ctrl

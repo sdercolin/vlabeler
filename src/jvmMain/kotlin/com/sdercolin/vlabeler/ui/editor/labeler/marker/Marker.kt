@@ -25,6 +25,8 @@ import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.action.MouseClickAction
+import com.sdercolin.vlabeler.model.action.canMoveParameter
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.EditorState
@@ -100,6 +102,7 @@ fun MarkerPointEventContainer(
                 }
                 state.handleMouseMove(
                     tool,
+                    keyboardState,
                     event,
                     editorState::updateEntries,
                     screenRange,
@@ -201,9 +204,11 @@ private fun FieldBorderCanvas(
     val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
     val tool = editorState.tool
 
-    LaunchedEffect(keyboardState.isCtrlPressed, tool) {
-        if (tool == Tool.Scissors) {
-            state.scissorsState.updateNonNull { copy(disabled = keyboardState.isCtrlPressed) }
+    LaunchedEffect(keyboardState.enabledMouseClickAction, tool) {
+        if (keyboardState.enabledMouseClickAction == MouseClickAction.PlayAudioSection) {
+            if (tool == Tool.Scissors) {
+                state.scissorsState.updateNonNull { copy(disabled = keyboardState.isCtrlPressed) }
+            }
         }
     }
 
@@ -390,6 +395,7 @@ private fun FieldBorderCanvas(
 
 private fun MarkerState.handleMouseMove(
     tool: Tool,
+    keyboardState: KeyboardState,
     event: PointerEvent,
     editEntries: (List<IndexedEntry>) -> Unit,
     screenRange: FloatRange?,
@@ -397,12 +403,13 @@ private fun MarkerState.handleMouseMove(
 ) {
     screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(event, editEntries, screenRange, playByCursor)
+        Tool.Cursor -> handleCursorMove(keyboardState, event, editEntries, screenRange, playByCursor)
         Tool.Scissors -> handleScissorsMove(event, screenRange)
     }
 }
 
 private fun MarkerState.handleCursorMove(
+    keyboardState: KeyboardState,
     event: PointerEvent,
     editEntries: (List<IndexedEntry>) -> Unit,
     screenRange: FloatRange,
@@ -422,8 +429,10 @@ private fun MarkerState.handleCursorMove(
             val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
             editEntries(updatedInMillis)
         }
-        playByCursor(entryConverter.convertToFrame(actualX))
-    } else {
+        if (keyboardState.enabledMouseClickAction == MouseClickAction.MoveParameterWithPlaybackPreview) {
+            playByCursor(entryConverter.convertToFrame(actualX))
+        }
+    } else if (keyboardState.enabledMouseClickAction.canMoveParameter()) {
         val newPointIndex = getPointIndexForHovering(
             x = actualX,
             y = y,
@@ -467,14 +476,15 @@ private fun MutableState<MarkerCursorState>.handleCursorPress(
     keyboardState: KeyboardState,
     labelerConf: LabelerConf
 ) {
-    if (!keyboardState.isCtrlPressed) {
+    if (keyboardState.enabledMouseClickAction.canMoveParameter()) {
         if (value.mouse == MarkerCursorState.Mouse.Hovering) {
             val lockedDragByBaseField =
                 labelerConf.lockedDrag.useDragBase &&
                     labelerConf.fields.getOrNull(value.pointIndex)?.dragBase == true
             val lockedDragByStart =
                 labelerConf.lockedDrag.useStart && value.usingStartPoint
-            val lockedDrag = (lockedDragByBaseField || lockedDragByStart) xor keyboardState.isShiftPressed
+            val lockedDrag = (lockedDragByBaseField || lockedDragByStart) xor
+                (keyboardState.enabledMouseClickAction == MouseClickAction.MoveParameterInvertingPrimary)
             update { startDragging(lockedDrag) }
         }
     }
@@ -490,7 +500,7 @@ private fun MarkerState.handleMouseRelease(
     screenRange: FloatRange?
 ) {
     screenRange ?: return
-    if (keyboardState.isCtrlPressed) {
+    if (keyboardState.enabledMouseClickAction == MouseClickAction.PlayAudioSection) {
         val x = event.changes.first().position.x
         val actualX = x + screenRange.start
         val clickedRange = getClickedAudioRange(actualX, leftBorder, rightBorder)

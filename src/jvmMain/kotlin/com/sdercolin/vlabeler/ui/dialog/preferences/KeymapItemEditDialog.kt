@@ -25,6 +25,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.released
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
+import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -78,7 +80,13 @@ class KeymapItemEditDialogState<K : Action>(private val args: PreferencesEditorS
 
     fun updateKeySet(keyEvent: KeyEvent) {
         if (keyEvent.released) return
-        val keySet = KeySet.fromKeyEvent(keyEvent)
+        var keySet = KeySet.fromKeyEvent(keyEvent)
+        if (args.keymapItem.actionType.requiresCompleteKeySet.not()) {
+            keySet = keySet.copy(mainKey = null)
+            if (keySet.subKeys.isEmpty()) {
+                keySet = keySet.copy(subKeys = setOf(Key.None))
+            }
+        }
         if (keySet.isValid()) {
             updateKeySet(keySet)
         }
@@ -95,6 +103,10 @@ class KeymapItemEditDialogState<K : Action>(private val args: PreferencesEditorS
 
     fun clearKeySet() {
         updateKeySet(null)
+    }
+
+    fun applyNoneKeySet() {
+        updateKeySet(KeySet.None)
     }
 
     fun cancel() {
@@ -121,7 +133,7 @@ fun <K : Action> KeymapItemEditDialog(
     ) {
         Surface {
             Column(
-                modifier = Modifier.widthIn(min = 300.dp)
+                modifier = Modifier.widthIn(min = 400.dp)
                     .padding(horizontal = 30.dp, vertical = 20.dp)
             ) {
                 Text(
@@ -160,6 +172,22 @@ fun <K : Action> KeymapItemEditDialog(
                         maxLines = 1,
                         cursorBrush = SolidColor(MaterialTheme.colors.onBackground)
                     )
+                    if (args.keymapItem.actionType.requiresCompleteKeySet.not()) {
+                        Spacer(Modifier.width(20.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .clickable { state.applyNoneKeySet() }
+                                .padding(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Remove,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onBackground,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                     Spacer(Modifier.width(20.dp))
                     Box(
                         modifier = Modifier

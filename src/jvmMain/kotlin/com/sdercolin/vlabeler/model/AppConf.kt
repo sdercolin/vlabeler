@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.model.action.MouseClickAction
 import com.sdercolin.vlabeler.model.key.KeySet
 import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
 import com.sdercolin.vlabeler.ui.string.LocalizedText
@@ -342,7 +343,7 @@ data class AppConf(
         val eventQueueSize: Int = DefaultPlayOnDraggingEventQueueSize
     ) {
         companion object {
-            const val DefaultPlayOnDraggingEnabled = false
+            const val DefaultPlayOnDraggingEnabled = true
             const val DefaultPlayOnDraggingRangeRadiusMillis = 10
             const val MaxPlayOnDraggingRangeRadiusMillis = 100
             const val MinPlayOnDraggingRangeRadiusMillis = 1
@@ -355,10 +356,12 @@ data class AppConf(
     /**
      * Custom keymaps
      * @param keyActionMap Custom keymap for [KeyAction]s
+     * @param mouseClickActionMap Custom keymap for [MouseClickAction]s
      */
     @Serializable
     @Immutable
     data class Keymaps(
-        val keyActionMap: Map<KeyAction, KeySet?> = mapOf()
+        val keyActionMap: Map<KeyAction, KeySet?> = mapOf(),
+        val mouseClickActionMap: Map<MouseClickAction, KeySet?> = mapOf()
     )
 }

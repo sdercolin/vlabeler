@@ -76,11 +76,8 @@ class AppState(
     var shouldExit: Boolean by mutableStateOf(false)
         private set
 
-    var playerState: PlayerState by mutableStateOf(PlayerState())
-        private set
-
-    var player: Player by mutableStateOf(Player(appConf.value.playback, mainScope, playerState))
-        private set
+    val playerState: PlayerState = PlayerState()
+    val player: Player = Player(appConf.value.playback, mainScope, playerState)
 
     private fun reset() {
         clearProject()
@@ -336,12 +333,12 @@ class AppState(
             }
         }
         if (appConf.playback != newConf.playback) {
-            player.close()
-            playerState = PlayerState()
-            player = Player(newConf.playback, mainScope, playerState)
+            player.loadNewConf(newConf.playback)
         }
         if (appConf.keymaps != newConf.keymaps) {
-            keyboardViewModel.updateKeymaps(newConf.keymaps)
+            mainScope.launch {
+                keyboardViewModel.updateKeymaps(newConf.keymaps)
+            }
         }
         appConf = newConf
     }

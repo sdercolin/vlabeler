@@ -47,7 +47,7 @@
   },
   "playback": {
     "playOnDragging": {
-      "enabled": false,
+      "enabled": true,
       "rangeRadiusMillis": 10,
       "eventQueueSize": 5
     }

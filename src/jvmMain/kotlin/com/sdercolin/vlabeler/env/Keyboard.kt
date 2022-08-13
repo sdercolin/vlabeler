@@ -5,7 +5,6 @@ package com.sdercolin.vlabeler.env
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
@@ -14,6 +13,9 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.model.action.MouseClickAction
+import com.sdercolin.vlabeler.model.key.ActualKey
+import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,83 +26,59 @@ import kotlinx.coroutines.launch
 
 @Stable
 class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: AppConf.Keymaps) {
-    private var isLeftCtrlPressed: Boolean = false
-    private var isRightCtrlPressed: Boolean = false
-    private var isLeftShiftPressed: Boolean = false
-    private var isRightShiftPressed: Boolean = false
-    private val isCtrlPressed get() = isLeftCtrlPressed || isRightCtrlPressed
-    private val isShiftPressed get() = isLeftShiftPressed || isRightShiftPressed
 
-    private var actions: List<Pair<KeySet, KeyAction>> = KeyAction.getNonMenuKeySets(keymaps)
+    private var keyActions: List<Pair<KeySet, KeyAction>> = KeyAction.getNonMenuKeySets(keymaps)
+    private var mouseClickActions: List<Pair<KeySet, MouseClickAction>> = MouseClickAction.getKeySets(keymaps)
 
     private val _keyboardActionFlow = MutableSharedFlow<KeyAction>(replay = 0)
     val keyboardActionFlow = _keyboardActionFlow.asSharedFlow()
 
-    private val _keyboardStateFlow = MutableStateFlow(KeyboardState())
+    private val _keyboardStateFlow = MutableStateFlow(getIdleState())
     val keyboardStateFlow = _keyboardStateFlow.asStateFlow()
 
-    fun updateKeymaps(keymaps: AppConf.Keymaps) {
-        actions = KeyAction.getNonMenuKeySets(keymaps)
+    suspend fun updateKeymaps(keymaps: AppConf.Keymaps) {
+        keyActions = KeyAction.getNonMenuKeySets(keymaps)
+        mouseClickActions = MouseClickAction.getKeySets(keymaps)
+        _keyboardStateFlow.emit(getIdleState())
     }
+
+    private fun getIdleState() = KeyboardState(
+        keySet = null,
+        enabledMouseClickAction = mouseClickActions.find { it.first.needNoKeys() }?.second
+    )
 
     private suspend fun emitEvent(action: KeyAction) {
         _keyboardActionFlow.emit(action)
     }
 
-    private suspend fun emitState() {
-        val state = KeyboardState(isCtrlPressed, isShiftPressed)
+    private suspend fun emitState(state: KeyboardState) {
         _keyboardStateFlow.emit(state)
     }
 
     fun onKeyEvent(event: KeyEvent): Boolean {
-        val isLeftCtrl = if (isMacOS) event.key == Key.MetaLeft else event.key == Key.CtrlLeft
-        if (isLeftCtrl) {
-            if (event.type == KeyEventType.KeyUp) {
-                isLeftCtrlPressed = false
-            } else if (event.type == KeyEventType.KeyDown) {
-                isLeftCtrlPressed = true
-            }
-        }
-        val isRightCtrl = if (isMacOS) event.key == Key.MetaRight else event.key == Key.CtrlRight
-        if (isRightCtrl) {
-            if (event.type == KeyEventType.KeyUp) {
-                isRightCtrlPressed = false
-            } else if (event.type == KeyEventType.KeyDown) {
-                isRightCtrlPressed = true
-            }
-        }
-        if (event.key == Key.ShiftLeft) {
-            if (event.type == KeyEventType.KeyUp) {
-                isLeftShiftPressed = false
-            } else if (event.type == KeyEventType.KeyDown) {
-                isLeftShiftPressed = true
-            }
-        }
-        if (event.key == Key.ShiftRight) {
-            if (event.type == KeyEventType.KeyUp) {
-                isRightShiftPressed = false
-            } else if (event.type == KeyEventType.KeyDown) {
-                isRightShiftPressed = true
-            }
-        }
-
-        val caughtAction = actions.firstOrNull { it.first.shouldCatch(event) }?.second
+        val keySet = KeySet.fromKeyEvent(event)
+        val caughtKeyAction = keyActions.firstOrNull { it.first.shouldCatch(event, true) }?.second
+        val mouseClickAction = mouseClickActions.firstOrNull { it.first.shouldCatch(event, false) }?.second
 
         coroutineScope.launch {
-            emitState()
-            caughtAction?.let { emitEvent(it) }
+            emitState(KeyboardState(keySet, mouseClickAction))
+            caughtKeyAction?.let { emitEvent(it) }
         }
-        return caughtAction != null
+        return caughtKeyAction != null
     }
 }
 
 @Immutable
 data class KeyboardState(
-    val isCtrlPressed: Boolean = false,
-    val isShiftPressed: Boolean = false
-)
+    val keySet: KeySet?,
+    val enabledMouseClickAction: MouseClickAction?
+) {
 
-fun KeyEvent.isReleased(key: Key) = released && this.key == key
+    val isCtrlPressed get() = keySet?.subKeys?.contains(Key.Ctrl) == true
+    val isShiftPressed get() = keySet?.subKeys?.contains(Key.Shift) == true
+}
+
+fun KeyEvent.isReleased(key: ActualKey) = released && this.key == key
 val KeyEvent.isNativeCtrlPressed get() = if (isMacOS) isMetaPressed else isCtrlPressed
 val KeyEvent.isNativeMetaPressed get() = if (isMacOS) isCtrlPressed else isMetaPressed
 val KeyEvent.released get() = type == KeyEventType.KeyUp
