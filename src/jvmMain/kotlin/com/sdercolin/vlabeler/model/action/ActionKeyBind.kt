@@ -29,6 +29,15 @@ data class MouseClickActionKeyBind(
     override fun update(keySet: KeySet?): ActionKeyBind<MouseClickAction> = copy(keySet = keySet)
 }
 
+data class MouseScrollActionKeyBind(
+    override val action: MouseScrollAction,
+    override val keySet: KeySet?
+) : ActionKeyBind<MouseScrollAction>() {
+    override val editable: Boolean = action.editable
+    override val equalsDefault: Boolean = action.defaultKeySet == keySet
+    override fun update(keySet: KeySet?): ActionKeyBind<MouseScrollAction> = copy(keySet = keySet)
+}
+
 fun <T : Action> List<ActionKeyBind<T>>.getConflictingKeyBinds(keySet: KeySet?, action: T): List<ActionKeyBind<T>> =
     if (keySet == null) {
         listOf()

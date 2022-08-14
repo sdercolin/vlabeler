@@ -8,10 +8,10 @@ import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.getNullableOrElse
 
 enum class MouseClickAction(val displayedName: Strings, val defaultKeySet: KeySet?) : Action {
-    MoveParameter(Strings.ActionMoveParameter, KeySet(null, setOf(Key.None))),
-    MoveParameterWithPlaybackPreview(Strings.ActionMoveParameterWithPlaybackPreview, KeySet(null, setOf(Key.Alt))),
-    MoveParameterInvertingPrimary(Strings.ActionMoveParameterInvertingPrimary, KeySet(null, setOf(Key.Shift))),
-    PlayAudioSection(Strings.ActionPlayAudioSection, KeySet(null, setOf(Key.Ctrl)));
+    MoveParameter(Strings.ActionMoveParameter, KeySet.None),
+    MoveParameterWithPlaybackPreview(Strings.ActionMoveParameterWithPlaybackPreview, KeySet.subKeys(Key.Alt)),
+    MoveParameterInvertingPrimary(Strings.ActionMoveParameterInvertingPrimary, KeySet.subKeys(Key.Shift)),
+    PlayAudioSection(Strings.ActionPlayAudioSection, KeySet.subKeys(Key.Ctrl));
 
     override val displayOrder: Int
         get() = values().indexOf(this)

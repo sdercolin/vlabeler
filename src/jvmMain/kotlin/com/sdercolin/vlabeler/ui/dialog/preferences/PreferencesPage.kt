@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.ActionType
 import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseClickActionKeyBind
+import com.sdercolin.vlabeler.model.action.MouseScrollActionKeyBind
 import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
 import com.sdercolin.vlabeler.ui.string.Strings
 
@@ -219,7 +220,7 @@ abstract class PreferencesPage(
     object Keymap : PreferencesPage(Strings.PreferencesKeymap, Strings.PreferencesKeymapDescription) {
 
         override val children: List<PreferencesPage>
-            get() = listOf(KeymapKeyAction, KeymapMouseClickAction)
+            get() = listOf(KeymapKeyAction, KeymapMouseClickAction, KeymapMouseScrollAction)
     }
 
     object KeymapKeyAction : PreferencesPage(
@@ -257,6 +258,28 @@ abstract class PreferencesPage(
                     defaultValue = listOf(),
                     select = { parent -> parent.mouseClickActionMap.map { MouseClickActionKeyBind(it.key, it.value) } },
                     update = { list -> copy(mouseClickActionMap = list.associate { it.action to it.keySet }) }
+                )
+            }
+        }
+    }
+
+    object KeymapMouseScrollAction : PreferencesPage(
+        Strings.PreferencesKeymapMouseScrollAction,
+        Strings.PreferencesKeymapMouseScrollActionDescription,
+        scrollable = false
+    ) {
+        override val content: List<PreferencesGroup> = buildPageContent {
+            withContext(
+                selector = { it.keymaps },
+                updater = { copy(keymaps = it) }
+            ) {
+                keymap(
+                    actionType = ActionType.MouseScroll,
+                    defaultValue = listOf(),
+                    select = { parent ->
+                        parent.mouseScrollActionMap.map { MouseScrollActionKeyBind(it.key, it.value) }
+                    },
+                    update = { list -> copy(mouseScrollActionMap = list.associate { it.action to it.keySet }) }
                 )
             }
         }

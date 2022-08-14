@@ -594,6 +594,13 @@ enum class Strings(val en: String) {
         en = "Customize key bindings for mouse click actions.\n" +
             "An action is conducted only while all the keys in the key bindings are pressed."
     ),
+    PreferencesKeymapMouseScrollAction(
+        en = "Mouse scroll actions"
+    ),
+    PreferencesKeymapMouseScrollActionDescription(
+        en = "Customize key bindings for mouse scroll actions.\n" +
+            "An action is conducted only while all the keys in the key bindings are pressed."
+    ),
     PreferencesKeymapEditDialogTitle(
         en = "Editing key bind for:"
     ),
@@ -734,6 +741,18 @@ enum class Strings(val en: String) {
     ),
     ActionPlayAudioSection(
         en = "Play the Clicked Audio Part"
+    ),
+    ActionScrollCanvas(
+        en = "Scroll Canvas"
+    ),
+    ActionZoomCanvas(
+        en = "Zoom In/Out"
+    ),
+    ActionSwitchEntry(
+        en = "Go to Previous/Next Entry"
+    ),
+    ActionSwitchSample(
+        en = "Go to Previous/Next Sample"
     );
 
     fun get(language: Language): String = when (language) {

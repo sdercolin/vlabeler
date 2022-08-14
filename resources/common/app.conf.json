@@ -54,6 +54,10 @@
   },
   "keymaps": {
     "keyActionMap": {
+    },
+    "mouseClickActionMap": {
+    },
+    "mouseScrollActionMap": {
     }
   }
 }

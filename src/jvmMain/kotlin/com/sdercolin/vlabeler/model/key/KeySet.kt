@@ -108,7 +108,9 @@ data class KeySet(
     }
 
     companion object {
-        val None get() = KeySet(null, setOf(Key.None))
+        val None get() = subKeys(Key.None)
+
+        fun subKeys(vararg keys: Key) = KeySet(null, keys.toSet())
 
         fun fromKeyEvent(keyEvent: KeyEvent): KeySet {
             val mainKey = Key.fromActualKey(keyEvent.key).takeUnless { keyEvent.released }

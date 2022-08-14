@@ -205,10 +205,9 @@ private fun FieldBorderCanvas(
     val tool = editorState.tool
 
     LaunchedEffect(keyboardState.enabledMouseClickAction, tool) {
-        if (keyboardState.enabledMouseClickAction == MouseClickAction.PlayAudioSection) {
-            if (tool == Tool.Scissors) {
-                state.scissorsState.updateNonNull { copy(disabled = keyboardState.isCtrlPressed) }
-            }
+        if (tool == Tool.Scissors) {
+            val disabled = keyboardState.enabledMouseClickAction == MouseClickAction.PlayAudioSection
+            state.scissorsState.updateNonNull { copy(disabled = disabled) }
         }
     }
 

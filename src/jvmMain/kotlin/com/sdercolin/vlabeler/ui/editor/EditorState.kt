@@ -14,6 +14,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.model.action.MouseScrollAction
 import com.sdercolin.vlabeler.repository.SampleRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
@@ -181,21 +182,24 @@ class EditorState(
         keyboardState: KeyboardState
     ) {
         if (isActive.not()) return
-        if (switchEntryByPointerEvent(event, keyboardState)) {
-            return
+        val horizontal = keyboardState.isShiftPressed
+        when (keyboardState.enabledMouseScrollAction) {
+            MouseScrollAction.SwitchSample -> switchEntryByPointerEvent(event, horizontal, true)
+            MouseScrollAction.SwitchEntry -> switchEntryByPointerEvent(event, horizontal, false)
+            MouseScrollAction.ZoomCanvas -> changeResolutionByPointerEvent(event, horizontal)
+            else -> Unit
         }
-        changeResolutionByPointerEvent(event, keyboardState)
     }
 
     private fun switchEntryByPointerEvent(
         event: PointerEvent,
-        keyboardState: KeyboardState
+        horizontal: Boolean,
+        shouldSwitchSample: Boolean
     ): Boolean {
-        val yDelta = event.changes.first().scrollDelta.y
-        val shouldSwitchSample = keyboardState.isCtrlPressed
+        val delta = event.changes.first().scrollDelta.run { if (horizontal) x else y }
         when {
-            yDelta > 0 -> if (shouldSwitchSample) appState.nextSample() else appState.nextEntry()
-            yDelta < 0 -> if (shouldSwitchSample) appState.previousSample() else appState.previousEntry()
+            delta > 0 -> if (shouldSwitchSample) appState.nextSample() else appState.nextEntry()
+            delta < 0 -> if (shouldSwitchSample) appState.previousSample() else appState.previousEntry()
             else -> return false
         }
         return true
@@ -203,15 +207,14 @@ class EditorState(
 
     private fun changeResolutionByPointerEvent(
         event: PointerEvent,
-        keyboardState: KeyboardState
+        horizontal: Boolean
     ) {
-        if (!keyboardState.isCtrlPressed) return
-        val xDelta = event.changes.first().scrollDelta.x
+        val delta = event.changes.first().scrollDelta.run { if (horizontal) x else y }
         val range = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
         val resolution = canvasResolution
         val updatedResolution = when {
-            xDelta > 0 -> range.decreaseFrom(resolution).takeIf { (range.canDecrease(resolution)) }
-            xDelta < 0 -> range.increaseFrom(resolution).takeIf { (range.canIncrease(resolution)) }
+            delta > 0 -> range.decreaseFrom(resolution).takeIf { (range.canDecrease(resolution)) }
+            delta < 0 -> range.increaseFrom(resolution).takeIf { (range.canIncrease(resolution)) }
             else -> null
         }
         if (updatedResolution != null) changeResolution(updatedResolution)

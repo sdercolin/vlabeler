@@ -14,6 +14,7 @@ import androidx.compose.ui.input.key.type
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.action.MouseClickAction
+import com.sdercolin.vlabeler.model.action.MouseScrollAction
 import com.sdercolin.vlabeler.model.key.ActualKey
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
@@ -29,6 +30,7 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
 
     private var keyActions: List<Pair<KeySet, KeyAction>> = KeyAction.getNonMenuKeySets(keymaps)
     private var mouseClickActions: List<Pair<KeySet, MouseClickAction>> = MouseClickAction.getKeySets(keymaps)
+    private var mouseScrollActions: List<Pair<KeySet, MouseScrollAction>> = MouseScrollAction.getKeySets(keymaps)
 
     private val _keyboardActionFlow = MutableSharedFlow<KeyAction>(replay = 0)
     val keyboardActionFlow = _keyboardActionFlow.asSharedFlow()
@@ -39,12 +41,14 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
     suspend fun updateKeymaps(keymaps: AppConf.Keymaps) {
         keyActions = KeyAction.getNonMenuKeySets(keymaps)
         mouseClickActions = MouseClickAction.getKeySets(keymaps)
+        mouseScrollActions = MouseScrollAction.getKeySets(keymaps)
         _keyboardStateFlow.emit(getIdleState())
     }
 
     private fun getIdleState() = KeyboardState(
         keySet = null,
-        enabledMouseClickAction = mouseClickActions.find { it.first.needNoKeys() }?.second
+        enabledMouseClickAction = mouseClickActions.find { it.first.needNoKeys() }?.second,
+        enabledMouseScrollAction = mouseScrollActions.find { it.first.needNoKeys() }?.second
     )
 
     private suspend fun emitEvent(action: KeyAction) {
@@ -59,9 +63,10 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
         val keySet = KeySet.fromKeyEvent(event)
         val caughtKeyAction = keyActions.firstOrNull { it.first.shouldCatch(event, true) }?.second
         val mouseClickAction = mouseClickActions.firstOrNull { it.first.shouldCatch(event, false) }?.second
+        val mouseScrollAction = mouseScrollActions.firstOrNull { it.first.shouldCatch(event, false) }?.second
 
         coroutineScope.launch {
-            emitState(KeyboardState(keySet, mouseClickAction))
+            emitState(KeyboardState(keySet, mouseClickAction, mouseScrollAction))
             caughtKeyAction?.let { emitEvent(it) }
         }
         return caughtKeyAction != null
@@ -71,10 +76,9 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
 @Immutable
 data class KeyboardState(
     val keySet: KeySet?,
-    val enabledMouseClickAction: MouseClickAction?
+    val enabledMouseClickAction: MouseClickAction?,
+    val enabledMouseScrollAction: MouseScrollAction?
 ) {
-
-    val isCtrlPressed get() = keySet?.subKeys?.contains(Key.Ctrl) == true
     val isShiftPressed get() = keySet?.subKeys?.contains(Key.Shift) == true
 }
 
