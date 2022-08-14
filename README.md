@@ -72,7 +72,9 @@ Currently, built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU)
 
 ## Available keyboard/mouse actions
 
-Note that following `Ctrl` means `Command` if you are using macOS.
+Note that following `Ctrl` is mapped to `Command` if you are using macOS.
+
+You can customize the key bindings in the `Settings` -> `Prefereneces` -> `Keymaps`
 
 ### Move parameter lines
 
@@ -85,6 +87,7 @@ Note that following `Ctrl` means `Command` if you are using macOS.
 - `Space`: play the current entry, or stop playing if already playing
 - `Shift` + `Space`: play the current sample file, or stop playing if already playing
 - `Ctrl` + mouse click: play the clicked section
+- `Alt` + mouse drag on parameters: play the audio near the cursor's position while moving
 
 ### Scrolling
 
