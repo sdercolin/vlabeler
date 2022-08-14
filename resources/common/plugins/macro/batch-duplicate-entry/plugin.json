@@ -1,0 +1,43 @@
+{
+  "name": "batch-duplicate-entry",
+  "version": 1,
+  "type": "macro",
+  "displayedName": "Batch duplicate entry",
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": "Duplicate multiple entries at once.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-duplicate-entry",
+  "supportedLabelFileExtension": "*",
+  "parameters": {
+    "list": [
+      {
+        "type": "entrySelector",
+        "name": "selector",
+        "label": "Entries to duplicate",
+        "description": "Select the entries to duplicate. Leave blank to edit all entries.",
+        "defaultValue": {
+          "filters": []
+        }
+      },
+      {
+        "type": "string",
+        "name": "from",
+        "label": "Rename from",
+        "description": "Regex is available.",
+        "defaultValue": "",
+        "optional": false
+      },
+      {
+        "type": "string",
+        "name": "to",
+        "label": "Rename to",
+        "description": "Regex captured group placeholders ($1, $2, etc.) are available.",
+        "defaultValue": "",
+        "optional": false
+      }
+    ]
+  },
+  "scriptFiles": [
+    "batch-duplicate-entry.js"
+  ]
+}

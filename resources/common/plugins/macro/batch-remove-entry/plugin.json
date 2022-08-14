@@ -1,0 +1,27 @@
+{
+  "name": "batch-remove-entry",
+  "version": 1,
+  "type": "macro",
+  "displayedName": "Batch remove entry",
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": "Remove multiple entries at once.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-remove-entry",
+  "supportedLabelFileExtension": "*",
+  "parameters": {
+    "list": [
+      {
+        "type": "entrySelector",
+        "name": "selector",
+        "label": "Entries to duplicate",
+        "description": "Select the entries to remove.",
+        "defaultValue": {
+          "filters": []
+        }
+      }
+    ]
+  },
+  "scriptFiles": [
+    "batch-remove-entry.js"
+  ]
+}

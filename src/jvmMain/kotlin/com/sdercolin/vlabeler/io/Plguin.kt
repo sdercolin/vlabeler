@@ -42,6 +42,7 @@ fun loadPlugins(type: Plugin.Type): List<Plugin> =
                 it.copy(directory = file.parentFile, builtIn = isBuiltIn)
             }
         }
+        .sortedBy { it.displayedName }
 
 suspend fun Plugin.loadSavedParams(): ParamMap = withContext(Dispatchers.IO) {
     requireNotNull(directory).resolve(PluginSavedParamsFileName)
