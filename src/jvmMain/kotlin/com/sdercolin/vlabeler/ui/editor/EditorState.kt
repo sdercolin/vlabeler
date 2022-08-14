@@ -52,6 +52,8 @@ class EditorState(
     var canvasResolution: Int by mutableStateOf(appState.appConf.painter.canvasResolution.default)
         private set
 
+    val scrollOnResolutionChangeViewModel = ScrollOnResolutionChangeViewModel()
+
     val entryTitle: String
         get() = project.currentEntry.name
 

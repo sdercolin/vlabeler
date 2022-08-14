@@ -144,6 +144,9 @@ fun MarkerCanvas(
         horizontalScrollState,
         appState.scrollFitViewModel
     )
+    LaunchedEffect(horizontalScrollState.maxValue, horizontalScrollState.value) {
+        editorState.scrollOnResolutionChangeViewModel.scroll(horizontalScrollState)
+    }
     LaunchedEffect(editorState.tool) {
         if (editorState.tool == Tool.Scissors) {
             state.scissorsState.update { MarkerScissorsState() }
