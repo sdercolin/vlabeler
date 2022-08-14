@@ -96,8 +96,8 @@ You can customize the key bindings in the `Settings` -> `Prefereneces` -> `Keyma
 
 ### Zoom in/out
 
-- `=` or numpad `+` or `+` button in the bottom bar: zoom in
-- `-` or numpad `-` or `-` button in the bottom bar: zoom out
+- `=` or `+` button in the bottom bar: zoom in
+- `-` or `-` button in the bottom bar: zoom out
 - `Ctrl` + `Shift` + mouse wheel scroll: zoom in/out
 - Resolution button in the bottom bar: open dialog for resolution input
 
