@@ -13,7 +13,6 @@ class ScrollOnResolutionChangeViewModel {
         if (canvasLength == canvasParams.lengthInPixel) return
         pendingLastCanvasLength = canvasLength
         canvasLength = canvasParams.lengthInPixel
-        println("updateCanvasParams: last = $pendingLastCanvasLength, new = $canvasLength")
     }
 
     suspend fun scroll(horizontalScrollState: ScrollState) {
@@ -26,7 +25,6 @@ class ScrollOnResolutionChangeViewModel {
             scrollMax = null
             return null
         }
-        println("max=$max, value=$value")
         val lastMax = scrollMax
         scrollMax = max
         if (lastMax == null) return null
@@ -39,12 +37,9 @@ class ScrollOnResolutionChangeViewModel {
         pendingLastCanvasLength = null
         val lastValue = scrollValue
         val lastScreenLength = lastCanvasLength - lastMax
-        println("lastScreenLength = $lastCanvasLength - $lastMax = $lastScreenLength")
         val ratio = (lastValue + lastScreenLength.toFloat() / 2) / lastCanvasLength
-        println("ratio=($lastValue + $lastScreenLength / 2) / $lastCanvasLength = $ratio")
         val newScreenLength = canvasLength - max
         val newValue = (ratio * canvasLength - newScreenLength.toFloat() / 2).toInt()
-        println("newValue=$ratio * $canvasLength - $newScreenLength / 2 = $newValue")
         return newValue.coerceAtLeast(0).coerceAtMost(max).also { scrollValue = it }
     }
 }
