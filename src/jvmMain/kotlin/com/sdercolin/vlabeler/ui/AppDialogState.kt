@@ -190,10 +190,10 @@ class AppDialogStateImpl(
         suspendCancellableCoroutine { continuation ->
             awaitEmbeddedDialogContinuation = continuation
             val request = EmbeddedDialogRequest(args) {
-                state.closeEmbeddedDialog()
                 continuation.resume(it) { t ->
                     if (t !is CancellationException) Log.error(t)
                 }
+                state.closeEmbeddedDialog()
             }
             embeddedDialog = request
         }
