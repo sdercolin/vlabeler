@@ -19,6 +19,7 @@ data class Project(
     val sampleDirectory: String,
     val workingDirectory: String,
     val projectName: String,
+    val cacheDirectory: String = getDefaultCacheDirectory(workingDirectory, projectName), // TODO: Remove migration code
     val entries: List<Entry>,
     val currentIndex: Int,
     val labelerConf: LabelerConf,
@@ -50,6 +51,8 @@ data class Project(
 
     val projectFile: File
         get() = File(workingDirectory).resolve("$projectName.$ProjectFileExtension")
+
+    val isUsingDefaultCacheDirectory get() = cacheDirectory == getDefaultCacheDirectory(workingDirectory, projectName)
 
     private fun getGroupIndex(entryIndex: Int) = entryIndexGroups.indexOfFirst { it.second.contains(entryIndex) }
 
@@ -273,6 +276,11 @@ data class Project(
     companion object {
         const val SampleFileExtension = "wav"
         const val ProjectFileExtension = "lbp"
+        private const val DefaultCacheDirectorySuffix = ".$ProjectFileExtension.caches"
+
+        fun getDefaultCacheDirectory(location: String, projectName: String): String {
+            return File(location, "$projectName$DefaultCacheDirectorySuffix").absolutePath
+        }
     }
 }
 
@@ -350,6 +358,7 @@ suspend fun projectOf(
     sampleDirectory: String,
     workingDirectory: String,
     projectName: String,
+    cacheDirectory: String,
     labelerConf: LabelerConf,
     plugin: Plugin?,
     pluginParams: ParamMap?,
@@ -398,6 +407,7 @@ suspend fun projectOf(
             sampleDirectory = sampleDirectory,
             workingDirectory = workingDirectory,
             projectName = projectName,
+            cacheDirectory = cacheDirectory,
             entries = entries,
             currentIndex = 0,
             labelerConf = labelerConf,

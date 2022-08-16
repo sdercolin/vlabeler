@@ -202,7 +202,7 @@ enum class Strings(val en: String) {
         en = "Sample directory"
     ),
     StarterNewWorkingDirectory(
-        en = "Working directory"
+        en = "Project location"
     ),
     StarterNewProjectTitle(
         en = "New Project"
@@ -212,6 +212,9 @@ enum class Strings(val en: String) {
     ),
     StarterNewProjectNameWarning(
         en = "The project file already exists. Creating project will overwrite the file."
+    ),
+    StarterNewCacheDirectory(
+        en = "Cache directory"
     ),
     StarterNewLabeler(
         en = "Labeler"
@@ -280,7 +283,10 @@ enum class Strings(val en: String) {
         en = "Choose sample directory"
     ),
     ChooseWorkingDirectoryDialogTitle(
-        en = "Choose working directory"
+        en = "Choose project location directory"
+    ),
+    ChooseCacheDirectoryDialogTitle(
+        en = "Choose cache directory"
     ),
     ChooseInputFileDialogTitle(
         en = "Choose input file"

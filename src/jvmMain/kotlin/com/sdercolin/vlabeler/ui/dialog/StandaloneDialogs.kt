@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.runtime.Composable
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.exportProject
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.Project
@@ -36,9 +37,20 @@ fun StandaloneDialogs(
             appState.closeSaveAsProjectDialog()
             if (directory != null && fileName != null) {
                 appState.editProject {
+                    val projectName = File(fileName).nameWithoutExtension
+                    val cacheDirectory = if (isUsingDefaultCacheDirectory) {
+                        val newCacheDirectory = Project.getDefaultCacheDirectory(directory, projectName)
+                        runCatching {
+                            File(cacheDirectory).copyRecursively(File(newCacheDirectory), overwrite = true)
+                        }.onFailure {
+                            Log.error(it)
+                        }
+                        newCacheDirectory
+                    } else this.cacheDirectory
                     copy(
                         workingDirectory = directory,
-                        projectName = File(fileName).nameWithoutExtension
+                        projectName = projectName,
+                        cacheDirectory = cacheDirectory
                     )
                 }
                 appState.requestSave()

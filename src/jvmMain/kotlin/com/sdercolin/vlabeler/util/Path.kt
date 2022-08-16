@@ -40,7 +40,7 @@ fun getDefaultLabelers() = DefaultLabelerDir.getChildren(labelerFileFilter)
 fun getCustomLabelers() = CustomLabelerDir.getChildren(labelerFileFilter)
 
 // Project files
-fun Project.getCacheDir() = File(workingDirectory).resolve(projectFile.name + ProjectCacheFolderNameSuffix)
+fun Project.getCacheDir() = File(cacheDirectory)
 
 private val invalidCharsForFileName = arrayOf('"', '*', ':', '<', '>', '?', '\\', '|', Char(0x7F), '\u0000')
 

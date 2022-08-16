@@ -94,6 +94,7 @@ fun ProjectCreator(
                         { SampleDirectoryTextField(state) },
                         { WorkingDirectoryTextField(state) },
                         { ProjectNameTextField(state) },
+                        { CacheDirectoryTextField(state) },
                         { LabelerSelectorRow(state, activeLabelerConfs, activeTemplatePlugins) },
                         { InputFileTextField(state) },
                         { EncodingSelector(state) }
@@ -170,6 +171,23 @@ private fun ProjectNameTextField(state: ProjectCreatorState) {
             }
         }
     }
+}
+
+@Composable
+private fun CacheDirectoryTextField(state: ProjectCreatorState) {
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = state.cacheDirectory,
+        onValueChange = state::updateCacheDirectory,
+        label = { Text(string(Strings.StarterNewCacheDirectory)) },
+        maxLines = 2,
+        trailingIcon = {
+            IconButton(onClick = { state.pickCacheDirectory() }) {
+                Icon(Icons.Default.FolderOpen, null)
+            }
+        },
+        isError = state.isCacheDirectoryValid().not()
+    )
 }
 
 @Composable

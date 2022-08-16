@@ -59,16 +59,16 @@ Currently, built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU)
 ## Get started
 
 1. Click `New project..`
-1. Select a folder containing your sample files
-1. If you don't want to save vLabeler files (project file, processed wav files etc.) in the sample folder, change
-   the `Working directory`
-1. Change `Project name` if you would like
-1. Select a labeler (e.g. UTAU oto labeler if you are editing UTAU oto)
-1. Select a label file template and its encoding (e.g. a pre-filled oto file), or leave it blank to use the default
+2. Select a folder containing your sample files
+3. Change `Project localtion` and `Project name` if you would like
+4. Change `Cache directory` if you would like to save the cache files (rendered images, processed wav files etc.)
+   somewhere else
+5. Select a labeler (e.g. UTAU oto labeler if you are editing UTAU oto)
+6. Select a label file template and its encoding (e.g. a pre-filled oto file), or leave it blank to use the default
    template (not recommended)
-1. If you don't have a template file, select a template generator along with input file which it requires
-1. Click `OK` and start editing
-1. Click `Export` in the menu to get the edited label file
+7. If you don't have a template file, select a template generator along with input file which it requires
+8. Click `OK` and start editing
+9. Click `Export` in the menu to get the edited label file
 
 ## Available keyboard/mouse actions
 
@@ -141,9 +141,9 @@ Cut the current entry into two parts by your click position.
 By default, when you click on a valid position with the scissors:
 
 1. Audio of the former (left) part after cutting is played so that you can confirm the phoneme
-1. A dialog is shown, asking you to rename the former entry
-1. Cutting and renaming is conducted
-1. The editor navigates to the former entry if needed
+2. A dialog is shown, asking you to rename the former entry
+3. Cutting and renaming is conducted
+4. The editor navigates to the former entry if needed
 
 These actions can be customized in the preferences.
 
@@ -219,6 +219,6 @@ When reporting issues, please attach the recent log files.
 ## Known issues
 
 1. Audio files with a higher bit depth than 16-bit cannot be played normally. Please convert them priorly.
-1. On Linux, file chooser may not be able to select an empty folder. Please creating something inside, or copy + paste
+2. On Linux, file chooser may not be able to select an empty folder. Please creating something inside, or copy + paste
    its path.
-1. Sometimes the window freezes unexpectedly. You can resize the window to refresh it.
+3. Sometimes the window freezes unexpectedly. You can resize the window to refresh it.

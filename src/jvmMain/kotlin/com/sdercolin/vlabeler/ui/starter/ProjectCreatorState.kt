@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.io.saveParams
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.model.Project.Companion.getDefaultCacheDirectory
 import com.sdercolin.vlabeler.model.projectOf
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -44,6 +45,9 @@ class ProjectCreatorState(
     var projectName: String by mutableStateOf("")
         private set
     private var projectNameEdited: Boolean by mutableStateOf(false)
+    var cacheDirectory: String by mutableStateOf("")
+        private set
+    private var cacheDirectoryEdited: Boolean by mutableStateOf(false)
     var currentPathPicker: PathPicker? by mutableStateOf(null)
         private set
     var labeler: LabelerConf by mutableStateOf(
@@ -75,9 +79,12 @@ class ProjectCreatorState(
         sampleDirectory = path
         if (!workingDirectoryEdited) {
             workingDirectory = sampleDirectory
-        }
-        if (!projectNameEdited && !workingDirectoryEdited) {
-            projectName = if (File(path).absolutePath != HomeDir.absolutePath) path.lastPathSection else ""
+            if (!projectNameEdited) {
+                fillInProjectNameByDefault(path)
+            }
+            if (!cacheDirectoryEdited) {
+                fillInCacheDirectoryByDefault(path, projectName)
+            }
         }
         updateInputFileIfNeeded()
     }
@@ -86,13 +93,36 @@ class ProjectCreatorState(
         workingDirectoryEdited = true
         workingDirectory = path
         if (!projectNameEdited) {
-            projectName = if (File(path).absolutePath != HomeDir.absolutePath) path.lastPathSection else ""
+            fillInProjectNameByDefault(path)
         }
+        if (!cacheDirectoryEdited) {
+            fillInCacheDirectoryByDefault(path, projectName)
+        }
+    }
+
+    private fun fillInProjectNameByDefault(path: String) {
+        projectName = if (File(path).absolutePath != HomeDir.absolutePath) path.lastPathSection else ""
+    }
+
+    private fun fillInCacheDirectoryByDefault(path: String, projectName: String) {
+        if (projectName.isEmpty()) return
+        cacheDirectory = if (File(path).absolutePath != HomeDir.absolutePath) {
+            getDefaultCacheDirectory(path, projectName)
+        } else ""
     }
 
     fun updateProjectName(name: String) {
         projectNameEdited = true
         projectName = name
+
+        if (!cacheDirectoryEdited) {
+            fillInCacheDirectoryByDefault(workingDirectory, name)
+        }
+    }
+
+    fun updateCacheDirectory(path: String) {
+        cacheDirectoryEdited = true
+        cacheDirectory = path
     }
 
     fun isSampleDirectoryValid(): Boolean {
@@ -115,6 +145,13 @@ class ProjectCreatorState(
         return if (isWorkingDirectoryValid() && isProjectNameValid()) {
             File(workingDirectory, "$projectName.${Project.ProjectFileExtension}").exists()
         } else false
+    }
+
+    fun isCacheDirectoryValid(): Boolean {
+        val file = File(cacheDirectory)
+        val parent = file.parent.orEmpty()
+        if (parent != workingDirectory && File(parent).exists().not()) return false
+        return file.name.isValidFileName()
     }
 
     private fun getSupportedInputFileExtension(): String? {
@@ -227,7 +264,7 @@ class ProjectCreatorState(
     }
 
     fun isValid(): Boolean = isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid() &&
-        isInputFileValid() && !templatePluginError
+        isCacheDirectoryValid() && isInputFileValid() && !templatePluginError
 
     fun pickSampleDirectory() {
         currentPathPicker = PathPicker.SampleDirectory
@@ -235,6 +272,10 @@ class ProjectCreatorState(
 
     fun pickWorkingDirectory() {
         currentPathPicker = PathPicker.WorkingDirectory
+    }
+
+    fun pickCacheDirectory() {
+        currentPathPicker = PathPicker.CacheDirectory
     }
 
     fun pickInputFile() {
@@ -251,6 +292,7 @@ class ProjectCreatorState(
     ) = when (picker) {
         PathPicker.SampleDirectory -> listOf(Project.SampleFileExtension)
         PathPicker.WorkingDirectory -> null
+        PathPicker.CacheDirectory -> null
         PathPicker.InputFile -> getSupportedInputFileExtension()?.let { listOf(it) }
     }
 
@@ -259,6 +301,7 @@ class ProjectCreatorState(
     ) = when (picker) {
         PathPicker.SampleDirectory -> sampleDirectory
         PathPicker.WorkingDirectory -> workingDirectory
+        PathPicker.CacheDirectory -> cacheDirectory
         PathPicker.InputFile -> if (inputFile != "" && isInputFileValid()) {
             File(inputFile).parent.orEmpty()
         } else {
@@ -269,6 +312,7 @@ class ProjectCreatorState(
     fun getFilePickerTitle(picker: PathPicker) = when (picker) {
         PathPicker.SampleDirectory -> string(Strings.ChooseSampleDirectoryDialogTitle)
         PathPicker.WorkingDirectory -> string(Strings.ChooseWorkingDirectoryDialogTitle)
+        PathPicker.CacheDirectory -> string(Strings.ChooseCacheDirectoryDialogTitle)
         PathPicker.InputFile -> string(Strings.ChooseInputFileDialogTitle)
     }
 
@@ -286,6 +330,9 @@ class ProjectCreatorState(
             }
             PathPicker.WorkingDirectory -> {
                 updateWorkingDirectory(file.getDirectory().absolutePath)
+            }
+            PathPicker.CacheDirectory -> {
+                updateCacheDirectory(file.getDirectory().absolutePath)
             }
             PathPicker.InputFile -> {
                 updateInputFile(file.absolutePath, editedByUser = true)
@@ -323,6 +370,7 @@ class ProjectCreatorState(
                 sampleDirectory = sampleDirectory,
                 workingDirectory = workingDirectory,
                 projectName = projectName,
+                cacheDirectory = cacheDirectory,
                 labelerConf = labeler,
                 plugin = templatePlugin,
                 pluginParams = templatePluginParams,
@@ -353,5 +401,6 @@ fun rememberProjectCreatorState(
 enum class PathPicker {
     SampleDirectory,
     WorkingDirectory,
+    CacheDirectory,
     InputFile
 }
