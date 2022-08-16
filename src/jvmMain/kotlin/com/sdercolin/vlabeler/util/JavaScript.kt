@@ -17,6 +17,7 @@ class JavaScript(logHandler: Handler? = null, currentWorkingDirectory: File? = n
         .runIfHave(logHandler) { logHandler(it) }
         .allowIO(true)
         .currentWorkingDirectory(currentWorkingDirectory?.toPath() ?: HomeDir.toPath())
+        .option("engine.WarnInterpreterOnly", "false")
         .build()
 
     private val bindings get() = context.getBindings("js")

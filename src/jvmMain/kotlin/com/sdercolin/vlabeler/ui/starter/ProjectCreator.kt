@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -29,11 +30,14 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
@@ -105,7 +109,7 @@ fun ProjectCreator(
                         { CacheDirectoryTextField(state) },
                         { LabelerSelectorRow(state, activeLabelerConfs, activeTemplatePlugins) },
                         { InputFileTextField(state) },
-                        { EncodingSelector(state) }
+                        { OtherSettingsRow(state) }
                     ).forEach {
                         it.invoke()
                         Spacer(Modifier.height(20.dp))
@@ -171,11 +175,11 @@ private fun ProjectNameTextField(state: ProjectCreatorState) {
             isError = state.isProjectNameValid().not()
         )
         if (state.isProjectFileExisting()) {
-            Spacer(Modifier.width(20.dp))
+            Spacer(Modifier.width(15.dp))
             TooltipArea(
                 tooltip = { Tooltip(string(Strings.StarterNewProjectNameWarning)) }
             ) {
-                Icon(Icons.Default.Warning, null, tint = DarkYellow)
+                Icon(Icons.Default.Warning, null, tint = DarkYellow, modifier = Modifier.size(20.dp))
             }
         }
     }
@@ -343,6 +347,15 @@ private fun InputFileTextField(state: ProjectCreatorState) {
 }
 
 @Composable
+private fun OtherSettingsRow(state: ProjectCreatorState) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        EncodingSelector(state)
+        Spacer(Modifier.width(60.dp))
+        AutoExportSwitch(state)
+    }
+}
+
+@Composable
 private fun EncodingSelector(state: ProjectCreatorState) {
     var expanded by remember { mutableStateOf(false) }
     Box {
@@ -375,6 +388,28 @@ private fun EncodingSelector(state: ProjectCreatorState) {
                     Text(text = encodingName)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun AutoExportSwitch(state: ProjectCreatorState) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Switch(
+            checked = state.autoExport,
+            onCheckedChange = { state.toggleAutoExport(it) },
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colors.primary,
+                uncheckedThumbColor = MaterialTheme.colors.onBackground
+            )
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(string(Strings.StarterNewAutoExport))
+        Spacer(Modifier.width(15.dp))
+        TooltipArea(
+            tooltip = { Tooltip(string(Strings.StarterNewAutoExportHelp)) }
+        ) {
+            Icon(Icons.Default.HelpOutline, null, tint = MaterialTheme.colors.primary, modifier = Modifier.size(20.dp))
         }
     }
 }

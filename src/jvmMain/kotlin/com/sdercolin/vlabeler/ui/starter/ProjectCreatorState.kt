@@ -68,6 +68,8 @@ class ProjectCreatorState(
         private set
     private var inputFileEdited: Boolean by mutableStateOf(false)
     val encodings = AvailableEncodings
+    var autoExport: Boolean by mutableStateOf(appRecord.autoExport)
+        private set
 
     private val encodingState = mutableStateOf(
         run {
@@ -106,6 +108,7 @@ class ProjectCreatorState(
                 updateInputFileIfNeeded(detectEncoding = encoding == null)
             }
         }
+        args[Arguments.AutoExport]?.toBooleanStrictOrNull()?.let { autoExport = it }
     }
 
     fun updateSampleDirectory(path: String) {
@@ -296,6 +299,11 @@ class ProjectCreatorState(
         }
     }
 
+    fun toggleAutoExport(enabled: Boolean) {
+        autoExport = enabled
+        appRecordStore.update { copy(autoExport = enabled) }
+    }
+
     fun isValid(): Boolean = isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid() &&
         isCacheDirectoryValid() && isInputFileValid() && !templatePluginError
 
@@ -408,7 +416,8 @@ class ProjectCreatorState(
                 plugin = templatePlugin,
                 pluginParams = templatePluginParams,
                 inputFilePath = inputFile,
-                encoding = encoding
+                encoding = encoding,
+                autoExport = autoExport
             ).getOrElse {
                 val message = it.message.orEmpty()
                 Log.error(it)

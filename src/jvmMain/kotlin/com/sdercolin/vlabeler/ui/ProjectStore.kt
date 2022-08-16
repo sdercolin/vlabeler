@@ -271,7 +271,7 @@ class ProjectStoreImpl(
                 val project = project ?: continue
                 when (autoSave.target) {
                     AppConf.AutoSave.Target.Project -> if (unsavedChangesState.hasUnsavedChanges) {
-                        saveProjectFile(project)
+                        saveProjectFile(project, allowAutoExport = true)
                         unsavedChangesState.projectSaved()
                     }
                     AppConf.AutoSave.Target.Record ->

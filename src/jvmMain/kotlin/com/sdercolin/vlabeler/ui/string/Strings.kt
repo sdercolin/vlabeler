@@ -237,6 +237,13 @@ enum class Strings(val en: String) {
     StarterNewEncoding(
         en = "Encoding"
     ),
+    StarterNewAutoExport(
+        en = "Auto-export"
+    ),
+    StarterNewAutoExportHelp(
+        en = "Automatically export the project to overwrite the given input file (if not given," +
+            " the default file position defined by labeler) when the project is saved."
+    ),
     SampleListIncludedHeader(
         en = "Project sample files"
     ),

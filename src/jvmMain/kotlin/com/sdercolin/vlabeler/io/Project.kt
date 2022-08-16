@@ -14,6 +14,7 @@ import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -51,17 +52,21 @@ fun loadProject(
                 project.labelerConf
             }
         }
-        val workingDirectory = when {
-            autoSaved -> project.workingDirectory
+        val (workingDirectory, projectName) = when {
+            autoSaved -> project.workingDirectory to project.projectName
             project.projectFile.absolutePath != file.absolutePath -> {
-                Log.info("Reset project's workingDirectory to ${file.absolutePath}")
-                file.absoluteFile.parentFile.absolutePath
+                Log.info("Redirect project path to ${file.absolutePath}")
+                file.absoluteFile.parentFile.absolutePath to file.nameWithoutExtension
             }
-            else -> project.workingDirectory
+            else -> project.workingDirectory to project.projectName
         }
 
         Log.info("Project loaded: ${project.projectFile.absolutePath}")
-        val fixedProject = project.copy(labelerConf = labelerConf, workingDirectory = workingDirectory)
+        val fixedProject = project.copy(
+            labelerConf = labelerConf,
+            workingDirectory = workingDirectory,
+            projectName = projectName
+        )
         if (fixedProject != project) {
             Log.info("Loaded project is modified to: $fixedProject")
         }
@@ -90,30 +95,36 @@ fun openCreatedProject(
     }
 }
 
-fun exportProject(
-    mainScope: CoroutineScope,
-    parent: String,
-    name: String,
-    appState: AppState
+@Suppress("RedundantSuspendModifier")
+suspend fun exportProject(
+    project: Project,
+    outputFile: File
 ) {
-    mainScope.launch(Dispatchers.IO) {
-        appState.showProgress()
-        val project = appState.project!!
-        val outputText = project.toRawLabels()
-        val charset = project.encoding?.let { Charset.forName(it) } ?: Charsets.UTF_8
-        File(parent, name).writeText(outputText, charset)
-        appState.hideProgress()
-    }
+    val outputText = project.toRawLabels()
+    val charset = project.encoding?.let { Charset.forName(it) } ?: Charsets.UTF_8
+    outputFile.writeText(outputText, charset)
+    Log.debug("Project exported to ${outputFile.absolutePath}")
 }
 
-suspend fun saveProjectFile(project: Project): File = withContext(Dispatchers.IO) {
-    val workingDirectory = project.workingDirectory.toFile()
-    if (!workingDirectory.exists()) {
-        workingDirectory.mkdir()
+private var saveFileJob: Job? = null
+
+suspend fun saveProjectFile(project: Project, allowAutoExport: Boolean = false): File = withContext(Dispatchers.IO) {
+    saveFileJob?.join()
+    saveFileJob = launch {
+        val workingDirectory = project.workingDirectory.toFile()
+        if (!workingDirectory.exists()) {
+            workingDirectory.mkdir()
+        }
+        val projectContent = project.stringifyJson()
+        project.projectFile.writeText(projectContent)
+        Log.debug("Project saved to ${project.projectFile}")
+
+        if (allowAutoExport && project.autoExportTargetPath != null) {
+            exportProject(project, project.autoExportTargetPath.toFile())
+        }
     }
-    val projectContent = project.stringifyJson()
-    project.projectFile.writeText(projectContent)
-    Log.debug("Project saved to ${project.projectFile}")
+    saveFileJob?.join()
+    saveFileJob = null
     project.projectFile
 }
 

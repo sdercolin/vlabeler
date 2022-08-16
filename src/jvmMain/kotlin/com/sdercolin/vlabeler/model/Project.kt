@@ -24,7 +24,8 @@ data class Project(
     val currentIndex: Int,
     val labelerConf: LabelerConf,
     val encoding: String? = null,
-    val multipleEditMode: Boolean = labelerConf.continuous
+    val multipleEditMode: Boolean = labelerConf.continuous,
+    val autoExportTargetPath: String? = null
 ) {
     @Transient
     private val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
@@ -363,7 +364,8 @@ suspend fun projectOf(
     plugin: Plugin?,
     pluginParams: ParamMap?,
     inputFilePath: String,
-    encoding: String
+    encoding: String,
+    autoExport: Boolean
 ): Result<Project> {
     val sampleDirectoryFile = File(sampleDirectory)
     val sampleNames = sampleDirectoryFile.getChildren()
@@ -399,6 +401,16 @@ suspend fun projectOf(
         }
     }
 
+    val autoExportTargetPath = if (!autoExport) {
+        null
+    } else {
+        if (inputFile != null && plugin == null) {
+            inputFile.absolutePath
+        } else {
+            labelerConf.defaultInputFilePath?.let { File(sampleDirectory).resolve(it) }?.absolutePath
+        }
+    }
+
     return runCatching {
         require(entries.isNotEmpty()) {
             "No entries found"
@@ -411,7 +423,8 @@ suspend fun projectOf(
             entries = entries,
             currentIndex = 0,
             labelerConf = labelerConf,
-            encoding = encoding
+            encoding = encoding,
+            autoExportTargetPath = autoExportTargetPath
         ).validate()
     }.onFailure {
         return Result.failure(InvalidCreatedProjectException(it))

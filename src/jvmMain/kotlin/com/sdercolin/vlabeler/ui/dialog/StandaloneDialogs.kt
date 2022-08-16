@@ -11,6 +11,8 @@ import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 @Composable
@@ -67,7 +69,11 @@ fun StandaloneDialogs(
             ) { parent, name ->
                 appState.closeExportDialog()
                 if (parent != null && name != null) {
-                    exportProject(mainScope, parent, name, appState)
+                    mainScope.launch(Dispatchers.IO) {
+                        appState.showProgress()
+                        exportProject(appState.requireProject(), File(parent, name))
+                        appState.hideProgress()
+                    }
                 }
             }
         }
