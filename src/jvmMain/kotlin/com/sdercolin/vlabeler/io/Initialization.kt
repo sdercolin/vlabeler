@@ -7,6 +7,7 @@ import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.ArgumentMap
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.AppRecordStore
@@ -113,7 +114,11 @@ fun ensureDirectories() {
     }
 }
 
-suspend fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecordStore): AppState {
+suspend fun produceAppState(
+    mainScope: CoroutineScope,
+    appRecordStore: AppRecordStore,
+    launchArguments: ArgumentMap?
+): AppState {
     val appConf = loadAppConf()
     val availableLabelerConfs = loadAvailableLabelerConfs()
     val plugins = loadPlugins()
@@ -130,6 +135,7 @@ suspend fun produceAppState(mainScope: CoroutineScope, appRecordStore: AppRecord
         snackbarHostState,
         appConf,
         availableLabelerConfs,
-        plugins
+        plugins,
+        launchArguments
     )
 }

@@ -8,12 +8,15 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.InvalidOpenedProjectException
 import com.sdercolin.vlabeler.io.loadAvailableLabelerConfs
 import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.model.ArgumentMap
+import com.sdercolin.vlabeler.model.Arguments
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
@@ -33,6 +36,7 @@ import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
+import com.sdercolin.vlabeler.util.toFileOrNull
 import com.sdercolin.vlabeler.util.toFrame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +53,7 @@ class AppState(
     appConf: MutableState<AppConf>,
     availableLabelerConfs: List<LabelerConf>,
     plugins: List<Plugin>,
+    private var launchArguments: ArgumentMap?,
     appErrorState: AppErrorState = AppErrorStateImpl(),
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
     screenState: AppScreenState = AppScreenStateImpl(),
@@ -112,6 +117,31 @@ class AppState(
         }
     }
 
+    fun consumeLaunchArguments() {
+        val args = launchArguments ?: return
+        launchArguments = null
+
+        when {
+            args.containsKey(Arguments.Open) -> {
+                val file = args[Arguments.Open]?.toFileOrNull(allowHomePlaceholder = true, ensureIsFile = true)
+                if (file == null) {
+                    Log.error("Could not find project file: --${Arguments.Open} ${args[Arguments.Open]}")
+                    return
+                }
+                loadProject(mainScope, file, this)
+            }
+            args.containsKey(Arguments.OpenOrCreate) -> {
+                val file = args[Arguments.OpenOrCreate]?.toFileOrNull(allowHomePlaceholder = true, ensureIsFile = true)
+                if (file != null) {
+                    loadProject(mainScope, file, this)
+                } else {
+                    screen = Screen.ProjectCreator(args)
+                }
+            }
+            else -> Unit
+        }
+    }
+
     private fun changeScreen(screen: Screen) {
         this.screen = screen
         closeAllDialogs()
@@ -143,7 +173,7 @@ class AppState(
     private fun askIfSaveBeforeCreateProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsCreatingNew)
     private fun openProjectCreator() {
         reset()
-        changeScreen(Screen.ProjectCreator)
+        changeScreen(Screen.ProjectCreator())
     }
 
     fun closeProjectCreator() = reset()

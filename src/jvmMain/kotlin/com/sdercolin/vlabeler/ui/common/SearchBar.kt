@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.util.runIfNotNull
+import com.sdercolin.vlabeler.util.runIfHave
 
 @Composable
 fun SearchBar(
@@ -40,8 +40,8 @@ fun SearchBar(
             value = text,
             modifier = Modifier.fillMaxWidth()
                 .padding(vertical = 10.dp)
-                .runIfNotNull(focusRequester) { focusRequester(it) }
-                .runIfNotNull(onPreviewKeyEvent) { onPreviewKeyEvent(it) },
+                .runIfHave(focusRequester) { focusRequester(it) }
+                .runIfHave(onPreviewKeyEvent) { onPreviewKeyEvent(it) },
             onValueChange = onTextChange,
             textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
             cursorBrush = SolidColor(MaterialTheme.colors.onBackground),

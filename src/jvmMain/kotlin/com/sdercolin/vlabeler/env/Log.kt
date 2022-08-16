@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.env
 
 import com.sdercolin.vlabeler.util.AppDir
+import com.sdercolin.vlabeler.util.ResourcePath
 import java.io.File
 import java.time.Instant
 import java.util.logging.FileHandler
@@ -50,7 +51,7 @@ object Log {
         }
 
         info("Log initialized")
-        debug("Launched in $osName, $runtimeVersion, idDebug=$isDebug")
+        debug("Launched in $osName, $runtimeVersion, isDebug=$isDebug, workingDir=$ResourcePath")
     }
 
     fun info(message: String) {

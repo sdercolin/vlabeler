@@ -14,10 +14,10 @@ private const val AppRecordFileName = "app.record.json"
 private const val LabelerFolderName = "labelers"
 private const val PluginFolderName = "plugins"
 private const val RecordFolderName = ".record"
-private const val ProjectCacheFolderNameSuffix = "_caches"
 
 // Internal files
-val ResourceDir get() = File(System.getProperty("compose.application.resources.dir"))
+val ResourcePath: String? get() = System.getProperty("compose.application.resources.dir")
+val ResourceDir get() = File(requireNotNull(ResourcePath))
 val DefaultAppConfFile get() = ResourceDir.resolve(AppConfFileName)
 val DefaultLabelerDir get() = ResourceDir.resolve(LabelerFolderName)
 val DefaultPluginDir get() = ResourceDir.resolve(PluginFolderName)
@@ -50,6 +50,12 @@ fun String.isValidFileName(): Boolean {
 
 fun String.asPathRelativeToHome(): String = if (!isWindows && startsWith(HomeDir.absolutePath)) {
     "~" + drop(HomeDir.absolutePath.length)
+} else {
+    this
+}
+
+fun String.resolveHome(): String = if (startsWith("~")) {
+    HomeDir.absolutePath + drop(1)
 } else {
     this
 }

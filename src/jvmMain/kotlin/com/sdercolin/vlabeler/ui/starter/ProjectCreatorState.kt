@@ -9,6 +9,8 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.loadSavedParams
 import com.sdercolin.vlabeler.io.saveParams
+import com.sdercolin.vlabeler.model.ArgumentMap
+import com.sdercolin.vlabeler.model.Arguments
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
@@ -25,6 +27,8 @@ import com.sdercolin.vlabeler.util.encodingNameEquals
 import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
+import com.sdercolin.vlabeler.util.resolveHome
+import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,8 +36,9 @@ import java.io.File
 
 class ProjectCreatorState(
     private val coroutineScope: CoroutineScope,
-    labelerConfs: List<LabelerConf>,
-    val appRecordStore: AppRecordStore
+    private val labelerConfs: List<LabelerConf>,
+    val appRecordStore: AppRecordStore,
+    private var launchArguments: ArgumentMap?
 ) {
     private val appRecord get() = appRecordStore.stateFlow.value
     var isLoading: Boolean by mutableStateOf(false)
@@ -74,6 +79,34 @@ class ProjectCreatorState(
         }
     )
     var encoding: String by encodingState
+
+    fun consumeLaunchArguments() {
+        val args = launchArguments ?: return
+        launchArguments = null
+        val projectFile = args[Arguments.OpenOrCreate]
+            ?.toFileOrNull(allowHomePlaceholder = true, ensureIsFile = true)
+            ?: return
+        workingDirectory = projectFile.parent
+        projectName = projectFile.nameWithoutExtension
+        sampleDirectory = args[Arguments.SampleDirectory]?.resolveHome() ?: workingDirectory
+        cacheDirectory = args[Arguments.CacheDirectory]?.resolveHome()
+            ?: getDefaultCacheDirectory(workingDirectory, projectName)
+        val encoding = args[Arguments.Encoding]
+        if (encoding != null) {
+            this.encoding = encoding
+        }
+        val labelerName = args[Arguments.LabelerName]
+        val labeler = labelerConfs.find { it.name == labelerName }
+        if (labeler != null) {
+            this.labeler = labeler
+            val inputFile = args[Arguments.InputFile]?.toFileOrNull(allowHomePlaceholder = true, ensureIsFile = true)
+            if (inputFile != null && inputFile.extension == labeler.extension) {
+                this.inputFile = inputFile.absolutePath
+            } else {
+                updateInputFileIfNeeded(detectEncoding = encoding == null)
+            }
+        }
+    }
 
     fun updateSampleDirectory(path: String) {
         sampleDirectory = path
@@ -203,7 +236,7 @@ class ProjectCreatorState(
         }
     }
 
-    private fun updateInputFileIfNeeded() {
+    private fun updateInputFileIfNeeded(detectEncoding: Boolean = true) {
         val supportedExtension = getSupportedInputFileExtension()
         if (supportedExtension == null) {
             updateInputFile("", editedByUser = false)
@@ -213,17 +246,17 @@ class ProjectCreatorState(
         if (supportedExtension == labeler.extension) {
             val file = labeler.defaultInputFilePath?.let { File(sampleDirectory).resolve(it) }
             val inputFilePath = if (file?.exists() == true) file.absolutePath else ""
-            updateInputFile(inputFilePath, editedByUser = false)
+            updateInputFile(inputFilePath, editedByUser = false, detectEncoding = detectEncoding)
         }
     }
 
-    fun updateInputFile(path: String, editedByUser: Boolean) {
+    fun updateInputFile(path: String, editedByUser: Boolean, detectEncoding: Boolean = true) {
         if (editedByUser) inputFileEdited = true
         if (path == inputFile) return
         coroutineScope.launch(Dispatchers.IO) {
             inputFile = path
             val file = File(path)
-            if (file.isFile && file.exists()) {
+            if (file.isFile && file.exists() && detectEncoding) {
                 val detectedEncoding = file.readBytes().detectEncoding() ?: return@launch
                 encoding = encodings.find { encodingNameEquals(detectedEncoding, it) } ?: detectedEncoding
             }
@@ -393,9 +426,10 @@ class ProjectCreatorState(
 fun rememberProjectCreatorState(
     coroutineScope: CoroutineScope,
     activeLabelerConfs: List<LabelerConf>,
-    appRecordStore: AppRecordStore
+    appRecordStore: AppRecordStore,
+    launchArguments: ArgumentMap?
 ) = remember(appRecordStore) {
-    ProjectCreatorState(coroutineScope, activeLabelerConfs, appRecordStore)
+    ProjectCreatorState(coroutineScope, activeLabelerConfs, appRecordStore, launchArguments)
 }
 
 enum class PathPicker {

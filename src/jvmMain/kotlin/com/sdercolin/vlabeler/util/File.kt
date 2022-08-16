@@ -8,4 +8,12 @@ fun File.getChildren(filenameFilter: FilenameFilter? = null): List<File> =
     listFiles(filenameFilter)?.toList() ?: emptyList()
 
 fun String.toFile(): File = File(this)
-fun String.toFileOrNull() = File(this).takeIf { it.exists() }
+fun String.toFileOrNull(
+    allowHomePlaceholder: Boolean = false,
+    ensureIsFile: Boolean = false,
+    ensureIsDirectory: Boolean = false
+) = this.runIf(allowHomePlaceholder) { resolveHome() }
+    .toFile()
+    .takeIf { it.exists() }
+    ?.runIfNotNull(ensureIsFile) { takeIf { it.isFile } }
+    ?.runIfNotNull(ensureIsDirectory) { takeIf { it.isDirectory } }

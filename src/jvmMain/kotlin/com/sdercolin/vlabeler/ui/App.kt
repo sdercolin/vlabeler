@@ -36,6 +36,9 @@ fun App(
     LaunchedEffect(appState.appConf.autoSave) {
         appState.enableAutoSaveProject(appState.appConf.autoSave, mainScope, appState)
     }
+    LaunchedEffect(Unit) {
+        appState.consumeLaunchArguments()
+    }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         when (val screen = appState.screen) {
             is Screen.Starter -> Starter(mainScope, appState)
@@ -46,7 +49,8 @@ fun App(
                     activeLabelerConfs = appState.activeLabelerConfs,
                     activeTemplatePlugins = appState.getActivePlugins(Plugin.Type.Template),
                     snackbarHostState = appState.snackbarHostState,
-                    appRecordStore = appState.appRecordStore
+                    appRecordStore = appState.appRecordStore,
+                    launchArguments = screen.launchArguments
                 )
             is Screen.Editor -> Editor(screen.state, appState)
         }

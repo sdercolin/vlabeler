@@ -29,6 +29,7 @@ import com.sdercolin.vlabeler.io.ensureDirectories
 import com.sdercolin.vlabeler.io.produceAppState
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.model.parseArguments
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
@@ -46,7 +47,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-fun main() = application {
+fun main(vararg args: String) = application {
     Log.init()
     ensureDirectories()
 
@@ -57,7 +58,7 @@ fun main() = application {
     val windowState = rememberResizableWindowState(appRecord)
 
     val appState by produceState(null as AppState?) {
-        value = produceAppState(mainScope, appRecordStore)
+        value = produceAppState(mainScope, appRecordStore, parseArguments(args.toList()))
     }
     val onCloseRequest = {
         appState?.requestExit() ?: exitApplication()

@@ -50,7 +50,7 @@ import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
-import com.sdercolin.vlabeler.util.runIfNotNull
+import com.sdercolin.vlabeler.util.runIfHave
 import java.io.File
 
 @Composable
@@ -204,7 +204,7 @@ private fun ItemRow(
         modifier = backgroundModifier
             .fillMaxWidth()
             .height(35.dp)
-            .runIfNotNull(onClick) { plainClickable(it) }
+            .runIfHave(onClick) { plainClickable(it) }
             .padding(horizontal = 15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

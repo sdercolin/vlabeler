@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.model.ArgumentMap
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
@@ -67,13 +69,19 @@ fun ProjectCreator(
     snackbarHostState: SnackbarHostState,
     appRecordStore: AppRecordStore,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    launchArguments: ArgumentMap?,
     state: ProjectCreatorState = rememberProjectCreatorState(
         coroutineScope,
         activeLabelerConfs,
-        appRecordStore
+        appRecordStore,
+        launchArguments
     ),
 ) {
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(Unit) {
+        state.consumeLaunchArguments()
+    }
 
     Surface(Modifier.fillMaxSize()) {
         Box {
