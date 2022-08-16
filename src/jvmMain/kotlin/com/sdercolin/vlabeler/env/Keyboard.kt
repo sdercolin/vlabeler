@@ -69,7 +69,10 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
             emitState(KeyboardState(keySet, mouseClickAction, mouseScrollAction))
             caughtKeyAction?.let { emitEvent(it) }
         }
-        return caughtKeyAction != null
+
+        // Avoid triggering focus on menu bar on Windows
+        val shouldBlockEvent = keySet.mainKey == null && keySet.subKeys == setOf(Key.Alt)
+        return caughtKeyAction != null && shouldBlockEvent
     }
 }
 
