@@ -164,6 +164,8 @@ class Player(
                     .coerceAtMost(totalFrameCount)
 
                 startWriting(startFrame, endFrame, cancelFormer = false)
+                writingJob?.join()
+                line?.flush()
             }
         }
     }
