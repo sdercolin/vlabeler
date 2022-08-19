@@ -86,7 +86,7 @@ class ProjectCreatorState(
         val args = launchArguments ?: return
         launchArguments = null
         val projectFile = args[Arguments.OpenOrCreate]
-            ?.toFileOrNull(allowHomePlaceholder = true, ensureIsFile = true)
+            ?.toFileOrNull(allowHomePlaceholder = true, ensureExists = false)
             ?: return
         workingDirectory = projectFile.parent
         projectName = projectFile.nameWithoutExtension
