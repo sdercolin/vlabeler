@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.action.MouseClickAction
 import com.sdercolin.vlabeler.model.action.canMoveParameter
@@ -109,7 +110,7 @@ fun MarkerPointEventContainer(
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
-                state.cursorState.handleMousePress(tool, keyboardState, event, state.labelerConf)
+                state.cursorState.handleMousePress(tool, keyboardState, event, state.labelerConf, appState.appConf)
             }
             .onPointerEvent(PointerEventType.Release) { event ->
                 state.handleMouseRelease(
@@ -453,10 +454,11 @@ private fun MutableState<MarkerCursorState>.handleMousePress(
     tool: Tool,
     keyboardState: KeyboardState,
     event: PointerEvent,
-    labelerConf: LabelerConf
+    labelerConf: LabelerConf,
+    appConf: AppConf
 ) {
     when (tool) {
-        Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf)
+        Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf)
         Tool.Scissors -> Unit
     }
 }
@@ -464,18 +466,25 @@ private fun MutableState<MarkerCursorState>.handleMousePress(
 private fun MutableState<MarkerCursorState>.handleCursorPress(
     keyboardState: KeyboardState,
     event: PointerEvent,
-    labelerConf: LabelerConf
+    labelerConf: LabelerConf,
+    appConf: AppConf
 ) {
     val action = keyboardState.getEnabledMouseClickAction(event) ?: return
     if (action.canMoveParameter()) {
         if (value.mouse == MarkerCursorState.Mouse.Hovering) {
-            val lockedDragByBaseField =
-                labelerConf.lockedDrag.useDragBase &&
-                    labelerConf.fields.getOrNull(value.pointIndex)?.dragBase == true
-            val lockedDragByStart =
-                labelerConf.lockedDrag.useStart && value.usingStartPoint
-            val lockedDrag = (lockedDragByBaseField || lockedDragByStart) xor
-                (action == MouseClickAction.MoveParameterInvertingPrimary)
+            val invertLockedDrag = action == MouseClickAction.MoveParameterInvertingPrimary
+            val lockedDrag = when (appConf.editor.lockedDrag) {
+                AppConf.Editor.LockedDrag.UseLabeler -> {
+                    val lockedDragByBaseField =
+                        labelerConf.lockedDrag.useDragBase &&
+                            labelerConf.fields.getOrNull(value.pointIndex)?.dragBase == true
+                    val lockedDragByStart =
+                        labelerConf.lockedDrag.useStart && value.usingStartPoint
+                    lockedDragByBaseField || lockedDragByStart
+                }
+                AppConf.Editor.LockedDrag.UseStart -> value.usingStartPoint
+                AppConf.Editor.LockedDrag.Never -> false
+            } xor invertLockedDrag
             val withPreview = action == MouseClickAction.MoveParameterWithPlaybackPreview
             update { startDragging(lockedDrag, withPreview) }
         }

@@ -295,6 +295,15 @@ abstract class PreferencesPage(
                 selector = { it.editor },
                 updater = { copy(editor = it) }
             ) {
+                selection(
+                    title = Strings.PreferencesEditorPlayerLockedDrag,
+                    description = Strings.PreferencesEditorPlayerLockedDragDescription,
+                    columnStyle = true,
+                    defaultValue = AppConf.Editor.DefaultLockedDrag,
+                    select = { it.lockedDrag },
+                    update = { copy(lockedDrag = it) },
+                    options = AppConf.Editor.LockedDrag.values()
+                )
                 color(
                     title = Strings.PreferencesEditorPlayerCursorColor,
                     defaultValue = AppConf.Editor.DefaultPlayerCursorColor,
@@ -489,6 +498,7 @@ private class PreferencesItemContext<P>(
     fun switch(
         title: Strings,
         description: Strings? = null,
+        columnStyle: Boolean = false,
         defaultValue: Boolean,
         select: (P) -> Boolean,
         update: P.(Boolean) -> P,
@@ -497,6 +507,7 @@ private class PreferencesItemContext<P>(
         PreferencesItem.Switch(
             title = title,
             description = description,
+            columnStyle = columnStyle,
             defaultValue = defaultValue,
             select = selectWithContext(select),
             update = updateWithContext(update),
@@ -507,6 +518,7 @@ private class PreferencesItemContext<P>(
     fun integer(
         title: Strings,
         description: Strings? = null,
+        columnStyle: Boolean = false,
         defaultValue: Int,
         min: Int? = null,
         max: Int? = null,
@@ -517,6 +529,7 @@ private class PreferencesItemContext<P>(
         PreferencesItem.IntegerInput(
             title = title,
             description = description,
+            columnStyle = columnStyle,
             defaultValue = defaultValue,
             min = min,
             max = max,
@@ -529,6 +542,7 @@ private class PreferencesItemContext<P>(
     fun float(
         title: Strings,
         description: Strings? = null,
+        columnStyle: Boolean = false,
         defaultValue: Float,
         min: Float? = null,
         max: Float? = null,
@@ -539,6 +553,7 @@ private class PreferencesItemContext<P>(
         PreferencesItem.FloatInput(
             title = title,
             description = description,
+            columnStyle = columnStyle,
             defaultValue = defaultValue,
             min = min,
             max = max,
@@ -551,6 +566,7 @@ private class PreferencesItemContext<P>(
     fun color(
         title: Strings,
         description: Strings? = null,
+        columnStyle: Boolean = false,
         defaultValue: String,
         select: (P) -> String,
         update: P.(String) -> P,
@@ -560,6 +576,7 @@ private class PreferencesItemContext<P>(
         PreferencesItem.ColorStringInput(
             title = title,
             description = description,
+            columnStyle = columnStyle,
             defaultValue = defaultValue,
             select = selectWithContext(select),
             update = updateWithContext(update),
@@ -569,8 +586,9 @@ private class PreferencesItemContext<P>(
     )
 
     fun <T> selection(
-        title: Strings,
+        title: Strings?,
         description: Strings? = null,
+        columnStyle: Boolean = false,
         defaultValue: T,
         select: (P) -> T,
         update: P.(T) -> P,
@@ -580,6 +598,7 @@ private class PreferencesItemContext<P>(
         PreferencesItem.Selection(
             title = title,
             description = description,
+            columnStyle = columnStyle,
             defaultValue = defaultValue,
             select = selectWithContext(select),
             update = updateWithContext(update),

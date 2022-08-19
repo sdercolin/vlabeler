@@ -187,11 +187,39 @@ data class AppConf(
         val playerCursorColor: String = DefaultPlayerCursorColor,
         val scissorsColor: String = DefaultScissorsColor,
         val scissorsActions: ScissorsActions = ScissorsActions(),
-        val autoScroll: AutoScroll = AutoScroll()
+        val autoScroll: AutoScroll = AutoScroll(),
+        val lockedDrag: LockedDrag = DefaultLockedDrag
     ) {
+
+        /**
+         * Condition for locked drag
+         */
+        @Serializable
+        @Immutable
+        enum class LockedDrag : LocalizedText {
+            @SerialName("labeler")
+            UseLabeler {
+                override val stringKey: Strings
+                    get() = Strings.PreferencesEditorPlayerLockedDragUseLabeler
+            },
+
+            @SerialName("start")
+            UseStart {
+                override val stringKey: Strings
+                    get() = Strings.PreferencesEditorPlayerLockedDragUseStart
+            },
+
+            @SerialName("never")
+            Never {
+                override val stringKey: Strings
+                    get() = Strings.PreferencesEditorPlayerLockedDragNever
+            }
+        }
+
         companion object {
             const val DefaultPlayerCursorColor = "#FFFF00"
             const val DefaultScissorsColor = "#FFFFFF00"
+            val DefaultLockedDrag = LockedDrag.UseLabeler
         }
     }
 

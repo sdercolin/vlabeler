@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
@@ -274,7 +275,7 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
                 Spacer(Modifier.widthIn(30.dp))
             }
             if (item.title != null) {
-                Column(Modifier.widthIn(min = 200.dp, max = 400.dp)) {
+                Column(Modifier.widthIn(min = 200.dp, max = if (item.columnStyle) Dp.Unspecified else 400.dp)) {
                     Text(
                         modifier = Modifier.padding(vertical = 14.dp),
                         text = string(item.title),
@@ -289,10 +290,16 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
                             softWrap = true
                         )
                     }
+                    if (item.columnStyle) {
+                        Spacer(Modifier.height(15.dp))
+                        Item(item, state)
+                    }
                 }
                 Spacer(Modifier.width(25.dp))
             }
-            Item(item, state)
+            if (!item.columnStyle) {
+                Item(item, state)
+            }
         }
     }
 }

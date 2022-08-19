@@ -644,6 +644,23 @@ enum class Strings(val en: String) {
     PreferencesEditorPlayerCursorColor(
         en = "Player cursor color"
     ),
+    PreferencesEditorPlayerLockedDrag(
+        en = "Fixed-drag"
+    ),
+    PreferencesEditorPlayerLockedDragDescription(
+        en = "Select a condition to enable fixed-drag while you move the parameter lines.\n" +
+            "When it is enabled, the other parameter lines will be moved accordingly to " +
+            "keep relative positions to the parameter you are moving."
+    ),
+    PreferencesEditorPlayerLockedDragUseLabeler(
+        en = "Use settings defined by the labeler"
+    ),
+    PreferencesEditorPlayerLockedDragUseStart(
+        en = "Fixed-drag at the \"start\" line"
+    ),
+    PreferencesEditorPlayerLockedDragNever(
+        en = "Never do fixed-drag"
+    ),
     PreferencesEditorScissors(
         en = "Scissors"
     ),
@@ -755,8 +772,8 @@ enum class Strings(val en: String) {
     ActionMoveParameterWithPlaybackPreview(
         en = "Drag Parameter Line with Playback Preview"
     ),
-    ActionMoveParameterInvertingPrimary(
-        en = "Drag Parameter Line with Primary/Normal Inverted"
+    ActionMoveParameterInvertingLocked(
+        en = "Drag Parameter Line with Fixed-drag Settings Inverted"
     ),
     ActionPlayAudioSection(
         en = "Play the Clicked Audio Part"

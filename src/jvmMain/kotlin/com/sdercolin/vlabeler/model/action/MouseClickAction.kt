@@ -20,7 +20,7 @@ enum class MouseClickAction(
         PointerEventType.Press
     ),
     MoveParameterInvertingPrimary(
-        Strings.ActionMoveParameterInvertingPrimary,
+        Strings.ActionMoveParameterInvertingLocked,
         KeySet(Key.MouseLeftClick, setOf(Key.Shift)),
         PointerEventType.Press
     ),
