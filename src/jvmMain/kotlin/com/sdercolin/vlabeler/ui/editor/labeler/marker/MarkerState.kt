@@ -193,12 +193,19 @@ class MarkerState(
         }
 
         // line part
-        (pointsSorted + listOf(IndexedValue(MarkerCursorState.EndPointIndex, endInPixel))).zipWithNext()
+        (pointsSorted + listOf(IndexedValue(MarkerCursorState.EndPointIndex, endInPixel)))
             .reversed()
+            .zipWithNext()
             .forEach { (current, next) ->
                 val radius = if (isBorderIndex(current.index)) NearRadiusStartOrEnd else NearRadiusCustom
-                if ((current.value - x).absoluteValue > radius) return@forEach
-                if (current.value == next.value || x - current.value <= next.value - x) {
+
+                fun inRange(point: IndexedValue<Float>) = (x - point.value).absoluteValue <= radius
+
+                if (!inRange(current)) return@forEach
+                if (current.value == next.value ||
+                    (x - current.value).absoluteValue <= (next.value - x).absoluteValue
+                ) {
+                    if (inRange(next) && x < current.value) return@forEach
                     val heightRatio = if (isBorderIndex(current.index)) {
                         1f
                     } else {
