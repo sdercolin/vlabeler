@@ -28,7 +28,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
-import kotlin.math.absoluteValue
 
 class EditorState(
     project: Project,
@@ -185,29 +184,20 @@ class EditorState(
         keyboardState: KeyboardState
     ) {
         if (isActive.not()) return
-        val horizontal = keyboardState.isShiftPressed
         when (keyboardState.getEnabledMouseScrollAction(event)) {
             MouseScrollAction.GoToNextSample -> switchEntryByPointerEvent(
-                event,
-                horizontal,
                 shouldSwitchSample = true,
                 positive = true
             )
             MouseScrollAction.GoToPreviousSample -> switchEntryByPointerEvent(
-                event,
-                horizontal,
                 shouldSwitchSample = true,
                 positive = false
             )
             MouseScrollAction.GoToNextEntry -> switchEntryByPointerEvent(
-                event,
-                horizontal,
                 shouldSwitchSample = false,
                 positive = true
             )
             MouseScrollAction.GoToPreviousEntry -> switchEntryByPointerEvent(
-                event,
-                horizontal,
                 shouldSwitchSample = false,
                 positive = false
             )
@@ -218,8 +208,6 @@ class EditorState(
     }
 
     private fun switchEntryByPointerEvent(
-        event: PointerEvent,
-        horizontal: Boolean,
         shouldSwitchSample: Boolean,
         positive: Boolean
     ): Boolean {
