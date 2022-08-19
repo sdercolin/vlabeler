@@ -96,7 +96,9 @@ class ProjectCreatorState(
         cacheDirectory = args[Arguments.CacheDirectory]?.resolveHome()
             ?.also { cacheDirectoryEdited = true }
             ?: getDefaultCacheDirectory(workingDirectory, projectName)
-        val encoding = args[Arguments.Encoding]
+        val encodingText = args[Arguments.Encoding]
+        val encoding =
+            if (encodingText != null) AvailableEncodings.find { charset(encodingText) == charset(it) } else null
         if (encoding != null) {
             this.encoding = encoding
         }
