@@ -91,7 +91,7 @@ class MarkerState(
     ): List<EntryInPixel> {
         if (pointIndex == MarkerCursorState.NonePointIndex) return entriesInPixel
         val dxMin = leftBorder - startInPixel
-        val dxMax = rightBorder - 1 - endInPixel
+        val dxMax = rightBorder - endInPixel
         val dx = (x - getPointPosition(pointIndex)).coerceIn(dxMin, dxMax)
         return entriesInPixel.map { it.moved(dx) }
     }
