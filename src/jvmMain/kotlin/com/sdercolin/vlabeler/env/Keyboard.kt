@@ -11,6 +11,8 @@ import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventType
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.action.MouseClickAction
@@ -29,8 +31,8 @@ import kotlinx.coroutines.launch
 class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: AppConf.Keymaps) {
 
     private var keyActions: List<Pair<KeySet, KeyAction>> = KeyAction.getNonMenuKeySets(keymaps)
-    private var mouseClickActions: List<Pair<KeySet, MouseClickAction>> = MouseClickAction.getKeySets(keymaps)
-    private var mouseScrollActions: List<Pair<KeySet, MouseScrollAction>> = MouseScrollAction.getKeySets(keymaps)
+    private var mouseClickActions: Map<KeySet, MouseClickAction> = MouseClickAction.getKeySets(keymaps).toMap()
+    private var mouseScrollActions: Map<KeySet, MouseScrollAction> = MouseScrollAction.getKeySets(keymaps).toMap()
 
     private val _keyboardActionFlow = MutableSharedFlow<KeyAction>(replay = 0)
     val keyboardActionFlow = _keyboardActionFlow.asSharedFlow()
@@ -40,16 +42,12 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
 
     suspend fun updateKeymaps(keymaps: AppConf.Keymaps) {
         keyActions = KeyAction.getNonMenuKeySets(keymaps)
-        mouseClickActions = MouseClickAction.getKeySets(keymaps)
-        mouseScrollActions = MouseScrollAction.getKeySets(keymaps)
+        mouseClickActions = MouseClickAction.getKeySets(keymaps).toMap()
+        mouseScrollActions = MouseScrollAction.getKeySets(keymaps).toMap()
         _keyboardStateFlow.emit(getIdleState())
     }
 
-    private fun getIdleState() = KeyboardState(
-        keySet = null,
-        enabledMouseClickAction = mouseClickActions.find { it.first.needNoKeys() }?.second,
-        enabledMouseScrollAction = mouseScrollActions.find { it.first.needNoKeys() }?.second
-    )
+    private fun getIdleState() = KeyboardState(null, mouseClickActions, mouseScrollActions)
 
     private suspend fun emitEvent(action: KeyAction) {
         _keyboardActionFlow.emit(action)
@@ -62,11 +60,9 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
     fun onKeyEvent(event: KeyEvent): Boolean {
         val keySet = KeySet.fromKeyEvent(event)
         val caughtKeyAction = keyActions.firstOrNull { it.first.shouldCatch(event, true) }?.second
-        val mouseClickAction = mouseClickActions.firstOrNull { it.first.shouldCatch(event, false) }?.second
-        val mouseScrollAction = mouseScrollActions.firstOrNull { it.first.shouldCatch(event, false) }?.second
 
         coroutineScope.launch {
-            emitState(KeyboardState(keySet, mouseClickAction, mouseScrollAction))
+            emitState(KeyboardState(keySet, mouseClickActions, mouseScrollActions))
             caughtKeyAction?.let { emitEvent(it) }
         }
 
@@ -79,10 +75,22 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
 @Immutable
 data class KeyboardState(
     val keySet: KeySet?,
-    val enabledMouseClickAction: MouseClickAction?,
-    val enabledMouseScrollAction: MouseScrollAction?
+    val availableMouseClickActions: Map<KeySet, MouseClickAction>,
+    val availableMouseScrollActions: Map<KeySet, MouseScrollAction>
 ) {
     val isShiftPressed get() = keySet?.subKeys?.contains(Key.Shift) == true
+
+    fun getEnabledMouseClickAction(pointerEvent: PointerEvent): MouseClickAction? {
+        val mainKey = pointerEvent.toVirtualKey() ?: return null
+        return availableMouseClickActions[KeySet(mainKey, keySet?.subKeys.orEmpty())]
+            ?.takeIf { it.pointerEventType == pointerEvent.type }
+    }
+
+    fun getEnabledMouseScrollAction(pointerEvent: PointerEvent): MouseScrollAction? {
+        if (pointerEvent.type != PointerEventType.Scroll) return null
+        val mainKey = pointerEvent.toVirtualKey() ?: return null
+        return availableMouseScrollActions[KeySet(mainKey, keySet?.subKeys.orEmpty())]
+    }
 }
 
 fun KeyEvent.isReleased(key: ActualKey) = released && this.key == key

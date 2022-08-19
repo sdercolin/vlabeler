@@ -12,10 +12,14 @@ enum class MouseScrollAction(
     val defaultKeySet: KeySet?,
     val editable: Boolean = true
 ) : Action {
-    SwitchSample(Strings.ActionSwitchSample, KeySet.subKeys(Key.Ctrl)),
-    SwitchEntry(Strings.ActionSwitchEntry, KeySet.None),
-    ZoomCanvas(Strings.ActionZoomCanvas, KeySet.subKeys(Key.Shift, Key.Ctrl)),
-    ScrollCanvas(Strings.ActionScrollCanvas, KeySet.subKeys(Key.Shift), editable = false);
+    GoToNextSample(Strings.ActionGoToNextSample, KeySet(Key.MouseScrollDown, setOf(Key.Ctrl))),
+    GoToPreviousSample(Strings.ActionGoToPreviousSample, KeySet(Key.MouseScrollUp, setOf(Key.Ctrl))),
+    GoToNextEntry(Strings.ActionGoToNextEntry, KeySet(Key.MouseScrollDown)),
+    GoToPreviousEntry(Strings.ActionGoToPreviousEntry, KeySet(Key.MouseScrollUp)),
+    ZoomInCanvas(Strings.ActionZoomInCanvas, KeySet(Key.MouseScrollUp, setOf(Key.Shift, Key.Ctrl))),
+    ZoomOutCanvas(Strings.ActionZoomOutCanvas, KeySet(Key.MouseScrollDown, setOf(Key.Shift, Key.Ctrl))),
+    ScrollLeftCanvas(Strings.ActionScrollCanvasLeft, KeySet(Key.MouseScrollDown, setOf(Key.Shift)), editable = false),
+    ScrollRightCanvas(Strings.ActionScrollCanvasRight, KeySet(Key.MouseScrollDown, setOf(Key.Shift)), editable = false);
 
     override val displayOrder: Int
         get() = values().indexOf(this)
@@ -31,6 +35,6 @@ enum class MouseScrollAction(
                 keySet?.let { it to action }
             }
             .groupBy { it.first.mainKey }
-            .flatMap { map -> map.value.sortedByDescending { it.first.subKeys.minus(Key.None).count() } }
+            .flatMap { map -> map.value.sortedByDescending { it.first.subKeys.count() } }
     }
 }

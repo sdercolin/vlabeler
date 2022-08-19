@@ -28,6 +28,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.math.absoluteValue
 
 class EditorState(
     project: Project,
@@ -185,10 +186,33 @@ class EditorState(
     ) {
         if (isActive.not()) return
         val horizontal = keyboardState.isShiftPressed
-        when (keyboardState.enabledMouseScrollAction) {
-            MouseScrollAction.SwitchSample -> switchEntryByPointerEvent(event, horizontal, true)
-            MouseScrollAction.SwitchEntry -> switchEntryByPointerEvent(event, horizontal, false)
-            MouseScrollAction.ZoomCanvas -> changeResolutionByPointerEvent(event, horizontal)
+        when (keyboardState.getEnabledMouseScrollAction(event)) {
+            MouseScrollAction.GoToNextSample -> switchEntryByPointerEvent(
+                event,
+                horizontal,
+                shouldSwitchSample = true,
+                positive = true
+            )
+            MouseScrollAction.GoToPreviousSample -> switchEntryByPointerEvent(
+                event,
+                horizontal,
+                shouldSwitchSample = true,
+                positive = false
+            )
+            MouseScrollAction.GoToNextEntry -> switchEntryByPointerEvent(
+                event,
+                horizontal,
+                shouldSwitchSample = false,
+                positive = true
+            )
+            MouseScrollAction.GoToPreviousEntry -> switchEntryByPointerEvent(
+                event,
+                horizontal,
+                shouldSwitchSample = false,
+                positive = false
+            )
+            MouseScrollAction.ZoomInCanvas -> changeResolutionByPointerEvent(true)
+            MouseScrollAction.ZoomOutCanvas -> changeResolutionByPointerEvent(false)
             else -> Unit
         }
     }
@@ -196,28 +220,23 @@ class EditorState(
     private fun switchEntryByPointerEvent(
         event: PointerEvent,
         horizontal: Boolean,
-        shouldSwitchSample: Boolean
+        shouldSwitchSample: Boolean,
+        positive: Boolean
     ): Boolean {
-        val delta = event.changes.first().scrollDelta.run { if (horizontal) x else y }
+        val delta = event.changes.first().scrollDelta.run { if (horizontal) x else y }.absoluteValue
         when {
-            delta > 0 -> if (shouldSwitchSample) appState.nextSample() else appState.nextEntry()
-            delta < 0 -> if (shouldSwitchSample) appState.previousSample() else appState.previousEntry()
-            else -> return false
+            positive -> if (shouldSwitchSample) appState.nextSample() else appState.nextEntry()
+            else -> if (shouldSwitchSample) appState.previousSample() else appState.previousEntry()
         }
         return true
     }
 
-    private fun changeResolutionByPointerEvent(
-        event: PointerEvent,
-        horizontal: Boolean
-    ) {
-        val delta = event.changes.first().scrollDelta.run { if (horizontal) x else y }
+    private fun changeResolutionByPointerEvent(positive: Boolean) {
         val range = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
         val resolution = canvasResolution
         val updatedResolution = when {
-            delta > 0 -> range.decreaseFrom(resolution).takeIf { (range.canDecrease(resolution)) }
-            delta < 0 -> range.increaseFrom(resolution).takeIf { (range.canIncrease(resolution)) }
-            else -> null
+            positive -> range.decreaseFrom(resolution).takeIf { (range.canDecrease(resolution)) }
+            else -> range.increaseFrom(resolution).takeIf { (range.canIncrease(resolution)) }
         }
         if (updatedResolution != null) changeResolution(updatedResolution)
     }

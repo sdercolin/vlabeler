@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.sdercolin.vlabeler.ui.dialog.preferences
 
 import androidx.compose.foundation.background
@@ -25,7 +27,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -41,11 +43,16 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.released
+import com.sdercolin.vlabeler.env.toVirtualKey
 import com.sdercolin.vlabeler.model.action.Action
+import com.sdercolin.vlabeler.model.action.ActionType
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
@@ -78,18 +85,23 @@ class KeymapItemEditDialogState<K : Action>(private val args: PreferencesEditorS
     fun getConflictingActions(): List<K> = args.allKeyBinds.getConflictingKeyBinds(keySet, args.actionKeyBind.action)
         .map { it.action }
 
+    private var pendingSubKeys: Set<Key>? = null
+
     fun updateKeySet(keyEvent: KeyEvent) {
+        val keySet = KeySet.fromKeyEvent(keyEvent)
+        pendingSubKeys = keySet.subKeys
+
         if (keyEvent.released) return
-        var keySet = KeySet.fromKeyEvent(keyEvent)
-        if (args.keymapItem.actionType.requiresCompleteKeySet.not()) {
-            keySet = keySet.copy(mainKey = null)
-            if (keySet.subKeys.isEmpty()) {
-                keySet = keySet.copy(subKeys = setOf(Key.None))
-            }
-        }
+        if (args.keymapItem.actionType != ActionType.Key) return
         if (keySet.isValid()) {
             updateKeySet(keySet)
         }
+    }
+
+    fun updateKeySet(pointerEvent: PointerEvent) {
+        val mainKey = pointerEvent.toVirtualKey() ?: return
+        if (mainKey.mainKeyActionType != args.keymapItem.actionType) return
+        updateKeySet(KeySet(mainKey, pendingSubKeys ?: emptySet()))
     }
 
     private fun updateKeySet(keySet: KeySet?) {
@@ -103,10 +115,6 @@ class KeymapItemEditDialogState<K : Action>(private val args: PreferencesEditorS
 
     fun clearKeySet() {
         updateKeySet(null)
-    }
-
-    fun applyNoneKeySet() {
-        updateKeySet(KeySet.None)
     }
 
     fun cancel() {
@@ -161,9 +169,15 @@ fun <K : Action> KeymapItemEditDialog(
                     BasicTextField(
                         modifier = Modifier.widthIn(min = 120.dp)
                             .focusRequester(focusRequester)
-                            .onPreviewKeyEvent { keyEvent ->
-                                state.updateKeySet(keyEvent)
+                            .onPreviewKeyEvent {
+                                state.updateKeySet(it)
                                 true
+                            }
+                            .onPointerEvent(PointerEventType.Release) {
+                                state.updateKeySet(it)
+                            }
+                            .onPointerEvent(PointerEventType.Scroll) {
+                                state.updateKeySet(it)
                             },
                         value = state.text,
                         textStyle = MaterialTheme.typography.body2
@@ -172,22 +186,6 @@ fun <K : Action> KeymapItemEditDialog(
                         maxLines = 1,
                         cursorBrush = SolidColor(MaterialTheme.colors.onBackground)
                     )
-                    if (args.keymapItem.actionType.requiresCompleteKeySet.not()) {
-                        Spacer(Modifier.width(20.dp))
-                        Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .clickable { state.applyNoneKeySet() }
-                                .padding(4.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Remove,
-                                contentDescription = null,
-                                tint = MaterialTheme.colors.onBackground,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    }
                     Spacer(Modifier.width(20.dp))
                     Box(
                         modifier = Modifier

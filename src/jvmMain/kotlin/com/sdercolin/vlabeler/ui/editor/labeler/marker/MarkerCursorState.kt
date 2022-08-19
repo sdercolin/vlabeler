@@ -13,10 +13,13 @@ data class MarkerCursorState(
      * It's ensured that: entry's end is equal to the next entry's start.
      */
     val pointIndex: Int = NonePointIndex,
-    val lockedDrag: Boolean = false
+    val lockedDrag: Boolean = false,
+    val previewOnDragging: Boolean = false
 ) {
 
-    fun startDragging(lockedDrag: Boolean) = copy(mouse = Mouse.Dragging, lockedDrag = lockedDrag)
+    fun startDragging(lockedDrag: Boolean, withPreview: Boolean) =
+        copy(mouse = Mouse.Dragging, lockedDrag = lockedDrag, previewOnDragging = withPreview)
+
     fun finishDragging() = copy(mouse = Mouse.None, lockedDrag = false)
 
     fun moveToNothing() = copy(pointIndex = NonePointIndex, mouse = Mouse.None)

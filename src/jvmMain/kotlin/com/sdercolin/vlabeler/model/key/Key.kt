@@ -4,6 +4,7 @@ package com.sdercolin.vlabeler.model.key
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import com.sdercolin.vlabeler.env.isMacOS
+import com.sdercolin.vlabeler.model.action.ActionType
 import kotlinx.serialization.ExperimentalSerializationApi
 
 typealias ActualKey = androidx.compose.ui.input.key.Key
@@ -11,7 +12,7 @@ typealias ActualKey = androidx.compose.ui.input.key.Key
 enum class Key(
     val displayedName: String,
     val actualKeys: List<ActualKey>,
-    val isMainKey: Boolean = true
+    val mainKeyActionType: ActionType? = ActionType.Key
 ) {
     Ctrl(
         if (isMacOS) {
@@ -24,7 +25,7 @@ enum class Key(
         } else {
             listOf(ActualKey.CtrlLeft, ActualKey.CtrlRight)
         },
-        isMainKey = false
+        mainKeyActionType = null
     ),
     Shift(
         if (isMacOS) {
@@ -33,7 +34,7 @@ enum class Key(
             "Shift"
         },
         listOf(ActualKey.ShiftLeft, ActualKey.ShiftRight),
-        isMainKey = false
+        mainKeyActionType = null
     ),
     Alt(
         if (isMacOS) {
@@ -42,7 +43,7 @@ enum class Key(
             "Alt"
         },
         listOf(ActualKey.AltLeft, ActualKey.AltRight),
-        isMainKey = false
+        mainKeyActionType = null
     ),
     Windows(
         if (isMacOS) {
@@ -55,13 +56,8 @@ enum class Key(
         } else {
             listOf(ActualKey.MetaLeft, ActualKey.MetaRight)
         },
-        isMainKey = false
+        mainKeyActionType = null
     ),
-
-    /**
-     * A special sub key to indicate no sub keys are needed for the action (only for mouse actions)
-     */
-    None("No Key Needed", listOf(), isMainKey = false),
     Space("Space", listOf(ActualKey.Spacebar)),
     Enter(
         if (isMacOS) {
@@ -205,9 +201,15 @@ enum class Key(
     F9("F9", listOf(ActualKey.F9)),
     F10("F10", listOf(ActualKey.F10)),
     F11("F11", listOf(ActualKey.F11)),
-    F12("F12", listOf(ActualKey.F12));
+    F12("F12", listOf(ActualKey.F12)),
+    MouseLeftClick("Left Click", listOf(), mainKeyActionType = ActionType.MouseClick),
+    MouseRightClick("Right Click", listOf(), mainKeyActionType = ActionType.MouseClick),
+    MouseScrollUp("Scroll Up", listOf(), mainKeyActionType = ActionType.MouseScroll),
+    MouseScrollDown("Scroll Down", listOf(), mainKeyActionType = ActionType.MouseScroll);
 
     fun isKey(actualKey: ActualKey) = actualKeys.contains(actualKey)
+
+    val isMainKey = mainKeyActionType != null
 
     companion object {
         fun fromActualKey(actualKey: ActualKey): Key? = values().find { it.isKey(actualKey) }

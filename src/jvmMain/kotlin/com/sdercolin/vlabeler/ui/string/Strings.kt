@@ -755,17 +755,29 @@ enum class Strings(val en: String) {
     ActionPlayAudioSection(
         en = "Play the Clicked Audio Part"
     ),
-    ActionScrollCanvas(
-        en = "Scroll Canvas"
+    ActionScrollCanvasLeft(
+        en = "Scroll Canvas to Left"
     ),
-    ActionZoomCanvas(
-        en = "Zoom In/Out"
+    ActionScrollCanvasRight(
+        en = "Scroll Canvas to Right"
     ),
-    ActionSwitchEntry(
-        en = "Go to Previous/Next Entry"
+    ActionZoomInCanvas(
+        en = "Zoom In"
     ),
-    ActionSwitchSample(
-        en = "Go to Previous/Next Sample"
+    ActionZoomOutCanvas(
+        en = "Zoom Out"
+    ),
+    ActionGoToNextEntry(
+        en = "Go to Next Entry"
+    ),
+    ActionGoToPreviousEntry(
+        en = "Go to Previous Entry"
+    ),
+    ActionGoToNextSample(
+        en = "Go to Next Sample"
+    ),
+    ActionGoToPreviousSample(
+        en = "Go to Previous Sample"
     );
 
     fun get(language: Language): String = when (language) {

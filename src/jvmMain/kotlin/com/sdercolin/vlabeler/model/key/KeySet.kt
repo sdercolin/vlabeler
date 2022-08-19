@@ -81,8 +81,6 @@ data class KeySet(
         return true
     }
 
-    fun needNoKeys() = this == None
-
     @Serializer(KeySet::class)
     object KeySetSerializer : KSerializer<KeySet> {
         override val descriptor: SerialDescriptor
@@ -108,9 +106,6 @@ data class KeySet(
     }
 
     companion object {
-        val None get() = subKeys(Key.None)
-
-        fun subKeys(vararg keys: Key) = KeySet(null, keys.toSet())
 
         fun fromKeyEvent(keyEvent: KeyEvent): KeySet {
             val mainKey = Key.fromActualKey(keyEvent.key).takeUnless { keyEvent.released }

@@ -105,7 +105,6 @@ fun Canvas(
                     MarkerCanvas(
                         canvasParams,
                         horizontalScrollState,
-                        keyboardState,
                         markerState,
                         editorState,
                         appState

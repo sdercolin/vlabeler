@@ -102,15 +102,14 @@ fun MarkerPointEventContainer(
                 }
                 state.handleMouseMove(
                     tool,
-                    keyboardState,
                     event,
                     editorState::updateEntries,
                     screenRange,
                     playByCursor
                 )
             }
-            .onPointerEvent(PointerEventType.Press) {
-                state.cursorState.handleMousePress(tool, keyboardState, state.labelerConf)
+            .onPointerEvent(PointerEventType.Press) { event ->
+                state.cursorState.handleMousePress(tool, keyboardState, event, state.labelerConf)
             }
             .onPointerEvent(PointerEventType.Release) { event ->
                 state.handleMouseRelease(
@@ -131,12 +130,11 @@ fun MarkerPointEventContainer(
 fun MarkerCanvas(
     canvasParams: CanvasParams,
     horizontalScrollState: ScrollState,
-    keyboardState: KeyboardState,
     state: MarkerState,
     editorState: EditorState,
     appState: AppState
 ) {
-    FieldBorderCanvas(horizontalScrollState, keyboardState, state, editorState, appState)
+    FieldBorderCanvas(horizontalScrollState, state, appState)
     LaunchAdjustScrollPosition(
         state.entriesInPixel,
         editorState.project.currentIndex,
@@ -199,20 +197,10 @@ fun MarkerLabels(
 @Composable
 private fun FieldBorderCanvas(
     horizontalScrollState: ScrollState,
-    keyboardState: KeyboardState,
     state: MarkerState,
-    editorState: EditorState,
     appState: AppState
 ) {
     val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
-    val tool = editorState.tool
-
-    LaunchedEffect(keyboardState.enabledMouseClickAction, tool) {
-        if (tool == Tool.Scissors) {
-            val disabled = keyboardState.enabledMouseClickAction == MouseClickAction.PlayAudioSection
-            state.scissorsState.updateNonNull { copy(disabled = disabled) }
-        }
-    }
 
     Canvas(Modifier.fillMaxSize()) {
         screenRange ?: return@Canvas
@@ -397,7 +385,6 @@ private fun FieldBorderCanvas(
 
 private fun MarkerState.handleMouseMove(
     tool: Tool,
-    keyboardState: KeyboardState,
     event: PointerEvent,
     editEntries: (List<IndexedEntry>) -> Unit,
     screenRange: FloatRange?,
@@ -405,13 +392,12 @@ private fun MarkerState.handleMouseMove(
 ) {
     screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(keyboardState, event, editEntries, screenRange, playByCursor)
+        Tool.Cursor -> handleCursorMove(event, editEntries, screenRange, playByCursor)
         Tool.Scissors -> handleScissorsMove(event, screenRange)
     }
 }
 
 private fun MarkerState.handleCursorMove(
-    keyboardState: KeyboardState,
     event: PointerEvent,
     editEntries: (List<IndexedEntry>) -> Unit,
     screenRange: FloatRange,
@@ -431,10 +417,10 @@ private fun MarkerState.handleCursorMove(
             val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
             editEntries(updatedInMillis)
         }
-        if (keyboardState.enabledMouseClickAction == MouseClickAction.MoveParameterWithPlaybackPreview) {
+        if (cursorState.value.previewOnDragging) {
             playByCursor(entryConverter.convertToFrame(actualX))
         }
-    } else if (keyboardState.enabledMouseClickAction.canMoveParameter()) {
+    } else {
         val newPointIndex = getPointIndexForHovering(
             x = actualX,
             y = y,
@@ -466,19 +452,22 @@ private fun MarkerState.handleScissorsMove(
 private fun MutableState<MarkerCursorState>.handleMousePress(
     tool: Tool,
     keyboardState: KeyboardState,
+    event: PointerEvent,
     labelerConf: LabelerConf
 ) {
     when (tool) {
-        Tool.Cursor -> handleCursorPress(keyboardState, labelerConf)
+        Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf)
         Tool.Scissors -> Unit
     }
 }
 
 private fun MutableState<MarkerCursorState>.handleCursorPress(
     keyboardState: KeyboardState,
+    event: PointerEvent,
     labelerConf: LabelerConf
 ) {
-    if (keyboardState.enabledMouseClickAction.canMoveParameter()) {
+    val action = keyboardState.getEnabledMouseClickAction(event) ?: return
+    if (action.canMoveParameter()) {
         if (value.mouse == MarkerCursorState.Mouse.Hovering) {
             val lockedDragByBaseField =
                 labelerConf.lockedDrag.useDragBase &&
@@ -486,8 +475,9 @@ private fun MutableState<MarkerCursorState>.handleCursorPress(
             val lockedDragByStart =
                 labelerConf.lockedDrag.useStart && value.usingStartPoint
             val lockedDrag = (lockedDragByBaseField || lockedDragByStart) xor
-                (keyboardState.enabledMouseClickAction == MouseClickAction.MoveParameterInvertingPrimary)
-            update { startDragging(lockedDrag) }
+                (action == MouseClickAction.MoveParameterInvertingPrimary)
+            val withPreview = action == MouseClickAction.MoveParameterWithPlaybackPreview
+            update { startDragging(lockedDrag, withPreview) }
         }
     }
 }
@@ -502,7 +492,7 @@ private fun MarkerState.handleMouseRelease(
     screenRange: FloatRange?
 ) {
     screenRange ?: return
-    if (keyboardState.enabledMouseClickAction == MouseClickAction.PlayAudioSection) {
+    if (keyboardState.getEnabledMouseClickAction(event) == MouseClickAction.PlayAudioSection) {
         val x = event.changes.first().position.x
         val actualX = x + screenRange.start
         val clickedRange = getClickedAudioRange(actualX, leftBorder, rightBorder)
