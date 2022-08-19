@@ -617,6 +617,12 @@ enum class Strings(val en: String) {
     PreferencesKeymapEditDialogTitle(
         en = "Editing key bind for:"
     ),
+    PreferencesKeymapEditDialogDescriptionMouseClick(
+        en = "Left/Right click on the text field with other keys pressed to input a shortcut."
+    ),
+    PreferencesKeymapEditDialogDescriptionMouseScroll(
+        en = "Scroll mouse wheel on the text field with other keys pressed to input a shortcut."
+    ),
     PreferencesKeymapEditDialogConflictingLabel(
         en = "Already assigned to:"
     ),

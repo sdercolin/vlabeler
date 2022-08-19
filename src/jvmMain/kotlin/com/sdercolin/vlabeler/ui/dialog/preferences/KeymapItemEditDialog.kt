@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -155,7 +156,7 @@ fun <K : Action> KeymapItemEditDialog(
                     style = MaterialTheme.typography.body2,
                     maxLines = 1
                 )
-                Spacer(Modifier.height(30.dp))
+                Spacer(Modifier.height(25.dp))
                 Row(
                     modifier = Modifier
                         .border(
@@ -166,6 +167,7 @@ fun <K : Action> KeymapItemEditDialog(
                         .padding(vertical = 15.dp, horizontal = 15.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // TODO: try to remove the right click menu
                     BasicTextField(
                         modifier = Modifier.widthIn(min = 120.dp)
                             .focusRequester(focusRequester)
@@ -173,7 +175,7 @@ fun <K : Action> KeymapItemEditDialog(
                                 state.updateKeySet(it)
                                 true
                             }
-                            .onPointerEvent(PointerEventType.Release) {
+                            .onPointerEvent(PointerEventType.Press) {
                                 state.updateKeySet(it)
                             }
                             .onPointerEvent(PointerEventType.Scroll) {
@@ -184,7 +186,8 @@ fun <K : Action> KeymapItemEditDialog(
                             .copy(color = MaterialTheme.colors.onBackground),
                         onValueChange = {},
                         maxLines = 1,
-                        cursorBrush = SolidColor(MaterialTheme.colors.onBackground)
+                        cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+                        keyboardActions = KeyboardActions()
                     )
                     Spacer(Modifier.width(20.dp))
                     Box(
@@ -200,6 +203,14 @@ fun <K : Action> KeymapItemEditDialog(
                             modifier = Modifier.size(20.dp)
                         )
                     }
+                }
+                val description = args.keymapItem.actionType.descriptionInEditDialog
+                if (description != null) {
+                    Spacer(Modifier.height(20.dp))
+                    Text(
+                        text = string(description),
+                        style = MaterialTheme.typography.caption
+                    )
                 }
                 val conflictedActions = state.getConflictingActions()
                 if (conflictedActions.isNotEmpty()) {

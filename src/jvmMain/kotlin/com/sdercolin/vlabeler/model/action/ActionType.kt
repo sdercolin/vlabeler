@@ -1,7 +1,9 @@
 package com.sdercolin.vlabeler.model.action
 
-enum class ActionType(val requiresCompleteKeySet: Boolean) {
-    Key(true),
-    MouseClick(false),
-    MouseScroll(false)
+import com.sdercolin.vlabeler.ui.string.Strings
+
+enum class ActionType(val requiresCompleteKeySet: Boolean, val descriptionInEditDialog: Strings?) {
+    Key(true, null),
+    MouseClick(false, Strings.PreferencesKeymapEditDialogDescriptionMouseClick),
+    MouseScroll(false, Strings.PreferencesKeymapEditDialogDescriptionMouseScroll)
 }
