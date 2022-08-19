@@ -87,13 +87,22 @@ class MarkerState(
         pointIndex: Int,
         x: Float,
         leftBorder: Float,
-        rightBorder: Float
+        rightBorder: Float,
+        forcedDrag: Boolean
     ): List<EntryInPixel> {
         if (pointIndex == MarkerCursorState.NonePointIndex) return entriesInPixel
-        val dxMin = leftBorder - startInPixel
-        val dxMax = rightBorder - endInPixel
-        val dx = (x - getPointPosition(pointIndex)).coerceIn(dxMin, dxMax)
-        return entriesInPixel.map { it.moved(dx) }
+        return if (!forcedDrag) {
+            val dxMin = leftBorder - startInPixel
+            val dxMax = (rightBorder - endInPixel - 1).coerceAtLeast(0f)
+            val dx = (x - getPointPosition(pointIndex)).coerceIn(dxMin, dxMax)
+            entriesInPixel.map { it.moved(dx) }
+        } else {
+            val currentX = getPointPosition(pointIndex)
+            val dxMin = leftBorder - currentX
+            val dxMax = (rightBorder - currentX - 1).coerceAtLeast(0f)
+            val dx = (x - getPointPosition(pointIndex)).coerceIn(dxMin, dxMax)
+            entriesInPixel.map { it.moved(dx).collapsed(leftBorder, rightBorder) }
+        }
     }
 
     fun getDraggedEntries(
@@ -101,25 +110,27 @@ class MarkerState(
         x: Float,
         leftBorder: Float,
         rightBorder: Float,
-        conf: LabelerConf
+        conf: LabelerConf,
+        forcedDrag: Boolean
     ): List<EntryInPixel> {
         val entries = entriesInPixel.toMutableList()
         when {
             pointIndex == MarkerCursorState.NonePointIndex -> Unit
             pointIndex == MarkerCursorState.StartPointIndex -> {
-                val max = middlePointsInPixelSorted.firstOrNull() ?: endInPixel
+                val max = if (forcedDrag) rightBorder - 1 else middlePointsInPixelSorted.firstOrNull() ?: endInPixel
                 val firstUpdated = entries.first().copy(start = x.coerceIn(leftBorder, max))
                 entries[0] = firstUpdated
             }
             pointIndex == MarkerCursorState.EndPointIndex -> {
-                val min = middlePointsInPixelSorted.lastOrNull() ?: startInPixel
-                val lastUpdated = entries.last().copy(end = x.coerceIn(min, rightBorder - 1))
+                val min = if (forcedDrag) leftBorder else middlePointsInPixelSorted.lastOrNull() ?: startInPixel
+                val lastUpdated = entries.last().copy(end = x.coerceIn(min, (rightBorder - 1).coerceAtLeast(min)))
                 entries[entries.lastIndex] = lastUpdated
             }
             isBorderIndex(pointIndex) -> {
                 val (firstEntryIndex, secondEntryIndex) = getEntryIndexesByBorderIndex(pointIndex)
-                val min = entries[firstEntryIndex].run { points.maxOrNull() ?: start }
-                val max = entries[secondEntryIndex].run { points.minOrNull() ?: end }
+                val min = if (forcedDrag) leftBorder else entries[firstEntryIndex].run { points.maxOrNull() ?: start }
+                val max =
+                    if (forcedDrag) rightBorder - 1 else entries[secondEntryIndex].run { points.minOrNull() ?: end }
                 val newBorder = x.coerceIn(min, max)
                 entries[firstEntryIndex] = entries[firstEntryIndex].copy(end = newBorder)
                 entries[secondEntryIndex] = entries[secondEntryIndex].copy(start = newBorder)
@@ -130,17 +141,93 @@ class MarkerState(
                 val points = entry.points
 
                 val constraints = conf.connectedConstraints
-                val min = constraints.filter { it.second == pointIndex }
-                    .maxOfOrNull { points[it.first] }
-                    ?: entry.start
-                val max = constraints.filter { it.first == pointIndex }
-                    .minOfOrNull { points[it.second] }
-                    ?: entry.end
+                val min = if (forcedDrag) leftBorder else {
+                    constraints.filter { it.second == pointIndex }
+                        .maxOfOrNull { points[it.first] }
+                        ?: entry.start
+                }
+                val max = if (forcedDrag) rightBorder - 1 else {
+                    constraints.filter { it.first == pointIndex }
+                        .minOfOrNull { points[it.second] }
+                        ?: entry.end
+                }
                 val newPoints = points.toMutableList()
                 val pointInsideIndex = pointIndex % (labelerConf.fields.size + 1)
                 newPoints[pointInsideIndex] = x.coerceIn(min, max)
                 val newEntry = entry.copy(points = newPoints)
                 entries[entryIndex] = newEntry
+            }
+        }
+        if (forcedDrag) {
+            val lastEntryIndex = entries.lastIndex
+            val (leftEntryIndex, currentEntryIndex, rightEntryIndex) = when {
+                pointIndex == MarkerCursorState.NonePointIndex -> return entries
+                pointIndex == MarkerCursorState.StartPointIndex ->
+                    Triple(null, null, 0.takeIf { it <= lastEntryIndex })
+                pointIndex == MarkerCursorState.EndPointIndex ->
+                    Triple((lastEntryIndex).takeIf { it >= 0 }, null, null)
+                isBorderIndex(pointIndex) -> {
+                    val (firstEntryIndex, secondEntryIndex) = getEntryIndexesByBorderIndex(pointIndex)
+                    Triple(firstEntryIndex, null, secondEntryIndex)
+                }
+                else -> {
+                    val entryIndex = getEntryIndexByPointIndex(pointIndex)
+                    Triple(
+                        (entryIndex - 1).takeIf { it >= 0 },
+                        entryIndex,
+                        (entryIndex + 1).takeIf { it <= lastEntryIndex }
+                    )
+                }
+            }
+            if (currentEntryIndex != null) {
+                val currentEntry = entries[currentEntryIndex]
+                val fieldIndex = getFieldIndexByPointIndex(pointIndex)
+                val point = currentEntry.points[fieldIndex]
+                val start = currentEntry.start.coerceAtMost(point)
+                val end = currentEntry.end.coerceAtLeast(point)
+                val points = currentEntry.points.toMutableList()
+                val constraints = conf.connectedConstraints
+                val indexesLeftThanBase = constraints.filter { it.second == fieldIndex }.map { it.first }
+                val indexesRightThanBase = constraints.filter { it.first == fieldIndex }.map { it.second }
+                points.indices.minus(fieldIndex).forEach { i ->
+                    when (i) {
+                        in indexesLeftThanBase -> {
+                            points[i] = points[i].coerceAtMost(point)
+                        }
+                        in indexesRightThanBase -> {
+                            points[i] = points[i].coerceAtLeast(point)
+                        }
+                    }
+                }
+                entries[currentEntryIndex] = currentEntry.copy(
+                    start = start,
+                    end = end,
+                    points = points
+                )
+                if (leftEntryIndex != null) {
+                    entries[leftEntryIndex] = entries[leftEntryIndex].copy(end = start)
+                }
+                if (rightEntryIndex != null) {
+                    entries[rightEntryIndex] = entries[rightEntryIndex].copy(start = end)
+                }
+            }
+            if (rightEntryIndex != null) {
+                var left = entries[rightEntryIndex].start
+                for (i in rightEntryIndex until entries.size) {
+                    val updated = entries[i].collapsed(leftBorder = left)
+                    if (updated == entries[i]) break
+                    entries[i] = updated
+                    left = entries[i].end
+                }
+            }
+            if (leftEntryIndex != null) {
+                var right = entries[leftEntryIndex].end
+                for (i in leftEntryIndex downTo 0) {
+                    val updated = entries[i].collapsed(rightBorder = right)
+                    if (updated == entries[i]) break
+                    entries[i] = updated
+                    right = entries[i].start
+                }
             }
         }
         return entries
@@ -216,6 +303,16 @@ class MarkerState(
                     if (y >= top) return current.index
                 }
             }
+
+        // check start again
+        if ((endInPixel - x).absoluteValue <= NearRadiusStartOrEnd) {
+            return MarkerCursorState.EndPointIndex
+        }
+
+        // check end again
+        if ((startInPixel - x).absoluteValue <= NearRadiusStartOrEnd) {
+            MarkerCursorState.StartPointIndex
+        }
 
         return MarkerCursorState.NonePointIndex
     }

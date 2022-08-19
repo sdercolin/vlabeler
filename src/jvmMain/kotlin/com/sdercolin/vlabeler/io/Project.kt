@@ -71,6 +71,9 @@ fun loadProject(
             Log.info("Loaded project is modified to: $fixedProject")
         }
         appState.openEditor(fixedProject)
+        if (!autoSaved) {
+            appState.discardAutoSavedProjects()
+        }
         appState.addRecentProject(fixedProject.projectFile)
         if (appState.appConf.editor.autoScroll.let { it.onSwitched || it.onLoadedNewSample }) {
             appState.scrollFitViewModel.emitNext()
@@ -88,6 +91,7 @@ fun openCreatedProject(
         val file = saveProjectFile(project)
         project.getCacheDir().deleteRecursively()
         appState.openEditor(project)
+        appState.discardAutoSavedProjects()
         appState.addRecentProject(file)
         if (appState.appConf.editor.autoScroll.let { it.onSwitched || it.onLoadedNewSample }) {
             appState.scrollFitViewModel.emitNext()

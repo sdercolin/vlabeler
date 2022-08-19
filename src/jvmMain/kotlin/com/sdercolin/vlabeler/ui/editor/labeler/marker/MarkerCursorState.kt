@@ -14,11 +14,16 @@ data class MarkerCursorState(
      */
     val pointIndex: Int = NonePointIndex,
     val lockedDrag: Boolean = false,
-    val previewOnDragging: Boolean = false
+    val previewOnDragging: Boolean = false,
+    val forcedDrag: Boolean = false
 ) {
 
-    fun startDragging(lockedDrag: Boolean, withPreview: Boolean) =
-        copy(mouse = Mouse.Dragging, lockedDrag = lockedDrag, previewOnDragging = withPreview)
+    fun startDragging(lockedDrag: Boolean, withPreview: Boolean, forcedDrag: Boolean) = copy(
+        mouse = Mouse.Dragging,
+        lockedDrag = lockedDrag,
+        previewOnDragging = withPreview,
+        forcedDrag = forcedDrag
+    )
 
     fun finishDragging() = copy(mouse = Mouse.None, lockedDrag = false)
 

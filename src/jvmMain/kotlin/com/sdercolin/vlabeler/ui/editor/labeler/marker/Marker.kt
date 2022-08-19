@@ -405,14 +405,15 @@ private fun MarkerState.handleCursorMove(
     playByCursor: (Float) -> Unit
 ) {
     val eventChange = event.changes.first()
-    val x = eventChange.position.x.coerceIn(0f, canvasParams.lengthInPixel.toFloat())
+    val x = eventChange.position.x
     val actualX = x + screenRange.start
     val y = eventChange.position.y.coerceIn(0f, canvasHeightState.value.coerceAtLeast(0f))
     if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
+        val forcedDrag = cursorState.value.forcedDrag
         val updated = if (cursorState.value.lockedDrag) {
-            getLockedDraggedEntries(cursorState.value.pointIndex, actualX, leftBorder, rightBorder)
+            getLockedDraggedEntries(cursorState.value.pointIndex, actualX, leftBorder, rightBorder, forcedDrag)
         } else {
-            getDraggedEntries(cursorState.value.pointIndex, actualX, leftBorder, rightBorder, labelerConf)
+            getDraggedEntries(cursorState.value.pointIndex, actualX, leftBorder, rightBorder, labelerConf, forcedDrag)
         }
         if (updated != entriesInPixel) {
             val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
@@ -486,7 +487,8 @@ private fun MutableState<MarkerCursorState>.handleCursorPress(
                 AppConf.Editor.LockedDrag.Never -> false
             } xor invertLockedDrag
             val withPreview = action == MouseClickAction.MoveParameterWithPlaybackPreview
-            update { startDragging(lockedDrag, withPreview) }
+            val forcedDrag = action == MouseClickAction.MoveParameterIgnoringConstraints
+            update { startDragging(lockedDrag, withPreview, forcedDrag) }
         }
     }
 }

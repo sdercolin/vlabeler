@@ -34,4 +34,11 @@ data class EntryInPixel(
     }
 
     fun isValidCutPosition(position: Float) = position > start && position < end
+
+    fun collapsed(leftBorder: Float = 0f, rightBorder: Float = Float.POSITIVE_INFINITY): EntryInPixel {
+        val start = start.coerceAtLeast(leftBorder).coerceAtMost(rightBorder)
+        val end = end.coerceAtMost(rightBorder).coerceAtLeast(leftBorder)
+        val points = points.map { it.coerceAtLeast(start).coerceAtMost(end) }
+        return copy(start = start, end = end, points = points)
+    }
 }

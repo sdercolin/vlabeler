@@ -772,6 +772,9 @@ enum class Strings(val en: String) {
     ActionMoveParameterWithPlaybackPreview(
         en = "Drag Parameter Line with Playback Preview"
     ),
+    ActionMoveParameterIgnoringConstraints(
+        en = "Drag Parameter Line Ignoring Constraints"
+    ),
     ActionMoveParameterInvertingLocked(
         en = "Drag Parameter Line with Fixed-drag Settings Inverted"
     ),
