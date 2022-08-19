@@ -223,7 +223,6 @@ class EditorState(
         shouldSwitchSample: Boolean,
         positive: Boolean
     ): Boolean {
-        val delta = event.changes.first().scrollDelta.run { if (horizontal) x else y }.absoluteValue
         when {
             positive -> if (shouldSwitchSample) appState.nextSample() else appState.nextEntry()
             else -> if (shouldSwitchSample) appState.previousSample() else appState.previousEntry()
