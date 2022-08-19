@@ -89,9 +89,12 @@ class ProjectCreatorState(
             ?.toFileOrNull(allowHomePlaceholder = true, ensureExists = false)
             ?: return
         workingDirectory = projectFile.parent
+        workingDirectoryEdited = true
         projectName = projectFile.nameWithoutExtension
+        projectNameEdited = true
         sampleDirectory = args[Arguments.SampleDirectory]?.resolveHome() ?: workingDirectory
         cacheDirectory = args[Arguments.CacheDirectory]?.resolveHome()
+            ?.also { cacheDirectoryEdited = true }
             ?: getDefaultCacheDirectory(workingDirectory, projectName)
         val encoding = args[Arguments.Encoding]
         if (encoding != null) {
@@ -104,6 +107,7 @@ class ProjectCreatorState(
             val inputFile = args[Arguments.InputFile]?.toFileOrNull(allowHomePlaceholder = true, ensureIsFile = true)
             if (inputFile != null && inputFile.extension == labeler.extension) {
                 this.inputFile = inputFile.absolutePath
+                inputFileEdited = true
             } else {
                 updateInputFileIfNeeded(detectEncoding = encoding == null)
             }
