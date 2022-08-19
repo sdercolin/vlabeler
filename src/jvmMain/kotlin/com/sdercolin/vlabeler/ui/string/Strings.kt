@@ -656,7 +656,7 @@ enum class Strings(val en: String) {
         en = "Use settings defined by the labeler"
     ),
     PreferencesEditorPlayerLockedDragUseStart(
-        en = "Fixed-drag at the \"start\" line"
+        en = "Fixed-drag at the entry's start"
     ),
     PreferencesEditorPlayerLockedDragNever(
         en = "Never do fixed-drag"
