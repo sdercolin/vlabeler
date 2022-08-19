@@ -64,6 +64,16 @@ compose.desktop {
             copyright = "© 2022 sdercolin. All rights reserved."
             appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
             modules("java.sql", "jdk.charsets", "jdk.unsupported", "jdk.accessibility")
+
+            macOS {
+                iconFile.set(project.file("src/jvmMain/resources/icon.icns"))
+            }
+            windows {
+                iconFile.set(project.file("src/jvmMain/resources/icon.ico"))
+            }
+            linux {
+                iconFile.set(project.file("src/jvmMain/resources/icon.png"))
+            }
         }
     }
 }
