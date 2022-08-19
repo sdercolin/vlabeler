@@ -18,7 +18,7 @@ enum class MouseScrollAction(
     GoToPreviousEntry(Strings.ActionGoToPreviousEntry, KeySet(Key.MouseScrollUp)),
     ZoomInCanvas(Strings.ActionZoomInCanvas, KeySet(Key.MouseScrollUp, setOf(Key.Shift, Key.Ctrl))),
     ZoomOutCanvas(Strings.ActionZoomOutCanvas, KeySet(Key.MouseScrollDown, setOf(Key.Shift, Key.Ctrl))),
-    ScrollLeftCanvas(Strings.ActionScrollCanvasLeft, KeySet(Key.MouseScrollDown, setOf(Key.Shift)), editable = false),
+    ScrollLeftCanvas(Strings.ActionScrollCanvasLeft, KeySet(Key.MouseScrollUp, setOf(Key.Shift)), editable = false),
     ScrollRightCanvas(Strings.ActionScrollCanvasRight, KeySet(Key.MouseScrollDown, setOf(Key.Shift)), editable = false);
 
     override val displayOrder: Int
