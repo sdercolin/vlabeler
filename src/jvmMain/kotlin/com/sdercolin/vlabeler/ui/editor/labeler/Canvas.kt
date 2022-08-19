@@ -97,9 +97,6 @@ fun Canvas(
                             )
                         }
                     }
-                    if (appState.isMarkerDisplayed) {
-                        MarkerLabels(screenRange, appState, markerState)
-                    }
                 }
                 if (appState.isMarkerDisplayed) {
                     MarkerCanvas(
@@ -109,6 +106,9 @@ fun Canvas(
                         editorState,
                         appState
                     )
+                    Box(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
+                        MarkerLabels(screenRange, appState, markerState)
+                    }
                 }
                 if (appState.playerState.isPlaying) {
                     PlayerCursor(

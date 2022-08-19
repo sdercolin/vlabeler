@@ -158,7 +158,13 @@ private fun NameLabelsChunk(
         // Set the size of the layout as big as it can
         layout(constraints.maxWidth, constraints.maxHeight) {
             placeables.forEachIndexed { index, placeable ->
-                val x = items[index].start - offset
+                val x = if (entryChunk.rightEntry != null && index == placeables.lastIndex) {
+                    // should only happen in continuous mode
+                    // so use `start` of the previous one to get immediate update
+                    items[index - 1].end - offset
+                } else {
+                    items[index].start - offset
+                }
                 placeable.place(x.toInt(), 0)
             }
         }
