@@ -27,9 +27,3 @@ fun ByteArray.detectEncoding(): String? {
     detector.setText(this)
     return detector.detect().name
 }
-
-fun String.fixEncoding(encoding: String? = null): String {
-    val bytes = this.toByteArray(Charsets.UTF_8)
-    val originalEncoding = encoding ?: bytes.detectEncoding() ?: return this
-    return String(bytes, charset(originalEncoding))
-}
