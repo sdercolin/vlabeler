@@ -1,5 +1,7 @@
 package com.sdercolin.vlabeler.model
 
+import com.sdercolin.vlabeler.util.fixEncoding
+
 typealias ArgumentMap = Map<String, String>
 
 object Arguments {
@@ -19,7 +21,7 @@ fun parseArguments(args: List<String>): ArgumentMap? {
         if (args[i].startsWith("--")) {
             val arg = args[i].removePrefix("--")
             val value = if (i + 1 < args.size && !args[i + 1].startsWith("--")) args[i + 1] else ""
-            map[arg] = value.trim('"')
+            map[arg] = value.trim('"').fixEncoding()
         }
     }
     return map.ifEmpty { null }
