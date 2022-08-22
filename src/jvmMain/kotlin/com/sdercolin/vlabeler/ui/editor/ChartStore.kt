@@ -53,6 +53,11 @@ class ChartStore {
         launchGcDelayed()
     }
 
+    fun prepareForNewLoading(chunkCount: Int, channelCount: Int) {
+        job?.cancel()
+        initializeStates(chunkCount, channelCount)
+    }
+
     fun load(
         scope: CoroutineScope,
         project: Project,
@@ -66,10 +71,7 @@ class ChartStore {
     ) {
         Log.info("ChartStore load(${sampleInfo.name})")
         ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
-        job?.cancel()
         job = scope.launch(Dispatchers.IO) {
-            val channelCount = sampleInfo.channels
-            initializeStates(chunkCount, channelCount)
             val sample = if (needsToLoadSample(sampleInfo)) {
                 SampleRepository.getSample(project.getSampleFile(sampleInfo.name), appConf)
             } else {
