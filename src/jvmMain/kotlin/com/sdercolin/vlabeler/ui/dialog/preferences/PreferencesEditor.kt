@@ -276,14 +276,16 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
             }
             if (item.title != null) {
                 Column(Modifier.widthIn(min = 200.dp, max = if (item.columnStyle) Dp.Unspecified else 400.dp)) {
+                    val topMargin = if (item.description == null) 14.dp else 4.dp
                     Text(
-                        modifier = Modifier.padding(vertical = 14.dp),
+                        modifier = Modifier.padding(top = topMargin),
                         text = string(item.title),
                         style = MaterialTheme.typography.body2,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     if (item.description != null) {
+                        Spacer(Modifier.height(10.dp))
                         Text(
                             text = string(item.description),
                             style = MaterialTheme.typography.caption,
