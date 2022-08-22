@@ -3,14 +3,15 @@ package com.sdercolin.vlabeler.io
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.Sample
+import com.sdercolin.vlabeler.model.SampleChunk
 import com.sdercolin.vlabeler.model.SampleInfo
-import java.io.File
-import javax.sound.sampled.AudioFormat
+import com.sdercolin.vlabeler.util.toFile
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import javax.sound.sampled.AudioSystem
-import kotlin.math.ceil
 
 @Immutable
 class Wave(val channels: List<Channel>) {
@@ -20,75 +21,70 @@ class Wave(val channels: List<Channel>) {
     val length get() = channels[0].data.size
 }
 
-fun loadSampleFile(file: File, appConf: AppConf): Result<Sample> = runCatching {
-    val stream = AudioSystem.getAudioInputStream(file)
-    val format = stream.format
-    Log.debug("Sample file loaded: $format")
-    val channelNumber = format.channels
-    val isBigEndian = format.isBigEndian
-    val channels = (0 until channelNumber).map { mutableListOf<Float>() }
-    val frameByteSize = format.sampleSizeInBits / 8
-    if (frameByteSize > 4 || (isWindows && frameByteSize != 2)) {
-        throw Exception("Unsupported sampleSizeInBits: ${format.sampleSizeInBits} bit")
-    }
-    val sampleSize = channelNumber * frameByteSize
-    val isFloat = when (format.encoding) {
-        AudioFormat.Encoding.PCM_SIGNED -> false
-        AudioFormat.Encoding.PCM_FLOAT -> true
-        else -> throw Exception("Unsupported audio encoding")
-    }
+suspend fun loadSampleChunk(
+    sampleInfo: SampleInfo,
+    appConf: AppConf,
+    chunkIndex: Int,
+    chunkSize: Int
+): Result<SampleChunk> = withContext(Dispatchers.IO) {
+    val stream = AudioSystem.getAudioInputStream(sampleInfo.file.toFile())
+    runCatching {
+        val offset = chunkIndex * chunkSize.toLong()
+        val sampleByteSize = sampleInfo.bitDepth
+        val channelCount = sampleInfo.channels
+        val frameSize = sampleByteSize * channelCount
+        val isBigEndian = stream.format.isBigEndian
+        val channels = List(channelCount) { mutableListOf<Float>() }
+        var readFrameCount = 0
+        var pos = offset
+        val buffer = ByteArray(frameSize)
+        stream.skipNBytes(offset * frameSize)
+        Log.debug("Loading chunk $chunkIndex: offset=$offset")
+        while (readFrameCount < chunkSize) {
+            yield()
+            val readSize = stream.readNBytes(buffer, 0, frameSize)
+            if (readSize == 0) break
+            for (channelIndex in channels.indices) {
+                val sampleSize = frameSize / channelCount
+                val channel = channels[channelIndex]
+                val channelBytes = buffer.slice(
+                    channelIndex * sampleSize until (channelIndex + 1) * sampleSize
+                ).let { if (isBigEndian) it.reversed() else it.toList() }
 
-    while (true) {
-        val sampleBytes = stream.readNBytes(sampleSize)
-        if (sampleBytes.isEmpty()) break
-        if (sampleBytes.size != sampleSize) {
-            Log.error("Ignored last ${sampleBytes.size} bytes.")
-            break
-        }
-        for (channelIndex in channels.indices) {
-            val channel = channels[channelIndex]
-            val channelBytes = sampleBytes.slice(
-                channelIndex * frameByteSize until (channelIndex + 1) * frameByteSize
-            ).let { if (isBigEndian) it.reversed() else it.toList() }
-
-            val sample = channelBytes.mapIndexed { index, byte ->
-                val uByte = if (index == channelBytes.lastIndex) byte.toInt()
-                else (byte.toInt() and 0xFF)
-                uByte shl (8 * index)
+                val sample = channelBytes.mapIndexed { index, byte ->
+                    val uByte = if (index == channelBytes.lastIndex) byte.toInt()
+                    else (byte.toInt() and 0xFF)
+                    uByte shl (8 * index)
+                }
+                    .sum()
+                    .let { if (sampleInfo.isFloat) Float.fromBits(it) else it.toFloat() }
+                channel.add(sample)
             }
-                .sum()
-                .let { if (isFloat) Float.fromBits(it) else it.toFloat() }
-            channel.add(sample)
+            pos += frameSize
+            readFrameCount++
         }
+        val wave = Wave(channels = channels.map { Wave.Channel(it.toFloatArray()) })
+        val spectrogram = if (appConf.painter.spectrogram.enabled) {
+            wave.toSpectrogram(appConf.painter.spectrogram, sampleInfo.sampleRate)
+        } else null
+        SampleChunk(
+            info = sampleInfo,
+            wave = wave,
+            spectrogram = spectrogram,
+            index = chunkIndex,
+            chunkSize = chunkSize
+        )
+    }.onFailure {
+        if (it is CancellationException) {
+            Log.info("Cancelled loading chunk $chunkIndex")
+        } else {
+            Log.error("Error loading chunk $chunkIndex")
+            Log.error(it)
+        }
+        stream.close()
+    }.onSuccess {
+        stream.close()
     }
-    stream.close()
-    val wave = Wave(channels = channels.map { Wave.Channel(it.toFloatArray()) })
-    val spectrogram = if (appConf.painter.spectrogram.enabled) {
-        wave.toSpectrogram(appConf.painter.spectrogram, format.sampleRate)
-    } else null
-    val maxChunkSize = appConf.painter.maxDataChunkSize
-    val chunkCount = ceil(wave.length.toFloat() / maxChunkSize).toInt()
-    val info = SampleInfo(
-        name = file.nameWithoutExtension,
-        file = file.absolutePath,
-        sampleRate = format.sampleRate,
-        bitDepth = frameByteSize,
-        isFloat = isFloat,
-        channels = channels.size,
-        length = wave.length,
-        lengthMillis = channels[0].size.toFloat() / format.sampleRate * 1000,
-        maxChunkSize = maxChunkSize,
-        chunkCount = chunkCount,
-        hasSpectrogram = spectrogram != null,
-        lastModified = file.lastModified(),
-        algorithmVersion = WaveLoadingAlgorithmVersion
-    )
-    val sample = Sample(
-        info = info,
-        wave = wave,
-        spectrogram = spectrogram
-    )
-    return Result.success(sample)
 }
 
-const val WaveLoadingAlgorithmVersion = 2
+const val WaveLoadingAlgorithmVersion = 3

@@ -22,7 +22,7 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
-import com.sdercolin.vlabeler.repository.SampleRepository
+import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
@@ -161,7 +161,7 @@ class AppState(
                 showError(InvalidOpenedProjectException(it))
                 return
             }
-        SampleRepository.init(project)
+        SampleInfoRepository.init(project)
         val editor = EditorState(
             project = project,
             appState = this

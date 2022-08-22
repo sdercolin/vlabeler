@@ -82,6 +82,7 @@ abstract class PreferencesPage(
             ) {
                 integer(
                     title = Strings.PreferencesChartsWaveformUnitSize,
+                    description = Strings.PreferencesChartsWaveformUnitSizeDescription,
                     defaultValue = AppConf.Amplitude.DefaultUnitSize,
                     min = AppConf.Amplitude.MinUnitSize,
                     max = AppConf.Amplitude.MaxUnitSize,
@@ -146,12 +147,13 @@ abstract class PreferencesPage(
                     update = { copy(heightWeight = it / 100) }
                 )
                 integer(
-                    title = Strings.PreferencesChartsSpectrogramPointPixelSize,
-                    defaultValue = AppConf.Spectrogram.DefaultPointPixelSize,
-                    min = AppConf.Spectrogram.MinPointPixelSize,
-                    max = AppConf.Spectrogram.MaxPointPixelSize,
-                    select = { it.pointPixelSize },
-                    update = { copy(pointPixelSize = it) }
+                    title = Strings.PreferencesChartsSpectrogramPointDensity,
+                    description = Strings.PreferencesChartsSpectrogramPointDensityDescription,
+                    defaultValue = AppConf.Spectrogram.DefaultPointDensity,
+                    min = AppConf.Spectrogram.MinPointDensity,
+                    max = AppConf.Spectrogram.MaxPointDensity,
+                    select = { it.pointDensity },
+                    update = { copy(pointDensity = it) }
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramHopSize,

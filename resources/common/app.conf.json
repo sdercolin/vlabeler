@@ -6,7 +6,7 @@
     },
     "maxDataChunkSize": 441000,
     "amplitude": {
-      "unitSize": 40,
+      "unitSize": 60,
       "intensityAccuracy": 1000,
       "yAxisBlankRate": 0.1,
       "color": "#FFF2F2F2",
@@ -15,7 +15,7 @@
     "spectrogram": {
       "enabled": true,
       "heightWeight": 0.75,
-      "pointPixelSize": 1,
+      "pointDensity": 2,
       "standardHopSize": 110,
       "standardWindowSize": 512,
       "windowType": "BlackmanHarris",
@@ -39,7 +39,8 @@
       "onJumpedToEntry": true,
       "onSwitchedInMultipleEditMode": true,
       "onSwitched": false
-    }
+    },
+    "lockedDrag": "labeler"
   },
   "autoSave": {
     "target": "record",

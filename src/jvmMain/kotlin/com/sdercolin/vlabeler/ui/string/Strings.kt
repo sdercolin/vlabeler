@@ -529,7 +529,10 @@ enum class Strings(val en: String) {
         en = "Customize the waveform chart."
     ),
     PreferencesChartsWaveformUnitSize(
-        en = "Frame size per pixel"
+        en = "Points per pixel"
+    ),
+    PreferencesChartsWaveformUnitSizeDescription(
+        en = "Increase for lower image quality."
     ),
     PreferencesChartsWaveformIntensityAccuracy(
         en = "Bitmap height (px)"
@@ -555,8 +558,11 @@ enum class Strings(val en: String) {
     PreferencesChartsSpectrogramHeight(
         en = "Height relative to waveforms (%%)"
     ),
-    PreferencesChartsSpectrogramPointPixelSize(
-        en = "Point size (px)"
+    PreferencesChartsSpectrogramPointDensity(
+        en = "Points per pixel"
+    ),
+    PreferencesChartsSpectrogramPointDensityDescription(
+        en = "Increase for lower image quality."
     ),
     PreferencesChartsSpectrogramHopSize(
         en = "FFT hop size"

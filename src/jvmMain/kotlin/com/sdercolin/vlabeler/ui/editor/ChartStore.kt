@@ -12,12 +12,12 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.MelScale
+import com.sdercolin.vlabeler.io.loadSampleChunk
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.model.SampleChunk
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.repository.ChartRepository
-import com.sdercolin.vlabeler.repository.SampleRepository
-import com.sdercolin.vlabeler.util.splitAveragely
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.toColorOrNull
 import kotlinx.coroutines.CoroutineScope
@@ -72,42 +72,21 @@ class ChartStore {
         Log.info("ChartStore load(${sampleInfo.name})")
         ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
         job = scope.launch(Dispatchers.IO) {
-            val sample = if (needsToLoadSample(sampleInfo)) {
-                SampleRepository.getSample(project.getSampleFile(sampleInfo.name), appConf)
-            } else {
-                null
-            }
-            val spectrogramDataChunks = sample?.spectrogram?.data?.toList()?.splitAveragely(chunkCount)
-
-            val waveformChannelChunks = sample?.wave?.channels?.map { channel ->
-                if (spectrogramDataChunks == null) {
-                    channel.data.toList().splitAveragely(chunkCount)
-                } else {
-                    var taken = 0
-                    val sizes = spectrogramDataChunks.map { it.size * sample.spectrogram.hopSize }
-                    val data = channel.data.toList()
-                    val chunks = mutableListOf<List<Float>>()
-                    repeat(sizes.size) {
-                        val until = taken + sizes[it]
-                        if (data.lastIndex < until) {
-                            chunks.add(data.subList(taken, data.lastIndex))
-                            taken = data.lastIndex
-                        } else {
-                            chunks.add(data.subList(taken, until))
-                            taken = until
-                        }
-                    }
-                    chunks.toList()
-                }
-            }
-
             val reorderedChunkIndexes = reorderChunks(startingChunkIndex, chunkCount)
             val colorPalette = appConf.painter.spectrogram.colorPalette.create()
             reorderedChunkIndexes.forEach { chunkIndex ->
+                yield()
+
+                val chunk = if (hasCachedChunk(sampleInfo, chunkIndex)) {
+                    null
+                } else {
+                    loadSampleChunk(sampleInfo, appConf, chunkIndex, sampleInfo.maxChunkSize).getOrThrow()
+                }
+
                 repeat(sampleInfo.channels) { channelIndex ->
-                    drawWaveform(
+                    renderWaveform(
                         sampleInfo,
-                        waveformChannelChunks,
+                        chunk,
                         channelIndex,
                         chunkIndex,
                         appConf,
@@ -117,9 +96,9 @@ class ChartStore {
                     )
                 }
                 if (sampleInfo.hasSpectrogram && appConf.painter.spectrogram.enabled) {
-                    drawSpectrogram(
+                    renderSpectrogram(
                         sampleInfo,
-                        spectrogramDataChunks,
+                        chunk,
                         chunkIndex,
                         density,
                         appConf,
@@ -129,7 +108,6 @@ class ChartStore {
                     )
                 }
             }
-            launchGcDelayed()
         }
     }
 
@@ -160,20 +138,16 @@ class ChartStore {
         return reorderedChunkIndexes
     }
 
-    private fun needsToLoadSample(sampleInfo: SampleInfo): Boolean {
+    private fun hasCachedChunk(sampleInfo: SampleInfo, chunkIndex: Int): Boolean {
         repeat(sampleInfo.channels) { channelIndex ->
-            repeat(sampleInfo.chunkCount) { chunkIndex ->
-                if (!hasCachedWaveform(sampleInfo, channelIndex, chunkIndex)) return true
-            }
+            if (!hasCachedWaveform(sampleInfo, channelIndex, chunkIndex)) return false
         }
 
         if (sampleInfo.hasSpectrogram) {
-            repeat(sampleInfo.chunkCount) { chunkIndex ->
-                if (!hasCachedSpectrogram(sampleInfo, chunkIndex)) return true
-            }
+            if (!hasCachedSpectrogram(sampleInfo, chunkIndex)) return false
         }
 
-        return false
+        return true
     }
 
     private fun hasCachedWaveform(
@@ -201,9 +175,9 @@ class ChartStore {
         }
     }
 
-    private suspend fun drawWaveform(
+    private suspend fun renderWaveform(
         sampleInfo: SampleInfo,
-        waveformChannelChunks: List<List<List<Float>>>?,
+        chunk: SampleChunk?,
         channelIndex: Int,
         chunkIndex: Int,
         appConf: AppConf,
@@ -218,10 +192,10 @@ class ChartStore {
         } else {
             deleteCachedWaveform(sampleInfo, channelIndex, chunkIndex)
         }
-        requireNotNull(waveformChannelChunks) {
-            "waveformChannelChunks[$channelIndex][$chunkIndex] is required. However it's not loaded."
+        requireNotNull(chunk) {
+            "Chunk $chunkIndex is required. However it's not loaded."
         }
-        val data = waveformChannelChunks[channelIndex][chunkIndex]
+        val data = chunk.wave.channels[channelIndex].data
         val dataDensity = appConf.painter.amplitude.unitSize
         val width = data.size / dataDensity
         val maxRawY = data.maxOfOrNull { it.absoluteValue } ?: 0f
@@ -268,9 +242,9 @@ class ChartStore {
     }
 
     @Suppress("UnnecessaryVariable")
-    private suspend fun drawSpectrogram(
+    private suspend fun renderSpectrogram(
         sampleInfo: SampleInfo,
-        spectrogramDataChunks: List<List<DoubleArray>>?,
+        chunk: SampleChunk?,
         chunkIndex: Int,
         density: Density,
         appConf: AppConf,
@@ -285,21 +259,30 @@ class ChartStore {
         } else {
             deleteCachedSpectrogram(sampleInfo, chunkIndex)
         }
-        requireNotNull(spectrogramDataChunks) {
-            "spectrogramDataChunks[$chunkIndex] is required. However it's not loaded."
+        requireNotNull(chunk) {
+            "Chunk $chunkIndex is required. However it's not loaded."
         }
-        val pixelSize = appConf.painter.spectrogram.pointPixelSize.toFloat()
-        val chunk = spectrogramDataChunks[chunkIndex]
+        val rawData = requireNotNull(chunk.spectrogram).data
+        val pointDensity = appConf.painter.spectrogram.pointDensity
+        val data = rawData.chunked(pointDensity).map { group ->
+            val result = DoubleArray(group.first().size) { 0.0 }
+            for (point in group) {
+                for (i in point.indices) {
+                    result[i] += point[i]
+                }
+            }
+            result.map { it / group.size }
+        }
         val maxFrequency = sampleInfo.sampleRate / 2
         val maxFrequencyToDisplay = appConf.painter.spectrogram.maxFrequency
         val maxMel = MelScale.toMel(maxFrequencyToDisplay.toDouble()).toInt()
-        val width = chunk.size.toFloat() * pixelSize
-        val height = maxMel * pixelSize
+        val width = data.size.toFloat()
+        val height = maxMel.toFloat()
         val size = Size(width, height)
         val newBitmap = ImageBitmap(width.toInt(), height.toInt())
         Log.info("Spectrogram chunk $chunkIndex: draw bitmap")
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
-            chunk.forEachIndexed { xIndex, yArray ->
+            data.forEachIndexed { xIndex, yArray ->
                 if (yArray.isEmpty()) return@forEachIndexed
                 val frequencyList = yArray.indices.map { it.toFloat() * maxFrequency / (yArray.size - 1) }
 
@@ -333,12 +316,12 @@ class ChartStore {
                 }
                 interpolated.forEach { (mel, intensity) ->
                     val color = colorPalette.get(intensity.toFloat())
-                    val left = xIndex.toFloat() * pixelSize
-                    val top = height - mel * pixelSize
+                    val left = xIndex.toFloat()
+                    val top = height - mel
                     drawRect(
                         color = color,
                         topLeft = Offset(left, top),
-                        size = Size(pixelSize, step * pixelSize)
+                        size = Size(1f, step.toFloat())
                     )
                 }
             }

@@ -15,7 +15,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.action.MouseScrollAction
-import com.sdercolin.vlabeler.repository.SampleRepository
+import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
@@ -110,7 +110,7 @@ class EditorState(
                 appState.confirmIfRedirectSampleDirectory(sampleDirectory)
                 return@withContext
             }
-            val sampleInfo = SampleRepository.load(project.currentSampleFile, appConf)
+            val sampleInfo = SampleInfoRepository.load(project.currentSampleFile, appConf)
             sampleInfoState.value = sampleInfo
             sampleInfo.getOrElse {
                 Log.error(it)
@@ -247,7 +247,6 @@ class EditorState(
 
     fun clear() {
         Log.info("EditorState clear()")
-        SampleRepository.clear()
         chartStore.clear()
         player.close()
     }

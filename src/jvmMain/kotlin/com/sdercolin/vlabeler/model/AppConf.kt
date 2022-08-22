@@ -74,8 +74,8 @@ data class AppConf(
     }
 
     /**
-     * Configurations about amplitude(waveforms) painting
-     * @param unitSize Frame size of one pixel used when drawing the waveform
+     * Configurations about amplitude (waveforms) painting
+     * @param unitSize Frames of one pixel used when drawing the waveform
      * @param intensityAccuracy Height of the container bitmap in pixel
      * @param yAxisBlankRate Height rate of the extra blank region displayed in both top and bottom to
      * the height of the waveform
@@ -110,6 +110,7 @@ data class AppConf(
      * Configurations about spectrogram painting
      * @param enabled True if spectrogram is calculated and shown
      * @param heightWeight Height weight of the spectrogram to the amplitude form (whose weight is 1)
+     * @param pointDensity Points drawn into one pixel
      * @param standardHopSize Distance as the number of samples for which the window is slided when move to the next
      * frame. This value is used for cases with sample rate 48000 Hz. For other sample rates it is calculated
      * linear-proportionally.
@@ -126,7 +127,7 @@ data class AppConf(
     data class Spectrogram(
         val enabled: Boolean = DefaultEnabled,
         val heightWeight: Float = DefaultHeightWeight,
-        val pointPixelSize: Int = DefaultPointPixelSize,
+        val pointDensity: Int = DefaultPointDensity,
         val standardHopSize: Int = DefaultStandardHopSize,
         val standardWindowSize: Int = DefaultStandardWindowSize,
         val windowType: WindowType = DefaultWindowType,
@@ -141,9 +142,9 @@ data class AppConf(
             const val DefaultHeightWeight = 0.75f
             const val MaxHeightWeight = 5f
             const val MinHeightWeight = 0.1f
-            const val DefaultPointPixelSize = 1
-            const val MaxPointPixelSize = 40
-            const val MinPointPixelSize = 1
+            const val DefaultPointDensity = 5
+            const val MaxPointDensity = 30
+            const val MinPointDensity = 1
             const val DefaultStandardHopSize = 110
             const val MaxStandardHopSize = 2048
             const val MinStandardHopSize = 1

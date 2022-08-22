@@ -5,8 +5,10 @@ import com.sdercolin.vlabeler.io.Spectrogram
 import com.sdercolin.vlabeler.io.Wave
 
 @Immutable
-class Sample(
+class SampleChunk(
     val info: SampleInfo,
+    val index: Int,
+    val chunkSize: Int,
     val wave: Wave,
     val spectrogram: Spectrogram?
 )
