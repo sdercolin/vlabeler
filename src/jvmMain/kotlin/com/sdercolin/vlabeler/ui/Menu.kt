@@ -181,6 +181,13 @@ fun FrameWindowScope.Menu(
                     enabled = appState.isEditorActive,
                 )
                 CheckboxItem(
+                    string(Strings.MenuViewPinEntryListLocked),
+                    checked = appState.pinnedEntryListSplitPanePositionLocked,
+                    onCheckedChange = { appState.pinnedEntryListSplitPanePositionLocked = it },
+                    shortcut = KeyAction.TogglePinnedEntryListLocked.getKeyShortCut(),
+                    enabled = appState.isEditorActive,
+                )
+                CheckboxItem(
                     string(Strings.MenuViewToggleToolbox),
                     checked = appState.isToolboxDisplayed,
                     onCheckedChange = { appState.isToolboxDisplayed = it },

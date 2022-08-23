@@ -10,6 +10,7 @@ interface AppViewState {
     var isMarkerDisplayed: Boolean
     var isPropertyViewDisplayed: Boolean
     var isEntryListPinned: Boolean
+    var pinnedEntryListSplitPanePositionLocked: Boolean
     var isToolboxDisplayed: Boolean
     var lastViewedPreferencesPage: PreferencesPage?
 }
@@ -25,6 +26,11 @@ class AppViewStateImpl(appRecord: AppRecordStore) : AppViewState {
     override var isEntryListPinned: Boolean
         by savedMutableStateOf(appRecord.stateFlow.value.isEntryListPinned) {
             appRecord.update { copy(isEntryListPinned = it) }
+        }
+
+    override var pinnedEntryListSplitPanePositionLocked: Boolean
+        by savedMutableStateOf(appRecord.stateFlow.value.pinnedEntryListSplitPanePositionLocked) {
+            appRecord.update { copy(pinnedEntryListSplitPanePositionLocked = it) }
         }
 
     override var isToolboxDisplayed: Boolean

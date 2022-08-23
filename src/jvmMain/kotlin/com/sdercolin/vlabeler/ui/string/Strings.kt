@@ -78,6 +78,9 @@ enum class Strings(val en: String) {
     MenuViewPinEntryList(
         en = "Pin Entry List"
     ),
+    MenuViewPinEntryListLocked(
+        en = "Lock Splitter for Pinned Entry List"
+    ),
     MenuViewToggleProperties(
         en = "Show Properties"
     ),
@@ -640,6 +643,15 @@ enum class Strings(val en: String) {
     ),
     PreferencesKeymapEditDialogConflictingWarningRemove(
         en = "Remove"
+    ),
+    PreferencesView(
+        en = "View"
+    ),
+    PreferencesViewDescription(
+        en = "Customize view appearances"
+    ),
+    PreferencesViewPinnedEntryListPosition(
+        en = "Position of pinned entry list"
     ),
     PreferencesEditor(
         en = "Editor"

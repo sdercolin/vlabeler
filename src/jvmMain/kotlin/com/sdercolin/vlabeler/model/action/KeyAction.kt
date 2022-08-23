@@ -107,6 +107,11 @@ enum class KeyAction(
         KeySet(Key.Two, setOf(Key.Ctrl)),
         true
     ),
+    TogglePinnedEntryListLocked(
+        listOf(Strings.MenuView, Strings.MenuViewPinEntryListLocked),
+        KeySet(Key.Two, setOf(Key.Ctrl, Key.Shift)),
+        true
+    ),
     ToggleToolbox(
         listOf(Strings.MenuView, Strings.MenuViewToggleToolbox),
         KeySet(Key.Three, setOf(Key.Ctrl)),

@@ -15,6 +15,7 @@ import kotlinx.serialization.Serializable
  * Basic configurations of app
  * @param painter Configurations about chart painting
  * @param editor Configurations about editor
+ * @param view Configurations about views
  * @param autoSave Configurations about auto-save
  * @param playback Configurations about audio playback
  * @param keymaps Custom keymap
@@ -24,6 +25,7 @@ import kotlinx.serialization.Serializable
 data class AppConf(
     val painter: Painter = Painter(),
     val editor: Editor = Editor(),
+    val view: View = View(),
     val autoSave: AutoSave = AutoSave(),
     val playback: Playback = Playback(),
     val keymaps: Keymaps = Keymaps()
@@ -268,6 +270,32 @@ data class AppConf(
             val DefaultAskForName = Target.Former
             val DefaultPlay = Target.Former
         }
+    }
+
+    /**
+     * Configurations about views
+     * @param pinnedEntryListPosition Position of the pinned entry list in the window
+     */
+    @Serializable
+    @Immutable
+    data class View(
+        val pinnedEntryListPosition: ViewPosition = DefaultPinnedEntryListPosition
+    ) {
+
+        companion object {
+            val DefaultPinnedEntryListPosition = ViewPosition.Right
+        }
+    }
+
+    /**
+     * Position options of views
+     */
+    @Immutable
+    enum class ViewPosition {
+        Left,
+        Right,
+        Top,
+        Bottom
     }
 
     /**

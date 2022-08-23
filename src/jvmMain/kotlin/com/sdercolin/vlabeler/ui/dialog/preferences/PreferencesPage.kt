@@ -287,6 +287,23 @@ abstract class PreferencesPage(
         }
     }
 
+    object View : PreferencesPage(Strings.PreferencesView, Strings.PreferencesViewDescription) {
+        override val content: List<PreferencesGroup> = buildPageContent {
+            withContext(
+                selector = { it.view },
+                updater = { copy(view = it) }
+            ) {
+                selection(
+                    title = Strings.PreferencesViewPinnedEntryListPosition,
+                    defaultValue = AppConf.View.DefaultPinnedEntryListPosition,
+                    select = { it.pinnedEntryListPosition },
+                    update = { copy(pinnedEntryListPosition = it) },
+                    options = AppConf.ViewPosition.values()
+                )
+            }
+        }
+    }
+
     object Editor : PreferencesPage(Strings.PreferencesEditor, Strings.PreferencesEditorDescription) {
 
         override val children: List<PreferencesPage>
@@ -470,16 +487,11 @@ abstract class PreferencesPage(
         fun getRootPages() = listOf(
             Charts,
             Keymap,
+            View,
             Editor,
             Playback,
             AutoSave
         )
-
-        private fun getChildrenRecursively(page: PreferencesPage): List<PreferencesPage> {
-            return listOf(page) + page.children.flatMap { getChildrenRecursively(it) }
-        }
-
-        private fun getAllPages() = getRootPages().flatMap { getChildrenRecursively(it) }
     }
 }
 
