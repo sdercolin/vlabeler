@@ -49,6 +49,7 @@ import com.sdercolin.vlabeler.util.requireValue
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.update
 import com.sdercolin.vlabeler.util.updateNonNull
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
@@ -152,6 +153,12 @@ fun MarkerCanvas(
             state.cursorState.update { MarkerCursorState() }
         } else {
             state.scissorsState.clear()
+        }
+    }
+    LaunchedEffect(editorState.keyboardViewModel, state) {
+        editorState.keyboardViewModel.keyboardActionFlow.collectLatest {
+            val updated = state.getUpdatedEntriesByKeyAction(it) ?: return@collectLatest
+            state.editEntryIfNeeded(updated, editorState::updateEntries)
         }
     }
 }
@@ -407,18 +414,16 @@ private fun MarkerState.handleCursorMove(
     val eventChange = event.changes.first()
     val x = eventChange.position.x
     val actualX = x + screenRange.start
+    cursorState.update { copy(position = actualX) }
     val y = eventChange.position.y.coerceIn(0f, canvasHeightState.value.coerceAtLeast(0f))
     if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
         val forcedDrag = cursorState.value.forcedDrag
         val updated = if (cursorState.value.lockedDrag) {
-            getLockedDraggedEntries(cursorState.value.pointIndex, actualX, leftBorder, rightBorder, forcedDrag)
+            getLockedDraggedEntries(cursorState.value.pointIndex, actualX, forcedDrag)
         } else {
-            getDraggedEntries(cursorState.value.pointIndex, actualX, leftBorder, rightBorder, labelerConf, forcedDrag)
+            getDraggedEntries(cursorState.value.pointIndex, actualX, forcedDrag)
         }
-        if (updated != entriesInPixel) {
-            val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
-            editEntries(updatedInMillis)
-        }
+        editEntryIfNeeded(updated, editEntries)
         if (cursorState.value.previewOnDragging) {
             playByCursor(entryConverter.convertToFrame(actualX))
         }
@@ -536,6 +541,16 @@ private fun MarkerState.handleScissorsRelease(
         val timePosition = entryConverter.convertToMillis(position)
         val entryIndex = getEntryIndexByCutPosition(position)
         cutEntry(entryIndex, timePosition)
+    }
+}
+
+private fun MarkerState.editEntryIfNeeded(
+    updated: List<EntryInPixel>,
+    editEntries: (List<IndexedEntry>) -> Unit
+) {
+    if (updated != entriesInPixel) {
+        val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
+        editEntries(updatedInMillis)
     }
 }
 

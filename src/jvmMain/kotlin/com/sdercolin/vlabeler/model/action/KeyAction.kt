@@ -200,6 +200,56 @@ enum class KeyAction(
         listOf(Strings.ActionCancelDialog),
         KeySet(Key.Escape),
         false
+    ),
+    SetValue1(
+        listOf(Strings.ActionSetValue1),
+        KeySet(Key.Q),
+        false
+    ),
+    SetValue2(
+        listOf(Strings.ActionSetValue2),
+        KeySet(Key.W),
+        false
+    ),
+    SetValue3(
+        listOf(Strings.ActionSetValue3),
+        KeySet(Key.E),
+        false
+    ),
+    SetValue4(
+        listOf(Strings.ActionSetValue4),
+        KeySet(Key.R),
+        false
+    ),
+    SetValue5(
+        listOf(Strings.ActionSetValue5),
+        KeySet(Key.T),
+        false
+    ),
+    SetValue6(
+        listOf(Strings.ActionSetValue6),
+        KeySet(Key.Y),
+        false
+    ),
+    SetValue7(
+        listOf(Strings.ActionSetValue7),
+        KeySet(Key.U),
+        false
+    ),
+    SetValue8(
+        listOf(Strings.ActionSetValue8),
+        KeySet(Key.I),
+        false
+    ),
+    SetValue9(
+        listOf(Strings.ActionSetValue9),
+        KeySet(Key.O),
+        false
+    ),
+    SetValue10(
+        listOf(Strings.ActionSetValue10),
+        KeySet(Key.P),
+        false
     );
 
     override val displayOrder: Int

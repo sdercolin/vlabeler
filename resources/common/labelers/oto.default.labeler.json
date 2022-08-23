@@ -1,6 +1,6 @@
 {
   "name": "oto.default",
-  "version": 6,
+  "version": 7,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": "UTAU oto labeler",
@@ -26,7 +26,8 @@
       "height": 0.5,
       "dragBase": false,
       "filling": "start",
-      "constraints": []
+      "constraints": [],
+      "shortcutIndex": 3
     },
     {
       "name": "preu",
@@ -40,7 +41,8 @@
           "min": null,
           "max": 0
         }
-      ]
+      ],
+      "shortcutIndex": 2
     },
     {
       "name": "ovl",
@@ -54,7 +56,8 @@
           "min": null,
           "max": 0
         }
-      ]
+      ],
+      "shortcutIndex": 1
     }
   ],
   "extraFieldNames": [

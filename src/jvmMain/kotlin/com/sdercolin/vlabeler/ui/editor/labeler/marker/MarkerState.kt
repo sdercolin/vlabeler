@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
@@ -86,8 +87,6 @@ class MarkerState(
     fun getLockedDraggedEntries(
         pointIndex: Int,
         x: Float,
-        leftBorder: Float,
-        rightBorder: Float,
         forcedDrag: Boolean
     ): List<EntryInPixel> {
         if (pointIndex == MarkerCursorState.NonePointIndex) return entriesInPixel
@@ -108,9 +107,6 @@ class MarkerState(
     fun getDraggedEntries(
         pointIndex: Int,
         x: Float,
-        leftBorder: Float,
-        rightBorder: Float,
-        conf: LabelerConf,
         forcedDrag: Boolean
     ): List<EntryInPixel> {
         val entries = entriesInPixel.toMutableList()
@@ -140,7 +136,7 @@ class MarkerState(
                 val entry = entries[entryIndex]
                 val points = entry.points
 
-                val constraints = conf.connectedConstraints
+                val constraints = labelerConf.connectedConstraints
                 val min = if (forcedDrag) leftBorder else {
                     constraints.filter { it.second == pointIndex }
                         .maxOfOrNull { points[it.first] }
@@ -186,7 +182,7 @@ class MarkerState(
                 val start = currentEntry.start.coerceAtMost(point)
                 val end = currentEntry.end.coerceAtLeast(point)
                 val points = currentEntry.points.toMutableList()
-                val constraints = conf.connectedConstraints
+                val constraints = labelerConf.connectedConstraints
                 val indexesLeftThanBase = constraints.filter { it.second == fieldIndex }.map { it.first }
                 val indexesRightThanBase = constraints.filter { it.first == fieldIndex }.map { it.second }
                 points.indices.minus(fieldIndex).forEach { i ->
@@ -347,6 +343,35 @@ class MarkerState(
             hoveredIndexSet.remove(index)
         }
         isLabelHovered = hoveredIndexSet.isNotEmpty()
+    }
+
+    fun getUpdatedEntriesByKeyAction(action: KeyAction): List<EntryInPixel>? {
+        val paramIndex = when (action) {
+            KeyAction.SetValue1 -> 0
+            KeyAction.SetValue2 -> 1
+            KeyAction.SetValue3 -> 2
+            KeyAction.SetValue4 -> 3
+            KeyAction.SetValue5 -> 4
+            KeyAction.SetValue6 -> 5
+            KeyAction.SetValue7 -> 6
+            KeyAction.SetValue8 -> 7
+            KeyAction.SetValue9 -> 8
+            KeyAction.SetValue10 -> 9
+            else -> return null
+        }
+
+        // Only used in single edit mode
+        if (entries.size != 1) return null
+
+        val fieldCount = labelerConf.fields.size
+        val pointIndex = when {
+            paramIndex == 0 -> MarkerCursorState.StartPointIndex
+            paramIndex == fieldCount + 1 -> MarkerCursorState.EndPointIndex
+            paramIndex <= fieldCount -> labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
+                .takeIf { it >= 0 } ?: return null
+            else -> return null
+        }
+        return getDraggedEntries(pointIndex, cursorState.value.position, forcedDrag = false)
     }
 
     companion object {

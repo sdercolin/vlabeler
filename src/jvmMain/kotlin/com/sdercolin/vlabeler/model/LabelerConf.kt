@@ -117,8 +117,9 @@ data class LabelerConf(
      * @param height Label height ratio to the height of waveforms part (0~1)
      * @param dragBase True if all the other parameter line move together with this one
      * @param filling Name of the target field to which a filled area is drawn from this field. "start" and "end" are
-     * also available.
+     * also available
      * @param constraints Define value constraints between the fields. See [Constraint]
+     * @param shortcutIndex Index in the shortcut list. Could be 1~8 (0 is reserved for "start")
      */
     @Serializable
     @Immutable
@@ -129,7 +130,8 @@ data class LabelerConf(
         val height: Float,
         val dragBase: Boolean = false,
         val filling: String? = null,
-        val constraints: List<Constraint> = listOf()
+        val constraints: List<Constraint> = listOf(),
+        val shortcutIndex: Int? = null
     )
 
     /**

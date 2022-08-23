@@ -772,6 +772,36 @@ enum class Strings(val en: String) {
     ActionCancelDialog(
         en = "Close Dialog"
     ),
+    ActionSetValue1(
+        en = "Set Parameter 1 To Cursor Position"
+    ),
+    ActionSetValue2(
+        en = "Set Parameter 2 To Cursor Position"
+    ),
+    ActionSetValue3(
+        en = "Set Parameter 3 To Cursor Position"
+    ),
+    ActionSetValue4(
+        en = "Set Parameter 4 To Cursor Position"
+    ),
+    ActionSetValue5(
+        en = "Set Parameter 5 To Cursor Position"
+    ),
+    ActionSetValue6(
+        en = "Set Parameter 6 To Cursor Position"
+    ),
+    ActionSetValue7(
+        en = "Set Parameter 7 To Cursor Position"
+    ),
+    ActionSetValue8(
+        en = "Set Parameter 8 To Cursor Position"
+    ),
+    ActionSetValue9(
+        en = "Set Parameter 9 To Cursor Position"
+    ),
+    ActionSetValue10(
+        en = "Set Parameter 10 To Cursor Position"
+    ),
     ActionMoveParameter(
         en = "Drag Parameter Line"
     ),
