@@ -50,7 +50,14 @@ fun FieldLabels(
             }
         }
     }
-    val chunks = remember(labelIndexes, state.entriesInPixel, state.labelerConf, state.cursorState.value.pointIndex) {
+    val chunks = remember(
+        labelIndexes,
+        state.entriesInPixel,
+        state.labelerConf,
+        state.cursorState.value.pointIndex,
+        chunkCount,
+        chunkLength
+    ) {
         val fields = state.labelerConf.fields
         val models = labelIndexes.map { (entryIndex, fieldIndex) ->
             val pointIndex = fieldIndex + entryIndex * (fields.size + 1)
