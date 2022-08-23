@@ -13,7 +13,7 @@ import java.util.logging.StreamHandler
 
 object Log {
 
-    val LoggingPath = AppDir.resolve(".logs").absolutePath
+    val LoggingPath: String = AppDir.resolve(".logs").absolutePath
     private const val InfoLogFileName = "info.log"
     private const val ErrorLogFileName = "error.log"
     private val infoLogger = Logger.getLogger("info")
@@ -27,13 +27,14 @@ object Log {
             return listOfNotNull(tag, message, throwable).joinToString(" ") + "\n"
         }
     }
-    val infoFileHandler by lazy { FileHandler("$LoggingPath/$InfoLogFileName", true) }
-    val errorStreamHandler = StreamHandler(System.err, formatter)
+    lateinit var infoFileHandler: FileHandler
+        private set
+    private val errorStreamHandler = StreamHandler(System.err, formatter)
 
     fun init() {
         val loggingDir = File(LoggingPath)
         if (loggingDir.exists().not()) loggingDir.mkdirs()
-
+        infoFileHandler = FileHandler("$LoggingPath/$InfoLogFileName", true)
         infoFileHandler.formatter = formatter
         infoLogger.useParentHandlers = false
         infoLogger.addHandler(infoFileHandler)
