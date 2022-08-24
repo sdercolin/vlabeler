@@ -10,7 +10,7 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
 enum class KeyAction(
     val displayedNameSections: List<Strings>,
     val defaultKeySet: KeySet?,
-    val isInMenu: Boolean
+    val isInMenu: Boolean,
 ) : Action {
     NewProject(
         listOf(Strings.MenuFile, Strings.MenuFileNewProject),
@@ -255,7 +255,8 @@ enum class KeyAction(
         listOf(Strings.ActionSetValue10),
         KeySet(Key.P),
         false,
-    );
+    ),
+    ;
 
     override val displayOrder: Int
         get() = values().indexOf(this)

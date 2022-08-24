@@ -22,7 +22,7 @@ fun runTemplatePlugin(
     inputFiles: List<File>,
     encoding: String,
     sampleNames: List<String>,
-    labelerConf: LabelerConf
+    labelerConf: LabelerConf,
 ): TemplatePluginResult {
     val js = JavaScript(
         logHandler = Log.infoFileHandler,
@@ -74,7 +74,7 @@ data class FlatEntry(
     val start: Float,
     val end: Float,
     val points: List<Float> = listOf(),
-    val extras: List<String> = listOf()
+    val extras: List<String> = listOf(),
 ) {
     fun toEntry(fallbackSample: String) = Entry(sample ?: fallbackSample, name, start, end, points, extras)
 }

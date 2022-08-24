@@ -56,7 +56,7 @@ import com.sdercolin.vlabeler.util.toColorOrNull
 fun Canvas(
     horizontalScrollState: ScrollState,
     editorState: EditorState,
-    appState: AppState
+    appState: AppState,
 ) {
     val currentDensity = LocalDensity.current
     val sampleInfoResult = editorState.sampleInfoResult
@@ -133,7 +133,7 @@ private fun Chunk(
     canvasParams: CanvasParams,
     sampleInfo: SampleInfo,
     appState: AppState,
-    editorState: EditorState
+    editorState: EditorState,
 ) {
     Box(
         Modifier.fillMaxHeight()
@@ -208,7 +208,7 @@ private fun PlayerCursor(
     canvasParams: CanvasParams,
     playerState: PlayerState,
     scrollState: ScrollState,
-    color: Color
+    color: Color,
 ) {
     val screenRange = scrollState.getScreenRange(canvasParams.lengthInPixel)
     Canvas(Modifier.fillMaxSize()) {

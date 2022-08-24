@@ -26,7 +26,7 @@ import com.sdercolin.vlabeler.ui.theme.Black20
 fun <K : Action> PreferencesKeymapItem(
     keyBind: ActionKeyBind<K>,
     keymap: PreferencesItem.Keymap<K>,
-    onClickItem: (ActionKeyBind<K>, PreferencesItem.Keymap<K>) -> Unit
+    onClickItem: (ActionKeyBind<K>, PreferencesItem.Keymap<K>) -> Unit,
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()

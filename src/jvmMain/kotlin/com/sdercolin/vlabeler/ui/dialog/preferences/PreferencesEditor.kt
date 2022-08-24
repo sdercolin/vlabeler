@@ -77,7 +77,7 @@ private fun rememberPreferencesEditorState(
     submit: (AppConf?) -> Unit,
     apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
-    onViewPage: (PreferencesPage) -> Unit
+    onViewPage: (PreferencesPage) -> Unit,
 ) =
     remember(currentConf, submit, initialPage, onViewPage) {
         PreferencesEditorState(
@@ -96,7 +96,7 @@ fun PreferencesEditor(
     apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit,
-    state: PreferencesEditorState = rememberPreferencesEditorState(currentConf, submit, apply, initialPage, onViewPage)
+    state: PreferencesEditorState = rememberPreferencesEditorState(currentConf, submit, apply, initialPage, onViewPage),
 ) {
     Box(Modifier.fillMaxSize(0.8f).plainClickable()) {
         Column(Modifier.fillMaxSize()) {
@@ -436,7 +436,7 @@ private fun <T> SelectionItem(item: PreferencesItem.Selection<T>, state: Prefere
 private fun <K : Action> Keymap(
     item: PreferencesItem.Keymap<K>,
     state: PreferencesEditorState,
-    keymapState: PreferencesKeymapState<K> = remember(item) { PreferencesKeymapState(item, state) }
+    keymapState: PreferencesKeymapState<K> = remember(item) { PreferencesKeymapState(item, state) },
 ) {
     LaunchedEffect(state.conf) {
         keymapState.update(state.conf)
@@ -481,7 +481,7 @@ private fun ButtonBar(
     cancel: () -> Unit,
     canApply: Boolean,
     apply: () -> Unit,
-    finish: () -> Unit
+    finish: () -> Unit,
 ) {
     var settingsExpanded by remember { mutableStateOf(false) }
     Row(modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.End) {

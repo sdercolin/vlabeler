@@ -28,7 +28,7 @@ data class AppConf(
     val view: View = View(),
     val autoSave: AutoSave = AutoSave(),
     val playback: Playback = Playback(),
-    val keymaps: Keymaps = Keymaps()
+    val keymaps: Keymaps = Keymaps(),
 ) {
     /**
      * Configurations about chart painting
@@ -43,7 +43,7 @@ data class AppConf(
         val canvasResolution: CanvasResolution = CanvasResolution(),
         val maxDataChunkSize: Int = DefaultMaxDataChunkSize,
         val amplitude: Amplitude = Amplitude(),
-        val spectrogram: Spectrogram = Spectrogram()
+        val spectrogram: Spectrogram = Spectrogram(),
     ) {
         companion object {
             const val DefaultMaxDataChunkSize = 441000
@@ -62,7 +62,7 @@ data class AppConf(
     @Immutable
     data class CanvasResolution(
         val default: Int = DefaultDefault,
-        val step: Int = DefaultStep
+        val step: Int = DefaultStep,
     ) {
         val min: Int get() = Min
         val max: Int get() = Max
@@ -91,7 +91,7 @@ data class AppConf(
         val intensityAccuracy: Int = DefaultIntensityAccuracy,
         val yAxisBlankRate: Float = DefaultYAxisBlankRate,
         val color: String = DefaultColor,
-        val backgroundColor: String = DefaultBackgroundColor
+        val backgroundColor: String = DefaultBackgroundColor,
     ) {
         companion object {
             const val DefaultUnitSize = 40
@@ -137,7 +137,7 @@ data class AppConf(
         val maxFrequency: Int = DefaultMaxFrequency,
         val minIntensity: Int = DefaultMinIntensity,
         val maxIntensity: Int = DefaultMaxIntensity,
-        val colorPalette: SpectrogramColorPalette.Presets = DefaultColorPalette
+        val colorPalette: SpectrogramColorPalette.Presets = DefaultColorPalette,
     ) {
         companion object {
             const val DefaultEnabled = true
@@ -175,7 +175,7 @@ data class AppConf(
         Triangular,
         Blackman,
         BlackmanHarris,
-        Bartlett
+        Bartlett,
     }
 
     /**
@@ -191,7 +191,7 @@ data class AppConf(
         val scissorsColor: String = DefaultScissorsColor,
         val scissorsActions: ScissorsActions = ScissorsActions(),
         val autoScroll: AutoScroll = AutoScroll(),
-        val lockedDrag: LockedDrag = DefaultLockedDrag
+        val lockedDrag: LockedDrag = DefaultLockedDrag,
     ) {
 
         /**
@@ -216,7 +216,7 @@ data class AppConf(
             Never {
                 override val stringKey: Strings
                     get() = Strings.PreferencesEditorPlayerLockedDragNever
-            }
+            },
         }
 
         companion object {
@@ -237,7 +237,7 @@ data class AppConf(
     data class ScissorsActions(
         val goTo: Target = DefaultGoTo,
         val askForName: Target = DefaultAskForName,
-        val play: Target = DefaultPlay
+        val play: Target = DefaultPlay,
     ) {
         /**
          * Targets of the actions.
@@ -262,7 +262,7 @@ data class AppConf(
             Latter {
                 override val stringKey: Strings
                     get() = Strings.PreferencesEditorScissorsActionTargetLatter
-            }
+            },
         }
 
         companion object {
@@ -279,7 +279,7 @@ data class AppConf(
     @Serializable
     @Immutable
     data class View(
-        val pinnedEntryListPosition: ViewPosition = DefaultPinnedEntryListPosition
+        val pinnedEntryListPosition: ViewPosition = DefaultPinnedEntryListPosition,
     ) {
 
         companion object {
@@ -295,7 +295,7 @@ data class AppConf(
         Left,
         Right,
         Top,
-        Bottom
+        Bottom,
     }
 
     /**
@@ -312,7 +312,7 @@ data class AppConf(
         val onLoadedNewSample: Boolean = DefaultOnLoadedNewSample,
         val onJumpedToEntry: Boolean = DefaultOnJumpedToEntry,
         val onSwitchedInMultipleEditMode: Boolean = DefaultOnSwitchedInMultipleEditMode,
-        val onSwitched: Boolean = DefaultOnSwitched
+        val onSwitched: Boolean = DefaultOnSwitched,
     ) {
 
         companion object {
@@ -332,7 +332,7 @@ data class AppConf(
     @Immutable
     data class AutoSave(
         val target: Target = DefaultTarget,
-        val intervalSec: Int = DefaultIntervalSec
+        val intervalSec: Int = DefaultIntervalSec,
     ) {
         /**
          * Targets of the auto-save
@@ -367,7 +367,7 @@ data class AppConf(
             Record {
                 override val stringKey: Strings
                     get() = Strings.PreferencesAutoSaveTargetRecord
-            }
+            },
         }
 
         companion object {
@@ -384,7 +384,7 @@ data class AppConf(
     @Serializable
     @Immutable
     data class Playback(
-        val playOnDragging: PlayOnDragging = PlayOnDragging()
+        val playOnDragging: PlayOnDragging = PlayOnDragging(),
     )
 
     /**
@@ -398,7 +398,7 @@ data class AppConf(
     data class PlayOnDragging(
         val enabled: Boolean = DefaultPlayOnDraggingEnabled,
         val rangeRadiusMillis: Int = DefaultPlayOnDraggingRangeRadiusMillis,
-        val eventQueueSize: Int = DefaultPlayOnDraggingEventQueueSize
+        val eventQueueSize: Int = DefaultPlayOnDraggingEventQueueSize,
     ) {
         companion object {
             const val DefaultPlayOnDraggingEnabled = true
@@ -422,6 +422,6 @@ data class AppConf(
     data class Keymaps(
         val keyActionMap: Map<KeyAction, KeySet?> = mapOf(),
         val mouseClickActionMap: Map<MouseClickAction, KeySet?> = mapOf(),
-        val mouseScrollActionMap: Map<MouseScrollAction, KeySet?> = mapOf()
+        val mouseScrollActionMap: Map<MouseScrollAction, KeySet?> = mapOf(),
     )
 }

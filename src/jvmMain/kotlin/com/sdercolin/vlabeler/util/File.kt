@@ -12,7 +12,7 @@ fun String.toFileOrNull(
     allowHomePlaceholder: Boolean = false,
     ensureExists: Boolean = true,
     ensureIsFile: Boolean = false,
-    ensureIsDirectory: Boolean = false
+    ensureIsDirectory: Boolean = false,
 ) = this.runIf(allowHomePlaceholder) { resolveHome() }
     .toFile()
     .runIfNotNull(ensureExists) { takeIf { it.exists() } }

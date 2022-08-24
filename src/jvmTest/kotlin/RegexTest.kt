@@ -19,7 +19,7 @@ class RegexTest {
         val variables = mapOf(
             "a" to 1.1,
             "b" to "sss",
-            "c" to (1 to 2)
+            "c" to (1 to 2),
         )
         val template = "{a}...{b}..{c}"
         val expected = "1.1...sss..(1, 2)"

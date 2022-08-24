@@ -81,6 +81,7 @@ compose.desktop {
 
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     version.set("0.45.2")
+    enableExperimentalRules.set(true)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {

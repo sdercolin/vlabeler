@@ -28,7 +28,7 @@ import com.sdercolin.vlabeler.ui.theme.Black50
 @Composable
 fun ErrorDialog(
     error: Throwable,
-    finish: () -> Unit
+    finish: () -> Unit,
 ) {
     Box(
         modifier = Modifier.fillMaxSize()

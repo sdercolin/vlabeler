@@ -15,7 +15,7 @@ inline fun ReversedRow(
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     verticalAlignment: Alignment.Vertical = Alignment.Top,
-    crossinline content: @Composable RowScope.() -> Unit
+    crossinline content: @Composable RowScope.() -> Unit,
 ) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         Row(modifier, horizontalArrangement, verticalAlignment) {

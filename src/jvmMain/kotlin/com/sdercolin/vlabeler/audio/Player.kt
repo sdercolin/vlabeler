@@ -22,7 +22,7 @@ import kotlin.math.roundToInt
 class Player(
     private var playbackConfig: AppConf.Playback,
     private val coroutineScope: CoroutineScope,
-    private val state: PlayerState
+    private val state: PlayerState,
 ) {
     private var file: File? = null
     private var format: AudioFormat? = null

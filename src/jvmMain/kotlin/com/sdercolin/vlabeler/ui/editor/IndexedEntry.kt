@@ -6,7 +6,7 @@ import com.sdercolin.vlabeler.model.Entry
 @Immutable
 data class IndexedEntry(
     val entry: Entry,
-    val index: Int
+    val index: Int,
 ) {
     val sample get() = entry.sample
     val name get() = entry.name

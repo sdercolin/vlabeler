@@ -5,7 +5,7 @@ import com.sdercolin.vlabeler.ui.string.string
 
 class PluginRuntimeException(
     cause: Throwable?,
-    expected: Boolean
+    expected: Boolean,
 ) : Exception(
     if (!expected) string(Strings.PluginRuntimeUnexpectedException) else cause?.message,
     cause,

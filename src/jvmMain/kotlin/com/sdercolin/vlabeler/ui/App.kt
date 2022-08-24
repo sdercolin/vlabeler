@@ -28,7 +28,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun App(
     mainScope: CoroutineScope,
-    appState: AppState
+    appState: AppState,
 ) {
     LaunchedEffect(appState) {
         appState.checkAutoSavedProject()

@@ -12,14 +12,13 @@ import kotlinx.serialization.Serializable
 fun runMacroPlugin(
     plugin: Plugin,
     params: ParamMap,
-    project: Project
+    project: Project,
 ): Project {
     val js = JavaScript(
         logHandler = Log.infoFileHandler,
         currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile(),
     )
     return runCatching {
-
         val resourceTexts = plugin.readResourceFiles()
 
         js.set("debug", isDebug)
@@ -70,5 +69,5 @@ fun runMacroPlugin(
 @Serializable
 data class PluginEditedEntry(
     val originalIndex: Int?,
-    val entry: Entry
+    val entry: Entry,
 )

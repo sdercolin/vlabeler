@@ -37,7 +37,7 @@ data class SetResolutionDialogResult(val newValue: Int) : EmbeddedDialogResult<S
 @Composable
 fun SetResolutionDialog(
     args: SetResolutionDialogArgs,
-    finish: (EmbeddedDialogResult<SetResolutionDialogArgs>?) -> Unit
+    finish: (EmbeddedDialogResult<SetResolutionDialogArgs>?) -> Unit,
 ) {
     val dismiss = { finish(null) }
     val submit = { newValue: Int -> finish(SetResolutionDialogResult(newValue)) }

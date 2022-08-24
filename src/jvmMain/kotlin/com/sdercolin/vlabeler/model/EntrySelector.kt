@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class EntrySelector(
-    val filters: List<FilterItem>
+    val filters: List<FilterItem>,
 ) {
 
     fun select(entries: List<Entry>, labelerConf: LabelerConf, js: JavaScript) = filters
@@ -32,7 +32,7 @@ data class EntrySelector(
         fun filter(
             entries: List<IndexedValue<Entry>>,
             labelerConf: LabelerConf,
-            js: JavaScript
+            js: JavaScript,
         ): List<IndexedValue<Entry>> = entries.filter { accept(it.value, labelerConf, js) }
 
         abstract fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean
@@ -48,7 +48,7 @@ data class EntrySelector(
     data class TextFilterItem(
         override val subject: String,
         val matchType: TextMatchType,
-        val matcherText: String
+        val matcherText: String,
     ) : FilterItem() {
 
         override fun isValid(labelerConf: LabelerConf): Boolean {
@@ -90,7 +90,7 @@ data class EntrySelector(
         override val subject: String,
         val matchType: NumberMatchType,
         val comparerValue: Double,
-        val comparerName: String?
+        val comparerName: String?,
     ) : FilterItem() {
 
         override fun isValid(labelerConf: LabelerConf): Boolean {

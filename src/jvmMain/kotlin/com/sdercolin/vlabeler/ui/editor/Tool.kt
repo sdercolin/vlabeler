@@ -11,5 +11,5 @@ enum class Tool(val stringKey: Strings, val keyAction: KeyAction) {
     Cursor(Strings.MenuEditToolsCursor, KeyAction.UseToolCursor),
 
     @SerialName("scissors")
-    Scissors(Strings.MenuEditToolsScissors, KeyAction.UseToolScissors)
+    Scissors(Strings.MenuEditToolsScissors, KeyAction.UseToolScissors),
 }

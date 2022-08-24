@@ -9,14 +9,14 @@ import com.sdercolin.vlabeler.model.AppConf
 data class CanvasParams(
     val dataLength: Int,
     val resolution: Int,
-    val density: Density
+    val density: Density,
 ) {
     val lengthInPixel = dataLength / resolution
     val canvasWidthInDp = with(density) { lengthInPixel.toDp() }
 
     @Immutable
     class ResolutionRange(
-        private val conf: AppConf.CanvasResolution
+        private val conf: AppConf.CanvasResolution,
     ) {
 
         fun canIncrease(resolution: Int) = resolution < conf.max

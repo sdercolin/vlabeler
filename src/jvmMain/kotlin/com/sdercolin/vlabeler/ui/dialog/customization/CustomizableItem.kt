@@ -17,7 +17,7 @@ abstract class CustomizableItem(
     val website: String,
     val rootFile: File,
     val canRemove: Boolean,
-    disabled: Boolean
+    disabled: Boolean,
 ) {
 
     fun remove() {

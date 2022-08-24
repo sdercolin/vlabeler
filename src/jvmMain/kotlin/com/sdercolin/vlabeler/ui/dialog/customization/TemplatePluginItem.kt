@@ -4,7 +4,7 @@ import com.sdercolin.vlabeler.model.Plugin
 
 class TemplatePluginItem(
     plugin: Plugin,
-    disabled: Boolean
+    disabled: Boolean,
 ) : CustomizableItem(
     name = plugin.name,
     author = plugin.author,

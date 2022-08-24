@@ -27,12 +27,12 @@ private data class FieldLabelModel(
     val entryAbsoluteIndex: Int,
     val position: Float,
     val field: LabelerConf.Field,
-    val isActive: Boolean
+    val isActive: Boolean,
 )
 
 @Immutable
 private data class FieldLabelModelChunk(
-    val models: List<FieldLabelModel>
+    val models: List<FieldLabelModel>,
 )
 
 @Composable
@@ -41,7 +41,7 @@ fun FieldLabels(
     chunkCount: Int,
     chunkLength: Float,
     chunkLengthDp: Dp,
-    chunkVisibleList: List<Boolean>
+    chunkVisibleList: List<Boolean>,
 ) {
     val labelIndexes = remember(state.entriesInPixel.indices, state.labelerConf.fields) {
         state.entriesInPixel.indices.flatMap { entryIndex ->
@@ -94,7 +94,7 @@ private fun FieldLabelsChunk(
     modifier: Modifier,
     offset: Float,
     modelChunk: FieldLabelModelChunk,
-    waveformsHeightRatio: Float
+    waveformsHeightRatio: Float,
 ) {
     val labelShiftUp = with(LocalDensity.current) { LabelShiftUp.toPx() }
     Layout(

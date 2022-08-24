@@ -33,7 +33,7 @@ class MarkerState(
     val cursorState: MutableState<MarkerCursorState>,
     val scissorsState: MutableState<MarkerScissorsState?>,
     val canvasHeightState: MutableState<Float>,
-    val waveformsHeightRatio: Float
+    val waveformsHeightRatio: Float,
 ) {
     val entryBorders: List<Float> = entriesInPixel.fold<EntryInPixel, List<Float>>(listOf()) { acc, entryInPixel ->
         val lastEntryEnd = acc.lastOrNull()
@@ -87,7 +87,7 @@ class MarkerState(
     fun getLockedDraggedEntries(
         pointIndex: Int,
         x: Float,
-        forcedDrag: Boolean
+        forcedDrag: Boolean,
     ): List<EntryInPixel> {
         if (pointIndex == MarkerCursorState.NonePointIndex) return entriesInPixel
         return if (!forcedDrag) {
@@ -107,7 +107,7 @@ class MarkerState(
     fun getDraggedEntries(
         pointIndex: Int,
         x: Float,
-        forcedDrag: Boolean
+        forcedDrag: Boolean,
     ): List<EntryInPixel> {
         val entries = entriesInPixel.toMutableList()
         when {
@@ -237,7 +237,7 @@ class MarkerState(
         waveformsHeightRatio: Float,
         density: Density,
         labelSize: DpSize,
-        labelShiftUp: Dp
+        labelShiftUp: Dp,
     ): Int {
         if (isLabelHovered) return MarkerCursorState.NonePointIndex
 
@@ -316,7 +316,7 @@ class MarkerState(
     fun getClickedAudioRange(
         x: Float,
         leftBorder: Float,
-        rightBorder: Float
+        rightBorder: Float,
     ): Pair<Float?, Float?>? {
         val borders =
             (listOf(leftBorder, rightBorder, startInPixel, endInPixel) + middlePointsInPixel).distinct().sorted()
@@ -386,7 +386,7 @@ fun rememberMarkerState(
     sampleInfo: SampleInfo,
     canvasParams: CanvasParams,
     editorState: EditorState,
-    appState: AppState
+    appState: AppState,
 ): MarkerState {
     val sampleRate = sampleInfo.sampleRate
     val sampleLengthMillis = sampleInfo.lengthMillis

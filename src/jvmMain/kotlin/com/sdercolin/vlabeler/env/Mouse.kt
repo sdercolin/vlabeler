@@ -10,8 +10,7 @@ import com.sdercolin.vlabeler.model.key.Key
 
 fun PointerEvent.toVirtualKey(): Key? {
     return when (type) {
-        PointerEventType.Press,
-        PointerEventType.Release -> when (button) {
+        PointerEventType.Press, PointerEventType.Release -> when (button) {
             PointerButton.Primary -> {
                 Key.MouseLeftClick
             }

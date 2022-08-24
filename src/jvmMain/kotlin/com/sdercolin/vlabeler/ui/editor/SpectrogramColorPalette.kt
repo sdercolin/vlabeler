@@ -59,6 +59,7 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
         return colors[index]
     }
 
+    @Suppress("unused")
     enum class Presets(private val keyColors: List<Color>, private val stepWeights: List<Float>) {
         Plain(listOf(White), listOf(1f)),
         Reversed(listOf(White, DarkGray), listOf(0f, 1f)),
@@ -100,7 +101,8 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
                 White,
             ),
             listOf(0f, 3f, 2f, 0.5f, 0.5f),
-        );
+        ),
+        ;
 
         fun create() = SpectrogramColorPalette(keyColors, stepWeights)
     }

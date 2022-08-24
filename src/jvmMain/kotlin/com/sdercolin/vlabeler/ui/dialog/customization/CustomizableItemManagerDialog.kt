@@ -62,7 +62,7 @@ import java.io.File
 fun CustomizableItemManagerDialog(
     type: CustomizableItem.Type,
     appState: AppState,
-    state: CustomizableItemManagerDialogState<*> = rememberCustomizableItemManagerDialogState(type, appState)
+    state: CustomizableItemManagerDialogState<*> = rememberCustomizableItemManagerDialogState(type, appState),
 ) {
     val coroutineScope = rememberCoroutineScope()
     Box(
@@ -107,7 +107,6 @@ fun CustomizableItemManagerDialog(
 @Composable
 private fun MiddleButtonBar(state: CustomizableItemManagerDialogState<*>) {
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-
         @Composable
         fun getTint(enabled: Boolean) = MaterialTheme.colors.onSurface.runIf(!enabled) {
             copy(alpha = 0.2f)

@@ -40,7 +40,7 @@ fun <T> SelectionBox(
     fixedWidth: Boolean = false,
     customPadding: Boolean = false,
     showIcon: Boolean = true,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {

@@ -64,7 +64,7 @@ object ChartRepository {
         sampleInfo: SampleInfo,
         channelIndex: Int,
         chunkIndex: Int,
-        waveform: ImageBitmap
+        waveform: ImageBitmap,
     ) {
         val file = getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
         saveImage(waveform, file)
@@ -89,12 +89,12 @@ object ChartRepository {
     fun getWaveformImageFile(
         sampleInfo: SampleInfo,
         channelIndex: Int,
-        chunkIndex: Int
+        chunkIndex: Int,
     ) = cacheDirectory.resolve("${sampleInfo.name}_waveform_${channelIndex}_$chunkIndex.png")
 
     fun getSpectrogramImageFile(
         sampleInfo: SampleInfo,
-        chunkIndex: Int
+        chunkIndex: Int,
     ) = cacheDirectory.resolve("${sampleInfo.name}_spectrogram_$chunkIndex.png")
 
     private const val ChartsCacheFolderName = "charts"
@@ -103,5 +103,5 @@ object ChartRepository {
 @Serializable
 data class ChartCacheParams(
     val algorithmVersion: Int,
-    val painterConfig: AppConf.Painter
+    val painterConfig: AppConf.Painter,
 )

@@ -2,7 +2,7 @@ package com.sdercolin.vlabeler.model
 
 data class ProjectHistory(
     val list: List<Project> = listOf(),
-    val index: Int = -1
+    val index: Int = -1,
 ) {
     val current get() = list[index]
     val canUndo get() = index > 0

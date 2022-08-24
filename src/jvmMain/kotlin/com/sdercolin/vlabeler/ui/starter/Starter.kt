@@ -36,7 +36,7 @@ import java.io.File
 @Composable
 fun BoxScope.Starter(
     mainScope: CoroutineScope,
-    appState: AppState
+    appState: AppState,
 ) {
     Surface(Modifier.fillMaxSize()) {
         Column(

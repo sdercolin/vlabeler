@@ -324,7 +324,7 @@ class AppState(
 
     fun handleTogglePlayerAction(
         action: KeyAction,
-        player: Player
+        player: Player,
     ) {
         if (action == KeyAction.ToggleEntryPlayback) {
             val sampleRate = requireNotNull(editor?.sampleInfoResult?.getOrNull()?.sampleRate)

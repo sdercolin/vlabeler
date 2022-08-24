@@ -37,7 +37,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun Labeler(
     editorState: EditorState,
-    appState: AppState
+    appState: AppState,
 ) {
     val project = editorState.project
     val openEditEntryNameDialog = remember(editorState, project) {

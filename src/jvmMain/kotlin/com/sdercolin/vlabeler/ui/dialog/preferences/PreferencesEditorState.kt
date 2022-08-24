@@ -14,7 +14,7 @@ class PreferencesEditorState(
     private val submit: (AppConf?) -> Unit,
     private val apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
-    private val onViewPage: (PreferencesPage) -> Unit
+    private val onViewPage: (PreferencesPage) -> Unit,
 ) {
 
     private var savedConf: AppConf by mutableStateOf(initConf)
@@ -150,7 +150,7 @@ class PreferencesEditorState(
         val actionKeyBind: ActionKeyBind<K>,
         val keymapItem: PreferencesItem.Keymap<K>,
         val allKeyBinds: List<ActionKeyBind<K>>,
-        val submit: (ActionKeyBind<K>?) -> Unit
+        val submit: (ActionKeyBind<K>?) -> Unit,
     )
 
     data class KeymapItemEditConflictDialogArgs<K : Action>(
@@ -158,13 +158,13 @@ class PreferencesEditorState(
         val conflictingKeyBinds: List<ActionKeyBind<K>>,
         val cancel: () -> Unit,
         val keep: () -> Unit,
-        val remove: () -> Unit
+        val remove: () -> Unit,
     )
 
     fun <K : Action> openKeymapItemEditDialog(
         actionKeyBind: ActionKeyBind<K>,
         keymap: PreferencesItem.Keymap<K>,
-        allKeyBinds: List<ActionKeyBind<K>>
+        allKeyBinds: List<ActionKeyBind<K>>,
     ) {
         keymapItemEditDialogArgs = KeymapItemEditDialogArgs(
             actionKeyBind = actionKeyBind,
@@ -179,7 +179,7 @@ class PreferencesEditorState(
     private fun <K : Action> submitKeymapItemEditDialog(
         edited: ActionKeyBind<K>?,
         keymap: PreferencesItem.Keymap<K>,
-        allKeyBinds: List<ActionKeyBind<K>>
+        allKeyBinds: List<ActionKeyBind<K>>,
     ) {
         keymapItemEditDialogArgs = null
         if (edited == null) return
@@ -212,7 +212,7 @@ class PreferencesEditorState(
     }
 
     private fun <K : Action> MutableMap<K, ActionKeyBind<K>>.update(
-        edited: ActionKeyBind<K>
+        edited: ActionKeyBind<K>,
     ) {
         if (edited.equalsDefault) {
             remove(edited.action)

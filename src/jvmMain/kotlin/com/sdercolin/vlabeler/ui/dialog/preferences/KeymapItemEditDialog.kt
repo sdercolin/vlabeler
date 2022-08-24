@@ -130,7 +130,7 @@ class KeymapItemEditDialogState<K : Action>(private val args: PreferencesEditorS
 @Composable
 fun <K : Action> KeymapItemEditDialog(
     args: PreferencesEditorState.KeymapItemEditDialogArgs<K>,
-    state: KeymapItemEditDialogState<K> = remember(args) { KeymapItemEditDialogState(args) }
+    state: KeymapItemEditDialogState<K> = remember(args) { KeymapItemEditDialogState(args) },
 ) {
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {

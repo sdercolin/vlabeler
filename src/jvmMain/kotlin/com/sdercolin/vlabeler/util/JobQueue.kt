@@ -8,7 +8,7 @@ private typealias JobFactory = (CoroutineScope) -> Job
 
 class JobQueue(
     private val coroutineScope: CoroutineScope,
-    private val size: Int
+    private val size: Int,
 ) {
 
     private val list = mutableListOf<JobFactory>()

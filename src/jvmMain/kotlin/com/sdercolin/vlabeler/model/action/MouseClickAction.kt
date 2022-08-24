@@ -11,7 +11,7 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
 enum class MouseClickAction(
     val displayedName: Strings,
     val defaultKeySet: KeySet?,
-    val pointerEventType: PointerEventType
+    val pointerEventType: PointerEventType,
 ) : Action {
     MoveParameter(Strings.ActionMoveParameter, KeySet(Key.MouseLeftClick), PointerEventType.Press),
     MoveParameterWithPlaybackPreview(
@@ -29,7 +29,8 @@ enum class MouseClickAction(
         KeySet(Key.MouseLeftClick, setOf(Key.Shift)),
         PointerEventType.Press,
     ),
-    PlayAudioSection(Strings.ActionPlayAudioSection, KeySet(Key.MouseRightClick), PointerEventType.Release);
+    PlayAudioSection(Strings.ActionPlayAudioSection, KeySet(Key.MouseRightClick), PointerEventType.Release),
+    ;
 
     override val displayOrder: Int
         get() = values().indexOf(this)

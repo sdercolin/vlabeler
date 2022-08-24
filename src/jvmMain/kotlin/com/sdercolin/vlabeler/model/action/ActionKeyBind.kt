@@ -13,7 +13,7 @@ sealed class ActionKeyBind<T : Action> {
 
 data class KeyActionKeyBind(
     override val action: KeyAction,
-    override val keySet: KeySet?
+    override val keySet: KeySet?,
 ) : ActionKeyBind<KeyAction>() {
     override val editable: Boolean = true
     override val equalsDefault: Boolean = action.defaultKeySet == keySet
@@ -22,7 +22,7 @@ data class KeyActionKeyBind(
 
 data class MouseClickActionKeyBind(
     override val action: MouseClickAction,
-    override val keySet: KeySet?
+    override val keySet: KeySet?,
 ) : ActionKeyBind<MouseClickAction>() {
     override val editable: Boolean = true
     override val equalsDefault: Boolean = action.defaultKeySet == keySet
@@ -31,7 +31,7 @@ data class MouseClickActionKeyBind(
 
 data class MouseScrollActionKeyBind(
     override val action: MouseScrollAction,
-    override val keySet: KeySet?
+    override val keySet: KeySet?,
 ) : ActionKeyBind<MouseScrollAction>() {
     override val editable: Boolean = action.editable
     override val equalsDefault: Boolean = action.defaultKeySet == keySet

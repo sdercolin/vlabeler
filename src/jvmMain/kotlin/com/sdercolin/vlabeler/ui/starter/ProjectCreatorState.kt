@@ -38,7 +38,7 @@ class ProjectCreatorState(
     private val coroutineScope: CoroutineScope,
     private val labelerConfs: List<LabelerConf>,
     val appRecordStore: AppRecordStore,
-    private var launchArguments: ArgumentMap?
+    private var launchArguments: ArgumentMap?,
 ) {
     private val appRecord get() = appRecordStore.stateFlow.value
     var isLoading: Boolean by mutableStateOf(false)
@@ -336,7 +336,7 @@ class ProjectCreatorState(
         picker != PathPicker.InputFile
 
     fun getFilePickerExtensions(
-        picker: PathPicker
+        picker: PathPicker,
     ) = when (picker) {
         PathPicker.SampleDirectory -> listOf(Project.SampleFileExtension)
         PathPicker.WorkingDirectory -> null
@@ -345,7 +345,7 @@ class ProjectCreatorState(
     }
 
     fun getFilePickerInitialDirectory(
-        picker: PathPicker
+        picker: PathPicker,
     ) = when (picker) {
         PathPicker.SampleDirectory -> sampleDirectory
         PathPicker.WorkingDirectory -> workingDirectory
@@ -367,7 +367,7 @@ class ProjectCreatorState(
     fun handleFilePickerResult(
         picker: PathPicker,
         parent: String?,
-        name: String?
+        name: String?,
     ) {
         currentPathPicker = null
         if (parent == null || name == null) return
@@ -395,7 +395,7 @@ class ProjectCreatorState(
 
     fun create(
         snackbarHostState: SnackbarHostState,
-        create: (Project) -> Unit
+        create: (Project) -> Unit,
     ) {
         coroutineScope.launch(Dispatchers.IO) {
             isLoading = true
@@ -443,7 +443,7 @@ fun rememberProjectCreatorState(
     coroutineScope: CoroutineScope,
     activeLabelerConfs: List<LabelerConf>,
     appRecordStore: AppRecordStore,
-    launchArguments: ArgumentMap?
+    launchArguments: ArgumentMap?,
 ) = remember(appRecordStore) {
     ProjectCreatorState(coroutineScope, activeLabelerConfs, appRecordStore, launchArguments)
 }

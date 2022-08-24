@@ -23,7 +23,7 @@ import java.io.File
 
 sealed class AskIfSaveDialogPurpose(
     val stringKey: Strings,
-    val action: AppState.PendingActionAfterSaved
+    val action: AppState.PendingActionAfterSaved,
 ) : EmbeddedDialogArgs {
     object IsOpening :
         AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeOpenDialogDescription, AppState.PendingActionAfterSaved.Open)
@@ -41,11 +41,13 @@ sealed class AskIfSaveDialogPurpose(
         AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close)
 
     object IsCreatingNew : AskIfSaveDialogPurpose(
-        Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.CreatingNew,
+        Strings.AskIfSaveBeforeCloseDialogDescription,
+        AppState.PendingActionAfterSaved.CreatingNew,
     )
 
     object IsClearingCaches : AskIfSaveDialogPurpose(
-        Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.ClearCaches,
+        Strings.AskIfSaveBeforeCloseDialogDescription,
+        AppState.PendingActionAfterSaved.ClearCaches,
     )
 
     object IsExiting :
@@ -54,7 +56,7 @@ sealed class AskIfSaveDialogPurpose(
 
 data class AskIfSaveDialogResult(
     val save: Boolean,
-    val actionAfterSaved: AppState.PendingActionAfterSaved
+    val actionAfterSaved: AppState.PendingActionAfterSaved,
 ) : EmbeddedDialogResult<AskIfSaveDialogPurpose>
 
 @Composable

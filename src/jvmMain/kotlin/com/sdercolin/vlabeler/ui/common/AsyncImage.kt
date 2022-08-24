@@ -19,7 +19,7 @@ fun <T> AsyncImage(
     contentDescription: String? = null,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
-    vararg keys: Any
+    vararg keys: Any,
 ) {
     val image: T? by produceState<T?>(null, *keys) {
         value = withContext(Dispatchers.IO) {

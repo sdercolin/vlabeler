@@ -28,7 +28,7 @@ fun SearchBar(
     onTextChange: (String) -> Unit,
     focusRequester: FocusRequester? = null,
     onPreviewKeyEvent: ((KeyEvent) -> Boolean)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth().height(50.dp).padding(horizontal = 15.dp),

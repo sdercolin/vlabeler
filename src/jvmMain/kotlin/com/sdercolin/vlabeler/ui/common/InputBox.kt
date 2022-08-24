@@ -90,7 +90,7 @@ fun IntegerInputBox(
     onValueChange: (Int) -> Unit,
     min: Int?,
     max: Int?,
-    leadingContent: @Composable RowScope.() -> Unit = {}
+    leadingContent: @Composable RowScope.() -> Unit = {},
 ) {
     var value by remember(intValue) { mutableStateOf(intValue.toString()) }
 
@@ -126,7 +126,7 @@ fun FloatInputBox(
     onValueChange: (Float) -> Unit,
     min: Float?,
     max: Float?,
-    leadingContent: @Composable RowScope.() -> Unit = {}
+    leadingContent: @Composable RowScope.() -> Unit = {},
 ) {
     var value by remember { mutableStateOf(floatValue.toStringTrimmed()) }
     LaunchedEffect(floatValue) {

@@ -13,7 +13,7 @@ sealed class PreferencesItem<T>(
     val defaultValue: T,
     val select: (AppConf) -> T,
     val update: AppConf.(T) -> AppConf,
-    val enabled: (AppConf) -> Boolean
+    val enabled: (AppConf) -> Boolean,
 ) {
 
     fun reset(conf: AppConf) = update(conf, defaultValue)
@@ -25,7 +25,7 @@ sealed class PreferencesItem<T>(
         defaultValue: Boolean,
         select: (AppConf) -> Boolean,
         update: AppConf.(Boolean) -> AppConf,
-        enabled: (AppConf) -> Boolean
+        enabled: (AppConf) -> Boolean,
     ) : PreferencesItem<Boolean>(title, description, columnStyle, defaultValue, select, update, enabled)
 
     class IntegerInput(
@@ -37,7 +37,7 @@ sealed class PreferencesItem<T>(
         update: AppConf.(Int) -> AppConf,
         enabled: (AppConf) -> Boolean,
         val min: Int?,
-        val max: Int?
+        val max: Int?,
     ) : PreferencesItem<Int>(title, description, columnStyle, defaultValue, select, update, enabled)
 
     class FloatInput(
@@ -49,7 +49,7 @@ sealed class PreferencesItem<T>(
         update: AppConf.(Float) -> AppConf,
         enabled: (AppConf) -> Boolean,
         val min: Float?,
-        val max: Float?
+        val max: Float?,
     ) : PreferencesItem<Float>(title, description, columnStyle, defaultValue, select, update, enabled)
 
     class ColorStringInput(
@@ -60,7 +60,7 @@ sealed class PreferencesItem<T>(
         select: (AppConf) -> String,
         update: AppConf.(String) -> AppConf,
         enabled: (AppConf) -> Boolean,
-        val useAlpha: Boolean
+        val useAlpha: Boolean,
     ) : PreferencesItem<String>(title, description, columnStyle, defaultValue, select, update, enabled)
 
     class Selection<T>(
@@ -71,7 +71,7 @@ sealed class PreferencesItem<T>(
         select: (AppConf) -> T,
         update: AppConf.(T) -> AppConf,
         enabled: (AppConf) -> Boolean,
-        val options: Array<T>
+        val options: Array<T>,
     ) : PreferencesItem<T>(title, description, columnStyle, defaultValue, select, update, enabled)
 
     class Keymap<K : Action>(

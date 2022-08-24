@@ -10,7 +10,7 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
 enum class MouseScrollAction(
     val displayedName: Strings,
     val defaultKeySet: KeySet?,
-    val editable: Boolean = true
+    val editable: Boolean = true,
 ) : Action {
     GoToNextSample(Strings.ActionGoToNextSample, KeySet(Key.MouseScrollDown, setOf(Key.Ctrl))),
     GoToPreviousSample(Strings.ActionGoToPreviousSample, KeySet(Key.MouseScrollUp, setOf(Key.Ctrl))),
@@ -19,7 +19,8 @@ enum class MouseScrollAction(
     ZoomInCanvas(Strings.ActionZoomInCanvas, KeySet(Key.MouseScrollUp, setOf(Key.Shift, Key.Ctrl))),
     ZoomOutCanvas(Strings.ActionZoomOutCanvas, KeySet(Key.MouseScrollDown, setOf(Key.Shift, Key.Ctrl))),
     ScrollLeftCanvas(Strings.ActionScrollCanvasLeft, KeySet(Key.MouseScrollUp, setOf(Key.Shift)), editable = false),
-    ScrollRightCanvas(Strings.ActionScrollCanvasRight, KeySet(Key.MouseScrollDown, setOf(Key.Shift)), editable = false);
+    ScrollRightCanvas(Strings.ActionScrollCanvasRight, KeySet(Key.MouseScrollDown, setOf(Key.Shift)), editable = false),
+    ;
 
     override val displayOrder: Int
         get() = values().indexOf(this)

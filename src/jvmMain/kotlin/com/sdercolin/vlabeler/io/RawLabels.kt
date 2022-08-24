@@ -15,7 +15,7 @@ fun fromRawLabels(
     sources: List<String>,
     inputFile: File?,
     labelerConf: LabelerConf,
-    sampleNames: List<String>
+    sampleNames: List<String>,
 ): List<Entry> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)

@@ -62,7 +62,7 @@ private fun rememberState(editorState: EditorState, sampleDirectory: String) = r
 fun SampleListDialog(
     editorState: EditorState,
     finish: () -> Unit,
-    state: SampleListDialogState = rememberState(editorState, editorState.project.sampleDirectory)
+    state: SampleListDialogState = rememberState(editorState, editorState.project.sampleDirectory),
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -194,7 +194,7 @@ private fun ItemRow(
     item: SampleListDialogItem,
     isSelected: Boolean,
     textColor: Color,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
 ) {
     val backgroundModifier = if (isSelected) {
         Modifier.background(MaterialTheme.colors.primaryVariant)
@@ -286,7 +286,7 @@ private fun ColumnScope.GroupLazyColumn(
     weight: Float,
     placeholder: @Composable BoxScope.() -> Unit = {},
     selectedIndex: Int? = null,
-    content: LazyListScope.() -> Unit
+    content: LazyListScope.() -> Unit,
 ) {
     Box(
         modifier = Modifier.fillMaxHeight()
@@ -319,7 +319,7 @@ private fun ColumnScope.GroupLazyColumn(
 private fun SampleDirectoryBar(
     directory: File,
     valid: Boolean,
-    requestRedirectSampleDirectory: () -> Unit
+    requestRedirectSampleDirectory: () -> Unit,
 ) {
     Row(Modifier.fillMaxWidth()) {
         BasicText(
@@ -361,7 +361,7 @@ private fun ButtonBar(
     hasSelectedEntry: Boolean,
     jumpToSelectedEntry: () -> Unit,
     canOpenSampleDirectory: Boolean,
-    openSampleDirectory: () -> Unit
+    openSampleDirectory: () -> Unit,
 ) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
         TextButton(

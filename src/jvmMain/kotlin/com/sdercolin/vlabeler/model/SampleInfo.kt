@@ -25,7 +25,7 @@ data class SampleInfo(
     val chunkCount: Int,
     val hasSpectrogram: Boolean,
     val lastModified: Long,
-    val algorithmVersion: Int
+    val algorithmVersion: Int,
 ) {
 
     companion object {

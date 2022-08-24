@@ -25,7 +25,7 @@ data class Project(
     val labelerConf: LabelerConf,
     val encoding: String? = null,
     val multipleEditMode: Boolean = labelerConf.continuous,
-    val autoExportTargetPath: String? = null
+    val autoExportTargetPath: String? = null,
 ) {
     @Transient
     private val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
@@ -192,7 +192,6 @@ data class Project(
     fun hasSwitchedSample(previous: Project?) = previous != null && previous.currentSampleName != currentSampleName
 
     fun validate(): Project {
-
         // Check multiMode enabled
         if (multipleEditMode) require(
             labelerConf.continuous,
@@ -291,7 +290,7 @@ private fun generateEntriesByPlugin(
     plugin: Plugin,
     params: ParamMap?,
     inputFile: File?,
-    encoding: String
+    encoding: String,
 ): Result<List<Entry>> = runCatching {
     when (
         val result =
@@ -312,7 +311,7 @@ private fun generateEntriesByPlugin(
 }
 
 fun List<Entry>.postApplyLabelerConf(
-    labelerConf: LabelerConf
+    labelerConf: LabelerConf,
 ): List<Entry> = toContinuous(labelerConf.continuous)
     .distinct(labelerConf.allowSameNameEntry)
 
@@ -365,7 +364,7 @@ suspend fun projectOf(
     pluginParams: ParamMap?,
     inputFilePath: String,
     encoding: String,
-    autoExport: Boolean
+    autoExport: Boolean,
 ): Result<Project> {
     val sampleDirectoryFile = File(sampleDirectory)
     val sampleNames = sampleDirectoryFile.getChildren()

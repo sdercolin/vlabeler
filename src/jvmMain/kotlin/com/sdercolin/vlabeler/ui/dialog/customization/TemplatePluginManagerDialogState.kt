@@ -10,7 +10,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 
 class TemplatePluginManagerDialogState(
     appState: AppState,
-    appRecordStore: AppRecordStore
+    appRecordStore: AppRecordStore,
 ) : PluginManagerDialogState<TemplatePluginItem>(
     pluginType = Plugin.Type.Template,
     title = Strings.TemplatePluginManagerTitle,

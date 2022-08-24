@@ -45,7 +45,7 @@ fun <T : EmbeddedDialogArgs> EmbeddedDialog(request: EmbeddedDialogRequest<T>) {
 @Composable
 private fun <T : EmbeddedDialogArgs> TypedDialog(
     args: T,
-    request: EmbeddedDialogRequest<T>
+    request: EmbeddedDialogRequest<T>,
 ) {
     @Suppress("UNCHECKED_CAST")
     when (args) {

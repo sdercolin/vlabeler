@@ -25,7 +25,7 @@ class BottomBarState(
     val isMultipleEditModeEnabled: Boolean,
     val isMultipleEditMode: Boolean,
     val toggleMultipleEditMode: () -> Unit,
-    val appConf: AppConf
+    val appConf: AppConf,
 ) {
     private val resolutionRange = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
     val canIncrease get() = resolutionRange.canIncrease(resolution)
@@ -38,7 +38,7 @@ class BottomBarState(
 fun rememberBottomBarState(
     project: Project,
     appState: AppState,
-    editorState: EditorState
+    editorState: EditorState,
 ) = remember(
     project,
     project.labelerConf,

@@ -54,7 +54,7 @@ fun ParamEntrySelector(
     isError: Boolean,
     onParseErrorChange: (Boolean) -> Unit,
     entries: List<Entry>,
-    js: JavaScript?
+    js: JavaScript?,
 ) {
     val filters = remember(value) { mutableStateListOf(*value.filters.toTypedArray()) }
     val parseErrors = remember(value) { mutableStateListOf(*Array(value.filters.size) { false }) }
@@ -138,7 +138,7 @@ private fun FilterRow(
     index: Int,
     value: EntrySelector.FilterItem,
     onValueChange: (EntrySelector.FilterItem) -> Unit,
-    onParseErrorChange: (Boolean) -> Unit
+    onParseErrorChange: (Boolean) -> Unit,
 ) {
     var type by remember(value) { mutableStateOf(value::class) }
     var subject by remember(value) { mutableStateOf(value.subject) }

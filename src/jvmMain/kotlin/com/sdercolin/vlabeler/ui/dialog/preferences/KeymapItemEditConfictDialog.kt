@@ -28,7 +28,7 @@ import com.sdercolin.vlabeler.ui.theme.Black50
 
 @Composable
 fun <K : Action> KeymapItemEditConflictDialog(
-    args: PreferencesEditorState.KeymapItemEditConflictDialogArgs<K>
+    args: PreferencesEditorState.KeymapItemEditConflictDialogArgs<K>,
 ) {
     Box(
         modifier = Modifier.fillMaxSize().background(color = Black50),

@@ -1,5 +1,7 @@
 @file:OptIn(DelicateCoroutinesApi::class)
 
+package com.sdercolin.vlabeler.util
+
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

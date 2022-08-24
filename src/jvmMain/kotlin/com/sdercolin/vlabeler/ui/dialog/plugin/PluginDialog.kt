@@ -81,7 +81,7 @@ private fun rememberState(
     savedParamMap: ParamMap?,
     project: Project?,
     submit: (ParamMap?) -> Unit,
-    save: (ParamMap) -> Unit
+    save: (ParamMap) -> Unit,
 ) = remember(plugin, paramMap, savedParamMap, submit, save) {
     PluginDialogState(
         plugin,
@@ -100,7 +100,7 @@ fun TemplatePluginDialog(
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
     submit: (ParamMap?) -> Unit,
-    save: (ParamMap) -> Unit
+    save: (ParamMap) -> Unit,
 ) = PluginDialog(
     appRecordStore = appRecordStore,
     plugin = plugin,
@@ -118,7 +118,7 @@ fun MacroPluginDialog(
     paramMap: ParamMap,
     project: Project?,
     submit: (ParamMap?) -> Unit,
-    save: (ParamMap) -> Unit
+    save: (ParamMap) -> Unit,
 ) = PluginDialog(
     appRecordStore = appRecordStore,
     plugin = plugin,
@@ -145,7 +145,7 @@ private fun PluginDialog(
         project,
         submit,
         save,
-    )
+    ),
 ) {
     val appRecord = appRecordStore.stateFlow.collectAsState()
     val dialogState = rememberResizableDialogState(appRecord)
@@ -177,7 +177,7 @@ private fun AppRecordStore.saveDialogSize(dpSize: DpSize) {
 @Composable
 private fun LaunchSaveDialogSize(
     dialogState: DialogState,
-    appRecordStore: AppRecordStore
+    appRecordStore: AppRecordStore,
 ) {
     LaunchedEffect(dialogState) {
         snapshotFlow { dialogState.size }
@@ -408,7 +408,7 @@ private fun ParamLabel(state: PluginDialogState, index: Int) {
 @Composable
 private fun RowScope.ParamSwitch(
     value: Boolean,
-    onValueChange: (Boolean) -> Unit
+    onValueChange: (Boolean) -> Unit,
 ) {
     Switch(
         modifier = Modifier.align(Alignment.CenterVertically),
@@ -422,7 +422,7 @@ private fun RowScope.ParamSwitch(
 private fun ParamDropDown(
     options: List<String>,
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
@@ -462,7 +462,7 @@ private fun <T : Number> ParamNumberTextField(
     onValueChange: (T) -> Unit,
     isError: Boolean,
     parse: (String) -> T?,
-    onParseErrorChange: (Boolean) -> Unit
+    onParseErrorChange: (Boolean) -> Unit,
 ) {
     var stringValue by remember { mutableStateOf(value.toString()) }
     var isParsingFailed by remember { mutableStateOf(false) }
@@ -501,7 +501,7 @@ private fun ParamTextField(
     onValueChange: (String) -> Unit,
     isError: Boolean,
     isLong: Boolean,
-    singleLine: Boolean
+    singleLine: Boolean,
 ) {
     val modifier = if (!isLong) Modifier.widthIn(min = 200.dp) else Modifier.fillMaxWidth()
     TextField(

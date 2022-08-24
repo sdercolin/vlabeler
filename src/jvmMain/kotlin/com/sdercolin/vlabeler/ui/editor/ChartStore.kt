@@ -18,6 +18,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleChunk
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.repository.ChartRepository
+import com.sdercolin.vlabeler.util.launchGcDelayed
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.toColorOrNull
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import launchGcDelayed
 import kotlin.math.absoluteValue
 
 class ChartStore {
@@ -67,7 +67,7 @@ class ChartStore {
         density: Density,
         layoutDirection: LayoutDirection,
         startingChunkIndex: Int,
-        onRenderProgress: suspend () -> Unit
+        onRenderProgress: suspend () -> Unit,
     ) {
         Log.info("ChartStore load(${sampleInfo.name})")
         ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
@@ -113,7 +113,7 @@ class ChartStore {
 
     private fun initializeStates(
         chunkCount: Int,
-        channelCount: Int
+        channelCount: Int,
     ) {
         repeat(chunkCount) { chunkIndex ->
             repeat(channelCount) { channelIndex ->
@@ -125,7 +125,7 @@ class ChartStore {
 
     private fun reorderChunks(
         startingChunkIndex: Int,
-        chunkCount: Int
+        chunkCount: Int,
     ): MutableList<Int> {
         val reorderedChunkIndexes = mutableListOf(startingChunkIndex)
         var radius = 1
@@ -153,7 +153,7 @@ class ChartStore {
     private fun hasCachedWaveform(
         sampleInfo: SampleInfo,
         channelIndex: Int,
-        chunkIndex: Int
+        chunkIndex: Int,
     ): Boolean {
         val targetFile = ChartRepository.getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
         if (targetFile.exists()) {
@@ -167,7 +167,7 @@ class ChartStore {
     private fun deleteCachedWaveform(
         sampleInfo: SampleInfo,
         channelIndex: Int,
-        chunkIndex: Int
+        chunkIndex: Int,
     ) {
         val targetFile = ChartRepository.getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
         if (targetFile.exists()) {
@@ -183,7 +183,7 @@ class ChartStore {
         appConf: AppConf,
         density: Density,
         layoutDirection: LayoutDirection,
-        onRenderProgress: suspend () -> Unit
+        onRenderProgress: suspend () -> Unit,
     ) {
         if (hasCachedWaveform(sampleInfo, channelIndex, chunkIndex)) {
             waveformStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
@@ -220,7 +220,7 @@ class ChartStore {
 
     private fun hasCachedSpectrogram(
         sampleInfo: SampleInfo,
-        chunkIndex: Int
+        chunkIndex: Int,
     ): Boolean {
         val targetFile = ChartRepository.getSpectrogramImageFile(sampleInfo, chunkIndex)
         if (targetFile.exists()) {
@@ -233,7 +233,7 @@ class ChartStore {
 
     private fun deleteCachedSpectrogram(
         sampleInfo: SampleInfo,
-        chunkIndex: Int
+        chunkIndex: Int,
     ) {
         val targetFile = ChartRepository.getSpectrogramImageFile(sampleInfo, chunkIndex)
         if (targetFile.exists()) {
@@ -250,7 +250,7 @@ class ChartStore {
         appConf: AppConf,
         layoutDirection: LayoutDirection,
         colorPalette: SpectrogramColorPalette,
-        onRenderProgress: suspend () -> Unit
+        onRenderProgress: suspend () -> Unit,
     ) {
         if (hasCachedSpectrogram(sampleInfo, chunkIndex)) {
             spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loaded

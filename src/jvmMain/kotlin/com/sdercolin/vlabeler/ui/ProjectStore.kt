@@ -64,12 +64,12 @@ interface ProjectStore {
     fun enableAutoSaveProject(
         autoSave: AppConf.AutoSave,
         scope: CoroutineScope,
-        unsavedChangesState: AppUnsavedChangesState
+        unsavedChangesState: AppUnsavedChangesState,
     )
 
     suspend fun executeMacroPlugin(
         plugin: Plugin,
-        params: ParamMap
+        params: ParamMap,
     )
 }
 
@@ -77,7 +77,7 @@ class ProjectStoreImpl(
     private val appConf: State<AppConf>,
     private val screenState: AppScreenState,
     private val scrollFitViewModel: ScrollFitViewModel,
-    private val errorState: AppErrorState
+    private val errorState: AppErrorState,
 ) : ProjectStore {
 
     override var project: Project? by savedMutableStateOf(null) {
@@ -260,7 +260,7 @@ class ProjectStoreImpl(
     override fun enableAutoSaveProject(
         autoSave: AppConf.AutoSave,
         scope: CoroutineScope,
-        unsavedChangesState: AppUnsavedChangesState
+        unsavedChangesState: AppUnsavedChangesState,
     ) {
         autoSaveJob?.cancel()
         autoSaveJob = null

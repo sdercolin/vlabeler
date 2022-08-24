@@ -40,7 +40,7 @@ data class InputEntryNameDialogArgs(
     val initial: String,
     val invalidOptions: List<String>,
     val showSnackbar: (String) -> Unit,
-    val purpose: InputEntryNameDialogPurpose
+    val purpose: InputEntryNameDialogPurpose,
 ) : EmbeddedDialogArgs
 
 enum class InputEntryNameDialogPurpose(val stringKey: Strings) {
@@ -53,7 +53,7 @@ enum class InputEntryNameDialogPurpose(val stringKey: Strings) {
 data class InputEntryNameDialogResult(
     val index: Int,
     val name: String,
-    val purpose: InputEntryNameDialogPurpose
+    val purpose: InputEntryNameDialogPurpose,
 ) : EmbeddedDialogResult<InputEntryNameDialogArgs>
 
 @Composable

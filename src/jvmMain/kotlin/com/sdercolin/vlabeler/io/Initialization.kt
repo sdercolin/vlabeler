@@ -117,7 +117,7 @@ fun ensureDirectories() {
 suspend fun produceAppState(
     mainScope: CoroutineScope,
     appRecordStore: AppRecordStore,
-    launchArguments: ArgumentMap?
+    launchArguments: ArgumentMap?,
 ): AppState {
     val appConf = loadAppConf()
     val availableLabelerConfs = loadAvailableLabelerConfs()

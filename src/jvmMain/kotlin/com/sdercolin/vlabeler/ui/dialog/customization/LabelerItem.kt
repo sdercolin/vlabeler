@@ -5,7 +5,7 @@ import com.sdercolin.vlabeler.util.CustomLabelerDir
 
 class LabelerItem(
     labelerConf: LabelerConf,
-    disabled: Boolean
+    disabled: Boolean,
 ) : CustomizableItem(
     name = labelerConf.name,
     author = labelerConf.author,

@@ -852,7 +852,8 @@ enum class Strings(val en: String) {
     ),
     ActionGoToPreviousSample(
         en = "Go to Previous Sample",
-    );
+    ),
+    ;
 
     fun get(language: Language): String = when (language) {
         English -> en

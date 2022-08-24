@@ -89,7 +89,7 @@ data class LabelerConf(
     /**
      * Defines how to write content in the original format
      */
-    val writer: Writer
+    val writer: Writer,
 ) {
 
     val fileName get() = "$name.$LabelerFileExtension"
@@ -131,7 +131,7 @@ data class LabelerConf(
         val dragBase: Boolean = false,
         val filling: String? = null,
         val constraints: List<Constraint> = listOf(),
-        val shortcutIndex: Int? = null
+        val shortcutIndex: Int? = null,
     )
 
     /**
@@ -144,7 +144,7 @@ data class LabelerConf(
     @Immutable
     data class Constraint(
         val min: Int? = null,
-        val max: Int? = null
+        val max: Int? = null,
     )
 
     /**
@@ -156,7 +156,7 @@ data class LabelerConf(
     @Immutable
     data class LockedDrag(
         val useDragBase: Boolean = false,
-        val useStart: Boolean = false
+        val useStart: Boolean = false,
     )
 
     /**
@@ -248,7 +248,7 @@ data class LabelerConf(
          * String type: sample, name, extras
          * Float type: start, end, and others
          */
-        val scripts: List<String>? = null
+        val scripts: List<String>? = null,
     )
 
     /**
@@ -264,7 +264,7 @@ data class LabelerConf(
     data class Property(
         val name: String,
         val displayedName: String,
-        val value: String
+        val value: String,
     )
 
     companion object {

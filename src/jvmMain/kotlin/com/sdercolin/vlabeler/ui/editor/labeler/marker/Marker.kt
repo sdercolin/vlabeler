@@ -71,7 +71,7 @@ fun MarkerPointEventContainer(
     state: MarkerState,
     editorState: EditorState,
     appState: AppState,
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable BoxScope.() -> Unit,
 ) {
     val tool = editorState.tool
     val playByCursor = remember(appState.appConf.playback.playOnDragging, appState.player) {
@@ -134,7 +134,7 @@ fun MarkerCanvas(
     horizontalScrollState: ScrollState,
     state: MarkerState,
     editorState: EditorState,
-    appState: AppState
+    appState: AppState,
 ) {
     FieldBorderCanvas(horizontalScrollState, state, appState)
     LaunchAdjustScrollPosition(
@@ -167,7 +167,7 @@ fun MarkerCanvas(
 fun MarkerLabels(
     screenRange: FloatRange?,
     appState: AppState,
-    state: MarkerState
+    state: MarkerState,
 ) {
     val requestRename: (Int) -> Unit = remember(appState) {
         { appState.openEditEntryNameDialog(it, InputEntryNameDialogPurpose.Rename) }
@@ -206,7 +206,7 @@ fun MarkerLabels(
 private fun FieldBorderCanvas(
     horizontalScrollState: ScrollState,
     state: MarkerState,
-    appState: AppState
+    appState: AppState,
 ) {
     val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
 
@@ -396,7 +396,7 @@ private fun MarkerState.handleMouseMove(
     event: PointerEvent,
     editEntries: (List<IndexedEntry>) -> Unit,
     screenRange: FloatRange?,
-    playByCursor: (Float) -> Unit
+    playByCursor: (Float) -> Unit,
 ) {
     screenRange ?: return
     when (tool) {
@@ -409,7 +409,7 @@ private fun MarkerState.handleCursorMove(
     event: PointerEvent,
     editEntries: (List<IndexedEntry>) -> Unit,
     screenRange: FloatRange,
-    playByCursor: (Float) -> Unit
+    playByCursor: (Float) -> Unit,
 ) {
     val eventChange = event.changes.first()
     val x = eventChange.position.x
@@ -448,7 +448,7 @@ private fun MarkerState.handleCursorMove(
 
 private fun MarkerState.handleScissorsMove(
     event: PointerEvent,
-    screenRange: FloatRange
+    screenRange: FloatRange,
 ) {
     val scissorsState = scissorsState
     val x = event.changes.first().position.x + screenRange.start
@@ -461,7 +461,7 @@ private fun MutableState<MarkerCursorState>.handleMousePress(
     keyboardState: KeyboardState,
     event: PointerEvent,
     labelerConf: LabelerConf,
-    appConf: AppConf
+    appConf: AppConf,
 ) {
     when (tool) {
         Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf)
@@ -473,7 +473,7 @@ private fun MutableState<MarkerCursorState>.handleCursorPress(
     keyboardState: KeyboardState,
     event: PointerEvent,
     labelerConf: LabelerConf,
-    appConf: AppConf
+    appConf: AppConf,
 ) {
     val action = keyboardState.getEnabledMouseClickAction(event) ?: return
     if (action.canMoveParameter()) {
@@ -505,7 +505,7 @@ private fun MarkerState.handleMouseRelease(
     playSampleSection: (Float, Float) -> Unit,
     cutEntry: (Int, Float) -> Unit,
     keyboardState: KeyboardState,
-    screenRange: FloatRange?
+    screenRange: FloatRange?,
 ) {
     screenRange ?: return
     if (keyboardState.getEnabledMouseClickAction(event) == MouseClickAction.PlayAudioSection) {
@@ -532,7 +532,7 @@ private fun MarkerState.handleCursorRelease(submitEntry: () -> Unit) {
 }
 
 private fun MarkerState.handleScissorsRelease(
-    cutEntry: (Int, Float) -> Unit
+    cutEntry: (Int, Float) -> Unit,
 ) {
     val scissorsState = scissorsState
 
@@ -546,7 +546,7 @@ private fun MarkerState.handleScissorsRelease(
 
 private fun MarkerState.editEntryIfNeeded(
     updated: List<EntryInPixel>,
-    editEntries: (List<IndexedEntry>) -> Unit
+    editEntries: (List<IndexedEntry>) -> Unit,
 ) {
     if (updated != entriesInPixel) {
         val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
@@ -560,7 +560,7 @@ private fun LaunchAdjustScrollPosition(
     currentIndex: Int,
     canvasLength: Int,
     horizontalScrollState: ScrollState,
-    scrollFitViewModel: ScrollFitViewModel
+    scrollFitViewModel: ScrollFitViewModel,
 ) {
     LaunchedEffect(currentIndex, canvasLength, horizontalScrollState.maxValue) {
         scrollFitViewModel.update(horizontalScrollState, canvasLength, entriesInPixel, currentIndex)

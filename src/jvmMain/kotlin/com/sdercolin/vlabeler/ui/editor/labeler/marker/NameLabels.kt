@@ -34,7 +34,7 @@ import com.sdercolin.vlabeler.util.getPreviousOrNull
 private data class NameLabelEntryChunk(
     val leftEntry: EntryInPixel?,
     val entries: List<EntryInPixel>,
-    val rightEntry: EntryInPixel?
+    val rightEntry: EntryInPixel?,
 )
 
 @Composable
@@ -46,7 +46,7 @@ fun NameLabels(
     chunkCount: Int,
     chunkLength: Float,
     chunkLengthDp: Dp,
-    chunkVisibleList: List<Boolean>
+    chunkVisibleList: List<Boolean>,
 ) {
     val leftEntry = remember(state.entriesInSample, state.entries.first().index) {
         val entry = state.entriesInSample.getPreviousOrNull { it.index == state.entries.first().index }
@@ -97,7 +97,7 @@ private fun NameLabel(
     color: Color,
     requestRename: (Int) -> Unit,
     jumpToEntry: (Int) -> Unit,
-    onHovered: (Int, Boolean) -> Unit
+    onHovered: (Int, Boolean) -> Unit,
 ) {
     Log.info("NameLabel of entry $index composed")
     Text(
@@ -129,7 +129,7 @@ private fun NameLabelsChunk(
     offset: Float,
     requestRename: (Int) -> Unit,
     jumpToEntry: (Int) -> Unit,
-    onHovered: (Int, Boolean) -> Unit
+    onHovered: (Int, Boolean) -> Unit,
 ) {
     Log.info("NameLabelsChunk $index composed")
     val items = remember(entryChunk) {

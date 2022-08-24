@@ -31,7 +31,7 @@ import java.io.File
 
 class EditorState(
     project: Project,
-    private val appState: AppState
+    private val appState: AppState,
 ) {
     private val sampleInfoState: MutableState<Result<SampleInfo>?> = mutableStateOf(null)
     val sampleInfoResult get() = sampleInfoState.value
@@ -173,7 +173,7 @@ class EditorState(
 
     private fun updateResolutionByKeyAction(
         action: KeyAction,
-        appConf: AppConf
+        appConf: AppConf,
     ) {
         val resolution = canvasResolution
         val range = CanvasParams.ResolutionRange(appConf.painter.canvasResolution)
@@ -187,7 +187,7 @@ class EditorState(
 
     fun handlePointerEvent(
         event: PointerEvent,
-        keyboardState: KeyboardState
+        keyboardState: KeyboardState,
     ) {
         if (isActive.not()) return
         when (keyboardState.getEnabledMouseScrollAction(event)) {
@@ -215,7 +215,7 @@ class EditorState(
 
     private fun switchEntryByPointerEvent(
         shouldSwitchSample: Boolean,
-        positive: Boolean
+        positive: Boolean,
     ): Boolean {
         when {
             positive -> if (shouldSwitchSample) appState.nextSample() else appState.nextEntry()

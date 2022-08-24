@@ -4,5 +4,5 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
 class InvalidEditedProjectException(
-    cause: Throwable?
+    cause: Throwable?,
 ) : Exception(string(Strings.InvalidEditedProjectException), cause)

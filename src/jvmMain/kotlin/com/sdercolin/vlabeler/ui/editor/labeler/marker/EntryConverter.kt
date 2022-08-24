@@ -7,7 +7,7 @@ import com.sdercolin.vlabeler.util.toMillisecond
 
 class EntryConverter(
     private val sampleRate: Float,
-    private val resolution: Int
+    private val resolution: Int,
 ) {
     fun convertToPixel(entry: IndexedEntry, sampleFileLengthMillis: Float) = EntryInPixel(
         index = entry.index,

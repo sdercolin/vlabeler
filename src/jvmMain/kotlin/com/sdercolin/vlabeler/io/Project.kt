@@ -24,7 +24,7 @@ fun loadProject(
     scope: CoroutineScope,
     file: File,
     appState: AppState,
-    autoSaved: Boolean = false
+    autoSaved: Boolean = false,
 ) {
     scope.launch(Dispatchers.IO) {
         if (file.exists().not()) {
@@ -85,7 +85,7 @@ fun loadProject(
 fun openCreatedProject(
     mainScope: CoroutineScope,
     project: Project,
-    appState: AppState
+    appState: AppState,
 ) {
     mainScope.launch(Dispatchers.IO) {
         val file = saveProjectFile(project)
@@ -102,7 +102,7 @@ fun openCreatedProject(
 @Suppress("RedundantSuspendModifier")
 suspend fun exportProject(
     project: Project,
-    outputFile: File
+    outputFile: File,
 ) {
     val outputText = project.toRawLabels()
     val charset = project.encoding?.let { Charset.forName(it) } ?: Charsets.UTF_8

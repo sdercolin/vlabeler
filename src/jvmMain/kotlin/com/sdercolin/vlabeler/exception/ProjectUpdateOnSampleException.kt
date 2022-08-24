@@ -4,5 +4,5 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
 class ProjectUpdateOnSampleException(
-    cause: Throwable?
+    cause: Throwable?,
 ) : Exception(string(Strings.ProjectUpdateOnSampleException), cause)

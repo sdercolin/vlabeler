@@ -12,7 +12,7 @@ import java.awt.Desktop
 import java.io.File
 
 class SampleListDialogState(
-    private val editorState: EditorState
+    private val editorState: EditorState,
 ) {
     var selectedSampleName: String? by mutableStateOf(null)
         private set

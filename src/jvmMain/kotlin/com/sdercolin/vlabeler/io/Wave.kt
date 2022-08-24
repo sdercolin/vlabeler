@@ -25,7 +25,7 @@ suspend fun loadSampleChunk(
     sampleInfo: SampleInfo,
     appConf: AppConf,
     chunkIndex: Int,
-    chunkSize: Int
+    chunkSize: Int,
 ): Result<SampleChunk> = withContext(Dispatchers.IO) {
     val stream = AudioSystem.getAudioInputStream(sampleInfo.file.toFile())
     runCatching {
@@ -69,10 +69,9 @@ suspend fun loadSampleChunk(
         } else null
         SampleChunk(
             info = sampleInfo,
+            index = chunkIndex,
             wave = wave,
             spectrogram = spectrogram,
-            index = chunkIndex,
-            chunkSize = chunkSize,
         )
     }.onFailure {
         if (it is CancellationException) {

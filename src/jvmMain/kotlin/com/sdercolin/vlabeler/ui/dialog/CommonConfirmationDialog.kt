@@ -24,7 +24,7 @@ import com.sdercolin.vlabeler.ui.string.string
 import java.io.File
 
 sealed class CommonConfirmationDialogAction(
-    val text: String
+    val text: String,
 ) : EmbeddedDialogArgs {
     constructor(stringKey: Strings) : this(string(stringKey))
 

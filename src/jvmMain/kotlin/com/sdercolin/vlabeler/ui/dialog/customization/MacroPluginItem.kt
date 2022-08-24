@@ -6,7 +6,7 @@ import com.sdercolin.vlabeler.ui.AppState
 class MacroPluginItem(
     private val plugin: Plugin,
     private val appState: AppState,
-    disabled: Boolean
+    disabled: Boolean,
 ) : CustomizableItem(
     name = plugin.name,
     author = plugin.author,

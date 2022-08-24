@@ -1,10 +1,7 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package com.sdercolin.vlabeler.env
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
@@ -76,9 +73,8 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
 data class KeyboardState(
     val keySet: KeySet?,
     val availableMouseClickActions: Map<KeySet, MouseClickAction>,
-    val availableMouseScrollActions: Map<KeySet, MouseScrollAction>
+    val availableMouseScrollActions: Map<KeySet, MouseScrollAction>,
 ) {
-    val isShiftPressed get() = keySet?.subKeys?.contains(Key.Shift) == true
 
     fun getEnabledMouseClickAction(pointerEvent: PointerEvent): MouseClickAction? {
         val mainKey = pointerEvent.toVirtualKey() ?: return null

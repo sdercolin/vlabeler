@@ -14,7 +14,7 @@ import java.io.File
 
 class LabelerManagerDialogState(
     appState: AppState,
-    appRecordStore: AppRecordStore
+    appRecordStore: AppRecordStore,
 ) : CustomizableItemManagerDialogState<LabelerItem>(
     title = Strings.LabelerManagerTitle,
     importDialogTitle = Strings.LabelerManagerImportDialogTitle,

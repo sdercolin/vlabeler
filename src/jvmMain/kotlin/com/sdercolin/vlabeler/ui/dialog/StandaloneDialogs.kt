@@ -18,7 +18,7 @@ import java.io.File
 @Composable
 fun StandaloneDialogs(
     mainScope: CoroutineScope,
-    appState: AppState
+    appState: AppState,
 ) {
     when {
         appState.isShowingOpenProjectDialog -> OpenFileDialog(

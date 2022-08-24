@@ -17,7 +17,7 @@ class PluginDialogState(
     private val savedParamMap: ParamMap?,
     val project: Project?,
     private val submit: (ParamMap?) -> Unit,
-    private val save: (ParamMap) -> Unit
+    private val save: (ParamMap) -> Unit,
 ) {
     val paramDefs = plugin.parameters?.list.orEmpty()
     val params = mutableStateListOf(*paramMap.map { it.value }.toTypedArray())

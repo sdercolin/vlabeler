@@ -16,7 +16,7 @@ data class MarkerCursorState(
     val lockedDrag: Boolean = false,
     val previewOnDragging: Boolean = false,
     val forcedDrag: Boolean = false,
-    val position: Float? = null
+    val position: Float? = null,
 ) {
 
     fun startDragging(lockedDrag: Boolean, withPreview: Boolean, forcedDrag: Boolean) = copy(

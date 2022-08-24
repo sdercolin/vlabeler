@@ -48,7 +48,7 @@ data class Plugin(
     val scriptFiles: List<String>,
     val resourceFiles: List<String> = listOf(),
     @Transient val directory: File? = null,
-    @Transient val builtIn: Boolean = false
+    @Transient val builtIn: Boolean = false,
 ) {
     fun readResourceFiles() = resourceFiles.map { requireNotNull(directory).resolve(it).readText() }
     fun readScriptTexts() = scriptFiles.map { requireNotNull(directory).resolve(it).readText() }
@@ -71,12 +71,12 @@ data class Plugin(
         Template("template"),
 
         @SerialName("macro")
-        Macro("macro")
+        Macro("macro"),
     }
 
     @Serializable(PluginParameterListSerializer::class)
     class Parameters(
-        val list: List<Parameter<*>>
+        val list: List<Parameter<*>>,
     )
 
     @Serializable(PluginParameterSerializer::class)
@@ -94,7 +94,7 @@ data class Plugin(
             description: String?,
             defaultValue: Int,
             val min: Int?,
-            val max: Int?
+            val max: Int?,
         ) : Parameter<Int>(ParameterType.Integer, name, label, description, defaultValue)
 
         class FloatParam(
@@ -103,14 +103,14 @@ data class Plugin(
             description: String?,
             defaultValue: Float,
             val min: Float?,
-            val max: Float?
+            val max: Float?,
         ) : Parameter<Float>(ParameterType.Float, name, label, description, defaultValue)
 
         class BooleanParam(
             name: String,
             label: String,
             description: String?,
-            defaultValue: Boolean
+            defaultValue: Boolean,
         ) : Parameter<Boolean>(ParameterType.Boolean, name, label, description, defaultValue)
 
         class StringParam(
@@ -119,7 +119,7 @@ data class Plugin(
             description: String?,
             defaultValue: String,
             val multiLine: Boolean,
-            val optional: Boolean
+            val optional: Boolean,
         ) : Parameter<String>(ParameterType.String, name, label, description, defaultValue) {
 
             companion object {
@@ -133,14 +133,14 @@ data class Plugin(
             label: String,
             description: String?,
             defaultValue: String,
-            val options: List<String>
+            val options: List<String>,
         ) : Parameter<String>(ParameterType.Enum, name, label, description, defaultValue)
 
         class EntrySelectorParam(
             name: String,
             label: String,
             description: String?,
-            defaultValue: EntrySelector
+            defaultValue: EntrySelector,
         ) : Parameter<EntrySelector>(ParameterType.EntrySelector, name, label, description, defaultValue)
     }
 
@@ -162,7 +162,7 @@ data class Plugin(
         Enum,
 
         @SerialName("entrySelector")
-        EntrySelector
+        EntrySelector,
     }
 
     fun checkParams(params: ParamMap, labelerConf: LabelerConf?): Boolean {

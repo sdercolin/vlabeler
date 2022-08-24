@@ -21,7 +21,7 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
         horizontalScrollState: ScrollState,
         canvasLength: Int,
         entriesInPixel: List<EntryInPixel>,
-        currentIndex: Int
+        currentIndex: Int,
     ) {
         val scrollMax = horizontalScrollState.maxValue
         val screenLength = canvasLength.toFloat() - scrollMax

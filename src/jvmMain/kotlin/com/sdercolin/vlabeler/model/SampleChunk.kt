@@ -8,7 +8,6 @@ import com.sdercolin.vlabeler.io.Wave
 class SampleChunk(
     val info: SampleInfo,
     val index: Int,
-    val chunkSize: Int,
     val wave: Wave,
-    val spectrogram: Spectrogram?
+    val spectrogram: Spectrogram?,
 )

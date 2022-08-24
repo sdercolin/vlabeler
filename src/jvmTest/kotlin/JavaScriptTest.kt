@@ -98,7 +98,7 @@ class JavaScriptTest {
                 }
                 let newPair = new Pair("e", 3)
                 list.push(newPair)
-                """.trimIndent()
+                """.trimIndent(),
             )
             val expected = listOf("c" to 1, "d" to 2, "e" to 3)
             assertEquals(expected, it.getJson("list"))

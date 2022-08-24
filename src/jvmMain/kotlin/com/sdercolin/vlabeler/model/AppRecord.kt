@@ -26,7 +26,7 @@ data class AppRecord(
     val labelerName: String? = null,
     val disabledLabelerNames: Set<String> = setOf(),
     val disabledPluginNames: Set<String> = setOf(),
-    val autoExport: Boolean = false
+    val autoExport: Boolean = false,
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(

@@ -10,7 +10,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 
 class MacroPluginManagerDialogState(
     appState: AppState,
-    appRecordStore: AppRecordStore
+    appRecordStore: AppRecordStore,
 ) : PluginManagerDialogState<MacroPluginItem>(
     pluginType = Plugin.Type.Macro,
     title = Strings.MacroPluginManagerTitle,

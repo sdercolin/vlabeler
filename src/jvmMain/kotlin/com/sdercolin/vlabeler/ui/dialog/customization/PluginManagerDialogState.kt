@@ -16,7 +16,7 @@ abstract class PluginManagerDialogState<T : CustomizableItem>(
     importDialogTitle: Strings,
     allowExecution: Boolean,
     appState: AppState,
-    appRecordStore: AppRecordStore
+    appRecordStore: AppRecordStore,
 ) : CustomizableItemManagerDialogState<T>(
     title = title,
     importDialogTitle = importDialogTitle,

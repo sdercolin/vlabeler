@@ -28,7 +28,7 @@ import java.io.File
 @Composable
 fun FrameWindowScope.Menu(
     mainScope: CoroutineScope,
-    appState: AppState?
+    appState: AppState?,
 ) {
     val keymap = appState?.appConf?.keymaps?.keyActionMap ?: mapOf()
 

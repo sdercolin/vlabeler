@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun Modifier.plainClickable(
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) = clickable(
     interactionSource = remember { MutableInteractionSource() },
     indication = null,

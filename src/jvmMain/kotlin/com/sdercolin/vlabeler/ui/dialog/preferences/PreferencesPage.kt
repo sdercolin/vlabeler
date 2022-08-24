@@ -13,7 +13,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 abstract class PreferencesPage(
     val displayedName: Strings,
     val description: Strings,
-    val scrollable: Boolean = true
+    val scrollable: Boolean = true,
 ) {
     open val children: List<PreferencesPage> = listOf()
     open val content: List<PreferencesGroup> = listOf()
@@ -498,7 +498,7 @@ abstract class PreferencesPage(
 private class PreferencesItemContext<P>(
     val builder: PageContentBuilder,
     val selector: (AppConf) -> P,
-    val updater: AppConf.(P) -> AppConf
+    val updater: AppConf.(P) -> AppConf,
 ) {
     private fun <T> selectWithContext(select: (P) -> T): (AppConf) -> T = {
         select(selector(it))
@@ -516,7 +516,7 @@ private class PreferencesItemContext<P>(
         defaultValue: Boolean,
         select: (P) -> Boolean,
         update: P.(Boolean) -> P,
-        enabled: (P) -> Boolean = { true }
+        enabled: (P) -> Boolean = { true },
     ) = builder.item(
         PreferencesItem.Switch(
             title = title,
@@ -538,7 +538,7 @@ private class PreferencesItemContext<P>(
         max: Int? = null,
         select: (P) -> Int,
         update: P.(Int) -> P,
-        enabled: (P) -> Boolean = { true }
+        enabled: (P) -> Boolean = { true },
     ) = builder.item(
         PreferencesItem.IntegerInput(
             title = title,
@@ -562,7 +562,7 @@ private class PreferencesItemContext<P>(
         max: Float? = null,
         select: (P) -> Float,
         update: P.(Float) -> P,
-        enabled: (P) -> Boolean = { true }
+        enabled: (P) -> Boolean = { true },
     ) = builder.item(
         PreferencesItem.FloatInput(
             title = title,
@@ -585,7 +585,7 @@ private class PreferencesItemContext<P>(
         select: (P) -> String,
         update: P.(String) -> P,
         enabled: (P) -> Boolean = { true },
-        useAlpha: Boolean
+        useAlpha: Boolean,
     ) = builder.item(
         PreferencesItem.ColorStringInput(
             title = title,
@@ -607,7 +607,7 @@ private class PreferencesItemContext<P>(
         select: (P) -> T,
         update: P.(T) -> P,
         enabled: (P) -> Boolean = { true },
-        options: Array<T>
+        options: Array<T>,
     ) = builder.item(
         PreferencesItem.Selection(
             title = title,
@@ -625,7 +625,7 @@ private class PreferencesItemContext<P>(
         actionType: ActionType,
         defaultValue: List<ActionKeyBind<K>>,
         select: (P) -> List<ActionKeyBind<K>>,
-        update: P.(List<ActionKeyBind<K>>) -> P
+        update: P.(List<ActionKeyBind<K>>) -> P,
     ) = builder.item(
         PreferencesItem.Keymap(
             actionType = actionType,
@@ -643,7 +643,7 @@ private class PageContentBuilder {
     fun <P> withContext(
         selector: (AppConf) -> P,
         updater: AppConf.(P) -> AppConf,
-        block: PreferencesItemContext<P>.() -> Unit
+        block: PreferencesItemContext<P>.() -> Unit,
     ) {
         PreferencesItemContext(this, selector, updater).block()
     }

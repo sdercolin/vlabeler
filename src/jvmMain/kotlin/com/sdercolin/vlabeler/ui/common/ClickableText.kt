@@ -16,7 +16,7 @@ fun ClickableText(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colors.primary,
-    style: TextStyle = MaterialTheme.typography.body2
+    style: TextStyle = MaterialTheme.typography.body2,
 ) {
     androidx.compose.foundation.text.ClickableText(
         modifier = modifier,

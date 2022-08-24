@@ -15,21 +15,21 @@ class EntrySelectorTest {
                 EntrySelector.TextFilterItem(
                     "name",
                     matchType = EntrySelector.TextMatchType.Contains,
-                    matcherText = "a"
+                    matcherText = "a",
                 ),
                 EntrySelector.NumberFilterItem(
                     "fixed",
                     matchType = EntrySelector.NumberMatchType.Equals,
                     comparerValue = 1.1,
-                    comparerName = null
+                    comparerName = null,
                 ),
                 EntrySelector.NumberFilterItem(
                     "preu",
                     matchType = EntrySelector.NumberMatchType.LessThan,
                     comparerValue = 0.0,
-                    comparerName = "overlap"
-                )
-            )
+                    comparerName = "overlap",
+                ),
+            ),
         )
         val json = selector.stringifyJson()
         val deserialized = json.parseJson<EntrySelector>()

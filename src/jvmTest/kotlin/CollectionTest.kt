@@ -13,7 +13,7 @@ class CollectionTest {
             listOf(4, 5, 6, 7),
             listOf(8, 9, 10),
             listOf(11, 12, 13),
-            listOf(14, 15, 16)
+            listOf(14, 15, 16),
         )
         assertEquals(expected, actual)
     }

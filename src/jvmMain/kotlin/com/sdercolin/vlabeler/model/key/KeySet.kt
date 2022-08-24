@@ -28,7 +28,7 @@ import kotlinx.serialization.encoding.Encoder
 @Immutable
 data class KeySet(
     val mainKey: Key?,
-    val subKeys: Set<Key> = setOf()
+    val subKeys: Set<Key> = setOf(),
 ) {
 
     fun isValid(): Boolean {

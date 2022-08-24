@@ -102,7 +102,7 @@ interface AppDialogState {
 class AppDialogStateImpl(
     private val appUnsavedChangesState: AppUnsavedChangesState,
     private val projectStore: ProjectStore,
-    private val snackbarHostState: SnackbarHostState
+    private val snackbarHostState: SnackbarHostState,
 ) : AppDialogState {
     private lateinit var state: AppState
     private lateinit var scope: CoroutineScope

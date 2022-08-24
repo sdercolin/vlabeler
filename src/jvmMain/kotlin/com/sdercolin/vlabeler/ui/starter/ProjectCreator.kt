@@ -206,7 +206,7 @@ private fun CacheDirectoryTextField(state: ProjectCreatorState) {
 private fun LabelerSelectorRow(
     state: ProjectCreatorState,
     availableLabelerConfs: List<LabelerConf>,
-    availableTemplatePlugins: List<Plugin>
+    availableTemplatePlugins: List<Plugin>,
 ) {
     var pluginDialogShown by remember { mutableStateOf(false) }
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -244,7 +244,7 @@ private fun LabelerSelectorRow(
 @Composable
 private fun LabelerSelector(
     state: ProjectCreatorState,
-    availableLabelerConfs: List<LabelerConf>
+    availableLabelerConfs: List<LabelerConf>,
 ) {
     Box {
         var expanded by remember { mutableStateOf(false) }
@@ -283,7 +283,7 @@ private fun LabelerSelector(
 @Composable
 private fun TemplatePluginSelector(
     state: ProjectCreatorState,
-    availableTemplatePlugins: List<Plugin>
+    availableTemplatePlugins: List<Plugin>,
 ) {
     Box {
         var expanded by remember { mutableStateOf(false) }
@@ -419,7 +419,7 @@ private fun ButtonBar(
     cancel: () -> Unit,
     state: ProjectCreatorState,
     snackbarHostState: SnackbarHostState,
-    create: (Project) -> Unit
+    create: (Project) -> Unit,
 ) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         OutlinedButton(onClick = cancel) {
@@ -437,7 +437,7 @@ private fun ButtonBar(
 @Composable
 private fun PickerDialog(
     state: ProjectCreatorState,
-    picker: PathPicker
+    picker: PathPicker,
 ) {
     val title = state.getFilePickerTitle(picker)
     val initial = state.getFilePickerInitialDirectory(picker)

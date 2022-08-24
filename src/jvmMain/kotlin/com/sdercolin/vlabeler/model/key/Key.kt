@@ -1,18 +1,17 @@
-@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalSerializationApi::class)
+@file:OptIn(ExperimentalComposeUiApi::class)
 
 package com.sdercolin.vlabeler.model.key
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.model.action.ActionType
-import kotlinx.serialization.ExperimentalSerializationApi
 
 typealias ActualKey = androidx.compose.ui.input.key.Key
 
 enum class Key(
     val displayedName: String,
     val actualKeys: List<ActualKey>,
-    val mainKeyActionType: ActionType? = ActionType.Key
+    val mainKeyActionType: ActionType? = ActionType.Key,
 ) {
     Ctrl(
         if (isMacOS) {
@@ -205,7 +204,8 @@ enum class Key(
     MouseLeftClick("Left Click", listOf(), mainKeyActionType = ActionType.MouseClick),
     MouseRightClick("Right Click", listOf(), mainKeyActionType = ActionType.MouseClick),
     MouseScrollUp("Scroll Up", listOf(), mainKeyActionType = ActionType.MouseScroll),
-    MouseScrollDown("Scroll Down", listOf(), mainKeyActionType = ActionType.MouseScroll);
+    MouseScrollDown("Scroll Down", listOf(), mainKeyActionType = ActionType.MouseScroll),
+    ;
 
     fun isKey(actualKey: ActualKey) = actualKeys.contains(actualKey)
 

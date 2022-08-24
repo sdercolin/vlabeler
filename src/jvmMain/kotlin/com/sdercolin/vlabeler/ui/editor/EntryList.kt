@@ -126,7 +126,7 @@ private fun ColumnScope.List(
     currentIndex: Int,
     selectedIndex: Int?,
     select: (Int) -> Unit,
-    submit: (Int) -> Unit
+    submit: (Int) -> Unit,
 ) {
     var pressedIndex by remember { mutableStateOf<Int?>(null) }
     val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = currentIndex)

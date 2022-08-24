@@ -117,7 +117,7 @@ private fun AppRecordStore.saveWindowSize(dpSize: DpSize) {
 @Composable
 private fun LaunchSaveWindowSize(
     windowState: WindowState,
-    appRecordStore: AppRecordStore
+    appRecordStore: AppRecordStore,
 ) {
     LaunchedEffect(windowState) {
         snapshotFlow { windowState.size }
@@ -130,7 +130,7 @@ private fun LaunchSaveWindowSize(
 private fun LaunchKeyboardEvent(
     keyboardViewModel: KeyboardViewModel,
     appState: AppState,
-    player: Player
+    player: Player,
 ) {
     LaunchedEffect(appState, keyboardViewModel, player) {
         keyboardViewModel.keyboardActionFlow.collect { action ->

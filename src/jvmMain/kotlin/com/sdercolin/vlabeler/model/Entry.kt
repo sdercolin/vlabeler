@@ -31,7 +31,7 @@ data class Entry(
     /**
      * Extra data as [String] defined by [LabelerConf.extraFieldNames]
      */
-    val extras: List<String>
+    val extras: List<String>,
 ) {
     companion object {
         fun fromDefaultValues(sample: String, name: String, labelerConf: LabelerConf) =

@@ -18,7 +18,7 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
     val directory: File,
     val allowExecution: Boolean,
     protected val appState: AppState,
-    protected val appRecordStore: AppRecordStore
+    protected val appRecordStore: AppRecordStore,
 ) {
 
     val snackbarHostState = appState.snackbarHostState
@@ -110,7 +110,7 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
 @Composable
 fun rememberCustomizableItemManagerDialogState(
     type: CustomizableItem.Type,
-    appState: AppState
+    appState: AppState,
 ) = when (type) {
     CustomizableItem.Type.MacroPlugin -> rememberMacroPluginManagerState(appState)
     CustomizableItem.Type.TemplatePlugin -> rememberTemplatePluginManagerState(appState)
