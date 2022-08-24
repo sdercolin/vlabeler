@@ -56,9 +56,9 @@ class PluginDialogState(
                 string(Strings.PluginDialogDescriptionMin, range.first)
             range.second != null ->
                 string(Strings.PluginDialogDescriptionMax, range.second)
-            else -> ""
+            else -> null
         }
-        return description?.plus("\n").orEmpty() + suffix
+        return listOfNotNull(description, suffix).joinToString("\n")
     }
 
     fun isValid(index: Int): Boolean {

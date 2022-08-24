@@ -328,6 +328,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
             Column(Modifier.heightIn(min = 60.dp)) {
                 if (!labelInRow) {
                     ParamLabel(state, i)
+                    Spacer(Modifier.height(10.dp))
                 }
                 Row {
                     if (labelInRow) {
