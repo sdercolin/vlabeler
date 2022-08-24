@@ -74,76 +74,84 @@ fun Editor(state: EditorState, appState: AppState) {
     }
 
     val entryListCard = @Composable {
-        Card(
-            modifier = Modifier.fillMaxSize(),
-            elevation = 10.dp,
-            shape = RoundedCornerShape(0.dp)
-        ) {
-            EntryList(
-                pinned = true,
-                project = state.project,
-                jumpToEntry = { index ->
-                    appState.jumpToEntry(index)
-                    labelerFocusRequester.requestFocus()
-                }
-            )
+        if (appState.isEntryListPinned) {
+            Card(
+                modifier = Modifier.fillMaxSize(),
+                elevation = 10.dp,
+                shape = RoundedCornerShape(0.dp)
+            ) {
+                EntryList(
+                    pinned = true,
+                    project = state.project,
+                    jumpToEntry = { index ->
+                        appState.jumpToEntry(index)
+                        labelerFocusRequester.requestFocus()
+                    }
+                )
+            }
         }
     }
 
-    if (appState.isEntryListPinned) {
-        val position = appState.appConf.view.pinnedEntryListPosition
-        val isHorizontal = position == AppConf.ViewPosition.Right || position == AppConf.ViewPosition.Left
-        val appRecord = appState.appRecordFlow.collectAsState().value
-        val locked = appRecord.pinnedEntryListSplitPanePositionLocked
-        val splitPaneState = remember(locked, position) {
-            SplitPaneState(
-                initialPositionPercentage = appRecord.getPinnedEntryListSplitPanePosition(position),
-                moveEnabled = !locked
-            )
-        }
-
-        val splitPaneContent: SplitPaneScope.() -> Unit = {
-            if (position == AppConf.ViewPosition.Right || position == AppConf.ViewPosition.Bottom) {
-                first(minSize = 300.dp) {
-                    labelerBox()
-                }
-                second {
-                    entryListCard()
-                }
-            } else {
-                first {
-                    entryListCard()
-                }
-                second(minSize = 300.dp) {
-                    labelerBox()
-                }
-            }
-            splitter {
-                handle {
-                    val cursor = if (isHorizontal) Cursor.E_RESIZE_CURSOR else Cursor.S_RESIZE_CURSOR
-                    Box(
-                        Modifier
-                            .markAsHandle()
-                            .pointerHoverIcon(PointerIcon(Cursor(cursor)))
-                            .width(1.dp)
-                            .fillMaxHeight()
-                    )
-                }
-            }
-        }
-
-        LaunchedEffect(splitPaneState) {
-            snapshotFlow { splitPaneState.positionPercentage }
-                .onEach { appState.appRecordStore.update { setPinnedEntryListSplitPanePosition(position, it) } }
-                .launchIn(this)
-        }
-        if (isHorizontal) {
-            HorizontalSplitPane(splitPaneState = splitPaneState, content = splitPaneContent)
+    val position = appState.appConf.view.pinnedEntryListPosition
+    val isHorizontal = position == AppConf.ViewPosition.Right || position == AppConf.ViewPosition.Left
+    val isLabelerFirst = position == AppConf.ViewPosition.Right || position == AppConf.ViewPosition.Bottom
+    val appRecord = appState.appRecordFlow.collectAsState().value
+    val locked = appRecord.pinnedEntryListSplitPanePositionLocked
+    val splitPaneState = remember(locked, position, appState.isEntryListPinned) {
+        val percentage = if (appState.isEntryListPinned) {
+            appRecord.getPinnedEntryListSplitPanePosition(position)
         } else {
-            VerticalSplitPane(splitPaneState = splitPaneState, content = splitPaneContent)
+            if (isLabelerFirst) 1f else 0f
         }
+        SplitPaneState(
+            initialPositionPercentage = percentage,
+            moveEnabled = !locked && appState.isEntryListPinned
+        )
+    }
+
+    val splitPaneContent: SplitPaneScope.() -> Unit = {
+        if (isLabelerFirst) {
+            first {
+                labelerBox()
+            }
+            second {
+                entryListCard()
+            }
+        } else {
+            first {
+                entryListCard()
+            }
+            second {
+                labelerBox()
+            }
+        }
+        splitter {
+            handle {
+                val cursor = if (isHorizontal) Cursor.E_RESIZE_CURSOR else Cursor.S_RESIZE_CURSOR
+                Box(
+                    Modifier
+                        .markAsHandle()
+                        .pointerHoverIcon(PointerIcon(Cursor(cursor)))
+                        .width(1.dp)
+                        .fillMaxHeight()
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(splitPaneState) {
+        snapshotFlow { splitPaneState.positionPercentage }
+            .onEach {
+                if (appState.isEntryListPinned) {
+                    appState.appRecordStore.update { setPinnedEntryListSplitPanePosition(position, it) }
+                }
+            }
+            .launchIn(this)
+    }
+    if (isHorizontal) {
+        HorizontalSplitPane(splitPaneState = splitPaneState, content = splitPaneContent)
     } else {
-        labelerBox()
+        VerticalSplitPane(splitPaneState = splitPaneState, content = splitPaneContent)
     }
 
     if (state.isLoading) {

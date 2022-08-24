@@ -15,10 +15,10 @@ data class AppRecord(
     val isEntryListPinned: Boolean = false,
     val pinnedEntryListSplitPanePositionLocked: Boolean = false,
     val pinnedEntryListSplitPanePositions: Map<AppConf.ViewPosition, Float> = mapOf(
-        AppConf.ViewPosition.Left to 0.35f,
-        AppConf.ViewPosition.Right to 0.95f,
-        AppConf.ViewPosition.Top to 0.45f,
-        AppConf.ViewPosition.Bottom to 1f
+        AppConf.ViewPosition.Left to 0.3f,
+        AppConf.ViewPosition.Right to 0.7f,
+        AppConf.ViewPosition.Top to 0.3f,
+        AppConf.ViewPosition.Bottom to 0.7f
     ),
     val isToolboxDisplayed: Boolean = false,
     val sampleDirectory: String? = null,
