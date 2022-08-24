@@ -72,7 +72,7 @@ fun Canvas(
                 editorState.renderCharts(this, chunkCount, sampleInfo, appState.appConf, density, layoutDirection)
             }
             val canvasParams = CanvasParams(sampleInfo.length, resolution, currentDensity)
-            editorState.scrollOnResolutionChangeViewModel.updateCanvasParams(canvasParams)
+            editorState.scrollOnResolutionChangeViewModel.updateCanvasParams(canvasParams, sampleInfo)
             val markerState = rememberMarkerState(sampleInfo, canvasParams, editorState, appState)
             val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
             val screenRange = horizontalScrollState.getScreenRange(markerState.canvasParams.lengthInPixel)

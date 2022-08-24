@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.editor
 
 import androidx.compose.foundation.ScrollState
+import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 
 class ScrollOnResolutionChangeViewModel {
@@ -9,7 +10,16 @@ class ScrollOnResolutionChangeViewModel {
     private var canvasLength: Int? = null
     private var pendingLastCanvasLength: Int? = null
 
-    fun updateCanvasParams(canvasParams: CanvasParams) {
+    private var sampleInfo: SampleInfo? = null
+    private var skipped = false
+
+    fun updateCanvasParams(canvasParams: CanvasParams, sampleInfo: SampleInfo) {
+        if (this.sampleInfo != sampleInfo) {
+            // skip first scroll when switched sample
+            this.sampleInfo = sampleInfo
+            skipped = true
+            return
+        }
         if (canvasLength == canvasParams.lengthInPixel) return
         pendingLastCanvasLength = canvasLength
         canvasLength = canvasParams.lengthInPixel
@@ -17,6 +27,10 @@ class ScrollOnResolutionChangeViewModel {
 
     suspend fun scroll(horizontalScrollState: ScrollState) {
         val newValue = getUpdatedValue(horizontalScrollState.maxValue, horizontalScrollState.value) ?: return
+        if (skipped) {
+            skipped = false
+            return
+        }
         horizontalScrollState.scrollTo(newValue)
     }
 
