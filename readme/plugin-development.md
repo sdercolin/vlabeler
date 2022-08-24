@@ -51,18 +51,19 @@ A plugin for `vLabeler` is a folder containing:
 Every object in `list` defines a parameter that is shown in the plugin config dialog and passed to your scripts.
 The object has the following properties:
 
-| Property     | Type                       | Default value | Supported parameter type | Description                                                                             |
-|--------------|----------------------------|---------------|--------------------------|-----------------------------------------------------------------------------------------|
-| type         | String                     | (Required)    | all                      | Can be any one of `integer`, `float`, `boolean`, `string`, `enum` and ,`entrySelector`. |
-| name         | String                     | (Required)    | all                      | Parameter name for reference in your scripts.                                           |
-| label        | String                     | (Required)    | all                      | Displayed in the config dialog.                                                         |
-| description  | String                     | ""            | all                      | Displayed in the config dialog.                                                         |
-| defaultValue | (Actual type of the value) | (Required)    | all                      | Value type is according to the parameter's `type`.                                      |
-| min          | (Actual type of the value) | null          | integer, float           |                                                                                         |
-| max          | (Actual type of the value) | null          | integer, float           |                                                                                         |
-| multiLine    | Boolean                    | false         | string                   | Set to `true` if you want to allow multi-line string values.                            |
-| optional     | Boolean                    | (Required)    | string                   | Set to `true` if you want to allow empty string values.                                 |
-| options      | List\<String>              | (Required)    | enum                     | Items of the enumerable.                                                                |
+| Property             | Type                       | Default value | Supported parameter type | Description                                                                             |
+|----------------------|----------------------------|---------------|--------------------------|-----------------------------------------------------------------------------------------|
+| type                 | String                     | (Required)    | all                      | Can be any one of `integer`, `float`, `boolean`, `string`, `enum` and ,`entrySelector`. |
+| name                 | String                     | (Required)    | all                      | Parameter name for reference in your scripts.                                           |
+| label                | String                     | (Required)    | all                      | Displayed in the config dialog.                                                         |
+| description          | String                     | ""            | all                      | Displayed in the config dialog.                                                         |
+| defaultValue         | (Actual type of the value) | (Required)    | all                      | Value type is according to the parameter's `type`.                                      |
+| defaultValueFromFile | String                     | null          | string                   | Set a file name if you want its content to be used as the default value.                |
+| min                  | (Actual type of the value) | null          | integer, float           |                                                                                         |
+| max                  | (Actual type of the value) | null          | integer, float           |                                                                                         |
+| multiLine            | Boolean                    | false         | string                   | Set to `true` if you want to allow multi-line string values.                            |
+| optional             | Boolean                    | (Required)    | string                   | Set to `true` if you want to allow empty string values.                                 |
+| options              | List\<String>              | (Required)    | enum                     | Items of the enumerable.                                                                |
 
 ### Types
 
