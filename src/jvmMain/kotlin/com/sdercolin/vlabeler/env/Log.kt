@@ -52,7 +52,13 @@ object Log {
         }
 
         info("Log initialized")
-        debug("Launched in $osName, $runtimeVersion, isDebug=$isDebug, workingDir=$ResourcePath")
+        val launchInfo = mapOf(
+            "javaRuntimeVersion" to runtimeVersion,
+            "appVersion" to appVersion,
+            "debug" to isDebug,
+            "workingDir" to ResourcePath,
+        )
+        debug("Launched in $osName, ${launchInfo.entries.joinToString(", ") { "${it.key}=${it.value}" }}")
     }
 
     fun info(message: String) {

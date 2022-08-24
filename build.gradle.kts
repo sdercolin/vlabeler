@@ -8,7 +8,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
 
-version = "1.0.0-alpha18"
+version = project.properties["app.version"] as String
 
 repositories {
     google()
@@ -87,3 +87,16 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 }
+
+task("createAppProperties") {
+    dependsOn("jvmProcessResources")
+    doLast {
+        val appProperties = project.properties.filterKeys { it.startsWith("app.") }
+        File("$buildDir/processedResources/jvm/main/app.properties").apply {
+            createNewFile()
+            writeText(appProperties.map { "${it.key}=${it.value}\n" }.joinToString(""))
+        }
+    }
+}
+
+tasks.findByName("jvmMainClasses")?.dependsOn("createAppProperties")
