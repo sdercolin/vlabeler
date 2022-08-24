@@ -62,7 +62,7 @@ fun runTemplatePlugin(
             TemplatePluginResult.Parsed(entries)
         }
     }.getOrElse {
-        val expected = js.get<Boolean>("expectedError")
+        val expected = js.getOrNull("expectedError") ?: false
         throw PluginRuntimeException(expected = expected, cause = it)
     }
 }
