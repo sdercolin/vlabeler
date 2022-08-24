@@ -177,10 +177,14 @@ data class Plugin(
                         floatValue <= (param.max ?: Float.POSITIVE_INFINITY)
                 } == true
                 is Parameter.IntParam -> (params[param.name] as? Int)?.let { intValue ->
-                    intValue >= (param.min ?: Int.MIN_VALUE) && intValue <= (param.max ?: Int.MIN_VALUE)
+                    intValue >= (param.min ?: Int.MIN_VALUE) && intValue <= (param.max ?: Int.MAX_VALUE)
                 } == true
                 is Parameter.StringParam -> (params[param.name] as? String)?.let { stringValue ->
-                    if (param.optional.not()) stringValue.isNotEmpty() else true
+                    when {
+                        param.optional.not() && stringValue.isEmpty() -> false
+                        param.multiLine.not() && stringValue.lines().size > 1 -> false
+                        else -> true
+                    }
                 } == true
                 is Parameter.EntrySelectorParam -> (params[param.name] as? EntrySelector)?.let { selector ->
                     selector.filters.all { it.isValid(requireNotNull(labelerConf)) }
