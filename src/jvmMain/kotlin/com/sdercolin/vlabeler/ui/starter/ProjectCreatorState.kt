@@ -242,6 +242,7 @@ class ProjectCreatorState(
         coroutineScope.launch {
             templatePlugin?.saveParams(params)
             templatePluginSavedParams = params
+            updatePluginParams(params)
         }
     }
 
