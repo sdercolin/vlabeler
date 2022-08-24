@@ -16,7 +16,7 @@ fun runMacroPlugin(
 ): Project {
     val js = JavaScript(
         logHandler = Log.infoFileHandler,
-        currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile()
+        currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile(),
     )
     return runCatching {
 
@@ -57,7 +57,7 @@ fun runMacroPlugin(
                 appendLine("New: $newCount")
                 appendLine("Edited: $editedCount")
                 appendLine("Removed: $removedCount")
-            }
+            },
         )
         js.close()
         project.copy(entries = editedEntries.map { it.entry }).validate()

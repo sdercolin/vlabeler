@@ -56,7 +56,7 @@ class ProjectCreatorState(
     var currentPathPicker: PathPicker? by mutableStateOf(null)
         private set
     var labeler: LabelerConf by mutableStateOf(
-        labelerConfs.firstOrNull { it.name == appRecord.labelerName } ?: labelerConfs.first()
+        labelerConfs.firstOrNull { it.name == appRecord.labelerName } ?: labelerConfs.first(),
     )
         private set
     var templatePlugin: Plugin? by mutableStateOf(null)
@@ -78,7 +78,7 @@ class ProjectCreatorState(
                 ?: encodings.first().takeIf { it.isNotBlank() }
                 ?: encodings.first()
             encodingName
-        }
+        },
     )
     var encoding: String by encodingState
 
@@ -405,13 +405,13 @@ class ProjectCreatorState(
                     "projectName=$projectName, " +
                     "labeler=${labeler.name}, " +
                     "input=$inputFile, " +
-                    "encoding=$encoding"
+                    "encoding=$encoding",
             )
             appRecordStore.update {
                 copy(
                     sampleDirectory = this@ProjectCreatorState.sampleDirectory,
                     workingDirectory = this@ProjectCreatorState.workingDirectory,
-                    labelerName = this@ProjectCreatorState.labeler.name
+                    labelerName = this@ProjectCreatorState.labeler.name,
                 )
             }
             val project = projectOf(
@@ -424,7 +424,7 @@ class ProjectCreatorState(
                 pluginParams = templatePluginParams,
                 inputFilePath = inputFile,
                 encoding = encoding,
-                autoExport = autoExport
+                autoExport = autoExport,
             ).getOrElse {
                 val message = it.message.orEmpty()
                 Log.error(it)

@@ -89,7 +89,7 @@ private fun rememberState(
         savedParamMap,
         project,
         submit,
-        save
+        save,
     )
 }
 
@@ -108,7 +108,7 @@ fun TemplatePluginDialog(
     savedParamMap = savedParamMap,
     project = null,
     submit = submit,
-    save = save
+    save = save,
 )
 
 @Composable
@@ -126,7 +126,7 @@ fun MacroPluginDialog(
     savedParamMap = paramMap,
     project = project,
     submit = submit,
-    save = save
+    save = save,
 )
 
 @Composable
@@ -144,7 +144,7 @@ private fun PluginDialog(
         savedParamMap,
         project,
         submit,
-        save
+        save,
     )
 ) {
     val appRecord = appRecordStore.stateFlow.collectAsState()
@@ -153,7 +153,7 @@ private fun PluginDialog(
         title = string(Strings.PluginDialogTitle),
         icon = painterResource("icon.ico"),
         onCloseRequest = { state.cancel() },
-        state = dialogState
+        state = dialogState,
     ) {
         LaunchSaveDialogSize(dialogState, appRecordStore)
         AppTheme {
@@ -201,21 +201,21 @@ private fun Content(state: PluginDialogState) {
             Column(
                 modifier = Modifier.weight(1f)
                     .padding(horizontal = 45.dp, vertical = 30.dp)
-                    .verticalScroll(scrollState)
+                    .verticalScroll(scrollState),
             ) {
                 ReversedRow(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Row(Modifier.requiredWidthIn(min = 116.dp)) {
                         IconButton(
                             modifier = Modifier.padding(start = 10.dp),
                             onClick = state::reset,
-                            enabled = !state.canReset()
+                            enabled = !state.canReset(),
                         ) {
                             Icon(Icons.Default.RestartAlt, null)
                         }
                         IconButton(
                             modifier = Modifier.padding(start = 10.dp),
                             onClick = state::save,
-                            enabled = state.canSave()
+                            enabled = state.canSave(),
                         ) {
                             Icon(Icons.Default.Save, null)
                         }
@@ -238,14 +238,14 @@ private fun Content(state: PluginDialogState) {
                 }
                 Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
                     TextButton(
-                        onClick = { state.cancel() }
+                        onClick = { state.cancel() },
                     ) {
                         Text(string(Strings.CommonCancel))
                     }
                     Spacer(Modifier.width(40.dp))
                     Button(
                         enabled = state.isAllValid(),
-                        onClick = { state.apply() }
+                        onClick = { state.apply() },
                     ) {
                         val strings = when (plugin.type) {
                             Plugin.Type.Template -> Strings.CommonOkay
@@ -266,7 +266,7 @@ private fun Title(plugin: Plugin) {
         text = plugin.displayedName,
         style = MaterialTheme.typography.h4,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -277,19 +277,19 @@ private fun Info(plugin: Plugin, contactAuthor: () -> Unit) {
             text = string(Strings.PluginDialogInfoAuthor, plugin.author),
             style = MaterialTheme.typography.caption,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = string(Strings.PluginDialogInfoVersion, plugin.version),
             style = MaterialTheme.typography.caption,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
         if (plugin.email.isNotBlank()) {
             ClickableText(
                 text = string(Strings.PluginDialogInfoContact),
                 style = MaterialTheme.typography.caption,
-                onClick = contactAuthor
+                onClick = contactAuthor,
             )
         }
     }
@@ -301,7 +301,7 @@ private fun Website(website: String, openWebsite: () -> Unit) {
         modifier = Modifier.padding(vertical = 3.dp),
         text = website,
         style = MaterialTheme.typography.caption,
-        onClick = openWebsite
+        onClick = openWebsite,
     )
 }
 
@@ -312,7 +312,7 @@ private fun Description(description: String) {
         text = description,
         style = MaterialTheme.typography.caption,
         maxLines = 3,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -321,7 +321,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
     Column(
         modifier = Modifier.background(color = White20, shape = RoundedCornerShape(10.dp))
             .padding(30.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         state.params.indices.forEach { i ->
             val labelInRow = state.isParamInRow(i)
@@ -350,7 +350,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                                 onValueChange,
                                 isError,
                                 parse = { it.toFloatOrNull() },
-                                onParseErrorChange = { state.setParseError(i, it) }
+                                onParseErrorChange = { state.setParseError(i, it) },
                             )
                         is Plugin.Parameter.IntParam ->
                             ParamNumberTextField(
@@ -358,7 +358,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                                 onValueChange,
                                 isError,
                                 parse = { it.toIntOrNull() },
-                                onParseErrorChange = { state.setParseError(i, it) }
+                                onParseErrorChange = { state.setParseError(i, it) },
                             )
                         is Plugin.Parameter.StringParam ->
                             ParamTextField(
@@ -366,7 +366,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                                 onValueChange,
                                 isError,
                                 isLong = true,
-                                singleLine = def.multiLine.not()
+                                singleLine = def.multiLine.not(),
                             )
                         is Plugin.Parameter.EntrySelectorParam ->
                             ParamEntrySelector(
@@ -376,7 +376,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                                 isError,
                                 onParseErrorChange = { state.setParseError(i, it) },
                                 requireNotNull(state.project).entries,
-                                js
+                                js,
                             )
                     }
                 }
@@ -391,7 +391,7 @@ private fun ParamLabel(state: PluginDialogState, index: Int) {
         text = state.getLabel(index),
         style = MaterialTheme.typography.body2,
         maxLines = 2,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
     val description = state.getDescription(index)
     if (description.isNotBlank()) {
@@ -400,7 +400,7 @@ private fun ParamLabel(state: PluginDialogState, index: Int) {
             text = description,
             style = MaterialTheme.typography.caption,
             maxLines = 3,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -414,7 +414,7 @@ private fun RowScope.ParamSwitch(
         modifier = Modifier.align(Alignment.CenterVertically),
         checked = value,
         onCheckedChange = onValueChange,
-        colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colors.primary)
+        colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colors.primary),
     )
 }
 
@@ -436,18 +436,18 @@ private fun ParamDropDown(
                 IconButton(onClick = { expanded = true }) {
                     Icon(Icons.Default.ExpandMore, null)
                 }
-            }
+            },
         )
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             options.forEach {
                 DropdownMenuItem(
                     onClick = {
                         onValueChange(it)
                         expanded = false
-                    }
+                    },
                 ) {
                     Text(text = it)
                 }
@@ -491,7 +491,7 @@ private fun <T : Number> ParamNumberTextField(
         ::onNewStringValue,
         isError || isParsingFailed,
         isLong = false,
-        singleLine = true
+        singleLine = true,
     )
 }
 
@@ -509,6 +509,6 @@ private fun ParamTextField(
         value = value,
         onValueChange = onValueChange,
         singleLine = singleLine,
-        isError = isError
+        isError = isError,
     )
 }

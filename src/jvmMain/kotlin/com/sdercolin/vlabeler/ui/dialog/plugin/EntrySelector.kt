@@ -61,7 +61,7 @@ fun ParamEntrySelector(
     val verticalScrollState = rememberLazyListState()
     Column(
         Modifier.fillMaxWidth()
-            .background(MaterialTheme.colors.background)
+            .background(MaterialTheme.colors.background),
     ) {
         Row(Modifier.height(160.dp).fillMaxWidth()) {
             LazyColumn(state = verticalScrollState, modifier = Modifier.padding(15.dp)) {
@@ -77,7 +77,7 @@ fun ParamEntrySelector(
                         onParseErrorChange = { isError ->
                             parseErrors[index] = isError
                             onParseErrorChange(parseErrors.any { it })
-                        }
+                        },
                     )
                 }
             }
@@ -85,20 +85,20 @@ fun ParamEntrySelector(
         }
         Row(
             modifier = Modifier.fillMaxWidth().background(MaterialTheme.colors.surface).padding(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Icon(
                 modifier = Modifier.size(18.dp).clickable {
                     val newItem = EntrySelector.TextFilterItem(
                         subject = EntrySelector.textItemSubjects.first().first,
                         matchType = EntrySelector.TextMatchType.values().first(),
-                        matcherText = ""
+                        matcherText = "",
                     )
                     onValueChange(EntrySelector(filters.toList().plus(newItem)))
                 },
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
-                tint = MaterialTheme.colors.onSurface
+                tint = MaterialTheme.colors.onSurface,
             )
             Icon(
                 modifier = Modifier.size(18.dp).clickable(enabled = filters.isNotEmpty()) {
@@ -106,14 +106,14 @@ fun ParamEntrySelector(
                 },
                 imageVector = Icons.Default.Remove,
                 contentDescription = null,
-                tint = MaterialTheme.colors.onSurface.runIf(filters.isEmpty()) { copy(alpha = 0.2f) }
+                tint = MaterialTheme.colors.onSurface.runIf(filters.isEmpty()) { copy(alpha = 0.2f) },
             )
             Spacer(Modifier.weight(1f))
             if (isError || parseErrors.any { it }) {
                 Text(
                     text = string(Strings.PluginEntrySelectorPreviewSummaryError),
                     style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.error
+                    color = MaterialTheme.colors.error,
                 )
             } else {
                 val text = if (js == null) {
@@ -125,7 +125,7 @@ fun ParamEntrySelector(
                 Text(
                     text = text,
                     style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onSurface
+                    color = MaterialTheme.colors.onSurface,
                 )
             }
         }
@@ -153,23 +153,23 @@ private fun FilterRow(
     var textMatchType by remember(value) {
         mutableStateOf(
             (value as? EntrySelector.TextFilterItem)?.matchType
-                ?: EntrySelector.TextMatchType.values().first()
+                ?: EntrySelector.TextMatchType.values().first(),
         )
     }
     var textMatchValue by remember(value) {
         mutableStateOf(
-            (value as? EntrySelector.TextFilterItem)?.matcherText ?: ""
+            (value as? EntrySelector.TextFilterItem)?.matcherText ?: "",
         )
     }
     var numberMatchType by remember(value) {
         mutableStateOf(
             (value as? EntrySelector.NumberFilterItem)?.matchType
-                ?: EntrySelector.NumberMatchType.values().first()
+                ?: EntrySelector.NumberMatchType.values().first(),
         )
     }
     var numberComparerValue by remember {
         mutableStateOf(
-            (value as? EntrySelector.NumberFilterItem)?.comparerValue?.toString().orEmpty()
+            (value as? EntrySelector.NumberFilterItem)?.comparerValue?.toString().orEmpty(),
         )
     }
     LaunchedEffect(value) {
@@ -194,13 +194,13 @@ private fun FilterRow(
                     subject,
                     numberMatchType,
                     comparerValue ?: 0.0,
-                    numberMatchComparerName
+                    numberMatchComparerName,
                 )
             }
             EntrySelector.TextFilterItem::class -> EntrySelector.TextFilterItem(
                 subject,
                 textMatchType,
-                textMatchValue
+                textMatchValue,
             )
             else -> return
         }
@@ -211,14 +211,14 @@ private fun FilterRow(
     Row(
         modifier = Modifier.fillMaxSize().padding(vertical = 5.dp, horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
             text = "#${index + 1}",
             color = MaterialTheme.colors.primary,
             style = MaterialTheme.typography.body2,
             maxLines = 1,
-            modifier = Modifier.width(30.dp)
+            modifier = Modifier.width(30.dp),
         )
         SelectionBox(
             value = subjects.firstOrNull { it.first == subject } ?: subjects.first(),
@@ -234,7 +234,7 @@ private fun FilterRow(
             getText = { it.second },
             modifier = Modifier.width(160.dp),
             fixedWidth = true,
-            showIcon = false
+            showIcon = false,
         )
         when (type) {
             EntrySelector.NumberFilterItem::class -> {
@@ -248,7 +248,7 @@ private fun FilterRow(
                     getText = { string(it.strings) },
                     modifier = Modifier.width(60.dp),
                     fixedWidth = true,
-                    showIcon = false
+                    showIcon = false,
                 )
                 SelectionBox(
                     value = numberComparers.firstOrNull { it.first == numberMatchComparerName }
@@ -261,7 +261,7 @@ private fun FilterRow(
                     getText = { it.second },
                     modifier = Modifier.width(120.dp),
                     fixedWidth = true,
-                    showIcon = false
+                    showIcon = false,
                 )
                 InputBox(
                     value = numberComparerValue,
@@ -271,7 +271,7 @@ private fun FilterRow(
                     },
                     modifier = Modifier.width(80.dp),
                     enabled = numberMatchComparerName == null,
-                    errorPrompt = { if (numberComparerValue.toDoubleOrNull() == null) "" else null }
+                    errorPrompt = { if (numberComparerValue.toDoubleOrNull() == null) "" else null },
                 )
             }
             EntrySelector.TextFilterItem::class -> {
@@ -285,7 +285,7 @@ private fun FilterRow(
                     getText = { string(it.strings) },
                     modifier = Modifier.width(120.dp),
                     fixedWidth = true,
-                    showIcon = false
+                    showIcon = false,
                 )
                 InputBox(
                     value = textMatchValue,
@@ -294,7 +294,7 @@ private fun FilterRow(
                         trySubmit()
                     },
                     modifier = Modifier.width(160.dp),
-                    errorPrompt = { if (textMatchValue.isEmpty()) "" else null }
+                    errorPrompt = { if (textMatchValue.isEmpty()) "" else null },
                 )
             }
         }
@@ -316,43 +316,43 @@ private fun Preview() = Box(Modifier.size(800.dp)) {
                     LabelerConf.Property(
                         name = "property1",
                         displayedName = "property1",
-                        value = ""
+                        value = "",
                     ),
                 ),
                 parser = LabelerConf.Parser(
                     defaultEncoding = "UTF-8",
                     extractionPattern = "",
                     variableNames = listOf(),
-                    scripts = listOf()
+                    scripts = listOf(),
                 ),
-                writer = LabelerConf.Writer()
+                writer = LabelerConf.Writer(),
             ),
             value = EntrySelector(
                 listOf(
                     EntrySelector.TextFilterItem(
                         subject = "sample",
                         matchType = EntrySelector.TextMatchType.Contains,
-                        matcherText = "a"
+                        matcherText = "a",
                     ),
                     EntrySelector.NumberFilterItem(
                         subject = "fixed",
                         matchType = EntrySelector.NumberMatchType.LessThanOrEquals,
                         comparerName = "property1",
-                        comparerValue = 0.0
+                        comparerValue = 0.0,
                     ),
                     EntrySelector.NumberFilterItem(
                         subject = "ovl",
                         matchType = EntrySelector.NumberMatchType.Equals,
                         comparerName = null,
-                        comparerValue = 5.0
-                    )
-                )
+                        comparerValue = 5.0,
+                    ),
+                ),
             ),
             onValueChange = {},
             onParseErrorChange = {},
             isError = false,
             entries = listOf(),
-            js = null
+            js = null,
         )
     }
 }

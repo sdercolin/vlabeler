@@ -56,7 +56,7 @@ fun FieldLabels(
         state.labelerConf,
         state.cursorState.value.pointIndex,
         chunkCount,
-        chunkLength
+        chunkLength,
     ) {
         val fields = state.labelerConf.fields
         val models = labelIndexes.map { (entryIndex, fieldIndex) ->
@@ -65,7 +65,7 @@ fun FieldLabels(
                 entryAbsoluteIndex = state.entriesInPixel[entryIndex].index,
                 position = state.entriesInPixel[entryIndex].points[fieldIndex],
                 field = fields[fieldIndex],
-                isActive = state.cursorState.value.pointIndex == pointIndex
+                isActive = state.cursorState.value.pointIndex == pointIndex,
             )
         }
         val groups = models.groupBy { (it.position / chunkLength).toInt() }
@@ -80,7 +80,7 @@ fun FieldLabels(
                     modifier = modifier,
                     offset = index * chunkLength,
                     modelChunk = chunks[index],
-                    waveformsHeightRatio = state.waveformsHeightRatio
+                    waveformsHeightRatio = state.waveformsHeightRatio,
                 )
             } else {
                 Box(modifier)
@@ -103,12 +103,12 @@ private fun FieldLabelsChunk(
             modelChunk.models.forEach { model ->
                 Box(
                     modifier = Modifier.requiredSize(LabelSize),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     FieldLabelText(model)
                 }
             }
-        }
+        },
     ) { measurables, constraints ->
         val placeables = measurables.map { measurable ->
             measurable.measure(constraints)
@@ -140,6 +140,6 @@ private fun FieldLabelText(model: FieldLabelModel) {
         color = model.field.color.toColor().copy(alpha = alpha),
         fontWeight = FontWeight.Bold,
         style = MaterialTheme.typography.caption.copy(fontSize = 14.sp),
-        overflow = TextOverflow.Visible
+        overflow = TextOverflow.Visible,
     )
 }

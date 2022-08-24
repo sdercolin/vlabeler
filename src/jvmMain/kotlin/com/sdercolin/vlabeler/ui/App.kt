@@ -50,7 +50,7 @@ fun App(
                     activeTemplatePlugins = appState.getActivePlugins(Plugin.Type.Template),
                     snackbarHostState = appState.snackbarHostState,
                     appRecordStore = appState.appRecordStore,
-                    launchArguments = screen.launchArguments
+                    launchArguments = screen.launchArguments,
                 )
             is Screen.Editor -> Editor(screen.state, appState)
         }
@@ -84,13 +84,13 @@ fun App(
                         appState.updateMacroPluginDialogInputParams(it)
                         plugin.saveParams(it)
                     }
-                }
+                },
             )
         }
         appState.customizableItemManagerTypeShownInDialog?.let {
             CustomizableItemManagerDialog(
                 it,
-                appState
+                appState,
             )
         }
         appState.embeddedDialog?.let { request ->
@@ -102,7 +102,7 @@ fun App(
                 finish = {
                     appState.handleErrorPendingAction(appState.errorPendingAction)
                     appState.clearError()
-                }
+                },
             )
         }
     }

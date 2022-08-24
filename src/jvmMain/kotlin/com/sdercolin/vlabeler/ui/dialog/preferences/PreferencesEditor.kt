@@ -85,7 +85,7 @@ private fun rememberPreferencesEditorState(
             submit = submit,
             apply = apply,
             initialPage = initialPage,
-            onViewPage = onViewPage
+            onViewPage = onViewPage,
         )
     }
 
@@ -108,7 +108,7 @@ fun PreferencesEditor(
                 cancel = { state.finish(false) },
                 canApply = state.needSave,
                 apply = { state.save() },
-                finish = { state.finish(true) }
+                finish = { state.finish(true) },
             )
         }
         state.keymapItemEditDialogArgs?.let {
@@ -133,13 +133,13 @@ private fun RowScope.PageList(state: PreferencesEditorState) {
     Box(
         Modifier.fillMaxHeight()
             .weight(0.25f)
-            .background(color = MaterialTheme.colors.background)
+            .background(color = MaterialTheme.colors.background),
     ) {
         val lazyListState = rememberLazyListState()
         LazyColumn(modifier = Modifier.fillMaxSize().padding(vertical = 15.dp), state = lazyListState) {
             items(
                 items = state.pages,
-                key = { it.model }
+                key = { it.model },
             ) { page ->
                 Row(
                     modifier = Modifier
@@ -150,7 +150,7 @@ private fun RowScope.PageList(state: PreferencesEditorState) {
                         .plainClickable { state.selectPage(page) }
                         .padding(vertical = 3.dp)
                         .padding(start = 10.dp + (page.level * 15).dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     if (page.canExpand) {
                         val icon = if (page.isExpanded) {
@@ -161,7 +161,7 @@ private fun RowScope.PageList(state: PreferencesEditorState) {
                         Icon(
                             imageVector = icon,
                             modifier = Modifier.size(25.dp).plainClickable { state.togglePage(page) },
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     } else {
                         Spacer(Modifier.size(25.dp))
@@ -173,14 +173,14 @@ private fun RowScope.PageList(state: PreferencesEditorState) {
                             copy(fontWeight = FontWeight.Bold)
                         },
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
         }
         VerticalScrollbar(
             adapter = rememberScrollbarAdapter(lazyListState),
-            modifier = Modifier.align(Alignment.CenterEnd).width(15.dp)
+            modifier = Modifier.align(Alignment.CenterEnd).width(15.dp),
         )
     }
 }
@@ -193,7 +193,7 @@ private fun RowScope.Page(state: PreferencesEditorState) {
         Column(
             modifier = Modifier.fillMaxSize()
                 .padding(horizontal = 20.dp, vertical = 10.dp)
-                .runIf(page.scrollable) { verticalScroll(scrollState) }
+                .runIf(page.scrollable) { verticalScroll(scrollState) },
         ) {
             PageHeader(page, state)
             page.content.forEachIndexed { index, group ->
@@ -206,7 +206,7 @@ private fun RowScope.Page(state: PreferencesEditorState) {
         if (page.scrollable) {
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(scrollState),
-                modifier = Modifier.align(Alignment.CenterEnd).width(30.dp)
+                modifier = Modifier.align(Alignment.CenterEnd).width(30.dp),
             )
         }
     }
@@ -220,20 +220,20 @@ private fun PageHeader(page: PreferencesPage, state: PreferencesEditorState) {
             text = string(page.displayedName),
             style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
         Text(
             modifier = Modifier.padding(vertical = 10.dp),
             text = string(page.description),
             style = MaterialTheme.typography.caption,
-            softWrap = true
+            softWrap = true,
         )
         Spacer(Modifier.height(10.dp))
         page.children.forEach { child ->
             ClickableText(
                 modifier = Modifier.padding(vertical = 5.dp).padding(start = 15.dp),
                 text = string(child.displayedName),
-                onClick = { state.selectPageByLink(child) }
+                onClick = { state.selectPageByLink(child) },
             )
         }
         if (page.children.isNotEmpty()) {
@@ -250,14 +250,14 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowRight,
                 modifier = Modifier.size(25.dp).padding(end = 10.dp),
-                contentDescription = null
+                contentDescription = null,
             )
             Text(
                 modifier = Modifier.padding(vertical = 5.dp),
                 text = string(group.name),
                 style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
         if (group.description != null) {
@@ -265,7 +265,7 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
                 modifier = Modifier.padding(vertical = 5.dp).padding(start = 30.dp),
                 text = string(group.description),
                 style = MaterialTheme.typography.caption,
-                softWrap = true
+                softWrap = true,
             )
         }
     }
@@ -282,14 +282,14 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
                         text = string(item.title),
                         style = MaterialTheme.typography.body2,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                     if (item.description != null) {
                         Spacer(Modifier.height(10.dp))
                         Text(
                             text = string(item.description),
                             style = MaterialTheme.typography.caption,
-                            softWrap = true
+                            softWrap = true,
                         )
                     }
                     if (item.columnStyle) {
@@ -326,8 +326,8 @@ fun SwitchItem(item: PreferencesItem.Switch, state: PreferencesEditorState) {
         onCheckedChange = { state.update(item, it) },
         colors = SwitchDefaults.colors(
             checkedThumbColor = MaterialTheme.colors.primary,
-            uncheckedThumbColor = MaterialTheme.colors.onBackground
-        )
+            uncheckedThumbColor = MaterialTheme.colors.onBackground,
+        ),
     )
 }
 
@@ -345,7 +345,7 @@ private fun IntegerInputItem(item: PreferencesItem.IntegerInput, state: Preferen
         intValue = value,
         onValueChange = { state.update(item, it) },
         min = item.min,
-        max = item.max
+        max = item.max,
     )
 }
 
@@ -363,7 +363,7 @@ private fun FloatInputItem(item: PreferencesItem.FloatInput, state: PreferencesE
         floatValue = value,
         onValueChange = { state.update(item, it) },
         min = item.min,
-        max = item.max
+        max = item.max,
     )
 }
 
@@ -411,7 +411,7 @@ private fun ColorStringInputItem(item: PreferencesItem.ColorStringInput, state: 
         leadingContent = {
             Box(Modifier.size(20.dp).background(color = colorPreview ?: item.defaultValue.toColor()))
             Spacer(Modifier.width(15.dp))
-        }
+        },
     )
 }
 
@@ -428,7 +428,7 @@ private fun <T> SelectionItem(item: PreferencesItem.Selection<T>, state: Prefere
                 is LocalizedText -> value.getText()
                 else -> value.toString()
             }
-        }
+        },
     )
 }
 
@@ -447,13 +447,13 @@ private fun <K : Action> Keymap(
         SearchBar(
             text = keymapState.searchText,
             onTextChange = keymapState::search,
-            modifier = Modifier.background(color = MaterialTheme.colors.background)
+            modifier = Modifier.background(color = MaterialTheme.colors.background),
         )
         Spacer(Modifier.height(8.dp))
         Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background),
-                state = lazyListState
+                state = lazyListState,
             ) {
                 items(keymapState.displayedKeyBinds, key = { it.action }) { keyBind ->
                     PreferencesKeymapItem(
@@ -463,9 +463,9 @@ private fun <K : Action> Keymap(
                             state.openKeymapItemEditDialog(
                                 keyBindItem,
                                 keymapItem,
-                                keymapState.allKeyBinds
+                                keymapState.allKeyBinds,
                             )
-                        }
+                        },
                     )
                 }
             }
@@ -491,13 +491,13 @@ private fun ButtonBar(
             }
             DropdownMenu(
                 expanded = settingsExpanded,
-                onDismissRequest = { settingsExpanded = false }
+                onDismissRequest = { settingsExpanded = false },
             ) {
                 DropdownMenuItem(
                     onClick = {
                         resetPage()
                         settingsExpanded = false
-                    }
+                    },
                 ) {
                     Text(text = string(Strings.PreferencesEditorResetPage))
                 }
@@ -505,7 +505,7 @@ private fun ButtonBar(
                     onClick = {
                         resetAll()
                         settingsExpanded = false
-                    }
+                    },
                 ) {
                     Text(text = string(Strings.PreferencesEditorResetAll))
                 }
@@ -518,13 +518,13 @@ private fun ButtonBar(
         Spacer(Modifier.width(25.dp))
         TextButton(
             enabled = canApply,
-            onClick = { apply() }
+            onClick = { apply() },
         ) {
             Text(string(Strings.CommonApply))
         }
         Spacer(Modifier.width(25.dp))
         Button(
-            onClick = { finish() }
+            onClick = { finish() },
         ) {
             Text(string(Strings.CommonOkay))
         }

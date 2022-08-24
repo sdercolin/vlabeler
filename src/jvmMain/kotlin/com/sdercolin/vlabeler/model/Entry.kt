@@ -41,7 +41,7 @@ data class Entry(
                 start = labelerConf.defaultValues.first(),
                 end = labelerConf.defaultValues.last(),
                 points = labelerConf.defaultValues.drop(1).dropLast(1),
-                extras = labelerConf.defaultExtras
+                extras = labelerConf.defaultExtras,
             )
     }
 }

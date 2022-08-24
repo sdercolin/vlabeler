@@ -48,10 +48,10 @@ fun InputBox(
                 .border(
                     width = 1.dp,
                     color = borderColor,
-                    shape = RoundedCornerShape(5.dp)
+                    shape = RoundedCornerShape(5.dp),
                 )
                 .padding(vertical = 15.dp, horizontal = 15.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             leadingContent()
             BasicTextField(
@@ -60,12 +60,12 @@ fun InputBox(
                 textStyle = MaterialTheme.typography.body2
                     .copy(
                         color = MaterialTheme.colors.onBackground
-                            .runIf(!enabled) { copy(alpha = 0.2f) }
+                            .runIf(!enabled) { copy(alpha = 0.2f) },
                     ),
                 onValueChange = onValueChange,
                 maxLines = 1,
                 cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
-                enabled = enabled
+                enabled = enabled,
             )
         }
         if (error != null && error.isNotEmpty()) {
@@ -115,7 +115,7 @@ fun IntegerInputBox(
             }
         },
         leadingContent = leadingContent,
-        errorPrompt = getErrorPrompt
+        errorPrompt = getErrorPrompt,
     )
 }
 
@@ -155,7 +155,7 @@ fun FloatInputBox(
             }
         },
         leadingContent = leadingContent,
-        errorPrompt = getErrorPrompt
+        errorPrompt = getErrorPrompt,
     )
 }
 

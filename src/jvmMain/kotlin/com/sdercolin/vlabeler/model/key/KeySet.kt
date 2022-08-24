@@ -65,7 +65,7 @@ data class KeySet(
             ctrl = hasMappedCtrl,
             alt = hasAlt,
             shift = hasShift,
-            meta = hasMappedWin
+            meta = hasMappedWin,
         )
     }
 

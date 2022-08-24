@@ -32,17 +32,17 @@ fun <K : Action> KeymapItemEditConflictDialog(
 ) {
     Box(
         modifier = Modifier.fillMaxSize().background(color = Black50),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface {
             Column(
                 modifier = Modifier.widthIn(min = 350.dp)
-                    .padding(horizontal = 35.dp, vertical = 20.dp)
+                    .padding(horizontal = 35.dp, vertical = 20.dp),
             ) {
                 Spacer(Modifier.height(15.dp))
                 WarningText(
                     text = string(Strings.PreferencesKeymapEditDialogConflictingWarning),
-                    style = WarningTextStyle.Warning
+                    style = WarningTextStyle.Warning,
                 )
                 Spacer(Modifier.height(25.dp))
                 Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
@@ -59,7 +59,7 @@ fun <K : Action> KeymapItemEditConflictDialog(
                     }
                     Spacer(Modifier.width(20.dp))
                     Button(
-                        onClick = { args.remove() }
+                        onClick = { args.remove() },
                     ) {
                         Text(string(Strings.PreferencesKeymapEditDialogConflictingWarningRemove))
                     }

@@ -15,162 +15,162 @@ enum class KeyAction(
     NewProject(
         listOf(Strings.MenuFile, Strings.MenuFileNewProject),
         KeySet(Key.N, setOf(Key.Ctrl, Key.Shift)),
-        true
+        true,
     ),
     OpenProject(
         listOf(Strings.MenuFile, Strings.MenuFileOpen),
         KeySet(Key.O, setOf(Key.Ctrl, Key.Shift)),
-        true
+        true,
     ),
     ClearRecentProjects(
         listOf(Strings.MenuFile, Strings.MenuFileOpenRecent, Strings.MenuFileOpenRecentClear),
         null,
-        true
+        true,
     ),
     SaveProject(
         listOf(Strings.MenuFile, Strings.MenuFileSave),
         KeySet(Key.S, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     SaveProjectAs(
         listOf(Strings.MenuFile, Strings.MenuFileSaveAs),
         KeySet(Key.S, setOf(Key.Ctrl, Key.Shift)),
-        true
+        true,
     ),
     ExportProject(
         listOf(Strings.MenuFile, Strings.MenuFileExport),
         KeySet(Key.E, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     InvalidateCaches(
         listOf(Strings.MenuFile, Strings.MenuFileInvalidateCaches),
         KeySet(Key.I, setOf(Key.Ctrl, Key.Shift)),
-        true
+        true,
     ),
     CloseProject(
         listOf(Strings.MenuFile, Strings.MenuFileClose),
         KeySet(Key.W, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     Undo(
         listOf(Strings.MenuEdit, Strings.MenuEditUndo),
         KeySet(Key.Z, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     Redo(
         listOf(Strings.MenuEdit, Strings.MenuEditRedo),
         KeySet(Key.Z, setOf(Key.Ctrl, Key.Shift)),
-        true
+        true,
     ),
     UseToolCursor(
         listOf(Strings.MenuEdit, Strings.MenuEditTools, Strings.MenuEditToolsCursor),
         KeySet(Key.One),
-        true
+        true,
     ),
     UseToolScissors(
         listOf(Strings.MenuEdit, Strings.MenuEditTools, Strings.MenuEditToolsScissors),
         KeySet(Key.Two),
-        true
+        true,
     ),
     RenameCurrentEntry(
         listOf(Strings.MenuEdit, Strings.MenuEditRenameEntry),
         KeySet(Key.R, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     DuplicateCurrentEntry(
         listOf(Strings.MenuEdit, Strings.MenuEditDuplicateEntry),
         KeySet(Key.D, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     RemoveCurrentEntry(
         listOf(Strings.MenuEdit, Strings.MenuEditRemoveEntry),
         KeySet(Key.Delete),
-        true
+        true,
     ),
     ToggleMultipleEditMode(
         listOf(Strings.MenuEdit, Strings.MenuEditMultipleEditMode),
         KeySet(Key.M, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     ToggleMarker(
         listOf(Strings.MenuView, Strings.MenuViewToggleMarker),
         KeySet(Key.Zero, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     ToggleProperties(
         listOf(Strings.MenuView, Strings.MenuViewToggleProperties),
         KeySet(Key.One, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     TogglePinnedEntryList(
         listOf(Strings.MenuView, Strings.MenuViewPinEntryList),
         KeySet(Key.Two, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     TogglePinnedEntryListLocked(
         listOf(Strings.MenuView, Strings.MenuViewPinEntryListLocked),
         KeySet(Key.Two, setOf(Key.Ctrl, Key.Shift)),
-        true
+        true,
     ),
     ToggleToolbox(
         listOf(Strings.MenuView, Strings.MenuViewToggleToolbox),
         KeySet(Key.Three, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     OpenSampleList(
         listOf(Strings.MenuView, Strings.MenuViewOpenSampleList),
         KeySet(Key.Nine, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     NavigateNextEntry(
         listOf(Strings.MenuNavigate, Strings.MenuNavigateNextEntry),
         KeySet(Key.Down),
-        true
+        true,
     ),
     NavigatePreviousEntry(
         listOf(Strings.MenuNavigate, Strings.MenuNavigatePreviousEntry),
         KeySet(Key.Up),
-        true
+        true,
     ),
     NavigateNextSample(
         listOf(Strings.MenuNavigate, Strings.MenuNavigateNextSample),
         KeySet(Key.Down, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     NavigatePreviousSample(
         listOf(Strings.MenuNavigate, Strings.MenuNavigatePreviousSample),
         KeySet(Key.Up, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     NavigateJumpToEntry(
         listOf(Strings.MenuNavigate, Strings.MenuNavigateJumpToEntry),
         KeySet(Key.G, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     NavigateScrollFit(
         listOf(Strings.MenuNavigate, Strings.MenuNavigateScrollFit),
         KeySet(Key.F),
-        true
+        true,
     ),
     ManageMacroPlugins(
         listOf(Strings.MenuTools, Strings.MenuToolsBatchEdit, Strings.MenuToolsBatchEditManagePlugins),
         KeySet(Key.Semicolon, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     ManageTemplatePlugins(
         listOf(Strings.MenuSettings, Strings.MenuSettingsTemplatePlugins),
         KeySet(Key.Apostrophe, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     Preferences(
         listOf(Strings.MenuSettings, Strings.MenuSettingsPreferences),
         KeySet(Key.Comma, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     ManageLabelers(
         listOf(Strings.MenuSettings, Strings.MenuSettingsLabelers),
         KeySet(Key.Period, setOf(Key.Ctrl)),
-        true
+        true,
     ),
     OpenLogDirectory(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLogDirectory), null, true),
     OpenLatestRelease(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLatestRelease), null, true),
@@ -179,82 +179,82 @@ enum class KeyAction(
     ToggleSamplePlayback(
         listOf(Strings.ActionToggleSamplePlayback),
         KeySet(Key.Space, setOf(Key.Shift)),
-        false
+        false,
     ),
     ToggleEntryPlayback(
         listOf(Strings.ActionToggleEntryPlayback),
         KeySet(Key.Space),
-        false
+        false,
     ),
     IncreaseResolution(
         listOf(Strings.ActionIncreaseResolution),
         KeySet(Key.Minus),
-        false
+        false,
     ),
     DecreaseResolution(
         listOf(Strings.ActionDecreaseResolution),
         KeySet(Key.Equals),
-        false
+        false,
     ),
     InputResolution(
         listOf(Strings.ActionInputResolution),
         KeySet(Key.Slash),
-        false
+        false,
     ),
     CancelDialog(
         listOf(Strings.ActionCancelDialog),
         KeySet(Key.Escape),
-        false
+        false,
     ),
     SetValue1(
         listOf(Strings.ActionSetValue1),
         KeySet(Key.Q),
-        false
+        false,
     ),
     SetValue2(
         listOf(Strings.ActionSetValue2),
         KeySet(Key.W),
-        false
+        false,
     ),
     SetValue3(
         listOf(Strings.ActionSetValue3),
         KeySet(Key.E),
-        false
+        false,
     ),
     SetValue4(
         listOf(Strings.ActionSetValue4),
         KeySet(Key.R),
-        false
+        false,
     ),
     SetValue5(
         listOf(Strings.ActionSetValue5),
         KeySet(Key.T),
-        false
+        false,
     ),
     SetValue6(
         listOf(Strings.ActionSetValue6),
         KeySet(Key.Y),
-        false
+        false,
     ),
     SetValue7(
         listOf(Strings.ActionSetValue7),
         KeySet(Key.U),
-        false
+        false,
     ),
     SetValue8(
         listOf(Strings.ActionSetValue8),
         KeySet(Key.I),
-        false
+        false,
     ),
     SetValue9(
         listOf(Strings.ActionSetValue9),
         KeySet(Key.O),
-        false
+        false,
     ),
     SetValue10(
         listOf(Strings.ActionSetValue10),
         KeySet(Key.P),
-        false
+        false,
     );
 
     override val displayOrder: Int

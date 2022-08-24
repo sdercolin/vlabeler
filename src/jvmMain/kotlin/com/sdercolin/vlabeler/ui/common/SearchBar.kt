@@ -32,7 +32,7 @@ fun SearchBar(
 ) {
     Row(
         modifier = modifier.fillMaxWidth().height(50.dp).padding(horizontal = 15.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(Icons.Default.Search, null, tint = MaterialTheme.colors.onSurface)
         Spacer(Modifier.width(15.dp))
@@ -45,7 +45,7 @@ fun SearchBar(
             onValueChange = onTextChange,
             textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
             cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
-            singleLine = true
+            singleLine = true,
         )
     }
 }

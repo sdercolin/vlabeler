@@ -74,7 +74,7 @@ suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatc
         }
     }
     availableLabelers.addAll(
-        validCustomLabelers.filter { it.first.name !in defaultLabelerNames }.map { it.second }
+        validCustomLabelers.filter { it.first.name !in defaultLabelerNames }.map { it.second },
     )
     if (availableLabelers.isEmpty()) {
         throw IllegalStateException("No labeler configuration files found.")
@@ -93,7 +93,7 @@ fun File.asLabelerConf(): Result<LabelerConf> {
     val text = readText()
     val result = runCatching {
         text.parseJson<LabelerConf>().copy(
-            name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}")
+            name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}"),
         )
     }
     result.exceptionOrNull()?.let {
@@ -136,6 +136,6 @@ suspend fun produceAppState(
         appConf,
         availableLabelerConfs,
         plugins,
-        launchArguments
+        launchArguments,
     )
 }

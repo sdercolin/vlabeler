@@ -17,17 +17,17 @@ enum class MouseClickAction(
     MoveParameterWithPlaybackPreview(
         Strings.ActionMoveParameterWithPlaybackPreview,
         KeySet(Key.MouseLeftClick, setOf(Key.Alt)),
-        PointerEventType.Press
+        PointerEventType.Press,
     ),
     MoveParameterIgnoringConstraints(
         Strings.ActionMoveParameterIgnoringConstraints,
         KeySet(Key.MouseLeftClick, setOf(Key.Ctrl)),
-        PointerEventType.Press
+        PointerEventType.Press,
     ),
     MoveParameterInvertingPrimary(
         Strings.ActionMoveParameterInvertingLocked,
         KeySet(Key.MouseLeftClick, setOf(Key.Shift)),
-        PointerEventType.Press
+        PointerEventType.Press,
     ),
     PlayAudioSection(Strings.ActionPlayAudioSection, KeySet(Key.MouseRightClick), PointerEventType.Release);
 
@@ -54,5 +54,5 @@ fun MouseClickAction?.canMoveParameter(): Boolean =
         MouseClickAction.MoveParameter,
         MouseClickAction.MoveParameterWithPlaybackPreview,
         MouseClickAction.MoveParameterInvertingPrimary,
-        MouseClickAction.MoveParameterIgnoringConstraints
+        MouseClickAction.MoveParameterIgnoringConstraints,
     )

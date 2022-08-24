@@ -31,7 +31,7 @@ sealed class AskIfSaveDialogPurpose(
     class IsOpeningRecent(val file: File) :
         AskIfSaveDialogPurpose(
             Strings.AskIfSaveBeforeOpenDialogDescription,
-            AppState.PendingActionAfterSaved.OpenRecent(file)
+            AppState.PendingActionAfterSaved.OpenRecent(file),
         )
 
     object IsExporting :
@@ -41,11 +41,11 @@ sealed class AskIfSaveDialogPurpose(
         AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close)
 
     object IsCreatingNew : AskIfSaveDialogPurpose(
-        Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.CreatingNew
+        Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.CreatingNew,
     )
 
     object IsClearingCaches : AskIfSaveDialogPurpose(
-        Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.ClearCaches
+        Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.ClearCaches,
     )
 
     object IsExiting :
@@ -71,24 +71,24 @@ fun AskIfSaveDialog(
         Text(
             text = string(args.stringKey),
             style = MaterialTheme.typography.body2,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
             TextButton(
-                onClick = { dismiss() }
+                onClick = { dismiss() },
             ) {
                 Text(string(Strings.CommonCancel))
             }
             Spacer(Modifier.width(25.dp))
             TextButton(
-                onClick = { submitNo() }
+                onClick = { submitNo() },
             ) {
                 Text(string(Strings.CommonNo))
             }
             Spacer(Modifier.width(25.dp))
             Button(
-                onClick = { submitYes() }
+                onClick = { submitYes() },
             ) {
                 Text(string(Strings.CommonYes))
             }

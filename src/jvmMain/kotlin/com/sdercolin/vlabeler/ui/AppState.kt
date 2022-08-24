@@ -164,7 +164,7 @@ class AppState(
         SampleInfoRepository.init(project)
         val editor = EditorState(
             project = project,
-            appState = this
+            appState = this,
         )
         changeScreen(Screen.Editor(editor))
     }
@@ -232,8 +232,8 @@ class AppState(
                         initial = sourceEntry.name,
                         invalidOptions = invalidOptions,
                         showSnackbar = showSnackbar,
-                        purpose = InputEntryNameDialogPurpose.CutFormer
-                    )
+                        purpose = InputEntryNameDialogPurpose.CutFormer,
+                    ),
                 )
                 (result as InputEntryNameDialogResult?)?.name ?: return@launch
             } else null
@@ -250,14 +250,14 @@ class AppState(
                         initial = "",
                         invalidOptions = invalidOptions,
                         showSnackbar = showSnackbar,
-                        purpose = InputEntryNameDialogPurpose.CutLatter
-                    )
+                        purpose = InputEntryNameDialogPurpose.CutLatter,
+                    ),
                 )
                 (result as InputEntryNameDialogResult?)?.name ?: return@launch
             } else getDefaultNewEntryName(
                 sourceEntry.name,
                 requireProject().entries.map { it.name },
-                requireProject().labelerConf.allowSameNameEntry
+                requireProject().labelerConf.allowSameNameEntry,
             )
             val targetIndex = when (actions.goTo) {
                 AppConf.ScissorsActions.Target.Former -> index

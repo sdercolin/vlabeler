@@ -16,14 +16,14 @@ fun Tooltip(text: String) {
     Box(
         Modifier.background(
             color = MaterialTheme.colors.background,
-            shape = RoundedCornerShape(5.dp)
+            shape = RoundedCornerShape(5.dp),
         )
             .padding(10.dp)
-            .shadow(elevation = 5.dp, shape = RoundedCornerShape(5.dp))
+            .shadow(elevation = 5.dp, shape = RoundedCornerShape(5.dp)),
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.caption
+            style = MaterialTheme.typography.caption,
         )
     }
 }

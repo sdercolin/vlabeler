@@ -48,7 +48,7 @@ suspend fun loadSampleChunk(
                 val sampleSize = frameSize / channelCount
                 val channel = channels[channelIndex]
                 val channelBytes = buffer.slice(
-                    channelIndex * sampleSize until (channelIndex + 1) * sampleSize
+                    channelIndex * sampleSize until (channelIndex + 1) * sampleSize,
                 ).let { if (isBigEndian) it.reversed() else it.toList() }
 
                 val sample = channelBytes.mapIndexed { index, byte ->
@@ -72,7 +72,7 @@ suspend fun loadSampleChunk(
             wave = wave,
             spectrogram = spectrogram,
             index = chunkIndex,
-            chunkSize = chunkSize
+            chunkSize = chunkSize,
         )
     }.onFailure {
         if (it is CancellationException) {

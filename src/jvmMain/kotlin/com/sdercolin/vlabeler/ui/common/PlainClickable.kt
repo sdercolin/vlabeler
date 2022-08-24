@@ -12,5 +12,5 @@ fun Modifier.plainClickable(
 ) = clickable(
     interactionSource = remember { MutableInteractionSource() },
     indication = null,
-    onClick = onClick
+    onClick = onClick,
 )

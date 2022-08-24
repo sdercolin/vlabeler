@@ -65,14 +65,14 @@ data class Project(
 
     private fun getEntryForEditing(index: Int = currentIndex) = IndexedEntry(
         entry = entries[index],
-        index = index
+        index = index,
     )
 
     fun getEntriesInGroupForEditing(groupIndex: Int = currentGroupIndex) = entryIndexGroups[groupIndex].second
         .map {
             IndexedEntry(
                 entry = entries[it],
-                index = it
+                index = it,
             )
         }
 
@@ -153,12 +153,12 @@ data class Project(
         val editedCurrentEntry = entry.copy(
             name = rename ?: entry.name,
             end = position,
-            points = entry.points.map { it.coerceAtMost(position) }
+            points = entry.points.map { it.coerceAtMost(position) },
         )
         val newEntry = entry.copy(
             name = newName,
             start = position,
-            points = entry.points.map { it.coerceAtLeast(position) }
+            points = entry.points.map { it.coerceAtLeast(position) },
         )
         entries[index] = editedCurrentEntry
         entries.add(index + 1, newEntry)
@@ -195,7 +195,7 @@ data class Project(
 
         // Check multiMode enabled
         if (multipleEditMode) require(
-            labelerConf.continuous
+            labelerConf.continuous,
         ) { "Multi-entry mode can only be used in continuous labelers." }
 
         // Check currentIndex valid
@@ -301,7 +301,7 @@ private fun generateEntriesByPlugin(
             val entries = result.entries.map {
                 it.copy(
                     points = it.points.take(labelerConf.fields.count()),
-                    extras = it.extras.take(labelerConf.extraFieldNames.count())
+                    extras = it.extras.take(labelerConf.extraFieldNames.count()),
                 )
             }.map { it.toEntry(fallbackSample = sampleNames.first()) }
 
@@ -391,7 +391,7 @@ suspend fun projectOf(
                 inputFile.readLines(Charset.forName(encoding)),
                 inputFile,
                 labelerConf,
-                sampleNames
+                sampleNames,
             )
         }
         else -> {
@@ -424,7 +424,7 @@ suspend fun projectOf(
             currentIndex = 0,
             labelerConf = labelerConf,
             encoding = encoding,
-            autoExportTargetPath = autoExportTargetPath
+            autoExportTargetPath = autoExportTargetPath,
         ).validate()
     }.onFailure {
         return Result.failure(InvalidCreatedProjectException(it))

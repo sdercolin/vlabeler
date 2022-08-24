@@ -57,13 +57,13 @@ fun Labeler(
             title = editorState.entryTitle,
             subTitle = editorState.entrySubTitle,
             multiple = editorState.editedEntries.size > 1,
-            openEditEntryNameDialog = openEditEntryNameDialog
+            openEditEntryNameDialog = openEditEntryNameDialog,
         )
         Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Black50)) {
             Canvas(
                 horizontalScrollState = horizontalScrollState,
                 editorState = editorState,
-                appState = appState
+                appState = appState,
             )
             if (appState.isPropertyViewDisplayed) {
                 PropertyView(editorState.project)
@@ -71,14 +71,14 @@ fun Labeler(
             if (appState.isToolboxDisplayed) {
                 ToolboxView(
                     selectedTool = editorState.tool,
-                    select = { editorState.tool = it }
+                    select = { editorState.tool = it },
                 )
             }
             RenderStatusLabel(editorState.renderProgress)
         }
         HorizontalScrollbar(
             modifier = Modifier.fillMaxWidth().height(20.dp),
-            adapter = rememberScrollbarAdapter(horizontalScrollState)
+            adapter = rememberScrollbarAdapter(horizontalScrollState),
         )
         val bottomBarState = rememberBottomBarState(project, appState, editorState)
         BottomBar(bottomBarState, appState.keyboardViewModel)
@@ -92,7 +92,7 @@ private fun EntryTitleBar(title: String, subTitle: String, multiple: Boolean, op
             modifier = Modifier.fillMaxWidth()
                 .heightIn(min = 80.dp)
                 .background(color = MaterialTheme.colors.surface)
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp),
         ) {
             Row(modifier = Modifier.align(Alignment.CenterStart)) {
                 Text(
@@ -100,14 +100,14 @@ private fun EntryTitleBar(title: String, subTitle: String, multiple: Boolean, op
                         .clickable(enabled = !multiple) { openEditEntryNameDialog() },
                     text = title,
                     style = MaterialTheme.typography.h3,
-                    maxLines = 1
+                    maxLines = 1,
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
                     modifier = Modifier.alignByBaseline(),
                     text = "（$subTitle）",
                     style = MaterialTheme.typography.h5,
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
         }

@@ -135,7 +135,7 @@ data class EntrySelector(
         val textItemSubjects
             get() = listOf(
                 TextItemSubjectEntryName to Strings.PluginEntrySelectorPreservedSubjectName,
-                TextItemSubjectSampleName to Strings.PluginEntrySelectorPreservedSubjectSample
+                TextItemSubjectSampleName to Strings.PluginEntrySelectorPreservedSubjectSample,
             )
 
         private const val TextItemSubjectEntryName = "name"

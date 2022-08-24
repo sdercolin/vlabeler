@@ -82,7 +82,7 @@ fun Project.toRawLabels(): String {
                     extras +
                     mapOf(
                         "sample" to entry.sample,
-                        "name" to entry.name
+                        "name" to entry.name,
                     )
             val scripts = labelerConf.writer.scripts
             if (scripts != null) {
@@ -103,7 +103,7 @@ fun Project.toRawLabels(): String {
 private fun LabelerConf.getFieldMap(entry: Entry) =
     mapOf(
         "start" to entry.start,
-        "end" to entry.end
+        "end" to entry.end,
     ) + fields.mapIndexed { index, field ->
         field.name to entry.points[index]
     }.toMap()

@@ -25,7 +25,7 @@ enum class Key(
         } else {
             listOf(ActualKey.CtrlLeft, ActualKey.CtrlRight)
         },
-        mainKeyActionType = null
+        mainKeyActionType = null,
     ),
     Shift(
         if (isMacOS) {
@@ -34,7 +34,7 @@ enum class Key(
             "Shift"
         },
         listOf(ActualKey.ShiftLeft, ActualKey.ShiftRight),
-        mainKeyActionType = null
+        mainKeyActionType = null,
     ),
     Alt(
         if (isMacOS) {
@@ -43,7 +43,7 @@ enum class Key(
             "Alt"
         },
         listOf(ActualKey.AltLeft, ActualKey.AltRight),
-        mainKeyActionType = null
+        mainKeyActionType = null,
     ),
     Windows(
         if (isMacOS) {
@@ -56,7 +56,7 @@ enum class Key(
         } else {
             listOf(ActualKey.MetaLeft, ActualKey.MetaRight)
         },
-        mainKeyActionType = null
+        mainKeyActionType = null,
     ),
     Space("Space", listOf(ActualKey.Spacebar)),
     Enter(
@@ -65,7 +65,7 @@ enum class Key(
         } else {
             "Enter"
         },
-        listOf(ActualKey.Enter)
+        listOf(ActualKey.Enter),
     ),
     Backspace(
         if (isMacOS) {
@@ -73,7 +73,7 @@ enum class Key(
         } else {
             "Backspace"
         },
-        listOf(ActualKey.Backspace)
+        listOf(ActualKey.Backspace),
     ),
     Delete(
         if (isMacOS) {
@@ -81,7 +81,7 @@ enum class Key(
         } else {
             "Delete"
         },
-        listOf(ActualKey.Delete)
+        listOf(ActualKey.Delete),
     ),
     Escape(
         if (isMacOS) {
@@ -89,7 +89,7 @@ enum class Key(
         } else {
             "Escape"
         },
-        listOf(ActualKey.Escape)
+        listOf(ActualKey.Escape),
     ),
     Up(
         if (isMacOS) {
@@ -97,7 +97,7 @@ enum class Key(
         } else {
             "Up"
         },
-        listOf(ActualKey.DirectionUp)
+        listOf(ActualKey.DirectionUp),
     ),
     Down(
         if (isMacOS) {
@@ -105,7 +105,7 @@ enum class Key(
         } else {
             "Down"
         },
-        listOf(ActualKey.DirectionDown)
+        listOf(ActualKey.DirectionDown),
     ),
     Left(
         if (isMacOS) {
@@ -113,7 +113,7 @@ enum class Key(
         } else {
             "Left"
         },
-        listOf(ActualKey.DirectionLeft)
+        listOf(ActualKey.DirectionLeft),
     ),
     Right(
         if (isMacOS) {
@@ -121,7 +121,7 @@ enum class Key(
         } else {
             "Right"
         },
-        listOf(ActualKey.DirectionRight)
+        listOf(ActualKey.DirectionRight),
     ),
     Home("Home", listOf(ActualKey.MoveHome)),
     End("End", listOf(ActualKey.MoveEnd)),

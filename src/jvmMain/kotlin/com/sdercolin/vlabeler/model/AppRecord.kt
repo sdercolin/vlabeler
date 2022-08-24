@@ -18,7 +18,7 @@ data class AppRecord(
         AppConf.ViewPosition.Left to 0.3f,
         AppConf.ViewPosition.Right to 0.7f,
         AppConf.ViewPosition.Top to 0.3f,
-        AppConf.ViewPosition.Bottom to 0.7f
+        AppConf.ViewPosition.Bottom to 0.7f,
     ),
     val isToolboxDisplayed: Boolean = false,
     val sampleDirectory: String? = null,
@@ -30,25 +30,25 @@ data class AppRecord(
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(
-            recentProjects.map { it.asPathRelativeToHome() }.asSimplifiedPaths()
+            recentProjects.map { it.asPathRelativeToHome() }.asSimplifiedPaths(),
         )
 
     fun addRecent(path: String) = copy(
-        recentProjects = (listOf(path) + recentProjects).distinct().take(MaxRecentProjectCount)
+        recentProjects = (listOf(path) + recentProjects).distinct().take(MaxRecentProjectCount),
     )
 
     fun setLabelerDisabled(name: String, disabled: Boolean) = copy(
-        disabledLabelerNames = if (disabled) disabledLabelerNames + name else disabledLabelerNames - name
+        disabledLabelerNames = if (disabled) disabledLabelerNames + name else disabledLabelerNames - name,
     )
 
     fun setPluginDisabled(name: String, disabled: Boolean) = copy(
-        disabledPluginNames = if (disabled) disabledPluginNames + name else disabledPluginNames - name
+        disabledPluginNames = if (disabled) disabledPluginNames + name else disabledPluginNames - name,
     )
 
     fun setPinnedEntryListSplitPanePosition(position: AppConf.ViewPosition, positionPercentage: Float) = copy(
         pinnedEntryListSplitPanePositions = pinnedEntryListSplitPanePositions.toMutableMap().apply {
             this[position] = positionPercentage
-        }.toMap()
+        }.toMap(),
     )
 
     fun getPinnedEntryListSplitPanePosition(position: AppConf.ViewPosition) =

@@ -32,7 +32,7 @@ fun <K : Action> PreferencesKeymapItem(
         modifier = Modifier.fillMaxWidth()
             .height(48.dp)
             .clickable(enabled = keyBind.editable) { onClickItem(keyBind, keymap) },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Row(Modifier.padding(horizontal = 30.dp)) {
             Text(
@@ -40,7 +40,7 @@ fun <K : Action> PreferencesKeymapItem(
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onBackground,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             Spacer(Modifier.weight(1f))
             val keySet = keyBind.keySet
@@ -49,14 +49,14 @@ fun <K : Action> PreferencesKeymapItem(
                     Text(
                         modifier = Modifier.background(
                             color = MaterialTheme.colors.primaryVariant,
-                            shape = RoundedCornerShape(5.dp)
+                            shape = RoundedCornerShape(5.dp),
                         )
                             .padding(horizontal = 5.dp, vertical = 3.dp),
                         text = keySet.displayedKeyName,
                         style = MaterialTheme.typography.body2,
                         color = MaterialTheme.colors.onBackground,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }

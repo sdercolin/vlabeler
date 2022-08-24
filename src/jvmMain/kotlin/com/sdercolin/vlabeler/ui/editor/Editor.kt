@@ -64,11 +64,11 @@ fun Editor(state: EditorState, appState: AppState) {
                 }
                 .onPointerEvent(PointerEventType.Scroll) {
                     state.handlePointerEvent(it, keyboardState)
-                }
+                },
         ) {
             Labeler(
                 editorState = state,
-                appState = appState
+                appState = appState,
             )
         }
     }
@@ -78,7 +78,7 @@ fun Editor(state: EditorState, appState: AppState) {
             Card(
                 modifier = Modifier.fillMaxSize(),
                 elevation = 10.dp,
-                shape = RoundedCornerShape(0.dp)
+                shape = RoundedCornerShape(0.dp),
             ) {
                 EntryList(
                     pinned = true,
@@ -86,7 +86,7 @@ fun Editor(state: EditorState, appState: AppState) {
                     jumpToEntry = { index ->
                         appState.jumpToEntry(index)
                         labelerFocusRequester.requestFocus()
-                    }
+                    },
                 )
             }
         }
@@ -105,7 +105,7 @@ fun Editor(state: EditorState, appState: AppState) {
         }
         SplitPaneState(
             initialPositionPercentage = percentage,
-            moveEnabled = !locked && appState.isEntryListPinned
+            moveEnabled = !locked && appState.isEntryListPinned,
         )
     }
 
@@ -133,7 +133,7 @@ fun Editor(state: EditorState, appState: AppState) {
                         .markAsHandle()
                         .pointerHoverIcon(PointerIcon(Cursor(cursor)))
                         .width(1.dp)
-                        .fillMaxHeight()
+                        .fillMaxHeight(),
                 )
             }
         }

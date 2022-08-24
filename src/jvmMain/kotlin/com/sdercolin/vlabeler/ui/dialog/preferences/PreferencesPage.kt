@@ -30,11 +30,11 @@ abstract class PreferencesPage(
         override val content: List<PreferencesGroup> = buildPageContent {
             group(
                 Strings.PreferencesChartsCanvasResolution,
-                Strings.PreferencesChartsCanvasResolutionDescription
+                Strings.PreferencesChartsCanvasResolutionDescription,
             ) {
                 withContext(
                     selector = { it.painter.canvasResolution },
-                    updater = { copy(painter = painter.copy(canvasResolution = it)) }
+                    updater = { copy(painter = painter.copy(canvasResolution = it)) },
                 ) {
                     integer(
                         title = Strings.PreferencesChartsCanvasResolutionDefault,
@@ -42,20 +42,20 @@ abstract class PreferencesPage(
                         min = AppConf.CanvasResolution.Min,
                         max = AppConf.CanvasResolution.Max,
                         select = { it.default },
-                        update = { copy(default = it) }
+                        update = { copy(default = it) },
                     )
                     integer(
                         title = Strings.PreferencesChartsCanvasResolutionStep,
                         defaultValue = AppConf.CanvasResolution.DefaultStep,
                         min = 1,
                         select = { it.step },
-                        update = { copy(step = it) }
+                        update = { copy(step = it) },
                     )
                 }
             }
             withContext(
                 selector = { it.painter },
-                updater = { copy(painter = it) }
+                updater = { copy(painter = it) },
             ) {
                 integer(
                     title = Strings.PreferencesChartsMaxDataChunkSize,
@@ -64,7 +64,7 @@ abstract class PreferencesPage(
                     min = AppConf.Painter.MinMaxDataChunkSize,
                     max = AppConf.Painter.MaxMaxDataChunkSize,
                     select = { it.maxDataChunkSize },
-                    update = { copy(maxDataChunkSize = it) }
+                    update = { copy(maxDataChunkSize = it) },
                 )
             }
         }
@@ -72,13 +72,13 @@ abstract class PreferencesPage(
 
     object ChartsWaveform : PreferencesPage(
         Strings.PreferencesChartsWaveform,
-        Strings.PreferencesChartsWaveformDescription
+        Strings.PreferencesChartsWaveformDescription,
     ) {
 
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
                 selector = { it.painter.amplitude },
-                updater = { copy(painter = painter.copy(amplitude = it)) }
+                updater = { copy(painter = painter.copy(amplitude = it)) },
             ) {
                 integer(
                     title = Strings.PreferencesChartsWaveformUnitSize,
@@ -87,7 +87,7 @@ abstract class PreferencesPage(
                     min = AppConf.Amplitude.MinUnitSize,
                     max = AppConf.Amplitude.MaxUnitSize,
                     select = { it.unitSize },
-                    update = { copy(unitSize = it) }
+                    update = { copy(unitSize = it) },
                 )
                 integer(
                     title = Strings.PreferencesChartsWaveformIntensityAccuracy,
@@ -95,7 +95,7 @@ abstract class PreferencesPage(
                     min = AppConf.Amplitude.MinIntensityAccuracy,
                     max = AppConf.Amplitude.MaxIntensityAccuracy,
                     select = { it.intensityAccuracy },
-                    update = { copy(intensityAccuracy = it) }
+                    update = { copy(intensityAccuracy = it) },
                 )
                 float(
                     title = Strings.PreferencesChartsWaveformYAxisBlankRate,
@@ -103,21 +103,21 @@ abstract class PreferencesPage(
                     min = AppConf.Amplitude.MinYAxisBlankRate * 100,
                     max = AppConf.Amplitude.MaxYAxisBlankRate * 100,
                     select = { it.yAxisBlankRate * 100 },
-                    update = { copy(yAxisBlankRate = it / 100) }
+                    update = { copy(yAxisBlankRate = it / 100) },
                 )
                 color(
                     title = Strings.PreferencesChartsWaveformColor,
                     defaultValue = AppConf.Amplitude.DefaultColor,
                     select = { it.color },
                     update = { copy(color = it) },
-                    useAlpha = true
+                    useAlpha = true,
                 )
                 color(
                     title = Strings.PreferencesChartsWaveformBackgroundColor,
                     defaultValue = AppConf.Amplitude.DefaultBackgroundColor,
                     select = { it.backgroundColor },
                     update = { copy(backgroundColor = it) },
-                    useAlpha = true
+                    useAlpha = true,
                 )
             }
         }
@@ -125,18 +125,18 @@ abstract class PreferencesPage(
 
     object ChartsSpectrogram : PreferencesPage(
         Strings.PreferencesChartsSpectrogram,
-        Strings.PreferencesChartsSpectrogramDescription
+        Strings.PreferencesChartsSpectrogramDescription,
     ) {
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
                 selector = { it.painter.spectrogram },
-                updater = { copy(painter = painter.copy(spectrogram = it)) }
+                updater = { copy(painter = painter.copy(spectrogram = it)) },
             ) {
                 switch(
                     title = Strings.PreferencesChartsSpectrogramEnabled,
                     defaultValue = AppConf.Spectrogram.DefaultEnabled,
                     select = { it.enabled },
-                    update = { copy(enabled = it) }
+                    update = { copy(enabled = it) },
                 )
                 float(
                     title = Strings.PreferencesChartsSpectrogramHeight,
@@ -144,7 +144,7 @@ abstract class PreferencesPage(
                     min = AppConf.Spectrogram.MinHeightWeight * 100,
                     max = AppConf.Spectrogram.MaxHeightWeight * 100,
                     select = { it.heightWeight * 100 },
-                    update = { copy(heightWeight = it / 100) }
+                    update = { copy(heightWeight = it / 100) },
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramPointDensity,
@@ -153,7 +153,7 @@ abstract class PreferencesPage(
                     min = AppConf.Spectrogram.MinPointDensity,
                     max = AppConf.Spectrogram.MaxPointDensity,
                     select = { it.pointDensity },
-                    update = { copy(pointDensity = it) }
+                    update = { copy(pointDensity = it) },
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramHopSize,
@@ -162,7 +162,7 @@ abstract class PreferencesPage(
                     min = AppConf.Spectrogram.MinStandardHopSize,
                     max = AppConf.Spectrogram.MaxStandardHopSize,
                     select = { it.standardHopSize },
-                    update = { copy(standardHopSize = it) }
+                    update = { copy(standardHopSize = it) },
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramWindowSize,
@@ -171,14 +171,14 @@ abstract class PreferencesPage(
                     min = AppConf.Spectrogram.MinStandardWindowSize,
                     max = AppConf.Spectrogram.MaxStandardWindowSize,
                     select = { it.standardWindowSize },
-                    update = { copy(standardWindowSize = it) }
+                    update = { copy(standardWindowSize = it) },
                 )
                 selection(
                     title = Strings.PreferencesChartsSpectrogramWindowType,
                     defaultValue = AppConf.Spectrogram.DefaultWindowType,
                     select = { it.windowType },
                     update = { copy(windowType = it) },
-                    options = AppConf.WindowType.values()
+                    options = AppConf.WindowType.values(),
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramMelScaleStep,
@@ -186,7 +186,7 @@ abstract class PreferencesPage(
                     min = AppConf.Spectrogram.MinMelScaleStep,
                     max = AppConf.Spectrogram.MaxMelScaleStep,
                     select = { it.melScaleStep },
-                    update = { copy(melScaleStep = it) }
+                    update = { copy(melScaleStep = it) },
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramMaxFrequency,
@@ -194,26 +194,26 @@ abstract class PreferencesPage(
                     min = AppConf.Spectrogram.MinMaxFrequency,
                     max = AppConf.Spectrogram.MaxMaxFrequency,
                     select = { it.maxFrequency },
-                    update = { copy(maxFrequency = it) }
+                    update = { copy(maxFrequency = it) },
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramMinIntensity,
                     defaultValue = AppConf.Spectrogram.DefaultMinIntensity,
                     select = { it.minIntensity },
-                    update = { copy(minIntensity = it) }
+                    update = { copy(minIntensity = it) },
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramMaxIntensity,
                     defaultValue = AppConf.Spectrogram.DefaultMaxIntensity,
                     select = { it.maxIntensity },
-                    update = { copy(maxIntensity = it) }
+                    update = { copy(maxIntensity = it) },
                 )
                 selection(
                     title = Strings.PreferencesChartsSpectrogramColorPalette,
                     defaultValue = AppConf.Spectrogram.DefaultColorPalette,
                     select = { it.colorPalette },
                     update = { copy(colorPalette = it) },
-                    options = SpectrogramColorPalette.Presets.values()
+                    options = SpectrogramColorPalette.Presets.values(),
                 )
             }
         }
@@ -228,18 +228,18 @@ abstract class PreferencesPage(
     object KeymapKeyAction : PreferencesPage(
         Strings.PreferencesKeymapKeyAction,
         Strings.PreferencesKeymapKeyActionDescription,
-        scrollable = false
+        scrollable = false,
     ) {
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
                 selector = { it.keymaps },
-                updater = { copy(keymaps = it) }
+                updater = { copy(keymaps = it) },
             ) {
                 keymap(
                     actionType = ActionType.Key,
                     defaultValue = listOf(),
                     select = { parent -> parent.keyActionMap.map { KeyActionKeyBind(it.key, it.value) } },
-                    update = { list -> copy(keyActionMap = list.associate { it.action to it.keySet }) }
+                    update = { list -> copy(keyActionMap = list.associate { it.action to it.keySet }) },
                 )
             }
         }
@@ -248,18 +248,18 @@ abstract class PreferencesPage(
     object KeymapMouseClickAction : PreferencesPage(
         Strings.PreferencesKeymapMouseClickAction,
         Strings.PreferencesKeymapMouseClickActionDescription,
-        scrollable = false
+        scrollable = false,
     ) {
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
                 selector = { it.keymaps },
-                updater = { copy(keymaps = it) }
+                updater = { copy(keymaps = it) },
             ) {
                 keymap(
                     actionType = ActionType.MouseClick,
                     defaultValue = listOf(),
                     select = { parent -> parent.mouseClickActionMap.map { MouseClickActionKeyBind(it.key, it.value) } },
-                    update = { list -> copy(mouseClickActionMap = list.associate { it.action to it.keySet }) }
+                    update = { list -> copy(mouseClickActionMap = list.associate { it.action to it.keySet }) },
                 )
             }
         }
@@ -268,12 +268,12 @@ abstract class PreferencesPage(
     object KeymapMouseScrollAction : PreferencesPage(
         Strings.PreferencesKeymapMouseScrollAction,
         Strings.PreferencesKeymapMouseScrollActionDescription,
-        scrollable = false
+        scrollable = false,
     ) {
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
                 selector = { it.keymaps },
-                updater = { copy(keymaps = it) }
+                updater = { copy(keymaps = it) },
             ) {
                 keymap(
                     actionType = ActionType.MouseScroll,
@@ -281,7 +281,7 @@ abstract class PreferencesPage(
                     select = { parent ->
                         parent.mouseScrollActionMap.map { MouseScrollActionKeyBind(it.key, it.value) }
                     },
-                    update = { list -> copy(mouseScrollActionMap = list.associate { it.action to it.keySet }) }
+                    update = { list -> copy(mouseScrollActionMap = list.associate { it.action to it.keySet }) },
                 )
             }
         }
@@ -291,14 +291,14 @@ abstract class PreferencesPage(
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
                 selector = { it.view },
-                updater = { copy(view = it) }
+                updater = { copy(view = it) },
             ) {
                 selection(
                     title = Strings.PreferencesViewPinnedEntryListPosition,
                     defaultValue = AppConf.View.DefaultPinnedEntryListPosition,
                     select = { it.pinnedEntryListPosition },
                     update = { copy(pinnedEntryListPosition = it) },
-                    options = AppConf.ViewPosition.values()
+                    options = AppConf.ViewPosition.values(),
                 )
             }
         }
@@ -312,7 +312,7 @@ abstract class PreferencesPage(
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
                 selector = { it.editor },
-                updater = { copy(editor = it) }
+                updater = { copy(editor = it) },
             ) {
                 selection(
                     title = Strings.PreferencesEditorPlayerLockedDrag,
@@ -321,14 +321,14 @@ abstract class PreferencesPage(
                     defaultValue = AppConf.Editor.DefaultLockedDrag,
                     select = { it.lockedDrag },
                     update = { copy(lockedDrag = it) },
-                    options = AppConf.Editor.LockedDrag.values()
+                    options = AppConf.Editor.LockedDrag.values(),
                 )
                 color(
                     title = Strings.PreferencesEditorPlayerCursorColor,
                     defaultValue = AppConf.Editor.DefaultPlayerCursorColor,
                     useAlpha = false,
                     select = { it.playerCursorColor },
-                    update = { copy(playerCursorColor = it) }
+                    update = { copy(playerCursorColor = it) },
                 )
             }
         }
@@ -336,45 +336,45 @@ abstract class PreferencesPage(
 
     object EditorScissors : PreferencesPage(
         Strings.PreferencesEditorScissors,
-        Strings.PreferencesEditorScissorsDescription
+        Strings.PreferencesEditorScissorsDescription,
     ) {
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
                 selector = { it.editor },
-                updater = { copy(editor = it) }
+                updater = { copy(editor = it) },
             ) {
                 color(
                     title = Strings.PreferencesEditorScissorsColor,
                     defaultValue = AppConf.Editor.DefaultScissorsColor,
                     useAlpha = true,
                     select = { it.scissorsColor },
-                    update = { copy(scissorsColor = it) }
+                    update = { copy(scissorsColor = it) },
                 )
             }
             withContext(
                 selector = { it.editor.scissorsActions },
-                updater = { copy(editor = editor.copy(scissorsActions = it)) }
+                updater = { copy(editor = editor.copy(scissorsActions = it)) },
             ) {
                 selection(
                     title = Strings.PreferencesEditorScissorsActionGoTo,
                     defaultValue = AppConf.ScissorsActions.DefaultGoTo,
                     select = { it.goTo },
                     update = { copy(goTo = it) },
-                    options = AppConf.ScissorsActions.Target.values()
+                    options = AppConf.ScissorsActions.Target.values(),
                 )
                 selection(
                     title = Strings.PreferencesEditorScissorsActionAskForName,
                     defaultValue = AppConf.ScissorsActions.DefaultAskForName,
                     select = { it.askForName },
                     update = { copy(askForName = it) },
-                    options = AppConf.ScissorsActions.Target.values()
+                    options = AppConf.ScissorsActions.Target.values(),
                 )
                 selection(
                     title = Strings.PreferencesEditorScissorsActionPlay,
                     defaultValue = AppConf.ScissorsActions.DefaultPlay,
                     select = { it.play },
                     update = { copy(play = it) },
-                    options = AppConf.ScissorsActions.Target.values()
+                    options = AppConf.ScissorsActions.Target.values(),
                 )
             }
         }
@@ -382,39 +382,39 @@ abstract class PreferencesPage(
 
     object EditorAutoScroll : PreferencesPage(
         Strings.PreferencesEditorAutoScroll,
-        Strings.PreferencesEditorAutoScrollDescription
+        Strings.PreferencesEditorAutoScrollDescription,
     ) {
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
                 selector = { it.editor.autoScroll },
-                updater = { copy(editor = editor.copy(autoScroll = it)) }
+                updater = { copy(editor = editor.copy(autoScroll = it)) },
             ) {
                 switch(
                     title = Strings.PreferencesEditorAutoScrollOnLoadedNewSample,
                     defaultValue = AppConf.AutoScroll.DefaultOnLoadedNewSample,
                     select = { it.onLoadedNewSample },
                     update = { copy(onLoadedNewSample = it) },
-                    enabled = { it.onSwitched.not() }
+                    enabled = { it.onSwitched.not() },
                 )
                 switch(
                     title = Strings.PreferencesEditorAutoScrollOnJumpedToEntry,
                     defaultValue = AppConf.AutoScroll.DefaultOnJumpedToEntry,
                     select = { it.onJumpedToEntry },
                     update = { copy(onJumpedToEntry = it) },
-                    enabled = { it.onSwitched.not() }
+                    enabled = { it.onSwitched.not() },
                 )
                 switch(
                     title = Strings.PreferencesEditorAutoScrollOnSwitchedInMultipleEditMode,
                     defaultValue = AppConf.AutoScroll.DefaultOnSwitchedInMultipleEditMode,
                     select = { it.onSwitchedInMultipleEditMode },
                     update = { copy(onSwitchedInMultipleEditMode = it) },
-                    enabled = { it.onSwitched.not() }
+                    enabled = { it.onSwitched.not() },
                 )
                 switch(
                     title = Strings.PreferencesEditorAutoScrollOnSwitched,
                     defaultValue = AppConf.AutoScroll.DefaultOnSwitched,
                     select = { it.onSwitched },
-                    update = { copy(onSwitched = it) }
+                    update = { copy(onSwitched = it) },
                 )
             }
         }
@@ -425,17 +425,17 @@ abstract class PreferencesPage(
         override val content: List<PreferencesGroup> = buildPageContent {
             group(
                 Strings.PreferencesPlaybackPlayOnDragging,
-                Strings.PreferencesPlaybackPlayOnDraggingDescription
+                Strings.PreferencesPlaybackPlayOnDraggingDescription,
             ) {
                 withContext(
                     selector = { it.playback.playOnDragging },
-                    updater = { copy(playback = playback.copy(playOnDragging = it)) }
+                    updater = { copy(playback = playback.copy(playOnDragging = it)) },
                 ) {
                     switch(
                         title = Strings.PreferencesPlaybackPlayOnDraggingEnabled,
                         defaultValue = AppConf.PlayOnDragging.DefaultPlayOnDraggingEnabled,
                         select = { it.enabled },
-                        update = { copy(enabled = it) }
+                        update = { copy(enabled = it) },
                     )
                     integer(
                         title = Strings.PreferencesPlaybackPlayOnDraggingRangeRadiusMillis,
@@ -443,7 +443,7 @@ abstract class PreferencesPage(
                         min = AppConf.PlayOnDragging.MinPlayOnDraggingRangeRadiusMillis,
                         max = AppConf.PlayOnDragging.MaxPlayOnDraggingRangeRadiusMillis,
                         select = { it.rangeRadiusMillis },
-                        update = { copy(rangeRadiusMillis = it) }
+                        update = { copy(rangeRadiusMillis = it) },
                     )
                     integer(
                         title = Strings.PreferencesPlaybackPlayOnDraggingEventQueueSize,
@@ -451,7 +451,7 @@ abstract class PreferencesPage(
                         min = AppConf.PlayOnDragging.MinPlayOnDraggingEventQueueSize,
                         max = AppConf.PlayOnDragging.MaxPlayOnDraggingEventQueueSize,
                         select = { it.eventQueueSize },
-                        update = { copy(eventQueueSize = it) }
+                        update = { copy(eventQueueSize = it) },
                     )
                 }
             }
@@ -462,21 +462,21 @@ abstract class PreferencesPage(
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
                 selector = { it.autoSave },
-                updater = { copy(autoSave = it) }
+                updater = { copy(autoSave = it) },
             ) {
                 selection(
                     title = Strings.PreferencesAutoSaveTarget,
                     defaultValue = AppConf.AutoSave.DefaultTarget,
                     select = { it.target },
                     update = { copy(target = it) },
-                    options = AppConf.AutoSave.Target.values()
+                    options = AppConf.AutoSave.Target.values(),
                 )
                 integer(
                     title = Strings.PreferencesAutoSaveIntervalSec,
                     defaultValue = AppConf.AutoSave.DefaultIntervalSec,
                     min = AppConf.AutoSave.MinIntervalSec,
                     select = { it.intervalSec },
-                    update = { copy(intervalSec = it) }
+                    update = { copy(intervalSec = it) },
                 )
             }
         }
@@ -490,7 +490,7 @@ abstract class PreferencesPage(
             View,
             Editor,
             Playback,
-            AutoSave
+            AutoSave,
         )
     }
 }
@@ -525,8 +525,8 @@ private class PreferencesItemContext<P>(
             defaultValue = defaultValue,
             select = selectWithContext(select),
             update = updateWithContext(update),
-            enabled = selectWithContext(enabled)
-        )
+            enabled = selectWithContext(enabled),
+        ),
     )
 
     fun integer(
@@ -549,8 +549,8 @@ private class PreferencesItemContext<P>(
             max = max,
             select = selectWithContext(select),
             update = updateWithContext(update),
-            enabled = selectWithContext(enabled)
-        )
+            enabled = selectWithContext(enabled),
+        ),
     )
 
     fun float(
@@ -573,8 +573,8 @@ private class PreferencesItemContext<P>(
             max = max,
             select = selectWithContext(select),
             update = updateWithContext(update),
-            enabled = selectWithContext(enabled)
-        )
+            enabled = selectWithContext(enabled),
+        ),
     )
 
     fun color(
@@ -596,7 +596,7 @@ private class PreferencesItemContext<P>(
             update = updateWithContext(update),
             enabled = selectWithContext(enabled),
             useAlpha = useAlpha,
-        )
+        ),
     )
 
     fun <T> selection(
@@ -617,8 +617,8 @@ private class PreferencesItemContext<P>(
             select = selectWithContext(select),
             update = updateWithContext(update),
             enabled = selectWithContext(enabled),
-            options = options
-        )
+            options = options,
+        ),
     )
 
     fun <K : Action> keymap(
@@ -632,7 +632,7 @@ private class PreferencesItemContext<P>(
             defaultValue = defaultValue,
             select = selectWithContext(select),
             update = updateWithContext(update),
-        )
+        ),
     )
 }
 

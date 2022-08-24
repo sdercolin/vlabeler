@@ -24,12 +24,12 @@ fun BoxScope.RenderStatusLabel(renderStatus: Pair<Int, Int>) {
                 .padding(10.dp)
                 .background(color = Black80, shape = RoundedCornerShape(5.dp))
                 .padding(10.dp)
-                .align(Alignment.BottomStart)
+                .align(Alignment.BottomStart),
         ) {
             Text(
                 text = string(Strings.EditorRenderStatusLabel, renderStatus.first, renderStatus.second),
                 style = MaterialTheme.typography.caption,
-                color = DarkYellow
+                color = DarkYellow,
             )
         }
     }

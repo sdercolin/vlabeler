@@ -12,7 +12,7 @@ val AvailableEncodings = listOf(
     "GB2312",
     "ISO-8859-9",
     "EUC-JP",
-    "EUC-KR"
+    "EUC-KR",
 )
 
 fun encodingNameEquals(first: String, second: String) =

@@ -171,7 +171,7 @@ class MarkerState(
                     Triple(
                         (entryIndex - 1).takeIf { it >= 0 },
                         entryIndex,
-                        (entryIndex + 1).takeIf { it <= lastEntryIndex }
+                        (entryIndex + 1).takeIf { it <= lastEntryIndex },
                     )
                 }
             }
@@ -198,7 +198,7 @@ class MarkerState(
                 entries[currentEntryIndex] = currentEntry.copy(
                     start = start,
                     end = end,
-                    points = points
+                    points = points,
                 )
                 if (leftEntryIndex != null) {
                     entries[leftEntryIndex] = entries[leftEntryIndex].copy(end = start)
@@ -443,7 +443,7 @@ fun rememberMarkerState(
         cursorState,
         scissorsState,
         canvasHeightState,
-        waveformsHeightRatio
+        waveformsHeightRatio,
     ) {
         MarkerState(
             entries,
@@ -458,7 +458,7 @@ fun rememberMarkerState(
             cursorState,
             scissorsState,
             canvasHeightState,
-            waveformsHeightRatio
+            waveformsHeightRatio,
         )
     }
 }

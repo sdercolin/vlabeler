@@ -26,7 +26,7 @@ fun runTemplatePlugin(
 ): TemplatePluginResult {
     val js = JavaScript(
         logHandler = Log.infoFileHandler,
-        currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile()
+        currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile(),
     )
     return runCatching {
         val inputTexts = inputFiles.map { it.readText(Charset.forName(encoding)) }

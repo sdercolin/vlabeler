@@ -82,7 +82,7 @@ fun Canvas(
                 keyboardState,
                 markerState,
                 editorState,
-                appState
+                appState,
             ) {
                 Box(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
                     Row {
@@ -93,7 +93,7 @@ fun Canvas(
                                 canvasParams,
                                 sampleInfo,
                                 appState,
-                                editorState
+                                editorState,
                             )
                         }
                     }
@@ -108,7 +108,7 @@ fun Canvas(
                         horizontalScrollState,
                         markerState,
                         editorState,
-                        appState
+                        appState,
                     )
                 }
                 if (appState.playerState.isPlaying) {
@@ -116,7 +116,7 @@ fun Canvas(
                         canvasParams,
                         appState.playerState,
                         horizontalScrollState,
-                        appState.appConf.editor.playerCursorColor.toColor()
+                        appState.appConf.editor.playerCursorColor.toColor(),
                     )
                 }
             }
@@ -138,7 +138,7 @@ private fun Chunk(
     Box(
         Modifier.fillMaxHeight()
             .requiredWidth(canvasParams.canvasWidthInDp / chunkCount)
-            .runIf(DebugState.isShowingChunkBorder) { border(1.dp, DarkYellow) }
+            .runIf(DebugState.isShowingChunkBorder) { border(1.dp, DarkYellow) },
     ) {
         Column(Modifier.fillMaxSize()) {
             val weightOfEachChannel = 1f / sampleInfo.channels
@@ -155,7 +155,7 @@ private fun Chunk(
             if (sampleInfo.hasSpectrogram && appState.appConf.painter.spectrogram.enabled) {
                 Box(
                     Modifier.weight(appState.appConf.painter.spectrogram.heightWeight)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 ) {
                     val imageStatus = editorState.chartStore.getSpectrogramStatus(chunkIndex)
                     if (imageStatus == ChartStore.ChartLoadingStatus.Loaded) {
@@ -175,7 +175,7 @@ private fun WaveformChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex:
             load = { ChartRepository.getWaveform(sampleInfo, channelIndex, chunkIndex) },
             sampleInfo,
             channelIndex,
-            chunkIndex
+            chunkIndex,
         )
     }
 }
@@ -187,7 +187,7 @@ private fun SpectrogramChunk(sampleInfo: SampleInfo, chunkIndex: Int) {
         ChunkAsyncImage(
             load = { ChartRepository.getSpectrogram(sampleInfo, chunkIndex) },
             sampleInfo,
-            chunkIndex
+            chunkIndex,
         )
     }
 }
@@ -199,7 +199,7 @@ private fun ChunkAsyncImage(load: suspend () -> ImageBitmap, vararg keys: Any) {
         painterFor = { remember { BitmapPainter(it) } },
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.FillBounds,
-        keys = keys
+        keys = keys,
     )
 }
 
@@ -219,7 +219,7 @@ private fun PlayerCursor(
                 color = color,
                 start = Offset(position, 0f),
                 end = Offset(position, center.y * 2),
-                strokeWidth = 2f
+                strokeWidth = 2f,
             )
         }
     }
@@ -229,13 +229,13 @@ private fun PlayerCursor(
 private fun Error(text: String) {
     Box(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.error.copy(alpha = 0.3f)),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             modifier = Modifier.widthIn(max = 600.dp),
             text = text,
             style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.onBackground
+            color = MaterialTheme.colors.onBackground,
         )
     }
 }

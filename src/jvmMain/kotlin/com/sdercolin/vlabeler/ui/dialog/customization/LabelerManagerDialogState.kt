@@ -22,7 +22,7 @@ class LabelerManagerDialogState(
     directory = CustomLabelerDir,
     allowExecution = false,
     appState = appState,
-    appRecordStore = appRecordStore
+    appRecordStore = appRecordStore,
 ) {
     override fun saveDisabled(index: Int) {
         val item = items[index]
@@ -49,14 +49,14 @@ fun rememberLabelerPluginManagerState(appState: AppState): LabelerManagerDialogS
     val state = remember {
         LabelerManagerDialogState(
             appState = appState,
-            appRecordStore = appState.appRecordStore
+            appRecordStore = appState.appRecordStore,
         )
     }
     LaunchedEffect(labelers) {
         val items = labelers.map {
             LabelerItem(
                 labelerConf = it,
-                disabled = appState.appRecordStore.stateFlow.value.disabledLabelerNames.contains(it.name)
+                disabled = appState.appRecordStore.stateFlow.value.disabledLabelerNames.contains(it.name),
             )
         }
         state.loadItems(items)

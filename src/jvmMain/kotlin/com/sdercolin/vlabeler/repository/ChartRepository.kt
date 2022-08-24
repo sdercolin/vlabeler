@@ -29,7 +29,7 @@ object ChartRepository {
         cacheDirectory.mkdirs()
         cacheParams = ChartCacheParams(
             version,
-            appConf.painter
+            appConf.painter,
         )
         val existingCacheParams = runCatching {
             cacheParamsFile.takeIf { it.exists() }?.readText()?.parseJson<ChartCacheParams>()

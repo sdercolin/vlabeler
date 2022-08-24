@@ -40,19 +40,19 @@ fun FrameWindowScope.Menu(
                 Item(
                     string(Strings.MenuFileNewProject),
                     onClick = { appState.requestOpenProjectCreator() },
-                    shortcut = KeyAction.NewProject.getKeyShortCut()
+                    shortcut = KeyAction.NewProject.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuFileOpen),
                     onClick = { appState.requestOpenProject() },
-                    shortcut = KeyAction.OpenProject.getKeyShortCut()
+                    shortcut = KeyAction.OpenProject.getKeyShortCut(),
                 )
                 val appRecord by appState.appRecordFlow.collectAsState()
                 Menu(string(Strings.MenuFileOpenRecent)) {
                     appRecord.recentProjectPathsWithDisplayNames.forEach { (path, displayName) ->
                         Item(
                             text = displayName,
-                            onClick = { appState.requestOpenRecentProject(mainScope, File(path)) }
+                            onClick = { appState.requestOpenRecentProject(mainScope, File(path)) },
                         )
                     }
                     Separator()
@@ -60,38 +60,38 @@ fun FrameWindowScope.Menu(
                         text = string(Strings.MenuFileOpenRecentClear),
                         onClick = { appState.clearRecentProjects() },
                         shortcut = KeyAction.ClearRecentProjects.getKeyShortCut(),
-                        enabled = appRecord.recentProjects.isNotEmpty()
+                        enabled = appRecord.recentProjects.isNotEmpty(),
                     )
                 }
                 Item(
                     string(Strings.MenuFileSave),
                     onClick = { appState.requestSave() },
                     shortcut = KeyAction.SaveProject.getKeyShortCut(),
-                    enabled = appState.hasUnsavedChanges
+                    enabled = appState.hasUnsavedChanges,
                 )
                 Item(
                     string(Strings.MenuFileSaveAs),
                     onClick = { appState.openSaveAsProjectDialog() },
                     shortcut = KeyAction.SaveProjectAs.getKeyShortCut(),
-                    enabled = appState.hasProject
+                    enabled = appState.hasProject,
                 )
                 Item(
                     string(Strings.MenuFileExport),
                     onClick = { appState.requestExport() },
                     shortcut = KeyAction.ExportProject.getKeyShortCut(),
-                    enabled = appState.hasProject
+                    enabled = appState.hasProject,
                 )
                 Item(
                     string(Strings.MenuFileInvalidateCaches),
                     onClick = { appState.requestClearCaches(mainScope) },
                     shortcut = KeyAction.InvalidateCaches.getKeyShortCut(),
-                    enabled = appState.hasProject
+                    enabled = appState.hasProject,
                 )
                 Item(
                     string(Strings.MenuFileClose),
                     onClick = { appState.requestCloseProject() },
                     shortcut = KeyAction.CloseProject.getKeyShortCut(),
-                    enabled = appState.hasProject
+                    enabled = appState.hasProject,
                 )
             }
         }
@@ -101,13 +101,13 @@ fun FrameWindowScope.Menu(
                     string(Strings.MenuEditUndo),
                     onClick = { appState.undo() },
                     shortcut = KeyAction.Undo.getKeyShortCut(),
-                    enabled = appState.history.canUndo
+                    enabled = appState.history.canUndo,
                 )
                 Item(
                     string(Strings.MenuEditRedo),
                     onClick = { appState.redo() },
                     shortcut = KeyAction.Redo.getKeyShortCut(),
-                    enabled = appState.history.canRedo
+                    enabled = appState.history.canRedo,
                 )
                 Menu(string(Strings.MenuEditTools)) {
                     Tool.values().forEach { tool ->
@@ -116,7 +116,7 @@ fun FrameWindowScope.Menu(
                             checked = appState.editor?.let { it.tool == tool } ?: false,
                             onCheckedChange = { if (it) appState.editor?.tool = tool },
                             shortcut = tool.keyAction.getKeyShortCut(),
-                            enabled = appState.isEditorActive
+                            enabled = appState.isEditorActive,
                         )
                     }
                 }
@@ -125,35 +125,35 @@ fun FrameWindowScope.Menu(
                     onClick = {
                         appState.openEditEntryNameDialog(
                             index = appState.requireProject().currentIndex,
-                            purpose = InputEntryNameDialogPurpose.Rename
+                            purpose = InputEntryNameDialogPurpose.Rename,
                         )
                     },
                     shortcut = KeyAction.RenameCurrentEntry.getKeyShortCut(),
-                    enabled = appState.isEditorActive
+                    enabled = appState.isEditorActive,
                 )
                 Item(
                     string(Strings.MenuEditDuplicateEntry),
                     onClick = {
                         appState.openEditEntryNameDialog(
                             index = appState.requireProject().currentIndex,
-                            purpose = InputEntryNameDialogPurpose.Duplicate
+                            purpose = InputEntryNameDialogPurpose.Duplicate,
                         )
                     },
                     shortcut = KeyAction.DuplicateCurrentEntry.getKeyShortCut(),
-                    enabled = appState.isEditorActive
+                    enabled = appState.isEditorActive,
                 )
                 Item(
                     string(Strings.MenuEditRemoveEntry),
                     onClick = { appState.confirmIfRemoveCurrentEntry(appState.isCurrentEntryTheLast()) },
                     shortcut = KeyAction.RemoveCurrentEntry.getKeyShortCut(),
-                    enabled = appState.isEditorActive
+                    enabled = appState.isEditorActive,
                 )
                 CheckboxItem(
                     string(Strings.MenuEditMultipleEditMode),
                     checked = appState.project?.multipleEditMode == true,
                     onCheckedChange = { appState.toggleMultipleEditMode(it) },
                     shortcut = KeyAction.ToggleMultipleEditMode.getKeyShortCut(),
-                    enabled = appState.isEditorActive && appState.project?.labelerConf?.continuous == true
+                    enabled = appState.isEditorActive && appState.project?.labelerConf?.continuous == true,
                 )
             }
         }
@@ -171,7 +171,7 @@ fun FrameWindowScope.Menu(
                     checked = appState.isPropertyViewDisplayed,
                     onCheckedChange = { appState.isPropertyViewDisplayed = it },
                     shortcut = KeyAction.ToggleProperties.getKeyShortCut(),
-                    enabled = appState.isEditorActive
+                    enabled = appState.isEditorActive,
                 )
                 CheckboxItem(
                     string(Strings.MenuViewPinEntryList),
@@ -192,13 +192,13 @@ fun FrameWindowScope.Menu(
                     checked = appState.isToolboxDisplayed,
                     onCheckedChange = { appState.isToolboxDisplayed = it },
                     shortcut = KeyAction.ToggleToolbox.getKeyShortCut(),
-                    enabled = appState.isEditorActive
+                    enabled = appState.isEditorActive,
                 )
                 Item(
                     string(Strings.MenuViewOpenSampleList),
                     onClick = { appState.openSampleListDialog() },
                     shortcut = KeyAction.OpenSampleList.getKeyShortCut(),
-                    enabled = appState.isEditorActive
+                    enabled = appState.isEditorActive,
                 )
             }
         }
@@ -208,37 +208,37 @@ fun FrameWindowScope.Menu(
                     string(Strings.MenuNavigateNextEntry),
                     onClick = { appState.nextEntry() },
                     shortcut = KeyAction.NavigateNextEntry.getKeyShortCut(),
-                    enabled = appState.isEditorActive && appState.canGoNextEntryOrSample
+                    enabled = appState.isEditorActive && appState.canGoNextEntryOrSample,
                 )
                 Item(
                     string(Strings.MenuNavigatePreviousEntry),
                     onClick = { appState.previousEntry() },
                     shortcut = KeyAction.NavigatePreviousEntry.getKeyShortCut(),
-                    enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample
+                    enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample,
                 )
                 Item(
                     string(Strings.MenuNavigateNextSample),
                     onClick = { appState.nextSample() },
                     shortcut = KeyAction.NavigateNextSample.getKeyShortCut(),
-                    enabled = appState.isEditorActive && appState.canGoNextEntryOrSample
+                    enabled = appState.isEditorActive && appState.canGoNextEntryOrSample,
                 )
                 Item(
                     string(Strings.MenuNavigatePreviousSample),
                     onClick = { appState.previousSample() },
                     shortcut = KeyAction.NavigatePreviousSample.getKeyShortCut(),
-                    enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample
+                    enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample,
                 )
                 Item(
                     string(Strings.MenuNavigateJumpToEntry),
                     onClick = { appState.openJumpToEntryDialog() },
                     shortcut = KeyAction.NavigateJumpToEntry.getKeyShortCut(),
-                    enabled = appState.isEditorActive
+                    enabled = appState.isEditorActive,
                 )
                 Item(
                     string(Strings.MenuNavigateScrollFit),
                     onClick = { appState.scrollFitViewModel.emit() },
                     shortcut = KeyAction.NavigateScrollFit.getKeyShortCut(),
-                    enabled = appState.isEditorActive && appState.isScrollFitEnabled
+                    enabled = appState.isEditorActive && appState.isScrollFitEnabled,
                 )
             }
         }
@@ -249,14 +249,14 @@ fun FrameWindowScope.Menu(
                         Item(
                             it.displayedName,
                             onClick = { appState.openMacroPluginDialog(it) },
-                            enabled = it.isMacroExecutable(appState)
+                            enabled = it.isMacroExecutable(appState),
                         )
                     }
                     Separator()
                     Item(
                         string(Strings.MenuToolsBatchEditManagePlugins),
                         onClick = { appState.openCustomizableItemManagerDialog(CustomizableItem.Type.MacroPlugin) },
-                        shortcut = KeyAction.ManageMacroPlugins.getKeyShortCut()
+                        shortcut = KeyAction.ManageMacroPlugins.getKeyShortCut(),
                     )
                 }
             }
@@ -266,17 +266,17 @@ fun FrameWindowScope.Menu(
                 Item(
                     string(Strings.MenuSettingsPreferences),
                     onClick = { appState.openPreferencesDialog() },
-                    shortcut = KeyAction.Preferences.getKeyShortCut()
+                    shortcut = KeyAction.Preferences.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuSettingsLabelers),
                     onClick = { appState.openCustomizableItemManagerDialog(CustomizableItem.Type.Labeler) },
-                    shortcut = KeyAction.ManageLabelers.getKeyShortCut()
+                    shortcut = KeyAction.ManageLabelers.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuSettingsTemplatePlugins),
                     onClick = { appState.openCustomizableItemManagerDialog(CustomizableItem.Type.TemplatePlugin) },
-                    shortcut = KeyAction.ManageTemplatePlugins.getKeyShortCut()
+                    shortcut = KeyAction.ManageTemplatePlugins.getKeyShortCut(),
                 )
             }
         }
@@ -284,22 +284,22 @@ fun FrameWindowScope.Menu(
             Item(
                 string(Strings.MenuHelpOpenLogDirectory),
                 onClick = { Desktop.getDesktop().open(Log.LoggingPath.toFile()) },
-                shortcut = KeyAction.OpenLogDirectory.getKeyShortCut()
+                shortcut = KeyAction.OpenLogDirectory.getKeyShortCut(),
             )
             Item(
                 string(Strings.MenuHelpOpenLatestRelease),
                 onClick = { Desktop.getDesktop().browse(Url.LatestRelease.toUri()) },
-                shortcut = KeyAction.OpenLatestRelease.getKeyShortCut()
+                shortcut = KeyAction.OpenLatestRelease.getKeyShortCut(),
             )
             Item(
                 string(Strings.MenuHelpOpenGitHub),
                 onClick = { Desktop.getDesktop().browse(Url.ProjectGitHub.toUri()) },
-                shortcut = KeyAction.OpenGitHub.getKeyShortCut()
+                shortcut = KeyAction.OpenGitHub.getKeyShortCut(),
             )
             Item(
                 string(Strings.MenuHelpJoinDiscord),
                 onClick = { Desktop.getDesktop().browse(Url.DiscordInvitation.toUri()) },
-                shortcut = KeyAction.JoinDiscord.getKeyShortCut()
+                shortcut = KeyAction.JoinDiscord.getKeyShortCut(),
             )
         }
         if (isDebug) {
@@ -307,20 +307,20 @@ fun FrameWindowScope.Menu(
                 if (appState != null) {
                     Item(
                         "Throw Exception",
-                        onClick = { throw IllegalStateException("Test exception from menu") }
+                        onClick = { throw IllegalStateException("Test exception from menu") },
                     )
                     Item(
                         "Export AppConfig",
-                        onClick = { CustomAppConfFile.writeText(appState.appConf.stringifyJson()) }
+                        onClick = { CustomAppConfFile.writeText(appState.appConf.stringifyJson()) },
                     )
                     Item(
                         "GC",
-                        onClick = { System.gc() }
+                        onClick = { System.gc() },
                     )
                     CheckboxItem(
                         "Show chunk border",
                         checked = DebugState.isShowingChunkBorder,
-                        onCheckedChange = { DebugState.isShowingChunkBorder = it }
+                        onCheckedChange = { DebugState.isShowingChunkBorder = it },
                     )
                 }
             }

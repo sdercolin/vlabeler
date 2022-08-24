@@ -156,7 +156,7 @@ class EditorState(
             density,
             layoutDirection,
             startingChunkIndex,
-            onRenderProgress
+            onRenderProgress,
         )
     }
 
@@ -193,19 +193,19 @@ class EditorState(
         when (keyboardState.getEnabledMouseScrollAction(event)) {
             MouseScrollAction.GoToNextSample -> switchEntryByPointerEvent(
                 shouldSwitchSample = true,
-                positive = true
+                positive = true,
             )
             MouseScrollAction.GoToPreviousSample -> switchEntryByPointerEvent(
                 shouldSwitchSample = true,
-                positive = false
+                positive = false,
             )
             MouseScrollAction.GoToNextEntry -> switchEntryByPointerEvent(
                 shouldSwitchSample = false,
-                positive = true
+                positive = true,
             )
             MouseScrollAction.GoToPreviousEntry -> switchEntryByPointerEvent(
                 shouldSwitchSample = false,
-                positive = false
+                positive = false,
             )
             MouseScrollAction.ZoomInCanvas -> changeResolutionByPointerEvent(true)
             MouseScrollAction.ZoomOutCanvas -> changeResolutionByPointerEvent(false)

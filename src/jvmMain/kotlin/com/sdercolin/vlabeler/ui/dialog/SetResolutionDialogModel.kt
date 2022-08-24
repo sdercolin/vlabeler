@@ -50,7 +50,7 @@ fun SetResolutionDialog(
         Text(
             text = string(Strings.SetResolutionDialogDescription, args.min, args.max),
             style = MaterialTheme.typography.body2,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Spacer(Modifier.height(20.dp))
         OutlinedTextField(
@@ -73,19 +73,19 @@ fun SetResolutionDialog(
                 } else {
                     null
                 }
-            }
+            },
         )
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
             TextButton(
-                onClick = { dismiss() }
+                onClick = { dismiss() },
             ) {
                 Text(string(Strings.CommonCancel))
             }
             Spacer(Modifier.width(25.dp))
             Button(
                 enabled = value != null,
-                onClick = { input.toIntOrNull()?.let { submit(it) } }
+                onClick = { input.toIntOrNull()?.let { submit(it) } },
             ) {
                 Text(string(Strings.CommonOkay))
             }

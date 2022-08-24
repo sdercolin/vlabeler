@@ -4,854 +4,854 @@ import com.sdercolin.vlabeler.ui.string.Language.English
 
 enum class Strings(val en: String) {
     AppName(
-        en = "vLabeler"
+        en = "vLabeler",
     ),
     LanguageDisplayName(
-        en = English.displayName
+        en = English.displayName,
     ),
     MenuFile(
-        en = "File"
+        en = "File",
     ),
     MenuFileNewProject(
-        en = "New Project..."
+        en = "New Project...",
     ),
     MenuFileOpen(
-        en = "Open..."
+        en = "Open...",
     ),
     MenuFileOpenRecent(
-        en = "Open Recent"
+        en = "Open Recent",
     ),
     MenuFileOpenRecentClear(
-        en = "Clear Recently Opened"
+        en = "Clear Recently Opened",
     ),
     MenuFileSave(
-        en = "Save"
+        en = "Save",
     ),
     MenuFileSaveAs(
-        en = "Save As..."
+        en = "Save As...",
     ),
     MenuFileExport(
-        en = "Export..."
+        en = "Export...",
     ),
     MenuFileInvalidateCaches(
-        en = "Invalidate Caches"
+        en = "Invalidate Caches",
     ),
     MenuFileClose(
-        en = "Close"
+        en = "Close",
     ),
     MenuEdit(
-        en = "Edit"
+        en = "Edit",
     ),
     MenuEditUndo(
-        en = "Undo"
+        en = "Undo",
     ),
     MenuEditRedo(
-        en = "Redo"
+        en = "Redo",
     ),
     MenuEditTools(
-        en = "Tools"
+        en = "Tools",
     ),
     MenuEditToolsCursor(
-        en = "Cursor"
+        en = "Cursor",
     ),
     MenuEditToolsScissors(
-        en = "Scissors"
+        en = "Scissors",
     ),
     MenuEditRenameEntry(
-        en = "Rename Current Entry..."
+        en = "Rename Current Entry...",
     ),
     MenuEditDuplicateEntry(
-        en = "Duplicate Current Entry..."
+        en = "Duplicate Current Entry...",
     ),
     MenuEditRemoveEntry(
-        en = "Remove Current Entry"
+        en = "Remove Current Entry",
     ),
     MenuEditMultipleEditMode(
-        en = "Edit All Connected Entries"
+        en = "Edit All Connected Entries",
     ),
     MenuView(
-        en = "View"
+        en = "View",
     ),
     MenuViewToggleMarker(
-        en = "Show Parameter Controllers"
+        en = "Show Parameter Controllers",
     ),
     MenuViewPinEntryList(
-        en = "Pin Entry List"
+        en = "Pin Entry List",
     ),
     MenuViewPinEntryListLocked(
-        en = "Lock Splitter for Pinned Entry List"
+        en = "Lock Splitter for Pinned Entry List",
     ),
     MenuViewToggleProperties(
-        en = "Show Properties"
+        en = "Show Properties",
     ),
     MenuViewToggleToolbox(
-        en = "Show Toolbox"
+        en = "Show Toolbox",
     ),
     MenuViewOpenSampleList(
-        en = "Sample List"
+        en = "Sample List",
     ),
     MenuNavigate(
-        en = "Navigate"
+        en = "Navigate",
     ),
     MenuNavigateNextEntry(
-        en = "Go to Next Entry"
+        en = "Go to Next Entry",
     ),
     MenuNavigatePreviousEntry(
-        en = "Go to Previous Entry"
+        en = "Go to Previous Entry",
     ),
     MenuNavigateNextSample(
-        en = "Go to Next Sample"
+        en = "Go to Next Sample",
     ),
     MenuNavigatePreviousSample(
-        en = "Go to Previous Sample"
+        en = "Go to Previous Sample",
     ),
     MenuNavigateJumpToEntry(
-        en = "Go to Entry..."
+        en = "Go to Entry...",
     ),
     MenuNavigateScrollFit(
-        en = "Scroll to Show the Current Entry"
+        en = "Scroll to Show the Current Entry",
     ),
     MenuTools(
-        en = "Tools"
+        en = "Tools",
     ),
     MenuToolsBatchEdit(
-        en = "Batch Edit"
+        en = "Batch Edit",
     ),
     MenuToolsBatchEditManagePlugins(
-        en = "Manage Plugins..."
+        en = "Manage Plugins...",
     ),
     MenuSettings(
-        en = "Settings"
+        en = "Settings",
     ),
     MenuHelp(
-        en = "Help"
+        en = "Help",
     ),
     MenuHelpOpenLogDirectory(
-        en = "Open Log Directory"
+        en = "Open Log Directory",
     ),
     MenuHelpOpenLatestRelease(
-        en = "Open Latest Release"
+        en = "Open Latest Release",
     ),
     MenuHelpOpenGitHub(
-        en = "Open GitHub Page"
+        en = "Open GitHub Page",
     ),
     MenuHelpJoinDiscord(
-        en = "Join Discord"
+        en = "Join Discord",
     ),
     MenuSettingsPreferences(
-        en = "Preferences..."
+        en = "Preferences...",
     ),
     MenuSettingsLabelers(
-        en = "Labelers..."
+        en = "Labelers...",
     ),
     MenuSettingsTemplatePlugins(
-        en = "Template Generators..."
+        en = "Template Generators...",
     ),
     CommonOkay(
-        en = "OK"
+        en = "OK",
     ),
     CommonApply(
-        en = "Apply"
+        en = "Apply",
     ),
     CommonCancel(
-        en = "Cancel"
+        en = "Cancel",
     ),
     CommonYes(
-        en = "Yes"
+        en = "Yes",
     ),
     CommonNo(
-        en = "No"
+        en = "No",
     ),
     CommonWarning(
-        en = "Warning"
+        en = "Warning",
     ),
     CommonError(
-        en = "Error"
+        en = "Error",
     ),
     CommonInputErrorPromptNumber(
-        en = "Please enter a number."
+        en = "Please enter a number.",
     ),
     CommonInputErrorPromptInteger(
-        en = "Please enter an integer number."
+        en = "Please enter an integer number.",
     ),
     CommonInputErrorPromptNumberRange(
-        en = "Please enter a number between %s and %s."
+        en = "Please enter a number between %s and %s.",
     ),
     CommonInputErrorPromptNumberMin(
-        en = "Please enter a number greater than or equal to %s."
+        en = "Please enter a number greater than or equal to %s.",
     ),
     CommonInputErrorPromptNumberMax(
-        en = "Please enter a number less than or equal to %s."
+        en = "Please enter a number less than or equal to %s.",
     ),
     StarterStart(
-        en = "Start"
+        en = "Start",
     ),
     StarterNewProject(
-        en = "New Project..."
+        en = "New Project...",
     ),
     StarterOpen(
-        en = "Open..."
+        en = "Open...",
     ),
     StarterRecent(
-        en = "Recent"
+        en = "Recent",
     ),
     StarterRecentEmpty(
-        en = "You have no recent projects."
+        en = "You have no recent projects.",
     ),
     StarterRecentDeleted(
-        en = "This profile has been removed."
+        en = "This profile has been removed.",
     ),
     StarterNewSampleDirectory(
-        en = "Sample directory"
+        en = "Sample directory",
     ),
     StarterNewWorkingDirectory(
-        en = "Project location"
+        en = "Project location",
     ),
     StarterNewProjectTitle(
-        en = "New Project"
+        en = "New Project",
     ),
     StarterNewProjectName(
-        en = "Project name"
+        en = "Project name",
     ),
     StarterNewProjectNameWarning(
-        en = "The project file already exists. Creating project will overwrite the file."
+        en = "The project file already exists. Creating project will overwrite the file.",
     ),
     StarterNewCacheDirectory(
-        en = "Cache directory"
+        en = "Cache directory",
     ),
     StarterNewLabeler(
-        en = "Labeler"
+        en = "Labeler",
     ),
     StarterNewTemplatePlugin(
-        en = "Template generator"
+        en = "Template generator",
     ),
     StarterNewTemplatePluginNone(
-        en = "None"
+        en = "None",
     ),
     StarterNewInputFile(
-        en = "Input file (.%s)"
+        en = "Input file (.%s)",
     ),
     StarterNewInputFilePlaceholder(
-        en = "(One would be created if left blank)"
+        en = "(One would be created if left blank)",
     ),
     StarterNewInputFileDisabled(
-        en = "No input file is required by the selected template generator"
+        en = "No input file is required by the selected template generator",
     ),
     StarterNewEncoding(
-        en = "Encoding"
+        en = "Encoding",
     ),
     StarterNewAutoExport(
-        en = "Auto-export"
+        en = "Auto-export",
     ),
     StarterNewAutoExportHelp(
         en = "Automatically export the project to overwrite the given input file (if not given," +
-            " the default file position defined by labeler) when the project is saved."
+            " the default file position defined by labeler) when the project is saved.",
     ),
     SampleListIncludedHeader(
-        en = "Project sample files"
+        en = "Project sample files",
     ),
     SampleListIncludedItemEntryCountSingle(
-        en = "%d entry"
+        en = "%d entry",
     ),
     SampleListIncludedItemEntryCountPlural(
-        en = "%d entries"
+        en = "%d entries",
     ),
     SampleListExcludedHeader(
-        en = "Other sample files"
+        en = "Other sample files",
     ),
     SampleListExcludedPlaceholder(
-        en = "There are no unreferred sample files in the sample directory."
+        en = "There are no unreferred sample files in the sample directory.",
     ),
     SampleListEntryHeader(
-        en = "Entries"
+        en = "Entries",
     ),
     SampleListEntriesPlaceholderUnselected(
-        en = "Select a sample file in the left to show entries bound to it."
+        en = "Select a sample file in the left to show entries bound to it.",
     ),
     SampleListEntriesPlaceholderNoEntry(
-        en = "There are no entries bound to the selected sample file."
+        en = "There are no entries bound to the selected sample file.",
     ),
     SampleListEntriesPlaceholderNoEntryButton(
-        en = "Create Default"
+        en = "Create Default",
     ),
     SampleListJumpToSelectedEntryButton(
-        en = "Go to selected entry"
+        en = "Go to selected entry",
     ),
     SampleListOpenSampleDirectoryButton(
-        en = "Open sample directory"
+        en = "Open sample directory",
     ),
     SampleListSampleDirectoryLabel(
-        en = "Sample directory: "
+        en = "Sample directory: ",
     ),
     SampleListSampleDirectoryRedirectButton(
-        en = "Change sample directory"
+        en = "Change sample directory",
     ),
     EditorRenderStatusLabel(
-        en = "%d/%d Rendering..."
+        en = "%d/%d Rendering...",
     ),
     ChooseSampleDirectoryDialogTitle(
-        en = "Choose sample directory"
+        en = "Choose sample directory",
     ),
     ChooseWorkingDirectoryDialogTitle(
-        en = "Choose project location directory"
+        en = "Choose project location directory",
     ),
     ChooseCacheDirectoryDialogTitle(
-        en = "Choose cache directory"
+        en = "Choose cache directory",
     ),
     ChooseInputFileDialogTitle(
-        en = "Choose input file"
+        en = "Choose input file",
     ),
     OpenProjectDialogTitle(
-        en = "Open project"
+        en = "Open project",
     ),
     SaveAsProjectDialogTitle(
-        en = "Save as project"
+        en = "Save as project",
     ),
     ExportDialogTitle(
-        en = "Export"
+        en = "Export",
     ),
     SetResolutionDialogDescription(
-        en = "Input canvas resolution (points per pixel) for the editor (%d ~ %d)"
+        en = "Input canvas resolution (points per pixel) for the editor (%d ~ %d)",
     ),
     AskIfSaveBeforeOpenDialogDescription(
-        en = "You have unsaved changes. Do you want to save them before opening a new project?"
+        en = "You have unsaved changes. Do you want to save them before opening a new project?",
     ),
     AskIfSaveBeforeExportDialogDescription(
-        en = "You have unsaved changes. Do you want to save them before exporting?"
+        en = "You have unsaved changes. Do you want to save them before exporting?",
     ),
     AskIfSaveBeforeCloseDialogDescription(
-        en = "You have unsaved changes. Do you want to save them before closing the current project?"
+        en = "You have unsaved changes. Do you want to save them before closing the current project?",
     ),
     AskIfSaveBeforeExitDialogDescription(
-        en = "You have unsaved changes. Do you want to save them before exiting?"
+        en = "You have unsaved changes. Do you want to save them before exiting?",
     ),
     InputEntryNameDialogDescription(
-        en = "Rename entry"
+        en = "Rename entry",
     ),
     InputEntryNameDuplicateDialogDescription(
-        en = "Input name for the new entry"
+        en = "Input name for the new entry",
     ),
     InputEntryNameCutFormerDialogDescription(
-        en = "Input name for the former entry after cutting"
+        en = "Input name for the former entry after cutting",
     ),
     InputEntryNameCutLatterDialogDescription(
-        en = "Input name for the latter entry after cutting"
+        en = "Input name for the latter entry after cutting",
     ),
     EditEntryNameDialogExistingError(
-        en = "The name you input already exists."
+        en = "The name you input already exists.",
     ),
     AskIfRemoveEntryDialogDescription(
-        en = "Removing current entry..."
+        en = "Removing current entry...",
     ),
     AskIfRemoveEntryLastDialogDescription(
         en = "Removing current entry...\nThis entry is the only one that has reference of the current sample file." +
-            "\nIf you need to add an entry on it later, please see menu `View` -> `Sample List`."
+            "\nIf you need to add an entry on it later, please see menu `View` -> `Sample List`.",
     ),
     AskIfLoadAutoSavedProjectDialogDescription(
-        en = "Auto-saved project file found. Do you want to load it? If not, the file will be discarded."
+        en = "Auto-saved project file found. Do you want to load it? If not, the file will be discarded.",
     ),
     AskIfRedirectSampleDirectoryDialogDescription(
-        en = "The sample directory of this project (%s) is not found. Do you want to redirect it to a new directory?"
+        en = "The sample directory of this project (%s) is not found. Do you want to redirect it to a new directory?",
     ),
     PluginDialogTitle(
-        en = "vLabeler - Plugin"
+        en = "vLabeler - Plugin",
     ),
     PluginDialogInfoAuthor(
-        en = "author: %s"
+        en = "author: %s",
     ),
     PluginDialogInfoVersion(
-        en = "version: %d"
+        en = "version: %d",
     ),
     PluginDialogInfoContact(
-        en = "Contact author"
+        en = "Contact author",
     ),
     PluginDialogDescriptionMin(
-        en = "min: %s"
+        en = "min: %s",
     ),
     PluginDialogDescriptionMax(
-        en = "max: %s"
+        en = "max: %s",
     ),
     PluginDialogDescriptionMinMax(
-        en = "min: %s, max: %s"
+        en = "min: %s, max: %s",
     ),
     PluginDialogExecute(
-        en = "Execute"
+        en = "Execute",
     ),
     PluginEntrySelectorTextMatchTypeEquals(
-        en = "Equals"
+        en = "Equals",
     ),
     PluginEntrySelectorTextMatchTypeContains(
-        en = "Contains"
+        en = "Contains",
     ),
     PluginEntrySelectorTextMatchTypeStartsWith(
-        en = "Starts with"
+        en = "Starts with",
     ),
     PluginEntrySelectorTextMatchTypeEndsWith(
-        en = "Ends with"
+        en = "Ends with",
     ),
     PluginEntrySelectorTextMatchTypeRegex(
-        en = "Regex"
+        en = "Regex",
     ),
     PluginEntrySelectorNumberMatchTypeEquals(
-        en = "="
+        en = "=",
     ),
     PluginEntrySelectorNumberMatchTypeGreaterThan(
-        en = ">"
+        en = ">",
     ),
     PluginEntrySelectorNumberMatchTypeGreaterThanOrEquals(
-        en = ">="
+        en = ">=",
     ),
     PluginEntrySelectorNumberMatchTypeLessThan(
-        en = "<"
+        en = "<",
     ),
     PluginEntrySelectorNumberMatchTypeLessThanOrEquals(
-        en = "<="
+        en = "<=",
     ),
     PluginEntrySelectorPreservedSubjectSample(
-        en = "Sample name"
+        en = "Sample name",
     ),
     PluginEntrySelectorPreservedSubjectName(
-        en = "Entry name"
+        en = "Entry name",
     ),
     PluginEntrySelectorComparerValue(
-        en = "Input"
+        en = "Input",
     ),
     PluginEntrySelectorPreviewSummaryError(
-        en = "Invalid input"
+        en = "Invalid input",
     ),
     PluginEntrySelectorPreviewSummaryInitializing(
-        en = "Initializing..."
+        en = "Initializing...",
     ),
     PluginEntrySelectorPreviewSummary(
-        en = "Selects %d/%d"
+        en = "Selects %d/%d",
     ),
     EditorSubTitleMultiple(
-        en = "editing %d entries in sample %s"
+        en = "editing %d entries in sample %s",
     ),
     FailedToLoadSampleFileError(
-        en = "Could not load the sample file.\nIt may not exist, or is not a supported format."
+        en = "Could not load the sample file.\nIt may not exist, or is not a supported format.",
     ),
     EmptySampleDirectoryException(
-        en = "Could not create project because no sample files are found in the given sample directory."
+        en = "Could not create project because no sample files are found in the given sample directory.",
     ),
     PluginRuntimeUnexpectedException(
         en = "An unexpected error occurred during the plugin execution.\n" +
-            "Please contact the author for more information."
+            "Please contact the author for more information.",
     ),
     InvalidCreatedProjectException(
-        en = "The created project is not valid.\nPlease contact author of the labeler/plugin for more information."
+        en = "The created project is not valid.\nPlease contact author of the labeler/plugin for more information.",
     ),
     InvalidOpenedProjectException(
         en = "Could not open the project because it contains invalid data.\n" +
-            "Please check error log for more information."
+            "Please check error log for more information.",
     ),
     ProjectParseException(
-        en = "Could not open the project.\nIt may be corrupted or created by an incompatible version of vLabeler."
+        en = "Could not open the project.\nIt may be corrupted or created by an incompatible version of vLabeler.",
     ),
     ProjectUpdateOnSampleException(
-        en = "Could not update the project with the loaded sample file.\nPlease check error log for more information."
+        en = "Could not update the project with the loaded sample file.\nPlease check error log for more information.",
     ),
     InvalidEditedProjectException(
-        en = "Invalid edited project.\nPlease check error log for more information."
+        en = "Invalid edited project.\nPlease check error log for more information.",
     ),
     CustomizableItemLoadingException(
-        en = "Could not load the selected customized item."
+        en = "Could not load the selected customized item.",
     ),
     LabelerManagerTitle(
-        en = "Labelers"
+        en = "Labelers",
     ),
     LabelerManagerImportDialogTitle(
-        en = "Import labeler"
+        en = "Import labeler",
     ),
     TemplatePluginManagerTitle(
-        en = "Template generators"
+        en = "Template generators",
     ),
     TemplatePluginManagerImportDialogTitle(
-        en = "Import template generator"
+        en = "Import template generator",
     ),
     MacroPluginManagerTitle(
-        en = "Batch Edit Plugins"
+        en = "Batch Edit Plugins",
     ),
     MacroPluginManagerImportDialogTitle(
-        en = "Import batch edit plugin"
+        en = "Import batch edit plugin",
     ),
     CustomizableItemManagerRemoveItemConfirm(
-        en = "Are you sure you want to remove \"%s\"? This will remove the file(s) from the disk."
+        en = "Are you sure you want to remove \"%s\"? This will remove the file(s) from the disk.",
     ),
     CustomizableItemManagerOpenDirectory(
-        en = "Open directory"
+        en = "Open directory",
     ),
     CustomizableItemManagerReload(
-        en = "Reload list"
+        en = "Reload list",
     ),
     CustomizableItemManagerLockedDescription(
-        en = "This item is built-in and cannot be removed."
+        en = "This item is built-in and cannot be removed.",
     ),
     PreferencesEditorResetPage(
-        en = "Reset items in this page"
+        en = "Reset items in this page",
     ),
     PreferencesEditorResetAll(
-        en = "Reset all items"
+        en = "Reset all items",
     ),
     PreferencesCharts(
-        en = "Charts"
+        en = "Charts",
     ),
     PreferencesChartsDescription(
-        en = "Customize the charts being rendered in the editor."
+        en = "Customize the charts being rendered in the editor.",
     ),
     PreferencesChartsCanvas(
-        en = "Canvas"
+        en = "Canvas",
     ),
     PreferencesChartsCanvasDescription(
-        en = "Customize general settings about the canvas where the charts are drawn."
+        en = "Customize general settings about the canvas where the charts are drawn.",
     ),
     PreferencesChartsCanvasResolution(
-        en = "Canvas resolution"
+        en = "Canvas resolution",
     ),
     PreferencesChartsCanvasResolutionDescription(
         en = "Defined as number of sample points included in 1 pixel.\n" +
-            "The bigger the number, the longer time duration the charts show in your screen."
+            "The bigger the number, the longer time duration the charts show in your screen.",
     ),
     PreferencesChartsCanvasResolutionDefault(
-        en = "Default resolution"
+        en = "Default resolution",
     ),
     PreferencesChartsCanvasResolutionStep(
-        en = "Step"
+        en = "Step",
     ),
     PreferencesChartsMaxDataChunkSize(
-        en = "Max data chunk size"
+        en = "Max data chunk size",
     ),
     PreferencesChartsMaxDataChunkSizeDescription(
         en = "Max frames that will be included in a chart chunk.\n" +
-            "The bigger the number, the less parts your charts will be divided to during rendering."
+            "The bigger the number, the less parts your charts will be divided to during rendering.",
     ),
     PreferencesChartsWaveform(
-        en = "Waveform"
+        en = "Waveform",
     ),
     PreferencesChartsWaveformDescription(
-        en = "Customize the waveform chart."
+        en = "Customize the waveform chart.",
     ),
     PreferencesChartsWaveformUnitSize(
-        en = "Points per pixel"
+        en = "Points per pixel",
     ),
     PreferencesChartsWaveformUnitSizeDescription(
-        en = "Increase for lower image quality."
+        en = "Increase for lower image quality.",
     ),
     PreferencesChartsWaveformIntensityAccuracy(
-        en = "Bitmap height (px)"
+        en = "Bitmap height (px)",
     ),
     PreferencesChartsWaveformYAxisBlankRate(
-        en = "Vertical padding (%%)"
+        en = "Vertical padding (%%)",
     ),
     PreferencesChartsWaveformColor(
-        en = "Color"
+        en = "Color",
     ),
     PreferencesChartsWaveformBackgroundColor(
-        en = "Background color"
+        en = "Background color",
     ),
     PreferencesChartsSpectrogram(
-        en = "Spectrogram"
+        en = "Spectrogram",
     ),
     PreferencesChartsSpectrogramDescription(
-        en = "Customize the spectrogram chart."
+        en = "Customize the spectrogram chart.",
     ),
     PreferencesChartsSpectrogramEnabled(
-        en = "Show spectrogram"
+        en = "Show spectrogram",
     ),
     PreferencesChartsSpectrogramHeight(
-        en = "Height relative to waveforms (%%)"
+        en = "Height relative to waveforms (%%)",
     ),
     PreferencesChartsSpectrogramPointDensity(
-        en = "Points per pixel"
+        en = "Points per pixel",
     ),
     PreferencesChartsSpectrogramPointDensityDescription(
-        en = "Increase for lower image quality."
+        en = "Increase for lower image quality.",
     ),
     PreferencesChartsSpectrogramHopSize(
-        en = "FFT hop size"
+        en = "FFT hop size",
     ),
     PreferencesChartsSpectrogramHopSizeDescription(
-        en = "Adapted to the actual sample rate."
+        en = "Adapted to the actual sample rate.",
     ),
     PreferencesChartsSpectrogramWindowSize(
-        en = "Window size"
+        en = "Window size",
     ),
     PreferencesChartsSpectrogramWindowSizeDescription(
-        en = "Adapted to the actual sample rate."
+        en = "Adapted to the actual sample rate.",
     ),
     PreferencesChartsSpectrogramMelScaleStep(
-        en = "Frequency resolution (mel)"
+        en = "Frequency resolution (mel)",
     ),
     PreferencesChartsSpectrogramMaxFrequency(
-        en = "Max frequency displayed (Hz)"
+        en = "Max frequency displayed (Hz)",
     ),
     PreferencesChartsSpectrogramMinIntensity(
-        en = "Min intensity displayed (dB)"
+        en = "Min intensity displayed (dB)",
     ),
     PreferencesChartsSpectrogramMaxIntensity(
-        en = "Max intensity displayed (dB)"
+        en = "Max intensity displayed (dB)",
     ),
     PreferencesChartsSpectrogramWindowType(
-        en = "Window function"
+        en = "Window function",
     ),
     PreferencesChartsSpectrogramColorPalette(
-        en = "Colors"
+        en = "Colors",
     ),
     PreferencesKeymap(
-        en = "Keymap"
+        en = "Keymap",
     ),
     PreferencesKeymapDescription(
-        en = "Customize key bindings for key/mouse actions."
+        en = "Customize key bindings for key/mouse actions.",
     ),
     PreferencesKeymapKeyAction(
-        en = "Key actions"
+        en = "Key actions",
     ),
     PreferencesKeymapKeyActionDescription(
-        en = "Customize key bindings for key actions."
+        en = "Customize key bindings for key actions.",
     ),
     PreferencesKeymapMouseClickAction(
-        en = "Mouse click actions"
+        en = "Mouse click actions",
     ),
     PreferencesKeymapMouseClickActionDescription(
         en = "Customize key bindings for mouse click actions.\n" +
-            "An action is conducted only while all the keys in the key bindings are pressed."
+            "An action is conducted only while all the keys in the key bindings are pressed.",
     ),
     PreferencesKeymapMouseScrollAction(
-        en = "Mouse scroll actions"
+        en = "Mouse scroll actions",
     ),
     PreferencesKeymapMouseScrollActionDescription(
         en = "Customize key bindings for mouse scroll actions.\n" +
-            "An action is conducted only while all the keys in the key bindings are pressed."
+            "An action is conducted only while all the keys in the key bindings are pressed.",
     ),
     PreferencesKeymapEditDialogTitle(
-        en = "Editing key bind for:"
+        en = "Editing key bind for:",
     ),
     PreferencesKeymapEditDialogDescriptionMouseClick(
-        en = "Left/Right click on the text field with other keys pressed to input a shortcut."
+        en = "Left/Right click on the text field with other keys pressed to input a shortcut.",
     ),
     PreferencesKeymapEditDialogDescriptionMouseScroll(
-        en = "Scroll mouse wheel on the text field with other keys pressed to input a shortcut."
+        en = "Scroll mouse wheel on the text field with other keys pressed to input a shortcut.",
     ),
     PreferencesKeymapEditDialogConflictingLabel(
-        en = "Already assigned to:"
+        en = "Already assigned to:",
     ),
     PreferencesKeymapEditDialogConflictingWarning(
-        en = "This shortcut is already assigned to other actions.\nDo you want to remove the other assignments?"
+        en = "This shortcut is already assigned to other actions.\nDo you want to remove the other assignments?",
     ),
     PreferencesKeymapEditDialogConflictingWarningKeep(
-        en = "Keep"
+        en = "Keep",
     ),
     PreferencesKeymapEditDialogConflictingWarningRemove(
-        en = "Remove"
+        en = "Remove",
     ),
     PreferencesView(
-        en = "View"
+        en = "View",
     ),
     PreferencesViewDescription(
-        en = "Customize view appearances"
+        en = "Customize view appearances",
     ),
     PreferencesViewPinnedEntryListPosition(
-        en = "Position of pinned entry list"
+        en = "Position of pinned entry list",
     ),
     PreferencesEditor(
-        en = "Editor"
+        en = "Editor",
     ),
     PreferencesEditorDescription(
-        en = "Customize the editor's appearance and behavior."
+        en = "Customize the editor's appearance and behavior.",
     ),
     PreferencesEditorPlayerCursorColor(
-        en = "Player cursor color"
+        en = "Player cursor color",
     ),
     PreferencesEditorPlayerLockedDrag(
-        en = "Fixed-drag"
+        en = "Fixed-drag",
     ),
     PreferencesEditorPlayerLockedDragDescription(
         en = "Select a condition to enable fixed-drag while you move the parameter lines.\n" +
             "When it is enabled, the other parameter lines will be moved accordingly to " +
-            "keep relative positions to the parameter you are moving."
+            "keep relative positions to the parameter you are moving.",
     ),
     PreferencesEditorPlayerLockedDragUseLabeler(
-        en = "Use settings defined by the labeler"
+        en = "Use settings defined by the labeler",
     ),
     PreferencesEditorPlayerLockedDragUseStart(
-        en = "Fixed-drag at the entry's start"
+        en = "Fixed-drag at the entry's start",
     ),
     PreferencesEditorPlayerLockedDragNever(
-        en = "Never do fixed-drag"
+        en = "Never do fixed-drag",
     ),
     PreferencesEditorScissors(
-        en = "Scissors"
+        en = "Scissors",
     ),
     PreferencesEditorScissorsDescription(
-        en = "Customize appearance and behavior of the scissors tool."
+        en = "Customize appearance and behavior of the scissors tool.",
     ),
     PreferencesEditorScissorsColor(
-        en = "Color"
+        en = "Color",
     ),
     PreferencesEditorScissorsActionTargetNone(
-        en = "None"
+        en = "None",
     ),
     PreferencesEditorScissorsActionTargetFormer(
-        en = "The former entry"
+        en = "The former entry",
     ),
     PreferencesEditorScissorsActionTargetLatter(
-        en = "The latter entry"
+        en = "The latter entry",
     ),
     PreferencesEditorScissorsActionGoTo(
-        en = "Go to entry after cutting"
+        en = "Go to entry after cutting",
     ),
     PreferencesEditorScissorsActionAskForName(
-        en = "Rename entry after cutting"
+        en = "Rename entry after cutting",
     ),
     PreferencesEditorScissorsActionPlay(
-        en = "Play audio when cutting"
+        en = "Play audio when cutting",
     ),
     PreferencesEditorAutoScroll(
-        en = "Auto scroll"
+        en = "Auto scroll",
     ),
     PreferencesEditorAutoScrollDescription(
-        en = "Define when the editor will automatically scroll to show the current entry."
+        en = "Define when the editor will automatically scroll to show the current entry.",
     ),
     PreferencesEditorAutoScrollOnLoadedNewSample(
-        en = "When switched to another sample"
+        en = "When switched to another sample",
     ),
     PreferencesEditorAutoScrollOnJumpedToEntry(
-        en = "When switched to another entry by absolute index"
+        en = "When switched to another entry by absolute index",
     ),
     PreferencesEditorAutoScrollOnSwitchedInMultipleEditMode(
-        en = "When switched to another entry in multiple edit mode"
+        en = "When switched to another entry in multiple edit mode",
     ),
     PreferencesEditorAutoScrollOnSwitched(
-        en = "When switched to another entry"
+        en = "When switched to another entry",
     ),
     PreferencesPlayback(
-        en = "Playback"
+        en = "Playback",
     ),
     PreferencesPlaybackDescription(
-        en = "Customize the behavior about audio playback."
+        en = "Customize the behavior about audio playback.",
     ),
     PreferencesPlaybackPlayOnDragging(
-        en = "Preview on dragging"
+        en = "Preview on dragging",
     ),
     PreferencesPlaybackPlayOnDraggingDescription(
-        en = "When dragging any parameter lines, play the audio range near the cursor."
+        en = "When dragging any parameter lines, play the audio range near the cursor.",
     ),
     PreferencesPlaybackPlayOnDraggingEnabled(
-        en = "Enabled"
+        en = "Enabled",
     ),
     PreferencesPlaybackPlayOnDraggingRangeRadiusMillis(
-        en = "Radius (ms)"
+        en = "Radius (ms)",
     ),
     PreferencesPlaybackPlayOnDraggingEventQueueSize(
-        en = "Retain drag events"
+        en = "Retain drag events",
     ),
     PreferencesAutoSave(
-        en = "Auto save"
+        en = "Auto save",
     ),
     PreferencesAutoSaveDescription(
-        en = "Customize the behavior about project auto-save."
+        en = "Customize the behavior about project auto-save.",
     ),
     PreferencesAutoSaveTarget(
-        en = "Location of auto-saved file"
+        en = "Location of auto-saved file",
     ),
     PreferencesAutoSaveTargetNone(
-        en = "Do not auto-save"
+        en = "Do not auto-save",
     ),
     PreferencesAutoSaveTargetProject(
-        en = "Overwrite project file"
+        en = "Overwrite project file",
     ),
     PreferencesAutoSaveTargetRecord(
-        en = "Save to temporary file"
+        en = "Save to temporary file",
     ),
     PreferencesAutoSaveIntervalSec(
-        en = "Interval (sec)"
+        en = "Interval (sec)",
     ),
     ActionToggleSamplePlayback(
-        en = "Toggle Playback of Current Sample"
+        en = "Toggle Playback of Current Sample",
     ),
     ActionToggleEntryPlayback(
-        en = "Toggle Playback of Current Entry"
+        en = "Toggle Playback of Current Entry",
     ),
     ActionIncreaseResolution(
-        en = "Zoom Out"
+        en = "Zoom Out",
     ),
     ActionDecreaseResolution(
-        en = "Zoom In"
+        en = "Zoom In",
     ),
     ActionInputResolution(
-        en = "Input Canvas Resolution"
+        en = "Input Canvas Resolution",
     ),
     ActionCancelDialog(
-        en = "Close Dialog"
+        en = "Close Dialog",
     ),
     ActionSetValue1(
-        en = "Set Parameter 1 To Cursor Position"
+        en = "Set Parameter 1 To Cursor Position",
     ),
     ActionSetValue2(
-        en = "Set Parameter 2 To Cursor Position"
+        en = "Set Parameter 2 To Cursor Position",
     ),
     ActionSetValue3(
-        en = "Set Parameter 3 To Cursor Position"
+        en = "Set Parameter 3 To Cursor Position",
     ),
     ActionSetValue4(
-        en = "Set Parameter 4 To Cursor Position"
+        en = "Set Parameter 4 To Cursor Position",
     ),
     ActionSetValue5(
-        en = "Set Parameter 5 To Cursor Position"
+        en = "Set Parameter 5 To Cursor Position",
     ),
     ActionSetValue6(
-        en = "Set Parameter 6 To Cursor Position"
+        en = "Set Parameter 6 To Cursor Position",
     ),
     ActionSetValue7(
-        en = "Set Parameter 7 To Cursor Position"
+        en = "Set Parameter 7 To Cursor Position",
     ),
     ActionSetValue8(
-        en = "Set Parameter 8 To Cursor Position"
+        en = "Set Parameter 8 To Cursor Position",
     ),
     ActionSetValue9(
-        en = "Set Parameter 9 To Cursor Position"
+        en = "Set Parameter 9 To Cursor Position",
     ),
     ActionSetValue10(
-        en = "Set Parameter 10 To Cursor Position"
+        en = "Set Parameter 10 To Cursor Position",
     ),
     ActionMoveParameter(
-        en = "Drag Parameter Line"
+        en = "Drag Parameter Line",
     ),
     ActionMoveParameterWithPlaybackPreview(
-        en = "Drag Parameter Line with Playback Preview"
+        en = "Drag Parameter Line with Playback Preview",
     ),
     ActionMoveParameterIgnoringConstraints(
-        en = "Drag Parameter Line Ignoring Constraints"
+        en = "Drag Parameter Line Ignoring Constraints",
     ),
     ActionMoveParameterInvertingLocked(
-        en = "Drag Parameter Line with Fixed-drag Settings Inverted"
+        en = "Drag Parameter Line with Fixed-drag Settings Inverted",
     ),
     ActionPlayAudioSection(
-        en = "Play the Clicked Audio Part"
+        en = "Play the Clicked Audio Part",
     ),
     ActionScrollCanvasLeft(
-        en = "Scroll Canvas to Left"
+        en = "Scroll Canvas to Left",
     ),
     ActionScrollCanvasRight(
-        en = "Scroll Canvas to Right"
+        en = "Scroll Canvas to Right",
     ),
     ActionZoomInCanvas(
-        en = "Zoom In"
+        en = "Zoom In",
     ),
     ActionZoomOutCanvas(
-        en = "Zoom Out"
+        en = "Zoom Out",
     ),
     ActionGoToNextEntry(
-        en = "Go to Next Entry"
+        en = "Go to Next Entry",
     ),
     ActionGoToPreviousEntry(
-        en = "Go to Previous Entry"
+        en = "Go to Previous Entry",
     ),
     ActionGoToNextSample(
-        en = "Go to Next Sample"
+        en = "Go to Next Sample",
     ),
     ActionGoToPreviousSample(
-        en = "Go to Previous Sample"
+        en = "Go to Previous Sample",
     );
 
     fun get(language: Language): String = when (language) {

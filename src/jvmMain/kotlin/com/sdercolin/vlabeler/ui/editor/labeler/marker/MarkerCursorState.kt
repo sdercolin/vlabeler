@@ -23,7 +23,7 @@ data class MarkerCursorState(
         mouse = Mouse.Dragging,
         lockedDrag = lockedDrag,
         previewOnDragging = withPreview,
-        forcedDrag = forcedDrag
+        forcedDrag = forcedDrag,
     )
 
     fun finishDragging() = copy(mouse = Mouse.None, lockedDrag = false)

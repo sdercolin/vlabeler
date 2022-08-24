@@ -24,7 +24,7 @@ abstract class PluginManagerDialogState<T : CustomizableItem>(
     directory = getPluginsDirectory(pluginType),
     allowExecution = allowExecution,
     appState = appState,
-    appRecordStore = appRecordStore
+    appRecordStore = appRecordStore,
 ) {
     override fun saveDisabled(index: Int) {
         val item = items[index]

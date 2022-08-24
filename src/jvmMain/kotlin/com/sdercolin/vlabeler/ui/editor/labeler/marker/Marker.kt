@@ -98,7 +98,7 @@ fun MarkerPointEventContainer(
                         playSection,
                         editorState::cutEntry,
                         keyboardState,
-                        screenRange
+                        screenRange,
                     )
                     return@onPointerEvent
                 }
@@ -107,7 +107,7 @@ fun MarkerPointEventContainer(
                     event,
                     editorState::updateEntries,
                     screenRange,
-                    playByCursor
+                    playByCursor,
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
@@ -121,10 +121,10 @@ fun MarkerPointEventContainer(
                     appState.player::playSection,
                     editorState::cutEntry,
                     keyboardState,
-                    screenRange
+                    screenRange,
                 )
             },
-        content = content
+        content = content,
     )
 }
 
@@ -142,7 +142,7 @@ fun MarkerCanvas(
         editorState.project.currentIndex,
         canvasParams.lengthInPixel,
         horizontalScrollState,
-        appState.scrollFitViewModel
+        appState.scrollFitViewModel,
     )
     LaunchedEffect(horizontalScrollState.maxValue, horizontalScrollState.value) {
         editorState.scrollOnResolutionChangeViewModel.scroll(horizontalScrollState)
@@ -197,7 +197,7 @@ fun MarkerLabels(
             chunkCount,
             chunkLength,
             chunkLengthDp,
-            chunkVisibleList
+            chunkVisibleList,
         )
     }
 }
@@ -232,13 +232,13 @@ private fun FieldBorderCanvas(
                     color = leftBorderColor,
                     alpha = UneditableRegionAlpha,
                     topLeft = Offset.Zero,
-                    size = Size(width = relativeLeftBorder, height = canvasHeight)
+                    size = Size(width = relativeLeftBorder, height = canvasHeight),
                 )
                 drawLine(
                     color = leftBorderColor.copy(alpha = IdleLineAlpha),
                     start = Offset(relativeLeftBorder, 0f),
                     end = Offset(relativeLeftBorder, canvasHeight),
-                    strokeWidth = StrokeWidth
+                    strokeWidth = StrokeWidth,
                 )
             }
 
@@ -253,14 +253,14 @@ private fun FieldBorderCanvas(
                     color = startColor,
                     alpha = RegionAlpha,
                     topLeft = Offset(coercedLeftBorder, 0f),
-                    size = Size(width = coercedStart - coercedLeftBorder, height = canvasHeight)
+                    size = Size(width = coercedStart - coercedLeftBorder, height = canvasHeight),
                 )
                 val startLineAlpha = if (cursorState.value.usingStartPoint) 1f else IdleLineAlpha
                 drawLine(
                     color = startColor.copy(alpha = startLineAlpha),
                     start = Offset(coercedStart, 0f),
                     end = Offset(coercedStart, canvasHeight),
-                    strokeWidth = StrokeWidth
+                    strokeWidth = StrokeWidth,
                 )
             }
 
@@ -281,7 +281,7 @@ private fun FieldBorderCanvas(
                             color = borderColor.copy(alpha = borderLineAlpha),
                             start = Offset(relativeBorder, 0f),
                             end = Offset(relativeBorder, canvasHeight),
-                            strokeWidth = StrokeWidth
+                            strokeWidth = StrokeWidth,
                         )
                     }
                 }
@@ -310,7 +310,7 @@ private fun FieldBorderCanvas(
                                 color = color,
                                 alpha = RegionAlpha,
                                 topLeft = Offset(coercedRelativeLeft, top),
-                                size = Size(width = coercedRelativeRight - coercedRelativeLeft, height = height)
+                                size = Size(width = coercedRelativeRight - coercedRelativeLeft, height = height),
                             )
                         }
                     }
@@ -323,7 +323,7 @@ private fun FieldBorderCanvas(
                             color = color.copy(alpha = lineAlpha),
                             start = Offset(relativeX, top),
                             end = Offset(relativeX, canvasHeight),
-                            strokeWidth = StrokeWidth
+                            strokeWidth = StrokeWidth,
                         )
                     }
                 }
@@ -340,14 +340,14 @@ private fun FieldBorderCanvas(
                     color = endColor,
                     alpha = RegionAlpha,
                     topLeft = Offset(coercedEnd, 0f),
-                    size = Size(width = coercedRightBorder - coercedEnd, height = canvasHeight)
+                    size = Size(width = coercedRightBorder - coercedEnd, height = canvasHeight),
                 )
                 val endLineAlpha = if (cursorState.value.usingEndPoint) 1f else IdleLineAlpha
                 drawLine(
                     color = endColor.copy(alpha = endLineAlpha),
                     start = Offset(coercedEnd, 0f),
                     end = Offset(coercedEnd, canvasHeight),
-                    strokeWidth = StrokeWidth
+                    strokeWidth = StrokeWidth,
                 )
             }
 
@@ -359,13 +359,13 @@ private fun FieldBorderCanvas(
                     color = rightBorderColor,
                     alpha = UneditableRegionAlpha,
                     topLeft = Offset(relativeRightBorder, 0f),
-                    size = Size(width = screenRange.endInclusive - relativeRightBorder, height = canvasHeight)
+                    size = Size(width = screenRange.endInclusive - relativeRightBorder, height = canvasHeight),
                 )
                 drawLine(
                     color = rightBorderColor.copy(alpha = IdleLineAlpha),
                     start = Offset(relativeRightBorder, 0f),
                     end = Offset(relativeRightBorder, canvasHeight),
-                    strokeWidth = StrokeWidth
+                    strokeWidth = StrokeWidth,
                 )
             }
 
@@ -379,7 +379,7 @@ private fun FieldBorderCanvas(
                             color = appState.appConf.editor.scissorsColor.toColor(),
                             start = Offset(relativePosition, 0f),
                             end = Offset(relativePosition, canvasHeight),
-                            strokeWidth = StrokeWidth * 2
+                            strokeWidth = StrokeWidth * 2,
                         )
                     }
                 }
@@ -436,7 +436,7 @@ private fun MarkerState.handleCursorMove(
             waveformsHeightRatio = waveformsHeightRatio,
             density = canvasParams.density,
             labelSize = LabelSize,
-            labelShiftUp = LabelShiftUp
+            labelShiftUp = LabelShiftUp,
         )
         if (newPointIndex == NonePointIndex) {
             cursorState.update { moveToNothing() }

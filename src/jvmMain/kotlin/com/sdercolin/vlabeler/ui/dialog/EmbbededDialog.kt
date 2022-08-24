@@ -29,12 +29,12 @@ fun <T : EmbeddedDialogArgs> EmbeddedDialog(request: EmbeddedDialogRequest<T>) {
         modifier = Modifier.fillMaxSize()
             .background(color = Black50)
             .plainClickable { if (args.cancellableOnClickOutside) request.onResult(null) },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface {
             Box(
                 modifier = Modifier
-                    .runIf<Modifier>(!args.customMargin) { padding(horizontal = 50.dp, vertical = 20.dp) }
+                    .runIf<Modifier>(!args.customMargin) { padding(horizontal = 50.dp, vertical = 20.dp) },
             ) {
                 TypedDialog(args, request)
             }

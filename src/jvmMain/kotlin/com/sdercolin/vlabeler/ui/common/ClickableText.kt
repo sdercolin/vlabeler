@@ -25,15 +25,15 @@ fun ClickableText(
             addStyle(
                 style = SpanStyle(
                     color = color,
-                    textDecoration = TextDecoration.Underline
+                    textDecoration = TextDecoration.Underline,
                 ),
                 start = 0,
-                end = text.length
+                end = text.length,
             )
         },
         onClick = { onClick() },
         style = style,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }

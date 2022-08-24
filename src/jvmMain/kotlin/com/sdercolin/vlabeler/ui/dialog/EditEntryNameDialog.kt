@@ -68,7 +68,7 @@ fun InputEntryNameDialog(
 
     var input by remember {
         mutableStateOf(
-            TextFieldValue(args.initial, selection = TextRange(0, args.initial.length))
+            TextFieldValue(args.initial, selection = TextRange(0, args.initial.length)),
         )
     }
 
@@ -90,7 +90,7 @@ fun InputEntryNameDialog(
         Text(
             text = string(args.purpose.stringKey),
             style = MaterialTheme.typography.body2,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Spacer(Modifier.height(20.dp))
         OutlinedTextField(
@@ -107,19 +107,19 @@ fun InputEntryNameDialog(
             value = input,
             singleLine = true,
             isError = args.invalidOptions.contains(input.text) || input.text.isBlank(),
-            onValueChange = { input = it }
+            onValueChange = { input = it },
         )
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
             TextButton(
-                onClick = { dismiss() }
+                onClick = { dismiss() },
             ) {
                 Text(string(Strings.CommonCancel))
             }
             Spacer(Modifier.width(25.dp))
             Button(
                 enabled = input.text.isNotBlank(),
-                onClick = { trySubmit() }
+                onClick = { trySubmit() },
             ) {
                 Text(string(Strings.CommonOkay))
             }

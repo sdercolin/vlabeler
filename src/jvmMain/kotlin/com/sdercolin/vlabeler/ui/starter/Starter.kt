@@ -42,12 +42,12 @@ fun BoxScope.Starter(
         Column(
             modifier = Modifier.wrapContentSize()
                 .padding(150.dp)
-                .align(Alignment.Center)
+                .align(Alignment.Center),
         ) {
             Text(
                 modifier = Modifier.padding(start = 10.dp),
                 text = string(Strings.AppName),
-                style = MaterialTheme.typography.h2
+                style = MaterialTheme.typography.h2,
             )
             Spacer(Modifier.height(50.dp))
 
@@ -56,14 +56,14 @@ fun BoxScope.Starter(
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = string(Strings.StarterStart),
-                        style = MaterialTheme.typography.h5
+                        style = MaterialTheme.typography.h5,
                     )
                     Spacer(Modifier.height(15.dp))
                     TextButton(onClick = { appState.requestOpenProjectCreator() }) {
                         Icon(
                             modifier = Modifier.size(20.dp),
                             imageVector = Icons.Default.Create,
-                            contentDescription = null
+                            contentDescription = null,
                         )
                         Spacer(Modifier.width(10.dp))
                         Text(text = string(Strings.StarterNewProject), style = MaterialTheme.typography.body2)
@@ -72,7 +72,7 @@ fun BoxScope.Starter(
                         Icon(
                             modifier = Modifier.size(20.dp),
                             imageVector = Icons.Default.FileOpen,
-                            contentDescription = null
+                            contentDescription = null,
                         )
                         Spacer(Modifier.width(10.dp))
                         Text(text = string(Strings.StarterOpen), style = MaterialTheme.typography.body2)
@@ -82,7 +82,7 @@ fun BoxScope.Starter(
                 Column(Modifier.weight(1.5f)) {
                     Text(
                         text = string(Strings.StarterRecent),
-                        style = MaterialTheme.typography.h5
+                        style = MaterialTheme.typography.h5,
                     )
                     Spacer(Modifier.height(30.dp))
                     val appRecord by appState.appRecordFlow.collectAsState()
@@ -97,7 +97,7 @@ fun BoxScope.Starter(
                                 text = recentPaths[index].second,
                                 onClick = {
                                     loadProject(mainScope, file, appState)
-                                }
+                                },
                             )
                         }
                     }

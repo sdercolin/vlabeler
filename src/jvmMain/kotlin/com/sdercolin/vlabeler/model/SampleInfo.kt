@@ -38,7 +38,7 @@ data class SampleInfo(
             val frameLengthLong = stream.frameLength
             if (frameLengthLong > Int.MAX_VALUE) {
                 throw IllegalArgumentException(
-                    "Cannot load sample with frame length ($frameLengthLong) > ${Int.MAX_VALUE}"
+                    "Cannot load sample with frame length ($frameLengthLong) > ${Int.MAX_VALUE}",
                 )
             }
             val frameLength = frameLengthLong.toInt()
@@ -69,7 +69,7 @@ data class SampleInfo(
                 chunkCount = chunkCount,
                 hasSpectrogram = appConf.painter.spectrogram.enabled,
                 lastModified = file.lastModified(),
-                algorithmVersion = WaveLoadingAlgorithmVersion
+                algorithmVersion = WaveLoadingAlgorithmVersion,
             )
         }
     }

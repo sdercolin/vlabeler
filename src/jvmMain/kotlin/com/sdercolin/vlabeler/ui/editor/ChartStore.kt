@@ -92,7 +92,7 @@ class ChartStore {
                         appConf,
                         density,
                         layoutDirection,
-                        onRenderProgress
+                        onRenderProgress,
                     )
                 }
                 if (sampleInfo.hasSpectrogram && appConf.painter.spectrogram.enabled) {
@@ -104,7 +104,7 @@ class ChartStore {
                         appConf,
                         layoutDirection,
                         colorPalette,
-                        onRenderProgress
+                        onRenderProgress,
                     )
                 }
             }
@@ -321,7 +321,7 @@ class ChartStore {
                     drawRect(
                         color = color,
                         topLeft = Offset(left, top),
-                        size = Size(1f, step.toFloat())
+                        size = Size(1f, step.toFloat()),
                     )
                 }
             }

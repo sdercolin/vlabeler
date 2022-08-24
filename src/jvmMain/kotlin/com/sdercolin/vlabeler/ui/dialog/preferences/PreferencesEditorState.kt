@@ -50,7 +50,7 @@ class PreferencesEditorState(
                         val page = first { it.model == pageModel }
                         addAll(
                             indexOf(page) + 1,
-                            pageModel.children.map { PreferencesPageListItem(it, level + 1) }
+                            pageModel.children.map { PreferencesPageListItem(it, level + 1) },
                         )
                         page.isExpanded = true
                     }
@@ -64,7 +64,7 @@ class PreferencesEditorState(
             pages.first { it.model == initialPage }
         } else {
             pages.first()
-        }
+        },
     )
 
     val needSave get() = savedConf != _conf
@@ -172,7 +172,7 @@ class PreferencesEditorState(
             allKeyBinds = allKeyBinds,
             submit = { edited ->
                 submitKeymapItemEditDialog(edited, keymap, allKeyBinds)
-            }
+            },
         )
     }
 
@@ -207,7 +207,7 @@ class PreferencesEditorState(
                     editedKeymap.update(it.update(null))
                 }
                 _conf = keymap.update(conf, editedKeymap.map { it.value })
-            }
+            },
         )
     }
 

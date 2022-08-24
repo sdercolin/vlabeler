@@ -21,7 +21,7 @@ data class ProjectHistory(
             .let {
                 ProjectHistory(
                     list = it,
-                    index = it.lastIndex
+                    index = it.lastIndex,
                 )
             }
     }

@@ -65,7 +65,7 @@ fun NameLabels(
             NameLabelEntryChunk(
                 leftEntry = leftEntry?.takeIf { it.start >= chunkStart && it.start < chunkEnd },
                 entries = totalChunk.entries.filter { it.start >= chunkStart && it.start < chunkEnd },
-                rightEntry = rightEntry?.takeIf { it.start >= chunkStart && it.start < chunkEnd }
+                rightEntry = rightEntry?.takeIf { it.start >= chunkStart && it.start < chunkEnd },
             )
         }
     }
@@ -81,7 +81,7 @@ fun NameLabels(
                     offset = index * chunkLength,
                     requestRename = requestRename,
                     jumpToEntry = jumpToEntry,
-                    onHovered = onHovered
+                    onHovered = onHovered,
                 )
             } else {
                 Box(modifier)
@@ -105,7 +105,7 @@ private fun NameLabel(
             .wrapContentSize()
             .combinedClickable(
                 onClick = { requestRename(index) },
-                onLongClick = { jumpToEntry(index) }
+                onLongClick = { jumpToEntry(index) },
             )
             .onPointerEvent(eventType = PointerEventType.Enter) {
                 onHovered(index, true)
@@ -117,7 +117,7 @@ private fun NameLabel(
         maxLines = 1,
         text = name,
         color = color,
-        style = MaterialTheme.typography.caption
+        style = MaterialTheme.typography.caption,
     )
 }
 
@@ -149,7 +149,7 @@ private fun NameLabelsChunk(
                 val color = colors[itemIndex]
                 NameLabel(item.index, item.name, color, requestRename, jumpToEntry, onHovered)
             }
-        }
+        },
     ) { measurables, constraints ->
         val placeables = measurables.map { measurable ->
             measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))

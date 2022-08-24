@@ -50,11 +50,11 @@ fun <T> SelectionBox(
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(5.dp)
+                    shape = RoundedCornerShape(5.dp),
                 )
                 .clickable(enabled) { expanded = !expanded }
                 .runIf(!customPadding) { padding(vertical = 10.dp, horizontal = 15.dp) },
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 modifier = if (fixedWidth) Modifier.weight(1f) else Modifier.widthIn(min = 120.dp),
@@ -62,7 +62,7 @@ fun <T> SelectionBox(
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onBackground.runIf(!enabled) { copy(alpha = 0.5f) },
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             if (showIcon) {
                 Spacer(Modifier.size(10.dp))
@@ -70,7 +70,7 @@ fun <T> SelectionBox(
                     imageVector = Icons.Default.ExpandMore,
                     modifier = Modifier.size(24.dp),
                     contentDescription = null,
-                    tint = MaterialTheme.colors.onBackground
+                    tint = MaterialTheme.colors.onBackground,
                 )
             } else {
                 Spacer(Modifier.height(24.dp).width(1.dp))
@@ -78,14 +78,14 @@ fun <T> SelectionBox(
         }
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             options.forEach {
                 DropdownMenuItem(
                     onClick = {
                         onSelect(it)
                         expanded = false
-                    }
+                    },
                 ) {
                     Text(text = getText(it), style = MaterialTheme.typography.body2)
                 }

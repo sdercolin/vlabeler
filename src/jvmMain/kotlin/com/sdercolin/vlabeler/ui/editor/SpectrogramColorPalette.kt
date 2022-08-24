@@ -41,7 +41,7 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
                             (lastR + it * rStep).roundToInt(),
                             (lastG + it * gStep).roundToInt(),
                             (lastB + it * bStep).roundToInt(),
-                            (lastA + it * aStep).roundToInt()
+                            (lastA + it * aStep).roundToInt(),
                         )
                     }
                 } else {
@@ -64,11 +64,11 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
         Reversed(listOf(White, DarkGray), listOf(0f, 1f)),
         Foggy(
             listOf("#c76504".toColor(), White),
-            listOf(5f, 1f)
+            listOf(5f, 1f),
         ),
         Snowy(
             listOf("#163eab".toColor(), White),
-            listOf(5f, 1f)
+            listOf(5f, 1f),
         ),
         Dawn(
             listOf(
@@ -77,9 +77,9 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
                 "#0286af".toColor(),
                 "#bfcab8".toColor(),
                 "#e6aaab".toColor(),
-                Color.White
+                Color.White,
             ),
-            listOf(0f, 2f, 4f, 2f, 1f, 0.5f)
+            listOf(0f, 2f, 4f, 2f, 1f, 0.5f),
         ),
         Sunset(
             listOf(
@@ -87,9 +87,9 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
                 "#02063e".toColor(),
                 "#f21e07".toColor(),
                 "#eded0c".toColor(),
-                "#fcfef0".toColor()
+                "#fcfef0".toColor(),
             ),
-            listOf(0f, 4f, 5f, 1f, 0.5f)
+            listOf(0f, 4f, 5f, 1f, 0.5f),
         ),
         Midnight(
             listOf(
@@ -97,9 +97,9 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
                 "#1f1f47".toColor(),
                 "#c45a0f".toColor(),
                 "#f9ca3a".toColor(),
-                White
+                White,
             ),
-            listOf(0f, 3f, 2f, 0.5f, 0.5f)
+            listOf(0f, 3f, 2f, 0.5f, 0.5f),
         );
 
         fun create() = SpectrogramColorPalette(keyColors, stepWeights)

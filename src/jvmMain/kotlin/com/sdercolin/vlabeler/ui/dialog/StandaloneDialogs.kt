@@ -23,7 +23,7 @@ fun StandaloneDialogs(
     when {
         appState.isShowingOpenProjectDialog -> OpenFileDialog(
             title = string(Strings.OpenProjectDialogTitle),
-            extensions = listOf(Project.ProjectFileExtension)
+            extensions = listOf(Project.ProjectFileExtension),
         ) { parent, name ->
             appState.closeOpenProjectDialog()
             if (parent != null && name != null) {
@@ -34,7 +34,7 @@ fun StandaloneDialogs(
             title = string(Strings.SaveAsProjectDialogTitle),
             extensions = listOf(Project.ProjectFileExtension),
             initialDirectory = appState.project!!.workingDirectory,
-            initialFileName = appState.project.projectFile.name
+            initialFileName = appState.project.projectFile.name,
         ) { directory, fileName ->
             appState.closeSaveAsProjectDialog()
             if (directory != null && fileName != null) {
@@ -52,7 +52,7 @@ fun StandaloneDialogs(
                     copy(
                         workingDirectory = directory,
                         projectName = projectName,
-                        cacheDirectory = cacheDirectory
+                        cacheDirectory = cacheDirectory,
                     )
                 }
                 appState.requestSave()
@@ -65,7 +65,7 @@ fun StandaloneDialogs(
                 extensions = listOf(project.labelerConf.extension),
                 initialDirectory = project.sampleDirectory,
                 initialFileName = project.labelerConf.defaultInputFilePath?.lastPathSection
-                    ?: "${project.projectName}.${project.labelerConf.extension}"
+                    ?: "${project.projectName}.${project.labelerConf.extension}",
             ) { parent, name ->
                 appState.closeExportDialog()
                 if (parent != null && name != null) {
@@ -83,7 +83,7 @@ fun StandaloneDialogs(
                 title = string(Strings.ChooseSampleDirectoryDialogTitle),
                 initialDirectory = project.sampleDirectory.toFileOrNull()?.absolutePath,
                 extensions = null,
-                directoryMode = true
+                directoryMode = true,
             ) { parent, name ->
                 appState.closeSampleDirectoryRedirectDialog()
                 if (parent != null && name != null) {

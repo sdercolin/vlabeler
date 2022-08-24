@@ -30,7 +30,7 @@ fun PreferencesDialog(appState: AppState) {
     }
     Box(
         modifier = Modifier.fillMaxSize().background(color = Black50),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface {
             PreferencesEditor(
@@ -38,7 +38,7 @@ fun PreferencesDialog(appState: AppState) {
                 submit = finish,
                 apply = apply,
                 initialPage = initialPage,
-                onViewPage = onViewPage
+                onViewPage = onViewPage,
             )
         }
     }

@@ -50,7 +50,7 @@ fun rememberBottomBarState(
     appState,
     appState.appConf,
     appState.canGoNextEntryOrSample,
-    appState.canGoPreviousEntryOrSample
+    appState.canGoPreviousEntryOrSample,
 ) {
     BottomBarState(
         currentEntryIndexInTotal = project.currentIndex,
@@ -62,8 +62,8 @@ fun rememberBottomBarState(
                 SetResolutionDialogArgs(
                     current = editorState.canvasResolution,
                     min = appState.appConf.painter.canvasResolution.min,
-                    max = appState.appConf.painter.canvasResolution.max
-                )
+                    max = appState.appConf.painter.canvasResolution.max,
+                ),
             )
         },
         canGoNext = appState.canGoNextEntryOrSample,
@@ -77,6 +77,6 @@ fun rememberBottomBarState(
         isMultipleEditModeEnabled = project.labelerConf.continuous,
         isMultipleEditMode = project.multipleEditMode,
         toggleMultipleEditMode = { appState.toggleMultipleEditMode(!project.multipleEditMode) },
-        appConf = appState.appConf
+        appConf = appState.appConf,
     )
 }

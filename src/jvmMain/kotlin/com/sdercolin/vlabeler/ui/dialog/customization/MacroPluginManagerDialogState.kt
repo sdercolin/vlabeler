@@ -17,7 +17,7 @@ class MacroPluginManagerDialogState(
     importDialogTitle = Strings.MacroPluginManagerImportDialogTitle,
     allowExecution = true,
     appState = appState,
-    appRecordStore = appRecordStore
+    appRecordStore = appRecordStore,
 )
 
 @Composable
@@ -26,7 +26,7 @@ fun rememberMacroPluginManagerState(appState: AppState): MacroPluginManagerDialo
     val state = remember {
         MacroPluginManagerDialogState(
             appState = appState,
-            appRecordStore = appState.appRecordStore
+            appRecordStore = appState.appRecordStore,
         )
     }
     LaunchedEffect(plugins) {
@@ -34,7 +34,7 @@ fun rememberMacroPluginManagerState(appState: AppState): MacroPluginManagerDialo
             MacroPluginItem(
                 plugin = it,
                 appState = appState,
-                disabled = appState.appRecordStore.stateFlow.value.disabledPluginNames.contains(it.name)
+                disabled = appState.appRecordStore.stateFlow.value.disabledPluginNames.contains(it.name),
             )
         }
         state.loadItems(items)

@@ -65,7 +65,7 @@ fun loadProject(
         val fixedProject = project.copy(
             labelerConf = labelerConf,
             workingDirectory = workingDirectory,
-            projectName = projectName
+            projectName = projectName,
         )
         if (fixedProject != project) {
             Log.info("Loaded project is modified to: $fixedProject")

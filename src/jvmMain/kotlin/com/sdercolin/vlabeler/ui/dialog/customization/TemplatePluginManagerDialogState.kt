@@ -17,7 +17,7 @@ class TemplatePluginManagerDialogState(
     importDialogTitle = Strings.TemplatePluginManagerImportDialogTitle,
     allowExecution = false,
     appState = appState,
-    appRecordStore = appRecordStore
+    appRecordStore = appRecordStore,
 )
 
 @Composable
@@ -26,14 +26,14 @@ fun rememberTemplatePluginManagerState(appState: AppState): TemplatePluginManage
     val state = remember {
         TemplatePluginManagerDialogState(
             appState = appState,
-            appRecordStore = appState.appRecordStore
+            appRecordStore = appState.appRecordStore,
         )
     }
     LaunchedEffect(plugins) {
         val items = plugins.map {
             TemplatePluginItem(
                 plugin = it,
-                disabled = appState.appRecordStore.stateFlow.value.disabledPluginNames.contains(it.name)
+                disabled = appState.appRecordStore.stateFlow.value.disabledPluginNames.contains(it.name),
             )
         }
         state.loadItems(items)

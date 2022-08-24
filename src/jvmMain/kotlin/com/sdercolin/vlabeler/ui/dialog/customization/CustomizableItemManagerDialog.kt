@@ -69,14 +69,14 @@ fun CustomizableItemManagerDialog(
         modifier = Modifier.fillMaxSize()
             .background(color = Black50)
             .plainClickable { state.cancelSelection() },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface(modifier = Modifier.fillMaxSize(0.8f)) {
             Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 30.dp)) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = string(state.title),
-                    style = MaterialTheme.typography.h6
+                    style = MaterialTheme.typography.h6,
                 )
                 Spacer(modifier = Modifier.height(25.dp))
                 MiddleButtonBar(state)
@@ -96,7 +96,7 @@ fun CustomizableItemManagerDialog(
                 coroutineScope.launch {
                     state.handleFileSelectorResult(file)
                 }
-            }
+            },
         )
     }
     Box(Modifier.fillMaxSize()) {
@@ -117,14 +117,14 @@ private fun MiddleButtonBar(state: CustomizableItemManagerDialogState<*>) {
             imageVector = Icons.Default.Add,
             contentDescription = null,
             tint = getTint(true),
-            modifier = Modifier.size(22.dp).clickable { state.openFileSelectorForNewItem() }
+            modifier = Modifier.size(22.dp).clickable { state.openFileSelectorForNewItem() },
         )
         val canRemove = state.canRemoveCurrentItem()
         Icon(
             imageVector = Icons.Default.Remove,
             contentDescription = null,
             tint = getTint(canRemove),
-            modifier = Modifier.size(22.dp).clickable(enabled = canRemove) { state.requestRemoveCurrentItem() }
+            modifier = Modifier.size(22.dp).clickable(enabled = canRemove) { state.requestRemoveCurrentItem() },
         )
 
         val selectedItem = state.selectedItem
@@ -134,7 +134,7 @@ private fun MiddleButtonBar(state: CustomizableItemManagerDialogState<*>) {
             tint = getTint(selectedItem != null),
             modifier = Modifier.size(22.dp).clickable(enabled = selectedItem != null) {
                 requireNotNull(selectedItem).revealInExplorer()
-            }
+            },
         )
         val hasEmail = selectedItem?.hasEmail() == true
         Icon(
@@ -143,7 +143,7 @@ private fun MiddleButtonBar(state: CustomizableItemManagerDialogState<*>) {
             tint = getTint(hasEmail),
             modifier = Modifier.size(22.dp).clickable(enabled = hasEmail) {
                 requireNotNull(selectedItem).openEmail()
-            }
+            },
         )
         val hasWebsite = selectedItem?.hasWebsite() == true
         Icon(
@@ -152,7 +152,7 @@ private fun MiddleButtonBar(state: CustomizableItemManagerDialogState<*>) {
             tint = getTint(hasWebsite),
             modifier = Modifier.size(22.dp).clickable(enabled = hasWebsite) {
                 requireNotNull(selectedItem).openWebsite()
-            }
+            },
         )
         if (state.allowExecution) {
             val canExecute = state.canExecuteSelectedItem()
@@ -160,7 +160,7 @@ private fun MiddleButtonBar(state: CustomizableItemManagerDialogState<*>) {
                 imageVector = Icons.Default.OpenInNew,
                 contentDescription = null,
                 tint = getTint(canExecute),
-                modifier = Modifier.size(22.dp).clickable(enabled = canExecute) { state.executeSelectedItem() }
+                modifier = Modifier.size(22.dp).clickable(enabled = canExecute) { state.executeSelectedItem() },
             )
         }
     }
@@ -172,21 +172,21 @@ private fun ColumnScope.Content(state: CustomizableItemManagerDialogState<*>) {
     Box(
         modifier = Modifier.fillMaxWidth()
             .weight(1f)
-            .background(MaterialTheme.colors.background)
+            .background(MaterialTheme.colors.background),
     ) {
         LazyColumn(state = lazyListState) {
             itemsIndexed(
                 items = state.items,
                 key = { _, item ->
                     item.name
-                }
+                },
             ) { index, item ->
                 Item(index, item, state)
             }
         }
         VerticalScrollbar(
             adapter = rememberScrollbarAdapter(lazyListState),
-            modifier = Modifier.align(Alignment.CenterEnd).width(15.dp)
+            modifier = Modifier.align(Alignment.CenterEnd).width(15.dp),
         )
     }
 }
@@ -200,7 +200,7 @@ fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialo
             .runIf(isSelected) { background(MaterialTheme.colors.primaryVariant) }
             .plainClickable { state.selectItem(index) }
             .padding(vertical = 20.dp, horizontal = 15.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Row {
@@ -208,21 +208,21 @@ fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialo
                     text = item.displayedName,
                     style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.alignByBaseline(),
-                    maxLines = 1
+                    maxLines = 1,
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
                     text = string(Strings.PluginDialogInfoAuthor, item.author),
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.alignByBaseline(),
-                    maxLines = 1
+                    maxLines = 1,
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
                     text = string(Strings.PluginDialogInfoVersion, item.version),
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.alignByBaseline(),
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
             if (item.description.isNotEmpty()) {
@@ -230,22 +230,22 @@ fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialo
                     modifier = Modifier.padding(top = 8.dp),
                     text = item.description,
                     style = MaterialTheme.typography.caption.copy(
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.75f)
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.75f),
                     ),
                     maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
         if (item.canRemove.not()) {
             Spacer(Modifier.width(10.dp))
             TooltipArea(
-                tooltip = { Tooltip(string(Strings.CustomizableItemManagerLockedDescription)) }
+                tooltip = { Tooltip(string(Strings.CustomizableItemManagerLockedDescription)) },
             ) {
                 Icon(
                     imageVector = Icons.Default.Lock,
                     contentDescription = null,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(22.dp),
                 )
             }
         }
@@ -255,9 +255,9 @@ fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialo
             onCheckedChange = { state.toggleItemDisabled(index) },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colors.primary,
-                uncheckedThumbColor = MaterialTheme.colors.onBackground
+                uncheckedThumbColor = MaterialTheme.colors.onBackground,
             ),
-            modifier = Modifier.padding(horizontal = 10.dp)
+            modifier = Modifier.padding(horizontal = 10.dp),
         )
     }
 }

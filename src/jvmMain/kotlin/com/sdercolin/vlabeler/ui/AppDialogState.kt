@@ -215,8 +215,8 @@ class AppDialogStateImpl(
                 initial = entry.name,
                 invalidOptions = invalidOptions,
                 showSnackbar = { state.mainScope.launch { snackbarHostState.showSnackbar(it) } },
-                purpose = purpose
-            )
+                purpose = purpose,
+            ),
         )
     }
 

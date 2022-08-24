@@ -47,7 +47,7 @@ class SampleListDialogState(
             SampleListDialogItem.IncludedSample(
                 name = it.key,
                 valid = it.key in existing,
-                entryCount = it.value.size
+                entryCount = it.value.size,
             )
         }
         excludedSampleItems = (existing - projectSamples.toSet()).map { SampleListDialogItem.ExcludedSample(it) }

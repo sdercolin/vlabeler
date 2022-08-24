@@ -72,14 +72,14 @@ private fun FileDialog(
     dispose = {
         if (directoryMode) setAwtDirectoryMode(false)
         it.dispose()
-    }
+    },
 ) else LwjglFileDialog(
     mode,
     initialDirectory,
     initialFileName,
     extensions,
     directoryMode,
-    onCloseRequest
+    onCloseRequest,
 )
 
 @Composable

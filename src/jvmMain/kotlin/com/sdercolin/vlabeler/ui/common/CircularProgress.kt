@@ -17,7 +17,7 @@ fun CircularProgress(darkenBackground: Boolean = true) {
         modifier = Modifier.fillMaxSize()
             .runIf(darkenBackground) { background(color = Black50) }
             .plainClickable(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()
     }

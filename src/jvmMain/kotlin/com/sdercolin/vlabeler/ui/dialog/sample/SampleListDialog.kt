@@ -68,7 +68,7 @@ fun SampleListDialog(
         modifier = Modifier.fillMaxSize()
             .background(color = Black50)
             .plainClickable(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface(modifier = Modifier.fillMaxSize(0.8f)) {
             Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 30.dp)) {
@@ -78,7 +78,7 @@ fun SampleListDialog(
                     valid = state.isSampleDirectoryExisting(),
                     requestRedirectSampleDirectory = {
                         state.requestRedirectSampleDirectory()
-                    }
+                    },
                 )
                 Spacer(Modifier.height(15.dp))
                 Content(state)
@@ -91,7 +91,7 @@ fun SampleListDialog(
                         finish()
                     },
                     canOpenSampleDirectory = state.isSampleDirectoryExisting(),
-                    openSampleDirectory = { state.openSampleDirectory() }
+                    openSampleDirectory = { state.openSampleDirectory() },
                 )
             }
         }
@@ -125,7 +125,7 @@ private fun ColumnScope.Samples(state: SampleListDialogState) {
                 item,
                 isSelected,
                 textColor,
-                onClick = { state.selectSample(item.name) }
+                onClick = { state.selectSample(item.name) },
             )
         }
     }
@@ -136,7 +136,7 @@ private fun ColumnScope.Samples(state: SampleListDialogState) {
         weight = 0.35f,
         placeholder = {
             PlaceholderText(Strings.SampleListExcludedPlaceholder)
-        }
+        },
     ) {
         items(state.excludedSampleItems) { item ->
             val isSelected = item.isSelected(state.selectedSampleName)
@@ -145,7 +145,7 @@ private fun ColumnScope.Samples(state: SampleListDialogState) {
                 item,
                 isSelected,
                 textColor,
-                onClick = { state.selectSample(item.name) }
+                onClick = { state.selectSample(item.name) },
             )
         }
     }
@@ -163,18 +163,18 @@ private fun ColumnScope.Entries(state: SampleListDialogState) {
             } else {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     PlaceholderText(Strings.SampleListEntriesPlaceholderNoEntry)
                     Spacer(Modifier.height(10.dp))
                     Button(
-                        onClick = { state.createDefaultEntry() }
+                        onClick = { state.createDefaultEntry() },
                     ) {
                         Text(string(Strings.SampleListEntriesPlaceholderNoEntryButton))
                     }
                 }
             }
-        }
+        },
     ) {
         items(state.entryItems) { item ->
             val isSelected = item.isSelected(state.selectedEntryIndex)
@@ -183,7 +183,7 @@ private fun ColumnScope.Entries(state: SampleListDialogState) {
                 item,
                 isSelected,
                 textColor,
-                onClick = { state.selectEntry(item.entry.index) }
+                onClick = { state.selectEntry(item.entry.index) },
             )
         }
     }
@@ -206,7 +206,7 @@ private fun ItemRow(
             .height(35.dp)
             .runIfHave(onClick) { plainClickable(it) }
             .padding(horizontal = 15.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         val mainStyle = MaterialTheme.typography.body2.copy(color = textColor)
         val subStyle = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f))
@@ -216,20 +216,20 @@ private fun ItemRow(
                     text = "${item.entry.index + 1}",
                     modifier = Modifier.padding(end = 15.dp, top = 3.dp).widthIn(20.dp),
                     maxLines = 1,
-                    style = subStyle
+                    style = subStyle,
                 )
                 BasicText(
                     text = item.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = mainStyle
+                    style = mainStyle,
                 )
                 BasicText(
                     text = "${item.entry.start}...${item.entry.end}",
                     modifier = Modifier.padding(start = 10.dp, top = 3.dp),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = subStyle
+                    style = subStyle,
                 )
             }
             is Sample -> {
@@ -237,7 +237,7 @@ private fun ItemRow(
                     text = item.fileName,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = mainStyle
+                    style = mainStyle,
                 )
                 if (item is IncludedSample) {
                     val text = if (item.entryCount > 1) {
@@ -250,7 +250,7 @@ private fun ItemRow(
                         modifier = Modifier.padding(start = 10.dp, top = 3.dp),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
-                        style = subStyle
+                        style = subStyle,
                     )
                 }
             }
@@ -263,7 +263,7 @@ private fun PlaceholderText(stringKey: Strings) {
     Text(
         text = string(stringKey),
         style = MaterialTheme.typography.caption,
-        color = MaterialTheme.colors.onBackground
+        color = MaterialTheme.colors.onBackground,
     )
 }
 
@@ -274,10 +274,10 @@ private fun GroupTitle(stringKey: Strings) {
         text = string(stringKey),
         style = MaterialTheme.typography.body2.copy(
             color = MaterialTheme.colors.onBackground,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         ),
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -291,7 +291,7 @@ private fun ColumnScope.GroupLazyColumn(
     Box(
         modifier = Modifier.fillMaxHeight()
             .weight(weight)
-            .background(color = MaterialTheme.colors.background)
+            .background(color = MaterialTheme.colors.background),
     ) {
         val lazyListState = rememberLazyListState()
         LaunchedEffect(selectedIndex) {
@@ -303,14 +303,14 @@ private fun ColumnScope.GroupLazyColumn(
         if (lazyListState.layoutInfo.totalItemsCount == 0) {
             Box(
                 modifier = Modifier.fillMaxSize(0.8f).align(Alignment.Center),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 placeholder()
             }
         }
         VerticalScrollbar(
             adapter = rememberScrollbarAdapter(lazyListState),
-            modifier = Modifier.align(Alignment.TopEnd).fillMaxHeight().width(15.dp)
+            modifier = Modifier.align(Alignment.TopEnd).fillMaxHeight().width(15.dp),
         )
     }
 }
@@ -327,10 +327,10 @@ private fun SampleDirectoryBar(
             text = string(Strings.SampleListSampleDirectoryLabel),
             style = MaterialTheme.typography.body2.copy(
                 color = MaterialTheme.colors.onBackground,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             ),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
         Spacer(Modifier.width(5.dp))
         BasicTextField(
@@ -341,16 +341,16 @@ private fun SampleDirectoryBar(
             value = directory.absolutePath,
             onValueChange = {},
             textStyle = MaterialTheme.typography.caption.copy(
-                color = if (valid) MaterialTheme.colors.onBackground else MaterialTheme.colors.error
+                color = if (valid) MaterialTheme.colors.onBackground else MaterialTheme.colors.error,
             ),
-            readOnly = true
+            readOnly = true,
         )
         Spacer(Modifier.width(20.dp))
         ClickableText(
             modifier = Modifier.alignByBaseline(),
             text = string(Strings.SampleListSampleDirectoryRedirectButton),
             style = MaterialTheme.typography.caption,
-            onClick = { requestRedirectSampleDirectory() }
+            onClick = { requestRedirectSampleDirectory() },
         )
     }
 }
@@ -366,20 +366,20 @@ private fun ButtonBar(
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
         TextButton(
             enabled = canOpenSampleDirectory,
-            onClick = { openSampleDirectory() }
+            onClick = { openSampleDirectory() },
         ) {
             Text(string(Strings.SampleListOpenSampleDirectoryButton))
         }
         Spacer(Modifier.weight(1f))
         TextButton(
             enabled = hasSelectedEntry,
-            onClick = { jumpToSelectedEntry() }
+            onClick = { jumpToSelectedEntry() },
         ) {
             Text(string(Strings.SampleListJumpToSelectedEntryButton))
         }
         Spacer(Modifier.width(25.dp))
         Button(
-            onClick = { finish() }
+            onClick = { finish() },
         ) {
             Text(string(Strings.CommonOkay))
         }

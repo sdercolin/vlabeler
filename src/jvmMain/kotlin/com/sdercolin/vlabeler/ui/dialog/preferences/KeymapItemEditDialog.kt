@@ -69,9 +69,9 @@ class KeymapItemEditDialogState<K : Action>(private val args: PreferencesEditorS
         args.actionKeyBind.keySet?.displayedKeyName.orEmpty().let { textValue ->
             TextFieldValue(
                 textValue,
-                selection = TextRange(textValue.length)
+                selection = TextRange(textValue.length),
             )
-        }
+        },
     )
         private set
 
@@ -110,7 +110,7 @@ class KeymapItemEditDialogState<K : Action>(private val args: PreferencesEditorS
         val textValue = keySet?.displayedKeyName.orEmpty()
         text = TextFieldValue(
             textValue,
-            selection = TextRange(textValue.length)
+            selection = TextRange(textValue.length),
         )
     }
 
@@ -138,23 +138,23 @@ fun <K : Action> KeymapItemEditDialog(
     }
     Box(
         modifier = Modifier.fillMaxSize().background(color = Black50),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface {
             Column(
                 modifier = Modifier.widthIn(min = 400.dp)
-                    .padding(horizontal = 30.dp, vertical = 20.dp)
+                    .padding(horizontal = 30.dp, vertical = 20.dp),
             ) {
                 Text(
                     text = string(Strings.PreferencesKeymapEditDialogTitle),
                     style = MaterialTheme.typography.caption,
-                    maxLines = 1
+                    maxLines = 1,
                 )
                 Spacer(Modifier.height(15.dp))
                 Text(
                     text = args.actionKeyBind.title,
                     style = MaterialTheme.typography.body2,
-                    maxLines = 1
+                    maxLines = 1,
                 )
                 Spacer(Modifier.height(25.dp))
                 Row(
@@ -162,10 +162,10 @@ fun <K : Action> KeymapItemEditDialog(
                         .border(
                             width = 1.dp,
                             color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
-                            shape = RoundedCornerShape(5.dp)
+                            shape = RoundedCornerShape(5.dp),
                         )
                         .padding(vertical = 15.dp, horizontal = 15.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // TODO: try to remove the right click menu
                     BasicTextField(
@@ -187,20 +187,20 @@ fun <K : Action> KeymapItemEditDialog(
                         onValueChange = {},
                         maxLines = 1,
                         cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
-                        keyboardActions = KeyboardActions()
+                        keyboardActions = KeyboardActions(),
                     )
                     Spacer(Modifier.width(20.dp))
                     Box(
                         modifier = Modifier
                             .clip(CircleShape)
                             .clickable { state.clearKeySet() }
-                            .padding(4.dp)
+                            .padding(4.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = null,
                             tint = MaterialTheme.colors.onBackground,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.dp),
                         )
                     }
                 }
@@ -209,7 +209,7 @@ fun <K : Action> KeymapItemEditDialog(
                     Spacer(Modifier.height(20.dp))
                     Text(
                         text = string(description),
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.caption,
                     )
                 }
                 val conflictedActions = state.getConflictingActions()
@@ -220,7 +220,7 @@ fun <K : Action> KeymapItemEditDialog(
                             imageVector = Icons.Default.Warning,
                             contentDescription = null,
                             tint = DarkYellow,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(18.dp),
                         )
                         Spacer(Modifier.width(20.dp))
                         Column {
@@ -228,13 +228,13 @@ fun <K : Action> KeymapItemEditDialog(
                             Text(
                                 text = string(Strings.PreferencesKeymapEditDialogConflictingLabel),
                                 style = MaterialTheme.typography.caption,
-                                maxLines = 1
+                                maxLines = 1,
                             )
                             for (action in conflictedActions) {
                                 Text(
                                     text = action.title,
                                     style = MaterialTheme.typography.caption,
-                                    maxLines = 1
+                                    maxLines = 1,
                                 )
                             }
                         }
@@ -243,14 +243,14 @@ fun <K : Action> KeymapItemEditDialog(
                 Spacer(Modifier.height(25.dp))
                 Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
                     TextButton(
-                        onClick = { state.cancel() }
+                        onClick = { state.cancel() },
                     ) {
                         Text(string(Strings.CommonCancel))
                     }
                     Spacer(Modifier.width(25.dp))
                     Button(
                         enabled = state.isValid,
-                        onClick = { state.submit() }
+                        onClick = { state.submit() },
                     ) {
                         Text(string(Strings.CommonOkay))
                     }

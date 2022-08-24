@@ -28,7 +28,7 @@ fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
         modifier = Modifier
             .padding(10.dp)
             .background(color = Black80, shape = RoundedCornerShape(5.dp))
-            .align(Alignment.BottomEnd)
+            .align(Alignment.BottomEnd),
     ) {
         Tool.values().forEach { tool ->
             val checked = selectedTool == tool
@@ -38,7 +38,7 @@ fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
                     .background(backgroundColor, shape = RoundedCornerShape(5.dp))
                     .plainClickable { select(tool) }
                     .padding(5.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 val icon = when (tool) {
                     Tool.Cursor -> Icons.Default.Height
@@ -52,7 +52,7 @@ fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
                     imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.rotate(rotate),
-                    tint = MaterialTheme.colors.onBackground
+                    tint = MaterialTheme.colors.onBackground,
                 )
             }
         }

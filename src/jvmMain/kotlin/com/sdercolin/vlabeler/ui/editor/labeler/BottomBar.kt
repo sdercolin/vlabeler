@@ -42,71 +42,71 @@ fun BottomBar(state: BottomBarState, keyboardViewModel: KeyboardViewModel) {
     Surface {
         Row(
             modifier = Modifier.fillMaxWidth().height(30.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
                         enabled = state.canGoPrevious,
-                        onClick = state.goPreviousSample
+                        onClick = state.goPreviousSample,
                     )
-                    .padding(start = 8.dp)
+                    .padding(start = 8.dp),
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = "<<",
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.caption,
                 )
             }
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
                         enabled = state.canGoPrevious,
-                        onClick = state.goPreviousEntry
-                    )
+                        onClick = state.goPreviousEntry,
+                    ),
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = "<",
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.caption,
                 )
             }
             Box(
                 Modifier.fillMaxHeight()
                     .widthIn(min = 85.dp)
                     .clickable { state.openJumpToEntryDialog() }
-                    .padding(horizontal = 5.dp)
+                    .padding(horizontal = 5.dp),
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = "${state.currentEntryIndexInTotal + 1} / ${state.totalEntryCount}",
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.caption,
                 )
             }
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
                         enabled = state.canGoNext,
-                        onClick = state.goNextEntry
-                    )
+                        onClick = state.goNextEntry,
+                    ),
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = ">",
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.caption,
                 )
             }
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
                         enabled = state.canGoNext,
-                        onClick = state.goNextSample
-                    )
+                        onClick = state.goNextSample,
+                    ),
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = ">>",
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.caption,
                 )
             }
 
@@ -115,19 +115,19 @@ fun BottomBar(state: BottomBarState, keyboardViewModel: KeyboardViewModel) {
             Box(
                 Modifier.fillMaxHeight()
                     .clickable { state.scrollFit() }
-                    .padding(horizontal = 15.dp)
+                    .padding(horizontal = 15.dp),
             ) {
                 Icon(
                     modifier = Modifier.size(15.dp).align(Alignment.Center),
                     imageVector = Icons.Default.CenterFocusWeak,
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
             if (state.isMultipleEditModeEnabled) {
                 Box(
                     Modifier.fillMaxHeight()
                         .clickable { state.toggleMultipleEditMode() }
-                        .padding(horizontal = 15.dp)
+                        .padding(horizontal = 15.dp),
                 ) {
                     Icon(
                         modifier = Modifier.size(15.dp).align(Alignment.Center).rotate(90f),
@@ -136,7 +136,7 @@ fun BottomBar(state: BottomBarState, keyboardViewModel: KeyboardViewModel) {
                         } else {
                             Icons.Default.Expand
                         },
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 }
             }
@@ -147,38 +147,38 @@ fun BottomBar(state: BottomBarState, keyboardViewModel: KeyboardViewModel) {
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
                         enabled = state.canIncrease,
-                        onClick = state::increase
-                    )
+                        onClick = state::increase,
+                    ),
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = "-",
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.caption,
                 )
             }
             Box(
                 Modifier.fillMaxHeight()
-                    .clickable(onClick = state.openSetResolutionDialog)
+                    .clickable(onClick = state.openSetResolutionDialog),
             ) {
                 Text(
                     modifier = Modifier.defaultMinSize(minWidth = 55.dp).align(Alignment.Center),
                     text = "1/${state.resolution}",
                     style = MaterialTheme.typography.caption,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
                         enabled = state.canDecrease,
-                        onClick = state::decrease
+                        onClick = state::decrease,
                     )
-                    .padding(end = 8.dp)
+                    .padding(end = 8.dp),
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = "+",
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.caption,
                 )
             }
         }

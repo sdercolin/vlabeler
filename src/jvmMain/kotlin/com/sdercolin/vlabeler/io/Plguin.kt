@@ -52,7 +52,7 @@ fun loadPlugins(type: Plugin.Type): List<Plugin> =
                                     description = param.description,
                                     defaultValue = content,
                                     multiLine = param.multiLine,
-                                    optional = param.optional
+                                    optional = param.optional,
                                 )
                             } else {
                                 param
@@ -66,7 +66,7 @@ fun loadPlugins(type: Plugin.Type): List<Plugin> =
                 plugin.copy(
                     directory = file.parentFile,
                     builtIn = isBuiltIn,
-                    parameters = parametersInjectedWithFileContents
+                    parameters = parametersInjectedWithFileContents,
                 )
             }
         }
@@ -87,7 +87,7 @@ suspend fun Plugin.loadSavedParams(): ParamMap = withContext(Dispatchers.IO) {
                             Plugin.ParameterType.Boolean -> element.jsonPrimitive.boolean
                             Plugin.ParameterType.EntrySelector -> json.decodeFromJsonElement(
                                 EntrySelector.serializer(),
-                                element
+                                element,
                             )
                             else -> element.jsonPrimitive.content
                         }

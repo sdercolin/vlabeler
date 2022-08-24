@@ -30,7 +30,7 @@ fun WarningText(text: String, style: WarningTextStyle) {
             imageVector = style.icon,
             contentDescription = null,
             tint = style.color,
-            modifier = Modifier.size(35.dp)
+            modifier = Modifier.size(35.dp),
         )
         Spacer(Modifier.width(20.dp))
         Column {

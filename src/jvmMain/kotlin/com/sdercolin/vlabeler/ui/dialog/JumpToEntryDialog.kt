@@ -22,6 +22,6 @@ fun JumpToEntryDialog(
     EntryList(
         pinned = false,
         project = args.project,
-        jumpToEntry = { index -> finish(JumpToEntryDialogResult(index)) }
+        jumpToEntry = { index -> finish(JumpToEntryDialogResult(index)) },
     )
 }

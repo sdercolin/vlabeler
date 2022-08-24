@@ -38,7 +38,7 @@ fun <T> AsyncImage(
                 painter = painterFor(it),
                 contentDescription = contentDescription,
                 contentScale = contentScale,
-                modifier = modifier
+                modifier = modifier,
             )
         }
     }

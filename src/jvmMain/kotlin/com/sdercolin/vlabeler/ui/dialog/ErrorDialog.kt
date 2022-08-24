@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Button
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,18 +34,18 @@ fun ErrorDialog(
         modifier = Modifier.fillMaxSize()
             .background(color = Black50)
             .plainClickable(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface {
             Box(
                 modifier = Modifier
-                    .padding(horizontal = 35.dp, vertical = 20.dp)
+                    .padding(horizontal = 35.dp, vertical = 20.dp),
             ) {
                 Column(Modifier.widthIn(min = 350.dp)) {
                     Spacer(Modifier.height(15.dp))
                     WarningText(
                         text = error.message ?: error.toString(),
-                        style = WarningTextStyle.Error
+                        style = WarningTextStyle.Error,
                     )
                     Spacer(Modifier.height(25.dp))
                     Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {

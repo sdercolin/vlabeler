@@ -34,7 +34,7 @@ sealed class CommonConfirmationDialogAction(
                 Strings.AskIfRemoveEntryLastDialogDescription
             } else {
                 Strings.AskIfRemoveEntryDialogDescription
-            }
+            },
         )
 
     class LoadAutoSavedProject(val file: File) :
@@ -44,13 +44,13 @@ sealed class CommonConfirmationDialogAction(
         CommonConfirmationDialogAction(
             string(
                 Strings.AskIfRedirectSampleDirectoryDialogDescription,
-                currentDirectory.absolutePath
-            )
+                currentDirectory.absolutePath,
+            ),
         )
 
     class RemoveCustomizableItem(val state: CustomizableItemManagerDialogState<*>, val item: CustomizableItem) :
         CommonConfirmationDialogAction(
-            string(Strings.CustomizableItemManagerRemoveItemConfirm, item.displayedName)
+            string(Strings.CustomizableItemManagerRemoveItemConfirm, item.displayedName),
         )
 }
 
@@ -71,18 +71,18 @@ fun CommonConfirmationDialog(
         Text(
             text = action.text,
             style = MaterialTheme.typography.body2,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
             TextButton(
-                onClick = { dismiss() }
+                onClick = { dismiss() },
             ) {
                 Text(string(Strings.CommonCancel))
             }
             Spacer(Modifier.width(25.dp))
             Button(
-                onClick = { confirm() }
+                onClick = { confirm() },
             ) {
                 Text(string(Strings.CommonOkay))
             }

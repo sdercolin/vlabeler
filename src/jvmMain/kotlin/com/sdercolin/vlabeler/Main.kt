@@ -72,7 +72,7 @@ fun main(vararg args: String) = application {
         icon = painterResource("icon.ico"),
         state = windowState,
         onCloseRequest = onCloseRequest,
-        onKeyEvent = onKeyEvent
+        onKeyEvent = onKeyEvent,
     ) {
         LaunchSaveWindowSize(windowState, appRecordStore)
         Menu(mainScope, appState)

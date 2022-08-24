@@ -52,14 +52,14 @@ fun BoxScope.PropertyView(project: Project) {
             .width(160.dp)
             .background(color = Black80, shape = RoundedCornerShape(5.dp))
             .padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 15.dp)
-            .align(Alignment.TopEnd)
+            .align(Alignment.TopEnd),
     ) {
         Text(
             text = text,
             modifier = Modifier.fillMaxWidth().align(Alignment.Center),
             color = MaterialTheme.colors.onBackground,
             style = MaterialTheme.typography.caption,
-            lineHeight = 25.sp
+            lineHeight = 25.sp,
         )
     }
 }

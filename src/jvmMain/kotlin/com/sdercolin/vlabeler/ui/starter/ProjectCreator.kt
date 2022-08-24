@@ -78,7 +78,7 @@ fun ProjectCreator(
         coroutineScope,
         activeLabelerConfs,
         appRecordStore,
-        launchArguments
+        launchArguments,
     ),
 ) {
     val scrollState = rememberScrollState()
@@ -94,12 +94,12 @@ fun ProjectCreator(
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 60.dp, vertical = 40.dp)
-                        .verticalScroll(scrollState)
+                        .verticalScroll(scrollState),
                 ) {
                     Text(
                         text = string(Strings.StarterNewProjectTitle),
                         style = MaterialTheme.typography.h4,
-                        maxLines = 1
+                        maxLines = 1,
                     )
                     Spacer(Modifier.height(25.dp))
                     listOf<@Composable () -> Unit>(
@@ -109,7 +109,7 @@ fun ProjectCreator(
                         { CacheDirectoryTextField(state) },
                         { LabelerSelectorRow(state, activeLabelerConfs, activeTemplatePlugins) },
                         { InputFileTextField(state) },
-                        { OtherSettingsRow(state) }
+                        { OtherSettingsRow(state) },
                     ).forEach {
                         it.invoke()
                         Spacer(Modifier.height(20.dp))
@@ -142,7 +142,7 @@ private fun SampleDirectoryTextField(state: ProjectCreatorState) {
                 Icon(Icons.Default.FolderOpen, null)
             }
         },
-        isError = state.isSampleDirectoryValid().not()
+        isError = state.isSampleDirectoryValid().not(),
     )
 }
 
@@ -159,7 +159,7 @@ private fun WorkingDirectoryTextField(state: ProjectCreatorState) {
                 Icon(Icons.Default.FolderOpen, null)
             }
         },
-        isError = state.isWorkingDirectoryValid().not()
+        isError = state.isWorkingDirectoryValid().not(),
     )
 }
 
@@ -172,12 +172,12 @@ private fun ProjectNameTextField(state: ProjectCreatorState) {
             onValueChange = state::updateProjectName,
             label = { Text(string(Strings.StarterNewProjectName)) },
             maxLines = 2,
-            isError = state.isProjectNameValid().not()
+            isError = state.isProjectNameValid().not(),
         )
         if (state.isProjectFileExisting()) {
             Spacer(Modifier.width(15.dp))
             TooltipArea(
-                tooltip = { Tooltip(string(Strings.StarterNewProjectNameWarning)) }
+                tooltip = { Tooltip(string(Strings.StarterNewProjectNameWarning)) },
             ) {
                 Icon(Icons.Default.Warning, null, tint = DarkYellow, modifier = Modifier.size(20.dp))
             }
@@ -198,7 +198,7 @@ private fun CacheDirectoryTextField(state: ProjectCreatorState) {
                 Icon(Icons.Default.FolderOpen, null)
             }
         },
-        isError = state.isCacheDirectoryValid().not()
+        isError = state.isCacheDirectoryValid().not(),
     )
 }
 
@@ -216,7 +216,7 @@ private fun LabelerSelectorRow(
         Spacer(Modifier.width(10.dp))
         IconButton(
             enabled = state.templatePlugin != null,
-            onClick = { pluginDialogShown = true }
+            onClick = { pluginDialogShown = true },
         ) {
             val color = if (state.templatePluginError) {
                 MaterialTheme.colors.error
@@ -236,7 +236,7 @@ private fun LabelerSelectorRow(
                 if (it != null) state.updatePluginParams(it)
                 pluginDialogShown = false
             },
-            save = { state.savePluginParams(it) }
+            save = { state.savePluginParams(it) },
         )
     }
 }
@@ -259,19 +259,19 @@ private fun LabelerSelector(
                 IconButton(onClick = { expanded = true }) {
                     Icon(Icons.Default.ExpandMore, null)
                 }
-            }
+            },
         )
         DropdownMenu(
             modifier = Modifier.align(Alignment.CenterEnd),
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             availableLabelerConfs.forEach { conf ->
                 DropdownMenuItem(
                     onClick = {
                         state.updateLabeler(conf)
                         expanded = false
-                    }
+                    },
                 ) {
                     Text(text = conf.displayedName)
                 }
@@ -298,18 +298,18 @@ private fun TemplatePluginSelector(
                 IconButton(onClick = { expanded = true }) {
                     Icon(Icons.Default.ExpandMore, null)
                 }
-            }
+            },
         )
         DropdownMenu(
             modifier = Modifier.align(Alignment.CenterEnd),
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
                 onClick = {
                     state.updatePlugin(null)
                     expanded = false
-                }
+                },
             ) {
                 Text(text = string(Strings.StarterNewTemplatePluginNone))
             }
@@ -318,7 +318,7 @@ private fun TemplatePluginSelector(
                     onClick = {
                         state.updatePlugin(plugin)
                         expanded = false
-                    }
+                    },
                 ) {
                     Text(text = plugin.displayedName)
                 }
@@ -342,7 +342,7 @@ private fun InputFileTextField(state: ProjectCreatorState) {
                 Icon(Icons.Default.FolderOpen, null)
             }
         },
-        isError = state.isInputFileValid().not()
+        isError = state.isInputFileValid().not(),
     )
 }
 
@@ -371,19 +371,19 @@ private fun EncodingSelector(state: ProjectCreatorState) {
                 IconButton(onClick = { expanded = true }) {
                     Icon(Icons.Default.ExpandMore, null)
                 }
-            }
+            },
         )
         DropdownMenu(
             modifier = Modifier.align(Alignment.CenterEnd),
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             state.encodings.forEach { encodingName ->
                 DropdownMenuItem(
                     onClick = {
                         state.encoding = encodingName
                         expanded = false
-                    }
+                    },
                 ) {
                     Text(text = encodingName)
                 }
@@ -400,14 +400,14 @@ private fun AutoExportSwitch(state: ProjectCreatorState) {
             onCheckedChange = { state.toggleAutoExport(it) },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colors.primary,
-                uncheckedThumbColor = MaterialTheme.colors.onBackground
-            )
+                uncheckedThumbColor = MaterialTheme.colors.onBackground,
+            ),
         )
         Spacer(Modifier.width(10.dp))
         Text(string(Strings.StarterNewAutoExport))
         Spacer(Modifier.width(15.dp))
         TooltipArea(
-            tooltip = { Tooltip(string(Strings.StarterNewAutoExportHelp)) }
+            tooltip = { Tooltip(string(Strings.StarterNewAutoExportHelp)) },
         ) {
             Icon(Icons.Default.HelpOutline, null, tint = MaterialTheme.colors.primary, modifier = Modifier.size(20.dp))
         }
@@ -427,7 +427,7 @@ private fun ButtonBar(
         }
         Button(
             onClick = { state.create(snackbarHostState, create) },
-            enabled = state.isValid()
+            enabled = state.isValid(),
         ) {
             Text(string(Strings.CommonOkay))
         }
@@ -447,7 +447,7 @@ private fun PickerDialog(
         title = title,
         initialDirectory = initial,
         extensions = extensions,
-        directoryMode = directoryMode
+        directoryMode = directoryMode,
     ) { parent, name ->
         state.handleFilePickerResult(picker, parent, name)
     }

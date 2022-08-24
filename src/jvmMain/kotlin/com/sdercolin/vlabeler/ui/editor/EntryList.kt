@@ -106,7 +106,7 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
                     }
                     else -> false
                 }
-            }
+            },
         )
         Divider(color = White20)
         if (searchResult.isNotEmpty()) {
@@ -114,7 +114,7 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
                 searchResult = searchResult,
                 currentIndex = currentIndex,
                 selectedIndex = selectedIndex,
-                select = { selectedIndex = it }
+                select = { selectedIndex = it },
             ) { searchResult[it].index.let(submit) }
         }
     }
@@ -165,33 +165,33 @@ private fun ColumnScope.List(
                                 submit(index)
                             }
                         },
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     BasicText(
                         text = "${item.index + 1}",
                         modifier = Modifier.padding(start = 20.dp, end = 15.dp, top = 3.dp).widthIn(20.dp),
                         maxLines = 1,
-                        style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f))
+                        style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f)),
                     )
                     BasicText(
                         text = item.value.name,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
-                        style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground)
+                        style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
                     )
                     BasicText(
                         text = item.value.sample,
                         modifier = Modifier.padding(start = 10.dp, top = 3.dp),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
-                        style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f))
+                        style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f)),
                     )
                 }
             }
         }
         VerticalScrollbar(
             adapter = scrollbarAdapter,
-            modifier = Modifier.align(Alignment.TopEnd).fillMaxHeight().width(15.dp)
+            modifier = Modifier.align(Alignment.TopEnd).fillMaxHeight().width(15.dp),
         )
     }
 }
