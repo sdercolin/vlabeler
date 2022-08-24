@@ -1,6 +1,6 @@
 {
   "name": "oto-plus.default",
-  "version": 4,
+  "version": 5,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": "UTAU oto labeler plus",
@@ -99,7 +99,7 @@
     {
       "name": "right",
       "displayedName": "Cutoff",
-      "value": "{end} > 0 ? {start} - {end} : parseFloat({rawRight})"
+      "value": "{end} > 0 ? {left} - {end} : parseFloat({rawRight})"
     },
     {
       "name": "preu",
