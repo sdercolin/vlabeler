@@ -20,7 +20,7 @@
       },
       {
         "type": "float",
-        "name": "start",
+        "name": "offset",
         "label": "Offset (ms)",
         "description": "Absolute time of the first preutterance",
         "defaultValue": 500,
@@ -63,28 +63,28 @@
       },
       {
         "type": "float",
-        "name": "preuValue",
+        "name": "preuDefault",
         "label": "Default value of preutterance (ms)",
         "defaultValue": 300,
         "min": 0
       },
       {
         "type": "float",
-        "name": "ovlValue",
+        "name": "ovlDefault",
         "label": "Default value of overlap (ms)",
         "defaultValue": 100,
         "min": 0
       },
       {
         "type": "float",
-        "name": "cutoffValue",
+        "name": "cutoffDefault",
         "label": "Default value of cutoff (ms)",
         "defaultValue": -700,
         "max": -1
       },
       {
         "type": "float",
-        "name": "fixedValue",
+        "name": "fixedDefault",
         "label": "Default value of fixed (or consonant) (ms)",
         "defaultValue": 450,
         "min": 0
