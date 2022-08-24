@@ -371,7 +371,8 @@ class MarkerState(
                 .takeIf { it >= 0 } ?: return null
             else -> return null
         }
-        return getDraggedEntries(pointIndex, cursorState.value.position, forcedDrag = false)
+        val cursorPosition = cursorState.value.position ?: return null
+        return getDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
     }
 
     companion object {

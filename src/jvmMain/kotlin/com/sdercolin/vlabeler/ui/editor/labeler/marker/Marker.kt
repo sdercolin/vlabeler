@@ -158,7 +158,7 @@ fun MarkerCanvas(
     LaunchedEffect(editorState.keyboardViewModel, state) {
         editorState.keyboardViewModel.keyboardActionFlow.collectLatest {
             val updated = state.getUpdatedEntriesByKeyAction(it) ?: return@collectLatest
-            state.editEntryIfNeeded(updated, editorState::updateEntries)
+            state.editEntryIfNeeded(updated, editorState::submitEntries)
         }
     }
 }

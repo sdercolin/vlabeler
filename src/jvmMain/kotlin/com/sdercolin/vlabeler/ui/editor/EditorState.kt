@@ -85,6 +85,11 @@ class EditorState(
         }
     }
 
+    fun submitEntries(editedEntries: List<IndexedEntry>) {
+        updateEntries(editedEntries)
+        submitEntries()
+    }
+
     fun updateEntries(editedEntries: List<IndexedEntry>) {
         this.editedEntries = editedEntries
     }
