@@ -24,7 +24,7 @@
         "type": "string",
         "name": "template",
         "label": "Template lines per sample",
-        "description": "Use `$1`, `$2`, etc. to specify the position of the extracted value.",
+        "description": "Use `$1`, `$2`, etc. to specify the position of the extracted value",
         "defaultValue": "",
         "multiLine": true,
         "optional": false

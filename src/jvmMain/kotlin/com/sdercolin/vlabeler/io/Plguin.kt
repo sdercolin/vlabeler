@@ -36,10 +36,38 @@ fun loadPlugins(type: Plugin.Type): List<Plugin> =
                 Log.debug(it)
                 Log.debug("Failed to load plugin: ${file.parent}")
                 null
-            }?.let {
+            }?.let { plugin ->
                 Log.info("Loaded plugin: ${file.parent}")
                 val isBuiltIn = file.absolutePath.contains(DefaultPluginDir.absolutePath)
-                it.copy(directory = file.parentFile, builtIn = isBuiltIn)
+                val parametersInjectedWithFileContents = plugin.parameters?.list?.let { list ->
+                    val newList = list.map { param ->
+                        if (param is Plugin.Parameter.StringParam) {
+                            val fileNameMatched = Plugin.Parameter.StringParam.DefaultValueFileReferencePattern
+                                .find(param.defaultValue)?.groupValues?.getOrNull(1)
+                            if (fileNameMatched != null) {
+                                val content = file.parentFile.resolve(fileNameMatched).readText().trim()
+                                Plugin.Parameter.StringParam(
+                                    name = param.name,
+                                    label = param.label,
+                                    description = param.description,
+                                    defaultValue = content,
+                                    multiLine = param.multiLine,
+                                    optional = param.optional
+                                )
+                            } else {
+                                param
+                            }
+                        } else {
+                            param
+                        }
+                    }
+                    Plugin.Parameters(list = newList)
+                }
+                plugin.copy(
+                    directory = file.parentFile,
+                    builtIn = isBuiltIn,
+                    parameters = parametersInjectedWithFileContents
+                )
             }
         }
         .sortedBy { it.displayedName }

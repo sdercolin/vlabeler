@@ -1,8 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog.plugin
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project

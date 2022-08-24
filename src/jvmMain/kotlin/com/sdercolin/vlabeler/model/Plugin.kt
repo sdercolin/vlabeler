@@ -120,7 +120,13 @@ data class Plugin(
             defaultValue: String,
             val multiLine: Boolean,
             val optional: Boolean
-        ) : Parameter<String>(ParameterType.String, name, label, description, defaultValue)
+        ) : Parameter<String>(ParameterType.String, name, label, description, defaultValue) {
+
+            companion object {
+                val DefaultValueFileReferencePattern = Regex("^file::(.*)$")
+                fun getDefaultValueFromFile(fileName: String) = "file::$fileName"
+            }
+        }
 
         class EnumParam(
             name: String,
@@ -226,7 +232,10 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
                 Plugin.Parameter.BooleanParam(name, label, description, default)
             }
             Plugin.ParameterType.String -> {
-                val default = defaultValue.jsonPrimitive.content
+                val defaultValueFromFile = element["defaultValueFromFile"]?.jsonPrimitive?.content
+                val default = defaultValueFromFile
+                    ?.let(Plugin.Parameter.StringParam::getDefaultValueFromFile)
+                    ?: defaultValue.jsonPrimitive.content
                 val optional = requireNotNull(element["optional"]).jsonPrimitive.boolean
                 val multiLine = element["multiLine"]?.jsonPrimitive?.boolean ?: false
                 Plugin.Parameter.StringParam(name, label, description, default, multiLine, optional)
