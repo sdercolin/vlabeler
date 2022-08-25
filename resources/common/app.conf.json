@@ -42,6 +42,9 @@
     },
     "lockedDrag": "labeler"
   },
+  "view": {
+    "pinnedEntryListPosition": "Right"
+  },
   "autoSave": {
     "target": "record",
     "intervalSec": 30
