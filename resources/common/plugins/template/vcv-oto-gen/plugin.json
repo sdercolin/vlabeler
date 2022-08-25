@@ -62,6 +62,15 @@
         "optional": true
       },
       {
+        "type": "string",
+        "name": "appendSuffix",
+        "label": "Append suffix",
+        "description": "Append a suffix to all normal file names. e.g. If given \"R\", a \"a R\" will be created from `_ああいあうえあ.wav`",
+        "defaultValue": "",
+        "multiLine": false,
+        "optional": true
+      },
+      {
         "type": "float",
         "name": "preuDefault",
         "label": "Default value of preutterance (ms)",

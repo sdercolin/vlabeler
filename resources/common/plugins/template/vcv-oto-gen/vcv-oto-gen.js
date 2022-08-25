@@ -15,7 +15,11 @@ if (repeatSuffix.indexOf("{number}") < 0) {
 }
 
 let prefix = params["prefix"]
+let appendSuffix = params["appendSuffix"]
 let suffixes = params["suffixes"].split(',')
+if (!suffixes.includes(appendSuffix)) {
+    suffixes.push(appendSuffix)
+}
 let preuDefault = params["preuDefault"]
 let ovlDefault = params["ovlDefault"]
 let cutoffDefault = params["cutoffDefault"]
@@ -86,7 +90,7 @@ function parseSample(sample) {
         return
     }
 
-    let rest = sample.slice(prefix.length)
+    let rest = (sample + appendSuffix).slice(prefix.length)
     let index = 0
     let lastVowel = "-"
 
@@ -96,7 +100,7 @@ function parseSample(sample) {
             // handle suffix
             let suffix = suffixes.find(suffix => rest === suffix)
             if (suffix) {
-                let alias = sample + " " + suffix
+                let alias = lastVowel + " " + suffix
                 push(sample, index, alias, false, false)
             } else if (index === 0) {
                 push(sample, 0, sample, false, true)
