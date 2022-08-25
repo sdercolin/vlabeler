@@ -54,6 +54,15 @@
       },
       {
         "type": "string",
+        "name": "separator",
+        "label": "Separator",
+        "description": "Separator of syllables in the normal file names. e.g. enter \"_\" for file names like \"_あ_あ_い_あ_う_え_あ\", and leave empty for \"_ああいあうえあ\"",
+        "defaultValue": "",
+        "multiLine": false,
+        "optional": true
+      },
+      {
+        "type": "string",
         "name": "suffixes",
         "label": "Available suffixes",
         "description": "Suffixes that should be used to create the last entry in a file. Use \",\" to separate multiple items",

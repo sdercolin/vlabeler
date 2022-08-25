@@ -15,6 +15,7 @@ if (repeatSuffix.indexOf("{number}") < 0) {
 }
 
 let prefix = params["prefix"]
+let separator = params["separator"]
 let appendSuffix = params["appendSuffix"]
 let suffixes = params["suffixes"].split(',')
 if (!suffixes.includes(appendSuffix)) {
@@ -118,6 +119,9 @@ function parseSample(sample) {
         index++
         lastVowel = vowelMap.get(matched)
         rest = rest.slice(matched.length)
+        if (separator !== "" && rest.startsWith(separator)) {
+            rest = rest.slice(separator.length)
+        }
     }
 }
 
