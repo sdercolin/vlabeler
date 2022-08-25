@@ -21,7 +21,7 @@ data class SampleInfo(
     val channels: Int,
     val length: Int,
     val lengthMillis: Float,
-    val maxChunkSize: Int,
+    val chunkSize: Int,
     val chunkCount: Int,
     val hasSpectrogram: Boolean,
     val lastModified: Long,
@@ -55,6 +55,7 @@ data class SampleInfo(
             val maxChunkSize = appConf.painter.maxDataChunkSize
             val lengthInMillis = frameLength / format.sampleRate * 1000
             val chunkCount = ceil(frameLength.toDouble() / maxChunkSize).toInt()
+            val chunkSize = frameLength / chunkCount
             stream.close()
             SampleInfo(
                 name = file.nameWithoutExtension,
@@ -65,7 +66,7 @@ data class SampleInfo(
                 channels = channels.size,
                 length = frameLength,
                 lengthMillis = lengthInMillis,
-                maxChunkSize = maxChunkSize,
+                chunkSize = chunkSize,
                 chunkCount = chunkCount,
                 hasSpectrogram = appConf.painter.spectrogram.enabled,
                 lastModified = file.lastModified(),

@@ -80,7 +80,7 @@ class ChartStore {
                 val chunk = if (hasCachedChunk(sampleInfo, chunkIndex)) {
                     null
                 } else {
-                    loadSampleChunk(sampleInfo, appConf, chunkIndex, sampleInfo.maxChunkSize).getOrThrow()
+                    loadSampleChunk(sampleInfo, appConf, chunkIndex, sampleInfo.chunkSize).getOrThrow()
                 }
 
                 repeat(sampleInfo.channels) { channelIndex ->

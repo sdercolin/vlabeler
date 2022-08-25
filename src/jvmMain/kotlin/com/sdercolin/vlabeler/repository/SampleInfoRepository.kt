@@ -37,7 +37,6 @@ object SampleInfoRepository {
         }.getOrNull()
         if (existingInfo != null &&
             existingInfo.algorithmVersion == WaveLoadingAlgorithmVersion &&
-            existingInfo.maxChunkSize == appConf.painter.maxDataChunkSize &&
             existingInfo.file.toFile().exists() &&
             existingInfo.lastModified == file.lastModified()
         ) {
