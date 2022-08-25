@@ -94,7 +94,7 @@ data class AppConf(
         val backgroundColor: String = DefaultBackgroundColor,
     ) {
         companion object {
-            const val DefaultUnitSize = 40
+            const val DefaultUnitSize = 60
             const val MaxUnitSize = DefaultUnitSize * 10
             const val MinUnitSize = 1
             const val DefaultIntensityAccuracy = 1000
@@ -144,7 +144,7 @@ data class AppConf(
             const val DefaultHeightWeight = 0.75f
             const val MaxHeightWeight = 5f
             const val MinHeightWeight = 0.1f
-            const val DefaultPointDensity = 5
+            const val DefaultPointDensity = 2
             const val MaxPointDensity = 30
             const val MinPointDensity = 1
             const val DefaultStandardHopSize = 110
