@@ -98,6 +98,8 @@ function parseSample(sample) {
             if (suffix) {
                 let alias = sample + " " + suffix
                 push(sample, index, alias, false, false)
+            } else if (index === 0) {
+                push(sample, 0, sample, false, true)
             }
             return
         }
