@@ -34,6 +34,7 @@ class Player(
 
     suspend fun load(newFile: File) {
         openJob?.cancelAndJoin()
+        stop()
         file = newFile
         openJob = coroutineScope.launch(Dispatchers.IO) {
             runCatching {

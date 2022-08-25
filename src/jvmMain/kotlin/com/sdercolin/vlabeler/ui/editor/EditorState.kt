@@ -122,10 +122,10 @@ class EditorState(
                 null
             }?.let {
                 chartStore.prepareForNewLoading(it.chunkCount, it.channels)
-                player.load(File(it.file))
                 appState.updateProjectOnLoadedSample(it)
                 val renderProgressTotal = it.chunkCount * (it.channels + if (it.hasSpectrogram) 1 else 0)
                 _renderProgress = 0 to renderProgressTotal
+                player.load(File(it.file))
             }
         }
     }
