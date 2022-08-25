@@ -57,7 +57,7 @@
         "name": "suffixes",
         "label": "Available suffixes",
         "description": "Suffixes that should be used to create the last entry in a file. Use \",\" to separate multiple items",
-        "defaultValue": "R,Bk,息,吸",
+        "defaultValue": "R,L,B,息,吸",
         "multiLine": false,
         "optional": true
       },
