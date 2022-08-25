@@ -56,7 +56,7 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
 
     fun onKeyEvent(event: KeyEvent): Boolean {
         val keySet = KeySet.fromKeyEvent(event)
-        val caughtKeyAction = keyActions.firstOrNull { it.first.shouldCatch(event, true) }?.second
+        val caughtKeyAction = keyActions.firstOrNull { it.first == keySet }?.second
 
         coroutineScope.launch {
             emitState(KeyboardState(keySet, mouseClickActions, mouseScrollActions))
