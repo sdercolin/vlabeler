@@ -26,12 +26,6 @@ class Player(
 ) {
     private var file: File? = null
     private var format: AudioFormat? = null
-    private val AudioFormat.sampleSize: Int
-        get() {
-            val channelNumber = channels
-            val frameByteSize = sampleSizeInBits / 8
-            return channelNumber * frameByteSize
-        }
     private var line: SourceDataLine? = null
     private var data: ByteArray? = null
     private var openJob: Job? = null
@@ -94,8 +88,8 @@ class Player(
         line.start()
         writingJob = coroutineScope.launch(Dispatchers.IO) {
             runCatching {
-                val offset = startFrame * format.sampleSize
-                val length = endFrame?.let { (it - startFrame) * format.sampleSize } ?: (data.size - offset)
+                val offset = startFrame * format.frameSize
+                val length = endFrame?.let { (it - startFrame) * format.frameSize } ?: (data.size - offset)
                 line.write(data, offset, length)
                 line.drain()
                 if (state.isPlaying) {
@@ -153,7 +147,7 @@ class Player(
                 awaitLoad()
                 val format = format ?: return@launch
                 val data = data ?: return@launch
-                val totalFrameCount = (data.size - 1) / format.sampleSize
+                val totalFrameCount = (data.size - 1) / format.frameSize
                 val radius = playbackConfig.playOnDragging.rangeRadiusMillis
                 val centerFrame = frame.roundToInt()
                 if (centerFrame < 0 || centerFrame >= totalFrameCount) return@launch
