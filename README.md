@@ -222,7 +222,7 @@ When reporting issues, please attach the recent log files.
 
 ## Known issues
 
-1. Audio files with a higher bit depth than 16-bit cannot be played normally. Please convert them priorly.
+1. On Windows, audio files with a higher bit depth than 16-bit cannot be played normally. Please convert them priorly.
 2. On Linux, file chooser may not be able to select an empty folder. Please creating something inside, or copy + paste
    its path.
 3. Sometimes the window freezes unexpectedly. You can resize the window to refresh it.
