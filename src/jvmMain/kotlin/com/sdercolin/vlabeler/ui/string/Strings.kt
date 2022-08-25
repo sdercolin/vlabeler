@@ -731,7 +731,7 @@ enum class Strings(val en: String) {
         en = "Customize the behavior about audio playback.",
     ),
     PreferencesPlaybackPlayOnDragging(
-        en = "Preview on dragging",
+        en = "Preview playback",
     ),
     PreferencesPlaybackPlayOnDraggingDescription(
         en = "When dragging any parameter lines, play the audio range near the cursor.",
