@@ -11,7 +11,6 @@ import com.github.psambit9791.jdsp.windows.Rectangular
 import com.github.psambit9791.jdsp.windows.Triangular
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
-import kotlin.math.absoluteValue
 import kotlin.math.log10
 import kotlin.math.pow
 import kotlin.math.roundToInt

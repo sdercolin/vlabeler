@@ -2,7 +2,7 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.env.isWindows
+import com.sdercolin.vlabeler.io.NormalizedSampleRate
 import com.sdercolin.vlabeler.io.WaveLoadingAlgorithmVersion
 import kotlinx.serialization.Serializable
 import java.io.File
@@ -16,8 +16,6 @@ data class SampleInfo(
     val name: String,
     val file: String,
     val sampleRate: Float,
-    val bitDepth: Int,
-    val isFloat: Boolean,
     val channels: Int,
     val length: Int,
     val lengthMillis: Float,
@@ -35,7 +33,7 @@ data class SampleInfo(
             val format = stream.format
             Log.debug("Sample info loaded: $format")
             val channelNumber = format.channels
-            val frameLengthLong = stream.frameLength
+            val frameLengthLong = stream.frameLength * NormalizedSampleRate / stream.format.sampleRate
             if (frameLengthLong > Int.MAX_VALUE) {
                 throw IllegalArgumentException(
                     "Cannot load sample with frame length ($frameLengthLong) > ${Int.MAX_VALUE}",
@@ -43,26 +41,19 @@ data class SampleInfo(
             }
             val frameLength = frameLengthLong.toInt()
             val channels = (0 until channelNumber).map { mutableListOf<Float>() }
-            val isFloat = when (format.encoding) {
-                AudioFormat.Encoding.PCM_SIGNED -> false
-                // TODO: convert floating point audio
-                else -> throw Exception("Unsupported audio encoding: ${format.encoding}")
-            }
-            val bitDepth = format.sampleSizeInBits
-            if (bitDepth % 8 != 0 || bitDepth > 32 || (isWindows && bitDepth != 16)) {
-                throw Exception("Unsupported bitDepth: $bitDepth")
+            if (format.encoding !in arrayOf(AudioFormat.Encoding.PCM_SIGNED, AudioFormat.Encoding.PCM_FLOAT)) {
+                throw Exception("Unsupported audio encoding: ${format.encoding}")
             }
             val maxChunkSize = appConf.painter.maxDataChunkSize
-            val lengthInMillis = frameLength / format.sampleRate * 1000
+            val sampleRate = NormalizedSampleRate
+            val lengthInMillis = frameLength / sampleRate * 1000
             val chunkCount = ceil(frameLength.toDouble() / maxChunkSize).toInt()
             val chunkSize = frameLength / chunkCount
             stream.close()
             SampleInfo(
                 name = file.nameWithoutExtension,
                 file = file.absolutePath,
-                sampleRate = format.sampleRate,
-                bitDepth = bitDepth,
-                isFloat = isFloat,
+                sampleRate = sampleRate,
                 channels = channels.size,
                 length = frameLength,
                 lengthMillis = lengthInMillis,

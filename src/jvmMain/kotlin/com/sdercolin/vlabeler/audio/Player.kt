@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.audio
 
 import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.io.normalize
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.JobQueue
@@ -40,11 +41,13 @@ class Player(
             runCatching {
                 Log.info("Player.load(\"${newFile.absolutePath}\")")
                 val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
-                    format = stream.format
-                    data = stream.readAllBytes().also {
-                        Log.info("Player.load: read ${it.size} bytes")
+                    format = stream.format.normalize()
+                    data = AudioSystem.getAudioInputStream(format, stream).use {
+                        val bytes = it.readAllBytes()
+                        Log.info("Player.load: read ${bytes.size} bytes")
+                        bytes
                     }
-                    AudioSystem.getSourceDataLine(stream.format)
+                    AudioSystem.getSourceDataLine(format)
                 }
                 this@Player.line = line
                 line.open()
