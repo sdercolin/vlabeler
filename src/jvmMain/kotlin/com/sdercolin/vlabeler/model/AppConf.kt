@@ -159,8 +159,8 @@ data class AppConf(
             const val MinMelScaleStep = 1
             const val MaxMaxFrequency = 48000
             const val MinMaxFrequency = 5000
-            const val DefaultMinIntensity = 0
-            const val DefaultMaxIntensity = 55
+            const val DefaultMinIntensity = -20
+            const val DefaultMaxIntensity = 45
             val DefaultWindowType = WindowType.BlackmanHarris
             val DefaultColorPalette = SpectrogramColorPalette.Presets.Plain
         }

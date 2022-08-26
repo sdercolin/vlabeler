@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import javax.sound.sampled.AudioSystem
+import kotlin.math.pow
 
 @Immutable
 class Wave(val channels: List<Channel>) {
@@ -30,7 +31,7 @@ suspend fun loadSampleChunk(
     val stream = AudioSystem.getAudioInputStream(sampleInfo.file.toFile())
     runCatching {
         val offset = chunkIndex * chunkSize.toLong()
-        val sampleByteSize = sampleInfo.bitDepth
+        val sampleByteSize = sampleInfo.bitDepth / 8
         val channelCount = sampleInfo.channels
         val frameSize = sampleByteSize * channelCount
         val isBigEndian = stream.format.isBigEndian
@@ -57,7 +58,15 @@ suspend fun loadSampleChunk(
                     uByte shl (8 * index)
                 }
                     .sum()
-                    .let { if (sampleInfo.isFloat) Float.fromBits(it) else it.toFloat() }
+                    .let {
+                        if (sampleInfo.isFloat) {
+                            Float.fromBits(it)
+                        } else {
+                            // decrease bit depth to 16 bit
+                            (it.toDouble() / 2.0.pow(sampleInfo.bitDepth - 1) * Short.MAX_VALUE).toFloat()
+                        }
+                    }
+
                 channel.add(sample)
             }
             pos += frameSize
@@ -86,4 +95,4 @@ suspend fun loadSampleChunk(
     }
 }
 
-const val WaveLoadingAlgorithmVersion = 3
+const val WaveLoadingAlgorithmVersion = 4

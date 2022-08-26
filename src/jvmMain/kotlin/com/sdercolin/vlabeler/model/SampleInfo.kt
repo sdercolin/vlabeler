@@ -45,12 +45,12 @@ data class SampleInfo(
             val channels = (0 until channelNumber).map { mutableListOf<Float>() }
             val isFloat = when (format.encoding) {
                 AudioFormat.Encoding.PCM_SIGNED -> false
-                AudioFormat.Encoding.PCM_FLOAT -> true
-                else -> throw Exception("Unsupported audio encoding")
+                // TODO: convert floating point audio
+                else -> throw Exception("Unsupported audio encoding: ${format.encoding}")
             }
-            val sampleByteSize = format.sampleSizeInBits / 8
-            if (sampleByteSize > 4 || (isWindows && sampleByteSize != 2)) {
-                throw Exception("Unsupported sampleSizeInBits: ${format.sampleSizeInBits} bit")
+            val bitDepth = format.sampleSizeInBits
+            if (bitDepth % 8 != 0 || bitDepth > 32 || (isWindows && bitDepth != 16)) {
+                throw Exception("Unsupported bitDepth: $bitDepth")
             }
             val maxChunkSize = appConf.painter.maxDataChunkSize
             val lengthInMillis = frameLength / format.sampleRate * 1000
@@ -61,7 +61,7 @@ data class SampleInfo(
                 name = file.nameWithoutExtension,
                 file = file.absolutePath,
                 sampleRate = format.sampleRate,
-                bitDepth = sampleByteSize,
+                bitDepth = bitDepth,
                 isFloat = isFloat,
                 channels = channels.size,
                 length = frameLength,

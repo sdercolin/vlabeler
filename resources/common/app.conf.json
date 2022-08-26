@@ -21,8 +21,8 @@
       "windowType": "BlackmanHarris",
       "melScaleStep": 10,
       "maxFrequency": 20000,
-      "minIntensity": 0,
-      "maxIntensity": 55,
+      "minIntensity": -20,
+      "maxIntensity": 45,
       "colorPalette": "Plain"
     }
   },

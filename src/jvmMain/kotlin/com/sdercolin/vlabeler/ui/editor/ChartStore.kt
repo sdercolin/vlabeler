@@ -27,6 +27,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import kotlin.math.absoluteValue
+import kotlin.math.pow
 
 class ChartStore {
 
@@ -198,7 +199,7 @@ class ChartStore {
         val data = chunk.wave.channels[channelIndex].data
         val dataDensity = appConf.painter.amplitude.unitSize
         val width = data.size / dataDensity
-        val maxRawY = data.maxOfOrNull { it.absoluteValue } ?: 0f
+        val maxRawY = 2.0.pow(sampleInfo.bitDepth - 1).toFloat()
         val height = appConf.painter.amplitude.intensityAccuracy
         val size = Size(width.toFloat(), height.toFloat())
         val newBitmap = ImageBitmap(width, height)
@@ -334,6 +335,6 @@ class ChartStore {
     }
 
     companion object {
-        private const val PaintingAlgorithmVersion = 3
+        private const val PaintingAlgorithmVersion = 4
     }
 }
