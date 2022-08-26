@@ -77,6 +77,8 @@ data class AppConf(
 
     /**
      * Configurations about amplitude (waveforms) painting
+     * @param resampleDownToHz Maximum sample rate for loading. If the audio has a higher sample rate, it will be
+     * resampled down to this value. If set to 0, the original sample rate is used
      * @param unitSize Frames of one pixel used when drawing the waveform
      * @param intensityAccuracy Height of the container bitmap in pixel
      * @param yAxisBlankRate Height rate of the extra blank region displayed in both top and bottom to
@@ -87,6 +89,7 @@ data class AppConf(
     @Serializable
     @Immutable
     data class Amplitude(
+        val resampleDownToHz: Int = DefaultResampleDownToHz,
         val unitSize: Int = DefaultUnitSize,
         val intensityAccuracy: Int = DefaultIntensityAccuracy,
         val yAxisBlankRate: Float = DefaultYAxisBlankRate,
@@ -94,6 +97,8 @@ data class AppConf(
         val backgroundColor: String = DefaultBackgroundColor,
     ) {
         companion object {
+            const val DefaultResampleDownToHz = 44100
+            const val MinResampleDownToHz = 0
             const val DefaultUnitSize = 60
             const val MaxUnitSize = DefaultUnitSize * 10
             const val MinUnitSize = 1

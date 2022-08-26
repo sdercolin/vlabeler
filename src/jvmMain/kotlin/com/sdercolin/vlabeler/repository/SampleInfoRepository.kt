@@ -26,8 +26,12 @@ object SampleInfoRepository {
     }
 
     fun load(file: File, appConf: AppConf): Result<SampleInfo> {
+        val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
         infoMap[file.nameWithoutExtension]?.let {
-            if (File(it.file).exists() && it.lastModified == file.lastModified()) {
+            if (it.maxSampleRate == maxSampleRate &&
+                it.file.toFile().exists() &&
+                it.lastModified == file.lastModified()
+            ) {
                 // Return memory cached sample info
                 Log.info("Returning cached sample info for ${file.nameWithoutExtension}")
                 return Result.success(it)
@@ -38,6 +42,7 @@ object SampleInfoRepository {
         }.getOrNull()
         if (existingInfo != null &&
             existingInfo.algorithmVersion == WaveLoadingAlgorithmVersion &&
+            existingInfo.maxSampleRate == maxSampleRate &&
             existingInfo.file.toFile().exists() &&
             existingInfo.lastModified == file.lastModified()
         ) {

@@ -28,7 +28,7 @@ suspend fun loadSampleChunk(
     chunkSize: Int,
 ): Result<SampleChunk> = withContext(Dispatchers.IO) {
     val stream = with(AudioSystem.getAudioInputStream(sampleInfo.file.toFile())) {
-        val format = format.normalize()
+        val format = format.normalize(appConf.painter.amplitude.resampleDownToHz)
         AudioSystem.getAudioInputStream(format, this)
     }
     runCatching {

@@ -2,8 +2,8 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.io.NormalizedSampleRate
 import com.sdercolin.vlabeler.io.WaveLoadingAlgorithmVersion
+import com.sdercolin.vlabeler.io.normalize
 import kotlinx.serialization.Serializable
 import java.io.File
 import javax.sound.sampled.AudioFormat
@@ -16,6 +16,7 @@ data class SampleInfo(
     val name: String,
     val file: String,
     val sampleRate: Float,
+    val maxSampleRate: Int,
     val channels: Int,
     val length: Int,
     val lengthMillis: Float,
@@ -30,10 +31,11 @@ data class SampleInfo(
 
         fun load(file: File, appConf: AppConf): Result<SampleInfo> = runCatching {
             val stream = AudioSystem.getAudioInputStream(file)
-            val format = stream.format
+            val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
+            val format = stream.format.normalize(maxSampleRate)
             Log.debug("Sample info loaded: $format")
             val channelNumber = format.channels
-            val frameLengthLong = stream.frameLength * NormalizedSampleRate / stream.format.sampleRate
+            val frameLengthLong = stream.frameLength * format.sampleRate / stream.format.sampleRate
             if (frameLengthLong > Int.MAX_VALUE) {
                 throw IllegalArgumentException(
                     "Cannot load sample with frame length ($frameLengthLong) > ${Int.MAX_VALUE}",
@@ -45,7 +47,7 @@ data class SampleInfo(
                 throw Exception("Unsupported audio encoding: ${format.encoding}")
             }
             val maxChunkSize = appConf.painter.maxDataChunkSize
-            val sampleRate = NormalizedSampleRate
+            val sampleRate = format.sampleRate
             val lengthInMillis = frameLength / sampleRate * 1000
             val chunkCount = ceil(frameLength.toDouble() / maxChunkSize).toInt()
             val chunkSize = frameLength / chunkCount
@@ -54,6 +56,7 @@ data class SampleInfo(
                 name = file.nameWithoutExtension,
                 file = file.absolutePath,
                 sampleRate = sampleRate,
+                maxSampleRate = maxSampleRate,
                 channels = channels.size,
                 length = frameLength,
                 lengthMillis = lengthInMillis,

@@ -82,7 +82,12 @@ class AppState(
         private set
 
     val playerState: PlayerState = PlayerState()
-    val player: Player = Player(appConf.value.playback, mainScope, playerState)
+    val player: Player = Player(
+        appConf.value.playback,
+        appConf.value.painter.amplitude.resampleDownToHz,
+        mainScope,
+        playerState,
+    )
 
     private fun reset() {
         clearProject()
@@ -359,12 +364,10 @@ class AppState(
     fun updateAppConf(newConf: AppConf) {
         if (appConf.painter != newConf.painter) {
             mainScope.launch {
-                editor?.loadSample()
+                editor?.loadSample(newConf)
             }
         }
-        if (appConf.playback != newConf.playback) {
-            player.loadNewConf(newConf.playback)
-        }
+        player.loadNewConfIfNeeded(newConf)
         if (appConf.keymaps != newConf.keymaps) {
             mainScope.launch {
                 keyboardViewModel.updateKeymaps(newConf.keymaps)

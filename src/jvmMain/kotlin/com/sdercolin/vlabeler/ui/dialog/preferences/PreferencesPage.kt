@@ -81,6 +81,14 @@ abstract class PreferencesPage(
                 updater = { copy(painter = painter.copy(amplitude = it)) },
             ) {
                 integer(
+                    title = Strings.PreferencesChartsWaveformResampleDownTo,
+                    description = Strings.PreferencesChartsWaveformResampleDownToDescription,
+                    defaultValue = AppConf.Amplitude.DefaultResampleDownToHz,
+                    min = AppConf.Amplitude.MinResampleDownToHz,
+                    select = { it.resampleDownToHz },
+                    update = { copy(resampleDownToHz = it) },
+                )
+                integer(
                     title = Strings.PreferencesChartsWaveformUnitSize,
                     description = Strings.PreferencesChartsWaveformUnitSizeDescription,
                     defaultValue = AppConf.Amplitude.DefaultUnitSize,

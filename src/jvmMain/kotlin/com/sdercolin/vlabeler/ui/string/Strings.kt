@@ -531,6 +531,13 @@ enum class Strings(val en: String) {
     PreferencesChartsWaveformDescription(
         en = "Customize the waveform chart.",
     ),
+    PreferencesChartsWaveformResampleDownTo(
+        en = "Maximum sample rate (Hz)",
+    ),
+    PreferencesChartsWaveformResampleDownToDescription(
+        en = "Audio file with a higher sample rate will be resampled down to the given value.\n" +
+            "Set to 0 to disable resampling.",
+    ),
     PreferencesChartsWaveformUnitSize(
         en = "Points per pixel",
     ),

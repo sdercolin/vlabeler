@@ -22,6 +22,7 @@ import kotlin.math.roundToInt
 @Stable
 class Player(
     private var playbackConfig: AppConf.Playback,
+    private var maxSampleRate: Int,
     private val coroutineScope: CoroutineScope,
     private val state: PlayerState,
 ) {
@@ -41,7 +42,7 @@ class Player(
             runCatching {
                 Log.info("Player.load(\"${newFile.absolutePath}\")")
                 val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
-                    format = stream.format.normalize()
+                    format = stream.format.normalize(maxSampleRate)
                     data = AudioSystem.getAudioInputStream(format, stream).use {
                         val bytes = it.readAllBytes()
                         Log.info("Player.load: read ${bytes.size} bytes")
@@ -192,8 +193,13 @@ class Player(
         }
     }
 
-    fun loadNewConf(playback: AppConf.Playback) {
-        playbackConfig = playback
+    fun loadNewConfIfNeeded(appConf: AppConf) {
+        if (playbackConfig != appConf.playback) {
+            playbackConfig = appConf.playback
+        }
+        if (maxSampleRate != appConf.painter.amplitude.resampleDownToHz) {
+            maxSampleRate = appConf.painter.amplitude.resampleDownToHz
+        }
     }
 
     companion object {
