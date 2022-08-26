@@ -538,6 +538,9 @@ enum class Strings(val en: String) {
         en = "Audio file with a higher sample rate will be resampled down to the given value.\n" +
             "Set to 0 to disable resampling.",
     ),
+    PreferencesChartsWaveformNormalize(
+        en = "Normalize audio",
+    ),
     PreferencesChartsWaveformUnitSize(
         en = "Points per pixel",
     ),

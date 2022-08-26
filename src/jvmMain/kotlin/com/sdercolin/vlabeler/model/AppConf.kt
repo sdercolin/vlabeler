@@ -90,6 +90,7 @@ data class AppConf(
     @Immutable
     data class Amplitude(
         val resampleDownToHz: Int = DefaultResampleDownToHz,
+        val normalize: Boolean = DefaultNormalize,
         val unitSize: Int = DefaultUnitSize,
         val intensityAccuracy: Int = DefaultIntensityAccuracy,
         val yAxisBlankRate: Float = DefaultYAxisBlankRate,
@@ -99,6 +100,7 @@ data class AppConf(
         companion object {
             const val DefaultResampleDownToHz = 44100
             const val MinResampleDownToHz = 0
+            const val DefaultNormalize = true
             const val DefaultUnitSize = 60
             const val MaxUnitSize = DefaultUnitSize * 10
             const val MinUnitSize = 1
@@ -165,7 +167,7 @@ data class AppConf(
             const val MaxMaxFrequency = 48000
             const val MinMaxFrequency = 5000
             const val DefaultMinIntensity = -20
-            const val DefaultMaxIntensity = 45
+            const val DefaultMaxIntensity = 55
             val DefaultWindowType = WindowType.BlackmanHarris
             val DefaultColorPalette = SpectrogramColorPalette.Presets.Plain
         }

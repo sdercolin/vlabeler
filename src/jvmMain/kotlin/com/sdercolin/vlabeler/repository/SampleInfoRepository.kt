@@ -25,10 +25,12 @@ object SampleInfoRepository {
         // TODO: handle case that the cache directory is not created
     }
 
-    fun load(file: File, appConf: AppConf): Result<SampleInfo> {
+    suspend fun load(file: File, appConf: AppConf): Result<SampleInfo> {
         val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
+        val normalize = appConf.painter.amplitude.normalize
         infoMap[file.nameWithoutExtension]?.let {
             if (it.maxSampleRate == maxSampleRate &&
+                it.normalize == normalize &&
                 it.file.toFile().exists() &&
                 it.lastModified == file.lastModified()
             ) {
@@ -42,6 +44,7 @@ object SampleInfoRepository {
         }.getOrNull()
         if (existingInfo != null &&
             existingInfo.algorithmVersion == WaveLoadingAlgorithmVersion &&
+            existingInfo.normalize == normalize &&
             existingInfo.maxSampleRate == maxSampleRate &&
             existingInfo.file.toFile().exists() &&
             existingInfo.lastModified == file.lastModified()
@@ -53,7 +56,7 @@ object SampleInfoRepository {
         return loadSampleInfo(file, appConf)
     }
 
-    private fun loadSampleInfo(file: File, appConf: AppConf): Result<SampleInfo> {
+    private suspend fun loadSampleInfo(file: File, appConf: AppConf): Result<SampleInfo> {
         Log.debug("Loading sample ${file.absolutePath}")
 
         val info = SampleInfo.load(file, appConf).getOrElse {

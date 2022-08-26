@@ -48,20 +48,19 @@ suspend fun loadSampleChunk(
             val readSize = stream.readNBytes(buffer, 0, frameSize)
             if (readSize == 0) break
             for (channelIndex in channels.indices) {
-                val sampleSize = frameSize / channelCount
-                val channel = channels[channelIndex]
-                val channelBytes = buffer.slice(
-                    channelIndex * sampleSize until (channelIndex + 1) * sampleSize,
-                ).let { if (isBigEndian) it.reversed() else it.toList() }
-
-                val sample = channelBytes.mapIndexed { index, byte ->
-                    val uByte = if (index == channelBytes.lastIndex) byte.toInt()
-                    else (byte.toInt() and 0xFF)
-                    uByte shl (8 * index)
+                val sample = getSampleValueFromFrame(
+                    frameSize = frameSize,
+                    channelCount = channelCount,
+                    buffer = buffer,
+                    channelIndex = channelIndex,
+                    isBigEndian = isBigEndian,
+                )
+                val normalizedSample = if (sampleInfo.normalizeRatio != null) {
+                    sample * sampleInfo.normalizeRatio
+                } else {
+                    sample
                 }
-                    .sum().toFloat()
-
-                channel.add(sample)
+                channels[channelIndex].add(normalizedSample)
             }
             pos += frameSize
             readFrameCount++
@@ -87,6 +86,26 @@ suspend fun loadSampleChunk(
     }.onSuccess {
         stream.close()
     }
+}
+
+fun getSampleValueFromFrame(
+    frameSize: Int,
+    channelCount: Int,
+    buffer: ByteArray,
+    channelIndex: Int,
+    isBigEndian: Boolean
+): Float {
+    val sampleSize = frameSize / channelCount
+    val channelBytes = buffer.slice(
+        channelIndex * sampleSize until (channelIndex + 1) * sampleSize,
+    ).let { if (isBigEndian) it.reversed() else it.toList() }
+
+    return channelBytes.mapIndexed { index, byte ->
+        val uByte = if (index == channelBytes.lastIndex) byte.toInt()
+        else (byte.toInt() and 0xFF)
+        uByte shl (8 * index)
+    }
+        .sum().toFloat()
 }
 
 const val WaveLoadingAlgorithmVersion = 4

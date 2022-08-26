@@ -51,6 +51,7 @@ import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.toColorOrNull
+import kotlinx.coroutines.CancellationException
 
 @Composable
 fun Canvas(
@@ -121,7 +122,10 @@ fun Canvas(
                 }
             }
         } else {
-            Error(string(Strings.FailedToLoadSampleFileError))
+            val exception = sampleInfoResult.exceptionOrNull()
+            if (exception != null && exception !is CancellationException) {
+                Error(string(Strings.FailedToLoadSampleFileError))
+            }
         }
     }
 }
@@ -183,6 +187,7 @@ private fun WaveformChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex:
 @Composable
 private fun SpectrogramChunk(sampleInfo: SampleInfo, chunkIndex: Int) {
     Log.info("Spectrogram (chunk $chunkIndex): composed")
+    println(sampleInfo.toString())
     Box(Modifier.fillMaxSize()) {
         ChunkAsyncImage(
             load = { ChartRepository.getSpectrogram(sampleInfo, chunkIndex) },

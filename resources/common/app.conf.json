@@ -7,6 +7,7 @@
     "maxDataChunkSize": 441000,
     "amplitude": {
       "resampleDownToHz": 44100,
+      "normalize": true,
       "unitSize": 60,
       "intensityAccuracy": 1000,
       "yAxisBlankRate": 0.1,
@@ -23,7 +24,7 @@
       "melScaleStep": 10,
       "maxFrequency": 20000,
       "minIntensity": -20,
-      "maxIntensity": 45,
+      "maxIntensity": 55,
       "colorPalette": "Plain"
     }
   },

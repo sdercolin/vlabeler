@@ -54,14 +54,14 @@ class ChartStore {
         launchGcDelayed()
     }
 
-    fun prepareForNewLoading(chunkCount: Int, channelCount: Int) {
+    fun prepareForNewLoading(project: Project, appConf: AppConf, chunkCount: Int, channelCount: Int) {
         job?.cancel()
         initializeStates(chunkCount, channelCount)
+        ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
     }
 
     fun load(
         scope: CoroutineScope,
-        project: Project,
         chunkCount: Int,
         sampleInfo: SampleInfo,
         appConf: AppConf,
@@ -71,7 +71,6 @@ class ChartStore {
         onRenderProgress: suspend () -> Unit,
     ) {
         Log.info("ChartStore load(${sampleInfo.name})")
-        ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
         job = scope.launch(Dispatchers.IO) {
             val reorderedChunkIndexes = reorderChunks(startingChunkIndex, chunkCount)
             val colorPalette = appConf.painter.spectrogram.colorPalette.create()

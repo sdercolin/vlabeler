@@ -88,6 +88,12 @@ abstract class PreferencesPage(
                     select = { it.resampleDownToHz },
                     update = { copy(resampleDownToHz = it) },
                 )
+                switch(
+                    title = Strings.PreferencesChartsWaveformNormalize,
+                    defaultValue = AppConf.Amplitude.DefaultNormalize,
+                    select = { it.normalize },
+                    update = { copy(normalize = it) },
+                )
                 integer(
                     title = Strings.PreferencesChartsWaveformUnitSize,
                     description = Strings.PreferencesChartsWaveformUnitSizeDescription,

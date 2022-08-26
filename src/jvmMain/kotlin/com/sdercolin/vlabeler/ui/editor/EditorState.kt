@@ -121,7 +121,7 @@ class EditorState(
                 Log.error(it)
                 null
             }?.let {
-                chartStore.prepareForNewLoading(it.chunkCount, it.channels)
+                chartStore.prepareForNewLoading(project, appConf, it.chunkCount, it.channels)
                 appState.updateProjectOnLoadedSample(it)
                 val renderProgressTotal = it.chunkCount * (it.channels + if (it.hasSpectrogram) 1 else 0)
                 _renderProgress = 0 to renderProgressTotal
@@ -149,7 +149,6 @@ class EditorState(
         }
         chartStore.load(
             scope,
-            project,
             chunkCount,
             sampleInfo,
             appConf,
