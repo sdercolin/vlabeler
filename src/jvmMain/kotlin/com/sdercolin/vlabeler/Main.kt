@@ -47,6 +47,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+var hasUncaughtError = false
+
 fun main(vararg args: String) = application {
     Log.init()
     ensureDirectories()
@@ -61,7 +63,11 @@ fun main(vararg args: String) = application {
         value = produceAppState(mainScope, appRecordStore, parseArguments(args.toList()))
     }
     val onCloseRequest = {
-        appState?.requestExit() ?: exitApplication()
+        if (hasUncaughtError) {
+            exitApplication()
+        } else {
+            appState?.requestExit() ?: exitApplication()
+        }
     }
     val onKeyEvent: (KeyEvent) -> Boolean = {
         appState?.keyboardViewModel?.onKeyEvent(it) ?: false

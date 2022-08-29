@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.env
 
+import com.sdercolin.vlabeler.hasUncaughtError
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.ResourcePath
 import java.io.File
@@ -48,6 +49,7 @@ object Log {
         errorLogger.level = Level.SEVERE
 
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            hasUncaughtError = true
             error("Uncaught exception in Thread ${t.name}: ${e.stackTraceToString()}")
         }
 
