@@ -111,7 +111,7 @@
         "type": "integer",
         "name": "repeatCV",
         "label": "Max repeated entry count of CV",
-        "description": "e.g. \"あ\" is duplicated from \"- あ\"",
+        "description": "Maximum number of the created CV entries with the same phonemes. e.g. \"あ\" is duplicated from \"- あ\" if set other than 0",
         "defaultValue": 0,
         "min": 0
       },
