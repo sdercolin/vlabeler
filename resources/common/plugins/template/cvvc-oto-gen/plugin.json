@@ -1,0 +1,205 @@
+{
+  "name": "cvvc-oto-gen",
+  "version": 1,
+  "type": "template",
+  "displayedName": "CVVC oto generator",
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": "Generate template for CVVC oto.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/cvvc-oto-gen",
+  "supportedLabelFileExtension": "ini",
+  "inputFileExtension": null,
+  "parameters": {
+    "list": [
+      {
+        "type": "float",
+        "name": "bpm",
+        "label": "BPM",
+        "defaultValue": 120,
+        "min": 0
+      },
+      {
+        "type": "float",
+        "name": "offset",
+        "label": "Offset (ms)",
+        "description": "Absolute time of the first preutterance",
+        "defaultValue": 500,
+        "min": 0
+      },
+      {
+        "type": "integer",
+        "name": "repeat",
+        "label": "Max repeated",
+        "description": "Maximum number of the created entries with the same phonemes",
+        "defaultValue": 2,
+        "min": 1
+      },
+      {
+        "type": "string",
+        "name": "repeatSuffix",
+        "label": "Repeat suffix template",
+        "description": "The suffix template added to the repeated entries. \"{number}\" will be replaced by the number of the repeated alias",
+        "defaultValue": "{number}",
+        "multiLine": false,
+        "optional": false
+      },
+      {
+        "type": "string",
+        "name": "prefix",
+        "label": "Prefix",
+        "description": "Prefix of normal file names. Leave empty if you don't have a prefix",
+        "defaultValue": "_",
+        "multiLine": false,
+        "optional": true
+      },
+      {
+        "type": "string",
+        "name": "separator",
+        "label": "Separator",
+        "description": "Separator of syllables in the normal file names. e.g. enter \"_\" for file names like \"_あ_あ_い_あ_う_え_あ\", and leave empty for \"_ああいあうえあ\"",
+        "defaultValue": "",
+        "multiLine": false,
+        "optional": true
+      },
+      {
+        "type": "string",
+        "name": "suffixes",
+        "label": "Available suffixes",
+        "description": "Suffixes that should be used to create the last entry in a file. Use \",\" to separate multiple items",
+        "defaultValue": "R,L,B,息,吸",
+        "multiLine": false,
+        "optional": true
+      },
+      {
+        "type": "string",
+        "name": "appendSuffix",
+        "label": "Append suffix",
+        "description": "Append a suffix to all normal file names. e.g. If given \"R\", a \"a R\" will be created from `_ああいあうえあ.wav`",
+        "defaultValue": "",
+        "multiLine": false,
+        "optional": true
+      },
+      {
+        "type": "float",
+        "name": "preuCV",
+        "label": "CV Preutterance (ms)",
+        "defaultValue": 100,
+        "min": 0
+      },
+      {
+        "type": "float",
+        "name": "ovlCV",
+        "label": "CV Overlap (ms)",
+        "defaultValue": 50,
+        "min": 0
+      },
+      {
+        "type": "float",
+        "name": "cutoffCV",
+        "label": "CV Cutoff (ms)",
+        "defaultValue": -350,
+        "max": -1
+      },
+      {
+        "type": "float",
+        "name": "fixedCV",
+        "label": "CV Fixed/Consonant (ms)",
+        "defaultValue": 200,
+        "min": 0
+      },
+      {
+        "type": "float",
+        "name": "lengthVC",
+        "label": "Consonant length (ms)",
+        "description": "Distance between the preutterances of a VC and its next CV",
+        "defaultValue": 100,
+        "min": 0
+      },
+      {
+        "type": "float",
+        "name": "preuVC",
+        "label": "VC Preutterance (ms)",
+        "defaultValue": 250,
+        "min": 0
+      },
+      {
+        "type": "float",
+        "name": "ovlVC",
+        "label": "VC Overlap (ms)",
+        "defaultValue": 70,
+        "min": 0
+      },
+      {
+        "type": "float",
+        "name": "cutoffVC",
+        "label": "VC Cutoff (ms)",
+        "defaultValue": -350,
+        "max": -1
+      },
+      {
+        "type": "float",
+        "name": "fixedVC",
+        "label": "VC Fixed/Consonant (ms)",
+        "defaultValue": 250,
+        "min": 0
+      },
+      {
+        "type": "boolean",
+        "name": "useHeadCV",
+        "label": "Head-style CV entries",
+        "description": "Whether to create aliases like \"- か\" from the file head. Head style V entries such as \"- あ\" are created even if this is turned off",
+        "defaultValue": true
+      },
+      {
+        "type": "boolean",
+        "name": "useVCV",
+        "label": "VCV entries",
+        "description": "Whether to duplicate VCV entries from CV. VV entries such as \"a い\" are created even if this is turned off",
+        "defaultValue": false
+      },
+      {
+        "type": "integer",
+        "name": "repeatC",
+        "label": "Max repeated entry count of Consonant-only entries",
+        "description": "Maximum number of the created Consonant-only entries with the same phonemes. e.g. \"k\" is duplicated from \"a k\" if set other than 0",
+        "defaultValue": 0,
+        "min": 0
+      },
+      {
+        "type": "enum",
+        "name": "order",
+        "label": "Entry order",
+        "description": "Rearrange the entries by putting entries with same type together",
+        "defaultValue": "Default order",
+        "options": [
+          "Default order",
+          "VCs -> CVs; within sample",
+          "CVs -> VCs; within sample",
+          "VCs -> CVs; across sample",
+          "CVs -> VCs; across sample"
+        ]
+      },
+      {
+        "type": "string",
+        "name": "vowelMap",
+        "label": "Vowel map",
+        "defaultValue": "Search is applied with suffix matching",
+        "defaultValueFromFile": "vowel-map-ja.txt",
+        "multiLine": true,
+        "optional": false
+      },
+      {
+        "type": "string",
+        "name": "consonantMap",
+        "label": "Consonant map",
+        "defaultValue": "Search is applied with exact matching.\n A line with no-consonant \"\" is required.",
+        "defaultValueFromFile": "consonant-map-ja.txt",
+        "multiLine": true,
+        "optional": false
+      }
+    ]
+  },
+  "scriptFiles": [
+    "cvvc-oto-gen.js"
+  ]
+}
