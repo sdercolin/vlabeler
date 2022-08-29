@@ -93,7 +93,7 @@ fun getSampleValueFromFrame(
     channelCount: Int,
     buffer: ByteArray,
     channelIndex: Int,
-    isBigEndian: Boolean
+    isBigEndian: Boolean,
 ): Float {
     val sampleSize = frameSize / channelCount
     val channelBytes = buffer.slice(

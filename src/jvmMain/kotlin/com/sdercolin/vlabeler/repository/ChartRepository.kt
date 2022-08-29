@@ -103,5 +103,5 @@ object ChartRepository {
 @Serializable
 data class ChartCacheParams(
     val algorithmVersion: Int,
-    val painterConfig: AppConf.Painter
+    val painterConfig: AppConf.Painter,
 )
