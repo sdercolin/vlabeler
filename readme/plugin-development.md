@@ -14,7 +14,7 @@ A plugin for `vLabeler` is a folder containing:
 
 ## Plugin Definition
 
-`plugin.json` file is a json object which has the following properties:
+`plugin.json` file is a JSON object which has the following properties:
 
 | Property                    | Type                   | Default value  | Supported plugin type | Description                                                                                                                                                                        |
 |-----------------------------|------------------------|----------------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -104,14 +104,14 @@ The object has the following properties:
 by [GraalVM 22.1](https://www.graalvm.org/22.1/reference-manual/js/).
 
 It implements JavaScript in the ECMAScript (ECMA-262) specification which is fully compatible with the ECMAScript 2021
-specification (ES12)
+specification (ES12).
 Check [JavaScript Compatibility](https://www.graalvm.org/22.1/reference-manual/js/JavaScriptCompatibility/) for detailed
 info about language specifications.
 
 ## Template Generation Scripts
 
-A plugin with `template` type is selected and executed in the `New Project` page.
-It should create a list of entries for subsequent edition.
+A plugin with `template` type is selected and executed on the `New Project` page.
+It should create a list of entries for subsequent editions.
 
 ### Input
 
@@ -153,8 +153,8 @@ properties.
 
 #### 2. Output the raw entry string
 
-If `outputRawEntry` is set to `true`, instead of the above class, `output` should be set a list of string in the format
-of the label file. They will be parsed by the labeler's parser later.
+If `outputRawEntry` is set to `true`, instead of the above class, `output` should be set to a list of strings in the
+format of the label file. They will be parsed by the labeler's parser later.
 
 ### Tips
 
@@ -179,10 +179,10 @@ Check the following built-in `template` plugins as examples:
 
 ## Batch Edit (Macro) Scripts
 
-A plugin with `macro` type is executed by an item in menu `Tools` -> `Batch Edit`. It is only available when editing a
-project.
+A plugin with `macro` type is executed by an item in the menu `Tools` -> `Batch Edit`. It is only available when editing
+a project.
 
-Basically it takes a list of entry objects and edits them, then sets the result to the `output` list.
+Basically, it takes a list of entry objects and edits them, then sets the result to the `output` list.
 
 ### Input
 
@@ -200,7 +200,7 @@ The following variables are provided before your scripts are executed.
 
 A parameter with `entrySelector` type is passed in `params` as a list of the selected indexes of the `entries` list.
 
-Following code is an example of using an entry selector:
+The following code is an example of using an entry selector:
 
 ```javascript
 let selectedIndexes = params["selector"] // use actual name of your parameter
@@ -216,7 +216,7 @@ for (index in entries) {
 
 You have to create a list named `output` to pass the result back to the application.
 
-`output` needs to be a list of objects in following type:
+`output` needs to be a list of objects in the following type:
 
 ```javascript
 class EditedEntry {
@@ -232,7 +232,7 @@ class EditedEntry {
 Check the following built-in `macro` plugins as examples:
 
 - [batch-edit-entry-name](../resources/common/plugins/macro/batch-edit-entry-name): Edit selected entry names for all
-  labelers. You can refer to it for the usage of entry selector
+  labelers. You can refer to it for the usage of the entry selector
 - [batch-edit-oto-parameter](../resources/common/plugins/macro/batch-edit-oto-parameter): Edit parameters of selected
   entries for UTAU oto. The `labeler` is used to get the specific settings about `oto.ini`
 - [execute-scripts](../resources/common/plugins/macro/execute-scripts): Execute input scripts to edit the project. It
@@ -240,15 +240,15 @@ Check the following built-in `macro` plugins as examples:
 
 ## Error handling
 
-When the scripts encounter illegal inputs, you can show error message to users by throwing an error along with setting
-the `expectedError` property to `true`.
+When the scripts encounter illegal inputs, you can show an error message to users by throwing an error along with
+setting the `expectedError` property to `true`.
 
 Other errors thrown in the scripts will be displayed as "Unexpected errors" without detailed information, indicating
 that it is more likely to be a bug of the plugin, rather than an illegal input or something else that may happen in
 normal use cases.
 
-If user contacts you with an "Unexpected errors", you can ask for detailed information in the logs to help you solve the
-issue.
+If a user contacts you with an "Unexpected errors", you can ask for detailed information in the logs to help you solve
+the issue.
 
 ```javascript
 let unknownExpressionMatch = expression.match(/\$\{\w+}/)
@@ -261,7 +261,7 @@ if (unknownExpressionMatch) {
 ## Debugging
 
 You can use logs to help debug your scripts.
-The standard output (e.g. `print()`) is written to `.logs/info.log` and the error output is written to `.logs/error.log`
-.
+The standard output (e.g. `print()`) is written to `.logs/info.log` and the error output is written to
+`.logs/error.log`.
 If the plugin is not shown in the list, there are probably some errors while loading the plugin (i.e.
 parsing `plugin.json`).

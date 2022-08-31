@@ -214,7 +214,7 @@ enum class Strings(val en: String) {
         en = "Project name",
     ),
     StarterNewProjectNameWarning(
-        en = "The project file already exists. Creating project will overwrite the file.",
+        en = "The project file already exists. Creating the project will overwrite the file.",
     ),
     StarterNewCacheDirectory(
         en = "Cache directory",
@@ -260,13 +260,13 @@ enum class Strings(val en: String) {
         en = "Other sample files",
     ),
     SampleListExcludedPlaceholder(
-        en = "There are no unreferred sample files in the sample directory.",
+        en = "There are no unreferenced sample files in the sample directory.",
     ),
     SampleListEntryHeader(
         en = "Entries",
     ),
     SampleListEntriesPlaceholderUnselected(
-        en = "Select a sample file in the left to show entries bound to it.",
+        en = "Select a sample file on the left to show entries bound to it.",
     ),
     SampleListEntriesPlaceholderNoEntry(
         en = "There are no entries bound to the selected sample file.",
@@ -429,27 +429,28 @@ enum class Strings(val en: String) {
         en = "editing %d entries in sample %s",
     ),
     FailedToLoadSampleFileError(
-        en = "Could not load the sample file.\nIt may not exist, or is not a supported format.",
+        en = "Could not load the sample file.\nIt may not exist or is not a supported format.",
     ),
     EmptySampleDirectoryException(
-        en = "Could not create project because no sample files are found in the given sample directory.",
+        en = "Could not create the project because no sample files are found in the given sample directory.",
     ),
     PluginRuntimeUnexpectedException(
         en = "An unexpected error occurred during the plugin execution.\n" +
             "Please contact the author for more information.",
     ),
     InvalidCreatedProjectException(
-        en = "The created project is not valid.\nPlease contact author of the labeler/plugin for more information.",
+        en = "The created project is not valid.\nPlease contact the author of the labeler/plugin for more information.",
     ),
     InvalidOpenedProjectException(
         en = "Could not open the project because it contains invalid data.\n" +
-            "Please check error log for more information.",
+            "Please check the error log for more information.",
     ),
     ProjectParseException(
         en = "Could not open the project.\nIt may be corrupted or created by an incompatible version of vLabeler.",
     ),
     ProjectUpdateOnSampleException(
-        en = "Could not update the project with the loaded sample file.\nPlease check error log for more information.",
+        en = "Could not update the project with the loaded sample file." +
+            "\nPlease check the error log for more information.",
     ),
     InvalidEditedProjectException(
         en = "Invalid edited project.\nPlease check error log for more information.",
@@ -509,8 +510,8 @@ enum class Strings(val en: String) {
         en = "Canvas resolution",
     ),
     PreferencesChartsCanvasResolutionDescription(
-        en = "Defined as number of sample points included in 1 pixel.\n" +
-            "The bigger the number, the longer time duration the charts show in your screen.",
+        en = "Defined as the number of sample points included in 1 pixel.\n" +
+            "The bigger the number, the longer time duration the charts show on your screen.",
     ),
     PreferencesChartsCanvasResolutionDefault(
         en = "Default resolution",
@@ -523,7 +524,7 @@ enum class Strings(val en: String) {
     ),
     PreferencesChartsMaxDataChunkSizeDescription(
         en = "Max frames that will be included in a chart chunk.\n" +
-            "The bigger the number, the less parts your charts will be divided to during rendering.",
+            "The bigger the number, the fewer parts your charts will be divided into during rendering.",
     ),
     PreferencesChartsWaveform(
         en = "Waveform",

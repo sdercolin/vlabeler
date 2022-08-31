@@ -9,7 +9,7 @@
 - High performance with multiplatform support
 
 **The project is now in Alpha.
-For helps, suggestions, issue reports etc. please join our [Discord](https://discord.gg/yrTqG2SrRd).**
+For help, suggestions, issue reports, etc. please join our [Discord](https://discord.gg/yrTqG2SrRd).**
 
 ## Download
 
@@ -21,7 +21,7 @@ The following platforms are provided in the releases.
 - Mac (Apple Silicon or Intel) (.dmg)
 - Ubuntu (.deb)
 
-For other linux os you may have to build it by yourself.
+For other types of Linux os, you may have to build it by yourself.
 
 ### For macOS users
 
@@ -38,10 +38,10 @@ Currently, cross-platform building is not supported. Only packages for your OS a
 Please ensure you have **JDK 15+** for building.
 
 ```
-// Package by installer
+// Package by an installer
 ./gradlew package
 
-// Or, build executable app
+// Or, build an executable app
 ./gradlew createDistributable
 ```
 
@@ -60,21 +60,21 @@ Currently, built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU)
 
 1. Click `New project..`
 2. Select a folder containing your sample files
-3. Change `Project localtion` and `Project name` if you would like
-4. Change `Cache directory` if you would like to save the cache files (rendered images, processed wav files etc.)
+3. Change `Project location` and `Project name` if you would like
+4. Change `Cache directory` if you would like to save the cache files (rendered images, processed wav files, etc.)
    somewhere else
 5. Select a labeler (e.g. UTAU oto labeler if you are editing UTAU oto)
 6. Select a label file template and its encoding (e.g. a pre-filled oto file), or leave it blank to use the default
    template (not recommended)
-7. If you don't have a template file, select a template generator along with input file which it requires
+7. If you don't have a template file, select a template generator along with an input file that it requires
 8. Click `OK` and start editing
 9. Click `Export` in the menu to get the edited label file
 
 ## Available keyboard/mouse actions
 
-Note that following `Ctrl` is mapped to `Command` if you are using macOS.
+Note that the following `Ctrl` is mapped to `Command` if you are using macOS.
 
-You can customize the key bindings in the `Settings` -> `Prefereneces` -> `Keymaps`
+You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`
 
 ### Move parameter lines
 
@@ -85,14 +85,14 @@ You can customize the key bindings in the `Settings` -> `Prefereneces` -> `Keyma
 ### Audio playback
 
 - `Space`: play the current entry, or stop playing if already playing
-- `Shift` + `Space`: play the current sample file, or stop playing if already playing
+- `Shift` + `Space`: play the current sample file or stop playing if already playing
 - `Ctrl` + mouse click: play the clicked section
 - `Alt` + mouse drag on parameters: play the audio near the cursor's position while moving
 
 ### Scrolling
 
 - `Shift` + mouse wheel scroll: horizontal scroll
-- `F` or Focus button in the center of bottom bar: Scroll to center the current entry in the screen
+- `F` or Focus button in the center of the bottom bar: Scroll to center the current entry on the screen
 
 ### Zoom in/out
 
@@ -133,7 +133,7 @@ Note that you can use the `Play the clicked section` feature by `Ctrl + Click` w
 
 ### Cursor
 
-The normal cursor tool to drag parameter controllers (lines or the labels).
+The normal cursor tool to drag parameter controllers (lines or labels).
 
 ### Scissors
 
@@ -142,14 +142,14 @@ By default, when you click on a valid position with the scissors:
 
 1. Audio of the former (left) part after cutting is played so that you can confirm the phoneme
 2. A dialog is shown, asking you to rename the former entry
-3. Cutting and renaming is conducted
+3. Cutting and renaming are conducted
 4. The editor navigates to the former entry if needed
 
-These actions can be customized in the preferences.
+These actions can be customized in `Settings` -> `Prefereneces`.
 
 ## Labelers
 
-A "labeler" is a configuration file for `vLabeler` which defines the behavior for a certain type of singing voice
+A "labeler" is a configuration file for `vLabeler` which defines the behavior of a certain type of singing voice
 generation software.
 For example, the built-in `UTAU oto labeler` is a labeler for editing UTAU's `oto.ini` files.
 
@@ -157,7 +157,7 @@ A labeler defines:
 
 - what data/fields a voice entry should contain (e.g. for UTAU, you need `fixed`, `pre-utterance`, `overlap`, etc.)
 - how the data/fields are displayed in the editor as parameter controllers
-- whether entries should be connected to each other (e.g. `Sinsy lab Labeler` does)
+- whether entries should be connected (e.g. `Sinsy lab Labeler` does)
 - how to parse the label file to a `vLabeler` project
 - how to generate the label file from a `vLabeler` project
 - and more behaviors when editing the certain type of label files
@@ -168,13 +168,13 @@ You can edit the labelers, but please
 check [LabelerConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) and make sure you understand the
 content before you edit them.
 
-If you want to edit the labels for a singing voice generation software which is not supported by `vLabeler`,
-instead of requesting for development supporting that software, you can create a labeler to make it work. (it requires
+If you want to edit the labels for a singing voice generation software that is not supported by `vLabeler`,
+instead of requesting development supporting that software, you can create a labeler to make it work. (it requires
 some knowledge of the coding though).
 After you put a new labeler file under the directory and restart the application, it will be available in
 the `New Project` page.
 You can distribute the labelers created by yourself to other users.
-You are also welcomed to submit your labeler files to our project to make it built-in.
+You are also welcome to submit your labeler files to our project to make it built-in.
 
 You can import/delete/disable labelers in `Settings` -> `Labelers...`.
 
@@ -190,7 +190,7 @@ Compared to a default template generated by the labeler which is literally minim
 given, a template generator plugin can create complicated templates. It's also more customizable with user input
 parameters.
 
-All valid template generators which support the selected labeler can be chosen in the `New Project` page.
+All valid template generators which support the selected labeler can be chosen on the `New Project` page.
 
 You can import/delete/disable template generators in `Settings` -> `Template Generators...`.
 
@@ -222,6 +222,6 @@ When reporting issues, please attach the recent log files.
 
 ## Known issues
 
-1. On Linux, file chooser may not be able to select an empty folder. Please creating something inside, or copy + paste
+1. On Linux, the file chooser may not be able to select an empty folder. Please create something inside, or copy + paste
    its path
 2. Sometimes the window freezes unexpectedly. You can resize the window to refresh it
