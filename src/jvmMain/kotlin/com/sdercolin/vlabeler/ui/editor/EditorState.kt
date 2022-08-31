@@ -151,7 +151,7 @@ class EditorState(
     ) {
         chartStore.clear()
         val chunkSizeInMilliSec = sampleInfo.lengthMillis / chunkCount
-        val startingChunkIndex = (project.currentEntry.start / chunkSizeInMilliSec).toInt()
+        val startingChunkIndex = (project.currentEntry.start / chunkSizeInMilliSec).toInt().coerceAtMost(chunkCount - 1)
 
         val onRenderProgress = suspend {
             renderProgressMutex.withLock {

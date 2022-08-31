@@ -68,7 +68,7 @@ fun FieldLabels(
                 isActive = state.cursorState.value.pointIndex == pointIndex,
             )
         }
-        val groups = models.groupBy { (it.position / chunkLength).toInt() }
+        val groups = models.groupBy { (it.position / chunkLength).toInt().coerceAtMost(chunkCount - 1) }
         List(chunkCount) { FieldLabelModelChunk(groups[it]?.toList() ?: listOf()) }
     }
 
