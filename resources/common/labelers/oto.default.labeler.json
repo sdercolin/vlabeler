@@ -1,6 +1,6 @@
 {
   "name": "oto.default",
-  "version": 7,
+  "version": 8,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": "UTAU oto labeler",
@@ -109,6 +109,9 @@
       "ovl"
     ],
     "scripts": [
+      "if (!name) {",
+      "    name = sample",
+      "}",
       "if (left !== '') {",
       "    start = parseFloat(left)",
       "}",
