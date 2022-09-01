@@ -15,9 +15,12 @@ import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
+import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
+import com.sdercolin.vlabeler.util.clear
 import com.sdercolin.vlabeler.util.getNextOrNull
 import com.sdercolin.vlabeler.util.getPreviousOrNull
+import com.sdercolin.vlabeler.util.update
 import kotlin.math.absoluteValue
 
 class MarkerState(
@@ -32,6 +35,7 @@ class MarkerState(
     val rightBorder: Float,
     val cursorState: MutableState<MarkerCursorState>,
     val scissorsState: MutableState<MarkerScissorsState?>,
+    val panState: MutableState<MarkerPanState?>,
     val canvasHeightState: MutableState<Float>,
     val waveformsHeightRatio: Float,
 ) {
@@ -375,6 +379,28 @@ class MarkerState(
         return getDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
     }
 
+    fun switchTool(tool: Tool) {
+        Tool.values().forEach {
+            if (it == tool) {
+                createToolStateIfNeeded(it)
+            } else {
+                clearToolState(it)
+            }
+        }
+    }
+
+    private fun createToolStateIfNeeded(tool: Tool) = when (tool) {
+        Tool.Cursor -> Unit
+        Tool.Scissors -> scissorsState.update { MarkerScissorsState() }
+        Tool.Pan -> panState.update { MarkerPanState() }
+    }
+
+    private fun clearToolState(tool: Tool) = when (tool) {
+        Tool.Cursor -> cursorState.update { MarkerCursorState() }
+        Tool.Scissors -> scissorsState.clear()
+        Tool.Pan -> panState.clear()
+    }
+
     companion object {
         private const val NearRadiusStartOrEnd = 20f
         private const val NearRadiusCustom = 5f
@@ -421,6 +447,7 @@ fun rememberMarkerState(
     }
     val cursorState = remember { mutableStateOf(MarkerCursorState()) }
     val scissorsState = remember { mutableStateOf<MarkerScissorsState?>(null) }
+    val panState = remember { mutableStateOf<MarkerPanState?>(null) }
     val canvasHeightState = remember { mutableStateOf(0f) }
     val waveformsHeightRatio = remember(appState.appConf.painter.spectrogram) {
         val spectrogram = appState.appConf.painter.spectrogram
@@ -442,6 +469,7 @@ fun rememberMarkerState(
         rightBorder,
         cursorState,
         scissorsState,
+        panState,
         canvasHeightState,
         waveformsHeightRatio,
     ) {
@@ -457,6 +485,7 @@ fun rememberMarkerState(
             rightBorder,
             cursorState,
             scissorsState,
+            panState,
             canvasHeightState,
             waveformsHeightRatio,
         )

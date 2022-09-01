@@ -12,4 +12,7 @@ enum class Tool(val stringKey: Strings, val keyAction: KeyAction, val iconPath: 
 
     @SerialName("scissors")
     Scissors(Strings.MenuEditToolsScissors, KeyAction.UseToolScissors, "img/scissors_tool.png"),
+
+    @SerialName("pan")
+    Pan(Strings.MenuEditToolsPan, KeyAction.UseToolPan, "img/pan_tool.png"),
 }

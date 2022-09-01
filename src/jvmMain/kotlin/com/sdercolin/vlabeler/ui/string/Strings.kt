@@ -57,6 +57,9 @@ enum class Strings(val en: String) {
     MenuEditToolsScissors(
         en = "Scissors",
     ),
+    MenuEditToolsPan(
+        en = "Pan",
+    ),
     MenuEditRenameEntry(
         en = "Rename Current Entry...",
     ),

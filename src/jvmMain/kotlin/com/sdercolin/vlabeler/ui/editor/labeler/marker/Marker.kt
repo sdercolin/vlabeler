@@ -4,13 +4,14 @@ package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -19,6 +20,7 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.areAnyPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.KeyboardState
@@ -41,7 +43,6 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Compani
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.FloatRange
-import com.sdercolin.vlabeler.util.clear
 import com.sdercolin.vlabeler.util.contains
 import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.length
@@ -49,7 +50,9 @@ import com.sdercolin.vlabeler.util.requireValue
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.update
 import com.sdercolin.vlabeler.util.updateNonNull
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
@@ -68,6 +71,7 @@ private const val LabelMaxChunkLength = 5000
 fun MarkerPointEventContainer(
     screenRange: FloatRange?,
     keyboardState: KeyboardState,
+    horizontalScrollState: ScrollState,
     state: MarkerState,
     editorState: EditorState,
     appState: AppState,
@@ -84,6 +88,7 @@ fun MarkerPointEventContainer(
     val playSection = remember(appState.player) {
         { start: Float, end: Float -> appState.player.playSection(start, end) }
     }
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier.fillMaxSize()
             .onPointerEvent(PointerEventType.Move) { event ->
@@ -108,10 +113,12 @@ fun MarkerPointEventContainer(
                     editorState::updateEntries,
                     screenRange,
                     playByCursor,
+                    horizontalScrollState,
+                    coroutineScope,
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
-                state.cursorState.handleMousePress(tool, keyboardState, event, state.labelerConf, appState.appConf)
+                state.handleMousePress(tool, keyboardState, event, state.labelerConf, appState.appConf)
             }
             .onPointerEvent(PointerEventType.Release) { event ->
                 state.handleMouseRelease(
@@ -148,12 +155,7 @@ fun MarkerCanvas(
         editorState.scrollOnResolutionChangeViewModel.scroll(horizontalScrollState)
     }
     LaunchedEffect(editorState.tool) {
-        if (editorState.tool == Tool.Scissors) {
-            state.scissorsState.update { MarkerScissorsState() }
-            state.cursorState.update { MarkerCursorState() }
-        } else {
-            state.scissorsState.clear()
-        }
+        state.switchTool(editorState.tool)
     }
     LaunchedEffect(editorState.keyboardViewModel, state) {
         editorState.keyboardViewModel.keyboardActionFlow.collectLatest {
@@ -397,11 +399,14 @@ private fun MarkerState.handleMouseMove(
     editEntries: (List<IndexedEntry>) -> Unit,
     screenRange: FloatRange?,
     playByCursor: (Float) -> Unit,
+    scrollState: ScrollState,
+    scope: CoroutineScope,
 ) {
     screenRange ?: return
     when (tool) {
         Tool.Cursor -> handleCursorMove(event, editEntries, screenRange, playByCursor)
         Tool.Scissors -> handleScissorsMove(event, screenRange)
+        Tool.Pan -> handlePanMove(event, scrollState, scope)
     }
 }
 
@@ -456,7 +461,19 @@ private fun MarkerState.handleScissorsMove(
     scissorsState.updateNonNull { copy(position = position) }
 }
 
-private fun MutableState<MarkerCursorState>.handleMousePress(
+private fun MarkerState.handlePanMove(
+    event: PointerEvent,
+    scrollState: ScrollState,
+    scope: CoroutineScope,
+) {
+    if (panState.value?.isDragging != true) return
+    val x = event.changes.first().positionChange().x
+    scope.launch {
+        scrollState.scrollBy(-x)
+    }
+}
+
+private fun MarkerState.handleMousePress(
     tool: Tool,
     keyboardState: KeyboardState,
     event: PointerEvent,
@@ -466,10 +483,11 @@ private fun MutableState<MarkerCursorState>.handleMousePress(
     when (tool) {
         Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf)
         Tool.Scissors -> Unit
+        Tool.Pan -> handlePanPress()
     }
 }
 
-private fun MutableState<MarkerCursorState>.handleCursorPress(
+private fun MarkerState.handleCursorPress(
     keyboardState: KeyboardState,
     event: PointerEvent,
     labelerConf: LabelerConf,
@@ -477,25 +495,30 @@ private fun MutableState<MarkerCursorState>.handleCursorPress(
 ) {
     val action = keyboardState.getEnabledMouseClickAction(event) ?: return
     if (action.canMoveParameter()) {
-        if (value.mouse == MarkerCursorState.Mouse.Hovering) {
+        val cursorStateValue = cursorState.value
+        if (cursorStateValue.mouse == MarkerCursorState.Mouse.Hovering) {
             val invertLockedDrag = action == MouseClickAction.MoveParameterInvertingPrimary
             val lockedDrag = when (appConf.editor.lockedDrag) {
                 AppConf.Editor.LockedDrag.UseLabeler -> {
                     val lockedDragByBaseField =
                         labelerConf.lockedDrag.useDragBase &&
-                            labelerConf.fields.getOrNull(value.pointIndex)?.dragBase == true
+                            labelerConf.fields.getOrNull(cursorStateValue.pointIndex)?.dragBase == true
                     val lockedDragByStart =
-                        labelerConf.lockedDrag.useStart && value.usingStartPoint
+                        labelerConf.lockedDrag.useStart && cursorStateValue.usingStartPoint
                     lockedDragByBaseField || lockedDragByStart
                 }
-                AppConf.Editor.LockedDrag.UseStart -> value.usingStartPoint
+                AppConf.Editor.LockedDrag.UseStart -> cursorStateValue.usingStartPoint
                 AppConf.Editor.LockedDrag.Never -> false
             } xor invertLockedDrag
             val withPreview = action == MouseClickAction.MoveParameterWithPlaybackPreview
             val forcedDrag = action == MouseClickAction.MoveParameterIgnoringConstraints
-            update { startDragging(lockedDrag, withPreview, forcedDrag) }
+            cursorState.update { startDragging(lockedDrag, withPreview, forcedDrag) }
         }
     }
+}
+
+private fun MarkerState.handlePanPress() {
+    panState.updateNonNull { copy(isDragging = true) }
 }
 
 private fun MarkerState.handleMouseRelease(
@@ -522,6 +545,7 @@ private fun MarkerState.handleMouseRelease(
         when (tool) {
             Tool.Cursor -> handleCursorRelease(submitEntry)
             Tool.Scissors -> handleScissorsRelease(cutEntry)
+            Tool.Pan -> handlePanRelease()
         }
     }
 }
@@ -542,6 +566,10 @@ private fun MarkerState.handleScissorsRelease(
         val entryIndex = getEntryIndexByCutPosition(position)
         cutEntry(entryIndex, timePosition)
     }
+}
+
+private fun MarkerState.handlePanRelease() {
+    panState.updateNonNull { copy(isDragging = false) }
 }
 
 private fun MarkerState.editEntryIfNeeded(

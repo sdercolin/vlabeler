@@ -81,6 +81,7 @@ fun Canvas(
             MarkerPointEventContainer(
                 screenRange,
                 keyboardState,
+                horizontalScrollState,
                 markerState,
                 editorState,
                 appState,

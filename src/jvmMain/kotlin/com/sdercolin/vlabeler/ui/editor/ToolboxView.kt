@@ -12,6 +12,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCut
 import androidx.compose.material.icons.filled.Height
+import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,10 +48,12 @@ fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
                 val icon = when (tool) {
                     Tool.Cursor -> Icons.Default.Height
                     Tool.Scissors -> Icons.Default.ContentCut
+                    Tool.Pan -> Icons.Default.PanTool
                 }
                 val rotate = when (tool) {
                     Tool.Cursor -> 90f
                     Tool.Scissors -> 270f
+                    Tool.Pan -> 0f
                 }
                 Icon(
                     imageVector = icon,

@@ -72,6 +72,11 @@ enum class KeyAction(
         KeySet(Key.Two),
         true,
     ),
+    UseToolPan(
+        listOf(Strings.MenuEdit, Strings.MenuEditTools, Strings.MenuEditToolsPan),
+        KeySet(Key.Three),
+        true,
+    ),
     RenameCurrentEntry(
         listOf(Strings.MenuEdit, Strings.MenuEditRenameEntry),
         KeySet(Key.R, setOf(Key.Ctrl)),
