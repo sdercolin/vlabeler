@@ -76,8 +76,10 @@ fun Canvas(
             val chunkCount = sampleInfo.chunkCount
             val density = LocalDensity.current
             val layoutDirection = LocalLayoutDirection.current
-            LaunchedEffect(sampleInfo, appState.appConf) {
-                editorState.renderCharts(this, chunkCount, sampleInfo, appState.appConf, density, layoutDirection)
+            LaunchedEffect(sampleInfo, appState.appConf, appState.isShowingPrerenderDialog) {
+                if (appState.isShowingPrerenderDialog.not()) {
+                    editorState.renderCharts(this, sampleInfo, appState.appConf, density, layoutDirection)
+                }
             }
             val canvasParams = CanvasParams(sampleInfo.length, resolution, currentDensity)
             editorState.scrollOnResolutionChangeViewModel.updateCanvasParams(canvasParams, sampleInfo)

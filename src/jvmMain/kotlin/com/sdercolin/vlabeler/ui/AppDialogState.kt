@@ -42,6 +42,7 @@ interface AppDialogState {
     val isShowingPreferencesDialog: Boolean
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
+    val isShowingPrerenderDialog: Boolean
     val macroPluginShownInDialog: Pair<Plugin, ParamMap>?
     val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
@@ -71,6 +72,8 @@ interface AppDialogState {
     fun closeSampleListDialog()
     fun openSampleDirectoryRedirectDialog()
     fun closeSampleDirectoryRedirectDialog()
+    fun openPrerenderDialog()
+    fun closePrerenderDialog()
     fun openPreferencesDialog()
     fun closePreferencesDialog()
     fun openMacroPluginDialog(plugin: Plugin)
@@ -86,12 +89,14 @@ interface AppDialogState {
 
     fun anyDialogOpening() =
         isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
-            isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || macroPluginShownInDialog != null ||
-            customizableItemManagerTypeShownInDialog != null || embeddedDialog != null
+            isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
+            macroPluginShownInDialog != null || customizableItemManagerTypeShownInDialog != null ||
+            embeddedDialog != null
 
     fun anyDialogOpeningExceptMacroPluginManager() =
         isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
-            isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || macroPluginShownInDialog != null ||
+            isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
+            macroPluginShownInDialog != null ||
             (
                 customizableItemManagerTypeShownInDialog != null &&
                     customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
@@ -118,6 +123,7 @@ class AppDialogStateImpl(
     override var isShowingPreferencesDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
+    override var isShowingPrerenderDialog: Boolean by mutableStateOf(false)
     override var macroPluginShownInDialog: Pair<Plugin, ParamMap>? by mutableStateOf(null)
     override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
     override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
@@ -250,6 +256,14 @@ class AppDialogStateImpl(
 
     override fun closeSampleDirectoryRedirectDialog() {
         isShowingSampleDirectoryRedirectDialog = false
+    }
+
+    override fun openPrerenderDialog() {
+        isShowingPrerenderDialog = true
+    }
+
+    override fun closePrerenderDialog() {
+        isShowingPrerenderDialog = false
     }
 
     override fun openPreferencesDialog() {

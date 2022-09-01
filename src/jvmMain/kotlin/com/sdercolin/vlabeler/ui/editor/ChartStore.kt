@@ -62,7 +62,6 @@ class ChartStore {
 
     fun load(
         scope: CoroutineScope,
-        chunkCount: Int,
         sampleInfo: SampleInfo,
         appConf: AppConf,
         density: Density,
@@ -72,7 +71,7 @@ class ChartStore {
     ) {
         Log.info("ChartStore load(${sampleInfo.name})")
         job = scope.launch(Dispatchers.IO) {
-            val reorderedChunkIndexes = reorderChunks(startingChunkIndex, chunkCount)
+            val reorderedChunkIndexes = reorderChunks(startingChunkIndex, sampleInfo.chunkCount)
             val colorPalette = appConf.painter.spectrogram.colorPalette.create()
             reorderedChunkIndexes.forEach { chunkIndex ->
                 yield()
@@ -114,6 +113,8 @@ class ChartStore {
         }
     }
 
+    suspend fun awaitLoad() = job?.join()
+
     private fun initializeStates(
         chunkCount: Int,
         channelCount: Int,
@@ -139,6 +140,15 @@ class ChartStore {
             radius++
         }
         return reorderedChunkIndexes
+    }
+
+    fun hasCachedSample(sampleInfo: SampleInfo): Boolean {
+        repeat(sampleInfo.chunkCount) {
+            if (!hasCachedChunk(sampleInfo, it)) {
+                return false
+            }
+        }
+        return true
     }
 
     private fun hasCachedChunk(sampleInfo: SampleInfo, chunkIndex: Int): Boolean {

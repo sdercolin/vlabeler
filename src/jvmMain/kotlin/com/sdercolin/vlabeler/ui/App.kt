@@ -16,10 +16,12 @@ import com.sdercolin.vlabeler.ui.dialog.ErrorDialog
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesDialog
+import com.sdercolin.vlabeler.ui.dialog.prerender.PrerenderDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +55,17 @@ fun App(
                     launchArguments = screen.launchArguments,
                 )
             is Screen.Editor -> Editor(screen.state, appState)
+        }
+        if (appState.isShowingPrerenderDialog) {
+            appState.editor?.let { editor ->
+                PrerenderDialog(
+                    editor.project,
+                    appState.appConf,
+                    editor.chartStore,
+                    onError = { if (it !is CancellationException) appState.showError(it) },
+                    finish = { appState.closePrerenderDialog() },
+                )
+            }
         }
         if (appState.isShowingSampleListDialog) {
             appState.editor?.let { SampleListDialog(it, finish = { appState.closeSampleListDialog() }) }

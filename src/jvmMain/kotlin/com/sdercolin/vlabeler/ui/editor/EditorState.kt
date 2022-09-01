@@ -141,15 +141,20 @@ class EditorState(
         }
     }
 
+    fun cancelLoading() {
+        sampleInfoState.value = null
+        _renderProgress = 0 to 0
+    }
+
     fun renderCharts(
         scope: CoroutineScope,
-        chunkCount: Int,
         sampleInfo: SampleInfo,
         appConf: AppConf,
         density: Density,
         layoutDirection: LayoutDirection,
     ) {
         chartStore.clear()
+        val chunkCount = sampleInfo.chunkCount
         val chunkSizeInMilliSec = sampleInfo.lengthMillis / chunkCount
         val startingChunkIndex = (project.currentEntry.start / chunkSizeInMilliSec).toInt().coerceAtMost(chunkCount - 1)
 
@@ -160,7 +165,6 @@ class EditorState(
         }
         chartStore.load(
             scope,
-            chunkCount,
             sampleInfo,
             appConf,
             density,

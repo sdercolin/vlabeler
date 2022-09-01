@@ -123,6 +123,9 @@ enum class Strings(val en: String) {
     MenuToolsBatchEditManagePlugins(
         en = "Manage Plugins...",
     ),
+    MenuToolsPrerender(
+        en = "Prerender All Charts...",
+    ),
     MenuSettings(
         en = "Settings",
     ),
@@ -288,6 +291,18 @@ enum class Strings(val en: String) {
     ),
     SampleListSampleDirectoryRedirectButton(
         en = "Change sample directory",
+    ),
+    PrerendererSampleText(
+        en = "Rendering sample files %d/%d...",
+    ),
+    PrerendererSampleTextFinished(
+        en = "Rendering sample files %d/%d... Done",
+    ),
+    PrerendererChartText(
+        en = "Rendering charts %d/%d...",
+    ),
+    PrerendererChartTextFinished(
+        en = "Rendering charts %d/%d... Done",
     ),
     EditorRenderStatusLabel(
         en = "%d/%d Rendering...",

@@ -42,8 +42,17 @@ import java.awt.Cursor
 fun Editor(state: EditorState, appState: AppState) {
     val keyboardState by state.keyboardViewModel.keyboardStateFlow.collectAsState()
 
-    LaunchedEffect(state.project.currentSampleName, state.project.sampleDirectory, appState.player, state) {
-        state.loadSample(appState.appConf)
+    LaunchedEffect(
+        state.project.currentSampleName,
+        state.project.sampleDirectory,
+        appState.isShowingPrerenderDialog,
+        state,
+    ) {
+        if (appState.isShowingPrerenderDialog) {
+            state.cancelLoading()
+        } else {
+            state.loadSample(appState.appConf)
+        }
     }
     LaunchedEffect(state) {
         state.updateResolution()

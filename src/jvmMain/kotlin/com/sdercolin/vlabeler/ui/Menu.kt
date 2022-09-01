@@ -85,7 +85,7 @@ fun FrameWindowScope.Menu(
                     string(Strings.MenuFileInvalidateCaches),
                     onClick = { appState.requestClearCaches(mainScope) },
                     shortcut = KeyAction.InvalidateCaches.getKeyShortCut(),
-                    enabled = appState.hasProject,
+                    enabled = appState.hasProject && appState.isShowingPrerenderDialog.not(),
                 )
                 Item(
                     string(Strings.MenuFileClose),
@@ -259,6 +259,11 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.ManageMacroPlugins.getKeyShortCut(),
                     )
                 }
+                Item(
+                    string(Strings.MenuToolsPrerender),
+                    onClick = { appState.openPrerenderDialog() },
+                    enabled = appState.isEditorActive,
+                )
             }
         }
         Menu(string(Strings.MenuSettings), mnemonic = 'S') {
