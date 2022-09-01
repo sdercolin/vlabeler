@@ -322,6 +322,11 @@ fun FrameWindowScope.Menu(
                         checked = DebugState.isShowingChunkBorder,
                         onCheckedChange = { DebugState.isShowingChunkBorder = it },
                     )
+                    CheckboxItem(
+                        "Print memory usage",
+                        checked = DebugState.printMemoryUsage,
+                        onCheckedChange = { DebugState.printMemoryUsage = it },
+                    )
                 }
             }
         }

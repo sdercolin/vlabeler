@@ -23,6 +23,7 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.sdercolin.vlabeler.audio.Player
+import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.ensureDirectories
@@ -42,6 +43,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.util.AppRecordFile
+import com.sdercolin.vlabeler.util.MemoryUsageMonitor
 import com.sdercolin.vlabeler.util.parseJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
@@ -50,8 +52,8 @@ import kotlinx.coroutines.flow.onEach
 var hasUncaughtError = false
 
 fun main(vararg args: String) = application {
-    Log.init()
-    ensureDirectories()
+    remember { Log.init() }
+    remember { ensureDirectories() }
 
     val mainScope = rememberCoroutineScope()
     val appRecordStore = rememberAppRecordStore(mainScope)
@@ -71,6 +73,12 @@ fun main(vararg args: String) = application {
     }
     val onKeyEvent: (KeyEvent) -> Boolean = {
         appState?.keyboardViewModel?.onKeyEvent(it) ?: false
+    }
+
+    LaunchedEffect(DebugState.printMemoryUsage) {
+        if (DebugState.printMemoryUsage) {
+            MemoryUsageMonitor().run()
+        }
     }
 
     Window(
