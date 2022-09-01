@@ -24,7 +24,6 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.util.getNextOrNull
@@ -76,7 +75,6 @@ fun NameLabels(
             if (chunkVisibleList[index]) {
                 NameLabelsChunk(
                     modifier = modifier,
-                    index = index,
                     entryChunk = chunks[index],
                     offset = index * chunkLength,
                     requestRename = requestRename,
@@ -99,7 +97,6 @@ private fun NameLabel(
     jumpToEntry: (Int) -> Unit,
     onHovered: (Int, Boolean) -> Unit,
 ) {
-    Log.info("NameLabel of entry $index composed")
     Text(
         modifier = Modifier.widthIn(max = 100.dp)
             .wrapContentSize()
@@ -124,14 +121,12 @@ private fun NameLabel(
 @Composable
 private fun NameLabelsChunk(
     modifier: Modifier,
-    index: Int,
     entryChunk: NameLabelEntryChunk,
     offset: Float,
     requestRename: (Int) -> Unit,
     jumpToEntry: (Int) -> Unit,
     onHovered: (Int, Boolean) -> Unit,
 ) {
-    Log.info("NameLabelsChunk $index composed")
     val items = remember(entryChunk) {
         listOfNotNull(entryChunk.leftEntry) + entryChunk.entries + listOfNotNull(entryChunk.rightEntry)
     }
