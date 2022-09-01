@@ -387,7 +387,7 @@ class AppState(
     val isMacroPluginAvailable
         get() = project != null && screen is Screen.Editor && !anyDialogOpeningExceptMacroPluginManager()
 
-    val isScrollFitEnabled get() = isMarkerDisplayed && editor?.sampleInfoResult?.getOrNull() != null
+    val isScrollFitEnabled get() = editor?.sampleInfoResult?.getOrNull() != null
 
     sealed class PendingActionAfterSaved {
         object Open : PendingActionAfterSaved()

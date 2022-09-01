@@ -4,15 +4,17 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -20,8 +22,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -52,6 +56,9 @@ import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.toColorOrNull
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
 
 @Composable
 fun Canvas(
@@ -86,27 +93,37 @@ fun Canvas(
                 editorState,
                 appState,
             ) {
-                val scrollState = if (appState.isMarkerDisplayed) {
-                    // use a copied state because this behind the marker labels
-                    ScrollState(horizontalScrollState.value)
-                } else {
-                    horizontalScrollState
-                }
-                Box(modifier = Modifier.fillMaxSize().horizontalScroll(scrollState)) {
-                    Row {
-                        repeat(chunkCount) { chunkIndex ->
-                            Chunk(
-                                chunkIndex,
-                                chunkCount,
-                                canvasParams,
-                                sampleInfo,
-                                appState,
-                                editorState,
-                            )
+                val lazyListState = rememberLazyListState()
+                LaunchedEffect(Unit) {
+                    snapshotFlow { horizontalScrollState.value }
+                        .scan(null as Int? to 0) { accumulator, value ->
+                            accumulator.second to value
                         }
+                        .onEach { (oldValue, newValue) ->
+                            if (oldValue != newValue) {
+                                if (oldValue == null) return@onEach
+                                lazyListState.scrollBy((newValue - oldValue).toFloat())
+                            }
+                        }
+                        .launchIn(appState.mainScope)
+                }
+                LazyRow(modifier = Modifier.fillMaxSize(), state = lazyListState) {
+                    items(chunkCount) { chunkIndex ->
+                        Chunk(
+                            chunkIndex,
+                            chunkCount,
+                            canvasParams,
+                            sampleInfo,
+                            appState,
+                            editorState,
+                        )
                     }
                 }
-                if (appState.isMarkerDisplayed) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .runIf(appState.isMarkerDisplayed.not()) { alpha(0f) },
+                ) {
                     MarkerCanvas(
                         canvasParams,
                         horizontalScrollState,
@@ -115,19 +132,22 @@ fun Canvas(
                         appState,
                     )
                 }
-                if (appState.isMarkerDisplayed) {
-                    Box(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
-                        MarkerLabels(screenRange, appState, markerState)
-                    }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .horizontalScroll(horizontalScrollState)
+                        .runIf(appState.isMarkerDisplayed.not()) { alpha(0f) },
+                ) {
+                    MarkerLabels(screenRange, appState, markerState)
                 }
-                if (appState.playerState.isPlaying) {
-                    PlayerCursor(
-                        canvasParams,
-                        appState.playerState,
-                        horizontalScrollState,
-                        appState.appConf.editor.playerCursorColor.toColor(),
-                    )
-                }
+            }
+            if (appState.playerState.isPlaying) {
+                PlayerCursor(
+                    canvasParams,
+                    appState.playerState,
+                    horizontalScrollState,
+                    appState.appConf.editor.playerCursorColor.toColor(),
+                )
             }
         } else {
             val exception = sampleInfoResult.exceptionOrNull()
