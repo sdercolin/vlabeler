@@ -162,6 +162,7 @@ enum class KeyAction(
         KeySet(Key.Semicolon, setOf(Key.Ctrl)),
         true,
     ),
+    PrerenderAll(listOf(Strings.MenuTools, Strings.MenuToolsPrerender), null, true),
     ManageTemplatePlugins(
         listOf(Strings.MenuSettings, Strings.MenuSettingsTemplatePlugins),
         KeySet(Key.Apostrophe, setOf(Key.Ctrl)),

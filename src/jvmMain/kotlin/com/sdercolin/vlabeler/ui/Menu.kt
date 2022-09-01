@@ -262,6 +262,7 @@ fun FrameWindowScope.Menu(
                 Item(
                     string(Strings.MenuToolsPrerender),
                     onClick = { appState.openPrerenderDialog() },
+                    shortcut = KeyAction.PrerenderAll.getKeyShortCut(),
                     enabled = appState.isEditorActive,
                 )
             }
