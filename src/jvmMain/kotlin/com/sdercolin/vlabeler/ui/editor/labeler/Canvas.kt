@@ -86,7 +86,13 @@ fun Canvas(
                 editorState,
                 appState,
             ) {
-                Box(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
+                val scrollState = if (appState.isMarkerDisplayed) {
+                    // use a copied state because this behind the marker labels
+                    ScrollState(horizontalScrollState.value)
+                } else {
+                    horizontalScrollState
+                }
+                Box(modifier = Modifier.fillMaxSize().horizontalScroll(scrollState)) {
                     Row {
                         repeat(chunkCount) { chunkIndex ->
                             Chunk(
@@ -99,10 +105,6 @@ fun Canvas(
                             )
                         }
                     }
-                    if (appState.isMarkerDisplayed) {
-                        // TODO: merge into marker canvas because it should displayed over the markers
-                        MarkerLabels(screenRange, appState, markerState)
-                    }
                 }
                 if (appState.isMarkerDisplayed) {
                     MarkerCanvas(
@@ -112,6 +114,11 @@ fun Canvas(
                         editorState,
                         appState,
                     )
+                }
+                if (appState.isMarkerDisplayed) {
+                    Box(modifier = Modifier.fillMaxSize().horizontalScroll(horizontalScrollState)) {
+                        MarkerLabels(screenRange, appState, markerState)
+                    }
                 }
                 if (appState.playerState.isPlaying) {
                     PlayerCursor(
