@@ -101,7 +101,7 @@ object ChartRepository {
 }
 
 @Serializable
-data class ChartCacheParams(
+private data class ChartCacheParams(
     val algorithmVersion: Int,
     val painterConfig: AppConf.Painter,
 )
