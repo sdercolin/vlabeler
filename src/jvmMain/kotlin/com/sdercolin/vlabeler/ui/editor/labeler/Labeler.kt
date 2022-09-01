@@ -24,7 +24,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.repository.ToolCursorRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.EditorState
@@ -59,7 +62,16 @@ fun Labeler(
             multiple = editorState.editedEntries.size > 1,
             openEditEntryNameDialog = openEditEntryNameDialog,
         )
-        Box(Modifier.fillMaxWidth().weight(1f).border(width = 0.5.dp, color = Black50)) {
+        val cursor = remember(editorState.tool) {
+            ToolCursorRepository.get(editorState.tool)
+        }
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .border(width = 0.5.dp, color = Black50)
+                .pointerHoverIcon(PointerIcon(cursor)),
+        ) {
             Canvas(
                 horizontalScrollState = horizontalScrollState,
                 editorState = editorState,

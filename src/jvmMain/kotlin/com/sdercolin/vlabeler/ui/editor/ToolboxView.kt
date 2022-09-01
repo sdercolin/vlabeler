@@ -17,10 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.Black80
 import com.sdercolin.vlabeler.ui.theme.White20
+import java.awt.Cursor
 
 @Composable
 fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
@@ -36,6 +39,7 @@ fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
             Box(
                 modifier = Modifier.size(40.dp)
                     .background(backgroundColor, shape = RoundedCornerShape(5.dp))
+                    .pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
                     .plainClickable { select(tool) }
                     .padding(5.dp),
                 contentAlignment = Alignment.Center,
@@ -46,7 +50,7 @@ fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
                 }
                 val rotate = when (tool) {
                     Tool.Cursor -> 90f
-                    Tool.Scissors -> 0f
+                    Tool.Scissors -> 270f
                 }
                 Icon(
                     imageVector = icon,
