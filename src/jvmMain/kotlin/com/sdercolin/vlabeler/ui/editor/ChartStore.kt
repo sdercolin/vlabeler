@@ -84,6 +84,7 @@ class ChartStore {
                 }
 
                 repeat(sampleInfo.channels) { channelIndex ->
+                    System.gc()
                     renderWaveform(
                         sampleInfo,
                         chunk,
@@ -96,6 +97,7 @@ class ChartStore {
                     )
                 }
                 if (sampleInfo.hasSpectrogram && appConf.painter.spectrogram.enabled) {
+                    System.gc()
                     renderSpectrogram(
                         sampleInfo,
                         chunk,
@@ -108,6 +110,7 @@ class ChartStore {
                     )
                 }
             }
+            launchGcDelayed()
         }
     }
 
