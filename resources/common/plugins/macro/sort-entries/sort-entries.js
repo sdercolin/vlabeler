@@ -1,6 +1,11 @@
 let descending = params["descending"]
 let useEntryNameAsFirstKey = params["useEntryNameAsFirstKey"]
 
+if (labeler.continuous) {
+    expectedError = true
+    throw new Error("Cannot sort continuous labels.")
+}
+
 entries.sort((a, b) => {
     let descendingFactor = descending ? -1 : 1
     let entryNameResult = descendingFactor * a.name.localeCompare(b.name)
