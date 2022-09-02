@@ -58,12 +58,12 @@ fun runMacroPlugin(
                 appendLine("Removed: $removedCount")
             },
         )
-        js.close()
         project.copy(entries = editedEntries.map { it.entry }).validate()
     }.getOrElse {
         val expected = js.getOrNull("expectedError") ?: false
+        js.close()
         throw PluginRuntimeException(expected = expected, cause = it)
-    }
+    }.also { js.close() }
 }
 
 @Serializable

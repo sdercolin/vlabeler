@@ -86,8 +86,8 @@ fun App(
                             appState.showProgress()
                             withContext(Dispatchers.IO) {
                                 plugin.saveParams(it)
+                                appState.executeMacroPlugin(plugin, it)
                             }
-                            appState.executeMacroPlugin(plugin, it)
                             appState.hideProgress()
                         }
                     }
