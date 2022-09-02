@@ -25,6 +25,8 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
@@ -102,18 +104,16 @@ fun ProjectCreator(
                         maxLines = 1,
                     )
                     Spacer(Modifier.height(25.dp))
-                    listOf<@Composable () -> Unit>(
-                        { SampleDirectoryTextField(state) },
-                        { WorkingDirectoryTextField(state) },
-                        { ProjectNameTextField(state) },
-                        { CacheDirectoryTextField(state) },
-                        { LabelerSelectorRow(state, activeLabelerConfs, activeTemplatePlugins) },
-                        { InputFileTextField(state) },
-                        { OtherSettingsRow(state) },
-                    ).forEach {
-                        it.invoke()
-                        Spacer(Modifier.height(20.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                        SampleDirectoryTextField(state)
+                        WorkingDirectoryTextField(state)
+                        ProjectNameTextField(state)
+                        CacheDirectoryTextField(state)
+                        LabelerSelectorRow(state, activeLabelerConfs, activeTemplatePlugins)
+                        InputFileTextField(state)
+                        OtherSettingsRow(state)
                     }
+
                     Spacer(Modifier.height(30.dp))
                     ButtonBar(cancel, state, snackbarHostState, create)
                 }
@@ -136,7 +136,7 @@ private fun SampleDirectoryTextField(state: ProjectCreatorState) {
         value = state.sampleDirectory,
         onValueChange = state::updateSampleDirectory,
         label = { Text(string(Strings.StarterNewSampleDirectory)) },
-        maxLines = 2,
+        singleLine = true,
         trailingIcon = {
             IconButton(onClick = { state.pickSampleDirectory() }) {
                 Icon(Icons.Default.FolderOpen, null)
@@ -153,7 +153,7 @@ private fun WorkingDirectoryTextField(state: ProjectCreatorState) {
         value = state.workingDirectory,
         onValueChange = state::updateWorkingDirectory,
         label = { Text(string(Strings.StarterNewWorkingDirectory)) },
-        maxLines = 2,
+        singleLine = true,
         trailingIcon = {
             IconButton(onClick = { state.pickWorkingDirectory() }) {
                 Icon(Icons.Default.FolderOpen, null)
@@ -171,7 +171,7 @@ private fun ProjectNameTextField(state: ProjectCreatorState) {
             value = state.projectName,
             onValueChange = state::updateProjectName,
             label = { Text(string(Strings.StarterNewProjectName)) },
-            maxLines = 2,
+            singleLine = true,
             isError = state.isProjectNameValid().not(),
         )
         if (state.isProjectFileExisting()) {
@@ -192,7 +192,7 @@ private fun CacheDirectoryTextField(state: ProjectCreatorState) {
         value = state.cacheDirectory,
         onValueChange = state::updateCacheDirectory,
         label = { Text(string(Strings.StarterNewCacheDirectory)) },
-        maxLines = 2,
+        singleLine = true,
         trailingIcon = {
             IconButton(onClick = { state.pickCacheDirectory() }) {
                 Icon(Icons.Default.FolderOpen, null)
@@ -221,7 +221,7 @@ private fun LabelerSelectorRow(
             val color = if (state.templatePluginError) {
                 MaterialTheme.colors.error
             } else {
-                MaterialTheme.colors.onSurface
+                LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
             }
             Icon(Icons.Default.Settings, null, tint = color)
         }
@@ -254,7 +254,7 @@ private fun LabelerSelector(
             onValueChange = { },
             readOnly = true,
             label = { Text(string(Strings.StarterNewLabeler)) },
-            maxLines = 1,
+            singleLine = true,
             leadingIcon = {
                 IconButton(onClick = { expanded = true }) {
                     Icon(Icons.Default.ExpandMore, null)
@@ -293,7 +293,7 @@ private fun TemplatePluginSelector(
             onValueChange = { },
             readOnly = true,
             label = { Text(string(Strings.StarterNewTemplatePlugin)) },
-            maxLines = 1,
+            singleLine = true,
             leadingIcon = {
                 IconButton(onClick = { expanded = true }) {
                     Icon(Icons.Default.ExpandMore, null)
@@ -336,7 +336,7 @@ private fun InputFileTextField(state: ProjectCreatorState) {
         label = { Text(state.getInputFileLabelText()) },
         placeholder = state.getInputFilePlaceholderText()?.let { { Text(it) } },
         enabled = state.isInputFileEnabled(),
-        maxLines = 2,
+        singleLine = true,
         trailingIcon = {
             IconButton(onClick = { state.pickInputFile() }, enabled = state.isInputFileEnabled()) {
                 Icon(Icons.Default.FolderOpen, null)
@@ -366,7 +366,7 @@ private fun EncodingSelector(state: ProjectCreatorState) {
             enabled = state.isEncodingSelectionEnabled,
             readOnly = true,
             label = { Text(string(Strings.StarterNewEncoding)) },
-            maxLines = 1,
+            singleLine = true,
             leadingIcon = {
                 IconButton(onClick = { expanded = true }) {
                     Icon(Icons.Default.ExpandMore, null)
