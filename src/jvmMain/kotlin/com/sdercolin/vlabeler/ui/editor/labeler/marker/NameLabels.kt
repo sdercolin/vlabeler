@@ -155,7 +155,7 @@ private fun NameLabelsChunk(
             placeables.forEachIndexed { index, placeable ->
                 val x = if (entryChunk.rightEntry != null && index == placeables.lastIndex && index > 0) {
                     // should only happen in continuous mode
-                    // so use `start` of the previous one to get immediate update
+                    // so use `end` of the previous one to get immediate update
                     items[index - 1].end - offset
                 } else {
                     items[index].start - offset
