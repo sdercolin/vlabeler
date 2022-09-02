@@ -48,6 +48,8 @@ class EditorState(
     private val player get() = appState.player
     var tool: Tool by mutableStateOf(Tool.Cursor)
 
+    var isInputFocused: Boolean by mutableStateOf(false)
+
     private var _renderProgress: Pair<Int, Int> by mutableStateOf(0 to 0)
     val renderProgress get() = _renderProgress
     private val renderProgressMutex = Mutex()

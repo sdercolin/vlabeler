@@ -96,6 +96,7 @@ fun Editor(state: EditorState, appState: AppState) {
                         appState.jumpToEntry(index)
                         labelerFocusRequester.requestFocus()
                     },
+                    onFocusedChanged = { state.isInputFocused = it },
                 )
             }
         }

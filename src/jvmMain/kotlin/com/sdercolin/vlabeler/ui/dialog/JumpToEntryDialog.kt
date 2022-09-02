@@ -23,5 +23,6 @@ fun JumpToEntryDialog(
         pinned = false,
         project = args.project,
         jumpToEntry = { index -> finish(JumpToEntryDialogResult(index)) },
+        onFocusedChanged = {},
     )
 }

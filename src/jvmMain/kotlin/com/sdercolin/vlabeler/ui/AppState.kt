@@ -383,7 +383,12 @@ class AppState(
         shouldExit = true
     }
 
-    val isEditorActive get() = project != null && screen is Screen.Editor && !anyDialogOpening()
+    val isEditorActive: Boolean
+        get() {
+            val editor = screen as? Screen.Editor ?: return false
+            return project != null && editor.state.isInputFocused.not() && !anyDialogOpening()
+        }
+
     val isMacroPluginAvailable
         get() = project != null && screen is Screen.Editor && !anyDialogOpeningExceptMacroPluginManager()
 

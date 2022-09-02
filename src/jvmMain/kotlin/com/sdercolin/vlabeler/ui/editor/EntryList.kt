@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
@@ -50,7 +51,7 @@ import com.sdercolin.vlabeler.util.animateScrollToShowItem
 import com.sdercolin.vlabeler.util.runIf
 
 @Composable
-fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
+fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit, onFocusedChanged: (Boolean) -> Unit) {
     val entries = project.entries.withIndex().toList()
     val currentIndex = project.currentIndex
 
@@ -83,7 +84,10 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit) {
         Modifier.fillMaxWidth(0.5f).fillMaxHeight(0.7f)
     }
 
-    Column(sizeModifier.plainClickable()) {
+    Column(
+        modifier = sizeModifier.plainClickable()
+            .onFocusChanged { onFocusedChanged(it.hasFocus) },
+    ) {
         SearchBar(
             text = searchText.orEmpty(),
             onTextChange = { text -> search(text.takeIf { it.isNotEmpty() }) },
