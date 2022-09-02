@@ -110,6 +110,7 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`
 - `Ctrl` + `Up`/`Down`: go to previous/next sample
 - `<<`/`>>` buttons in the bottom bar: go to previous/next sample
 - `Ctrl` + `G` or entry number button in the bottom bar: show `Go to entry...` dialog
+- `Ctrl` + `2` (also in `View` menu): pin the entry list to the right side of the screen (position and size are customizable)
 
 ## Multiple editing mode
 
@@ -144,6 +145,9 @@ By default, when you click on a valid position with the scissors:
 2. A dialog is shown, asking you to rename the former entry
 3. Cutting and renaming are conducted
 4. The editor navigates to the former entry if needed
+
+### Pan
+Or the hand tool. Drag the charts to scroll the canvas.
 
 These actions can be customized in `Settings` -> `Prefereneces`.
 
