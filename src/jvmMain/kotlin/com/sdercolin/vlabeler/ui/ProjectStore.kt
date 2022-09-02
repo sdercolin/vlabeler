@@ -285,7 +285,6 @@ class ProjectStoreImpl(
         }
     }
 
-    @Suppress("ThrowableNotThrown")
     override suspend fun executeMacroPlugin(plugin: Plugin, params: ParamMap) {
         val newProject = runCatching { runMacroPlugin(plugin, params, requireProject()) }
             .getOrElse {
