@@ -280,7 +280,7 @@ class MarkerState(
         }
 
         // line part
-        (pointsSorted + listOf(IndexedValue(MarkerCursorState.EndPointIndex, endInPixel)))
+        (listOf(IndexedValue(MarkerCursorState.StartPointIndex, startInPixel)) + pointsSorted)
             .reversed()
             .zipWithNext()
             .forEach { (current, next) ->
