@@ -1,0 +1,31 @@
+{
+  "name": "sort-entries",
+  "version": 1,
+  "type": "macro",
+  "displayedName": "Reorder entries",
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": "Reorder all entries by entry name or sample name",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/sort-entries",
+  "supportedLabelFileExtension": "*",
+  "parameters": {
+    "list": [
+      {
+        "type": "boolean",
+        "name": "descending",
+        "label": "Descending order",
+        "defaultValue": false
+      },
+      {
+        "type": "boolean",
+        "name": "useEntryNameAsFirstKey",
+        "label": "Use entry name as the first key",
+        "description": "If this option is enabled, entries are sorted firstly by entry name, otherwise, they are sorted firstly by the sample name.",
+        "defaultValue": false
+      }
+    ]
+  },
+  "scriptFiles": [
+    "sort-entries.js"
+  ]
+}
