@@ -254,7 +254,6 @@ class ChartStore {
         }
     }
 
-    @Suppress("UnnecessaryVariable")
     private suspend fun renderSpectrogram(
         sampleInfo: SampleInfo,
         chunk: SampleChunk?,
