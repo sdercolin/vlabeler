@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.common.ClickableText
+import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import kotlinx.coroutines.CoroutineScope
@@ -92,7 +92,7 @@ fun BoxScope.Starter(
                         Text(text = string(Strings.StarterRecentEmpty), style = MaterialTheme.typography.body2)
                     } else {
                         recentFiles.forEachIndexed { index, file ->
-                            ClickableText(
+                            SingleClickableText(
                                 modifier = Modifier.padding(bottom = 15.dp),
                                 text = recentPaths[index].second,
                                 onClick = {

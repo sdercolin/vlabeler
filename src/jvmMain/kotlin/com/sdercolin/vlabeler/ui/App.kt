@@ -18,6 +18,7 @@ import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesDialog
 import com.sdercolin.vlabeler.ui.dialog.prerender.PrerenderDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
+import com.sdercolin.vlabeler.ui.dialog.updater.UpdaterDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
@@ -40,6 +41,9 @@ fun App(
     }
     LaunchedEffect(Unit) {
         appState.consumeLaunchArguments()
+    }
+    LaunchedEffect(Unit) {
+        appState.check()
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         when (val screen = appState.screen) {
@@ -72,6 +76,17 @@ fun App(
         }
         if (appState.isShowingPreferencesDialog) {
             PreferencesDialog(appState)
+        }
+        appState.updaterDialogContent?.let { update ->
+            UpdaterDialog(
+                update = update,
+                appRecordStore = appState.appRecordStore,
+                onError = {
+                    appState.closeUpdaterDialog()
+                    appState.showError(it)
+                },
+                finish = { appState.closeUpdaterDialog() },
+            )
         }
         appState.macroPluginShownInDialog?.let { (plugin, params) ->
             MacroPluginDialog(

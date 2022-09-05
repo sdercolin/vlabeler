@@ -56,7 +56,7 @@ fun rememberLabelerPluginManagerState(appState: AppState): LabelerManagerDialogS
         val items = labelers.map {
             LabelerItem(
                 labelerConf = it,
-                disabled = appState.appRecordStore.stateFlow.value.disabledLabelerNames.contains(it.name),
+                disabled = appState.appRecordStore.value.disabledLabelerNames.contains(it.name),
             )
         }
         state.loadItems(items)

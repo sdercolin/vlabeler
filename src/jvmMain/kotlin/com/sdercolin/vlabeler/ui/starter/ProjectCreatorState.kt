@@ -40,7 +40,7 @@ class ProjectCreatorState(
     val appRecordStore: AppRecordStore,
     private var launchArguments: ArgumentMap?,
 ) {
-    private val appRecord get() = appRecordStore.stateFlow.value
+    private val appRecord get() = appRecordStore.value
     var isLoading: Boolean by mutableStateOf(false)
     var sampleDirectory: String by mutableStateOf(appRecord.sampleDirectory ?: HomeDir.absolutePath)
         private set

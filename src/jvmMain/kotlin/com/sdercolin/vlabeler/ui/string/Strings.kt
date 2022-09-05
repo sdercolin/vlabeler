@@ -882,6 +882,27 @@ enum class Strings(val en: String) {
     ActionGoToPreviousSample(
         en = "Go to Previous Sample",
     ),
+    CheckForUpdatesFailure(
+        en = "Could not fetch the latest version information.",
+    ),
+    UpdaterDialogSummaryDetailsLink(
+        en = "Details",
+    ),
+    UpdaterDialogTitle(
+        en = "vLabeler - Update",
+    ),
+    UpdaterDialogCurrentVersionLabel(
+        en = "Current version: %s",
+    ),
+    UpdaterDialogLatestVersionLabel(
+        en = "Latest version: %s (%s)",
+    ),
+    UpdaterDialogStartDownloadButton(
+        en = "Download",
+    ),
+    UpdaterDialogIgnoreButton(
+        en = "Ignore this version",
+    ),
     ;
 
     fun get(language: Language): String = when (language) {

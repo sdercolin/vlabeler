@@ -61,8 +61,8 @@ import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
-import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.common.ReversedRow
+import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
@@ -286,7 +286,7 @@ private fun Info(plugin: Plugin, contactAuthor: () -> Unit) {
             overflow = TextOverflow.Ellipsis,
         )
         if (plugin.email.isNotBlank()) {
-            ClickableText(
+            SingleClickableText(
                 text = string(Strings.PluginDialogInfoContact),
                 style = MaterialTheme.typography.caption,
                 onClick = contactAuthor,
@@ -297,7 +297,7 @@ private fun Info(plugin: Plugin, contactAuthor: () -> Unit) {
 
 @Composable
 private fun Website(website: String, openWebsite: () -> Unit) {
-    ClickableText(
+    SingleClickableText(
         modifier = Modifier.padding(vertical = 3.dp),
         text = website,
         style = MaterialTheme.typography.caption,

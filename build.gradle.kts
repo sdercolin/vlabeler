@@ -36,6 +36,12 @@ kotlin {
                 implementation("com.github.psambit9791:jdsp:1.0.0")
                 implementation("org.graalvm.js:js:22.1.0")
                 implementation("org.apache.tika:tika-parser-text-module:2.4.1")
+                implementation("io.ktor:ktor-client-core:2.1.0")
+                implementation("io.ktor:ktor-client-apache:2.1.0")
+                implementation("io.ktor:ktor-client-logging:2.1.0")
+                implementation("io.ktor:ktor-client-content-negotiation:2.1.0")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.0")
+                implementation("ch.qos.logback:logback-classic:1.2.6")
 
                 val lwjglVersion = "3.3.1"
                 listOf("lwjgl", "lwjgl-nfd").forEach { lwjglDep ->

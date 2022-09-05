@@ -1,6 +1,5 @@
 package com.sdercolin.vlabeler.util
 
-import com.sdercolin.vlabeler.env.isLinux
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.model.LabelerConf.Companion.LabelerFileExtension
@@ -21,8 +20,6 @@ val ResourceDir get() = File(requireNotNull(ResourcePath))
 val DefaultAppConfFile get() = ResourceDir.resolve(AppConfFileName)
 val DefaultLabelerDir get() = ResourceDir.resolve(LabelerFolderName)
 val DefaultPluginDir get() = ResourceDir.resolve(PluginFolderName)
-val RecordDir get() = if (isLinux) AppDir.resolve(RecordFolderName) else ResourceDir.resolve(RecordFolderName)
-val AppRecordFile get() = RecordDir.resolve(AppRecordFileName)
 
 // External files
 val HomeDir get() = File(System.getProperty("user.home"))
@@ -34,6 +31,16 @@ val AppDir
 val CustomAppConfFile get() = AppDir.resolve(AppConfFileName)
 val CustomLabelerDir get() = AppDir.resolve(LabelerFolderName)
 val CustomPluginDir get() = AppDir.resolve(PluginFolderName)
+val RecordDir get() = AppDir.resolve(RecordFolderName)
+val AppRecordFile get() = RecordDir.resolve(AppRecordFileName)
+val DefaultDownloadDir: File
+    get() = listOf(
+        "Downloads",
+        "Download",
+        "Desktop",
+    ).find { HomeDir.resolve(it).absolutePath.toFileOrNull(ensureIsDirectory = true) != null }
+        ?.let { HomeDir.resolve(it) }
+        ?: HomeDir
 
 private val labelerFileFilter = FilenameFilter { _, name -> name.endsWith(".$LabelerFileExtension") }
 fun getDefaultLabelers() = DefaultLabelerDir.getChildren(labelerFileFilter)

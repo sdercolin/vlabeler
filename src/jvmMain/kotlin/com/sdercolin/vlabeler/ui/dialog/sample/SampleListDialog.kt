@@ -38,7 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.ui.common.ClickableText
+import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.Entry
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.IncludedSample
@@ -346,7 +346,7 @@ private fun SampleDirectoryBar(
             readOnly = true,
         )
         Spacer(Modifier.width(20.dp))
-        ClickableText(
+        SingleClickableText(
             modifier = Modifier.alignByBaseline(),
             text = string(Strings.SampleListSampleDirectoryRedirectButton),
             style = MaterialTheme.typography.caption,

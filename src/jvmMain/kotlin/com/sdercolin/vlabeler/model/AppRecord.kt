@@ -1,6 +1,8 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.env.Version
+import com.sdercolin.vlabeler.util.DefaultDownloadDir
 import com.sdercolin.vlabeler.util.asPathRelativeToHome
 import com.sdercolin.vlabeler.util.asSimplifiedPaths
 import kotlinx.serialization.Serializable
@@ -27,6 +29,8 @@ data class AppRecord(
     val disabledLabelerNames: Set<String> = setOf(),
     val disabledPluginNames: Set<String> = setOf(),
     val autoExport: Boolean = false,
+    val ignoredUpdateVersions: Set<String> = setOf(),
+    val updateDownloadDirectory: String = DefaultDownloadDir.absolutePath,
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(
@@ -53,6 +57,12 @@ data class AppRecord(
 
     fun getPinnedEntryListSplitPanePosition(position: AppConf.ViewPosition) =
         pinnedEntryListSplitPanePositions[position] ?: 0.5f
+
+    fun isUpdateIgnored(version: Version) = ignoredUpdateVersions.contains(version.toString())
+
+    fun versionIgnored(version: Version) = copy(
+        ignoredUpdateVersions = ignoredUpdateVersions + version.toString(),
+    )
 }
 
 private const val MaxRecentProjectCount = 10

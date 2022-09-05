@@ -37,8 +37,10 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
         }
     }
 
+    val value get() = stateFlow.value
+
     fun update(updater: AppRecord.() -> AppRecord) {
-        push(updater(_stateFlow.value))
+        push(updater(value))
     }
 
     companion object {

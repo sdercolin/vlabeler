@@ -33,7 +33,7 @@ fun rememberTemplatePluginManagerState(appState: AppState): TemplatePluginManage
         val items = plugins.map {
             TemplatePluginItem(
                 plugin = it,
-                disabled = appState.appRecordStore.stateFlow.value.disabledPluginNames.contains(it.name),
+                disabled = appState.appRecordStore.value.disabledPluginNames.contains(it.name),
             )
         }
         state.loadItems(items)

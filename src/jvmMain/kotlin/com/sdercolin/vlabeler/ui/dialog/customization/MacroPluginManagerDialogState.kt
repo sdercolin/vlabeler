@@ -34,7 +34,7 @@ fun rememberMacroPluginManagerState(appState: AppState): MacroPluginManagerDialo
             MacroPluginItem(
                 plugin = it,
                 appState = appState,
-                disabled = appState.appRecordStore.stateFlow.value.disabledPluginNames.contains(it.name),
+                disabled = appState.appRecordStore.value.disabledPluginNames.contains(it.name),
             )
         }
         state.loadItems(items)

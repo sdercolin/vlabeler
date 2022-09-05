@@ -52,12 +52,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
-import com.sdercolin.vlabeler.ui.common.ClickableText
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
 import com.sdercolin.vlabeler.ui.common.InputBox
 import com.sdercolin.vlabeler.ui.common.IntegerInputBox
 import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.SelectionBox
+import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -230,7 +230,7 @@ private fun PageHeader(page: PreferencesPage, state: PreferencesEditorState) {
         )
         Spacer(Modifier.height(10.dp))
         page.children.forEach { child ->
-            ClickableText(
+            SingleClickableText(
                 modifier = Modifier.padding(vertical = 5.dp).padding(start = 15.dp),
                 text = string(child.displayedName),
                 onClick = { state.selectPageByLink(child) },

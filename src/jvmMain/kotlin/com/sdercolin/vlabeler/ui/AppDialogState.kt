@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.io.loadSavedParams
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
@@ -43,6 +44,7 @@ interface AppDialogState {
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
     val isShowingPrerenderDialog: Boolean
+    val updaterDialogContent: Update?
     val macroPluginShownInDialog: Pair<Plugin, ParamMap>?
     val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
@@ -76,6 +78,8 @@ interface AppDialogState {
     fun closePrerenderDialog()
     fun openPreferencesDialog()
     fun closePreferencesDialog()
+    fun openUpdaterDialog(update: Update)
+    fun closeUpdaterDialog()
     fun openMacroPluginDialog(plugin: Plugin)
     fun updateMacroPluginDialogInputParams(params: ParamMap)
     fun closeMacroPluginDialog()
@@ -124,6 +128,7 @@ class AppDialogStateImpl(
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
     override var isShowingPrerenderDialog: Boolean by mutableStateOf(false)
+    override var updaterDialogContent: Update? by mutableStateOf(null)
     override var macroPluginShownInDialog: Pair<Plugin, ParamMap>? by mutableStateOf(null)
     override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
     override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
@@ -279,6 +284,14 @@ class AppDialogStateImpl(
         if (hasUnsavedChanges) askIfSaveBeforeClearCaches() else clearCachesAndReopen(scope)
 
     private fun askIfSaveBeforeClearCaches() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsClearingCaches)
+
+    override fun openUpdaterDialog(update: Update) {
+        updaterDialogContent = update
+    }
+
+    override fun closeUpdaterDialog() {
+        updaterDialogContent = null
+    }
 
     override fun openMacroPluginDialog(plugin: Plugin) {
         scope.launch(Dispatchers.IO) {

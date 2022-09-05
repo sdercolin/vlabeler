@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.common
 
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,14 +12,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
-fun ClickableText(
+fun SingleClickableText(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colors.primary,
     style: TextStyle = MaterialTheme.typography.body2,
 ) {
-    androidx.compose.foundation.text.ClickableText(
+    ClickableText(
         modifier = modifier,
         text = buildAnnotatedString {
             append(text)

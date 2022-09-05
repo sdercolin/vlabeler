@@ -19,22 +19,22 @@ class AppViewStateImpl(appRecord: AppRecordStore) : AppViewState {
     override var isMarkerDisplayed: Boolean by mutableStateOf(true)
 
     override var isPropertyViewDisplayed: Boolean
-        by savedMutableStateOf(appRecord.stateFlow.value.isPropertyViewDisplayed) {
+        by savedMutableStateOf(appRecord.value.isPropertyViewDisplayed) {
             appRecord.update { copy(isPropertyViewDisplayed = it) }
         }
 
     override var isEntryListPinned: Boolean
-        by savedMutableStateOf(appRecord.stateFlow.value.isEntryListPinned) {
+        by savedMutableStateOf(appRecord.value.isEntryListPinned) {
             appRecord.update { copy(isEntryListPinned = it) }
         }
 
     override var pinnedEntryListSplitPanePositionLocked: Boolean
-        by savedMutableStateOf(appRecord.stateFlow.value.pinnedEntryListSplitPanePositionLocked) {
+        by savedMutableStateOf(appRecord.value.pinnedEntryListSplitPanePositionLocked) {
             appRecord.update { copy(pinnedEntryListSplitPanePositionLocked = it) }
         }
 
     override var isToolboxDisplayed: Boolean
-        by savedMutableStateOf(appRecord.stateFlow.value.isToolboxDisplayed) {
+        by savedMutableStateOf(appRecord.value.isToolboxDisplayed) {
             appRecord.update { copy(isToolboxDisplayed = it) }
         }
 
