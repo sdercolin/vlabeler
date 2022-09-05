@@ -60,7 +60,7 @@ class AppState(
     projectStore: ProjectStore = ProjectStoreImpl(appConf, screenState, scrollFitViewModel, appErrorState),
     unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl(),
     dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarHostState),
-    updaterState: AppUpdaterState = AppUpdaterStateImpl(snackbarHostState, dialogState, appRecordStore),
+    updaterState: AppUpdaterState = AppUpdaterStateImpl(snackbarHostState, dialogState, appRecordStore, mainScope),
 ) : AppErrorState by appErrorState,
     AppViewState by viewState,
     AppScreenState by screenState,

@@ -43,7 +43,7 @@ fun App(
         appState.consumeLaunchArguments()
     }
     LaunchedEffect(Unit) {
-        appState.check()
+        appState.checkUpdates(isAuto = true)
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         when (val screen = appState.screen) {

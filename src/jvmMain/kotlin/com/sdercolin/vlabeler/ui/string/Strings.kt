@@ -132,6 +132,9 @@ enum class Strings(val en: String) {
     MenuHelp(
         en = "Help",
     ),
+    MenuHelpCheckForUpdates(
+        en = "Check for Updates...",
+    ),
     MenuHelpOpenLogDirectory(
         en = "Open Log Directory",
     ),
@@ -881,6 +884,9 @@ enum class Strings(val en: String) {
     ),
     ActionGoToPreviousSample(
         en = "Go to Previous Sample",
+    ),
+    CheckForUpdatesAlreadyUpdated(
+        en = "You already have the latest version of vLabeler installed.",
     ),
     CheckForUpdatesFailure(
         en = "Could not fetch the latest version information.",

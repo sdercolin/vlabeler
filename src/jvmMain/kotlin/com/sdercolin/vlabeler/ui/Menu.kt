@@ -288,6 +288,11 @@ fun FrameWindowScope.Menu(
         }
         Menu(string(Strings.MenuHelp), mnemonic = 'H') {
             Item(
+                string(Strings.MenuHelpCheckForUpdates),
+                onClick = { appState?.checkUpdates(isAuto = false) },
+                shortcut = KeyAction.CheckForUpdates.getKeyShortCut(),
+            )
+            Item(
                 string(Strings.MenuHelpOpenLogDirectory),
                 onClick = { Desktop.getDesktop().open(Log.LoggingPath.toFile()) },
                 shortcut = KeyAction.OpenLogDirectory.getKeyShortCut(),

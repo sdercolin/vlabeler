@@ -178,6 +178,7 @@ enum class KeyAction(
         KeySet(Key.Period, setOf(Key.Ctrl)),
         true,
     ),
+    CheckForUpdates(listOf(Strings.MenuHelp, Strings.MenuHelpCheckForUpdates), null, true),
     OpenLogDirectory(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLogDirectory), null, true),
     OpenLatestRelease(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLatestRelease), null, true),
     OpenGitHub(listOf(Strings.MenuHelp, Strings.MenuHelpOpenGitHub), null, true),
