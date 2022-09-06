@@ -25,8 +25,16 @@ For other types of Linux os, you may have to build it by yourself.
 
 ### For macOS users
 
-If you cannot open the app with a "damaged" error, please run `sudo xattr -rc /Applications/vLabeler.app`
-with your terminal. (sudo command requires your password)
+If you cannot open the app with a "damaged" error, please run the following commands with your terminal.
+```
+sudo xattr -rc /Applications/vLabeler.app
+```
+If it doesn't work, try
+```
+sudo xattr -r -d com.apple.quarantine /Applications/vLabeler.app
+```
+
+Note that `sudo` command requires your password.
 
 ## Building
 
