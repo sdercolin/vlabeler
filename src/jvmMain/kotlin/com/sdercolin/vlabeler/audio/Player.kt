@@ -113,14 +113,15 @@ class Player(
     private suspend fun startCounting(startFrame: Int = 0, endFrame: Int? = null) {
         countingJob?.cancelAndJoin()
         countingJob = coroutineScope.launch(Dispatchers.Default) {
-            var frame = startFrame.toFloat()
+            val firstTime = System.currentTimeMillis()
+            val firstFrame = startFrame.toFloat()
+            var frame = firstFrame
             val sampleRate = format?.sampleRate ?: return@launch
-            val frameInterval = PlayingTimeInterval * sampleRate / 1000
             state.setFramePosition(frame)
             while (true) {
                 delay(PlayingTimeInterval)
                 if (!state.isPlaying) break
-                frame += frameInterval
+                frame = firstFrame + (System.currentTimeMillis() - firstTime) * sampleRate / 1000
                 if (endFrame != null && frame > endFrame) break
                 state.setFramePosition(frame)
             }
