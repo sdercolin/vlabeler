@@ -17,7 +17,7 @@ See [Releases](https://github.com/sdercolin/vlabeler/releases).
 
 Packaged application for the following platforms are provided in the releases.
 
-- Windows (.exe)
+- Windows (.zip/.exe)
 - Mac (Apple Silicon or Intel) (.dmg)
 - Ubuntu (.deb)
 
