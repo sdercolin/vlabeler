@@ -2,6 +2,8 @@ package com.sdercolin.vlabeler
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -103,8 +105,25 @@ fun main(vararg args: String) = application {
             StandaloneDialogs(mainScope, state)
             ProjectChangesListener(state)
             ProjectWriter(state)
-            Box(Modifier.fillMaxSize()) {
-                SnackbarHost(state.snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+            SnackbarBox(state)
+        }
+    }
+}
+
+@Composable
+private fun SnackbarBox(state: AppState) {
+    AppTheme {
+        Box(Modifier.fillMaxSize()) {
+            SnackbarHost(
+                state.snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            ) {
+                Snackbar(
+                    it,
+                    actionColor = MaterialTheme.colors.primary,
+                    backgroundColor = MaterialTheme.colors.background,
+                    contentColor = MaterialTheme.colors.onBackground,
+                )
             }
         }
     }

@@ -927,6 +927,16 @@ enum class Strings(val en: String) {
     LicenseDialogLicenses(
         en = "OSS Licenses used in vLabeler",
     ),
+    LoadProjectWarningLabelerCreated(
+        en = "A new labeler `%s` is installed by the project file.",
+    ),
+    LoadProjectWarningLabelerUpdated(
+        en = "Labeler `%s` is updated to version `%s` by the project file.",
+    ),
+    LoadProjectWarningCacheDirReset(
+        en = "Cannot find or create the cache directory defined in the project file." +
+            " A default cache directory will be used instead.",
+    ),
     ;
 
     fun get(language: Language): String = when (language) {

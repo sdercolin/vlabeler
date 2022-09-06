@@ -22,7 +22,6 @@ object SampleInfoRepository {
     fun init(project: Project) {
         cacheDirectory = project.getCacheDir().resolve(SampleInfoCacheFolderName)
         cacheDirectory.mkdirs()
-        // TODO: handle case that the cache directory is not created
     }
 
     suspend fun load(file: File, appConf: AppConf): Result<SampleInfo> {

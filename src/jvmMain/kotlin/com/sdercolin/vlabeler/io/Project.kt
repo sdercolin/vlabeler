@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.io
 
+import androidx.compose.material.SnackbarDuration
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.ProjectParseException
 import com.sdercolin.vlabeler.model.Project
@@ -26,9 +27,17 @@ fun loadProject(
     appState: AppState,
     autoSaved: Boolean = false,
 ) {
+    suspend fun showSnackbar(message: String) {
+        appState.snackbarHostState.showSnackbar(
+            message,
+            actionLabel = string(Strings.CommonOkay),
+            duration = SnackbarDuration.Indefinite,
+        )
+    }
+
     scope.launch(Dispatchers.IO) {
         if (file.exists().not()) {
-            appState.snackbarHostState.showSnackbar(string(Strings.StarterRecentDeleted))
+            showSnackbar(string(Strings.StarterRecentDeleted))
             return@launch
         }
         appState.showProgress()
@@ -41,14 +50,34 @@ fun loadProject(
         val existingLabelerConf = appState.availableLabelerConfs.find { it.name == project.labelerConf.name }
         val labelerConf = when {
             existingLabelerConf == null -> {
-                CustomLabelerDir.resolve(project.labelerConf.fileName).writeText(project.labelerConf.stringifyJson())
+                val labelerConfFile = CustomLabelerDir.resolve(project.labelerConf.fileName)
+                Log.info("Wrote labeler ${project.labelerConf.name} to ${labelerConfFile.absolutePath}")
+                labelerConfFile.writeText(project.labelerConf.stringifyJson())
+                showSnackbar(
+                    string(
+                        Strings.LoadProjectWarningLabelerCreated,
+                        project.labelerConf.name,
+                    ),
+                )
                 project.labelerConf
             }
             existingLabelerConf.version >= project.labelerConf.version -> {
                 existingLabelerConf
             }
             else -> {
-                // TODO: notifying user about updating local labelers
+                val labelerConfFile = CustomLabelerDir.resolve(project.labelerConf.fileName)
+                Log.info(
+                    "Wrote new version ${project.labelerConf.version} of labeler ${project.labelerConf.name}" +
+                        "to ${labelerConfFile.absolutePath}",
+                )
+                labelerConfFile.writeText(project.labelerConf.stringifyJson())
+                showSnackbar(
+                    string(
+                        Strings.LoadProjectWarningLabelerUpdated,
+                        project.labelerConf.name,
+                        project.labelerConf.version,
+                    ),
+                )
                 project.labelerConf
             }
         }
@@ -61,11 +90,21 @@ fun loadProject(
             else -> project.workingDirectory to project.projectName
         }
 
+        val cacheDirectory = if (project.cacheDirectory.toFile().parentFile.exists().not()) {
+            Project.getDefaultCacheDirectory(workingDirectory, projectName).also {
+                showSnackbar(string(Strings.LoadProjectWarningCacheDirReset))
+                Log.info("Reset cache directory to $it")
+            }
+        } else {
+            project.cacheDirectory
+        }
+
         Log.info("Project loaded: ${project.projectFile.absolutePath}")
         val fixedProject = project.copy(
             labelerConf = labelerConf,
             workingDirectory = workingDirectory,
             projectName = projectName,
+            cacheDirectory = cacheDirectory,
         )
         if (fixedProject != project) {
             Log.info("Loaded project is modified to: $fixedProject")
