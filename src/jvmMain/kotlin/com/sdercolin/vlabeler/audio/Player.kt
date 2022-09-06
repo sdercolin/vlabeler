@@ -94,7 +94,9 @@ class Player(
         writingJob = coroutineScope.launch(Dispatchers.IO) {
             runCatching {
                 val offset = startFrame * format.frameSize
-                val length = endFrame?.let { (it - startFrame) * format.frameSize } ?: (data.size - offset)
+                val length = endFrame?.let { (it - startFrame) * format.frameSize }
+                    ?.coerceAtMost(data.size - offset)
+                    ?: (data.size - offset)
                 line.write(data, offset, length)
                 line.drain()
                 if (state.isPlaying) {
