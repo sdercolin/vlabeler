@@ -69,6 +69,7 @@ import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.Resources
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -151,7 +152,7 @@ private fun PluginDialog(
     val dialogState = rememberResizableDialogState(appRecord)
     Dialog(
         title = string(Strings.PluginDialogTitle),
-        icon = painterResource("icon.ico"),
+        icon = painterResource(Resources.iconIco),
         onCloseRequest = { state.cancel() },
         state = dialogState,
     ) {

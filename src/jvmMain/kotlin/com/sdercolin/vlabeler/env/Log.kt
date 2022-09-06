@@ -59,8 +59,9 @@ object Log {
             "appVersion" to appVersion,
             "debug" to isDebug,
             "workingDir" to ResourcePath,
+            "appDir" to AppDir,
         )
-        debug("Launched in $osName, ${launchInfo.entries.joinToString(", ") { "${it.key}=${it.value}" }}")
+        debug("Launched in $osInfo, ${launchInfo.entries.joinToString(", ") { "${it.key}=${it.value}" }}")
     }
 
     fun info(message: String) {

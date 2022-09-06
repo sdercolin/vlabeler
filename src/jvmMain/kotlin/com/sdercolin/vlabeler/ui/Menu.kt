@@ -312,6 +312,11 @@ fun FrameWindowScope.Menu(
                 onClick = { Desktop.getDesktop().browse(Url.DiscordInvitation.toUri()) },
                 shortcut = KeyAction.JoinDiscord.getKeyShortCut(),
             )
+            Item(
+                string(Strings.MenuHelpAbout),
+                onClick = { appState?.openAboutDialog() },
+                shortcut = KeyAction.About.getKeyShortCut(),
+            )
         }
         if (isDebug) {
             Menu("Debug") {

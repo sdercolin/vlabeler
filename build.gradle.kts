@@ -1,3 +1,4 @@
+import com.github.jk1.license.render.JsonReportRenderer
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
@@ -6,6 +7,7 @@ plugins {
     kotlin("plugin.serialization") version "1.7.10"
     id("org.jetbrains.compose")
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
+    id("com.github.jk1.dependency-license-report") version "2.0"
 }
 
 version = project.properties["app.version"] as String
@@ -106,3 +108,7 @@ task("createAppProperties") {
 }
 
 tasks.findByName("jvmMainClasses")?.dependsOn("createAppProperties")
+
+licenseReport {
+    renderers = arrayOf(JsonReportRenderer())
+}

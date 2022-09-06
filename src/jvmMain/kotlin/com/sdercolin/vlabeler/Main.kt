@@ -44,6 +44,7 @@ import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.util.AppRecordFile
 import com.sdercolin.vlabeler.util.MemoryUsageMonitor
+import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.parseJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
@@ -83,7 +84,7 @@ fun main(vararg args: String) = application {
 
     Window(
         title = string(Strings.AppName),
-        icon = painterResource("icon.ico"),
+        icon = painterResource(Resources.iconIco),
         state = windowState,
         onCloseRequest = onCloseRequest,
         onKeyEvent = onKeyEvent,

@@ -147,6 +147,9 @@ enum class Strings(val en: String) {
     MenuHelpJoinDiscord(
         en = "Join Discord",
     ),
+    MenuHelpAbout(
+        en = "About",
+    ),
     MenuSettingsPreferences(
         en = "Preferences...",
     ),
@@ -908,6 +911,21 @@ enum class Strings(val en: String) {
     ),
     UpdaterDialogIgnoreButton(
         en = "Ignore this version",
+    ),
+    AboutDialogTitle(
+        en = "vLabeler - About",
+    ),
+    AboutDialogCopyInfo(
+        en = "Copy info",
+    ),
+    AboutDialogShowLicenses(
+        en = "Show licenses",
+    ),
+    LicenseDialogTitle(
+        en = "vLabeler - Licenses",
+    ),
+    LicenseDialogLicenses(
+        en = "OSS Licenses used in vLabeler",
     ),
     ;
 

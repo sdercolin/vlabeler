@@ -11,8 +11,10 @@ import com.sdercolin.vlabeler.io.openCreatedProject
 import com.sdercolin.vlabeler.io.saveParams
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
+import com.sdercolin.vlabeler.ui.dialog.AboutDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.ErrorDialog
+import com.sdercolin.vlabeler.ui.dialog.LicenseDialog
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesDialog
@@ -76,6 +78,18 @@ fun App(
         }
         if (appState.isShowingPreferencesDialog) {
             PreferencesDialog(appState)
+        }
+        if (appState.isShowingAboutDialog) {
+            AboutDialog(
+                showLicenses = {
+                    appState.closeAboutDialog()
+                    appState.openLicenseDialog()
+                },
+                finish = { appState.closeAboutDialog() },
+            )
+        }
+        if (appState.isShowingLicenseDialog) {
+            LicenseDialog(finish = { appState.closeLicenseDialog() })
         }
         appState.updaterDialogContent?.let { update ->
             UpdaterDialog(

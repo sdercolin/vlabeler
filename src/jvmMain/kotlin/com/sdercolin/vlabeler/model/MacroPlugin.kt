@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.Serializable
 
@@ -27,8 +28,8 @@ fun runMacroPlugin(
         js.setJson("params", params.resolve(project, js))
         js.setJson("resources", resourceTexts)
 
-        val entryDefCode = useResource("class_entry.js") { String(it.readAllBytes()) }
-        val editedEntryDefCode = useResource("class_edited_entry.js") { String(it.readAllBytes()) }
+        val entryDefCode = useResource(Resources.classEntryJs) { it.bufferedReader().readText() }
+        val editedEntryDefCode = useResource(Resources.classEditedEntryJs) { it.bufferedReader().readText() }
         js.eval(entryDefCode)
         js.eval(editedEntryDefCode)
 

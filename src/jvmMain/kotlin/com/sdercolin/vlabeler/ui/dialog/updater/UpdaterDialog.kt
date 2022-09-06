@@ -38,8 +38,9 @@ import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
+import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.toUri
 import java.awt.Desktop
-import java.net.URI
 
 @Composable
 private fun rememberUpdaterDialogState(
@@ -64,7 +65,7 @@ fun UpdaterDialog(
 ) {
     Dialog(
         title = string(Strings.UpdaterDialogTitle),
-        icon = painterResource("icon.ico"),
+        icon = painterResource(Resources.iconIco),
         onCloseRequest = { state.cancel() },
         state = rememberDialogState(width = 800.dp, height = 400.dp),
         resizable = false,
@@ -136,7 +137,7 @@ private fun ColumnScope.SummaryBox(state: UpdaterDialogState) {
                         start = offset,
                         end = offset,
                     ).firstOrNull()?.let { annotation ->
-                        val url = URI(annotation.item)
+                        val url = annotation.item.toUri()
                         Desktop.getDesktop().browse(url)
                     }
                 },

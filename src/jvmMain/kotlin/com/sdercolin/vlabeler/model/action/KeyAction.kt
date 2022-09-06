@@ -183,6 +183,7 @@ enum class KeyAction(
     OpenLatestRelease(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLatestRelease), null, true),
     OpenGitHub(listOf(Strings.MenuHelp, Strings.MenuHelpOpenGitHub), null, true),
     JoinDiscord(listOf(Strings.MenuHelp, Strings.MenuHelpJoinDiscord), null, true),
+    About(listOf(Strings.MenuHelp, Strings.MenuHelpAbout), null, true),
     ToggleSamplePlayback(
         listOf(Strings.ActionToggleSamplePlayback),
         KeySet(Key.Space, setOf(Key.Shift)),

@@ -44,6 +44,8 @@ interface AppDialogState {
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
     val isShowingPrerenderDialog: Boolean
+    val isShowingAboutDialog: Boolean
+    val isShowingLicenseDialog: Boolean
     val updaterDialogContent: Update?
     val macroPluginShownInDialog: Pair<Plugin, ParamMap>?
     val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
@@ -78,6 +80,10 @@ interface AppDialogState {
     fun closePrerenderDialog()
     fun openPreferencesDialog()
     fun closePreferencesDialog()
+    fun openAboutDialog()
+    fun closeAboutDialog()
+    fun openLicenseDialog()
+    fun closeLicenseDialog()
     fun openUpdaterDialog(update: Update)
     fun closeUpdaterDialog()
     fun openMacroPluginDialog(plugin: Plugin)
@@ -128,6 +134,8 @@ class AppDialogStateImpl(
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
     override var isShowingPrerenderDialog: Boolean by mutableStateOf(false)
+    override var isShowingAboutDialog: Boolean by mutableStateOf(false)
+    override var isShowingLicenseDialog: Boolean by mutableStateOf(false)
     override var updaterDialogContent: Update? by mutableStateOf(null)
     override var macroPluginShownInDialog: Pair<Plugin, ParamMap>? by mutableStateOf(null)
     override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
@@ -291,6 +299,22 @@ class AppDialogStateImpl(
 
     override fun closeUpdaterDialog() {
         updaterDialogContent = null
+    }
+
+    override fun openAboutDialog() {
+        isShowingAboutDialog = true
+    }
+
+    override fun closeAboutDialog() {
+        isShowingAboutDialog = false
+    }
+
+    override fun openLicenseDialog() {
+        isShowingLicenseDialog = true
+    }
+
+    override fun closeLicenseDialog() {
+        isShowingLicenseDialog = false
     }
 
     override fun openMacroPluginDialog(plugin: Plugin) {
