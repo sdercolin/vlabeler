@@ -15,7 +15,7 @@ For help, suggestions, issue reports, etc. please join our [Discord](https://dis
 
 See [Releases](https://github.com/sdercolin/vlabeler/releases).
 
-The following platforms are provided in the releases.
+Packaged application for the following platforms are provided in the releases.
 
 - Windows (.exe)
 - Mac (Apple Silicon or Intel) (.dmg)
