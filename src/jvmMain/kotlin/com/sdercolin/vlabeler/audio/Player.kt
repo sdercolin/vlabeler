@@ -80,8 +80,8 @@ class Player(
             Log.info("Player.play()")
             awaitLoad()
             state.startPlaying()
-            startWriting()
             startCounting()
+            startWriting()
         }
     }
 
@@ -108,15 +108,19 @@ class Player(
         }
     }
 
-    private suspend fun startCounting(startFrame: Int = 0) {
+    private suspend fun startCounting(startFrame: Int = 0, endFrame: Int? = null) {
         countingJob?.cancelAndJoin()
-        countingJob = coroutineScope.launch {
-            val line = line ?: return@launch
-            state.resetFramePosition(line.framePosition.toFloat(), startFrame.toFloat())
+        countingJob = coroutineScope.launch(Dispatchers.Default) {
+            var frame = startFrame.toFloat()
+            val sampleRate = format?.sampleRate ?: return@launch
+            val frameInterval = PlayingTimeInterval * sampleRate / 1000
+            state.setFramePosition(frame)
             while (true) {
                 delay(PlayingTimeInterval)
                 if (!state.isPlaying) break
-                state.setFramePositionRelatively(line.framePosition.toFloat())
+                frame += frameInterval
+                if (endFrame != null && frame > endFrame) break
+                state.setFramePosition(frame)
             }
         }
     }
@@ -135,8 +139,8 @@ class Player(
             val startFrame = startFramePosition.roundToInt()
             val endFrame = endFramePosition.roundToInt()
             state.startPlaying()
+            startCounting(startFrame, endFrame)
             startWriting(startFrame, endFrame)
-            startCounting(startFrame)
         }
     }
 

@@ -247,15 +247,18 @@ private fun PlayerCursor(
 ) {
     val screenRange = scrollState.getScreenRange(canvasParams.lengthInPixel)
     Canvas(Modifier.fillMaxSize()) {
-        val actualPosition = playerState.framePosition / canvasParams.resolution
-        if (screenRange != null && actualPosition in screenRange) {
-            val position = actualPosition - screenRange.start
-            drawLine(
-                color = color,
-                start = Offset(position, 0f),
-                end = Offset(position, center.y * 2),
-                strokeWidth = 2f,
-            )
+        val framePosition = playerState.framePosition
+        if (framePosition != null) {
+            val actualPosition = framePosition / canvasParams.resolution
+            if (screenRange != null && actualPosition in screenRange) {
+                val position = actualPosition - screenRange.start
+                drawLine(
+                    color = color,
+                    start = Offset(position, 0f),
+                    end = Offset(position, center.y * 2),
+                    strokeWidth = 2f,
+                )
+            }
         }
     }
 }
