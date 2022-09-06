@@ -117,6 +117,9 @@ fun loadProject(
         if (appState.appConf.editor.autoScroll.let { it.onSwitched || it.onLoadedNewSample }) {
             appState.scrollFitViewModel.emitNext()
         }
+        if (fixedProject != project) {
+            saveProjectFile(fixedProject, allowAutoExport = false)
+        }
         appState.hideProgress()
     }
 }
