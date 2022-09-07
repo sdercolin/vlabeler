@@ -97,13 +97,19 @@ fun Canvas(
             ) {
                 val lazyListState = rememberLazyListState()
                 LaunchedEffect(Unit) {
-                    snapshotFlow { horizontalScrollState.value }
-                        .scan(null as Int? to 0) { accumulator, value ->
+                    snapshotFlow { horizontalScrollState.value to horizontalScrollState.maxValue }
+                        .scan(null as Pair<Int, Int>? to (0 to 0)) { accumulator, value ->
                             accumulator.second to value
                         }
-                        .onEach { (oldValue, newValue) ->
-                            if (oldValue != newValue) {
-                                if (oldValue == null) return@onEach
+                        .onEach { (oldPair, newPair) ->
+                            val (oldValue, oldMax) = oldPair ?: return@onEach
+                            val (newValue, newMax) = newPair
+                            if (oldMax != newMax) {
+                                val itemSize = lazyListState.layoutInfo.visibleItemsInfo.first().size
+                                val itemIndex = newValue / itemSize
+                                val itemOffset = newValue % itemSize
+                                lazyListState.scrollToItem(itemIndex, itemOffset)
+                            } else if (newValue != oldValue) {
                                 lazyListState.scrollBy((newValue - oldValue).toFloat())
                             }
                         }
