@@ -27,13 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.ui.AppState
 
 @Composable
-fun BottomBar(state: BottomBarState, keyboardViewModel: KeyboardViewModel) {
-    LaunchedEffect(keyboardViewModel.keyboardActionFlow) {
-        keyboardViewModel.keyboardActionFlow.collect {
+fun BottomBar(state: BottomBarState, appState: AppState) {
+    LaunchedEffect(appState.keyboardViewModel.keyboardActionFlow) {
+        appState.keyboardViewModel.keyboardActionFlow.collect {
+            if (appState.isEditorActive.not()) return@collect
             if (it == KeyAction.InputResolution) {
                 state.openSetResolutionDialog()
             }
