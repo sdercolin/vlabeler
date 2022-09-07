@@ -2,7 +2,6 @@ package com.sdercolin.vlabeler.io
 
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
@@ -22,14 +21,16 @@ import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getCustomLabelers
 import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.savedMutableStateOf
 import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-suspend fun loadAppConf(): MutableState<AppConf> = withContext(Dispatchers.IO) {
-    val customAppConf = if (CustomAppConfFile.exists() && !isDebug) {
+suspend fun loadAppConf(mainScope: CoroutineScope): MutableState<AppConf> = withContext(Dispatchers.IO) {
+    val customAppConf = if (CustomAppConfFile.exists()) {
         Log.info("Custom app conf found")
         val customAppConfText = CustomAppConfFile.readText()
         runCatching { customAppConfText.parseJson<AppConf>() }.getOrElse {
@@ -40,7 +41,15 @@ suspend fun loadAppConf(): MutableState<AppConf> = withContext(Dispatchers.IO) {
     val appConf = customAppConf ?: DefaultAppConfFile.readText().parseJson()
     CustomAppConfFile.writeText(appConf.stringifyJson())
     Log.info("AppConf: $appConf")
-    mutableStateOf(appConf)
+    savedMutableStateOf(appConf) { value ->
+        mainScope.launch(Dispatchers.IO) {
+            runCatching {
+                CustomAppConfFile.writeText(value.stringifyJson())
+            }.onFailure {
+                Log.error(it)
+            }
+        }
+    }
 }
 
 suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatchers.IO) {
@@ -119,7 +128,7 @@ suspend fun produceAppState(
     appRecordStore: AppRecordStore,
     launchArguments: ArgumentMap?,
 ): AppState {
-    val appConf = loadAppConf()
+    val appConf = loadAppConf(mainScope)
     val availableLabelerConfs = loadAvailableLabelerConfs()
     val plugins = loadPlugins()
 
