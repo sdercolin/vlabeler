@@ -397,7 +397,7 @@ private fun FieldBorderCanvas(
 private fun MarkerState.handleMouseMove(
     tool: Tool,
     event: PointerEvent,
-    editEntries: (List<IndexedEntry>) -> Unit,
+    editEntries: (List<IndexedEntry>, Set<Int>) -> Unit,
     screenRange: FloatRange?,
     playByCursor: (Float) -> Unit,
     scrollState: ScrollState,
@@ -413,7 +413,7 @@ private fun MarkerState.handleMouseMove(
 
 private fun MarkerState.handleCursorMove(
     event: PointerEvent,
-    editEntries: (List<IndexedEntry>) -> Unit,
+    editEntries: (List<IndexedEntry>, Set<Int>) -> Unit,
     screenRange: FloatRange,
     playByCursor: (Float) -> Unit,
 ) {
@@ -575,11 +575,12 @@ private fun MarkerState.handlePanRelease() {
 
 private fun MarkerState.editEntryIfNeeded(
     updated: List<EntryInPixel>,
-    editEntries: (List<IndexedEntry>) -> Unit,
+    editEntries: (List<IndexedEntry>, Set<Int>) -> Unit,
 ) {
     if (updated != entriesInPixel) {
         val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
-        editEntries(updatedInMillis)
+        val edited = updated - entriesInPixel.toSet()
+        editEntries(updatedInMillis, edited.map { it.index }.toSet())
     }
 }
 

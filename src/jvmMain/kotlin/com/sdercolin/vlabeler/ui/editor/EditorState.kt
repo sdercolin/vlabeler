@@ -21,6 +21,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -84,6 +85,8 @@ class EditorState(
         },
     )
 
+    private val editedIndexes = mutableSetOf<Int>()
+
     /**
      * Called from upstream
      */
@@ -100,16 +103,17 @@ class EditorState(
         val changedEntries = editedEntries - project.getEntriesForEditing().toSet()
         if (changedEntries.isNotEmpty()) {
             Log.info("Submit entries: $changedEntries")
-            appState.editEntries(changedEntries)
+            appState.editEntries(changedEntries.map { it.runIf(editedIndexes.contains(it.index)) { markedAsDone() } })
         }
     }
 
-    fun submitEntries(editedEntries: List<IndexedEntry>) {
-        updateEntries(editedEntries)
+    fun submitEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>) {
+        updateEntries(editedEntries, editedIndexes)
         submitEntries()
     }
 
-    fun updateEntries(editedEntries: List<IndexedEntry>) {
+    fun updateEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>) {
+        this.editedIndexes.addAll(editedIndexes)
         this.editedEntries = editedEntries
     }
 
@@ -122,6 +126,7 @@ class EditorState(
         val newValues = project.getEntriesForEditing()
         if (newValues != editedEntries) {
             Log.info("Load new entries: $newValues")
+            editedIndexes.clear()
             editedEntries = newValues
         }
     }

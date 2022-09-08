@@ -167,11 +167,13 @@ data class Project(
             name = rename ?: entry.name,
             end = position,
             points = entry.points.map { it.coerceAtMost(position) },
+            meta = entry.meta.copy(done = true),
         )
         val newEntry = entry.copy(
             name = newName,
             start = position,
             points = entry.points.map { it.coerceAtLeast(position) },
+            meta = entry.meta.copy(done = true),
         )
         entries[index] = editedCurrentEntry
         entries.add(index + 1, newEntry)
