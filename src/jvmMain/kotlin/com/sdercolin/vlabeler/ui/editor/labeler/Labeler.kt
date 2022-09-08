@@ -4,6 +4,7 @@ import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -29,6 +31,8 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.repository.ToolCursorRepository
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.common.DoneIcon
+import com.sdercolin.vlabeler.ui.common.StarIcon
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.PropertyView
@@ -60,6 +64,10 @@ fun Labeler(
             title = editorState.entryTitle,
             subTitle = editorState.entrySubTitle,
             multiple = editorState.editedEntries.size > 1,
+            done = editorState.entryDone,
+            toggleDone = { editorState.toggleEntryDone(editorState.project.currentIndex) },
+            star = editorState.entryStar,
+            toggleStar = { editorState.toggleEntryStar(editorState.project.currentIndex) },
             openEditEntryNameDialog = openEditEntryNameDialog,
         )
         val cursor = remember(editorState.tool) {
@@ -98,7 +106,16 @@ fun Labeler(
 }
 
 @Composable
-private fun EntryTitleBar(title: String, subTitle: String, multiple: Boolean, openEditEntryNameDialog: () -> Unit) {
+private fun EntryTitleBar(
+    title: String,
+    subTitle: String,
+    multiple: Boolean,
+    done: Boolean,
+    toggleDone: () -> Unit,
+    star: Boolean,
+    toggleStar: () -> Unit,
+    openEditEntryNameDialog: () -> Unit,
+) {
     Surface {
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -116,11 +133,23 @@ private fun EntryTitleBar(title: String, subTitle: String, multiple: Boolean, op
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
-                    modifier = Modifier.alignByBaseline(),
+                    modifier = Modifier.alignByBaseline().weight(1f),
                     text = "（$subTitle）",
                     style = MaterialTheme.typography.h5,
                     maxLines = 1,
                 )
+                Spacer(Modifier.width(20.dp))
+                Row(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    IconButton(onClick = toggleDone) {
+                        DoneIcon(done)
+                    }
+                    IconButton(onClick = toggleStar) {
+                        StarIcon(star)
+                    }
+                }
             }
         }
     }

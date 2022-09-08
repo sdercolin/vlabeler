@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.model.EntryMetaData
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.EndPointIndex
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.StartPointIndex
 
@@ -13,6 +14,7 @@ data class EntryInPixel(
     val end: Float,
     val points: List<Float>,
     val extras: List<String>,
+    val meta: EntryMetaData,
 ) {
 
     fun moved(dx: Float) = copy(

@@ -67,6 +67,11 @@ interface ProjectStore {
         unsavedChangesState: AppUnsavedChangesState,
     )
 
+    fun toggleEntryDone(index: Int)
+    fun toggleCurrentEntryDone()
+    fun toggleEntryStar(index: Int)
+    fun toggleCurrentEntryStar()
+
     suspend fun executeMacroPlugin(
         plugin: Plugin,
         params: ParamMap,
@@ -292,5 +297,21 @@ class ProjectStoreImpl(
                 return
             }
         editProject { newProject }
+    }
+
+    override fun toggleEntryDone(index: Int) {
+        editProject { toggleEntryDone(index) }
+    }
+
+    override fun toggleCurrentEntryDone() {
+        editProject { toggleEntryDone(currentIndex) }
+    }
+
+    override fun toggleEntryStar(index: Int) {
+        editProject { toggleEntryStar(index) }
+    }
+
+    override fun toggleCurrentEntryStar() {
+        editProject { toggleEntryStar(currentIndex) }
     }
 }

@@ -69,6 +69,12 @@ class EditorState(
             string(Strings.EditorSubTitleMultiple, editedEntries.size, project.currentSampleName)
         }
 
+    val entryStar: Boolean
+        get() = project.currentEntry.meta.star
+
+    val entryDone: Boolean
+        get() = project.currentEntry.meta.done
+
     val chartStore = ChartStore()
 
     /**
@@ -264,6 +270,14 @@ class EditorState(
 
     fun requestRedirectSampleDirectory() {
         appState.openSampleDirectoryRedirectDialog()
+    }
+
+    fun toggleEntryDone(index: Int) {
+        appState.toggleEntryDone(index)
+    }
+
+    fun toggleEntryStar(index: Int) {
+        appState.toggleEntryStar(index)
     }
 
     fun clear() {

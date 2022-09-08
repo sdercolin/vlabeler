@@ -92,6 +92,16 @@ enum class KeyAction(
         KeySet(Key.Delete),
         true,
     ),
+    ToggleDone(
+        listOf(Strings.MenuEdit, Strings.MenuEditToggleDone),
+        KeySet(Key.K),
+        true,
+    ),
+    ToggleStar(
+        listOf(Strings.MenuEdit, Strings.MenuEditToggleStar),
+        KeySet(Key.L),
+        true,
+    ),
     ToggleMultipleEditMode(
         listOf(Strings.MenuEdit, Strings.MenuEditMultipleEditMode),
         KeySet(Key.M, setOf(Key.Ctrl)),

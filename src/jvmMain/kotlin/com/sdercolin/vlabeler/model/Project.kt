@@ -211,6 +211,18 @@ data class Project(
 
     fun hasSwitchedSample(previous: Project?) = previous != null && previous.currentSampleName != currentSampleName
 
+    fun toggleEntryDone(index: Int): Project {
+        val entry = entries[index]
+        val editedEntry = entry.doneToggled()
+        return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
+    }
+
+    fun toggleEntryStar(index: Int): Project {
+        val entry = entries[index]
+        val editedEntry = entry.starToggled()
+        return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
+    }
+
     fun validate(): Project {
         // Check multiMode enabled
         if (multipleEditMode) require(

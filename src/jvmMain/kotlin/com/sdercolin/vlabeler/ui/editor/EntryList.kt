@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,13 +39,17 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.filter.EntryFilter
+import com.sdercolin.vlabeler.ui.common.DoneIcon
 import com.sdercolin.vlabeler.ui.common.SearchBar
+import com.sdercolin.vlabeler.ui.common.StarIcon
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
@@ -184,25 +189,7 @@ private fun ColumnScope.List(
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    BasicText(
-                        text = "${item.index + 1}",
-                        modifier = Modifier.padding(start = 20.dp, end = 15.dp, top = 3.dp).widthIn(20.dp),
-                        maxLines = 1,
-                        style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f)),
-                    )
-                    BasicText(
-                        text = item.value.name,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
-                    )
-                    BasicText(
-                        text = item.value.sample,
-                        modifier = Modifier.padding(start = 10.dp, top = 3.dp),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f)),
-                    )
+                    ItemContent(item)
                 }
             }
         }
@@ -210,5 +197,61 @@ private fun ColumnScope.List(
             adapter = scrollbarAdapter,
             modifier = Modifier.align(Alignment.TopEnd).fillMaxHeight().width(15.dp),
         )
+    }
+}
+
+@Composable
+private fun ItemContent(item: IndexedValue<Entry>) {
+    Layout(
+        content = {
+            BasicText(
+                text = "${item.index + 1}",
+                modifier = Modifier.padding(start = 20.dp, end = 15.dp, top = 3.dp).widthIn(20.dp),
+                maxLines = 1,
+                style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f)),
+            )
+            Row {
+                BasicText(
+                    text = item.value.name,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
+                )
+                BasicText(
+                    text = item.value.sample,
+                    modifier = Modifier.padding(start = 10.dp, top = 3.dp),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f)),
+                )
+            }
+
+            Row {
+                if (item.value.meta.done) {
+                    DoneIcon(true, modifier = Modifier.padding(start = 8.dp).requiredSize(16.dp))
+                }
+                if (item.value.meta.star) {
+                    StarIcon(true, modifier = Modifier.padding(start = 8.dp).requiredSize(16.dp))
+                }
+            }
+        },
+    ) { measurables, constraints ->
+        val (head, middle, tail) = measurables
+        val placeables = mutableListOf<Placeable>()
+        head.measure(constraints).let { placeables.add(it) }
+        tail.measure(constraints.copy(maxWidth = constraints.maxWidth - placeables.first().measuredWidth))
+            .let { placeables.add(it) }
+        middle.measure(constraints.copy(maxWidth = constraints.maxWidth - placeables.sumOf { it.measuredWidth }))
+            .let { placeables.add(1, it) }
+
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            var xPosition = 0
+            placeables.forEachIndexed { index, placeable ->
+                val x = if (index <= 1) xPosition else constraints.maxWidth - placeable.width
+                val y = (constraints.maxHeight - placeable.height) / 2
+                placeable.placeRelative(x, y)
+                xPosition += placeable.width
+            }
+        }
     }
 }

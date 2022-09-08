@@ -32,7 +32,15 @@ data class Entry(
      * Extra data as [String] defined by [LabelerConf.extraFieldNames]
      */
     val extras: List<String>,
+    /**
+     * Other properties of an entry which are only used in vLabeler
+     */
+    val meta: EntryMetaData = EntryMetaData(),
 ) {
+
+    fun starToggled() = copy(meta = meta.copy(star = !meta.star))
+    fun doneToggled() = copy(meta = meta.copy(done = !meta.done))
+
     companion object {
         fun fromDefaultValues(sample: String, name: String, labelerConf: LabelerConf) =
             Entry(
