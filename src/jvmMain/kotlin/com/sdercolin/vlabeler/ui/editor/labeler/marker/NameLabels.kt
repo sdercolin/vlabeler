@@ -47,12 +47,12 @@ fun NameLabels(
     chunkLengthDp: Dp,
     chunkVisibleList: List<Boolean>,
 ) {
-    val leftEntry = remember(state.entriesInSample, state.entries.first().index) {
-        val entry = state.entriesInSample.getPreviousOrNull { it.index == state.entries.first().index }
+    val leftEntry = remember(state.entriesInCurrentGroup, state.entries.first().index) {
+        val entry = state.entriesInCurrentGroup.getPreviousOrNull { it.index == state.entries.first().index }
         entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
     }
-    val rightEntry = remember(state.entriesInSample, state.entries.last().index) {
-        val entry = state.entriesInSample.getNextOrNull { it.index == state.entries.last().index }
+    val rightEntry = remember(state.entriesInCurrentGroup, state.entries.last().index) {
+        val entry = state.entriesInCurrentGroup.getNextOrNull { it.index == state.entries.last().index }
         entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
     }
 

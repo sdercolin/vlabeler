@@ -587,7 +587,7 @@ private fun MarkerState.editEntryIfNeeded(
         val editedIndexes = edited.map { it.index }.toMutableSet()
 
         if (labelerConf.continuous) {
-            val leftEntry = entriesInSample.getPreviousOrNull { it.index == updated.firstOrNull()?.index }
+            val leftEntry = entriesInCurrentGroup.getPreviousOrNull { it.index == updated.firstOrNull()?.index }
             val firstEdited = edited.first()
             val firstOriginal = entriesInPixel.firstOrNull { it.index == firstEdited.index }
             val leftBorderEdited = firstEdited.start != firstOriginal?.start
@@ -595,7 +595,7 @@ private fun MarkerState.editEntryIfNeeded(
                 editedIndexes.add(leftEntry.index)
             }
 
-            val rightEntry = entriesInSample.getNextOrNull { it.index == updated.lastOrNull()?.index }
+            val rightEntry = entriesInCurrentGroup.getNextOrNull { it.index == updated.lastOrNull()?.index }
             val lastEdited = edited.last()
             val lastOriginal = entriesInPixel.lastOrNull { it.index == lastEdited.index }
             val rightBorderEdited = lastEdited.end != lastOriginal?.end

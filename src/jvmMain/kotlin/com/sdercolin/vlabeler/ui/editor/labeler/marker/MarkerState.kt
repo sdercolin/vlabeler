@@ -25,7 +25,7 @@ import kotlin.math.absoluteValue
 
 class MarkerState(
     val entries: List<IndexedEntry>,
-    val entriesInSample: List<IndexedEntry>,
+    val entriesInCurrentGroup: List<IndexedEntry>,
     val labelerConf: LabelerConf,
     val canvasParams: CanvasParams,
     val sampleLengthMillis: Float,
