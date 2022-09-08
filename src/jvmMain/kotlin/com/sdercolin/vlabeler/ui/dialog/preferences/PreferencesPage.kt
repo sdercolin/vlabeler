@@ -344,6 +344,12 @@ abstract class PreferencesPage(
                     select = { it.playerCursorColor },
                     update = { copy(playerCursorColor = it) },
                 )
+                switch(
+                    title = Strings.PreferencesEditorAutoDone,
+                    defaultValue = AppConf.Editor.DefaultAutoDone,
+                    select = { it.autoDone },
+                    update = { copy(autoDone = it) },
+                )
             }
         }
     }

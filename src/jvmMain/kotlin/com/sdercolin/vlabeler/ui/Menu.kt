@@ -15,6 +15,7 @@ import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.Clipboard
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.getNullableOrElse
@@ -340,6 +341,10 @@ fun FrameWindowScope.Menu(
                     Item(
                         "Export AppConfig",
                         onClick = { CustomAppConfFile.writeText(appState.appConf.stringifyJson()) },
+                    )
+                    Item(
+                        "Copy AppConfig",
+                        onClick = { Clipboard.copyToClipboard(appState.appConf.stringifyJson()) },
                     )
                     Item(
                         "GC",

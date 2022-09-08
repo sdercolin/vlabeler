@@ -20,6 +20,7 @@ import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getChildren
+import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.savedMutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -129,7 +130,10 @@ class ProjectStoreImpl(
     }
 
     override fun editEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>) = editProject {
-        updateEntries(editedEntries).markEntriesAsDone(editedIndexes)
+        updateEntries(editedEntries)
+            .runIf(appConf.value.editor.autoDone) {
+                markEntriesAsDone(editedIndexes)
+            }
     }
 
     override fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?) {

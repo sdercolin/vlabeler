@@ -103,6 +103,7 @@ class EditorState(
         if (changedEntries.isNotEmpty()) {
             Log.info("Submit entries: $changedEntries")
             appState.editEntries(changedEntries, editedIndexes)
+            editedIndexes.clear()
         }
     }
 

@@ -720,6 +720,9 @@ enum class Strings(val en: String) {
     PreferencesEditorPlayerLockedDragNever(
         en = "Never do fixed-drag",
     ),
+    PreferencesEditorAutoDone(
+        en = "Automatically set edited entries as \"Done\"",
+    ),
     PreferencesEditorScissors(
         en = "Scissors",
     ),

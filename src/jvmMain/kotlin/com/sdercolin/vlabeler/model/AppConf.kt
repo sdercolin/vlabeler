@@ -190,6 +190,7 @@ data class AppConf(
      * @param scissorsColor Color hex string of the scissors' cursor position
      * @param scissorsActions Actions taken with a successful scissors click
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted
+     * @param autoDone True if the editor is automatically setting "done" status of entries
      */
     @Serializable
     @Immutable
@@ -199,6 +200,7 @@ data class AppConf(
         val scissorsActions: ScissorsActions = ScissorsActions(),
         val autoScroll: AutoScroll = AutoScroll(),
         val lockedDrag: LockedDrag = DefaultLockedDrag,
+        val autoDone: Boolean = DefaultAutoDone,
     ) {
 
         /**
@@ -230,6 +232,7 @@ data class AppConf(
             const val DefaultPlayerCursorColor = "#FFFF00"
             const val DefaultScissorsColor = "#FFFFFF00"
             val DefaultLockedDrag = LockedDrag.UseLabeler
+            val DefaultAutoDone = true
         }
     }
 

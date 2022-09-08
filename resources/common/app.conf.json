@@ -42,7 +42,8 @@
       "onSwitchedInMultipleEditMode": true,
       "onSwitched": false
     },
-    "lockedDrag": "labeler"
+    "lockedDrag": "labeler",
+    "autoDone": true
   },
   "view": {
     "pinnedEntryListPosition": "Right"
