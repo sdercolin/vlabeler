@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.LightGray
@@ -59,19 +60,19 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit, onF
     var hasFocus by remember { mutableStateOf(false) }
     val submit = { index: Int -> jumpToEntry(index) }
 
-    fun getSearchResult(searchText: String?): List<IndexedValue<Entry>> {
-        return if (searchText == null) entries else entries.filter { it.value.name.contains(searchText) }
-    }
+    var searchText by remember { mutableStateOf("") }
+    var filter: EntryFilter? by remember { mutableStateOf(EntryFilter(searchText).validated()) }
 
-    var searchText by remember { mutableStateOf<String?>(null) }
-    var searchResult by remember(project) { mutableStateOf(getSearchResult(searchText)) }
+    fun getSearchResult(): List<IndexedValue<Entry>> = entries.filter { filter?.matches(it.value) != false }
+
+    var searchResult by remember(project) { mutableStateOf(getSearchResult()) }
     var selectedIndex by remember(project.currentIndex) {
         mutableStateOf(searchResult.indexOfFirst { it.index == project.currentIndex }.takeIf { it >= 0 })
     }
 
-    fun search(text: String?) {
-        searchText = text
-        val newResults = getSearchResult(text)
+    fun updateSearch() {
+        filter = EntryFilter(searchText).validated()
+        val newResults = getSearchResult()
         if (searchResult == newResults) return
         searchResult = newResults
         selectedIndex = 0
@@ -93,8 +94,11 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit, onF
             },
     ) {
         SearchBar(
-            text = searchText.orEmpty(),
-            onTextChange = { text -> search(text.takeIf { it.isNotEmpty() }) },
+            text = searchText,
+            onTextChange = {
+                searchText = it
+                updateSearch()
+            },
             focusRequester = focusRequester,
             onPreviewKeyEvent = {
                 if (searchResult.isEmpty()) return@SearchBar false

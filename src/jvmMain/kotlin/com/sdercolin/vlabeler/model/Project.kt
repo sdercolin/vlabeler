@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
 import com.sdercolin.vlabeler.io.fromRawLabels
+import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getChildren
@@ -26,9 +27,21 @@ data class Project(
     val encoding: String? = null,
     val multipleEditMode: Boolean = labelerConf.continuous,
     val autoExportTargetPath: String? = null,
+    val entryFilter: EntryFilter? = null,
 ) {
     @Transient
+    private val filteredEntryIndexes: List<Int> = entries.indices.filter { entryFilter?.matches(entries[it]) ?: true }
+
+    @Transient
     private val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
+
+    @Transient
+    private val filteredEntryIndexGroupIndexes: List<Pair<Int, List<Int>>> = entryIndexGroups
+        .mapIndexed { index, pair -> index to pair.second }
+        .map { (groupIndex, entryIndexes) ->
+            groupIndex to entryIndexes.filter { entryFilter?.matches(entries[it]) ?: true }
+        }
+        .filter { it.second.isNotEmpty() }
 
     @Transient
     private val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
@@ -169,7 +182,11 @@ data class Project(
     fun nextEntry() = switchEntry(reverse = false)
     fun previousEntry() = switchEntry(reverse = true)
     private fun switchEntry(reverse: Boolean): Project {
-        val targetIndex = (currentIndex + if (reverse) -1 else 1).coerceIn(0..entries.lastIndex)
+        val targetIndex = if (reverse) {
+            filteredEntryIndexes.lastOrNull { it < currentIndex } ?: currentIndex
+        } else {
+            filteredEntryIndexes.firstOrNull { it > currentIndex } ?: currentIndex
+        }
         return copy(currentIndex = targetIndex)
     }
 
@@ -177,14 +194,17 @@ data class Project(
     fun previousSample() = switchSample(reverse = true)
     private fun switchSample(reverse: Boolean): Project {
         val currentGroupIndex = getGroupIndex(currentIndex)
-        val targetGroupIndex = currentGroupIndex + if (reverse) -1 else 1
-        val targetEntryIndex = when {
-            targetGroupIndex < 0 -> 0
-            targetGroupIndex > entryGroups.lastIndex -> entries.lastIndex
-            else -> {
-                val indexesInTargetGroup = entryIndexGroups[targetGroupIndex].second
-                if (reverse) indexesInTargetGroup.last() else indexesInTargetGroup.first()
-            }
+        val targetGroupIndex = if (reverse) {
+            filteredEntryIndexGroupIndexes.lastOrNull { it.first < currentGroupIndex }?.first ?: currentGroupIndex
+        } else {
+            filteredEntryIndexGroupIndexes.firstOrNull { it.first > currentGroupIndex }?.first ?: currentGroupIndex
+        }
+        val targetEntryIndex = if (targetGroupIndex == currentGroupIndex) {
+            val indexesInCurrentGroup = filteredEntryIndexGroupIndexes.first { it.first == targetGroupIndex }.second
+            if (reverse) indexesInCurrentGroup.first() else indexesInCurrentGroup.last()
+        } else {
+            val indexesInTargetGroup = filteredEntryIndexGroupIndexes.first { it.first == targetGroupIndex }.second
+            if (reverse) indexesInTargetGroup.last() else indexesInTargetGroup.first()
         }
         return copy(currentIndex = targetEntryIndex)
     }
