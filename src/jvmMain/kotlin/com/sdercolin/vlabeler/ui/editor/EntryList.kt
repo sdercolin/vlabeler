@@ -56,6 +56,7 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit, onF
     val currentIndex = project.currentIndex
 
     val focusRequester = remember { FocusRequester() }
+    var hasFocus by remember { mutableStateOf(false) }
     val submit = { index: Int -> jumpToEntry(index) }
 
     fun getSearchResult(searchText: String?): List<IndexedValue<Entry>> {
@@ -86,7 +87,10 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit, onF
 
     Column(
         modifier = sizeModifier.plainClickable()
-            .onFocusChanged { onFocusedChanged(it.hasFocus) },
+            .onFocusChanged {
+                hasFocus = it.hasFocus
+                onFocusedChanged(hasFocus)
+            },
     ) {
         SearchBar(
             text = searchText.orEmpty(),
@@ -112,7 +116,12 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit, onF
                 }
             },
         )
-        Divider(color = White20)
+        Divider(
+            color = if (hasFocus) MaterialTheme.colors.primaryVariant else White20,
+            thickness = if (hasFocus) 2.dp else 1.dp,
+            modifier = Modifier.padding(top = if (hasFocus) 0.dp else 1.dp),
+        )
+
         if (searchResult.isNotEmpty()) {
             List(
                 searchResult = searchResult,
