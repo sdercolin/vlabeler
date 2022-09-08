@@ -944,19 +944,28 @@ enum class Strings(val en: String) {
             " A default cache directory will be used instead.",
     ),
     FilterStarred(
-        en = "Starred",
+        en = "Filtering starred entries",
     ),
     FilterUnstarred(
-        en = "Unstarred",
+        en = "Filtering unstarred entries",
+    ),
+    FilterStarIgnored(
+        en = "Not filtered by star",
     ),
     FilterDone(
-        en = "Done",
+        en = "Filtering done entries",
     ),
     FilterUndone(
-        en = "Undone",
+        en = "Filtering undone entries",
     ),
-    FilterIgnored(
-        en = "Ignored",
+    FilterDoneIgnored(
+        en = "Not filtered by done",
+    ),
+    FilterLink(
+        en = "Toggle to apply the filters to project navigation",
+    ),
+    FilterLinked(
+        en = "Filters applied to project navigation",
     ),
     ;
 

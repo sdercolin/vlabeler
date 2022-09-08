@@ -77,7 +77,12 @@ class EditorState(
 
     val chartStore = ChartStore()
 
-    val pinnedEntryListFilterState = EntryListFilterState()
+    val pinnedEntryListFilterState = LinkableEntryListFilterState(
+        project = project,
+        submitFilter = {
+            appState.editProject { copy(entryFilter = it) }
+        },
+    )
 
     /**
      * Called from upstream
@@ -85,6 +90,7 @@ class EditorState(
     fun updateProject(newProject: Project) {
         val previous = project
         project = newProject
+        pinnedEntryListFilterState.updateProject(newProject)
         if (newProject.getEntriesForEditing() != previous.getEntriesForEditing()) {
             loadNewEntries()
         }

@@ -9,6 +9,10 @@ data class EntryFilter(
     val star: Boolean? = null,
     val done: Boolean? = null,
 ) {
+    fun isEmpty(): Boolean {
+        return searchText.isEmpty() && star == null && done == null
+    }
+
     fun matches(entry: Entry): Boolean {
         if (searchText.isNotEmpty() && !entry.name.contains(searchText, true)) {
             return false

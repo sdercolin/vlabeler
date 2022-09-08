@@ -31,7 +31,7 @@ fun SearchBar(
     onFocusedChanged: ((Boolean) -> Unit)? = null,
     onPreviewKeyEvent: ((KeyEvent) -> Boolean)? = null,
     modifier: Modifier = Modifier,
-    trailingContent: @Composable () -> Unit = {}
+    trailingContent: @Composable () -> Unit = {},
 ) {
     Row(
         modifier = modifier.fillMaxWidth().height(50.dp).padding(horizontal = 15.dp),

@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 
-
 /**
  * Copied and edited base on [androidx.compose.material.IconButton]
  * The minimum size restriction is removed
@@ -24,7 +23,7 @@ fun FreeSizedIconButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Box(
         modifier = modifier

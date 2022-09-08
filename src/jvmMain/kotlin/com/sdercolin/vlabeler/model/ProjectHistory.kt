@@ -26,7 +26,10 @@ data class ProjectHistory(
             }
     }
 
-    private fun Project.contentEquals(other: Project) = copy(currentIndex = other.currentIndex) == other
+    private fun Project.contentEquals(other: Project) = copy(
+        currentIndex = other.currentIndex,
+        entryFilter = other.entryFilter,
+    ) == other
 
     fun undo() = copy(index = index.minus(1).coerceAtLeast(0))
 

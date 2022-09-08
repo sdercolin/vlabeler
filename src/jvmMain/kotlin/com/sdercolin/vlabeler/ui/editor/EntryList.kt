@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +32,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarOutline
 import androidx.compose.runtime.Composable
@@ -88,7 +91,7 @@ class EntryListState(
     )
 
     var hasFocus: Boolean by mutableStateOf(false)
-    var isFilterExpanded: Boolean by mutableStateOf(false)
+    var isFilterExpanded: Boolean by mutableStateOf(filterState.filter.isEmpty().not())
 
     fun submit(index: Int) {
         jumpToEntry(index)
@@ -120,7 +123,7 @@ fun EntryList(
     project: Project,
     jumpToEntry: (Int) -> Unit,
     onFocusedChanged: (Boolean) -> Unit,
-    state: EntryListState = remember(filterState, jumpToEntry) { EntryListState(filterState, project, jumpToEntry) }
+    state: EntryListState = remember(filterState, jumpToEntry) { EntryListState(filterState, project, jumpToEntry) },
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -190,24 +193,22 @@ fun EntryList(
             modifier = Modifier.padding(top = if (state.hasFocus) 0.dp else 1.dp),
         )
         if (filterShown) {
-            FilterRow(filterState, state::updateSearch)
+            FilterRow(filterState as LinkableEntryListFilterState, state::updateSearch)
         }
 
-        if (state.searchResult.isNotEmpty()) {
-            List(state)
-        }
+        List(state)
     }
 }
 
 @Composable
-private fun FilterRow(filterState: EntryListFilterState, updateSearch: () -> Unit) {
+private fun FilterRow(filterState: LinkableEntryListFilterState, updateSearch: () -> Unit) {
     Row(modifier = Modifier.padding(horizontal = 5.dp)) {
         TooltipArea(
             tooltip = {
                 val strings = when (filterState.filter.done) {
                     true -> Strings.FilterDone
                     false -> Strings.FilterUndone
-                    null -> Strings.FilterIgnored
+                    null -> Strings.FilterDoneIgnored
                 }
                 Tooltip(string(strings))
             },
@@ -237,7 +238,7 @@ private fun FilterRow(filterState: EntryListFilterState, updateSearch: () -> Uni
                 val strings = when (filterState.filter.star) {
                     true -> Strings.FilterStarred
                     false -> Strings.FilterUnstarred
-                    null -> Strings.FilterIgnored
+                    null -> Strings.FilterStarIgnored
                 }
                 Tooltip(string(strings))
             },
@@ -266,13 +267,36 @@ private fun FilterRow(filterState: EntryListFilterState, updateSearch: () -> Uni
                 )
             }
         }
+        Spacer(modifier = Modifier.weight(1f))
+        TooltipArea(
+            tooltip = {
+                val strings = if (filterState.linked) {
+                    Strings.FilterLinked
+                } else {
+                    Strings.FilterLink
+                }
+                Tooltip(string(strings))
+            },
+        ) {
+            FreeSizedIconButton(
+                onClick = { filterState.toggleLinked() },
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
+            ) {
+                val icon = if (filterState.linked) Icons.Default.Link else Icons.Default.LinkOff
+                val tint = if (filterState.linked) LightGray else White20
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = tint,
+                )
+            }
+        }
     }
 }
 
 @Composable
-private fun ColumnScope.List(
-    state: EntryListState,
-) {
+private fun ColumnScope.List(state: EntryListState) {
     var pressedIndex by remember { mutableStateOf<Int?>(null) }
     val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = state.currentIndex)
     val scrollbarAdapter = remember { ScrollbarAdapter(scrollState) }
