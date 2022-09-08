@@ -943,6 +943,21 @@ enum class Strings(val en: String) {
         en = "Cannot find or create the cache directory defined in the project file." +
             " A default cache directory will be used instead.",
     ),
+    FilterStarred(
+        en = "Starred",
+    ),
+    FilterUnstarred(
+        en = "Unstarred",
+    ),
+    FilterDone(
+        en = "Done",
+    ),
+    FilterUndone(
+        en = "Undone",
+    ),
+    FilterIgnored(
+        en = "Ignored",
+    ),
     ;
 
     fun get(language: Language): String = when (language) {

@@ -1,8 +1,10 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 
 package com.sdercolin.vlabeler.ui.editor
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollbarAdapter
+import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,7 +25,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,7 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isPrimaryPressed
@@ -46,44 +56,77 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
-import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.common.DoneIcon
+import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.StarIcon
+import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.theme.DarkGreen
+import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
+import com.sdercolin.vlabeler.ui.theme.White80
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
 import com.sdercolin.vlabeler.util.runIf
 
-@Composable
-fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit, onFocusedChanged: (Boolean) -> Unit) {
-    val entries = project.entries.withIndex().toList()
-    val currentIndex = project.currentIndex
+class EntryListState(
+    private val filterState: EntryListFilterState,
+    project: Project,
+    private val jumpToEntry: (Int) -> Unit,
+) {
+    var entries = project.entries.withIndex().toList()
+        private set
+    var currentIndex = project.currentIndex
+        private set
 
-    val focusRequester = remember { FocusRequester() }
-    var hasFocus by remember { mutableStateOf(false) }
-    val submit = { index: Int -> jumpToEntry(index) }
+    var searchResult: List<IndexedValue<Entry>> by mutableStateOf(calculateResult())
+    var selectedIndex: Int? by mutableStateOf(
+        searchResult.indexOfFirst { it.index == currentIndex }.takeIf { it >= 0 },
+    )
 
-    var searchText by remember { mutableStateOf("") }
-    var filter: EntryFilter? by remember { mutableStateOf(EntryFilter(searchText).validated()) }
+    var hasFocus: Boolean by mutableStateOf(false)
+    var isFilterExpanded: Boolean by mutableStateOf(false)
 
-    fun getSearchResult(): List<IndexedValue<Entry>> = entries.filter { filter?.matches(it.value) != false }
+    fun submit(index: Int) {
+        jumpToEntry(index)
+    }
 
-    var searchResult by remember(project) { mutableStateOf(getSearchResult()) }
-    var selectedIndex by remember(project.currentIndex) {
-        mutableStateOf(searchResult.indexOfFirst { it.index == project.currentIndex }.takeIf { it >= 0 })
+    private fun calculateResult(): List<IndexedValue<Entry>> = entries.filter { filterState.filter.matches(it.value) }
+
+    fun updateProject(project: Project) {
+        entries = project.entries.withIndex().toList()
+        currentIndex = project.currentIndex
+        updateSearch()
     }
 
     fun updateSearch() {
-        filter = EntryFilter(searchText).validated()
-        val newResults = getSearchResult()
-        if (searchResult == newResults) return
+        val newResults = calculateResult()
         searchResult = newResults
-        selectedIndex = 0
+        selectedIndex = if (hasFocus) {
+            if (newResults.isNotEmpty()) 0 else null
+        } else {
+            newResults.indexOfFirst { it.index == currentIndex }.takeIf { it >= 0 }
+        }
     }
+}
+
+@Composable
+fun EntryList(
+    pinned: Boolean,
+    filterState: EntryListFilterState,
+    project: Project,
+    jumpToEntry: (Int) -> Unit,
+    onFocusedChanged: (Boolean) -> Unit,
+    state: EntryListState = remember(filterState, jumpToEntry) { EntryListState(filterState, project, jumpToEntry) }
+) {
+    val focusRequester = remember { FocusRequester() }
 
     if (!pinned) LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
+    LaunchedEffect(project) { state.updateProject(project) }
 
     val sizeModifier = if (pinned) {
         Modifier.fillMaxSize()
@@ -92,80 +135,161 @@ fun EntryList(pinned: Boolean, project: Project, jumpToEntry: (Int) -> Unit, onF
     }
 
     Column(
-        modifier = sizeModifier.plainClickable()
-            .onFocusChanged {
-                hasFocus = it.hasFocus
-                onFocusedChanged(hasFocus)
-            },
+        modifier = sizeModifier.plainClickable(),
     ) {
         SearchBar(
-            text = searchText,
+            text = filterState.filter.searchText,
             onTextChange = {
-                searchText = it
-                updateSearch()
+                filterState.editFilter { copy(searchText = it) }
+                state.updateSearch()
             },
             focusRequester = focusRequester,
+            onFocusedChanged = {
+                state.hasFocus = it
+                onFocusedChanged(it)
+            },
             onPreviewKeyEvent = {
-                if (searchResult.isEmpty()) return@SearchBar false
-                val index = selectedIndex ?: return@SearchBar false
+                if (state.searchResult.isEmpty()) return@SearchBar false
+                val index = state.selectedIndex ?: return@SearchBar false
                 when {
                     it.isReleased(Key.DirectionDown) -> {
-                        selectedIndex = index.plus(1).coerceAtMost(searchResult.lastIndex)
+                        state.selectedIndex = index.plus(1).coerceAtMost(state.searchResult.lastIndex)
                         true
                     }
                     it.isReleased(Key.DirectionUp) -> {
-                        selectedIndex = index.minus(1).coerceAtLeast(0)
+                        state.selectedIndex = index.minus(1).coerceAtLeast(0)
                         true
                     }
                     it.isReleased(Key.Enter) -> {
-                        searchResult[index].index.let(submit)
+                        state.searchResult[index].index.let(state::submit)
                         true
                     }
                     else -> false
                 }
             },
+            trailingContent = {
+                if (pinned) {
+                    FreeSizedIconButton(
+                        onClick = { state.isFilterExpanded = !state.isFilterExpanded },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        val icon = if (state.isFilterExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore
+                        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(24.dp))
+                    }
+                }
+            },
         )
+        val filterShown = pinned && state.isFilterExpanded
         Divider(
-            color = if (hasFocus) MaterialTheme.colors.primaryVariant else White20,
-            thickness = if (hasFocus) 2.dp else 1.dp,
-            modifier = Modifier.padding(top = if (hasFocus) 0.dp else 1.dp),
+            color = when {
+                state.hasFocus -> MaterialTheme.colors.primaryVariant
+                filterShown -> White20
+                else -> Color.Transparent
+            },
+            thickness = if (state.hasFocus) 2.dp else 1.dp,
+            modifier = Modifier.padding(top = if (state.hasFocus) 0.dp else 1.dp),
         )
+        if (filterShown) {
+            FilterRow(filterState, state::updateSearch)
+        }
 
-        if (searchResult.isNotEmpty()) {
-            List(
-                searchResult = searchResult,
-                currentIndex = currentIndex,
-                selectedIndex = selectedIndex,
-                select = { selectedIndex = it },
-            ) { searchResult[it].index.let(submit) }
+        if (state.searchResult.isNotEmpty()) {
+            List(state)
+        }
+    }
+}
+
+@Composable
+private fun FilterRow(filterState: EntryListFilterState, updateSearch: () -> Unit) {
+    Row(modifier = Modifier.padding(horizontal = 5.dp)) {
+        TooltipArea(
+            tooltip = {
+                val strings = when (filterState.filter.done) {
+                    true -> Strings.FilterDone
+                    false -> Strings.FilterUndone
+                    null -> Strings.FilterIgnored
+                }
+                Tooltip(string(strings))
+            },
+        ) {
+            FreeSizedIconButton(
+                onClick = {
+                    filterState.editFilter { doneNexted() }
+                    updateSearch()
+                },
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
+            ) {
+                val tint = when (filterState.filter.done) {
+                    true -> DarkGreen
+                    false -> White80
+                    null -> White20
+                }
+                Icon(
+                    imageVector = Icons.Default.Done,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = tint,
+                )
+            }
+        }
+        TooltipArea(
+            tooltip = {
+                val strings = when (filterState.filter.star) {
+                    true -> Strings.FilterStarred
+                    false -> Strings.FilterUnstarred
+                    null -> Strings.FilterIgnored
+                }
+                Tooltip(string(strings))
+            },
+        ) {
+            FreeSizedIconButton(
+                onClick = {
+                    filterState.editFilter { starNexted() }
+                    updateSearch()
+                },
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
+            ) {
+                val icon = when (filterState.filter.star) {
+                    true -> Icons.Default.Star
+                    else -> Icons.Default.StarOutline
+                }
+                val tint = when (filterState.filter.star) {
+                    true -> DarkYellow
+                    false -> White80
+                    null -> White20
+                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = tint,
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun ColumnScope.List(
-    searchResult: List<IndexedValue<Entry>>,
-    currentIndex: Int,
-    selectedIndex: Int?,
-    select: (Int) -> Unit,
-    submit: (Int) -> Unit,
+    state: EntryListState,
 ) {
     var pressedIndex by remember { mutableStateOf<Int?>(null) }
-    val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = currentIndex)
+    val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = state.currentIndex)
     val scrollbarAdapter = remember { ScrollbarAdapter(scrollState) }
 
-    LaunchedEffect(selectedIndex, searchResult) {
-        if (selectedIndex != null) {
-            scrollState.animateScrollToShowItem(selectedIndex)
+    LaunchedEffect(state.selectedIndex, state.searchResult) {
+        val index = state.selectedIndex
+        if (index != null) {
+            scrollState.animateScrollToShowItem(index)
         }
     }
-    Box(Modifier.weight(1f)) {
+    Box(Modifier.weight(1f).background(color = MaterialTheme.colors.background.copy(alpha = 0.35f))) {
         LazyColumn(state = scrollState) {
-            itemsIndexed(searchResult) { index, item ->
+            itemsIndexed(state.searchResult) { index, item ->
                 Row(
                     modifier = Modifier.fillMaxWidth()
                         .height(30.dp)
-                        .runIf(index == selectedIndex) {
+                        .runIf(index == state.selectedIndex) {
                             background(color = MaterialTheme.colors.primaryVariant)
                         }
                         .padding(end = 20.dp)
@@ -174,7 +298,7 @@ private fun ColumnScope.List(
                                 return@onPointerEvent
                             }
                             pressedIndex = index
-                            select(index)
+                            state.selectedIndex = index
                         }
                         .onPointerEvent(PointerEventType.Exit) {
                             if (it.buttons.isPrimaryPressed.not()) return@onPointerEvent
@@ -184,7 +308,7 @@ private fun ColumnScope.List(
                         }
                         .onPointerEvent(PointerEventType.Release) {
                             if (pressedIndex == index) {
-                                submit(index)
+                                state.submit(state.searchResult[index].index)
                             }
                         },
                     verticalAlignment = Alignment.CenterVertically,

@@ -84,6 +84,15 @@ fun Editor(state: EditorState, appState: AppState) {
 
     val entryListCard = @Composable {
         if (appState.isEntryListPinned) {
+            val jumpToEntry: (Int) -> Unit = remember {
+                { index ->
+                    appState.jumpToEntry(index)
+                    labelerFocusRequester.requestFocus()
+                }
+            }
+            val onFocusedChanged: (Boolean) -> Unit = remember {
+                { state.isInputFocused = it }
+            }
             Card(
                 modifier = Modifier.fillMaxSize(),
                 elevation = 10.dp,
@@ -91,12 +100,10 @@ fun Editor(state: EditorState, appState: AppState) {
             ) {
                 EntryList(
                     pinned = true,
+                    filterState = state.pinnedEntryListFilterState,
                     project = state.project,
-                    jumpToEntry = { index ->
-                        appState.jumpToEntry(index)
-                        labelerFocusRequester.requestFocus()
-                    },
-                    onFocusedChanged = { state.isInputFocused = it },
+                    jumpToEntry = jumpToEntry,
+                    onFocusedChanged = onFocusedChanged,
                 )
             }
         }

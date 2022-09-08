@@ -1,8 +1,10 @@
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.editor.EntryList
+import com.sdercolin.vlabeler.ui.editor.EntryListFilterState
 
 data class JumpToEntryDialogArgs(val project: Project) : EmbeddedDialogArgs {
     override val customMargin: Boolean
@@ -19,8 +21,10 @@ fun JumpToEntryDialog(
     args: JumpToEntryDialogArgs,
     finish: (JumpToEntryDialogResult?) -> Unit,
 ) {
+    val filterState = remember { EntryListFilterState() }
     EntryList(
         pinned = false,
+        filterState = filterState,
         project = args.project,
         jumpToEntry = { index -> finish(JumpToEntryDialogResult(index)) },
         onFocusedChanged = {},

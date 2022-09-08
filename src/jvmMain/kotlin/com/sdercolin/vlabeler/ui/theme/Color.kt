@@ -12,6 +12,7 @@ val Black80 = Color(0xb3000000)
 val Black50 = Color(0x7f000000)
 val Black20 = Color(0x33000000)
 val White = Color.White
+val White80 = Color(0xb3ffffff)
 val White20 = Color(0x33ffffff)
 val DarkYellow = Color(0xffe89f17)
 val DarkRed = Color(0xffcf6679)

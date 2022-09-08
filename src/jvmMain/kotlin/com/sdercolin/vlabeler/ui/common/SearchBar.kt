@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
@@ -27,8 +28,10 @@ fun SearchBar(
     text: String,
     onTextChange: (String) -> Unit,
     focusRequester: FocusRequester? = null,
+    onFocusedChanged: ((Boolean) -> Unit)? = null,
     onPreviewKeyEvent: ((KeyEvent) -> Boolean)? = null,
     modifier: Modifier = Modifier,
+    trailingContent: @Composable () -> Unit = {}
 ) {
     Row(
         modifier = modifier.fillMaxWidth().height(50.dp).padding(horizontal = 15.dp),
@@ -38,8 +41,9 @@ fun SearchBar(
         Spacer(Modifier.width(15.dp))
         BasicTextField(
             value = text,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.weight(1f)
                 .padding(vertical = 10.dp)
+                .runIfHave(onFocusedChanged) { callback -> onFocusChanged { callback(it.hasFocus) } }
                 .runIfHave(focusRequester) { focusRequester(it) }
                 .runIfHave(onPreviewKeyEvent) { onPreviewKeyEvent(it) },
             onValueChange = onTextChange,
@@ -47,5 +51,6 @@ fun SearchBar(
             cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
             singleLine = true,
         )
+        trailingContent()
     }
 }

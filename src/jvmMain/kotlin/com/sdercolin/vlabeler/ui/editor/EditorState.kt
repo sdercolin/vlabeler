@@ -77,6 +77,8 @@ class EditorState(
 
     val chartStore = ChartStore()
 
+    val pinnedEntryListFilterState = EntryListFilterState()
+
     /**
      * Called from upstream
      */
