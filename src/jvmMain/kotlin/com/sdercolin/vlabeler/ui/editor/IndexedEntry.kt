@@ -16,6 +16,7 @@ data class IndexedEntry(
     val extras get() = entry.extras
 
     fun edit(entry: Entry) = copy(entry = entry)
+    fun edit(editor: Entry.() -> Entry) = copy(entry = entry.editor())
 
     fun markedAsDone() = edit(entry.copy(meta = entry.meta.copy(done = true)))
 }

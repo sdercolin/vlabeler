@@ -21,7 +21,6 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -103,7 +102,7 @@ class EditorState(
         val changedEntries = editedEntries - project.getEntriesForEditing().toSet()
         if (changedEntries.isNotEmpty()) {
             Log.info("Submit entries: $changedEntries")
-            appState.editEntries(changedEntries.map { it.runIf(editedIndexes.contains(it.index)) { markedAsDone() } })
+            appState.editEntries(changedEntries, editedIndexes)
         }
     }
 

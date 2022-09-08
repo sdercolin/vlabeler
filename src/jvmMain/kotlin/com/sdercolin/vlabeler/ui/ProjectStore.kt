@@ -38,7 +38,7 @@ interface ProjectStore {
     fun clearProject()
     fun editProject(editor: Project.() -> Project)
     fun updateProjectOnLoadedSample(sampleInfo: SampleInfo)
-    fun editEntries(editedEntries: List<IndexedEntry>)
+    fun editEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>)
     fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?)
     val canUndo: Boolean
     fun undo()
@@ -128,7 +128,10 @@ class ProjectStoreImpl(
         history = history.replaceTop(updated)
     }
 
-    override fun editEntries(editedEntries: List<IndexedEntry>) = editProject { updateEntries(editedEntries) }
+    override fun editEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>) = editProject {
+        updateEntries(editedEntries).markEntriesAsDone(editedIndexes)
+    }
+
     override fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?) {
         val autoScrollConf = appConf.value.editor.autoScroll
         if (autoScrollConf.onSwitched ||

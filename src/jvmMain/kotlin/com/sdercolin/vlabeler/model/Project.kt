@@ -125,6 +125,14 @@ data class Project(
 
     private fun updateEntry(editedEntry: IndexedEntry) = updateEntries(listOf(editedEntry))
 
+    fun markEntriesAsDone(editedIndexes: Set<Int>): Project {
+        val entries = entries.toMutableList()
+        editedIndexes.forEach {
+            entries[it] = entries[it].done()
+        }
+        return copy(entries = entries)
+    }
+
     fun renameEntry(index: Int, newName: String): Project {
         val editedEntry = getEntryForEditing(index)
         val renamed = editedEntry.entry.copy(name = newName)

@@ -44,6 +44,8 @@ import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.contains
+import com.sdercolin.vlabeler.util.getNextOrNull
+import com.sdercolin.vlabeler.util.getPreviousOrNull
 import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.length
 import com.sdercolin.vlabeler.util.requireValue
@@ -580,7 +582,28 @@ private fun MarkerState.editEntryIfNeeded(
     if (updated != entriesInPixel) {
         val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
         val edited = updated - entriesInPixel.toSet()
-        editEntries(updatedInMillis, edited.map { it.index }.toSet())
+        if (edited.isEmpty()) return
+
+        val editedIndexes = edited.map { it.index }.toMutableSet()
+
+        if (labelerConf.continuous) {
+            val leftEntry = entriesInSample.getPreviousOrNull { it.index == updated.firstOrNull()?.index }
+            val firstEdited = edited.first()
+            val firstOriginal = entriesInPixel.firstOrNull { it.index == firstEdited.index }
+            val leftBorderEdited = firstEdited.start != firstOriginal?.start
+            if (leftEntry != null && leftBorderEdited) {
+                editedIndexes.add(leftEntry.index)
+            }
+
+            val rightEntry = entriesInSample.getNextOrNull { it.index == updated.lastOrNull()?.index }
+            val lastEdited = edited.last()
+            val lastOriginal = entriesInPixel.lastOrNull { it.index == lastEdited.index }
+            val rightBorderEdited = lastEdited.end != lastOriginal?.end
+            if (rightEntry != null && rightBorderEdited) {
+                editedIndexes.add(rightEntry.index)
+            }
+        }
+        editEntries(updatedInMillis, editedIndexes)
     }
 }
 
