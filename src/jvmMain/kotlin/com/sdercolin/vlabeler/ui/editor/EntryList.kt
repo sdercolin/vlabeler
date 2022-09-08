@@ -29,6 +29,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -292,6 +293,19 @@ private fun FilterRow(filterState: LinkableEntryListFilterState, updateSearch: (
                 )
             }
         }
+        FreeSizedIconButton(
+            onClick = {
+                filterState.clear()
+                updateSearch()
+            },
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+        }
     }
 }
 
@@ -307,7 +321,11 @@ private fun ColumnScope.List(state: EntryListState) {
             scrollState.animateScrollToShowItem(index)
         }
     }
-    Box(Modifier.weight(1f).background(color = MaterialTheme.colors.background.copy(alpha = 0.35f))) {
+    Box(
+        Modifier.weight(1f)
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colors.background.copy(alpha = 0.35f)),
+    ) {
         LazyColumn(state = scrollState) {
             itemsIndexed(state.searchResult) { index, item ->
                 Row(

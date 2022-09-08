@@ -14,6 +14,10 @@ open class EntryListFilterState {
     open fun editFilter(editor: EntryFilter.() -> EntryFilter) {
         filter = editor.invoke(filter)
     }
+
+    open fun clear() {
+        filter = EntryFilter()
+    }
 }
 
 class LinkableEntryListFilterState(project: Project, private val submitFilter: (EntryFilter?) -> Unit) :
@@ -61,5 +65,10 @@ class LinkableEntryListFilterState(project: Project, private val submitFilter: (
         linked = false
         projectFiler = null
         submitFilter(null)
+    }
+
+    override fun clear() {
+        super.clear()
+        unlink()
     }
 }
