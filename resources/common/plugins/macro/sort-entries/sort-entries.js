@@ -1,5 +1,7 @@
 let descending = params["descending"]
-let useEntryNameAsFirstKey = params["useEntryNameAsFirstKey"]
+let prioritizeEntryName = params["prioritizeEntryName"]
+let useTag = params["useTag"]
+let prioritizeTag = params["prioritizeTag"]
 
 if (labeler.continuous) {
     expectedError = true
@@ -10,10 +12,36 @@ entries.sort((a, b) => {
     let descendingFactor = descending ? -1 : 1
     let entryNameResult = descendingFactor * a.name.localeCompare(b.name)
     let sampleNameResult = descendingFactor * a.sample.localeCompare(b.sample)
-    if (useEntryNameAsFirstKey) {
-        return entryNameResult === 0 ? sampleNameResult : entryNameResult
+    let tagResult = descendingFactor * a.meta.tag.localeCompare(b.meta.tag)
+    if (useTag && prioritizeTag) {
+        if (tagResult !== 0) {
+            return tagResult
+        }
+    }
+    if (prioritizeEntryName) {
+        if (entryNameResult !== 0) {
+            return entryNameResult
+        }
+        if (sampleNameResult !== 0) {
+            return sampleNameResult
+        }
+        if (useTag) {
+            return tagResult
+        } else {
+            return 0
+        }
     } else {
-        return sampleNameResult === 0 ? entryNameResult : sampleNameResult
+        if (sampleNameResult !== 0) {
+            return sampleNameResult
+        }
+        if (entryNameResult !== 0) {
+            return entryNameResult
+        }
+        if (useTag) {
+            return tagResult
+        } else {
+            return 0
+        }
     }
 })
 

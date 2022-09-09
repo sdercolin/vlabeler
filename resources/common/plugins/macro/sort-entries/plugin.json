@@ -1,6 +1,6 @@
 {
   "name": "sort-entries",
-  "version": 2,
+  "version": 3,
   "type": "macro",
   "displayedName": "Reorder entries",
   "author": "sdercolin",
@@ -18,9 +18,21 @@
       },
       {
         "type": "boolean",
-        "name": "useEntryNameAsFirstKey",
-        "label": "Use entry name as the first key",
-        "description": "If this option is enabled, entries are sorted firstly by entry name, otherwise, they are sorted firstly by the sample name.",
+        "name": "useTag",
+        "label": "Sort by tag",
+        "defaultValue": false
+      },
+      {
+        "type": "boolean",
+        "name": "prioritizeTag",
+        "label": "Sort by tag first",
+        "visibleIf": "useTag",
+        "defaultValue": true
+      },
+      {
+        "type": "boolean",
+        "name": "prioritizeEntryName",
+        "label": "Prioritize entry name over sample name",
         "defaultValue": false
       }
     ]
