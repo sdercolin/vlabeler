@@ -95,7 +95,9 @@ class EntryListState(
     )
 
     var hasFocus: Boolean by mutableStateOf(false)
-    var isFilterExpanded: Boolean by mutableStateOf(filterState.filter.isEmpty().not())
+    var isFilterExpanded: Boolean by mutableStateOf(
+        filterState.filter.isEmpty().not() || (filterState as? LinkableEntryListFilterState)?.linked == true,
+    )
 
     fun submit(index: Int) {
         jumpToEntry(index)
@@ -395,14 +397,13 @@ private fun ItemContent(item: IndexedValue<Entry>) {
                 )
             }
 
-            Row(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
+            Row {
                 if (item.value.meta.tag.isNotEmpty()) {
+                    Spacer(modifier = Modifier.width(12.dp))
                     BasicText(
                         text = item.value.meta.tag,
                         modifier = Modifier
+                            .offset(y = 1.dp)
                             .background(color = White20, shape = RoundedCornerShape(5.dp))
                             .padding(horizontal = 5.dp, vertical = 2.dp),
                         overflow = TextOverflow.Ellipsis,
@@ -410,6 +411,12 @@ private fun ItemContent(item: IndexedValue<Entry>) {
                         style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.8f)),
                     )
                 }
+            }
+
+            Row(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
                 if (item.value.meta.done) {
                     DoneIcon(true, modifier = Modifier.requiredSize(16.dp))
                 }
@@ -419,18 +426,20 @@ private fun ItemContent(item: IndexedValue<Entry>) {
             }
         },
     ) { measurables, constraints ->
-        val (head, middle, tail) = measurables
+        val (head, middle, tag, tail) = measurables
         val placeables = mutableListOf<Placeable>()
         head.measure(constraints).let { placeables.add(it) }
         tail.measure(constraints.copy(maxWidth = constraints.maxWidth - placeables.first().measuredWidth))
             .let { placeables.add(it) }
+        tag.measure(constraints.copy(maxWidth = constraints.maxWidth - placeables.sumOf { it.measuredWidth }))
+            .let { placeables.add(1, it) }
         middle.measure(constraints.copy(maxWidth = constraints.maxWidth - placeables.sumOf { it.measuredWidth }))
             .let { placeables.add(1, it) }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             var xPosition = 0
             placeables.forEachIndexed { index, placeable ->
-                val x = if (index <= 1) xPosition else constraints.maxWidth - placeable.width
+                val x = if (index <= 2) xPosition else constraints.maxWidth - placeable.width
                 val y = (constraints.maxHeight - placeable.height) / 2
                 placeable.placeRelative(x, y)
                 xPosition += placeable.width
