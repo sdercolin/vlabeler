@@ -26,10 +26,13 @@ For other types of Linux os, you may have to build it by yourself.
 ### For macOS users
 
 If you cannot open the app with a "damaged" error, please run the following commands with your terminal.
+
 ```
 sudo xattr -rc /Applications/vLabeler.app
 ```
+
 If it doesn't work, try
+
 ```
 sudo xattr -r -d com.apple.quarantine /Applications/vLabeler.app
 ```
@@ -58,11 +61,30 @@ Please ensure you have **JDK 15+** for building.
 Many behaviors of vLabeler depend on customizable `labeler`s.
 Currently, built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU) lab labeler`.
 
-- oto labeler (Basic mode, SetParam style)
-  ![](readme/oto.gif)
+#### oto labeler (Basic mode, SetParam style)
 
-- lab labeler (Continuous mode)
-  ![](readme/lab.gif)
+![](readme/oto.gif)
+
+There are two items in the built-in labeler list:
+
+- UTAU oto labeler
+
+  If you don't need negative overlap values, please choose this one.
+
+- UTAU oto labeler plus
+
+  This labeler has an extra line named `Left` which is the actual `Left` value used when exporting the oto file. You
+  can move the `Ovl` line to the left of `Left` line to get negative overlap values. The white left border is not
+  used.
+
+#### lab labeler (Continuous mode)
+
+![](readme/lab.gif)
+
+- Sinsy lab labeler
+
+  This labeler is for Sinsy (NNSVS/ENUNU) lab files. Please note that the accpeted lab format use `100ns` as the time
+  unit and use `\t` (tab) as the separator.
 
 ## Get started
 
@@ -118,7 +140,8 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`
 - `Ctrl` + `Up`/`Down`: go to previous/next sample
 - `<<`/`>>` buttons in the bottom bar: go to previous/next sample
 - `Ctrl` + `G` or entry number button in the bottom bar: show `Go to entry...` dialog
-- `Ctrl` + `2` (also in `View` menu): pin the entry list to the right side of the screen (position and size are customizable)
+- `Ctrl` + `2` (also in `View` menu): pin the entry list to the right side of the screen (position and size are
+  customizable)
 
 ## Multiple editing mode
 
@@ -155,6 +178,7 @@ By default, when you click on a valid position with the scissors:
 4. The editor navigates to the former entry if needed
 
 ### Pan
+
 Or the hand tool. Drag the charts to scroll the canvas.
 
 These actions can be customized in `Settings` -> `Prefereneces`.
