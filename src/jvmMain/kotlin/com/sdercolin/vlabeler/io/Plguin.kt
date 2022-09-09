@@ -50,6 +50,7 @@ fun loadPlugins(type: Plugin.Type): List<Plugin> =
                                     name = param.name,
                                     label = param.label,
                                     description = param.description,
+                                    visibleIf = param.visibleIf,
                                     defaultValue = content,
                                     multiLine = param.multiLine,
                                     optional = param.optional,

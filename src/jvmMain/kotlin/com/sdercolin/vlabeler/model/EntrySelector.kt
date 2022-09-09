@@ -150,7 +150,6 @@ data class EntrySelector(
             }
             return subjectValue == matcherBoolean
         }
-
     }
 
     companion object {

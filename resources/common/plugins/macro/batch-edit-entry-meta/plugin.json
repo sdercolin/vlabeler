@@ -1,0 +1,64 @@
+{
+  "name": "batch-edit-entry-meta",
+  "version": 1,
+  "type": "macro",
+  "displayedName": "Batch edit entry metadata",
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": "Edit the metadata (starred, done, tag) of multiple entries at once.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-entry-meta",
+  "supportedLabelFileExtension": "*",
+  "parameters": {
+    "list": [
+      {
+        "type": "entrySelector",
+        "name": "selector",
+        "label": "Entries to edit",
+        "description": "Select the entries to edit. Leave blank to edit all entries.",
+        "defaultValue": {
+          "filters": []
+        }
+      },
+      {
+        "type": "enum",
+        "name": "star",
+        "label": "Set Starred",
+        "defaultValue": "Do not change",
+        "options": [
+          "Do not change",
+          "Starred",
+          "Unstarred"
+        ]
+      },
+      {
+        "type": "enum",
+        "name": "done",
+        "label": "Set Done",
+        "defaultValue": "Do not change",
+        "options": [
+          "Do not change",
+          "Done",
+          "Undone"
+        ]
+      },
+      {
+        "type": "boolean",
+        "name": "tag",
+        "label": "Set Tag",
+        "defaultValue": false
+      },
+      {
+        "type": "string",
+        "name": "tagValue",
+        "label": "Tag Value",
+        "defaultValue": "",
+        "optional": true,
+        "description": "Leave blank to remove the tag.",
+        "visibleIf": "tag"
+      }
+    ]
+  },
+  "scriptFiles": [
+    "batch-edit-entry-meta.js"
+  ]
+}

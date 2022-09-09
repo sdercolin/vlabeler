@@ -86,41 +86,59 @@ data class Plugin(
         val name: String,
         val label: String,
         val description: String?,
+        val visibleIf: String?,
         open val defaultValue: T,
     ) {
+        abstract fun eval(value: Any): Boolean
+
         class IntParam(
             name: String,
             label: String,
             description: String?,
+            visibleIf: String?,
             defaultValue: Int,
             val min: Int?,
             val max: Int?,
-        ) : Parameter<Int>(ParameterType.Integer, name, label, description, defaultValue)
+        ) : Parameter<Int>(ParameterType.Integer, name, label, description, visibleIf, defaultValue) {
+
+            override fun eval(value: Any) = value is Int && value != 0
+        }
 
         class FloatParam(
             name: String,
             label: String,
             description: String?,
+            visibleIf: String?,
             defaultValue: Float,
             val min: Float?,
             val max: Float?,
-        ) : Parameter<Float>(ParameterType.Float, name, label, description, defaultValue)
+        ) : Parameter<Float>(ParameterType.Float, name, label, description, visibleIf, defaultValue) {
+
+            override fun eval(value: Any) = value is Float && value != 0f && value.isNaN().not()
+        }
 
         class BooleanParam(
             name: String,
             label: String,
             description: String?,
+            visibleIf: String?,
             defaultValue: Boolean,
-        ) : Parameter<Boolean>(ParameterType.Boolean, name, label, description, defaultValue)
+        ) : Parameter<Boolean>(ParameterType.Boolean, name, label, description, visibleIf, defaultValue) {
+
+            override fun eval(value: Any) = value is Boolean && value
+        }
 
         class StringParam(
             name: String,
             label: String,
             description: String?,
+            visibleIf: String?,
             defaultValue: String,
             val multiLine: Boolean,
             val optional: Boolean,
-        ) : Parameter<String>(ParameterType.String, name, label, description, defaultValue) {
+        ) : Parameter<String>(ParameterType.String, name, label, description, visibleIf, defaultValue) {
+
+            override fun eval(value: Any) = value is String && value.isNotEmpty()
 
             companion object {
                 val DefaultValueFileReferencePattern = Regex("^file::(.*)$")
@@ -132,16 +150,24 @@ data class Plugin(
             name: String,
             label: String,
             description: String?,
+            visibleIf: String?,
             defaultValue: String,
             val options: List<String>,
-        ) : Parameter<String>(ParameterType.Enum, name, label, description, defaultValue)
+        ) : Parameter<String>(ParameterType.Enum, name, label, description, visibleIf, defaultValue) {
+
+            override fun eval(value: Any) = value is String && value.isNotEmpty()
+        }
 
         class EntrySelectorParam(
             name: String,
             label: String,
             description: String?,
+            visibleIf: String?,
             defaultValue: EntrySelector,
-        ) : Parameter<EntrySelector>(ParameterType.EntrySelector, name, label, description, defaultValue)
+        ) : Parameter<EntrySelector>(ParameterType.EntrySelector, name, label, description, visibleIf, defaultValue) {
+
+            override fun eval(value: Any) = value is EntrySelector && value.filters.isNotEmpty()
+        }
     }
 
     @Serializable
@@ -217,23 +243,24 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
         val name = requireNotNull(element["name"]).jsonPrimitive.content
         val label = requireNotNull(element["label"]).jsonPrimitive.content
         val description = element["description"]?.jsonPrimitive?.content
+        val visibleIf = element["visibleIf"]?.jsonPrimitive?.content
         val defaultValue = requireNotNull(element["defaultValue"])
         return when (type) {
             Plugin.ParameterType.Integer -> {
                 val default = defaultValue.jsonPrimitive.int
                 val min = element["min"]?.jsonPrimitive?.int
                 val max = element["max"]?.jsonPrimitive?.int
-                Plugin.Parameter.IntParam(name, label, description, default, min, max)
+                Plugin.Parameter.IntParam(name, label, description, visibleIf, default, min, max)
             }
             Plugin.ParameterType.Float -> {
                 val default = defaultValue.jsonPrimitive.float
                 val min = element["min"]?.jsonPrimitive?.float
                 val max = element["max"]?.jsonPrimitive?.float
-                Plugin.Parameter.FloatParam(name, label, description, default, min, max)
+                Plugin.Parameter.FloatParam(name, label, description, visibleIf, default, min, max)
             }
             Plugin.ParameterType.Boolean -> {
                 val default = defaultValue.jsonPrimitive.boolean
-                Plugin.Parameter.BooleanParam(name, label, description, default)
+                Plugin.Parameter.BooleanParam(name, label, description, visibleIf, default)
             }
             Plugin.ParameterType.String -> {
                 val defaultValueFromFile = element["defaultValueFromFile"]?.jsonPrimitive?.content
@@ -242,18 +269,18 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
                     ?: defaultValue.jsonPrimitive.content
                 val optional = requireNotNull(element["optional"]).jsonPrimitive.boolean
                 val multiLine = element["multiLine"]?.jsonPrimitive?.boolean ?: false
-                Plugin.Parameter.StringParam(name, label, description, default, multiLine, optional)
+                Plugin.Parameter.StringParam(name, label, description, visibleIf, default, multiLine, optional)
             }
             Plugin.ParameterType.Enum -> {
                 val default = defaultValue.jsonPrimitive.content
                 val options = requireNotNull(element["options"]).jsonArray.map {
                     it.jsonPrimitive.content
                 }
-                Plugin.Parameter.EnumParam(name, label, description, default, options)
+                Plugin.Parameter.EnumParam(name, label, description, visibleIf, default, options)
             }
             Plugin.ParameterType.EntrySelector -> {
                 val default = decoder.json.decodeFromJsonElement(EntrySelector.serializer(), defaultValue)
-                Plugin.Parameter.EntrySelectorParam(name, label, description, default)
+                Plugin.Parameter.EntrySelectorParam(name, label, description, visibleIf, default)
             }
         }
     }

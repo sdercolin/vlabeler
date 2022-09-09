@@ -40,7 +40,7 @@ class UpdateRepository {
                     Log.debug(message)
                 }
             }
-            level = if (isDebug) LogLevel.BODY else LogLevel.NONE
+            level = if (isDebug) LogLevel.INFO else LogLevel.NONE
         }
         install(ContentNegotiation) {
             json(

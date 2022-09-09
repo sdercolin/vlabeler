@@ -324,7 +324,12 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
             .padding(30.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        state.params.indices.forEach { i ->
+        state.params.indices.filter { i ->
+            val dependingParamName = state.paramDefs[i].visibleIf ?: return@filter true
+            val dependingParam = state.paramDefs.firstOrNull { it.name == dependingParamName } ?: return@filter false
+            val dependingParamValue = state.params[state.paramDefs.indexOf(dependingParam)]
+            dependingParam.eval(dependingParamValue)
+        }.forEach { i ->
             val labelInRow = state.isParamInRow(i)
             Column(Modifier.heightIn(min = 60.dp)) {
                 if (!labelInRow) {
