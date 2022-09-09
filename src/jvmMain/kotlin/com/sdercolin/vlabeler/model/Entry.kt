@@ -41,6 +41,7 @@ data class Entry(
     fun starToggled() = copy(meta = meta.copy(star = !meta.star))
     fun doneToggled() = copy(meta = meta.copy(done = !meta.done))
     fun done() = copy(meta = meta.copy(done = true))
+    fun tagEdited(tag: String) = copy(meta = meta.copy(tag = tag))
 
     companion object {
         fun fromDefaultValues(sample: String, name: String, labelerConf: LabelerConf) =

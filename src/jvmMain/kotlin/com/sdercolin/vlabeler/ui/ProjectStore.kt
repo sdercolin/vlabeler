@@ -72,6 +72,8 @@ interface ProjectStore {
     fun toggleCurrentEntryDone()
     fun toggleEntryStar(index: Int)
     fun toggleCurrentEntryStar()
+    fun editEntryTag(index: Int, tag: String)
+    fun editCurrentEntryTag(tag: String)
 
     suspend fun executeMacroPlugin(
         plugin: Plugin,
@@ -320,5 +322,13 @@ class ProjectStoreImpl(
 
     override fun toggleCurrentEntryStar() {
         editProject { toggleEntryStar(currentIndex) }
+    }
+
+    override fun editEntryTag(index: Int, tag: String) {
+        editProject { editEntryTag(index, tag) }
+    }
+
+    override fun editCurrentEntryTag(tag: String) {
+        editProject { editEntryTag(currentIndex, tag) }
     }
 }

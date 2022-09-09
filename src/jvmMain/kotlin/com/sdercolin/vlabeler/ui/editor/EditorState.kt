@@ -48,7 +48,8 @@ class EditorState(
     private val player get() = appState.player
     var tool: Tool by mutableStateOf(Tool.Cursor)
 
-    var isInputFocused: Boolean by mutableStateOf(false)
+    var isPinnedEntryListInputFocused: Boolean by mutableStateOf(false)
+    var isTagInputFocused: Boolean by mutableStateOf(false)
 
     private var _renderProgress: Pair<Int, Int> by mutableStateOf(0 to 0)
     val renderProgress get() = _renderProgress
@@ -74,6 +75,9 @@ class EditorState(
 
     val entryDone: Boolean
         get() = project.currentEntry.meta.done
+
+    val entryTag: String
+        get() = project.currentEntry.meta.tag
 
     val chartStore = ChartStore()
 
@@ -291,6 +295,10 @@ class EditorState(
 
     fun toggleEntryStar(index: Int) {
         appState.toggleEntryStar(index)
+    }
+
+    fun editEntryTag(index: Int, tag: String) {
+        appState.editEntryTag(index, tag)
     }
 
     fun clear() {

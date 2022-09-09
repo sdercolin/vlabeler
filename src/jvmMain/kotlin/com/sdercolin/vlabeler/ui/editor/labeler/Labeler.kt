@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,23 +16,39 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.IconButton
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NewLabel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.repository.ToolCursorRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.DoneIcon
+import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.StarIcon
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.EditorState
@@ -39,6 +56,9 @@ import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.editor.RenderStatusLabel
 import com.sdercolin.vlabeler.ui.editor.ToolboxView
 import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.ui.theme.DarkGray
+import com.sdercolin.vlabeler.ui.theme.LightGray
+import com.sdercolin.vlabeler.ui.theme.White20
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -68,6 +88,9 @@ fun Labeler(
             toggleDone = { editorState.toggleEntryDone(editorState.project.currentIndex) },
             star = editorState.entryStar,
             toggleStar = { editorState.toggleEntryStar(editorState.project.currentIndex) },
+            tag = editorState.entryTag,
+            editTag = { editorState.editEntryTag(editorState.project.currentIndex, it) },
+            onTagEditingChanged = { editorState.isTagInputFocused = it },
             openEditEntryNameDialog = openEditEntryNameDialog,
         )
         val cursor = remember(editorState.tool) {
@@ -114,6 +137,9 @@ private fun EntryTitleBar(
     toggleDone: () -> Unit,
     star: Boolean,
     toggleStar: () -> Unit,
+    tag: String,
+    editTag: (String) -> Unit,
+    onTagEditingChanged: (Boolean) -> Unit,
     openEditEntryNameDialog: () -> Unit,
 ) {
     Surface {
@@ -140,17 +166,109 @@ private fun EntryTitleBar(
                 )
                 Spacer(Modifier.width(20.dp))
                 Row(
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier.align(Alignment.Bottom)
+                        .padding(vertical = 5.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.Bottom,
                 ) {
-                    IconButton(onClick = toggleDone) {
+                    TagRegion(
+                        tag = tag,
+                        editTag = editTag,
+                        onEditingChanged = onTagEditingChanged,
+                    )
+                    FreeSizedIconButton(
+                        onClick = toggleDone,
+                        modifier = Modifier.padding(8.dp),
+                    ) {
                         DoneIcon(done)
                     }
-                    IconButton(onClick = toggleStar) {
+                    FreeSizedIconButton(
+                        onClick = toggleStar,
+                        modifier = Modifier.padding(8.dp),
+                    ) {
                         StarIcon(star)
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun TagRegion(
+    tag: String,
+    editTag: (String) -> Unit,
+    onEditingChanged: (Boolean) -> Unit,
+) {
+    var isEditing by remember { mutableStateOf(false) }
+    var isTextFieldFocused by remember { mutableStateOf(false) }
+    var editingTag by remember(tag) { mutableStateOf(TextFieldValue(tag, TextRange(0, tag.length))) }
+
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(isEditing) {
+        onEditingChanged(isEditing)
+        if (isEditing) {
+            focusRequester.requestFocus()
+        }
+    }
+
+    Box(contentAlignment = Alignment.BottomEnd) {
+        val textBoxModifier = Modifier
+            .padding(vertical = 5.dp, horizontal = 3.dp)
+            .widthIn(min = 35.dp, max = 150.dp)
+            .background(color = White20, shape = RoundedCornerShape(50))
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+        val textStyle = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.8f))
+        if (!isEditing) {
+            if (tag.isEmpty()) {
+                FreeSizedIconButton(
+                    onClick = { isEditing = true },
+                    modifier = Modifier.padding(8.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.NewLabel,
+                        contentDescription = null,
+                        tint = White20,
+                    )
+                }
+            } else {
+                Text(
+                    modifier = textBoxModifier.clickable { isEditing = true },
+                    text = tag,
+                    textAlign = TextAlign.Center,
+                    style = textStyle,
+                    maxLines = 1,
+                )
+            }
+        } else {
+            BasicTextField(
+                modifier = Modifier
+                    .width(IntrinsicSize.Min)
+                    .focusRequester(focusRequester)
+                    .onFocusChanged {
+                        if (isEditing && isTextFieldFocused && it.hasFocus.not()) {
+                            isEditing = false
+                            if (editingTag.text != tag) {
+                                editTag(editingTag.text)
+                            }
+                        }
+                        isTextFieldFocused = it.isFocused
+                    },
+                value = editingTag,
+                onValueChange = { editingTag = it },
+                textStyle = textStyle,
+                cursorBrush = SolidColor(LightGray),
+                maxLines = 1,
+                decorationBox = {
+                    Box(
+                        modifier = textBoxModifier,
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        it()
+                    }
+                },
+            )
         }
     }
 }

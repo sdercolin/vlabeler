@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.CircularProgress
+import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.editor.labeler.Labeler
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -68,7 +69,7 @@ fun Editor(state: EditorState, appState: AppState) {
             Modifier.fillMaxSize()
                 .focusRequester(labelerFocusRequester)
                 .focusTarget()
-                .onPointerEvent(PointerEventType.Press) {
+                .plainClickable {
                     labelerFocusRequester.requestFocus()
                 }
                 .onPointerEvent(PointerEventType.Scroll) {
@@ -91,7 +92,7 @@ fun Editor(state: EditorState, appState: AppState) {
                 }
             }
             val onFocusedChanged: (Boolean) -> Unit = remember {
-                { state.isInputFocused = it }
+                { state.isPinnedEntryListInputFocused = it }
             }
             Card(
                 modifier = Modifier.fillMaxSize(),

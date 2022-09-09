@@ -388,7 +388,10 @@ class AppState(
     val isEditorActive: Boolean
         get() {
             val editor = screen as? Screen.Editor ?: return false
-            return project != null && editor.state.isInputFocused.not() && !anyDialogOpening()
+            return project != null &&
+                editor.state.isPinnedEntryListInputFocused.not() &&
+                editor.state.isTagInputFocused.not() &&
+                !anyDialogOpening()
         }
 
     val isMacroPluginAvailable

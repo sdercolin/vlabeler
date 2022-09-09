@@ -233,6 +233,12 @@ data class Project(
         return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
     }
 
+    fun editEntryTag(index: Int, tag: String): Project {
+        val entry = entries[index]
+        val editedEntry = entry.tagEdited(tag)
+        return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
+    }
+
     fun validate(): Project {
         // Check multiMode enabled
         if (multipleEditMode) require(

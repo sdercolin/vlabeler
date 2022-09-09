@@ -7,6 +7,7 @@ import androidx.compose.foundation.ScrollbarAdapter
 import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
@@ -24,6 +26,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -392,12 +395,26 @@ private fun ItemContent(item: IndexedValue<Entry>) {
                 )
             }
 
-            Row {
+            Row(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                if (item.value.meta.tag.isNotEmpty()) {
+                    BasicText(
+                        text = item.value.meta.tag,
+                        modifier = Modifier
+                            .background(color = White20, shape = RoundedCornerShape(5.dp))
+                            .padding(horizontal = 5.dp, vertical = 2.dp),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.8f)),
+                    )
+                }
                 if (item.value.meta.done) {
-                    DoneIcon(true, modifier = Modifier.padding(start = 8.dp).requiredSize(16.dp))
+                    DoneIcon(true, modifier = Modifier.requiredSize(16.dp))
                 }
                 if (item.value.meta.star) {
-                    StarIcon(true, modifier = Modifier.padding(start = 8.dp).requiredSize(16.dp))
+                    StarIcon(true, modifier = Modifier.requiredSize(16.dp))
                 }
             }
         },
