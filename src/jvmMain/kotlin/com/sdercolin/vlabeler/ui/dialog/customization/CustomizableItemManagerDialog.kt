@@ -54,6 +54,7 @@ import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.launch
 import java.io.File
@@ -252,10 +253,7 @@ fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialo
         Switch(
             checked = item.disabled.not(),
             onCheckedChange = { state.toggleItemDisabled(index) },
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colors.primary,
-                uncheckedThumbColor = MaterialTheme.colors.onBackground,
-            ),
+            colors = getSwitchColors(),
             modifier = Modifier.padding(horizontal = 10.dp),
         )
     }

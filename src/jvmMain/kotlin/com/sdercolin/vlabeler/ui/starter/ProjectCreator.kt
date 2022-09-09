@@ -64,6 +64,7 @@ import com.sdercolin.vlabeler.ui.dialog.plugin.TemplatePluginDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.DarkYellow
+import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -398,10 +399,7 @@ private fun AutoExportSwitch(state: ProjectCreatorState) {
         Switch(
             checked = state.autoExport,
             onCheckedChange = { state.toggleAutoExport(it) },
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colors.primary,
-                uncheckedThumbColor = MaterialTheme.colors.onBackground,
-            ),
+            colors = getSwitchColors(),
         )
         Spacer(Modifier.width(10.dp))
         Text(string(Strings.StarterNewAutoExport))

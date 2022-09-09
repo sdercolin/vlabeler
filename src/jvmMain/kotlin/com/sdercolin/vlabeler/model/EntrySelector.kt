@@ -38,7 +38,7 @@ data class EntrySelector(
         abstract fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean
 
         /**
-         * The name of the property being filtered. `sample` and `name` are preserved.
+         * The name of the property being filtered. `sample`, `name`, `tag`, `star` and `done` are preserved.
          */
         abstract val subject: String
     }
@@ -63,6 +63,7 @@ data class EntrySelector(
             val subjectValue = when (subject) {
                 TextItemSubjectEntryName -> entry.name
                 TextItemSubjectSampleName -> entry.sample
+                TextItemSubjectTagName -> entry.meta.tag
                 else -> throw IllegalArgumentException("Unknown subject name as text: $subject")
             }
             return when (matchType) {
@@ -131,14 +132,45 @@ data class EntrySelector(
         LessThanOrEquals(Strings.PluginEntrySelectorNumberMatchTypeLessThanOrEquals)
     }
 
+    @Serializable
+    @SerialName("boolean")
+    data class BooleanFilterItem(
+        override val subject: String,
+        val matcherBoolean: Boolean,
+    ) : FilterItem() {
+        override fun isValid(labelerConf: LabelerConf): Boolean {
+            return subject in booleanItemSubjects.map { it.first }
+        }
+
+        override fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean {
+            val subjectValue = when (subject) {
+                BooleanItemSubjectDone -> entry.meta.done
+                BooleanItemSubjectStar -> entry.meta.star
+                else -> throw IllegalArgumentException("Unknown subject name as boolean: $subject")
+            }
+            return subjectValue == matcherBoolean
+        }
+
+    }
+
     companion object {
         val textItemSubjects
             get() = listOf(
                 TextItemSubjectEntryName to Strings.PluginEntrySelectorPreservedSubjectName,
                 TextItemSubjectSampleName to Strings.PluginEntrySelectorPreservedSubjectSample,
+                TextItemSubjectTagName to Strings.PluginEntrySelectorPreservedSubjectTag,
+            )
+
+        val booleanItemSubjects
+            get() = listOf(
+                BooleanItemSubjectDone to Strings.PluginEntrySelectorPreservedSubjectDone,
+                BooleanItemSubjectStar to Strings.PluginEntrySelectorPreservedSubjectStar,
             )
 
         private const val TextItemSubjectEntryName = "name"
         private const val TextItemSubjectSampleName = "sample"
+        private const val TextItemSubjectTagName = "tag"
+        private const val BooleanItemSubjectDone = "done"
+        private const val BooleanItemSubjectStar = "star"
     }
 }

@@ -446,6 +446,15 @@ enum class Strings(val en: String) {
     PluginEntrySelectorPreservedSubjectName(
         en = "Entry name",
     ),
+    PluginEntrySelectorPreservedSubjectTag(
+        en = "Tag",
+    ),
+    PluginEntrySelectorPreservedSubjectDone(
+        en = "Done",
+    ),
+    PluginEntrySelectorPreservedSubjectStar(
+        en = "Starred",
+    ),
     PluginEntrySelectorComparerValue(
         en = "Input",
     ),

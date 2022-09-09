@@ -1,5 +1,8 @@
 package com.sdercolin.vlabeler.ui.theme
 
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SwitchDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val Pink = Color(0xfff48fb1)
@@ -17,3 +20,9 @@ val White20 = Color(0x33ffffff)
 val DarkYellow = Color(0xffe89f17)
 val DarkRed = Color(0xffcf6679)
 val DarkGreen = Color(0xff4caf50)
+
+@Composable
+fun getSwitchColors() = SwitchDefaults.colors(
+    checkedThumbColor = MaterialTheme.colors.primary,
+    uncheckedThumbColor = MaterialTheme.colors.onSurface,
+)

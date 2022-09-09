@@ -21,6 +21,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -43,6 +45,7 @@ import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
+import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.runIf
 
@@ -149,7 +152,9 @@ private fun FilterRow(
         listOf(null to string(Strings.PluginEntrySelectorComparerValue)) +
             labelerConf.properties.map { it.name to it.displayedName }
     }
-    val subjects = remember(labelerConf) { textSubjects + numberSubjects }
+    val booleanSubjects = remember { EntrySelector.booleanItemSubjects.map { it.first to string(it.second) } }
+    val booleanSubjectNames = remember { booleanSubjects.map { it.first } }
+    val subjects = remember(labelerConf) { textSubjects + numberSubjects + booleanSubjects }
     var textMatchType by remember(value) {
         mutableStateOf(
             (value as? EntrySelector.TextFilterItem)?.matchType
@@ -170,6 +175,11 @@ private fun FilterRow(
     var numberComparerValue by remember {
         mutableStateOf(
             (value as? EntrySelector.NumberFilterItem)?.comparerValue?.toString().orEmpty(),
+        )
+    }
+    var booleanMatchValue by remember(value) {
+        mutableStateOf(
+            (value as? EntrySelector.BooleanFilterItem)?.matcherBoolean ?: false,
         )
     }
     LaunchedEffect(value) {
@@ -202,6 +212,10 @@ private fun FilterRow(
                 textMatchType,
                 textMatchValue,
             )
+            EntrySelector.BooleanFilterItem::class -> EntrySelector.BooleanFilterItem(
+                subject,
+                booleanMatchValue,
+            )
             else -> return
         }
         onValueChange(newValue)
@@ -226,6 +240,7 @@ private fun FilterRow(
                 subject = it.first
                 type = when (it.first) {
                     in textSubjectNames -> EntrySelector.TextFilterItem::class
+                    in booleanSubjectNames -> EntrySelector.BooleanFilterItem::class
                     else -> EntrySelector.NumberFilterItem::class
                 }
                 trySubmit()
@@ -295,6 +310,16 @@ private fun FilterRow(
                     },
                     modifier = Modifier.width(160.dp),
                     errorPrompt = { if (textMatchValue.isEmpty()) "" else null },
+                )
+            }
+            EntrySelector.BooleanFilterItem::class -> {
+                Switch(
+                    checked = booleanMatchValue,
+                    onCheckedChange = {
+                        booleanMatchValue = it
+                        trySubmit()
+                    },
+                    colors = getSwitchColors(),
                 )
             }
         }

@@ -63,6 +63,7 @@ import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.argbHexString
 import com.sdercolin.vlabeler.util.isHexChar
 import com.sdercolin.vlabeler.util.rgbHexString
@@ -324,10 +325,7 @@ fun SwitchItem(item: PreferencesItem.Switch, state: PreferencesEditorState) {
         enabled = item.enabled(state.conf),
         checked = item.select(state.conf),
         onCheckedChange = { state.update(item, it) },
-        colors = SwitchDefaults.colors(
-            checkedThumbColor = MaterialTheme.colors.primary,
-            uncheckedThumbColor = MaterialTheme.colors.onBackground,
-        ),
+        colors = getSwitchColors(),
     )
 }
 
