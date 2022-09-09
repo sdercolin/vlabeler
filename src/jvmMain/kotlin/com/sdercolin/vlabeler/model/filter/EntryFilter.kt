@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.model.filter
 
 import com.sdercolin.vlabeler.model.Entry
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class EntryFilter(
@@ -13,9 +14,64 @@ data class EntryFilter(
         return searchText.isEmpty() && star == null && done == null
     }
 
+    @Transient
+    private var searchAny: String? = null
+
+    @Transient
+    private var searchName: String? = null
+
+    @Transient
+    private var searchSample: String? = null
+
+    @Transient
+    private var searchTag: String? = null
+
+    init {
+
+        fun String.getValue() = split(":")[1]
+        fun String.trimValue() = if (startsWith("\"") && endsWith("\"") && length > 1) {
+            substring(1, length - 1)
+        } else {
+            this
+        }
+
+        val sections = searchText.split(";")
+        for (section in sections) {
+            val trimmed = section.trim()
+            if (trimmed.isEmpty()) continue
+
+            when {
+                trimmed.startsWith("name:") -> searchName = trimmed.getValue().trimValue()
+                trimmed.startsWith("sample:") -> searchSample = trimmed.getValue().trimValue()
+                trimmed.startsWith("tag:") -> searchTag = trimmed.getValue().trimValue()
+                else -> searchAny = trimmed.trimValue()
+            }
+        }
+    }
+
     fun matches(entry: Entry): Boolean {
-        if (searchText.isNotEmpty() && !entry.name.contains(searchText, true)) {
-            return false
+        searchAny?.let {
+            if (!entry.name.contains(it) &&
+                !entry.sample.contains(it) &&
+                !entry.meta.tag.contains(it)
+            ) {
+                return false
+            }
+        }
+        searchName?.let {
+            if (!entry.name.contains(it)) {
+                return false
+            }
+        }
+        searchSample?.let {
+            if (!entry.sample.contains(it)) {
+                return false
+            }
+        }
+        searchTag?.let {
+            if (!entry.meta.tag.contains(it)) {
+                return false
+            }
         }
         if (star != null && entry.meta.star != star) {
             return false
