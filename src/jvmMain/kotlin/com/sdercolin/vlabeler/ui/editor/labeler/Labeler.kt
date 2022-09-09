@@ -204,7 +204,7 @@ private fun TagRegion(
     setEditing: (Boolean) -> Unit,
 ) {
     var isTextFieldFocused by remember { mutableStateOf(false) }
-    var editingTag by remember(tag) { mutableStateOf(TextFieldValue(tag, TextRange(0, tag.length))) }
+    var editingTag by remember(tag, isEditing) { mutableStateOf(TextFieldValue(tag, TextRange(0, tag.length))) }
 
     val focusRequester = remember { FocusRequester() }
 
