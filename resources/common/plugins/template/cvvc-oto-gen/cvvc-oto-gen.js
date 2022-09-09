@@ -44,6 +44,8 @@ if (reorder) {
     reorderAcrossSample = order[1] === "across sample"
 }
 
+let appendTags = params["appendTags"]
+
 let vowelLineParsed = params["vowelMap"].split('\n').flatMap(line => {
     let pair = line.trim().split('=')
     let vowel = pair[0]
@@ -116,7 +118,7 @@ function push(entry, asCV) {
 }
 
 // Include CV, VCV, VV and special
-function pushCV(sample, index, alias, isSpecial) {
+function pushCV(sample, index, alias, isSpecial, tag) {
     // check alias count
     let max = repeat
     let count = aliasCountMap.get(alias) || 0
@@ -139,13 +141,17 @@ function pushCV(sample, index, alias, isSpecial) {
     // for oto labeler plus, adding start again in the points
     points.push(start)
     let extras = [cutoffCV.toString()]
-    let entry = new Entry(sample, thisAlias, start, end, points, extras)
+    let meta = new Meta()
+    if (appendTags) {
+        meta.tag = tag
+    }
+    let entry = new Entry(sample, thisAlias, start, end, points, extras, meta)
     aliasCountMap.set(alias, count + 1)
     push(entry, true)
 }
 
 // Include VC and SingleC
-function pushVC(sample, index, alias, isSingleC) {
+function pushVC(sample, index, alias, isSingleC, tag) {
     // check alias count
     let max = isSingleC ? repeatC : repeat
     let count = aliasCountMap.get(alias) || 0
@@ -168,14 +174,18 @@ function pushVC(sample, index, alias, isSingleC) {
     // for oto labeler plus, adding start again in the points
     points.push(start)
     let extras = [cutoffVC.toString()]
-    let entry = new Entry(sample, thisAlias, start, end, points, extras)
+    let meta = new Meta()
+    if (appendTags) {
+        meta.tag = tag
+    }
+    let entry = new Entry(sample, thisAlias, start, end, points, extras, meta)
     aliasCountMap.set(alias, count + 1)
     push(entry, false)
 }
 
 function parseSample(sample) {
     if (prefix !== "" && !sample.startsWith(prefix)) {
-        pushCV(sample, 0, sample, true)
+        pushCV(sample, 0, sample, true, "Others")
         return
     }
 
@@ -190,9 +200,9 @@ function parseSample(sample) {
             let suffix = suffixes.find(suffix => rest === suffix)
             if (suffix) {
                 let alias = (lastVowel + " " + suffix).trim()
-                pushCV(sample, index, alias, false)
+                pushCV(sample, index, alias, false, "Tail")
             } else if (index === 0) {
-                pushCV(sample, 0, sample, true)
+                pushCV(sample, 0, sample, true, "Others")
             }
             return
         }
@@ -201,26 +211,27 @@ function parseSample(sample) {
 
         if (lastVowel !== "" && consonant !== "") {
             let aliasVC = lastVowel + " " + consonant
-            pushVC(sample, index, aliasVC, false)
+            pushVC(sample, index, aliasVC, false, "VC")
         }
         if (repeatC > 0 && consonant !== "") {
-            pushVC(sample, index, consonant, true)
+            pushVC(sample, index, consonant, true, "C")
         }
 
         if (index === 0) {
             let aliasHeadCV = "- " + matched
             if (useHeadCV || consonant === "") {
-                pushCV(sample, index, aliasHeadCV, false)
+                pushCV(sample, index, aliasHeadCV, false, "Head")
             }
         }
 
         if (lastVowel !== "" && (useVCV || consonant === "")) {
             let aliasVCV = lastVowel + " " + matched
-            pushCV(sample, index, aliasVCV, false)
+            let tag = consonant === "" ? "VV" : "VCV"
+            pushCV(sample, index, aliasVCV, false, tag)
         }
 
         if (index === 0 || consonant !== "") {
-            pushCV(sample, index, matched, false)
+            pushCV(sample, index, matched, false, "CV")
         }
 
         index++

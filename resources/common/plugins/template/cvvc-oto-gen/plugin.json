@@ -1,6 +1,6 @@
 {
   "name": "cvvc-oto-gen",
-  "version": 1,
+  "version": 2,
   "type": "template",
   "displayedName": "CVVC oto generator",
   "author": "sdercolin",
@@ -178,6 +178,13 @@
           "VCs -> CVs; across sample",
           "CVs -> VCs; across sample"
         ]
+      },
+      {
+        "type": "boolean",
+        "name": "appendTags",
+        "label": "Append tags",
+        "description": "Whether to append types as tags to the entries",
+        "defaultValue": true
       },
       {
         "type": "string",
