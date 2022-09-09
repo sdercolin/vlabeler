@@ -92,6 +92,11 @@ enum class KeyAction(
         KeySet(Key.Delete),
         true,
     ),
+    EditTag(
+        listOf(Strings.MenuEdit, Strings.MenuEditEditTag),
+        KeySet(Key.J),
+        true,
+    ),
     ToggleDone(
         listOf(Strings.MenuEdit, Strings.MenuEditToggleDone),
         KeySet(Key.K),

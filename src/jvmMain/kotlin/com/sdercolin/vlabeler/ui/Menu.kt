@@ -150,6 +150,12 @@ fun FrameWindowScope.Menu(
                     enabled = appState.isEditorActive,
                 )
                 Item(
+                    string(Strings.MenuEditEditTag),
+                    onClick = { appState.editor?.isEditingTag = true },
+                    shortcut = KeyAction.EditTag.getKeyShortCut(),
+                    enabled = appState.isEditorActive,
+                )
+                Item(
                     string(Strings.MenuEditToggleDone),
                     onClick = { appState.toggleCurrentEntryDone() },
                     shortcut = KeyAction.ToggleDone.getKeyShortCut(),

@@ -390,7 +390,7 @@ class AppState(
             val editor = screen as? Screen.Editor ?: return false
             return project != null &&
                 editor.state.isPinnedEntryListInputFocused.not() &&
-                editor.state.isTagInputFocused.not() &&
+                editor.state.isEditingTag.not() &&
                 !anyDialogOpening()
         }
 

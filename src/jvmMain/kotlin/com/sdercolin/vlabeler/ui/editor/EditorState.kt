@@ -49,7 +49,7 @@ class EditorState(
     var tool: Tool by mutableStateOf(Tool.Cursor)
 
     var isPinnedEntryListInputFocused: Boolean by mutableStateOf(false)
-    var isTagInputFocused: Boolean by mutableStateOf(false)
+    var isEditingTag: Boolean by mutableStateOf(false)
 
     private var _renderProgress: Pair<Int, Int> by mutableStateOf(0 to 0)
     val renderProgress get() = _renderProgress

@@ -75,6 +75,9 @@ enum class Strings(val en: String) {
     MenuEditToggleStar(
         en = "Toggle Starred for Current Entry",
     ),
+    MenuEditEditTag(
+        en = "Edit Tag of Current Entry",
+    ),
     MenuEditMultipleEditMode(
         en = "Edit All Connected Entries",
     ),

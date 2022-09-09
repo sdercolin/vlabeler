@@ -56,7 +56,6 @@ import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.editor.RenderStatusLabel
 import com.sdercolin.vlabeler.ui.editor.ToolboxView
 import com.sdercolin.vlabeler.ui.theme.Black50
-import com.sdercolin.vlabeler.ui.theme.DarkGray
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
 import kotlinx.coroutines.flow.collectLatest
@@ -90,7 +89,8 @@ fun Labeler(
             toggleStar = { editorState.toggleEntryStar(editorState.project.currentIndex) },
             tag = editorState.entryTag,
             editTag = { editorState.editEntryTag(editorState.project.currentIndex, it) },
-            onTagEditingChanged = { editorState.isTagInputFocused = it },
+            isEditingTag = editorState.isEditingTag,
+            setEditingTag = { editorState.isEditingTag = it },
             openEditEntryNameDialog = openEditEntryNameDialog,
         )
         val cursor = remember(editorState.tool) {
@@ -139,7 +139,8 @@ private fun EntryTitleBar(
     toggleStar: () -> Unit,
     tag: String,
     editTag: (String) -> Unit,
-    onTagEditingChanged: (Boolean) -> Unit,
+    isEditingTag: Boolean,
+    setEditingTag: (Boolean) -> Unit,
     openEditEntryNameDialog: () -> Unit,
 ) {
     Surface {
@@ -174,7 +175,8 @@ private fun EntryTitleBar(
                     TagRegion(
                         tag = tag,
                         editTag = editTag,
-                        onEditingChanged = onTagEditingChanged,
+                        isEditing = isEditingTag,
+                        setEditing = setEditingTag,
                     )
                     FreeSizedIconButton(
                         onClick = toggleDone,
@@ -198,20 +200,13 @@ private fun EntryTitleBar(
 private fun TagRegion(
     tag: String,
     editTag: (String) -> Unit,
-    onEditingChanged: (Boolean) -> Unit,
+    isEditing: Boolean,
+    setEditing: (Boolean) -> Unit,
 ) {
-    var isEditing by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
     var editingTag by remember(tag) { mutableStateOf(TextFieldValue(tag, TextRange(0, tag.length))) }
 
     val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(isEditing) {
-        onEditingChanged(isEditing)
-        if (isEditing) {
-            focusRequester.requestFocus()
-        }
-    }
 
     Box(contentAlignment = Alignment.BottomEnd) {
         val textBoxModifier = Modifier
@@ -223,7 +218,7 @@ private fun TagRegion(
         if (!isEditing) {
             if (tag.isEmpty()) {
                 FreeSizedIconButton(
-                    onClick = { isEditing = true },
+                    onClick = { setEditing(true) },
                     modifier = Modifier.padding(8.dp),
                 ) {
                     Icon(
@@ -234,7 +229,7 @@ private fun TagRegion(
                 }
             } else {
                 Text(
-                    modifier = textBoxModifier.clickable { isEditing = true },
+                    modifier = textBoxModifier.clickable { setEditing(true) },
                     text = tag,
                     textAlign = TextAlign.Center,
                     style = textStyle,
@@ -242,13 +237,16 @@ private fun TagRegion(
                 )
             }
         } else {
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
             BasicTextField(
                 modifier = Modifier
                     .width(IntrinsicSize.Min)
                     .focusRequester(focusRequester)
                     .onFocusChanged {
-                        if (isEditing && isTextFieldFocused && it.hasFocus.not()) {
-                            isEditing = false
+                        if (isTextFieldFocused && it.hasFocus.not()) {
+                            setEditing(false)
                             if (editingTag.text != tag) {
                                 editTag(editingTag.text)
                             }
