@@ -14,7 +14,7 @@ data class AppRecord(
     val windowSizeDp: Pair<Float, Float> = Pair(1200f, 850f),
     val pluginDialogSizeDp: Pair<Float, Float> = Pair(900f, 700f),
     val isPropertyViewDisplayed: Boolean = false,
-    val isEntryListPinned: Boolean = false,
+    val isEntryListPinned: Boolean = true,
     val pinnedEntryListSplitPanePositionLocked: Boolean = false,
     val pinnedEntryListSplitPanePositions: Map<AppConf.ViewPosition, Float> = mapOf(
         AppConf.ViewPosition.Left to 0.3f,
