@@ -141,7 +141,7 @@ private fun FilterRow(
     value: EntrySelector.FilterItem,
     onValueChange: (EntrySelector.FilterItem) -> Unit,
     onParseErrorChange: (Boolean) -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
 ) {
     var type by remember(value) { mutableStateOf(value::class) }
     var subject by remember(value) { mutableStateOf(value.subject) }
