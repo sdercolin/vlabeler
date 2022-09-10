@@ -100,6 +100,7 @@ fun Editor(state: EditorState, appState: AppState) {
                 shape = RoundedCornerShape(0.dp),
             ) {
                 EntryList(
+                    editorConf = appState.appConf.editor,
                     pinned = true,
                     filterState = state.pinnedEntryListFilterState,
                     project = state.project,

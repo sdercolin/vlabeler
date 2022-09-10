@@ -321,7 +321,7 @@ abstract class PreferencesPage(
     object Editor : PreferencesPage(Strings.PreferencesEditor, Strings.PreferencesEditorDescription) {
 
         override val children: List<PreferencesPage>
-            get() = listOf(EditorScissors, EditorAutoScroll)
+            get() = listOf(EditorScissors, EditorAutoScroll, EditorMetadata)
 
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
@@ -343,12 +343,6 @@ abstract class PreferencesPage(
                     useAlpha = false,
                     select = { it.playerCursorColor },
                     update = { copy(playerCursorColor = it) },
-                )
-                switch(
-                    title = Strings.PreferencesEditorAutoDone,
-                    defaultValue = AppConf.Editor.DefaultAutoDone,
-                    select = { it.autoDone },
-                    update = { copy(autoDone = it) },
                 )
             }
         }
@@ -395,6 +389,43 @@ abstract class PreferencesPage(
                     select = { it.play },
                     update = { copy(play = it) },
                     options = AppConf.ScissorsActions.Target.values(),
+                )
+            }
+        }
+    }
+
+    object EditorMetadata : PreferencesPage(
+        Strings.PreferencesEditorMetadata,
+        Strings.PreferencesEditorMetadataDescription,
+    ) {
+        override val content: List<PreferencesGroup> = buildPageContent {
+            withContext(
+                selector = { it.editor },
+                updater = { copy(editor = it) },
+            ) {
+                switch(
+                    title = Strings.PreferencesEditorShowDone,
+                    defaultValue = AppConf.Editor.DefaultShowDone,
+                    select = { it.showDone },
+                    update = { copy(showDone = it) },
+                )
+                switch(
+                    title = Strings.PreferencesEditorAutoDone,
+                    defaultValue = AppConf.Editor.DefaultAutoDone,
+                    select = { it.autoDone },
+                    update = { copy(autoDone = it) },
+                )
+                switch(
+                    title = Strings.PreferencesEditorShowStarred,
+                    defaultValue = AppConf.Editor.DefaultShowStar,
+                    select = { it.showStar },
+                    update = { copy(showStar = it) },
+                )
+                switch(
+                    title = Strings.PreferencesEditorShowTag,
+                    defaultValue = AppConf.Editor.DefaultShowTag,
+                    select = { it.showTag },
+                    update = { copy(showTag = it) },
                 )
             }
         }

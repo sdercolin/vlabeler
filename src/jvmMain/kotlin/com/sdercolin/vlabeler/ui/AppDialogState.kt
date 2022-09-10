@@ -217,7 +217,9 @@ class AppDialogStateImpl(
             embeddedDialog = request
         }
 
-    override fun openJumpToEntryDialog() = openEmbeddedDialog(JumpToEntryDialogArgs(projectStore.requireProject()))
+    override fun openJumpToEntryDialog() = openEmbeddedDialog(
+        JumpToEntryDialogArgs(projectStore.requireProject(), state.appConf.editor),
+    )
 
     override fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose) {
         val project = projectStore.requireProject()

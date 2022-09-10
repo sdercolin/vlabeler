@@ -45,6 +45,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.repository.ToolCursorRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.DoneIcon
@@ -80,6 +81,7 @@ fun Labeler(
 
     Column(Modifier.fillMaxSize()) {
         EntryTitleBar(
+            appConf = appState.appConf,
             title = editorState.entryTitle,
             subTitle = editorState.entrySubTitle,
             multiple = editorState.editedEntries.size > 1,
@@ -130,6 +132,7 @@ fun Labeler(
 
 @Composable
 private fun EntryTitleBar(
+    appConf: AppConf,
     title: String,
     subTitle: String,
     multiple: Boolean,
@@ -165,30 +168,38 @@ private fun EntryTitleBar(
                     style = MaterialTheme.typography.h5,
                     maxLines = 1,
                 )
-                Spacer(Modifier.width(20.dp))
-                Row(
-                    modifier = Modifier.align(Alignment.Bottom)
-                        .padding(vertical = 5.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.Bottom,
-                ) {
-                    TagRegion(
-                        tag = tag,
-                        editTag = editTag,
-                        isEditing = isEditingTag,
-                        setEditing = setEditingTag,
-                    )
-                    FreeSizedIconButton(
-                        onClick = toggleDone,
-                        modifier = Modifier.padding(8.dp),
+                if (appConf.editor.let { it.showDone || it.showStar || it.showTag }) {
+                    Spacer(Modifier.width(20.dp))
+                    Row(
+                        modifier = Modifier.align(Alignment.Bottom)
+                            .padding(vertical = 5.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.Bottom,
                     ) {
-                        DoneIcon(done)
-                    }
-                    FreeSizedIconButton(
-                        onClick = toggleStar,
-                        modifier = Modifier.padding(8.dp),
-                    ) {
-                        StarIcon(star)
+                        if (appConf.editor.showTag) {
+                            TagRegion(
+                                tag = tag,
+                                editTag = editTag,
+                                isEditing = isEditingTag,
+                                setEditing = setEditingTag,
+                            )
+                        }
+                        if (appConf.editor.showDone) {
+                            FreeSizedIconButton(
+                                onClick = toggleDone,
+                                modifier = Modifier.padding(8.dp),
+                            ) {
+                                DoneIcon(done)
+                            }
+                        }
+                        if (appConf.editor.showStar) {
+                            FreeSizedIconButton(
+                                onClick = toggleStar,
+                                modifier = Modifier.padding(8.dp),
+                            ) {
+                                StarIcon(star)
+                            }
+                        }
                     }
                 }
             }

@@ -732,8 +732,23 @@ enum class Strings(val en: String) {
     PreferencesEditorPlayerLockedDragNever(
         en = "Never do fixed-drag",
     ),
+    PreferencesEditorMetadata(
+        en = "Metadata",
+    ),
+    PreferencesEditorMetadataDescription(
+        en = "Customize the editor's appearance and behavior about entry metadata (starred, done, tag).",
+    ),
+    PreferencesEditorShowDone(
+        en = "Display \"Done\" status",
+    ),
     PreferencesEditorAutoDone(
         en = "Automatically set edited entries as \"Done\"",
+    ),
+    PreferencesEditorShowStarred(
+        en = "Display \"Starred\" status",
+    ),
+    PreferencesEditorShowTag(
+        en = "Display tags",
     ),
     PreferencesEditorScissors(
         en = "Scissors",

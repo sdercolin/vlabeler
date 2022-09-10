@@ -61,6 +61,7 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.common.DoneIcon
@@ -80,6 +81,7 @@ import com.sdercolin.vlabeler.util.animateScrollToShowItem
 import com.sdercolin.vlabeler.util.runIf
 
 class EntryListState(
+    val editorConf: AppConf.Editor,
     private val filterState: EntryListFilterState,
     project: Project,
     private val jumpToEntry: (Int) -> Unit,
@@ -124,12 +126,20 @@ class EntryListState(
 
 @Composable
 fun EntryList(
+    editorConf: AppConf.Editor,
     pinned: Boolean,
     filterState: EntryListFilterState,
     project: Project,
     jumpToEntry: (Int) -> Unit,
     onFocusedChanged: (Boolean) -> Unit,
-    state: EntryListState = remember(filterState, jumpToEntry) { EntryListState(filterState, project, jumpToEntry) },
+    state: EntryListState = remember(editorConf, filterState, jumpToEntry) {
+        EntryListState(
+            editorConf,
+            filterState,
+            project,
+            jumpToEntry,
+        )
+    },
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -202,7 +212,7 @@ fun EntryList(
             FilterRow(filterState as LinkableEntryListFilterState, state::updateSearch)
         }
 
-        List(state)
+        List(editorConf, state)
     }
 }
 
@@ -315,7 +325,7 @@ private fun FilterRow(filterState: LinkableEntryListFilterState, updateSearch: (
 }
 
 @Composable
-private fun ColumnScope.List(state: EntryListState) {
+private fun ColumnScope.List(editorConf: AppConf.Editor, state: EntryListState) {
     var pressedIndex by remember { mutableStateOf<Int?>(null) }
     val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = state.currentIndex)
     val scrollbarAdapter = remember { ScrollbarAdapter(scrollState) }
@@ -360,7 +370,7 @@ private fun ColumnScope.List(state: EntryListState) {
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    ItemContent(item)
+                    ItemContent(editorConf, item)
                 }
             }
         }
@@ -372,7 +382,7 @@ private fun ColumnScope.List(state: EntryListState) {
 }
 
 @Composable
-private fun ItemContent(item: IndexedValue<Entry>) {
+private fun ItemContent(editorConf: AppConf.Editor, item: IndexedValue<Entry>) {
     Layout(
         content = {
             BasicText(
@@ -398,7 +408,7 @@ private fun ItemContent(item: IndexedValue<Entry>) {
             }
 
             Row {
-                if (item.value.meta.tag.isNotEmpty()) {
+                if (item.value.meta.tag.isNotEmpty() && editorConf.showTag) {
                     Spacer(modifier = Modifier.width(12.dp))
                     BasicText(
                         text = item.value.meta.tag,
@@ -417,10 +427,10 @@ private fun ItemContent(item: IndexedValue<Entry>) {
                 modifier = Modifier.padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                if (item.value.meta.done) {
+                if (item.value.meta.done && editorConf.showDone) {
                     DoneIcon(true, modifier = Modifier.requiredSize(16.dp))
                 }
-                if (item.value.meta.star) {
+                if (item.value.meta.star && editorConf.showStar) {
                     StarIcon(true, modifier = Modifier.requiredSize(16.dp))
                 }
             }

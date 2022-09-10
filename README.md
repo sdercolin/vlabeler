@@ -147,6 +147,14 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`
 - `K` or click the `Star` button in the entry title bar: Toggle the entry's `Starred` status
 - `L` or click the `Done` button in the entry title bar: Toggle the entry's `Done` status
 
+#### Settings for metadata
+
+You can customize the metadata display in `Settings` -> `Prefereneces` -> `Editor` -> `Metadata` to hide the items that
+you don't need.
+
+The `Done` status is by default automatically set when you edit any values in a entry. You can disable this behavior in
+the settings too.
+
 ## Multiple editing mode
 
 For labelers with `continuous: true` (currently only the sinsy lab labeler), you can switch between the normal editing
