@@ -1,9 +1,11 @@
 package com.sdercolin.vlabeler.ui.theme
 
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 
 val Pink = Color(0xfff48fb1)
 val DarkPink = Color(0xffad375f)
@@ -24,5 +26,19 @@ val DarkGreen = Color(0xff4caf50)
 @Composable
 fun getSwitchColors() = SwitchDefaults.colors(
     checkedThumbColor = MaterialTheme.colors.primary,
+    checkedTrackColor = MaterialTheme.colors.primary,
     uncheckedThumbColor = MaterialTheme.colors.onSurface,
+    uncheckedTrackColor = MaterialTheme.colors.onSurface,
+    disabledCheckedThumbColor = MaterialTheme.colors.onSurface
+        .copy(alpha = ContentAlpha.disabled)
+        .compositeOver(MaterialTheme.colors.surface),
+    disabledCheckedTrackColor = MaterialTheme.colors.onSurface
+        .copy(alpha = ContentAlpha.disabled)
+        .compositeOver(MaterialTheme.colors.surface),
+    disabledUncheckedThumbColor = MaterialTheme.colors.onSurface
+        .copy(alpha = ContentAlpha.disabled)
+        .compositeOver(MaterialTheme.colors.surface),
+    disabledUncheckedTrackColor = MaterialTheme.colors.onSurface
+        .copy(alpha = ContentAlpha.disabled)
+        .compositeOver(MaterialTheme.colors.surface),
 )

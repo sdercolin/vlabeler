@@ -67,6 +67,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.White20
+import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Resources
@@ -324,12 +325,12 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
             .padding(30.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        state.params.indices.filter { i ->
-            val dependingParamName = state.paramDefs[i].visibleIf ?: return@filter true
-            val dependingParam = state.paramDefs.firstOrNull { it.name == dependingParamName } ?: return@filter false
+        state.params.indices.map { i ->
+            val dependingParamName = state.paramDefs[i].enableIf ?: return@map i to true
+            val dependingParam = state.paramDefs.firstOrNull { it.name == dependingParamName } ?: return@map i to false
             val dependingParamValue = state.params[state.paramDefs.indexOf(dependingParam)]
-            dependingParam.eval(dependingParamValue)
-        }.forEach { i ->
+            i to dependingParam.eval(dependingParamValue)
+        }.forEach { (i, enabled) ->
             val labelInRow = state.isParamInRow(i)
             Column(Modifier.heightIn(min = 60.dp)) {
                 if (!labelInRow) {
@@ -348,42 +349,47 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                     val isError = state.isValid(i).not()
                     val onValueChange = { newValue: Any -> state.update(i, newValue) }
                     when (def) {
-                        is Plugin.Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange)
-                        is Plugin.Parameter.EnumParam -> ParamDropDown(def.options, value as String, onValueChange)
-                        is Plugin.Parameter.FloatParam ->
-                            ParamNumberTextField(
-                                value as Float,
-                                onValueChange,
-                                isError,
-                                parse = { it.toFloatOrNull() },
-                                onParseErrorChange = { state.setParseError(i, it) },
-                            )
-                        is Plugin.Parameter.IntParam ->
-                            ParamNumberTextField(
-                                value as Int,
-                                onValueChange,
-                                isError,
-                                parse = { it.toIntOrNull() },
-                                onParseErrorChange = { state.setParseError(i, it) },
-                            )
-                        is Plugin.Parameter.StringParam ->
-                            ParamTextField(
-                                value as String,
-                                onValueChange,
-                                isError,
-                                isLong = true,
-                                singleLine = def.multiLine.not(),
-                            )
-                        is Plugin.Parameter.EntrySelectorParam ->
-                            ParamEntrySelector(
-                                requireNotNull(state.project).labelerConf,
-                                value as EntrySelector,
-                                onValueChange,
-                                isError,
-                                onParseErrorChange = { state.setParseError(i, it) },
-                                requireNotNull(state.project).entries,
-                                js,
-                            )
+                        is Plugin.Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange, enabled)
+                        is Plugin.Parameter.EnumParam -> ParamDropDown(
+                            options = def.options,
+                            value = value as String,
+                            onValueChange = onValueChange,
+                            enabled = enabled,
+                        )
+                        is Plugin.Parameter.FloatParam -> ParamNumberTextField(
+                            value = value as Float,
+                            onValueChange = onValueChange,
+                            isError = isError,
+                            parse = { it.toFloatOrNull() },
+                            onParseErrorChange = { state.setParseError(i, it) },
+                            enabled = enabled,
+                        )
+                        is Plugin.Parameter.IntParam -> ParamNumberTextField(
+                            value as Int,
+                            onValueChange,
+                            isError,
+                            parse = { it.toIntOrNull() },
+                            onParseErrorChange = { state.setParseError(i, it) },
+                            enabled = enabled,
+                        )
+                        is Plugin.Parameter.StringParam -> ParamTextField(
+                            value as String,
+                            onValueChange,
+                            isError,
+                            isLong = true,
+                            singleLine = def.multiLine.not(),
+                            enabled = enabled,
+                        )
+                        is Plugin.Parameter.EntrySelectorParam -> ParamEntrySelector(
+                            requireNotNull(state.project).labelerConf,
+                            value as EntrySelector,
+                            onValueChange,
+                            isError,
+                            onParseErrorChange = { state.setParseError(i, it) },
+                            requireNotNull(state.project).entries,
+                            js,
+                            enabled = enabled,
+                        )
                     }
                 }
             }
@@ -415,12 +421,14 @@ private fun ParamLabel(state: PluginDialogState, index: Int) {
 private fun RowScope.ParamSwitch(
     value: Boolean,
     onValueChange: (Boolean) -> Unit,
+    enabled: Boolean
 ) {
     Switch(
         modifier = Modifier.align(Alignment.CenterVertically),
         checked = value,
         onCheckedChange = onValueChange,
-        colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colors.primary),
+        colors = getSwitchColors(),
+        enabled = enabled,
     )
 }
 
@@ -429,6 +437,7 @@ private fun ParamDropDown(
     options: List<String>,
     value: String,
     onValueChange: (String) -> Unit,
+    enabled: Boolean,
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
@@ -439,10 +448,11 @@ private fun ParamDropDown(
             readOnly = true,
             maxLines = 1,
             leadingIcon = {
-                IconButton(onClick = { expanded = true }) {
+                IconButton(onClick = { expanded = true }, enabled = enabled) {
                     Icon(Icons.Default.ExpandMore, null)
                 }
             },
+            enabled = enabled,
         )
         DropdownMenu(
             expanded = expanded,
@@ -469,6 +479,7 @@ private fun <T : Number> ParamNumberTextField(
     isError: Boolean,
     parse: (String) -> T?,
     onParseErrorChange: (Boolean) -> Unit,
+    enabled: Boolean,
 ) {
     var stringValue by remember { mutableStateOf(value.toString()) }
     var isParsingFailed by remember { mutableStateOf(false) }
@@ -493,11 +504,12 @@ private fun <T : Number> ParamNumberTextField(
     }
 
     ParamTextField(
-        stringValue,
-        ::onNewStringValue,
-        isError || isParsingFailed,
+        value = stringValue,
+        onValueChange = ::onNewStringValue,
+        isError = isError || isParsingFailed,
         isLong = false,
         singleLine = true,
+        enabled = enabled,
     )
 }
 
@@ -508,6 +520,7 @@ private fun ParamTextField(
     isError: Boolean,
     isLong: Boolean,
     singleLine: Boolean,
+    enabled: Boolean,
 ) {
     val modifier = if (!isLong) Modifier.widthIn(min = 200.dp) else Modifier.fillMaxWidth()
     TextField(
@@ -516,5 +529,6 @@ private fun ParamTextField(
         onValueChange = onValueChange,
         singleLine = singleLine,
         isError = isError,
+        enabled = enabled,
     )
 }

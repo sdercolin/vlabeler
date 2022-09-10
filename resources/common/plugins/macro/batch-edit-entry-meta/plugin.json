@@ -54,7 +54,7 @@
         "defaultValue": "",
         "optional": true,
         "description": "Leave blank to remove the tag.",
-        "visibleIf": "tag"
+        "enableIf": "tag"
       }
     ]
   },

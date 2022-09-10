@@ -1,11 +1,9 @@
 package com.sdercolin.vlabeler.ui.dialog.plugin
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,7 +41,6 @@ import com.sdercolin.vlabeler.ui.common.InputBox
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.runIf
@@ -57,6 +54,7 @@ fun ParamEntrySelector(
     onParseErrorChange: (Boolean) -> Unit,
     entries: List<Entry>,
     js: JavaScript?,
+    enabled: Boolean,
 ) {
     val filters = remember(value) { mutableStateListOf(*value.filters.toTypedArray()) }
     val parseErrors = remember(value) { mutableStateListOf(*Array(value.filters.size) { false }) }
@@ -80,6 +78,7 @@ fun ParamEntrySelector(
                             parseErrors[index] = isError
                             onParseErrorChange(parseErrors.any { it })
                         },
+                        enabled = enabled,
                     )
                 }
             }
@@ -90,7 +89,7 @@ fun ParamEntrySelector(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Icon(
-                modifier = Modifier.size(18.dp).clickable {
+                modifier = Modifier.size(18.dp).clickable(enabled = enabled) {
                     val newItem = EntrySelector.TextFilterItem(
                         subject = EntrySelector.textItemSubjects.first().first,
                         matchType = EntrySelector.TextMatchType.values().first(),
@@ -100,15 +99,16 @@ fun ParamEntrySelector(
                 },
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
-                tint = MaterialTheme.colors.onSurface,
+                tint = MaterialTheme.colors.onSurface.runIf(enabled.not()) { copy(alpha = 0.2f) },
             )
+            val minusButtonEnabled = enabled && filters.isNotEmpty()
             Icon(
-                modifier = Modifier.size(18.dp).clickable(enabled = filters.isNotEmpty()) {
+                modifier = Modifier.size(18.dp).clickable(enabled = minusButtonEnabled) {
                     onValueChange(EntrySelector(filters.toList().dropLast(1)))
                 },
                 imageVector = Icons.Default.Remove,
                 contentDescription = null,
-                tint = MaterialTheme.colors.onSurface.runIf(filters.isEmpty()) { copy(alpha = 0.2f) },
+                tint = MaterialTheme.colors.onSurface.runIf(minusButtonEnabled.not()) { copy(alpha = 0.2f) },
             )
             Spacer(Modifier.weight(1f))
             if (isError || parseErrors.any { it }) {
@@ -141,6 +141,7 @@ private fun FilterRow(
     value: EntrySelector.FilterItem,
     onValueChange: (EntrySelector.FilterItem) -> Unit,
     onParseErrorChange: (Boolean) -> Unit,
+    enabled: Boolean
 ) {
     var type by remember(value) { mutableStateOf(value::class) }
     var subject by remember(value) { mutableStateOf(value.subject) }
@@ -249,6 +250,7 @@ private fun FilterRow(
             modifier = Modifier.width(160.dp),
             fixedWidth = true,
             showIcon = false,
+            enabled = enabled,
         )
         when (type) {
             EntrySelector.NumberFilterItem::class -> {
@@ -263,6 +265,7 @@ private fun FilterRow(
                     modifier = Modifier.width(60.dp),
                     fixedWidth = true,
                     showIcon = false,
+                    enabled = enabled,
                 )
                 SelectionBox(
                     value = numberComparers.firstOrNull { it.first == numberMatchComparerName }
@@ -276,6 +279,7 @@ private fun FilterRow(
                     modifier = Modifier.width(120.dp),
                     fixedWidth = true,
                     showIcon = false,
+                    enabled = enabled,
                 )
                 InputBox(
                     value = numberComparerValue,
@@ -284,7 +288,7 @@ private fun FilterRow(
                         trySubmit()
                     },
                     modifier = Modifier.width(80.dp),
-                    enabled = numberMatchComparerName == null,
+                    enabled = enabled && (numberMatchComparerName == null),
                     errorPrompt = { if (numberComparerValue.toDoubleOrNull() == null) "" else null },
                 )
             }
@@ -300,6 +304,7 @@ private fun FilterRow(
                     modifier = Modifier.width(120.dp),
                     fixedWidth = true,
                     showIcon = false,
+                    enabled = enabled,
                 )
                 InputBox(
                     value = textMatchValue,
@@ -309,6 +314,7 @@ private fun FilterRow(
                     },
                     modifier = Modifier.width(160.dp),
                     errorPrompt = { if (textMatchValue.isEmpty()) "" else null },
+                    enabled = enabled,
                 )
             }
             EntrySelector.BooleanFilterItem::class -> {
@@ -319,64 +325,9 @@ private fun FilterRow(
                         trySubmit()
                     },
                     colors = getSwitchColors(),
+                    enabled = enabled,
                 )
             }
         }
-    }
-}
-
-@Composable
-@Preview
-private fun Preview() = Box(Modifier.size(800.dp)) {
-    AppTheme {
-        ParamEntrySelector(
-            labelerConf = LabelerConf(
-                name = "aaa",
-                extension = "a",
-                author = "aaaa",
-                defaultExtras = emptyList(),
-                defaultValues = emptyList(),
-                properties = listOf(
-                    LabelerConf.Property(
-                        name = "property1",
-                        displayedName = "property1",
-                        value = "",
-                    ),
-                ),
-                parser = LabelerConf.Parser(
-                    defaultEncoding = "UTF-8",
-                    extractionPattern = "",
-                    variableNames = listOf(),
-                    scripts = listOf(),
-                ),
-                writer = LabelerConf.Writer(),
-            ),
-            value = EntrySelector(
-                listOf(
-                    EntrySelector.TextFilterItem(
-                        subject = "sample",
-                        matchType = EntrySelector.TextMatchType.Contains,
-                        matcherText = "a",
-                    ),
-                    EntrySelector.NumberFilterItem(
-                        subject = "fixed",
-                        matchType = EntrySelector.NumberMatchType.LessThanOrEquals,
-                        comparerName = "property1",
-                        comparerValue = 0.0,
-                    ),
-                    EntrySelector.NumberFilterItem(
-                        subject = "ovl",
-                        matchType = EntrySelector.NumberMatchType.Equals,
-                        comparerName = null,
-                        comparerValue = 5.0,
-                    ),
-                ),
-            ),
-            onValueChange = {},
-            onParseErrorChange = {},
-            isError = false,
-            entries = listOf(),
-            js = null,
-        )
     }
 }
