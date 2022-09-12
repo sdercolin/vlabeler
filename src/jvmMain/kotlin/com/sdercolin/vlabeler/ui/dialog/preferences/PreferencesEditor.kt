@@ -41,6 +41,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -329,12 +330,14 @@ private fun Item(item: PreferencesItem<*>, state: PreferencesEditorState) {
 
 @Composable
 fun SwitchItem(item: PreferencesItem.Switch, state: PreferencesEditorState) {
-    Switch(
-        enabled = item.enabled(state.conf),
-        checked = item.select(state.conf),
-        onCheckedChange = { state.update(item, it) },
-        colors = getSwitchColors(),
-    )
+    key(item) {
+        Switch(
+            enabled = item.enabled(state.conf),
+            checked = item.select(state.conf),
+            onCheckedChange = { state.update(item, it) },
+            colors = getSwitchColors(),
+        )
+    }
 }
 
 @Composable
