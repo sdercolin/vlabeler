@@ -703,6 +703,12 @@ enum class Strings(val en: String) {
     PreferencesViewDescription(
         en = "Customize view appearances",
     ),
+    PreferencesViewAppAccentColor(
+        en = "Accent color (light) of the app",
+    ),
+    PreferencesViewAppAccentColorVariant(
+        en = "Accent color (dark) of the app",
+    ),
     PreferencesViewPinnedEntryListPosition(
         en = "Position of pinned entry list",
     ),

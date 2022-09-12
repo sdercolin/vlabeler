@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.util.toColorOrNull
 
 private val colors = darkColors(
     primary = Pink,
@@ -44,8 +46,11 @@ private val typography = Typography(
 )
 
 @Composable
-fun AppTheme(content: @Composable () -> Unit) = MaterialTheme(
-    colors = colors,
+fun AppTheme(viewConf: AppConf.View? = null, content: @Composable () -> Unit) = MaterialTheme(
+    colors = colors.copy(
+        primary = viewConf?.accentColor?.toColorOrNull() ?: colors.primary,
+        primaryVariant = viewConf?.accentColorVariant?.toColorOrNull() ?: colors.primaryVariant,
+    ),
     typography = typography,
     content = content,
 )

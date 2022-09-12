@@ -53,6 +53,7 @@ fun App(
             is Screen.Starter -> Starter(mainScope, appState)
             is Screen.ProjectCreator ->
                 ProjectCreator(
+                    appState = appState,
                     create = { openCreatedProject(mainScope, it, appState) },
                     cancel = { appState.closeProjectCreator() },
                     activeLabelerConfs = appState.activeLabelerConfs,
@@ -82,6 +83,7 @@ fun App(
         }
         if (appState.isShowingAboutDialog) {
             AboutDialog(
+                appConf = appState.appConf,
                 showLicenses = {
                     appState.closeAboutDialog()
                     appState.openLicenseDialog()
@@ -90,10 +92,11 @@ fun App(
             )
         }
         if (appState.isShowingLicenseDialog) {
-            LicenseDialog(finish = { appState.closeLicenseDialog() })
+            LicenseDialog(appState.appConf, finish = { appState.closeLicenseDialog() })
         }
         appState.updaterDialogContent?.let { update ->
             UpdaterDialog(
+                appConf = appState.appConf,
                 update = update,
                 appRecordStore = appState.appRecordStore,
                 onError = {
@@ -105,6 +108,7 @@ fun App(
         }
         appState.colorPickerDialogArgs?.let { args ->
             ColorPickerDialog(
+                appState.appConf,
                 args.color,
                 args.useAlpha,
                 submit = {
@@ -115,6 +119,7 @@ fun App(
         }
         appState.macroPluginShownInDialog?.let { (plugin, params) ->
             MacroPluginDialog(
+                appConf = appState.appConf,
                 appRecordStore = appState.appRecordStore,
                 plugin = plugin,
                 paramMap = params,

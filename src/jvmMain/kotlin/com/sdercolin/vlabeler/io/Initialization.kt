@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-suspend fun loadAppConf(mainScope: CoroutineScope): MutableState<AppConf> = withContext(Dispatchers.IO) {
+fun loadAppConf(mainScope: CoroutineScope): MutableState<AppConf> {
     val customAppConf = if (CustomAppConfFile.exists()) {
         Log.info("Custom app conf found")
         val customAppConfText = CustomAppConfFile.readText()
@@ -41,7 +41,7 @@ suspend fun loadAppConf(mainScope: CoroutineScope): MutableState<AppConf> = with
     val appConf = customAppConf ?: DefaultAppConfFile.readText().parseJson()
     CustomAppConfFile.writeText(appConf.stringifyJson())
     Log.info("AppConf: $appConf")
-    savedMutableStateOf(appConf) { value ->
+    return savedMutableStateOf(appConf) { value ->
         mainScope.launch(Dispatchers.IO) {
             runCatching {
                 CustomAppConfFile.writeText(value.stringifyJson())
@@ -125,10 +125,10 @@ fun ensureDirectories() {
 
 suspend fun produceAppState(
     mainScope: CoroutineScope,
+    appConf: MutableState<AppConf>,
     appRecordStore: AppRecordStore,
     launchArguments: ArgumentMap?,
 ): AppState {
-    val appConf = loadAppConf(mainScope)
     val availableLabelerConfs = loadAvailableLabelerConfs()
     val plugins = loadPlugins()
 

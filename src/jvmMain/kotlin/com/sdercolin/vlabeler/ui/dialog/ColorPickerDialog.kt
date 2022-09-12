@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.rememberDialogState
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.ui.common.ColorHexInputBox
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -227,6 +228,7 @@ class ColorPickerState(
 
 @Composable
 fun ColorPickerDialog(
+    appConf: AppConf,
     initialColor: Color,
     useAlpha: Boolean,
     submit: (Color?) -> Unit,
@@ -241,7 +243,7 @@ fun ColorPickerDialog(
         state = rememberDialogState(width = 400.dp, height = 580.dp.runIf(!useAlpha) { minus(45.dp) }),
         resizable = false,
     ) {
-        AppTheme {
+        AppTheme(appConf.view) {
             Content(state)
         }
     }

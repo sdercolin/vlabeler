@@ -49,6 +49,8 @@
     "showTag": true
   },
   "view": {
+    "accentColor": "#F48FB1",
+    "accentColorVariant": "#AD375F",
     "pinnedEntryListPosition": "Right"
   },
   "autoSave": {

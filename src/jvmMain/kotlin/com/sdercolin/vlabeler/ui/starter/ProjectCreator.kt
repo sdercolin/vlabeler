@@ -56,6 +56,7 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
@@ -68,6 +69,7 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun ProjectCreator(
+    appState: AppState,
     create: (Project) -> Unit,
     cancel: () -> Unit,
     activeLabelerConfs: List<LabelerConf>,
@@ -77,6 +79,7 @@ fun ProjectCreator(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     launchArguments: ArgumentMap?,
     state: ProjectCreatorState = rememberProjectCreatorState(
+        appState,
         coroutineScope,
         activeLabelerConfs,
         appRecordStore,
@@ -228,6 +231,7 @@ private fun LabelerSelectorRow(
     }
     if (pluginDialogShown) {
         TemplatePluginDialog(
+            appConf = state.appConf,
             appRecordStore = state.appRecordStore,
             plugin = requireNotNull(state.templatePlugin),
             paramMap = requireNotNull(state.templatePluginParams),

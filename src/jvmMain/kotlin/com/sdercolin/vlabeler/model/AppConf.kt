@@ -293,15 +293,28 @@ data class AppConf(
 
     /**
      * Configurations about views
+     * @param accentColor Color hex string of the accent color
+     * @param accentColorVariant Color hex string of the accent color variant
      * @param pinnedEntryListPosition Position of the pinned entry list in the window
      */
     @Serializable
     @Immutable
     data class View(
+        val accentColor: String = DefaultAccentColor,
+        val accentColorVariant: String = DefaultAccentColorVariant,
         val pinnedEntryListPosition: ViewPosition = DefaultPinnedEntryListPosition,
     ) {
 
         companion object {
+            /**
+             * Equals to [com.sdercolin.vlabeler.ui.theme.Pink]
+             */
+            const val DefaultAccentColor = "#F48FB1"
+
+            /**
+             * Equals to [com.sdercolin.vlabeler.ui.theme.DarkPink]
+             */
+            const val DefaultAccentColorVariant = "#AD375F"
             val DefaultPinnedEntryListPosition = ViewPosition.Right
         }
     }

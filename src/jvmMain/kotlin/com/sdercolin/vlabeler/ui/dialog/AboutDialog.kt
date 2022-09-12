@@ -35,6 +35,7 @@ import com.sdercolin.vlabeler.env.appVersion
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.osInfo
 import com.sdercolin.vlabeler.env.runtimeVersion
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
@@ -45,6 +46,7 @@ import com.sdercolin.vlabeler.util.Resources
 
 @Composable
 fun AboutDialog(
+    appConf: AppConf,
     showLicenses: () -> Unit,
     finish: () -> Unit,
 ) {
@@ -55,7 +57,7 @@ fun AboutDialog(
         state = rememberDialogState(width = 450.dp, height = 350.dp),
         resizable = false,
     ) {
-        AppTheme {
+        AppTheme(appConf.view) {
             Content(
                 showLicenses = showLicenses,
                 finish = finish,

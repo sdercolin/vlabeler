@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.rememberDialogState
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.license.LicenseReport
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -47,6 +48,7 @@ import java.awt.Desktop
 
 @Composable
 fun LicenseDialog(
+    appConf: AppConf,
     finish: () -> Unit,
 ) {
     Dialog(
@@ -56,7 +58,7 @@ fun LicenseDialog(
         state = rememberDialogState(width = 800.dp, height = 600.dp),
         resizable = false,
     ) {
-        AppTheme {
+        AppTheme(appConf.view) {
             Content(
                 finish = finish,
             )

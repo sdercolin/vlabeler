@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.rememberDialogState
 import com.sdercolin.vlabeler.env.appVersion
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -57,6 +58,7 @@ private fun rememberUpdaterDialogState(
 
 @Composable
 fun UpdaterDialog(
+    appConf: AppConf,
     update: Update,
     appRecordStore: AppRecordStore,
     onError: (Throwable) -> Unit,
@@ -70,7 +72,7 @@ fun UpdaterDialog(
         state = rememberDialogState(width = 800.dp, height = 400.dp),
         resizable = false,
     ) {
-        AppTheme {
+        AppTheme(appConf.view) {
             Content(state)
         }
     }

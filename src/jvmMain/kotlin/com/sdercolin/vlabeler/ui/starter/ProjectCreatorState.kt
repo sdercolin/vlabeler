@@ -17,6 +17,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.Project.Companion.getDefaultCacheDirectory
 import com.sdercolin.vlabeler.model.projectOf
 import com.sdercolin.vlabeler.ui.AppRecordStore
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.AvailableEncodings
@@ -35,11 +36,13 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class ProjectCreatorState(
+    private val appState: AppState,
     private val coroutineScope: CoroutineScope,
     private val labelerConfs: List<LabelerConf>,
     val appRecordStore: AppRecordStore,
     private var launchArguments: ArgumentMap?,
 ) {
+    val appConf get() = appState.appConf
     private val appRecord get() = appRecordStore.value
     var isLoading: Boolean by mutableStateOf(false)
     var sampleDirectory: String by mutableStateOf(appRecord.sampleDirectory ?: HomeDir.absolutePath)
@@ -440,12 +443,13 @@ class ProjectCreatorState(
 
 @Composable
 fun rememberProjectCreatorState(
+    appState: AppState,
     coroutineScope: CoroutineScope,
     activeLabelerConfs: List<LabelerConf>,
     appRecordStore: AppRecordStore,
     launchArguments: ArgumentMap?,
 ) = remember(appRecordStore) {
-    ProjectCreatorState(coroutineScope, activeLabelerConfs, appRecordStore, launchArguments)
+    ProjectCreatorState(appState, coroutineScope, activeLabelerConfs, appRecordStore, launchArguments)
 }
 
 enum class PathPicker {

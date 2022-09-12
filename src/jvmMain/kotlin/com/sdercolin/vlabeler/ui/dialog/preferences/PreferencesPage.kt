@@ -307,6 +307,20 @@ abstract class PreferencesPage(
                 selector = { it.view },
                 updater = { copy(view = it) },
             ) {
+                color(
+                    title = Strings.PreferencesViewAppAccentColor,
+                    defaultValue = AppConf.View.DefaultAccentColor,
+                    select = { it.accentColor },
+                    update = { copy(accentColor = it) },
+                    useAlpha = false,
+                )
+                color(
+                    title = Strings.PreferencesViewAppAccentColorVariant,
+                    defaultValue = AppConf.View.DefaultAccentColorVariant,
+                    select = { it.accentColorVariant },
+                    update = { copy(accentColorVariant = it) },
+                    useAlpha = false,
+                )
                 selection(
                     title = Strings.PreferencesViewPinnedEntryListPosition,
                     defaultValue = AppConf.View.DefaultPinnedEntryListPosition,

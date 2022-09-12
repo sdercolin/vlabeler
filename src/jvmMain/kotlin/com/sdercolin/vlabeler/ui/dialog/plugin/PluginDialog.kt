@@ -55,6 +55,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.rememberDialogState
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.Plugin
@@ -96,6 +97,7 @@ private fun rememberState(
 
 @Composable
 fun TemplatePluginDialog(
+    appConf: AppConf,
     appRecordStore: AppRecordStore,
     plugin: Plugin,
     paramMap: ParamMap,
@@ -103,6 +105,7 @@ fun TemplatePluginDialog(
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
 ) = PluginDialog(
+    appConf = appConf,
     appRecordStore = appRecordStore,
     plugin = plugin,
     paramMap = paramMap,
@@ -114,6 +117,7 @@ fun TemplatePluginDialog(
 
 @Composable
 fun MacroPluginDialog(
+    appConf: AppConf,
     appRecordStore: AppRecordStore,
     plugin: Plugin,
     paramMap: ParamMap,
@@ -121,6 +125,7 @@ fun MacroPluginDialog(
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
 ) = PluginDialog(
+    appConf = appConf,
     appRecordStore = appRecordStore,
     plugin = plugin,
     paramMap = paramMap,
@@ -132,6 +137,7 @@ fun MacroPluginDialog(
 
 @Composable
 private fun PluginDialog(
+    appConf: AppConf,
     appRecordStore: AppRecordStore,
     plugin: Plugin,
     paramMap: ParamMap,
@@ -157,7 +163,7 @@ private fun PluginDialog(
         state = dialogState,
     ) {
         LaunchSaveDialogSize(dialogState, appRecordStore)
-        AppTheme {
+        AppTheme(appConf.view) {
             Content(state)
         }
     }

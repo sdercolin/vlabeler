@@ -29,6 +29,7 @@ import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.ensureDirectories
+import com.sdercolin.vlabeler.io.loadAppConf
 import com.sdercolin.vlabeler.io.produceAppState
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.action.KeyAction
@@ -63,9 +64,9 @@ fun main(vararg args: String) = application {
 
     val appRecord = appRecordStore.stateFlow.collectAsState()
     val windowState = rememberResizableWindowState(appRecord)
-
+    val appConf = loadAppConf(mainScope)
     val appState by produceState(null as AppState?) {
-        value = produceAppState(mainScope, appRecordStore, parseArguments(args.toList()))
+        value = produceAppState(mainScope, appConf, appRecordStore, parseArguments(args.toList()))
     }
     val onCloseRequest = {
         if (hasUncaughtError) {
@@ -95,13 +96,13 @@ fun main(vararg args: String) = application {
         Menu(mainScope, appState)
 
         if (appState == null) {
-            AppTheme { Splash() }
+            AppTheme(appConf.value.view) { Splash() }
         }
 
         appState?.let { state ->
             LaunchKeyboardEvent(state.keyboardViewModel, state, state.player)
             LaunchExit(state, ::exitApplication)
-            AppTheme { App(mainScope, state) }
+            AppTheme(state.appConf.view) { App(mainScope, state) }
             StandaloneDialogs(mainScope, state)
             ProjectChangesListener(state)
             ProjectWriter(state)
@@ -112,7 +113,7 @@ fun main(vararg args: String) = application {
 
 @Composable
 private fun SnackbarBox(state: AppState) {
-    AppTheme {
+    AppTheme(state.appConf.view) {
         Box(Modifier.fillMaxSize()) {
             SnackbarHost(
                 state.snackbarHostState,
