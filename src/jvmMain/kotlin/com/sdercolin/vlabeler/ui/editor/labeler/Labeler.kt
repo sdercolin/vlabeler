@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -149,30 +148,32 @@ private fun EntryTitleBar(
     Surface {
         Box(
             modifier = Modifier.fillMaxWidth()
-                .heightIn(min = 80.dp)
+                .height(80.dp)
                 .background(color = MaterialTheme.colors.surface)
                 .padding(horizontal = 20.dp),
         ) {
-            Row(modifier = Modifier.align(Alignment.CenterStart)) {
-                Text(
-                    modifier = Modifier.alignByBaseline()
-                        .clickable(enabled = !multiple) { openEditEntryNameDialog() },
-                    text = title,
-                    style = MaterialTheme.typography.h3,
-                    maxLines = 1,
-                )
-                Spacer(Modifier.width(10.dp))
-                Text(
-                    modifier = Modifier.alignByBaseline().weight(1f),
-                    text = "（$subTitle）",
-                    style = MaterialTheme.typography.h5,
-                    maxLines = 1,
-                )
+            Row(modifier = Modifier.fillMaxSize().align(Alignment.CenterStart)) {
+                Row(Modifier.weight(1f).align(Alignment.CenterVertically)) {
+                    Text(
+                        modifier = Modifier.alignByBaseline()
+                            .clickable(enabled = !multiple) { openEditEntryNameDialog() },
+                        text = title,
+                        style = MaterialTheme.typography.h3,
+                        maxLines = 1,
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        modifier = Modifier.alignByBaseline(),
+                        text = "（$subTitle）",
+                        style = MaterialTheme.typography.h5,
+                        maxLines = 1,
+                    )
+                }
                 if (appConf.editor.let { it.showDone || it.showStar || it.showTag }) {
                     Spacer(Modifier.width(20.dp))
                     Row(
                         modifier = Modifier.align(Alignment.Bottom)
-                            .padding(vertical = 5.dp),
+                            .padding(vertical = 10.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                         verticalAlignment = Alignment.Bottom,
                     ) {
