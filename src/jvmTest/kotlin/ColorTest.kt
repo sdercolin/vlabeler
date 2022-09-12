@@ -3,6 +3,7 @@ import com.sdercolin.vlabeler.util.argbHexString
 import com.sdercolin.vlabeler.util.rgbHexString
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.toColorOrNull
+import com.sdercolin.vlabeler.util.toHsv
 import com.sdercolin.vlabeler.util.toRgbColor
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -43,5 +44,24 @@ class ColorTest {
     fun testStringifyArgb() {
         val expected = "#AAFFAAAA"
         assertEquals(expected, Color(0xaaffaaaa).argbHexString)
+    }
+
+    @Test
+    fun testToHsv() {
+        val colors = listOf(
+            "#f286e2",
+            "#37eea7",
+            "#d29c9d",
+            "#8d0e20",
+            "#d2cbcc",
+            "#0d1450",
+            "#3ae7cb",
+            "#06fc88",
+        )
+        for (color in colors) {
+            val hsv = color.toColor().toHsv()
+            val restored = Color.hsv(hsv[0], hsv[1], hsv[2])
+            assertEquals(color.toColor(), restored)
+        }
     }
 }

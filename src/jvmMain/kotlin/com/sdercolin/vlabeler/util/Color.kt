@@ -16,3 +16,23 @@ val Color.rgbHexString get() = String.format("#%06X", 0xffffff and toArgb())
 val Color.argbHexString get() = String.format("#%08X", 0xffffffff and toArgb().toLong())
 
 val Char.isHexChar get() = this in '0'..'9' || this in 'a'..'f' || this in 'A'..'F'
+
+fun Color.toHsv(): FloatArray {
+    val min = minOf(red, green, blue)
+    val max = maxOf(red, green, blue)
+    val delta = max - min
+    val h = if (delta == 0f) {
+        0f
+    } else when (max) {
+        red -> (green - blue) / delta
+        green -> (blue - red) / delta + 2
+        blue -> (red - green) / delta + 4
+        else -> 0f
+    }
+        .let { it % 6 }
+        .let { if (it < 0) it + 6 else it }
+        .let { it * 60 }
+    val s = if (max == 0f) 0f else delta / max
+    val v = max
+    return floatArrayOf(h, s, v)
+}

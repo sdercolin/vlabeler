@@ -36,6 +36,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,25 +52,23 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
+import com.sdercolin.vlabeler.ui.common.ColorHexInputBox
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
-import com.sdercolin.vlabeler.ui.common.InputBox
 import com.sdercolin.vlabeler.ui.common.IntegerInputBox
 import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.argbHexString
-import com.sdercolin.vlabeler.util.isHexChar
 import com.sdercolin.vlabeler.util.rgbHexString
 import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toColor
-import com.sdercolin.vlabeler.util.toColorOrNull
-import com.sdercolin.vlabeler.util.toRgbColorOrNull
 
 @Composable
 private fun rememberPreferencesEditorState(
@@ -78,6 +77,7 @@ private fun rememberPreferencesEditorState(
     apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit,
+    requestColorPickerDialog: (ColorPickerArgs) -> Unit,
 ) =
     remember(currentConf, submit, initialPage, onViewPage) {
         PreferencesEditorState(
@@ -86,6 +86,7 @@ private fun rememberPreferencesEditorState(
             apply = apply,
             initialPage = initialPage,
             onViewPage = onViewPage,
+            requestColorPickerDialog = requestColorPickerDialog,
         )
     }
 
@@ -96,7 +97,15 @@ fun PreferencesEditor(
     apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit,
-    state: PreferencesEditorState = rememberPreferencesEditorState(currentConf, submit, apply, initialPage, onViewPage),
+    requestColorPickerDialog: (ColorPickerArgs) -> Unit,
+    state: PreferencesEditorState = rememberPreferencesEditorState(
+        currentConf,
+        submit,
+        apply,
+        initialPage,
+        onViewPage,
+        requestColorPickerDialog,
+    ),
 ) {
     Box(Modifier.fillMaxSize(0.8f).plainClickable()) {
         Column(Modifier.fillMaxSize()) {
@@ -366,58 +375,45 @@ private fun FloatInputItem(item: PreferencesItem.FloatInput, state: PreferencesE
 
 @Composable
 private fun ColorStringInputItem(item: PreferencesItem.ColorStringInput, state: PreferencesEditorState) {
-    val currentValue = item.select(state.conf)
-
-    fun getColor(text: String) = if (item.useAlpha) text.toColorOrNull() else text.toRgbColorOrNull()
-
-    var value by remember {
-        if (getColor(currentValue) == null) {
-            mutableStateOf(item.defaultValue)
-        } else {
-            mutableStateOf(currentValue)
+    val value = item.select(state.conf)
+    Row {
+        ColorHexInputBox(
+            value = value,
+            defaultValue = item.defaultValue,
+            onValidValue = { state.update(item, it) },
+            useAlpha = item.useAlpha,
+            enabled = item.enabled(state.conf),
+        )
+        Spacer(Modifier.width(10.dp))
+        IconButton(
+            onClick = {
+                state.requestColorPickerDialog(
+                    ColorPickerArgs(
+                        color = value.toColor(),
+                        useAlpha = item.useAlpha,
+                        submit = {
+                            if (it != null) {
+                                state.update(item, if (item.useAlpha) it.argbHexString else it.rgbHexString)
+                            }
+                        },
+                    ),
+                )
+            },
+            enabled = item.enabled(state.conf),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Palette,
+                contentDescription = null,
+            )
         }
     }
-
-    LaunchedEffect(currentValue) {
-        val inputColor = getColor(currentValue)
-        if (inputColor != null && inputColor != getColor(value)) {
-            value = currentValue
-        }
-    }
-
-    var colorPreview by remember(currentValue) { mutableStateOf(getColor(currentValue)) }
-    val valueLength = if (item.useAlpha) 9 else 7
-
-    InputBox(
-        enabled = item.enabled(state.conf),
-        value = value,
-        onValueChange = { newValue ->
-            var sanitizedValue = newValue
-            if (sanitizedValue.firstOrNull() != '#') {
-                sanitizedValue = "#" + sanitizedValue.replace("#", "")
-            }
-            sanitizedValue = sanitizedValue.filter { it.isHexChar || it == '#' }
-            sanitizedValue = sanitizedValue.take(valueLength)
-            value = sanitizedValue
-            getColor(value)?.let {
-                colorPreview = it
-                val hexString = if (item.useAlpha) it.argbHexString else it.rgbHexString
-                state.update(item, hexString)
-            }
-        },
-        leadingContent = {
-            Box(Modifier.size(20.dp).background(color = colorPreview ?: item.defaultValue.toColor()))
-            Spacer(Modifier.width(15.dp))
-        },
-    )
 }
 
 @Composable
 private fun <T> SelectionItem(item: PreferencesItem.Selection<T>, state: PreferencesEditorState) {
-    val currentValue = item.select(state.conf)
     SelectionBox(
         enabled = item.enabled(state.conf),
-        value = currentValue,
+        value = item.select(state.conf),
         onSelect = { state.update(item, it) },
         options = item.options.toList(),
         getText = { value ->

@@ -8,13 +8,15 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
+import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 
 class PreferencesEditorState(
-    private val initConf: AppConf,
+    initConf: AppConf,
     private val submit: (AppConf?) -> Unit,
     private val apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     private val onViewPage: (PreferencesPage) -> Unit,
+    val requestColorPickerDialog: (ColorPickerArgs) -> Unit,
 ) {
 
     private var savedConf: AppConf by mutableStateOf(initConf)

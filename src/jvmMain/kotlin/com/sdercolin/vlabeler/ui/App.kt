@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.io.saveParams
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.AboutDialog
+import com.sdercolin.vlabeler.ui.dialog.ColorPickerDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.ErrorDialog
 import com.sdercolin.vlabeler.ui.dialog.LicenseDialog
@@ -100,6 +101,16 @@ fun App(
                     appState.showError(it)
                 },
                 finish = { appState.closeUpdaterDialog() },
+            )
+        }
+        appState.colorPickerDialogArgs?.let { args ->
+            ColorPickerDialog(
+                args.color,
+                args.useAlpha,
+                submit = {
+                    args.submit(it)
+                    appState.closeColorPickerDialog()
+                },
             )
         }
         appState.macroPluginShownInDialog?.let { (plugin, params) ->

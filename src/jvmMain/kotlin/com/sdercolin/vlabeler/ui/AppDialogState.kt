@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.io.loadSavedParams
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
+import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogRequest
@@ -47,6 +48,7 @@ interface AppDialogState {
     val isShowingAboutDialog: Boolean
     val isShowingLicenseDialog: Boolean
     val updaterDialogContent: Update?
+    val colorPickerDialogArgs: ColorPickerArgs?
     val macroPluginShownInDialog: Pair<Plugin, ParamMap>?
     val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
@@ -86,6 +88,8 @@ interface AppDialogState {
     fun closeLicenseDialog()
     fun openUpdaterDialog(update: Update)
     fun closeUpdaterDialog()
+    fun openColorPickerDialog(args: ColorPickerArgs)
+    fun closeColorPickerDialog()
     fun openMacroPluginDialog(plugin: Plugin)
     fun updateMacroPluginDialogInputParams(params: ParamMap)
     fun closeMacroPluginDialog()
@@ -137,6 +141,7 @@ class AppDialogStateImpl(
     override var isShowingAboutDialog: Boolean by mutableStateOf(false)
     override var isShowingLicenseDialog: Boolean by mutableStateOf(false)
     override var updaterDialogContent: Update? by mutableStateOf(null)
+    override var colorPickerDialogArgs: ColorPickerArgs? by mutableStateOf(null)
     override var macroPluginShownInDialog: Pair<Plugin, ParamMap>? by mutableStateOf(null)
     override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
     override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
@@ -317,6 +322,14 @@ class AppDialogStateImpl(
 
     override fun closeLicenseDialog() {
         isShowingLicenseDialog = false
+    }
+
+    override fun openColorPickerDialog(args: ColorPickerArgs) {
+        colorPickerDialogArgs = args
+    }
+
+    override fun closeColorPickerDialog() {
+        colorPickerDialogArgs = null
     }
 
     override fun openMacroPluginDialog(plugin: Plugin) {

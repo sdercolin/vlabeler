@@ -2,9 +2,11 @@ package com.sdercolin.vlabeler.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
@@ -55,7 +57,11 @@ fun InputBox(
         ) {
             leadingContent()
             BasicTextField(
-                modifier = if (fixedWidth) Modifier.weight(1f) else Modifier.widthIn(min = 120.dp),
+                modifier = if (fixedWidth) {
+                    Modifier.weight(1f)
+                } else {
+                    Modifier.widthIn(min = 80.dp).width(IntrinsicSize.Min)
+                },
                 value = value,
                 textStyle = MaterialTheme.typography.body2
                     .copy(
@@ -68,7 +74,7 @@ fun InputBox(
                 enabled = enabled,
             )
         }
-        if (error != null && error.isNotEmpty()) {
+        if (!error.isNullOrEmpty()) {
             BasicText(
                 modifier = Modifier
                     .padding(start = 10.dp)

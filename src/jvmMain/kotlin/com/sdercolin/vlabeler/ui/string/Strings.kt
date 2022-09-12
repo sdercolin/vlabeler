@@ -997,6 +997,9 @@ enum class Strings(val en: String) {
     FilterLinked(
         en = "Filters applied to project navigation",
     ),
+    ColorPickerDialogTitle(
+        en = "vLabeler - Color Picker",
+    ),
     ;
 
     fun get(language: Language): String = when (language) {

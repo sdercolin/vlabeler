@@ -10,11 +10,13 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.Clipboard
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.Url
@@ -365,6 +367,10 @@ fun FrameWindowScope.Menu(
                         "Print memory usage",
                         checked = DebugState.printMemoryUsage,
                         onCheckedChange = { DebugState.printMemoryUsage = it },
+                    )
+                    Item(
+                        "Color picker",
+                        onClick = { appState.openColorPickerDialog(ColorPickerArgs(White, true) {}) },
                     )
                 }
             }
