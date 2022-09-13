@@ -368,10 +368,6 @@ fun FrameWindowScope.Menu(
                         checked = DebugState.printMemoryUsage,
                         onCheckedChange = { DebugState.printMemoryUsage = it },
                     )
-                    Item(
-                        "Color picker",
-                        onClick = { appState.openColorPickerDialog(ColorPickerArgs(White, true) {}) },
-                    )
                 }
             }
         }
