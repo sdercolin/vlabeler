@@ -21,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -41,6 +42,7 @@ import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -397,18 +399,31 @@ private fun EncodingSelector(state: ProjectCreatorState) {
 @Composable
 private fun AutoExportSwitch(state: ProjectCreatorState) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Switch(
-            checked = state.autoExport,
-            onCheckedChange = { state.toggleAutoExport(it) },
-            colors = getSwitchColors(),
-        )
-        Spacer(Modifier.width(10.dp))
-        Text(string(Strings.StarterNewAutoExport))
+        val contentAlpha = if (state.autoExportTargetPath != null) {
+            LocalContentAlpha.current
+        } else {
+            ContentAlpha.disabled
+        }
+        CompositionLocalProvider(LocalContentAlpha provides contentAlpha) {
+            Switch(
+                checked = state.autoExport,
+                onCheckedChange = { state.toggleAutoExport(it) },
+                colors = getSwitchColors(),
+                enabled = state.autoExportTargetPath != null,
+            )
+            Spacer(Modifier.width(10.dp))
+            Text(string(Strings.StarterNewAutoExport))
+        }
         Spacer(Modifier.width(15.dp))
         TooltipArea(
             tooltip = { Tooltip(string(Strings.StarterNewAutoExportHelp)) },
         ) {
-            Icon(Icons.Default.HelpOutline, null, tint = MaterialTheme.colors.primary, modifier = Modifier.size(20.dp))
+            Icon(
+                Icons.Default.HelpOutline,
+                null,
+                tint = MaterialTheme.colors.primary,
+                modifier = Modifier.size(20.dp),
+            )
         }
     }
 }

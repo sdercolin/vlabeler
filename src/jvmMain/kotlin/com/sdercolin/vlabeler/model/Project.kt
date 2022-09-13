@@ -412,7 +412,7 @@ suspend fun projectOf(
     pluginParams: ParamMap?,
     inputFilePath: String,
     encoding: String,
-    autoExport: Boolean,
+    autoExportTargetPath: String?,
 ): Result<Project> {
     val sampleDirectoryFile = File(sampleDirectory)
     val sampleNames = sampleDirectoryFile.getChildren()
@@ -445,16 +445,6 @@ suspend fun projectOf(
             sampleNames.map {
                 Entry.fromDefaultValues(it, it, labelerConf)
             }
-        }
-    }
-
-    val autoExportTargetPath = if (!autoExport) {
-        null
-    } else {
-        if (inputFile != null && plugin == null) {
-            inputFile.absolutePath
-        } else {
-            labelerConf.defaultInputFilePath?.let { File(sampleDirectory).resolve(it) }?.absolutePath
         }
     }
 

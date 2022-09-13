@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.starter
 
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +29,7 @@ import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.resolveHome
+import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,6 +74,13 @@ class ProjectCreatorState(
     val encodings = AvailableEncodings
     var autoExport: Boolean by mutableStateOf(appRecord.autoExport)
         private set
+
+    val autoExportTargetPath: String?
+        get() = if (inputFile.isNotEmpty() && templatePlugin == null) {
+            inputFile.toFile().absolutePath
+        } else {
+            labeler.defaultInputFilePath?.let { sampleDirectory.toFile().resolve(it) }?.absolutePath
+        }
 
     private val encodingState = mutableStateOf(
         run {
@@ -423,12 +432,12 @@ class ProjectCreatorState(
                 pluginParams = templatePluginParams,
                 inputFilePath = inputFile,
                 encoding = encoding,
-                autoExport = autoExport,
+                autoExportTargetPath = autoExportTargetPath.takeIf { autoExport },
             ).getOrElse {
                 val message = it.message.orEmpty()
                 Log.error(it)
                 isLoading = false
-                appState.showSnackbar(message)
+                appState.showSnackbar(message, duration = SnackbarDuration.Indefinite)
                 return@launch
             }
             create(project)
