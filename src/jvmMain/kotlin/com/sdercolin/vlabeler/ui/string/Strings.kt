@@ -530,6 +530,30 @@ enum class Strings(val en: String) {
     CustomizableItemManagerLockedDescription(
         en = "This item is built-in and cannot be removed.",
     ),
+    PreferencesEditorImport(
+        en = "Import",
+    ),
+    PreferencesEditorImportDialogTitle(
+        en = "Import preferences",
+    ),
+    PreferencesEditorImportSuccess(
+        en = "Successfully imported preferences.",
+    ),
+    PreferencesEditorImportFailure(
+        en = "Failed to import the selected preferences file.",
+    ),
+    PreferencesEditorExport(
+        en = "Export",
+    ),
+    PreferencesEditorExportSuccess(
+        en = "Successfully exported preferences.",
+    ),
+    PreferencesEditorExportFailure(
+        en = "Failed to export preferences to the selected file.",
+    ),
+    PreferencesEditorExportDialogTitle(
+        en = "Export preferences",
+    ),
     PreferencesEditorResetPage(
         en = "Reset items in this page",
     ),

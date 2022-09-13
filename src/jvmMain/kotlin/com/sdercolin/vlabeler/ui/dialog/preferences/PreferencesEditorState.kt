@@ -4,10 +4,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.stringifyJson
+import java.io.File
 
 class PreferencesEditorState(
     initConf: AppConf,
@@ -15,6 +21,7 @@ class PreferencesEditorState(
     private val apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     private val onViewPage: (PreferencesPage) -> Unit,
+    private val showSnackbar: (String) -> Unit,
 ) {
     var savedConf: AppConf by mutableStateOf(initConf)
         private set
@@ -219,5 +226,60 @@ class PreferencesEditorState(
         } else {
             this[edited.action] = edited
         }
+    }
+
+    var currentFilePicker: FilePicker? by mutableStateOf(null)
+
+    fun handleFilePickerResult(
+        picker: FilePicker,
+        parent: String?,
+        name: String?,
+    ) {
+        currentFilePicker = null
+        if (parent == null || name == null) return
+        val file = File(parent, name)
+        when (picker) {
+            FilePicker.Import -> {
+                runCatching { file.readText().parseJson<AppConf>() }
+                    .onSuccess {
+                        showSnackbar(string(Strings.PreferencesEditorImportSuccess))
+                        _conf = it
+                    }
+                    .onFailure {
+                        showSnackbar(string(Strings.PreferencesEditorImportFailure))
+                        Log.error(it)
+                    }
+            }
+            FilePicker.Export -> {
+                runCatching { file.writeText(conf.stringifyJson()) }
+                    .onSuccess {
+                        showSnackbar(string(Strings.PreferencesEditorExportSuccess))
+                    }
+                    .onFailure {
+                        showSnackbar(string(Strings.PreferencesEditorExportFailure))
+                        Log.error(it)
+                    }
+            }
+        }
+    }
+
+    enum class FilePicker(
+        val title: Strings,
+        val writeMode: Boolean,
+        val initialFileName: String?,
+        val extensions: List<String>,
+    ) {
+        Import(
+            title = Strings.PreferencesEditorImportDialogTitle,
+            writeMode = false,
+            initialFileName = null,
+            extensions = listOf("json"),
+        ),
+        Export(
+            title = Strings.PreferencesEditorExportDialogTitle,
+            writeMode = true,
+            initialFileName = "vLabeler.conf.json",
+            extensions = listOf("json"),
+        ),
     }
 }

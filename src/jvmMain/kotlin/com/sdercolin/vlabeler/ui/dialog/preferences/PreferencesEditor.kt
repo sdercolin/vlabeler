@@ -62,6 +62,8 @@ import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 import com.sdercolin.vlabeler.ui.dialog.ColorPickerDialog
+import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
+import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -79,6 +81,7 @@ private fun rememberPreferencesEditorState(
     apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit,
+    showSnackbar: (String) -> Unit,
 ) =
     remember(currentConf, submit, initialPage, onViewPage) {
         PreferencesEditorState(
@@ -87,6 +90,7 @@ private fun rememberPreferencesEditorState(
             apply = apply,
             initialPage = initialPage,
             onViewPage = onViewPage,
+            showSnackbar = showSnackbar,
         )
     }
 
@@ -97,12 +101,14 @@ fun PreferencesEditor(
     apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit,
+    showSnackbar: (String) -> Unit,
     state: PreferencesEditorState = rememberPreferencesEditorState(
         currentConf,
         submit,
         apply,
         initialPage,
         onViewPage,
+        showSnackbar,
     ),
 ) {
     Box(Modifier.fillMaxSize(0.8f).plainClickable()) {
@@ -110,6 +116,8 @@ fun PreferencesEditor(
             Content(state)
             Divider(Modifier.height(1.dp), color = Black50)
             ButtonBar(
+                requestImport = { state.currentFilePicker = PreferencesEditorState.FilePicker.Import },
+                requestExport = { state.currentFilePicker = PreferencesEditorState.FilePicker.Export },
                 resetPage = { state.resetPage() },
                 resetAll = { state.resetAll() },
                 cancel = { state.finish(false) },
@@ -125,6 +133,7 @@ fun PreferencesEditor(
             KeymapItemEditConflictDialog(it)
         }
     }
+    FilePicker(state)
 }
 
 @Composable
@@ -481,6 +490,8 @@ private fun <K : Action> Keymap(
 
 @Composable
 private fun ButtonBar(
+    requestImport: () -> Unit,
+    requestExport: () -> Unit,
     resetPage: () -> Unit,
     resetAll: () -> Unit,
     cancel: () -> Unit,
@@ -489,6 +500,7 @@ private fun ButtonBar(
     finish: () -> Unit,
 ) {
     var settingsExpanded by remember { mutableStateOf(false) }
+
     Row(modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.End) {
         Box {
             IconButton(onClick = { settingsExpanded = true }) {
@@ -498,6 +510,22 @@ private fun ButtonBar(
                 expanded = settingsExpanded,
                 onDismissRequest = { settingsExpanded = false },
             ) {
+                DropdownMenuItem(
+                    onClick = {
+                        requestImport()
+                        settingsExpanded = false
+                    },
+                ) {
+                    Text(text = string(Strings.PreferencesEditorImport))
+                }
+                DropdownMenuItem(
+                    onClick = {
+                        requestExport()
+                        settingsExpanded = false
+                    },
+                ) {
+                    Text(text = string(Strings.PreferencesEditorExport))
+                }
                 DropdownMenuItem(
                     onClick = {
                         resetPage()
@@ -532,6 +560,35 @@ private fun ButtonBar(
             onClick = { finish() },
         ) {
             Text(string(Strings.CommonOkay))
+        }
+    }
+}
+
+@Composable
+private fun FilePicker(state: PreferencesEditorState) {
+    state.currentFilePicker?.let { picker ->
+        val title = string(picker.title)
+        val extensions = picker.extensions
+        val writeMode = picker.writeMode
+        val initialFileName = picker.initialFileName
+        if (writeMode) {
+            SaveFileDialog(
+                title = title,
+                extensions = extensions,
+                initialFileName = initialFileName,
+                onCloseRequest = { parent, name ->
+                    state.handleFilePickerResult(picker, parent, name)
+                },
+            )
+        } else {
+            OpenFileDialog(
+                title = title,
+                extensions = extensions,
+                initialFileName = initialFileName,
+                onCloseRequest = { parent, name ->
+                    state.handleFilePickerResult(picker, parent, name)
+                },
+            )
         }
     }
 }

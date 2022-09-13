@@ -6,11 +6,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
+import kotlinx.coroutines.launch
 
 @Composable
 fun PreferencesDialog(appState: AppState) {
@@ -28,6 +32,7 @@ fun PreferencesDialog(appState: AppState) {
             appState.updateAppConf(newConf)
         }
     }
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier.fillMaxSize().background(color = Black50),
         contentAlignment = Alignment.Center,
@@ -39,6 +44,14 @@ fun PreferencesDialog(appState: AppState) {
                 apply = apply,
                 initialPage = initialPage,
                 onViewPage = onViewPage,
+                showSnackbar = {
+                    coroutineScope.launch {
+                        appState.snackbarHostState.showSnackbar(
+                            message = it,
+                            actionLabel = string(Strings.CommonOkay),
+                        )
+                    }
+                },
             )
         }
     }
