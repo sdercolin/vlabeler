@@ -39,7 +39,6 @@ fun PreferencesDialog(appState: AppState) {
                 apply = apply,
                 initialPage = initialPage,
                 onViewPage = onViewPage,
-                requestColorPickerDialog = appState::openColorPickerDialog,
             )
         }
     }

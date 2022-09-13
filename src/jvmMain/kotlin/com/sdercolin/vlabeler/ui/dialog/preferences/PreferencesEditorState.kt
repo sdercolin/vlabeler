@@ -8,7 +8,6 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
-import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 
 class PreferencesEditorState(
     initConf: AppConf,
@@ -16,10 +15,9 @@ class PreferencesEditorState(
     private val apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     private val onViewPage: (PreferencesPage) -> Unit,
-    val requestColorPickerDialog: (ColorPickerArgs) -> Unit,
 ) {
-
-    private var savedConf: AppConf by mutableStateOf(initConf)
+    var savedConf: AppConf by mutableStateOf(initConf)
+        private set
     private var _conf: AppConf by mutableStateOf(initConf)
     val conf get() = _conf
     private val pageChildrenMap = mutableMapOf<PreferencesPageListItem, List<PreferencesPageListItem>>()

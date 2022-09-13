@@ -61,6 +61,7 @@ import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
+import com.sdercolin.vlabeler.ui.dialog.ColorPickerDialog
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -78,7 +79,6 @@ private fun rememberPreferencesEditorState(
     apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit,
-    requestColorPickerDialog: (ColorPickerArgs) -> Unit,
 ) =
     remember(currentConf, submit, initialPage, onViewPage) {
         PreferencesEditorState(
@@ -87,7 +87,6 @@ private fun rememberPreferencesEditorState(
             apply = apply,
             initialPage = initialPage,
             onViewPage = onViewPage,
-            requestColorPickerDialog = requestColorPickerDialog,
         )
     }
 
@@ -98,14 +97,12 @@ fun PreferencesEditor(
     apply: (AppConf) -> Unit,
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit,
-    requestColorPickerDialog: (ColorPickerArgs) -> Unit,
     state: PreferencesEditorState = rememberPreferencesEditorState(
         currentConf,
         submit,
         apply,
         initialPage,
         onViewPage,
-        requestColorPickerDialog,
     ),
 ) {
     Box(Modifier.fillMaxSize(0.8f).plainClickable()) {
@@ -379,6 +376,8 @@ private fun FloatInputItem(item: PreferencesItem.FloatInput, state: PreferencesE
 @Composable
 private fun ColorStringInputItem(item: PreferencesItem.ColorStringInput, state: PreferencesEditorState) {
     val value = item.select(state.conf)
+    var colorPickerArgs: ColorPickerArgs? by remember { mutableStateOf(null) }
+
     Row {
         ColorHexInputBox(
             value = value,
@@ -390,16 +389,14 @@ private fun ColorStringInputItem(item: PreferencesItem.ColorStringInput, state: 
         Spacer(Modifier.width(10.dp))
         IconButton(
             onClick = {
-                state.requestColorPickerDialog(
-                    ColorPickerArgs(
-                        color = value.toColor(),
-                        useAlpha = item.useAlpha,
-                        submit = {
-                            if (it != null) {
-                                state.update(item, if (item.useAlpha) it.argbHexString else it.rgbHexString)
-                            }
-                        },
-                    ),
+                colorPickerArgs = ColorPickerArgs(
+                    color = value.toColor(),
+                    useAlpha = item.useAlpha,
+                    submit = {
+                        if (it != null) {
+                            state.update(item, if (item.useAlpha) it.argbHexString else it.rgbHexString)
+                        }
+                    },
                 )
             },
             enabled = item.enabled(state.conf),
@@ -409,6 +406,18 @@ private fun ColorStringInputItem(item: PreferencesItem.ColorStringInput, state: 
                 contentDescription = null,
             )
         }
+    }
+
+    colorPickerArgs?.let { args ->
+        ColorPickerDialog(
+            state.savedConf,
+            args.color,
+            args.useAlpha,
+            submit = {
+                args.submit(it)
+                colorPickerArgs = null
+            },
+        )
     }
 }
 
