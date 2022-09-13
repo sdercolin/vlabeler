@@ -1,6 +1,5 @@
 package com.sdercolin.vlabeler.ui.starter
 
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -396,10 +395,7 @@ class ProjectCreatorState(
         .filter { it.isLabelFileExtensionSupported(labeler.extension) }
         .sortedBy { it.displayedName }
 
-    fun create(
-        snackbarHostState: SnackbarHostState,
-        create: (Project) -> Unit,
-    ) {
+    fun create(create: (Project) -> Unit) {
         coroutineScope.launch(Dispatchers.IO) {
             isLoading = true
             Log.debug(
@@ -432,7 +428,7 @@ class ProjectCreatorState(
                 val message = it.message.orEmpty()
                 Log.error(it)
                 isLoading = false
-                snackbarHostState.showSnackbar(message)
+                appState.showSnackbar(message)
                 return@launch
             }
             create(project)

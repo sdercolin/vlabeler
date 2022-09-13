@@ -49,7 +49,7 @@ class AppState(
     val keyboardViewModel: KeyboardViewModel,
     val scrollFitViewModel: ScrollFitViewModel,
     val appRecordStore: AppRecordStore,
-    val snackbarHostState: SnackbarHostState,
+    snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
     availableLabelerConfs: List<LabelerConf>,
     plugins: List<Plugin>,
@@ -59,13 +59,15 @@ class AppState(
     screenState: AppScreenState = AppScreenStateImpl(),
     projectStore: ProjectStore = ProjectStoreImpl(appConf, screenState, scrollFitViewModel, appErrorState),
     unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl(),
-    dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarHostState),
-    updaterState: AppUpdaterState = AppUpdaterStateImpl(snackbarHostState, dialogState, appRecordStore, mainScope),
+    snackbarState: AppSnackbarState = AppSnackbarStateImpl(snackbarHostState),
+    dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarState),
+    updaterState: AppUpdaterState = AppUpdaterStateImpl(snackbarState, dialogState, appRecordStore, mainScope),
 ) : AppErrorState by appErrorState,
     AppViewState by viewState,
     AppScreenState by screenState,
     ProjectStore by projectStore,
     AppUnsavedChangesState by unsavedChangesState,
+    AppSnackbarState by snackbarState,
     AppDialogState by dialogState,
     AppUpdaterState by updaterState {
 
@@ -207,7 +209,7 @@ class AppState(
         mainScope.launch {
             val sourceEntry = requireProject().entries[index]
             val showSnackbar = { message: String ->
-                mainScope.launch { snackbarHostState.showSnackbar(message) }
+                mainScope.launch { showSnackbar(message) }
                 Unit
             }
 

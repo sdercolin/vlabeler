@@ -1,6 +1,5 @@
 package com.sdercolin.vlabeler.ui
 
-import androidx.compose.material.SnackbarHostState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.repository.update.UpdateRepository
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -15,7 +14,7 @@ interface AppUpdaterState {
 }
 
 class AppUpdaterStateImpl(
-    private val snackbarHostState: SnackbarHostState,
+    private val snackbarState: AppSnackbarState,
     private val dialogState: AppDialogState,
     private val appRecordStore: AppRecordStore,
     private val scope: CoroutineScope,
@@ -29,7 +28,7 @@ class AppUpdaterStateImpl(
                 .onSuccess {
                     if (it == null) {
                         if (isAuto.not()) {
-                            snackbarHostState.showSnackbar(string(Strings.CheckForUpdatesAlreadyUpdated))
+                            snackbarState.showSnackbar(string(Strings.CheckForUpdatesAlreadyUpdated))
                         }
                         return@launch
                     }
@@ -41,7 +40,7 @@ class AppUpdaterStateImpl(
                     dialogState.openUpdaterDialog(it)
                 }
                 .onFailure {
-                    snackbarHostState.showSnackbar(string(Strings.CheckForUpdatesFailure))
+                    snackbarState.showSnackbar(string(Strings.CheckForUpdatesFailure))
                 }
         }
     }

@@ -2,7 +2,6 @@
 
 package com.sdercolin.vlabeler.ui
 
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -117,7 +116,7 @@ interface AppDialogState {
 class AppDialogStateImpl(
     private val appUnsavedChangesState: AppUnsavedChangesState,
     private val projectStore: ProjectStore,
-    private val snackbarHostState: SnackbarHostState,
+    private val snackbarState: AppSnackbarState,
 ) : AppDialogState {
     private lateinit var state: AppState
     private lateinit var scope: CoroutineScope
@@ -235,7 +234,7 @@ class AppDialogStateImpl(
                 index = index,
                 initial = entry.name,
                 invalidOptions = invalidOptions,
-                showSnackbar = { state.mainScope.launch { snackbarHostState.showSnackbar(it) } },
+                showSnackbar = { state.mainScope.launch { snackbarState.showSnackbar(it) } },
                 purpose = purpose,
             ),
         )

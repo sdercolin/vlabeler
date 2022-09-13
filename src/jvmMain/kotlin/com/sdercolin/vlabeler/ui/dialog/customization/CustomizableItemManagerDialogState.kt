@@ -21,8 +21,6 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
     protected val appRecordStore: AppRecordStore,
 ) {
 
-    val snackbarHostState = appState.snackbarHostState
-
     private val _items = mutableStateListOf<T>()
     val items: List<T> get() = _items
 
@@ -93,7 +91,7 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
 
     private suspend fun addNewItem(configFile: File) {
         runCatching { importNewItem(configFile) }.getOrElse {
-            snackbarHostState.showSnackbar(it.message.orEmpty())
+            appState.showSnackbar(it.message.orEmpty())
             return
         }
         reload()

@@ -57,7 +57,6 @@ fun App(
                     cancel = { appState.closeProjectCreator() },
                     activeLabelerConfs = appState.activeLabelerConfs,
                     activeTemplatePlugins = appState.getActivePlugins(Plugin.Type.Template),
-                    snackbarHostState = appState.snackbarHostState,
                     appRecordStore = appState.appRecordStore,
                     launchArguments = screen.launchArguments,
                 )

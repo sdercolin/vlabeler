@@ -46,7 +46,7 @@ fun PreferencesDialog(appState: AppState) {
                 onViewPage = onViewPage,
                 showSnackbar = {
                     coroutineScope.launch {
-                        appState.snackbarHostState.showSnackbar(
+                        appState.showSnackbar(
                             message = it,
                             actionLabel = string(Strings.CommonOkay),
                         )

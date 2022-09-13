@@ -28,9 +28,8 @@ fun loadProject(
     autoSaved: Boolean = false,
 ) {
     suspend fun showSnackbar(message: String) {
-        appState.snackbarHostState.showSnackbar(
+        appState.showSnackbar(
             message,
-            actionLabel = string(Strings.CommonOkay),
             duration = SnackbarDuration.Indefinite,
         )
     }

@@ -26,7 +26,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -98,9 +97,6 @@ fun CustomizableItemManagerDialog(
                 }
             },
         )
-    }
-    Box(Modifier.fillMaxSize()) {
-        SnackbarHost(state.snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 

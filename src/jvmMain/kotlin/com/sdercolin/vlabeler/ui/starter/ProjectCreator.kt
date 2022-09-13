@@ -30,7 +30,6 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -74,7 +73,6 @@ fun ProjectCreator(
     cancel: () -> Unit,
     activeLabelerConfs: List<LabelerConf>,
     activeTemplatePlugins: List<Plugin>,
-    snackbarHostState: SnackbarHostState,
     appRecordStore: AppRecordStore,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     launchArguments: ArgumentMap?,
@@ -118,7 +116,7 @@ fun ProjectCreator(
                     }
 
                     Spacer(Modifier.height(30.dp))
-                    ButtonBar(cancel, state, snackbarHostState, create)
+                    ButtonBar(cancel, state, create)
                 }
                 VerticalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.width(15.dp))
             }
@@ -419,7 +417,6 @@ private fun AutoExportSwitch(state: ProjectCreatorState) {
 private fun ButtonBar(
     cancel: () -> Unit,
     state: ProjectCreatorState,
-    snackbarHostState: SnackbarHostState,
     create: (Project) -> Unit,
 ) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -427,7 +424,7 @@ private fun ButtonBar(
             Text(string(Strings.CommonCancel))
         }
         Button(
-            onClick = { state.create(snackbarHostState, create) },
+            onClick = { state.create(create) },
             enabled = state.isValid(),
         ) {
             Text(string(Strings.CommonOkay))
