@@ -25,6 +25,7 @@ import com.sdercolin.vlabeler.util.savedMutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -67,6 +68,8 @@ interface ProjectStore {
         scope: CoroutineScope,
         unsavedChangesState: AppUnsavedChangesState,
     )
+
+    suspend fun terminateAutoSaveProject()
 
     fun toggleEntryDone(index: Int)
     fun toggleCurrentEntryDone()
@@ -259,9 +262,12 @@ class ProjectStoreImpl(
     override fun getAutoSavedProjectFile(): File? = listAutoSavedProjectFiles().firstOrNull()
 
     override fun discardAutoSavedProjects() {
-        autoSaveJob?.cancel()
-        autoSaveJob = null
         listAutoSavedProjectFiles().forEach { it.delete() }
+    }
+
+    override suspend fun terminateAutoSaveProject() {
+        autoSaveJob?.cancelAndJoin()
+        autoSaveJob = null
     }
 
     private fun discardAutoSavedProject(project: Project) {

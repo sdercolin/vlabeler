@@ -383,8 +383,11 @@ class AppState(
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
 
     private fun exit() {
-        discardAutoSavedProjects()
-        shouldExit = true
+        mainScope.launch {
+            terminateAutoSaveProject()
+            discardAutoSavedProjects()
+            shouldExit = true
+        }
     }
 
     val isEditorActive: Boolean
