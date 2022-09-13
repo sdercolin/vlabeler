@@ -6,7 +6,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
@@ -108,55 +108,88 @@ private fun MiddleButtonBar(state: CustomizableItemManagerDialogState<*>) {
             copy(alpha = 0.2f)
         }
 
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = null,
-            tint = getTint(true),
-            modifier = Modifier.size(22.dp).clickable { state.openFileSelectorForNewItem() },
-        )
+        FreeSizedIconButton(
+            modifier = Modifier.padding(5.dp),
+            onClick = { state.openFileSelectorForNewItem() },
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                tint = getTint(true),
+                modifier = Modifier.size(22.dp),
+            )
+        }
+
         val canRemove = state.canRemoveCurrentItem()
-        Icon(
-            imageVector = Icons.Default.Remove,
-            contentDescription = null,
-            tint = getTint(canRemove),
-            modifier = Modifier.size(22.dp).clickable(enabled = canRemove) { state.requestRemoveCurrentItem() },
-        )
+        FreeSizedIconButton(
+            modifier = Modifier.padding(5.dp),
+            enabled = canRemove,
+            onClick = { state.requestRemoveCurrentItem() },
+        ) {
+            Icon(
+                imageVector = Icons.Default.Remove,
+                contentDescription = null,
+                tint = getTint(canRemove),
+                modifier = Modifier.size(22.dp),
+            )
+        }
 
         val selectedItem = state.selectedItem
-        Icon(
-            imageVector = Icons.Default.Search,
-            contentDescription = null,
-            tint = getTint(selectedItem != null),
-            modifier = Modifier.size(22.dp).clickable(enabled = selectedItem != null) {
-                requireNotNull(selectedItem).revealInExplorer()
-            },
-        )
+        FreeSizedIconButton(
+            modifier = Modifier.padding(5.dp),
+            enabled = selectedItem != null,
+            onClick = { requireNotNull(selectedItem).revealInExplorer() },
+        ) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                tint = getTint(selectedItem != null),
+                modifier = Modifier.size(22.dp),
+            )
+        }
+
         val hasEmail = selectedItem?.hasEmail() == true
-        Icon(
-            imageVector = Icons.Default.Mail,
-            contentDescription = null,
-            tint = getTint(hasEmail),
-            modifier = Modifier.size(22.dp).clickable(enabled = hasEmail) {
-                requireNotNull(selectedItem).openEmail()
-            },
-        )
+        FreeSizedIconButton(
+            modifier = Modifier.padding(5.dp),
+            enabled = hasEmail,
+            onClick = { requireNotNull(selectedItem).openEmail() },
+        ) {
+            Icon(
+                imageVector = Icons.Default.Mail,
+                contentDescription = null,
+                tint = getTint(hasEmail),
+                modifier = Modifier.size(22.dp),
+            )
+        }
+
         val hasWebsite = selectedItem?.hasWebsite() == true
-        Icon(
-            imageVector = Icons.Default.Public,
-            contentDescription = null,
-            tint = getTint(hasWebsite),
-            modifier = Modifier.size(22.dp).clickable(enabled = hasWebsite) {
-                requireNotNull(selectedItem).openWebsite()
-            },
-        )
+        FreeSizedIconButton(
+            modifier = Modifier.padding(5.dp),
+            enabled = hasWebsite,
+            onClick = { requireNotNull(selectedItem).openWebsite() },
+        ) {
+            Icon(
+                imageVector = Icons.Default.Public,
+                contentDescription = null,
+                tint = getTint(hasWebsite),
+                modifier = Modifier.size(22.dp),
+            )
+        }
+
         if (state.allowExecution) {
             val canExecute = state.canExecuteSelectedItem()
-            Icon(
-                imageVector = Icons.Default.OpenInNew,
-                contentDescription = null,
-                tint = getTint(canExecute),
-                modifier = Modifier.size(22.dp).clickable(enabled = canExecute) { state.executeSelectedItem() },
-            )
+            FreeSizedIconButton(
+                modifier = Modifier.padding(5.dp),
+                enabled = canExecute,
+                onClick = { state.executeSelectedItem() },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.OpenInNew,
+                    contentDescription = null,
+                    tint = getTint(canExecute),
+                    modifier = Modifier.size(22.dp),
+                )
+            }
         }
     }
 }
