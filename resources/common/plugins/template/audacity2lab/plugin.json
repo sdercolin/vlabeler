@@ -1,0 +1,28 @@
+{
+  "name": "audacity2lab",
+  "version": 1,
+  "type": "template",
+  "displayedName": "Audacity labels to Sinsy lab format",
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": "Convert label file created by Audacity to Sinsy lab format. Can be used on other similar formats with configuration.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/audacity2lab",
+  "supportedLabelFileExtension": "lab",
+  "inputFileExtension": "txt",
+  "requireInputFile": true,
+  "outputRawEntry": true,
+  "parameters": {
+    "list": [
+      {
+        "type": "float",
+        "name": "unit",
+        "label": "Time unit (s)",
+        "defaultValue": 1.0,
+        "min": 0
+      }
+    ]
+  },
+  "scriptFiles": [
+    "audacity2lab.js"
+  ]
+}
