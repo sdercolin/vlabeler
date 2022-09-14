@@ -1,0 +1,60 @@
+{
+  "name": "audacity.default",
+  "version": 1,
+  "extension": "txt",
+  "defaultInputFilePath": null,
+  "displayedName": "Audacity labeler",
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": "Default labeler for Audacity Labels file.",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
+  "continuous": true,
+  "allowSameNameEntry": true,
+  "defaultValues": [
+    0,
+    0
+  ],
+  "defaultExtras": [],
+  "fields": [],
+  "extraFieldNames": [],
+  "lockedDrag": {
+    "useDragBase": false,
+    "useStart": false
+  },
+  "decimalDigit": 4,
+  "properties": [
+    {
+      "name": "start",
+      "displayedName": "Start",
+      "value": "{start}"
+    },
+    {
+      "name": "end",
+      "displayedName": "End",
+      "value": "{end}"
+    }
+  ],
+  "parser": {
+    "defaultEncoding": "UTF-8",
+    "extractionPattern": "(.*)\t(.*)\t(.*)",
+    "variableNames": [
+      "left",
+      "right",
+      "name"
+    ],
+    "scripts": [
+      "if (inputFileName) {",
+      "    if(sampleNames.contains(inputFileName)) {",
+      "        sample = inputFileName",
+      "    }",
+      "}",
+      "start = parseFloat(left) * 1000",
+      "end = parseFloat(right) * 1000"
+    ]
+  },
+  "writer": {
+    "scripts": [
+      "output = (start / 1000).toFixed(6) + \" \" + (end / 1000).toFixed(6) + \" \"+ name"
+    ]
+  }
+}
