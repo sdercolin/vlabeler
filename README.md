@@ -56,16 +56,16 @@ Please ensure you have **JDK 15+** for building.
 ./gradlew createDistributable
 ```
 
-## Usage
+## Scenarios
 
 Many behaviors of vLabeler depend on customizable `labeler`s.
 Currently, built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU) lab labeler`.
 
-#### oto labeler (Basic mode, SetParam style)
+#### working on UTAU oto.ini (Single entry mode, SetParam style)
 
 ![](readme/oto.gif)
 
-There are two items in the built-in labeler list:
+For UTAU oto usages, there are two items in the built-in labeler list:
 
 - UTAU oto labeler
 
@@ -77,14 +77,21 @@ There are two items in the built-in labeler list:
   can move the `Ovl` line to the left of `Left` line to get negative overlap values. The white left border is not
   used.
 
-#### lab labeler (Continuous mode)
+#### Working on audio labels (Continuous mode)
 
 ![](readme/lab.gif)
 
+For label files used in NNSVS/ENUNU and similar systems, the following options are available now:
+
 - Sinsy lab labeler
 
-  This labeler is for Sinsy (NNSVS/ENUNU) lab files. Please note that the accpeted lab format use `100ns` as the time
-  unit and use `\t` (tab) as the separator.
+  This labeler is for Sinsy (NNSVS/ENUNU) lab files, which uses `100ns` as the time unit and use ` ` (space) as the
+  separator.
+
+- Audacity labeler
+
+  This labeler is for `Labels` file created by Audacity, which uses `s` as the time unit and use `\t` (tab) as the
+  separator.
 
 ## Get started
 
