@@ -867,6 +867,21 @@ enum class Strings(val en: String) {
     PreferencesAutoSaveIntervalSec(
         en = "Interval (sec)",
     ),
+    PreferencesHistory(
+        en = "Edit history",
+    ),
+    PreferencesHistoryDescription(
+        en = "Customize the behavior about edit history (undo/redo).",
+    ),
+    PreferencesHistoryMaxSize(
+        en = "Maximum retained size",
+    ),
+    PreferencesHistorySquashIndex(
+        en = "Squash index changes",
+    ),
+    PreferencesHistorySquashIndexDescription(
+        en = "When enabled, index changes (e.g. switch entries) will not be saved until the next content change.",
+    ),
     ActionToggleSamplePlayback(
         en = "Toggle Playback of Current Sample",
     ),

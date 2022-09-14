@@ -19,6 +19,7 @@ import kotlinx.serialization.Serializable
  * @param autoSave Configurations about auto-save
  * @param playback Configurations about audio playback
  * @param keymaps Custom keymap
+ * @param history Configurations about edit history (undo/redo)
  */
 @Serializable
 @Immutable
@@ -29,6 +30,7 @@ data class AppConf(
     val autoSave: AutoSave = AutoSave(),
     val playback: Playback = Playback(),
     val keymaps: Keymaps = Keymaps(),
+    val history: History = History(),
 ) {
     /**
      * Configurations about chart painting
@@ -456,4 +458,22 @@ data class AppConf(
         val mouseClickActionMap: Map<MouseClickAction, KeySet?> = mapOf(),
         val mouseScrollActionMap: Map<MouseScrollAction, KeySet?> = mapOf(),
     )
+
+    /**
+     * Configurations about edit history (undo/redo)
+     * @param maxSize Max size of the edit history
+     * @param squashIndex Ignore changes that contain a different [Project.currentIndex]
+     */
+    @Serializable
+    @Immutable
+    data class History(
+        val maxSize: Int = DefaultMaxSize,
+        val squashIndex: Boolean = DefaultSquashIndex,
+    ) {
+        companion object {
+            const val DefaultMaxSize = 100
+            const val MinMaxSize = 1
+            const val DefaultSquashIndex = true
+        }
+    }
 }

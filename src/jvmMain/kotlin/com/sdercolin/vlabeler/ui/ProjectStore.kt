@@ -2,7 +2,6 @@ package com.sdercolin.vlabeler.ui
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectUpdateOnSampleException
@@ -98,7 +97,7 @@ class ProjectStoreImpl(
     override val hasProject get() = project != null
     override fun requireProject(): Project = requireNotNull(project)
 
-    override val history: ProjectHistory = ProjectHistory()
+    override val history: ProjectHistory = ProjectHistory(appConf)
 
     override fun newProject(newProject: Project) {
         project?.let { discardAutoSavedProject(it) }

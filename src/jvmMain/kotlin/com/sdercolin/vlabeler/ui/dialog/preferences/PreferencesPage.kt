@@ -547,6 +547,30 @@ abstract class PreferencesPage(
         }
     }
 
+    object History : PreferencesPage(Strings.PreferencesHistory, Strings.PreferencesHistoryDescription) {
+        override val content: List<PreferencesGroup> = buildPageContent {
+            withContext(
+                selector = { it.history },
+                updater = { copy(history = it) },
+            ) {
+                integer(
+                    title = Strings.PreferencesHistoryMaxSize,
+                    defaultValue = AppConf.History.DefaultMaxSize,
+                    min = AppConf.History.MinMaxSize,
+                    select = { it.maxSize },
+                    update = { copy(maxSize = it) },
+                )
+                switch(
+                    title = Strings.PreferencesHistorySquashIndex,
+                    description = Strings.PreferencesHistorySquashIndexDescription,
+                    defaultValue = AppConf.History.DefaultSquashIndex,
+                    select = { it.squashIndex },
+                    update = { copy(squashIndex = it) },
+                )
+            }
+        }
+    }
+
     companion object {
 
         fun getRootPages() = listOf(
@@ -556,6 +580,7 @@ abstract class PreferencesPage(
             Editor,
             Playback,
             AutoSave,
+            History,
         )
     }
 }
