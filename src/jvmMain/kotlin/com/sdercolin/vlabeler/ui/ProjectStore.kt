@@ -98,20 +98,19 @@ class ProjectStoreImpl(
     override val hasProject get() = project != null
     override fun requireProject(): Project = requireNotNull(project)
 
-    override var history: ProjectHistory by mutableStateOf(ProjectHistory())
-        private set
+    override val history: ProjectHistory = ProjectHistory()
 
     override fun newProject(newProject: Project) {
         project?.let { discardAutoSavedProject(it) }
         val validatedProject = newProject.validate()
         project = validatedProject
-        history = ProjectHistory.new(validatedProject)
+        history.new(validatedProject)
     }
 
     override fun clearProject() {
         project?.let { discardAutoSavedProject(it) }
         project = null
-        history = ProjectHistory()
+        history.clear()
     }
 
     override fun editProject(editor: Project.() -> Project) {
@@ -120,7 +119,7 @@ class ProjectStoreImpl(
             return
         }
         project = edited
-        history = history.push(edited)
+        history.push(edited)
     }
 
     override fun updateProjectOnLoadedSample(sampleInfo: SampleInfo) {
@@ -131,7 +130,7 @@ class ProjectStoreImpl(
             }
         if (updated == requireProject()) return
         project = updated
-        history = history.replaceTop(updated)
+        history.replaceTop(updated)
     }
 
     override fun editEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>) = editProject {
@@ -153,13 +152,13 @@ class ProjectStoreImpl(
 
     override val canUndo get() = history.canUndo
     override fun undo() {
-        history = history.undo()
+        history.undo()
         project = history.current
     }
 
     override val canRedo get() = history.canRedo
     override fun redo() {
-        history = history.redo()
+        history.redo()
         project = history.current
     }
 

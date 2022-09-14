@@ -1,29 +1,40 @@
 package com.sdercolin.vlabeler.model
 
-data class ProjectHistory(
-    val list: List<Project> = listOf(),
-    val index: Int = -1,
-) {
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
+class ProjectHistory {
+
+    private val list = mutableStateListOf<Project>()
+    private var index by mutableStateOf(-1)
+
     val current get() = list[index]
     val canUndo get() = index > 0
     val canRedo get() = index >= 0 && index < list.lastIndex
 
-    fun replaceTop(project: Project): ProjectHistory {
-        val list = list.toMutableList()
-        list[index] = project
-        return copy(list = list)
+    fun clear() {
+        list.clear()
+        index = -1
     }
 
-    fun push(project: Project): ProjectHistory {
-        if (current.contentEquals(project)) return this
-        return (list.subList(0, index + 1) + project)
-            .takeLast(MaxStackSize)
-            .let {
-                ProjectHistory(
-                    list = it,
-                    index = it.lastIndex,
-                )
-            }
+    fun new(project: Project) {
+        list.clear()
+        list.add(project)
+        index = 0
+    }
+
+    fun replaceTop(project: Project) {
+        list[index] = project
+    }
+
+    fun push(project: Project) {
+        if (current.contentEquals(project)) return
+        list.removeRange(index + 1, list.size)
+        list.add(project)
+        if (list.size > MaxStackSize) list.removeAt(0)
+        index = list.lastIndex
     }
 
     private fun Project.contentEquals(other: Project) = copy(
@@ -31,13 +42,15 @@ data class ProjectHistory(
         entryFilter = other.entryFilter,
     ) == other
 
-    fun undo() = copy(index = index.minus(1).coerceAtLeast(0))
+    fun undo() {
+        if (canUndo) index--
+    }
 
-    fun redo() = copy(index = index.plus(1).coerceAtMost(list.lastIndex))
+    fun redo() {
+        if (canRedo) index++
+    }
 
     companion object {
         private const val MaxStackSize = 100
-
-        fun new(project: Project) = ProjectHistory(list = listOf(project), 0)
     }
 }
