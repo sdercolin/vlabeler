@@ -20,9 +20,6 @@ if (timeUnit <= 0) {
     throw new Error("Time unit must be greater than 0")
 }
 
-// 1s = 10^7 * 100ns
-let targetUnitRatio = 10000000.0
-
 let indexesOfInvalidLength = []
 let indexesOfEmptyLabelName = []
 let indexesPairsOfInconsistentLabels = []
@@ -61,14 +58,14 @@ if (indexesOfInvalidLength.length > 0 || indexesPairsOfInconsistentLabels.length
 
 function convert(input) {
     let time = parseFloat(input)
-    let outputTime = time * targetUnitRatio * timeUnit
+    let outputTime = time * timeUnit
     return outputTime.toString()
 }
 
 let output = []
 
 for (const line of lines) {
-    output.push([convert(line[0]), convert(line[1]), line[2]].join(" "))
+    output.push([convert(line[0]), convert(line[1]), line[2]].join("\t"))
 }
 
 if (debug) {
