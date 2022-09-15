@@ -46,14 +46,14 @@ data class Project(
     @Transient
     private val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
 
-    @Transient
-    val currentEntry: Entry = entries[currentIndex]
+    val currentEntry: Entry
+        get() = entries[currentIndex]
 
-    @Transient
-    private val currentGroupIndex: Int = getGroupIndex(currentIndex)
+    private val currentGroupIndex: Int
+        get() = getGroupIndex(currentIndex)
 
-    @Transient
-    val currentSampleName: String = currentEntry.sample
+    val currentSampleName: String
+        get() = currentEntry.sample
 
     val currentSampleFile: File
         get() = getSampleFile(currentSampleName)
