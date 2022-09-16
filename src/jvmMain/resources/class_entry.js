@@ -1,16 +1,16 @@
 class Entry {
-    constructor(sample, name, start, end, points, extras, meta = new Meta()) {
+    constructor(sample, name, start, end, points, extras, notes = new Notes()) {
         this.sample = sample
         this.name = name
         this.start = start
         this.end = end
         this.points = points
         this.extras = extras
-        this.meta = meta
+        this.notes = notes
     }
 }
 
-class Meta {
+class Notes {
     constructor(done = false, star = false, tag = "") {
         this.done = done
         this.star = star

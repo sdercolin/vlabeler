@@ -53,7 +53,7 @@ data class EntryFilter(
         searchAny?.let {
             if (!entry.name.contains(it) &&
                 !entry.sample.contains(it) &&
-                !entry.meta.tag.contains(it)
+                !entry.notes.tag.contains(it)
             ) {
                 return false
             }
@@ -69,14 +69,14 @@ data class EntryFilter(
             }
         }
         searchTag?.let {
-            if (!entry.meta.tag.contains(it)) {
+            if (!entry.notes.tag.contains(it)) {
                 return false
             }
         }
-        if (star != null && entry.meta.star != star) {
+        if (star != null && entry.notes.star != star) {
             return false
         }
-        if (done != null && entry.meta.done != done) {
+        if (done != null && entry.notes.done != done) {
             return false
         }
         return true

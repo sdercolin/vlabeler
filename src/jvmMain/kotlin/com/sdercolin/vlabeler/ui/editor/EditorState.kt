@@ -71,13 +71,13 @@ class EditorState(
         }
 
     val entryStar: Boolean
-        get() = project.currentEntry.meta.star
+        get() = project.currentEntry.notes.star
 
     val entryDone: Boolean
-        get() = project.currentEntry.meta.done
+        get() = project.currentEntry.notes.done
 
     val entryTag: String
-        get() = project.currentEntry.meta.tag
+        get() = project.currentEntry.notes.tag
 
     val chartStore = ChartStore()
 

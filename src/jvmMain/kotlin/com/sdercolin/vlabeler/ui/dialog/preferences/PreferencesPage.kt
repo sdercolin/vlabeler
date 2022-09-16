@@ -343,7 +343,7 @@ abstract class PreferencesPage(
     object Editor : PreferencesPage(Strings.PreferencesEditor, Strings.PreferencesEditorDescription) {
 
         override val children: List<PreferencesPage>
-            get() = listOf(EditorScissors, EditorAutoScroll, EditorMetadata)
+            get() = listOf(EditorScissors, EditorAutoScroll, EditorNotes)
 
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
@@ -416,9 +416,9 @@ abstract class PreferencesPage(
         }
     }
 
-    object EditorMetadata : PreferencesPage(
-        Strings.PreferencesEditorMetadata,
-        Strings.PreferencesEditorMetadataDescription,
+    object EditorNotes : PreferencesPage(
+        Strings.PreferencesEditorNotes,
+        Strings.PreferencesEditorNotesDescription,
     ) {
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(

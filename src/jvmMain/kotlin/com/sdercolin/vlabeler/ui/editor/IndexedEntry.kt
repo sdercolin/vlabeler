@@ -18,5 +18,5 @@ data class IndexedEntry(
     fun edit(entry: Entry) = copy(entry = entry)
     fun edit(editor: Entry.() -> Entry) = copy(entry = entry.editor())
 
-    fun markedAsDone() = edit(entry.copy(meta = entry.meta.copy(done = true)))
+    fun markedAsDone() = edit(entry.copy(notes = entry.notes.copy(done = true)))
 }

@@ -1,9 +1,17 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.model.Entry.Companion.EntrySerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.json.JsonDecoder
 
-@Serializable
+@Serializable(EntrySerializer::class)
 @Immutable
 data class Entry(
     /**
@@ -35,13 +43,37 @@ data class Entry(
     /**
      * Other properties of an entry which are only used in vLabeler
      */
-    val meta: EntryMetaData = EntryMetaData(),
+    val notes: EntryNotes = EntryNotes(),
 ) {
 
-    fun starToggled() = copy(meta = meta.copy(star = !meta.star))
-    fun doneToggled() = copy(meta = meta.copy(done = !meta.done))
-    fun done() = copy(meta = meta.copy(done = true))
-    fun tagEdited(tag: String) = copy(meta = meta.copy(tag = tag))
+    fun starToggled() = copy(notes = notes.copy(star = !notes.star))
+    fun doneToggled() = copy(notes = notes.copy(done = !notes.done))
+    fun done() = copy(notes = notes.copy(done = true))
+    fun tagEdited(tag: String) = copy(notes = notes.copy(tag = tag))
+
+    @Serializable
+    data class EntryDeserializationContainer(
+        val sample: String,
+        val name: String,
+        val start: Float,
+        val end: Float,
+        val points: List<Float>,
+        val extras: List<String>,
+        val notes: EntryNotes? = null,
+        // for backward compatibility
+        val meta: EntryNotes? = null,
+    ) {
+
+        fun toEntry() = Entry(
+            sample = sample,
+            name = name,
+            start = start,
+            end = end,
+            points = points,
+            extras = extras,
+            notes = notes ?: meta ?: EntryNotes(),
+        )
+    }
 
     companion object {
         fun fromDefaultValues(sample: String, name: String, labelerConf: LabelerConf) =
@@ -53,5 +85,14 @@ data class Entry(
                 points = labelerConf.defaultValues.drop(1).dropLast(1),
                 extras = labelerConf.defaultExtras,
             )
+
+        @Serializer(Entry::class)
+        object EntrySerializer : KSerializer<Entry> {
+            override fun deserialize(decoder: Decoder): Entry {
+                require(decoder is JsonDecoder)
+                val element = decoder.decodeSerializableValue(EntryDeserializationContainer.serializer())
+                return element.toEntry()
+            }
+        }
     }
 }

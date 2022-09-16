@@ -12,7 +12,7 @@ entries.sort((a, b) => {
     let descendingFactor = descending ? -1 : 1
     let entryNameResult = descendingFactor * a.name.localeCompare(b.name)
     let sampleNameResult = descendingFactor * a.sample.localeCompare(b.sample)
-    let tagResult = descendingFactor * a.meta.tag.localeCompare(b.meta.tag)
+    let tagResult = descendingFactor * a.notes.tag.localeCompare(b.notes.tag)
     if (useTag && prioritizeTag) {
         if (tagResult !== 0) {
             return tagResult

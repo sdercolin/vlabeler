@@ -301,10 +301,10 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorPlayerLockedDragUseLabeler -> "Use settings defined by the labeler"
     PreferencesEditorPlayerLockedDragUseStart -> "Fixed-drag at the entry's start"
     PreferencesEditorPlayerLockedDragNever -> "Never do fixed-drag"
-    PreferencesEditorMetadata -> "Metadata"
-    PreferencesEditorMetadataDescription ->
+    PreferencesEditorNotes -> "Notes"
+    PreferencesEditorNotesDescription ->
         "Customize the editor's appearance and behavior about entry " +
-            "metadata (starred, done, tag)."
+            "notes (starred, done, tag)."
     PreferencesEditorShowDone -> "Display \"Done\" status"
     PreferencesEditorAutoDone -> "Automatically set edited entries as \"Done\""
     PreferencesEditorShowStarred -> "Display \"Starred\" status"

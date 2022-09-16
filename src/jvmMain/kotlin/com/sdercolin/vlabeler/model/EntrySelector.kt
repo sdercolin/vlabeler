@@ -63,7 +63,7 @@ data class EntrySelector(
             val subjectValue = when (subject) {
                 TextItemSubjectEntryName -> entry.name
                 TextItemSubjectSampleName -> entry.sample
-                TextItemSubjectTagName -> entry.meta.tag
+                TextItemSubjectTagName -> entry.notes.tag
                 else -> throw IllegalArgumentException("Unknown subject name as text: $subject")
             }
             return when (matchType) {
@@ -144,8 +144,8 @@ data class EntrySelector(
 
         override fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean {
             val subjectValue = when (subject) {
-                BooleanItemSubjectDone -> entry.meta.done
-                BooleanItemSubjectStar -> entry.meta.star
+                BooleanItemSubjectDone -> entry.notes.done
+                BooleanItemSubjectStar -> entry.notes.star
                 else -> throw IllegalArgumentException("Unknown subject name as boolean: $subject")
             }
             return subjectValue == matcherBoolean

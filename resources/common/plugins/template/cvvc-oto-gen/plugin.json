@@ -1,6 +1,6 @@
 {
   "name": "cvvc-oto-gen",
-  "version": 2,
+  "version": 3,
   "type": "template",
   "displayedName": "CVVC oto generator",
   "author": "sdercolin",

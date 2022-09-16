@@ -1,6 +1,6 @@
 {
   "name": "sort-entries",
-  "version": 3,
+  "version": 4,
   "type": "macro",
   "displayedName": "Reorder entries",
   "author": "sdercolin",

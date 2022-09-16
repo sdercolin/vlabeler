@@ -141,11 +141,11 @@ function pushCV(sample, index, alias, isSpecial, tag) {
     // for oto labeler plus, adding start again in the points
     points.push(start)
     let extras = [cutoffCV.toString()]
-    let meta = new Meta()
+    let notes = new Notes()
     if (appendTags) {
-        meta.tag = tag
+        notes.tag = tag
     }
-    let entry = new Entry(sample, thisAlias, start, end, points, extras, meta)
+    let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
     aliasCountMap.set(alias, count + 1)
     push(entry, true)
 }
@@ -174,11 +174,11 @@ function pushVC(sample, index, alias, isSingleC, tag) {
     // for oto labeler plus, adding start again in the points
     points.push(start)
     let extras = [cutoffVC.toString()]
-    let meta = new Meta()
+    let notes = new Notes()
     if (appendTags) {
-        meta.tag = tag
+        notes.tag = tag
     }
-    let entry = new Entry(sample, thisAlias, start, end, points, extras, meta)
+    let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
     aliasCountMap.set(alias, count + 1)
     push(entry, false)
 }

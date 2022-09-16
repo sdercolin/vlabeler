@@ -408,10 +408,10 @@ private fun ItemContent(editorConf: AppConf.Editor, item: IndexedValue<Entry>) {
             }
 
             Row {
-                if (item.value.meta.tag.isNotEmpty() && editorConf.showTag) {
+                if (item.value.notes.tag.isNotEmpty() && editorConf.showTag) {
                     Spacer(modifier = Modifier.width(12.dp))
                     BasicText(
-                        text = item.value.meta.tag,
+                        text = item.value.notes.tag,
                         modifier = Modifier
                             .offset(y = 1.dp)
                             .background(color = White20, shape = RoundedCornerShape(5.dp))
@@ -427,10 +427,10 @@ private fun ItemContent(editorConf: AppConf.Editor, item: IndexedValue<Entry>) {
                 modifier = Modifier.padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                if (item.value.meta.done && editorConf.showDone) {
+                if (item.value.notes.done && editorConf.showDone) {
                     DoneIcon(true, modifier = Modifier.requiredSize(16.dp))
                 }
-                if (item.value.meta.star && editorConf.showStar) {
+                if (item.value.notes.star && editorConf.showStar) {
                     StarIcon(true, modifier = Modifier.requiredSize(16.dp))
                 }
             }

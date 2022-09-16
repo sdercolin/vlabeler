@@ -1,11 +1,11 @@
 {
   "name": "batch-edit-entry-meta",
-  "version": 1,
+  "version": 3,
   "type": "macro",
-  "displayedName": "Batch edit entry metadata",
+  "displayedName": "Batch edit entry notes",
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Edit the metadata (starred, done, tag) of multiple entries at once.",
+  "description": "Edit the notes (starred, done, tag) of multiple entries at once.",
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-entry-meta",
   "supportedLabelFileExtension": "*",
   "parameters": {

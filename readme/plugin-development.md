@@ -138,18 +138,18 @@ Put items in the following type to the `output` list (the class is defined befor
 
 ```javascript
 class Entry {
-    constructor(sample, name, start, end, points, extras, meta = new Meta()) {
+    constructor(sample, name, start, end, points, extras, notes = new Notes()) {
         this.sample = sample // sample file name without extension
         this.name = name // entry name (alias)
         this.start = start // float value in millisecond
         this.end = end // float value in millisecond
         this.points = points // list of float values in millisecond
         this.extras = extras // list of string values
-        this.meta = meta // meta info
+        this.notes = notes // notes
     }
 }
 
-class Meta {
+class Notes {
     constructor(done = false, star = false, tag = "") {
         this.done = done
         this.star = star

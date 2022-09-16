@@ -148,15 +148,15 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`
 - `<<`/`>>` buttons in the bottom bar: go to previous/next sample
 - `Ctrl` + `G` or entry number button in the bottom bar: show `Go to entry...` dialog
 
-### Set metadata for entry
+### Set notes for entry
 
 - `J` or click the `Add tag` button in the entry title bar: Start editing the entry's tag
 - `K` or click the `Star` button in the entry title bar: Toggle the entry's `Starred` status
 - `L` or click the `Done` button in the entry title bar: Toggle the entry's `Done` status
 
-#### Settings for metadata
+#### Settings for notes
 
-You can customize the metadata display in `Settings` -> `Prefereneces` -> `Editor` -> `Metadata` to hide the items that
+You can customize the notes display in `Settings` -> `Prefereneces` -> `Editor` -> `Notes` to hide the items that
 you don't need.
 
 The `Done` status is by default automatically set when you edit any values in a entry. You can disable this behavior in

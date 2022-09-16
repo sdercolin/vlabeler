@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Immutable
-data class EntryMetaData(
+data class EntryNotes(
     val done: Boolean = false,
     val star: Boolean = false,
     val tag: String = "",

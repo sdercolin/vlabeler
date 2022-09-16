@@ -16,8 +16,8 @@ output = entries.map((entry, index) => {
         return new EditedEntry(index, entry)
     }
     let edited = Object.assign({}, entry)
-    if (star !== null) edited.meta.star = star
-    if (done !== null) edited.meta.done = done
-    if (tag) edited.meta.tag = tagValue
+    if (star !== null) edited.notes.star = star
+    if (done !== null) edited.notes.done = done
+    if (tag) edited.notes.tag = tagValue
     return new EditedEntry(index, edited)
 })
