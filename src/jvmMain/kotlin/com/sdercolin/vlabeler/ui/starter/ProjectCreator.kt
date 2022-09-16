@@ -372,7 +372,7 @@ private fun EncodingSelector(state: ProjectCreatorState) {
             label = { Text(string(Strings.StarterNewEncoding)) },
             singleLine = true,
             leadingIcon = {
-                IconButton(onClick = { expanded = true }) {
+                IconButton(onClick = { expanded = true }, enabled = state.isEncodingSelectionEnabled) {
                     Icon(Icons.Default.ExpandMore, null)
                 }
             },
