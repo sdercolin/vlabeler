@@ -61,7 +61,7 @@ Please ensure you have **JDK 15+** for building.
 Many behaviors of vLabeler depend on customizable `labeler`s.
 Currently, built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU) lab labeler`.
 
-#### working on UTAU oto.ini (Single entry mode, SetParam style)
+#### Working on UTAU oto.ini (Single entry mode, SetParam style)
 
 ![](readme/oto.gif)
 
