@@ -60,6 +60,7 @@ object Log {
             "debug" to isDebug,
             "workingDir" to ResourcePath,
             "appDir" to AppDir,
+            "locale" to Locale,
         )
         debug("Launched in $osInfo, ${launchInfo.entries.joinToString(", ") { "${it.key}=${it.value}" }}")
     }

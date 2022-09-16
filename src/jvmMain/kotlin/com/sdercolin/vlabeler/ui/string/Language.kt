@@ -9,4 +9,11 @@ enum class Language(val code: String, val displayName: String) : Text {
 
     override val text: String
         get() = displayName
+
+    companion object {
+
+        fun find(languageTag: String): Language? {
+            return values().find { languageTag.startsWith(it.code) }
+        }
+    }
 }

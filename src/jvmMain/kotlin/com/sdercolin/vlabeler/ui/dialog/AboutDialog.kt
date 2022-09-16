@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -31,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.rememberDialogState
+import com.sdercolin.vlabeler.env.Locale
 import com.sdercolin.vlabeler.env.appVersion
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.osInfo
@@ -76,6 +78,7 @@ private fun Content(
         App version: $appVersion
         Runtime version: $runtimeVersion
         OS: $osInfo
+        System locale: $Locale
         Debug mode: $isDebug
         User directory: $AppDir
         Resource directory: $ResourcePath
@@ -127,9 +130,11 @@ private fun ColumnScope.InfoBox(info: String) {
                 .fillMaxSize()
                 .verticalScroll(scrollState),
         ) {
-            Text(
-                text = info,
-                style = MaterialTheme.typography.caption,
+            BasicTextField(
+                value = info,
+                onValueChange = {},
+                readOnly = true,
+                textStyle = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.onBackground),
             )
         }
         VerticalScrollbar(

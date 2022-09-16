@@ -65,7 +65,7 @@ fun main(vararg args: String) = application {
 
     val appRecord = appRecordStore.stateFlow.collectAsState()
     val windowState = rememberResizableWindowState(appRecord)
-    val appConf = loadAppConf(mainScope)
+    val appConf = loadAppConf(mainScope, appRecordStore)
 
     currentLanguage = appConf.value.view.language
 

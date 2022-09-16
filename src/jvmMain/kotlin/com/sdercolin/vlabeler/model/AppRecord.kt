@@ -31,6 +31,7 @@ data class AppRecord(
     val autoExport: Boolean = false,
     val ignoredUpdateVersions: Set<String> = setOf(),
     val updateDownloadDirectory: String = DefaultDownloadDir.absolutePath,
+    val hasSavedDetectedLanguage: Boolean = false,
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(
