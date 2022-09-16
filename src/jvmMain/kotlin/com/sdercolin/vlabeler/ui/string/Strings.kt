@@ -1,1058 +1,363 @@
 package com.sdercolin.vlabeler.ui.string
 
+import com.sdercolin.vlabeler.ui.string.Language.ChineseSimplified
 import com.sdercolin.vlabeler.ui.string.Language.English
 
-enum class Strings(val en: String) {
-    AppName(
-        en = "vLabeler",
-    ),
-    LanguageDisplayName(
-        en = English.displayName,
-    ),
-    MenuFile(
-        en = "File",
-    ),
-    MenuFileNewProject(
-        en = "New Project...",
-    ),
-    MenuFileOpen(
-        en = "Open...",
-    ),
-    MenuFileOpenRecent(
-        en = "Open Recent",
-    ),
-    MenuFileOpenRecentClear(
-        en = "Clear Recently Opened",
-    ),
-    MenuFileSave(
-        en = "Save",
-    ),
-    MenuFileSaveAs(
-        en = "Save As...",
-    ),
-    MenuFileExport(
-        en = "Export...",
-    ),
-    MenuFileInvalidateCaches(
-        en = "Invalidate Caches",
-    ),
-    MenuFileClose(
-        en = "Close",
-    ),
-    MenuEdit(
-        en = "Edit",
-    ),
-    MenuEditUndo(
-        en = "Undo",
-    ),
-    MenuEditRedo(
-        en = "Redo",
-    ),
-    MenuEditTools(
-        en = "Tools",
-    ),
-    MenuEditToolsCursor(
-        en = "Cursor",
-    ),
-    MenuEditToolsScissors(
-        en = "Scissors",
-    ),
-    MenuEditToolsPan(
-        en = "Pan",
-    ),
-    MenuEditRenameEntry(
-        en = "Rename Current Entry...",
-    ),
-    MenuEditDuplicateEntry(
-        en = "Duplicate Current Entry...",
-    ),
-    MenuEditRemoveEntry(
-        en = "Remove Current Entry",
-    ),
-    MenuEditToggleDone(
-        en = "Toggle Done for Current Entry",
-    ),
-    MenuEditToggleStar(
-        en = "Toggle Starred for Current Entry",
-    ),
-    MenuEditEditTag(
-        en = "Edit Tag of Current Entry",
-    ),
-    MenuEditMultipleEditMode(
-        en = "Edit All Connected Entries",
-    ),
-    MenuView(
-        en = "View",
-    ),
-    MenuViewToggleMarker(
-        en = "Show Parameter Controllers",
-    ),
-    MenuViewPinEntryList(
-        en = "Pin Entry List",
-    ),
-    MenuViewPinEntryListLocked(
-        en = "Lock Splitter for Pinned Entry List",
-    ),
-    MenuViewToggleProperties(
-        en = "Show Properties",
-    ),
-    MenuViewToggleToolbox(
-        en = "Show Toolbox",
-    ),
-    MenuViewOpenSampleList(
-        en = "Sample List",
-    ),
-    MenuNavigate(
-        en = "Navigate",
-    ),
-    MenuNavigateNextEntry(
-        en = "Go to Next Entry",
-    ),
-    MenuNavigatePreviousEntry(
-        en = "Go to Previous Entry",
-    ),
-    MenuNavigateNextSample(
-        en = "Go to Next Sample",
-    ),
-    MenuNavigatePreviousSample(
-        en = "Go to Previous Sample",
-    ),
-    MenuNavigateJumpToEntry(
-        en = "Go to Entry...",
-    ),
-    MenuNavigateScrollFit(
-        en = "Scroll to Show the Current Entry",
-    ),
-    MenuTools(
-        en = "Tools",
-    ),
-    MenuToolsBatchEdit(
-        en = "Batch Edit",
-    ),
-    MenuToolsBatchEditManagePlugins(
-        en = "Manage Plugins...",
-    ),
-    MenuToolsPrerender(
-        en = "Prerender All Charts...",
-    ),
-    MenuSettings(
-        en = "Settings",
-    ),
-    MenuHelp(
-        en = "Help",
-    ),
-    MenuHelpCheckForUpdates(
-        en = "Check for Updates...",
-    ),
-    MenuHelpOpenLogDirectory(
-        en = "Open Log Directory",
-    ),
-    MenuHelpOpenLatestRelease(
-        en = "Open Latest Release",
-    ),
-    MenuHelpOpenGitHub(
-        en = "Open GitHub Page",
-    ),
-    MenuHelpJoinDiscord(
-        en = "Join Discord",
-    ),
-    MenuHelpAbout(
-        en = "About",
-    ),
-    MenuSettingsPreferences(
-        en = "Preferences...",
-    ),
-    MenuSettingsLabelers(
-        en = "Labelers...",
-    ),
-    MenuSettingsTemplatePlugins(
-        en = "Template Generators...",
-    ),
-    CommonOkay(
-        en = "OK",
-    ),
-    CommonApply(
-        en = "Apply",
-    ),
-    CommonCancel(
-        en = "Cancel",
-    ),
-    CommonYes(
-        en = "Yes",
-    ),
-    CommonNo(
-        en = "No",
-    ),
-    CommonWarning(
-        en = "Warning",
-    ),
-    CommonError(
-        en = "Error",
-    ),
-    CommonInputErrorPromptNumber(
-        en = "Please enter a number.",
-    ),
-    CommonInputErrorPromptInteger(
-        en = "Please enter an integer number.",
-    ),
-    CommonInputErrorPromptNumberRange(
-        en = "Please enter a number between %s and %s.",
-    ),
-    CommonInputErrorPromptNumberMin(
-        en = "Please enter a number greater than or equal to %s.",
-    ),
-    CommonInputErrorPromptNumberMax(
-        en = "Please enter a number less than or equal to %s.",
-    ),
-    StarterStart(
-        en = "Start",
-    ),
-    StarterNewProject(
-        en = "New Project...",
-    ),
-    StarterOpen(
-        en = "Open...",
-    ),
-    StarterRecent(
-        en = "Recent",
-    ),
-    StarterRecentEmpty(
-        en = "You have no recent projects.",
-    ),
-    StarterRecentDeleted(
-        en = "This profile has been removed.",
-    ),
-    StarterNewSampleDirectory(
-        en = "Sample directory",
-    ),
-    StarterNewWorkingDirectory(
-        en = "Project location",
-    ),
-    StarterNewProjectTitle(
-        en = "New Project",
-    ),
-    StarterNewProjectName(
-        en = "Project name",
-    ),
-    StarterNewProjectNameWarning(
-        en = "The project file already exists. Creating the project will overwrite the file.",
-    ),
-    StarterNewCacheDirectory(
-        en = "Cache directory",
-    ),
-    StarterNewLabeler(
-        en = "Labeler",
-    ),
-    StarterNewTemplatePlugin(
-        en = "Template generator",
-    ),
-    StarterNewTemplatePluginNone(
-        en = "None",
-    ),
-    StarterNewInputFile(
-        en = "Input file (.%s)",
-    ),
-    StarterNewInputFilePlaceholder(
-        en = "(One would be created if left blank)",
-    ),
-    StarterNewInputFileDisabled(
-        en = "No input file is required by the selected template generator",
-    ),
-    StarterNewEncoding(
-        en = "Encoding",
-    ),
-    StarterNewAutoExport(
-        en = "Auto-export",
-    ),
-    StarterNewAutoExportHelp(
-        en = "Automatically export the project to overwrite the given input file (if not given," +
-            " the default file position defined by labeler) when the project is saved.",
-    ),
-    SampleListIncludedHeader(
-        en = "Project sample files",
-    ),
-    SampleListIncludedItemEntryCountSingle(
-        en = "%d entry",
-    ),
-    SampleListIncludedItemEntryCountPlural(
-        en = "%d entries",
-    ),
-    SampleListExcludedHeader(
-        en = "Other sample files",
-    ),
-    SampleListExcludedPlaceholder(
-        en = "There are no unreferenced sample files in the sample directory.",
-    ),
-    SampleListEntryHeader(
-        en = "Entries",
-    ),
-    SampleListEntriesPlaceholderUnselected(
-        en = "Select a sample file on the left to show entries bound to it.",
-    ),
-    SampleListEntriesPlaceholderNoEntry(
-        en = "There are no entries bound to the selected sample file.",
-    ),
-    SampleListEntriesPlaceholderNoEntryButton(
-        en = "Create Default",
-    ),
-    SampleListJumpToSelectedEntryButton(
-        en = "Go to selected entry",
-    ),
-    SampleListOpenSampleDirectoryButton(
-        en = "Open sample directory",
-    ),
-    SampleListSampleDirectoryLabel(
-        en = "Sample directory: ",
-    ),
-    SampleListSampleDirectoryRedirectButton(
-        en = "Change sample directory",
-    ),
-    PrerendererSampleText(
-        en = "Rendering sample files %d/%d...",
-    ),
-    PrerendererSampleTextFinished(
-        en = "Rendering sample files %d/%d... Done",
-    ),
-    PrerendererChartText(
-        en = "Rendering charts %d/%d...",
-    ),
-    PrerendererChartTextFinished(
-        en = "Rendering charts %d/%d... Done",
-    ),
-    EditorRenderStatusLabel(
-        en = "%d/%d Rendering...",
-    ),
-    ChooseSampleDirectoryDialogTitle(
-        en = "Choose sample directory",
-    ),
-    ChooseWorkingDirectoryDialogTitle(
-        en = "Choose project location directory",
-    ),
-    ChooseCacheDirectoryDialogTitle(
-        en = "Choose cache directory",
-    ),
-    ChooseInputFileDialogTitle(
-        en = "Choose input file",
-    ),
-    OpenProjectDialogTitle(
-        en = "Open project",
-    ),
-    SaveAsProjectDialogTitle(
-        en = "Save as project",
-    ),
-    ExportDialogTitle(
-        en = "Export",
-    ),
-    SetResolutionDialogDescription(
-        en = "Input canvas resolution (points per pixel) for the editor (%d ~ %d)",
-    ),
-    AskIfSaveBeforeOpenDialogDescription(
-        en = "You have unsaved changes. Do you want to save them before opening a new project?",
-    ),
-    AskIfSaveBeforeExportDialogDescription(
-        en = "You have unsaved changes. Do you want to save them before exporting?",
-    ),
-    AskIfSaveBeforeCloseDialogDescription(
-        en = "You have unsaved changes. Do you want to save them before closing the current project?",
-    ),
-    AskIfSaveBeforeExitDialogDescription(
-        en = "You have unsaved changes. Do you want to save them before exiting?",
-    ),
-    InputEntryNameDialogDescription(
-        en = "Rename entry",
-    ),
-    InputEntryNameDuplicateDialogDescription(
-        en = "Input name for the new entry",
-    ),
-    InputEntryNameCutFormerDialogDescription(
-        en = "Input name for the former entry after cutting",
-    ),
-    InputEntryNameCutLatterDialogDescription(
-        en = "Input name for the latter entry after cutting",
-    ),
-    EditEntryNameDialogExistingError(
-        en = "The name you input already exists.",
-    ),
-    AskIfRemoveEntryDialogDescription(
-        en = "Removing current entry...",
-    ),
-    AskIfRemoveEntryLastDialogDescription(
-        en = "Removing current entry...\nThis entry is the only one that has reference of the current sample file." +
-            "\nIf you need to add an entry on it later, please see menu `View` -> `Sample List`.",
-    ),
-    AskIfLoadAutoSavedProjectDialogDescription(
-        en = "Auto-saved project file found. Do you want to load it? If not, the file will be discarded.",
-    ),
-    AskIfRedirectSampleDirectoryDialogDescription(
-        en = "The sample directory of this project (%s) is not found. Do you want to redirect it to a new directory?",
-    ),
-    PluginDialogTitle(
-        en = "vLabeler - Plugin",
-    ),
-    PluginDialogInfoAuthor(
-        en = "author: %s",
-    ),
-    PluginDialogInfoVersion(
-        en = "version: %d",
-    ),
-    PluginDialogInfoContact(
-        en = "Contact author",
-    ),
-    PluginDialogDescriptionMin(
-        en = "min: %s",
-    ),
-    PluginDialogDescriptionMax(
-        en = "max: %s",
-    ),
-    PluginDialogDescriptionMinMax(
-        en = "min: %s, max: %s",
-    ),
-    PluginDialogExecute(
-        en = "Execute",
-    ),
-    PluginEntrySelectorTextMatchTypeEquals(
-        en = "Equals",
-    ),
-    PluginEntrySelectorTextMatchTypeContains(
-        en = "Contains",
-    ),
-    PluginEntrySelectorTextMatchTypeStartsWith(
-        en = "Starts with",
-    ),
-    PluginEntrySelectorTextMatchTypeEndsWith(
-        en = "Ends with",
-    ),
-    PluginEntrySelectorTextMatchTypeRegex(
-        en = "Regex",
-    ),
-    PluginEntrySelectorNumberMatchTypeEquals(
-        en = "=",
-    ),
-    PluginEntrySelectorNumberMatchTypeGreaterThan(
-        en = ">",
-    ),
-    PluginEntrySelectorNumberMatchTypeGreaterThanOrEquals(
-        en = ">=",
-    ),
-    PluginEntrySelectorNumberMatchTypeLessThan(
-        en = "<",
-    ),
-    PluginEntrySelectorNumberMatchTypeLessThanOrEquals(
-        en = "<=",
-    ),
-    PluginEntrySelectorPreservedSubjectSample(
-        en = "Sample name",
-    ),
-    PluginEntrySelectorPreservedSubjectName(
-        en = "Entry name",
-    ),
-    PluginEntrySelectorPreservedSubjectTag(
-        en = "Tag",
-    ),
-    PluginEntrySelectorPreservedSubjectDone(
-        en = "Done",
-    ),
-    PluginEntrySelectorPreservedSubjectStar(
-        en = "Starred",
-    ),
-    PluginEntrySelectorComparerValue(
-        en = "Input",
-    ),
-    PluginEntrySelectorPreviewSummaryError(
-        en = "Invalid input",
-    ),
-    PluginEntrySelectorPreviewSummaryInitializing(
-        en = "Initializing...",
-    ),
-    PluginEntrySelectorPreviewSummary(
-        en = "Selects %d/%d",
-    ),
-    EditorSubTitleMultiple(
-        en = "editing %d entries in sample %s",
-    ),
-    FailedToLoadSampleFileError(
-        en = "Could not load the sample file.\nIt may not exist or is not a supported format.",
-    ),
-    EmptySampleDirectoryException(
-        en = "Could not create the project because no sample files are found in the given sample directory.",
-    ),
-    PluginRuntimeUnexpectedException(
-        en = "An unexpected error occurred during the plugin execution.\n" +
-            "Please contact the author for more information.",
-    ),
-    InvalidCreatedProjectException(
-        en = "The created project is not valid.\nPlease contact the author of the labeler/plugin for more information.",
-    ),
-    InvalidOpenedProjectException(
-        en = "Could not open the project because it contains invalid data.\n" +
-            "Please check the error log for more information.",
-    ),
-    ProjectParseException(
-        en = "Could not open the project.\nIt may be corrupted or created by an incompatible version of vLabeler.",
-    ),
-    ProjectUpdateOnSampleException(
-        en = "Could not update the project with the loaded sample file." +
-            "\nPlease check the error log for more information.",
-    ),
-    InvalidEditedProjectException(
-        en = "Invalid edited project.\nPlease check error log for more information.",
-    ),
-    CustomizableItemLoadingException(
-        en = "Could not load the selected customized item.",
-    ),
-    LabelerManagerTitle(
-        en = "Labelers",
-    ),
-    LabelerManagerImportDialogTitle(
-        en = "Import labeler",
-    ),
-    TemplatePluginManagerTitle(
-        en = "Template generators",
-    ),
-    TemplatePluginManagerImportDialogTitle(
-        en = "Import template generator",
-    ),
-    MacroPluginManagerTitle(
-        en = "Batch Edit Plugins",
-    ),
-    MacroPluginManagerImportDialogTitle(
-        en = "Import batch edit plugin",
-    ),
-    CustomizableItemManagerRemoveItemConfirm(
-        en = "Are you sure you want to remove \"%s\"? This will remove the file(s) from the disk.",
-    ),
-    CustomizableItemManagerOpenDirectory(
-        en = "Open directory",
-    ),
-    CustomizableItemManagerReload(
-        en = "Reload list",
-    ),
-    CustomizableItemManagerLockedDescription(
-        en = "This item is built-in and cannot be removed.",
-    ),
-    PreferencesEditorImport(
-        en = "Import",
-    ),
-    PreferencesEditorImportDialogTitle(
-        en = "Import preferences",
-    ),
-    PreferencesEditorImportSuccess(
-        en = "Successfully imported preferences.",
-    ),
-    PreferencesEditorImportFailure(
-        en = "Failed to import the selected preferences file.",
-    ),
-    PreferencesEditorExport(
-        en = "Export",
-    ),
-    PreferencesEditorExportSuccess(
-        en = "Successfully exported preferences.",
-    ),
-    PreferencesEditorExportFailure(
-        en = "Failed to export preferences to the selected file.",
-    ),
-    PreferencesEditorExportDialogTitle(
-        en = "Export preferences",
-    ),
-    PreferencesEditorResetPage(
-        en = "Reset items in this page",
-    ),
-    PreferencesEditorResetAll(
-        en = "Reset all items",
-    ),
-    PreferencesCharts(
-        en = "Charts",
-    ),
-    PreferencesChartsDescription(
-        en = "Customize the charts being rendered in the editor.",
-    ),
-    PreferencesChartsCanvas(
-        en = "Canvas",
-    ),
-    PreferencesChartsCanvasDescription(
-        en = "Customize general settings about the canvas where the charts are drawn.",
-    ),
-    PreferencesChartsCanvasResolution(
-        en = "Canvas resolution",
-    ),
-    PreferencesChartsCanvasResolutionDescription(
-        en = "Defined as the number of sample points included in 1 pixel.\n" +
-            "The bigger the number, the longer time duration the charts show on your screen.",
-    ),
-    PreferencesChartsCanvasResolutionDefault(
-        en = "Default resolution",
-    ),
-    PreferencesChartsCanvasResolutionStep(
-        en = "Step",
-    ),
-    PreferencesChartsMaxDataChunkSize(
-        en = "Max data chunk size",
-    ),
-    PreferencesChartsMaxDataChunkSizeDescription(
-        en = "Max frames that will be included in a chart chunk.\n" +
-            "The bigger the number, the fewer parts your charts will be divided into during rendering.",
-    ),
-    PreferencesChartsWaveform(
-        en = "Waveform",
-    ),
-    PreferencesChartsWaveformDescription(
-        en = "Customize the waveform chart.",
-    ),
-    PreferencesChartsWaveformResampleDownTo(
-        en = "Maximum sample rate (Hz)",
-    ),
-    PreferencesChartsWaveformResampleDownToDescription(
-        en = "Audio file with a higher sample rate will be resampled down to the given value.\n" +
-            "Set to 0 to disable resampling.",
-    ),
-    PreferencesChartsWaveformNormalize(
-        en = "Normalize audio",
-    ),
-    PreferencesChartsWaveformUnitSize(
-        en = "Points per pixel",
-    ),
-    PreferencesChartsWaveformUnitSizeDescription(
-        en = "Increase for lower image quality.",
-    ),
-    PreferencesChartsWaveformIntensityAccuracy(
-        en = "Bitmap height (px)",
-    ),
-    PreferencesChartsWaveformYAxisBlankRate(
-        en = "Vertical padding (%%)",
-    ),
-    PreferencesChartsWaveformColor(
-        en = "Color",
-    ),
-    PreferencesChartsWaveformBackgroundColor(
-        en = "Background color",
-    ),
-    PreferencesChartsSpectrogram(
-        en = "Spectrogram",
-    ),
-    PreferencesChartsSpectrogramDescription(
-        en = "Customize the spectrogram chart.",
-    ),
-    PreferencesChartsSpectrogramEnabled(
-        en = "Show spectrogram",
-    ),
-    PreferencesChartsSpectrogramHeight(
-        en = "Height relative to waveforms (%%)",
-    ),
-    PreferencesChartsSpectrogramPointDensity(
-        en = "Points per pixel",
-    ),
-    PreferencesChartsSpectrogramPointDensityDescription(
-        en = "Increase for lower image quality.",
-    ),
-    PreferencesChartsSpectrogramHopSize(
-        en = "FFT hop size",
-    ),
-    PreferencesChartsSpectrogramHopSizeDescription(
-        en = "Adapted to the actual sample rate.",
-    ),
-    PreferencesChartsSpectrogramWindowSize(
-        en = "Window size",
-    ),
-    PreferencesChartsSpectrogramWindowSizeDescription(
-        en = "Adapted to the actual sample rate.",
-    ),
-    PreferencesChartsSpectrogramMelScaleStep(
-        en = "Frequency resolution (mel)",
-    ),
-    PreferencesChartsSpectrogramMaxFrequency(
-        en = "Max frequency displayed (Hz)",
-    ),
-    PreferencesChartsSpectrogramMinIntensity(
-        en = "Min intensity displayed (dB)",
-    ),
-    PreferencesChartsSpectrogramMaxIntensity(
-        en = "Max intensity displayed (dB)",
-    ),
-    PreferencesChartsSpectrogramWindowType(
-        en = "Window function",
-    ),
-    PreferencesChartsSpectrogramColorPalette(
-        en = "Colors",
-    ),
-    PreferencesKeymap(
-        en = "Keymap",
-    ),
-    PreferencesKeymapDescription(
-        en = "Customize key bindings for key/mouse actions.",
-    ),
-    PreferencesKeymapKeyAction(
-        en = "Key actions",
-    ),
-    PreferencesKeymapKeyActionDescription(
-        en = "Customize key bindings for key actions.",
-    ),
-    PreferencesKeymapMouseClickAction(
-        en = "Mouse click actions",
-    ),
-    PreferencesKeymapMouseClickActionDescription(
-        en = "Customize key bindings for mouse click actions.\n" +
-            "An action is conducted only while all the keys in the key bindings are pressed.",
-    ),
-    PreferencesKeymapMouseScrollAction(
-        en = "Mouse scroll actions",
-    ),
-    PreferencesKeymapMouseScrollActionDescription(
-        en = "Customize key bindings for mouse scroll actions.\n" +
-            "An action is conducted only while all the keys in the key bindings are pressed.",
-    ),
-    PreferencesKeymapEditDialogTitle(
-        en = "Editing key bind for:",
-    ),
-    PreferencesKeymapEditDialogDescriptionMouseClick(
-        en = "Left/Right click on the text field with other keys pressed to input a shortcut.",
-    ),
-    PreferencesKeymapEditDialogDescriptionMouseScroll(
-        en = "Scroll mouse wheel on the text field with other keys pressed to input a shortcut.",
-    ),
-    PreferencesKeymapEditDialogConflictingLabel(
-        en = "Already assigned to:",
-    ),
-    PreferencesKeymapEditDialogConflictingWarning(
-        en = "This shortcut is already assigned to other actions.\nDo you want to remove the other assignments?",
-    ),
-    PreferencesKeymapEditDialogConflictingWarningKeep(
-        en = "Keep",
-    ),
-    PreferencesKeymapEditDialogConflictingWarningRemove(
-        en = "Remove",
-    ),
-    PreferencesView(
-        en = "View",
-    ),
-    PreferencesViewDescription(
-        en = "Customize view appearances",
-    ),
-    PreferencesViewAppAccentColor(
-        en = "Accent color (light) of the app",
-    ),
-    PreferencesViewAppAccentColorVariant(
-        en = "Accent color (dark) of the app",
-    ),
-    PreferencesViewPinnedEntryListPosition(
-        en = "Position of pinned entry list",
-    ),
-    PreferencesEditor(
-        en = "Editor",
-    ),
-    PreferencesEditorDescription(
-        en = "Customize the editor's appearance and behavior.",
-    ),
-    PreferencesEditorPlayerCursorColor(
-        en = "Player cursor color",
-    ),
-    PreferencesEditorPlayerLockedDrag(
-        en = "Fixed-drag",
-    ),
-    PreferencesEditorPlayerLockedDragDescription(
-        en = "Select a condition to enable fixed-drag while you move the parameter lines.\n" +
-            "When it is enabled, the other parameter lines will be moved accordingly to " +
-            "keep relative positions to the parameter you are moving.",
-    ),
-    PreferencesEditorPlayerLockedDragUseLabeler(
-        en = "Use settings defined by the labeler",
-    ),
-    PreferencesEditorPlayerLockedDragUseStart(
-        en = "Fixed-drag at the entry's start",
-    ),
-    PreferencesEditorPlayerLockedDragNever(
-        en = "Never do fixed-drag",
-    ),
-    PreferencesEditorMetadata(
-        en = "Metadata",
-    ),
-    PreferencesEditorMetadataDescription(
-        en = "Customize the editor's appearance and behavior about entry metadata (starred, done, tag).",
-    ),
-    PreferencesEditorShowDone(
-        en = "Display \"Done\" status",
-    ),
-    PreferencesEditorAutoDone(
-        en = "Automatically set edited entries as \"Done\"",
-    ),
-    PreferencesEditorShowStarred(
-        en = "Display \"Starred\" status",
-    ),
-    PreferencesEditorShowTag(
-        en = "Display tags",
-    ),
-    PreferencesEditorScissors(
-        en = "Scissors",
-    ),
-    PreferencesEditorScissorsDescription(
-        en = "Customize appearance and behavior of the scissors tool.",
-    ),
-    PreferencesEditorScissorsColor(
-        en = "Color",
-    ),
-    PreferencesEditorScissorsActionTargetNone(
-        en = "None",
-    ),
-    PreferencesEditorScissorsActionTargetFormer(
-        en = "The former entry",
-    ),
-    PreferencesEditorScissorsActionTargetLatter(
-        en = "The latter entry",
-    ),
-    PreferencesEditorScissorsActionGoTo(
-        en = "Go to entry after cutting",
-    ),
-    PreferencesEditorScissorsActionAskForName(
-        en = "Rename entry after cutting",
-    ),
-    PreferencesEditorScissorsActionPlay(
-        en = "Play audio when cutting",
-    ),
-    PreferencesEditorAutoScroll(
-        en = "Auto scroll",
-    ),
-    PreferencesEditorAutoScrollDescription(
-        en = "Define when the editor will automatically scroll to show the current entry.",
-    ),
-    PreferencesEditorAutoScrollOnLoadedNewSample(
-        en = "When switched to another sample",
-    ),
-    PreferencesEditorAutoScrollOnJumpedToEntry(
-        en = "When switched to another entry by absolute index",
-    ),
-    PreferencesEditorAutoScrollOnSwitchedInMultipleEditMode(
-        en = "When switched to another entry in multiple edit mode",
-    ),
-    PreferencesEditorAutoScrollOnSwitched(
-        en = "When switched to another entry",
-    ),
-    PreferencesPlayback(
-        en = "Playback",
-    ),
-    PreferencesPlaybackDescription(
-        en = "Customize the behavior about audio playback.",
-    ),
-    PreferencesPlaybackPlayOnDragging(
-        en = "Preview playback",
-    ),
-    PreferencesPlaybackPlayOnDraggingDescription(
-        en = "When dragging any parameter lines, play the audio range near the cursor.",
-    ),
-    PreferencesPlaybackPlayOnDraggingEnabled(
-        en = "Enabled",
-    ),
-    PreferencesPlaybackPlayOnDraggingRangeRadiusMillis(
-        en = "Radius (ms)",
-    ),
-    PreferencesPlaybackPlayOnDraggingEventQueueSize(
-        en = "Retain drag events",
-    ),
-    PreferencesAutoSave(
-        en = "Auto save",
-    ),
-    PreferencesAutoSaveDescription(
-        en = "Customize the behavior about project auto-save.",
-    ),
-    PreferencesAutoSaveTarget(
-        en = "Location of auto-saved file",
-    ),
-    PreferencesAutoSaveTargetNone(
-        en = "Do not auto-save",
-    ),
-    PreferencesAutoSaveTargetProject(
-        en = "Overwrite project file",
-    ),
-    PreferencesAutoSaveTargetRecord(
-        en = "Save to temporary file",
-    ),
-    PreferencesAutoSaveIntervalSec(
-        en = "Interval (sec)",
-    ),
-    PreferencesHistory(
-        en = "Edit history",
-    ),
-    PreferencesHistoryDescription(
-        en = "Customize the behavior about edit history (undo/redo).",
-    ),
-    PreferencesHistoryMaxSize(
-        en = "Maximum retained size",
-    ),
-    PreferencesHistorySquashIndex(
-        en = "Squash index changes",
-    ),
-    PreferencesHistorySquashIndexDescription(
-        en = "When enabled, index changes (e.g. switch entries) will not be saved until the next content change.",
-    ),
-    ActionToggleSamplePlayback(
-        en = "Toggle Playback of Current Sample",
-    ),
-    ActionToggleEntryPlayback(
-        en = "Toggle Playback of Current Entry",
-    ),
-    ActionIncreaseResolution(
-        en = "Zoom Out",
-    ),
-    ActionDecreaseResolution(
-        en = "Zoom In",
-    ),
-    ActionInputResolution(
-        en = "Input Canvas Resolution",
-    ),
-    ActionCancelDialog(
-        en = "Close Dialog",
-    ),
-    ActionSetValue1(
-        en = "Set Parameter 1 To Cursor Position",
-    ),
-    ActionSetValue2(
-        en = "Set Parameter 2 To Cursor Position",
-    ),
-    ActionSetValue3(
-        en = "Set Parameter 3 To Cursor Position",
-    ),
-    ActionSetValue4(
-        en = "Set Parameter 4 To Cursor Position",
-    ),
-    ActionSetValue5(
-        en = "Set Parameter 5 To Cursor Position",
-    ),
-    ActionSetValue6(
-        en = "Set Parameter 6 To Cursor Position",
-    ),
-    ActionSetValue7(
-        en = "Set Parameter 7 To Cursor Position",
-    ),
-    ActionSetValue8(
-        en = "Set Parameter 8 To Cursor Position",
-    ),
-    ActionSetValue9(
-        en = "Set Parameter 9 To Cursor Position",
-    ),
-    ActionSetValue10(
-        en = "Set Parameter 10 To Cursor Position",
-    ),
-    ActionMoveParameter(
-        en = "Drag Parameter Line",
-    ),
-    ActionMoveParameterWithPlaybackPreview(
-        en = "Drag Parameter Line with Playback Preview",
-    ),
-    ActionMoveParameterIgnoringConstraints(
-        en = "Drag Parameter Line Ignoring Constraints",
-    ),
-    ActionMoveParameterInvertingLocked(
-        en = "Drag Parameter Line with Fixed-drag Settings Inverted",
-    ),
-    ActionPlayAudioSection(
-        en = "Play the Clicked Audio Part",
-    ),
-    ActionScrollCanvasLeft(
-        en = "Scroll Canvas to Left",
-    ),
-    ActionScrollCanvasRight(
-        en = "Scroll Canvas to Right",
-    ),
-    ActionZoomInCanvas(
-        en = "Zoom In",
-    ),
-    ActionZoomOutCanvas(
-        en = "Zoom Out",
-    ),
-    ActionGoToNextEntry(
-        en = "Go to Next Entry",
-    ),
-    ActionGoToPreviousEntry(
-        en = "Go to Previous Entry",
-    ),
-    ActionGoToNextSample(
-        en = "Go to Next Sample",
-    ),
-    ActionGoToPreviousSample(
-        en = "Go to Previous Sample",
-    ),
-    CheckForUpdatesAlreadyUpdated(
-        en = "You already have the latest version of vLabeler installed.",
-    ),
-    CheckForUpdatesFailure(
-        en = "Could not fetch the latest version information.",
-    ),
-    UpdaterDialogSummaryDetailsLink(
-        en = "Details",
-    ),
-    UpdaterDialogTitle(
-        en = "vLabeler - Update",
-    ),
-    UpdaterDialogCurrentVersionLabel(
-        en = "Current version: %s",
-    ),
-    UpdaterDialogLatestVersionLabel(
-        en = "Latest version: %s (%s)",
-    ),
-    UpdaterDialogStartDownloadButton(
-        en = "Download",
-    ),
-    UpdaterDialogIgnoreButton(
-        en = "Ignore this version",
-    ),
-    AboutDialogTitle(
-        en = "vLabeler - About",
-    ),
-    AboutDialogCopyInfo(
-        en = "Copy info",
-    ),
-    AboutDialogShowLicenses(
-        en = "Show licenses",
-    ),
-    LicenseDialogTitle(
-        en = "vLabeler - Licenses",
-    ),
-    LicenseDialogLicenses(
-        en = "OSS Licenses used in vLabeler",
-    ),
-    LoadProjectWarningLabelerCreated(
-        en = "A new labeler `%s` is installed by the project file.",
-    ),
-    LoadProjectWarningLabelerUpdated(
-        en = "Labeler `%s` is updated to version `%s` by the project file.",
-    ),
-    LoadProjectWarningCacheDirReset(
-        en = "Cannot find or create the cache directory defined in the project file." +
-            " A default cache directory will be used instead.",
-    ),
-    FilterStarred(
-        en = "Filtering starred entries",
-    ),
-    FilterUnstarred(
-        en = "Filtering unstarred entries",
-    ),
-    FilterStarIgnored(
-        en = "Not filtered by star",
-    ),
-    FilterDone(
-        en = "Filtering done entries",
-    ),
-    FilterUndone(
-        en = "Filtering undone entries",
-    ),
-    FilterDoneIgnored(
-        en = "Not filtered by done",
-    ),
-    FilterLink(
-        en = "Toggle to apply the filters to project navigation",
-    ),
-    FilterLinked(
-        en = "Filters applied to project navigation",
-    ),
-    ColorPickerDialogTitle(
-        en = "vLabeler - Color Picker",
-    ),
+enum class Strings {
+    AppName,
+    LanguageDisplayName,
+    MenuFile,
+    MenuFileNewProject,
+    MenuFileOpen,
+    MenuFileOpenRecent,
+    MenuFileOpenRecentClear,
+    MenuFileSave,
+    MenuFileSaveAs,
+    MenuFileExport,
+    MenuFileInvalidateCaches,
+    MenuFileClose,
+    MenuEdit,
+    MenuEditUndo,
+    MenuEditRedo,
+    MenuEditTools,
+    MenuEditToolsCursor,
+    MenuEditToolsScissors,
+    MenuEditToolsPan,
+    MenuEditRenameEntry,
+    MenuEditDuplicateEntry,
+    MenuEditRemoveEntry,
+    MenuEditToggleDone,
+    MenuEditToggleStar,
+    MenuEditEditTag,
+    MenuEditMultipleEditMode,
+    MenuView,
+    MenuViewToggleMarker,
+    MenuViewPinEntryList,
+    MenuViewPinEntryListLocked,
+    MenuViewToggleProperties,
+    MenuViewToggleToolbox,
+    MenuViewOpenSampleList,
+    MenuNavigate,
+    MenuNavigateNextEntry,
+    MenuNavigatePreviousEntry,
+    MenuNavigateNextSample,
+    MenuNavigatePreviousSample,
+    MenuNavigateJumpToEntry,
+    MenuNavigateScrollFit,
+    MenuTools,
+    MenuToolsBatchEdit,
+    MenuToolsBatchEditManagePlugins,
+    MenuToolsPrerender,
+    MenuSettings,
+    MenuSettingsPreferences,
+    MenuSettingsLabelers,
+    MenuSettingsTemplatePlugins,
+    MenuHelp,
+    MenuHelpCheckForUpdates,
+    MenuHelpOpenLogDirectory,
+    MenuHelpOpenLatestRelease,
+    MenuHelpOpenGitHub,
+    MenuHelpJoinDiscord,
+    MenuHelpAbout,
+    CommonOkay,
+    CommonApply,
+    CommonCancel,
+    CommonYes,
+    CommonNo,
+    CommonWarning,
+    CommonError,
+    CommonInputErrorPromptNumber,
+    CommonInputErrorPromptInteger,
+    CommonInputErrorPromptNumberRange,
+    CommonInputErrorPromptNumberMin,
+    CommonInputErrorPromptNumberMax,
+    StarterStart,
+    StarterNewProject,
+    StarterOpen,
+    StarterRecent,
+    StarterRecentEmpty,
+    StarterRecentDeleted,
+    StarterNewSampleDirectory,
+    StarterNewWorkingDirectory,
+    StarterNewProjectTitle,
+    StarterNewProjectName,
+    StarterNewProjectNameWarning,
+    StarterNewCacheDirectory,
+    StarterNewLabeler,
+    StarterNewTemplatePlugin,
+    StarterNewTemplatePluginNone,
+    StarterNewInputFile,
+    StarterNewInputFilePlaceholder,
+    StarterNewInputFileDisabled,
+    StarterNewEncoding,
+    StarterNewAutoExport,
+    StarterNewAutoExportHelp,
+    SampleListIncludedHeader,
+    SampleListIncludedItemEntryCountSingle,
+    SampleListIncludedItemEntryCountPlural,
+    SampleListExcludedHeader,
+    SampleListExcludedPlaceholder,
+    SampleListEntryHeader,
+    SampleListEntriesPlaceholderUnselected,
+    SampleListEntriesPlaceholderNoEntry,
+    SampleListEntriesPlaceholderNoEntryButton,
+    SampleListJumpToSelectedEntryButton,
+    SampleListOpenSampleDirectoryButton,
+    SampleListSampleDirectoryLabel,
+    SampleListSampleDirectoryRedirectButton,
+    PrerendererSampleText,
+    PrerendererSampleTextFinished,
+    PrerendererChartText,
+    PrerendererChartTextFinished,
+    EditorRenderStatusLabel,
+    ChooseSampleDirectoryDialogTitle,
+    ChooseWorkingDirectoryDialogTitle,
+    ChooseCacheDirectoryDialogTitle,
+    ChooseInputFileDialogTitle,
+    OpenProjectDialogTitle,
+    SaveAsProjectDialogTitle,
+    ExportDialogTitle,
+    SetResolutionDialogDescription,
+    AskIfSaveBeforeOpenDialogDescription,
+    AskIfSaveBeforeExportDialogDescription,
+    AskIfSaveBeforeCloseDialogDescription,
+    AskIfSaveBeforeExitDialogDescription,
+    InputEntryNameDialogDescription,
+    InputEntryNameDuplicateDialogDescription,
+    InputEntryNameCutFormerDialogDescription,
+    InputEntryNameCutLatterDialogDescription,
+    EditEntryNameDialogExistingError,
+    AskIfRemoveEntryDialogDescription,
+    AskIfRemoveEntryLastDialogDescription,
+    AskIfLoadAutoSavedProjectDialogDescription,
+    AskIfRedirectSampleDirectoryDialogDescription,
+    PluginDialogTitle,
+    PluginDialogInfoAuthor,
+    PluginDialogInfoVersion,
+    PluginDialogInfoContact,
+    PluginDialogDescriptionMin,
+    PluginDialogDescriptionMax,
+    PluginDialogDescriptionMinMax,
+    PluginDialogExecute,
+    PluginEntrySelectorTextMatchTypeEquals,
+    PluginEntrySelectorTextMatchTypeContains,
+    PluginEntrySelectorTextMatchTypeStartsWith,
+    PluginEntrySelectorTextMatchTypeEndsWith,
+    PluginEntrySelectorTextMatchTypeRegex,
+    PluginEntrySelectorNumberMatchTypeEquals,
+    PluginEntrySelectorNumberMatchTypeGreaterThan,
+    PluginEntrySelectorNumberMatchTypeGreaterThanOrEquals,
+    PluginEntrySelectorNumberMatchTypeLessThan,
+    PluginEntrySelectorNumberMatchTypeLessThanOrEquals,
+    PluginEntrySelectorPreservedSubjectSample,
+    PluginEntrySelectorPreservedSubjectName,
+    PluginEntrySelectorPreservedSubjectTag,
+    PluginEntrySelectorPreservedSubjectDone,
+    PluginEntrySelectorPreservedSubjectStar,
+    PluginEntrySelectorComparerValue,
+    PluginEntrySelectorPreviewSummaryError,
+    PluginEntrySelectorPreviewSummaryInitializing,
+    PluginEntrySelectorPreviewSummary,
+    EditorSubTitleMultiple,
+    FailedToLoadSampleFileError,
+    EmptySampleDirectoryException,
+    PluginRuntimeUnexpectedException,
+    InvalidCreatedProjectException,
+    InvalidOpenedProjectException,
+    ProjectParseException,
+    ProjectUpdateOnSampleException,
+    InvalidEditedProjectException,
+    CustomizableItemLoadingException,
+    LabelerManagerTitle,
+    LabelerManagerImportDialogTitle,
+    TemplatePluginManagerTitle,
+    TemplatePluginManagerImportDialogTitle,
+    MacroPluginManagerTitle,
+    MacroPluginManagerImportDialogTitle,
+    CustomizableItemManagerRemoveItemConfirm,
+    CustomizableItemManagerOpenDirectory,
+    CustomizableItemManagerReload,
+    CustomizableItemManagerLockedDescription,
+    PreferencesEditorImport,
+    PreferencesEditorImportDialogTitle,
+    PreferencesEditorImportSuccess,
+    PreferencesEditorImportFailure,
+    PreferencesEditorExport,
+    PreferencesEditorExportSuccess,
+    PreferencesEditorExportFailure,
+    PreferencesEditorExportDialogTitle,
+    PreferencesEditorResetPage,
+    PreferencesEditorResetAll,
+    PreferencesCharts,
+    PreferencesChartsDescription,
+    PreferencesChartsCanvas,
+    PreferencesChartsCanvasDescription,
+    PreferencesChartsCanvasResolution,
+    PreferencesChartsCanvasResolutionDescription,
+    PreferencesChartsCanvasResolutionDefault,
+    PreferencesChartsCanvasResolutionStep,
+    PreferencesChartsMaxDataChunkSize,
+    PreferencesChartsMaxDataChunkSizeDescription,
+    PreferencesChartsWaveform,
+    PreferencesChartsWaveformDescription,
+    PreferencesChartsWaveformResampleDownTo,
+    PreferencesChartsWaveformResampleDownToDescription,
+    PreferencesChartsWaveformNormalize,
+    PreferencesChartsWaveformUnitSize,
+    PreferencesChartsWaveformUnitSizeDescription,
+    PreferencesChartsWaveformIntensityAccuracy,
+    PreferencesChartsWaveformYAxisBlankRate,
+    PreferencesChartsWaveformColor,
+    PreferencesChartsWaveformBackgroundColor,
+    PreferencesChartsSpectrogram,
+    PreferencesChartsSpectrogramDescription,
+    PreferencesChartsSpectrogramEnabled,
+    PreferencesChartsSpectrogramHeight,
+    PreferencesChartsSpectrogramPointDensity,
+    PreferencesChartsSpectrogramPointDensityDescription,
+    PreferencesChartsSpectrogramHopSize,
+    PreferencesChartsSpectrogramHopSizeDescription,
+    PreferencesChartsSpectrogramWindowSize,
+    PreferencesChartsSpectrogramWindowSizeDescription,
+    PreferencesChartsSpectrogramMelScaleStep,
+    PreferencesChartsSpectrogramMaxFrequency,
+    PreferencesChartsSpectrogramMinIntensity,
+    PreferencesChartsSpectrogramMaxIntensity,
+    PreferencesChartsSpectrogramWindowType,
+    PreferencesChartsSpectrogramColorPalette,
+    PreferencesKeymap,
+    PreferencesKeymapDescription,
+    PreferencesKeymapKeyAction,
+    PreferencesKeymapKeyActionDescription,
+    PreferencesKeymapMouseClickAction,
+    PreferencesKeymapMouseClickActionDescription,
+    PreferencesKeymapMouseScrollAction,
+    PreferencesKeymapMouseScrollActionDescription,
+    PreferencesKeymapEditDialogTitle,
+    PreferencesKeymapEditDialogDescriptionMouseClick,
+    PreferencesKeymapEditDialogDescriptionMouseScroll,
+    PreferencesKeymapEditDialogConflictingLabel,
+    PreferencesKeymapEditDialogConflictingWarning,
+    PreferencesKeymapEditDialogConflictingWarningKeep,
+    PreferencesKeymapEditDialogConflictingWarningRemove,
+    PreferencesView,
+    PreferencesViewDescription,
+    PreferencesViewAppAccentColor,
+    PreferencesViewAppAccentColorVariant,
+    PreferencesViewPinnedEntryListPosition,
+    PreferencesEditor,
+    PreferencesEditorDescription,
+    PreferencesEditorPlayerCursorColor,
+    PreferencesEditorPlayerLockedDrag,
+    PreferencesEditorPlayerLockedDragDescription,
+    PreferencesEditorPlayerLockedDragUseLabeler,
+    PreferencesEditorPlayerLockedDragUseStart,
+    PreferencesEditorPlayerLockedDragNever,
+    PreferencesEditorMetadata,
+    PreferencesEditorMetadataDescription,
+    PreferencesEditorShowDone,
+    PreferencesEditorAutoDone,
+    PreferencesEditorShowStarred,
+    PreferencesEditorShowTag,
+    PreferencesEditorScissors,
+    PreferencesEditorScissorsDescription,
+    PreferencesEditorScissorsColor,
+    PreferencesEditorScissorsActionTargetNone,
+    PreferencesEditorScissorsActionTargetFormer,
+    PreferencesEditorScissorsActionTargetLatter,
+    PreferencesEditorScissorsActionGoTo,
+    PreferencesEditorScissorsActionAskForName,
+    PreferencesEditorScissorsActionPlay,
+    PreferencesEditorAutoScroll,
+    PreferencesEditorAutoScrollDescription,
+    PreferencesEditorAutoScrollOnLoadedNewSample,
+    PreferencesEditorAutoScrollOnJumpedToEntry,
+    PreferencesEditorAutoScrollOnSwitchedInMultipleEditMode,
+    PreferencesEditorAutoScrollOnSwitched,
+    PreferencesPlayback,
+    PreferencesPlaybackDescription,
+    PreferencesPlaybackPlayOnDragging,
+    PreferencesPlaybackPlayOnDraggingDescription,
+    PreferencesPlaybackPlayOnDraggingEnabled,
+    PreferencesPlaybackPlayOnDraggingRangeRadiusMillis,
+    PreferencesPlaybackPlayOnDraggingEventQueueSize,
+    PreferencesAutoSave,
+    PreferencesAutoSaveDescription,
+    PreferencesAutoSaveTarget,
+    PreferencesAutoSaveTargetNone,
+    PreferencesAutoSaveTargetProject,
+    PreferencesAutoSaveTargetRecord,
+    PreferencesAutoSaveIntervalSec,
+    PreferencesHistory,
+    PreferencesHistoryDescription,
+    PreferencesHistoryMaxSize,
+    PreferencesHistorySquashIndex,
+    PreferencesHistorySquashIndexDescription,
+    ActionToggleSamplePlayback,
+    ActionToggleEntryPlayback,
+    ActionIncreaseResolution,
+    ActionDecreaseResolution,
+    ActionInputResolution,
+    ActionCancelDialog,
+    ActionSetValue1,
+    ActionSetValue2,
+    ActionSetValue3,
+    ActionSetValue4,
+    ActionSetValue5,
+    ActionSetValue6,
+    ActionSetValue7,
+    ActionSetValue8,
+    ActionSetValue9,
+    ActionSetValue10,
+    ActionMoveParameter,
+    ActionMoveParameterWithPlaybackPreview,
+    ActionMoveParameterIgnoringConstraints,
+    ActionMoveParameterInvertingLocked,
+    ActionPlayAudioSection,
+    ActionScrollCanvasLeft,
+    ActionScrollCanvasRight,
+    ActionZoomInCanvas,
+    ActionZoomOutCanvas,
+    ActionGoToNextEntry,
+    ActionGoToPreviousEntry,
+    ActionGoToNextSample,
+    ActionGoToPreviousSample,
+    CheckForUpdatesAlreadyUpdated,
+    CheckForUpdatesFailure,
+    UpdaterDialogSummaryDetailsLink,
+    UpdaterDialogTitle,
+    UpdaterDialogCurrentVersionLabel,
+    UpdaterDialogLatestVersionLabel,
+    UpdaterDialogStartDownloadButton,
+    UpdaterDialogIgnoreButton,
+    AboutDialogTitle,
+    AboutDialogCopyInfo,
+    AboutDialogShowLicenses,
+    LicenseDialogTitle,
+    LicenseDialogLicenses,
+    LoadProjectWarningLabelerCreated,
+    LoadProjectWarningLabelerUpdated,
+    LoadProjectWarningCacheDirReset,
+    FilterStarred,
+    FilterUnstarred,
+    FilterStarIgnored,
+    FilterDone,
+    FilterUndone,
+    FilterDoneIgnored,
+    FilterLink,
+    FilterLinked,
+    ColorPickerDialogTitle,
     ;
 
     fun get(language: Language): String = when (language) {
-        English -> en
-    }
+        English -> en()
+        ChineseSimplified -> zhHans()
+    } ?: en()
 }
 
-fun string(key: Strings, vararg params: Any?): String {
-    val template = key.get(currentLanguage)
+fun string(key: Strings, vararg params: Any?): String = stringCertain(key, currentLanguage, *params)
+
+fun stringCertain(key: Strings, language: Language, vararg params: Any?): String {
+    val template = key.get(language)
     return template.format(*params)
 }
