@@ -43,6 +43,7 @@ import com.sdercolin.vlabeler.ui.ProjectWriter
 import com.sdercolin.vlabeler.ui.Splash
 import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
 import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.util.AppRecordFile
@@ -65,6 +66,9 @@ fun main(vararg args: String) = application {
     val appRecord = appRecordStore.stateFlow.collectAsState()
     val windowState = rememberResizableWindowState(appRecord)
     val appConf = loadAppConf(mainScope)
+
+    currentLanguage = appConf.value.view.language
+
     val appState by produceState(null as AppState?) {
         value = produceAppState(mainScope, appConf, appRecordStore, parseArguments(args.toList()))
     }

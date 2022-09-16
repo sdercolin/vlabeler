@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.model.action.MouseClickAction
 import com.sdercolin.vlabeler.model.action.MouseScrollAction
 import com.sdercolin.vlabeler.model.key.KeySet
 import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
+import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
 import kotlinx.serialization.SerialName
@@ -295,6 +296,7 @@ data class AppConf(
 
     /**
      * Configurations about views
+     * @param language Language of the app
      * @param accentColor Color hex string of the accent color
      * @param accentColorVariant Color hex string of the accent color variant
      * @param pinnedEntryListPosition Position of the pinned entry list in the window
@@ -302,12 +304,16 @@ data class AppConf(
     @Serializable
     @Immutable
     data class View(
+        val language: Language = DefaultLanguage,
         val accentColor: String = DefaultAccentColor,
         val accentColorVariant: String = DefaultAccentColorVariant,
         val pinnedEntryListPosition: ViewPosition = DefaultPinnedEntryListPosition,
     ) {
 
         companion object {
+
+            val DefaultLanguage = Language.English
+
             /**
              * Equals to [com.sdercolin.vlabeler.ui.theme.Pink]
              */

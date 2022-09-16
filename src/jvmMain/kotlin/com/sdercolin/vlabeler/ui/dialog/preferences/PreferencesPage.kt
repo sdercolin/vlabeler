@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseClickActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseScrollActionKeyBind
 import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
+import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.Strings
 
 abstract class PreferencesPage(
@@ -307,6 +308,13 @@ abstract class PreferencesPage(
                 selector = { it.view },
                 updater = { copy(view = it) },
             ) {
+                selection(
+                    title = Strings.PreferencesViewLanguage,
+                    defaultValue = AppConf.View.DefaultLanguage,
+                    select = { it.language },
+                    update = { copy(language = it) },
+                    options = Language.values(),
+                )
                 color(
                     title = Strings.PreferencesViewAppAccentColor,
                     defaultValue = AppConf.View.DefaultAccentColor,

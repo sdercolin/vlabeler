@@ -66,6 +66,7 @@ import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.Text
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
@@ -439,6 +440,7 @@ private fun <T> SelectionItem(item: PreferencesItem.Selection<T>, state: Prefere
         options = item.options.toList(),
         getText = { value ->
             when (value) {
+                is Text -> value.text
                 is LocalizedText -> value.getText()
                 else -> value.toString()
             }

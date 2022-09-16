@@ -285,6 +285,7 @@ fun Strings.en(): String = when (this) {
     PreferencesKeymapEditDialogConflictingWarningRemove -> "Remove"
     PreferencesView -> "View"
     PreferencesViewDescription -> "Customize view appearances"
+    PreferencesViewLanguage -> "Language"
     PreferencesViewAppAccentColor -> "Accent color (light) of the app"
     PreferencesViewAppAccentColorVariant -> "Accent color (dark) of the app"
     PreferencesViewPinnedEntryListPosition -> "Position of pinned entry list"

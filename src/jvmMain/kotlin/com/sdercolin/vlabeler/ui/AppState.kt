@@ -35,6 +35,7 @@ import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.toFileOrNull
 import com.sdercolin.vlabeler.util.toFrame
@@ -376,6 +377,9 @@ class AppState(
             mainScope.launch {
                 keyboardViewModel.updateKeymaps(newConf.keymaps)
             }
+        }
+        if (appConf.view.language != newConf.view.language) {
+            currentLanguage = newConf.view.language
         }
         appConf = newConf
     }

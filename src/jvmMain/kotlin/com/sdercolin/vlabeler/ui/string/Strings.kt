@@ -242,6 +242,7 @@ enum class Strings {
     PreferencesKeymapEditDialogConflictingWarningRemove,
     PreferencesView,
     PreferencesViewDescription,
+    PreferencesViewLanguage,
     PreferencesViewAppAccentColor,
     PreferencesViewAppAccentColorVariant,
     PreferencesViewPinnedEntryListPosition,

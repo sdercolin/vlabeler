@@ -255,6 +255,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesKeymapEditDialogConflictingWarningRemove -> "移除"
     PreferencesView -> "视图"
     PreferencesViewDescription -> "编辑视图的外观。"
+    PreferencesViewLanguage -> "语言"
     PreferencesViewAppAccentColor -> "应用程序主题色（亮色）"
     PreferencesViewAppAccentColorVariant -> "应用程序主题色（暗色）"
     PreferencesViewPinnedEntryListPosition -> "固定条目列表的位置"
