@@ -20,6 +20,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.ui.string.Language
+import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.util.toColor
 
 @Immutable
@@ -134,12 +136,18 @@ private fun FieldLabelsChunk(
 @Composable
 private fun FieldLabelText(model: FieldLabelModel) {
     val alpha = if (model.isActive) 1f else IdleLineAlpha
+    val fontSize = if (LocalLanguage.current in listOf(Language.ChineseSimplified)) {
+        // Show Chinese characters in bigger size
+        16.sp
+    } else {
+        14.sp
+    }
     Text(
         text = model.field.label.get(),
         textAlign = TextAlign.Center,
         color = model.field.color.toColor().copy(alpha = alpha),
         fontWeight = FontWeight.Bold,
-        style = MaterialTheme.typography.caption.copy(fontSize = 14.sp),
+        style = MaterialTheme.typography.caption.copy(fontSize = fontSize),
         overflow = TextOverflow.Visible,
     )
 }

@@ -66,7 +66,7 @@ private val UneditableRegionColor = Black
 const val IdleLineAlpha = 0.7f
 private const val StrokeWidth = 2f
 val LabelSize = DpSize(40.dp, 25.dp)
-val LabelShiftUp = 8.dp
+val LabelShiftUp = 11.dp
 private const val LabelMaxChunkLength = 5000
 
 @Composable
