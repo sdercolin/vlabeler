@@ -135,7 +135,7 @@ private fun FieldLabelsChunk(
 private fun FieldLabelText(model: FieldLabelModel) {
     val alpha = if (model.isActive) 1f else IdleLineAlpha
     Text(
-        text = model.field.label,
+        text = model.field.label.get(),
         textAlign = TextAlign.Center,
         color = model.field.color.toColor().copy(alpha = alpha),
         fontWeight = FontWeight.Bold,

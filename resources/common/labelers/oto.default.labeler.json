@@ -27,7 +27,10 @@
   "fields": [
     {
       "name": "fixed",
-      "label": "Fixed",
+      "label": {
+        "en": "Fixed",
+        "zh": "固"
+      },
       "color": "#0000ff",
       "height": 0.5,
       "dragBase": false,
@@ -37,7 +40,10 @@
     },
     {
       "name": "preu",
-      "label": "Preu",
+      "label": {
+        "en": "Preu",
+        "zh": "先"
+      },
       "color": "#ff0000",
       "height": 0.6667,
       "dragBase": true,
@@ -52,7 +58,10 @@
     },
     {
       "name": "ovl",
-      "label": "Ovl",
+      "label": {
+        "en": "Ovl",
+        "zh": "重"
+      },
       "color": "#00ff00",
       "height": 0.8333,
       "dragBase": false,
@@ -78,27 +87,42 @@
   "properties": [
     {
       "name": "left",
-      "displayedName": "Offset",
+      "displayedName": {
+        "en": "Offset",
+        "zh": "左边界"
+      },
       "value": "{start}"
     },
     {
       "name": "fixed",
-      "displayedName": "Fixed",
+      "displayedName": {
+        "en": "Fixed",
+        "zh": "固定"
+      },
       "value": "{fixed} - {start}"
     },
     {
       "name": "right",
-      "displayedName": "Cutoff",
+      "displayedName": {
+        "en": "Cutoff",
+        "zh": "右边界"
+      },
       "value": "{end} > 0 ? {start} - {end} : parseFloat({rawRight})"
     },
     {
       "name": "preu",
-      "displayedName": "Preutterance",
+      "displayedName": {
+        "en": "Preutterance",
+        "zh": "先行发声"
+      },
       "value": "{preu} - {start}"
     },
     {
       "name": "ovl",
-      "displayedName": "Overlap",
+      "displayedName": {
+        "en": "Overlap",
+        "zh": "重叠"
+      },
       "value": "{ovl} - {start}"
     }
   ],

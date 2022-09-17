@@ -147,9 +147,9 @@ private fun FilterRow(
     var subject by remember(value) { mutableStateOf(value.subject) }
     val textSubjects = EntrySelector.textItemSubjects.map { it.first to string(it.second) }
     val textSubjectNames = textSubjects.map { it.first }
-    val numberSubjects = labelerConf.properties.map { it.name to it.displayedName }
+    val numberSubjects = labelerConf.properties.map { it.name to it.displayedName.get() }
     val numberComparers = listOf(null to string(Strings.PluginEntrySelectorComparerValue)) +
-        labelerConf.properties.map { it.name to it.displayedName }
+        labelerConf.properties.map { it.name to it.displayedName.get() }
     val booleanSubjects = EntrySelector.booleanItemSubjects.map { it.first to string(it.second) }
     val booleanSubjectNames = booleanSubjects.map { it.first }
     val subjects = textSubjects + numberSubjects + booleanSubjects

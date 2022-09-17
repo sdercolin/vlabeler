@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.getPropertyMap
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.string.Language
+import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.theme.Black80
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
@@ -35,11 +37,12 @@ fun BoxScope.PropertyView(project: Project) {
     val js by produceState(null as JavaScript?) {
         value = withContext(Dispatchers.IO) { JavaScript() }
     }
-    val text by produceState(project.buildEmptyPropertyText(), project.currentEntry, js) {
+    val language = LocalLanguage.current
+    val text by produceState(project.buildEmptyPropertyText(language), project.currentEntry, js, language) {
         js?.let {
-            value = runCatching { project.buildPropertyText(it) }.getOrElse {
+            value = runCatching { project.buildPropertyText(it, language) }.getOrElse {
                 Log.error(it)
-                project.buildEmptyPropertyText()
+                project.buildEmptyPropertyText(language)
             }
         }
     }
@@ -64,19 +67,29 @@ fun BoxScope.PropertyView(project: Project) {
     }
 }
 
-private fun Project.buildEmptyPropertyText() = buildAnnotatedString {
+private fun Project.buildEmptyPropertyText(language: Language) = buildAnnotatedString {
     labelerConf.properties.forEachIndexed { index, property ->
         if (index != 0) append("\n")
-        append(AnnotatedString(property.displayedName, SpanStyle(fontWeight = FontWeight.SemiBold)))
+        append(
+            AnnotatedString(
+                property.displayedName.getCertain(language),
+                SpanStyle(fontWeight = FontWeight.SemiBold),
+            ),
+        )
         append(": ")
     }
 }
 
-private fun Project.buildPropertyText(js: JavaScript) = buildAnnotatedString {
+private fun Project.buildPropertyText(js: JavaScript, language: Language) = buildAnnotatedString {
     val propertyMap = labelerConf.getPropertyMap(currentEntry, js)
     propertyMap.toList().forEachIndexed { index, (property, value) ->
         if (index != 0) append("\n")
-        append(AnnotatedString(property.displayedName, SpanStyle(fontWeight = FontWeight.SemiBold)))
+        append(
+            AnnotatedString(
+                property.displayedName.getCertain(language),
+                SpanStyle(fontWeight = FontWeight.SemiBold),
+            ),
+        )
         append(": ")
         append(value.roundToDecimalDigit(labelerConf.decimalDigit).toString())
     }

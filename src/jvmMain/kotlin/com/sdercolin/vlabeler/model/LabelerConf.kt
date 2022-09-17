@@ -31,7 +31,7 @@ data class LabelerConf(
      */
     val defaultInputFilePath: String? = null,
     /**
-     * Name displayed in the UI
+     * Name displayed in the UI (localized)
      */
     val displayedName: LocalizedJsonString = name.toLocalized(),
     val author: String,
@@ -115,7 +115,8 @@ data class LabelerConf(
     /**
      * Custom field of the labeler
      * @param name Unique name of the field
-     * @param label Color code in format of "#ffffff"
+     * @param label Label displayed in the UI (localized)
+     * @param color Color code in format of "#ffffff"
      * @param height Label height ratio to the height of waveforms part (0~1)
      * @param dragBase True if all the other parameter line move together with this one
      * @param filling Name of the target field to which a filled area is drawn from this field. "start" and "end" are
@@ -127,7 +128,7 @@ data class LabelerConf(
     @Immutable
     data class Field(
         val name: String,
-        val label: String,
+        val label: LocalizedJsonString,
         val color: String,
         val height: Float,
         val dragBase: Boolean = false,
@@ -256,7 +257,7 @@ data class LabelerConf(
     /**
      * Definition of properties that will be written to the raw label file
      * @param name Unique name of the property
-     * @param displayedName Name displayed in property view UI
+     * @param displayedName Name displayed in property view UI (localized)
      * @param value Mathematical expression text including fields written as "{[Field.name]}" and "{start}", "{end}".
      * Extra fields of number type defined in [extraFieldNames] are also available. The expression is evaluated in
      * JavaScript.
@@ -265,7 +266,7 @@ data class LabelerConf(
     @Immutable
     data class Property(
         val name: String,
-        val displayedName: String,
+        val displayedName: LocalizedJsonString,
         val value: String,
     )
 
