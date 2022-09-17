@@ -174,6 +174,6 @@ fun Editor(state: EditorState, appState: AppState) {
     }
 
     if (state.isLoading) {
-        CircularProgress()
+        CircularProgress(darkenBackground = false)
     }
 }

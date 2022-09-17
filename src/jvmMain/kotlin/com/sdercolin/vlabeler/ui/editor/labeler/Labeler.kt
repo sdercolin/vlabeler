@@ -59,6 +59,7 @@ import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun Labeler(
@@ -72,7 +73,7 @@ fun Labeler(
     val horizontalScrollState = rememberScrollState(0)
 
     LaunchedEffect(editorState) {
-        editorState.scrollFitViewModel.eventFlow.collectLatest {
+        editorState.scrollFitViewModel.eventFlow.distinctUntilChanged().collectLatest {
             if (appState.isScrollFitEnabled.not()) return@collectLatest
             horizontalScrollState.animateScrollTo(it)
         }

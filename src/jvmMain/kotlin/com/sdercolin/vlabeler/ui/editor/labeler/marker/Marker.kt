@@ -615,7 +615,7 @@ private fun LaunchAdjustScrollPosition(
     horizontalScrollState: ScrollState,
     scrollFitViewModel: ScrollFitViewModel,
 ) {
-    LaunchedEffect(currentIndex, canvasLength, horizontalScrollState.maxValue) {
+    LaunchedEffect(entriesInPixel, currentIndex, canvasLength, horizontalScrollState.maxValue) {
         scrollFitViewModel.update(horizontalScrollState, canvasLength, entriesInPixel, currentIndex)
     }
 }

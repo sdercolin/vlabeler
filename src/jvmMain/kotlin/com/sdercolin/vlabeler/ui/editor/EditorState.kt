@@ -25,9 +25,6 @@ import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -144,15 +141,9 @@ class EditorState(
                 appState.confirmIfRedirectSampleDirectory(sampleDirectory)
                 return@withContext
             }
-            val sampleInfoJob = async { SampleInfoRepository.load(project.currentSampleFile, appConf) }
-            launch {
-                // if loading takes time, clear previous charts and show the progress
-                delay(500)
-                if (sampleInfoJob.isCompleted.not()) {
-                    sampleInfoState.value = null
-                }
-            }
-            val sampleInfo = sampleInfoJob.await()
+
+            sampleInfoState.value = null
+            val sampleInfo = SampleInfoRepository.load(project.currentSampleFile, appConf)
             sampleInfoState.value = sampleInfo
             sampleInfo.getOrElse {
                 Log.error(it)
