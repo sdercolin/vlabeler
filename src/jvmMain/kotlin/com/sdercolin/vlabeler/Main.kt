@@ -97,7 +97,7 @@ fun main(vararg args: String) = application {
         onKeyEvent = onKeyEvent,
     ) {
         LaunchSaveWindowSize(windowState, appRecordStore)
-        AppTheme { Menu(mainScope, appState) }
+        Menu(mainScope, appState)
 
         if (appState == null) {
             AppTheme(appConf.value.view) { Splash() }
