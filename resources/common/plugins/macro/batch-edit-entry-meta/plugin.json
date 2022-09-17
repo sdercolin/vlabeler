@@ -19,8 +19,14 @@
       {
         "type": "entrySelector",
         "name": "selector",
-        "label": "Entries to edit",
-        "description": "Select the entries to edit. Leave blank to edit all entries.",
+        "label": {
+          "en": "Entries to edit",
+          "zh": "要编辑的条目"
+        },
+        "description": {
+          "en": "Select the entries to edit. Leave blank to edit all entries.",
+          "zh": "选择要编辑的条目。留空以编辑所有条目。"
+        },
         "defaultValue": {
           "filters": []
         }
@@ -28,38 +34,77 @@
       {
         "type": "enum",
         "name": "star",
-        "label": "Set Starred",
-        "defaultValue": "Do not change",
+        "label": {
+          "en": "Set Starred",
+          "zh": "设置星标状态"
+        },
+        "defaultValue": {
+          "en": "Do not change",
+          "zh": "不更改"
+        },
         "options": [
-          "Do not change",
-          "Starred",
-          "Unstarred"
+          {
+            "en": "Do not change",
+            "zh": "不更改"
+          },
+          {
+            "en": "Starred",
+            "zh": "星标"
+          },
+          {
+            "en": "Unstarred",
+            "zh": "未星标"
+          }
         ]
       },
       {
         "type": "enum",
         "name": "done",
-        "label": "Set Done",
-        "defaultValue": "Do not change",
+        "label": {
+          "en": "Set Done",
+          "zh": "设置完成状态"
+        },
+        "defaultValue": {
+          "en": "Do not change",
+          "zh": "不更改"
+        },
         "options": [
-          "Do not change",
-          "Done",
-          "Undone"
+          {
+            "en": "Do not change",
+            "zh": "不更改"
+          },
+          {
+            "en": "Done",
+            "zh": "完成"
+          },
+          {
+            "en": "Undone",
+            "zh": "未完成"
+          }
         ]
       },
       {
         "type": "boolean",
         "name": "tag",
-        "label": "Set Tag",
+        "label": {
+          "en": "Set Tags",
+          "zh": "设置标签"
+        },
         "defaultValue": false
       },
       {
         "type": "string",
         "name": "tagValue",
-        "label": "Tag Value",
+        "label": {
+          "en": "Tags",
+          "zh": "标签"
+        },
         "defaultValue": "",
         "optional": true,
-        "description": "Leave blank to remove the tag.",
+        "description": {
+          "en": "Leave blank to remove the tag.",
+          "zh": "留空以删除标签。"
+        },
         "enableIf": "tag"
       }
     ]

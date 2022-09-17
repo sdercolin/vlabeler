@@ -19,8 +19,14 @@
       {
         "type": "entrySelector",
         "name": "selector",
-        "label": "Entries to duplicate",
-        "description": "Select the entries to remove.",
+        "label": {
+          "en": "Entries to remove",
+          "zh": "要删除的条目"
+        },
+        "description": {
+          "en": "Select the entries to remove.",
+          "zh": "选择要删除的条目。"
+        },
         "defaultValue": {
           "filters": []
         }

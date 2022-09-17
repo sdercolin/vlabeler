@@ -22,7 +22,10 @@
       {
         "type": "float",
         "name": "unit",
-        "label": "Time unit (s)",
+        "label": {
+          "en": "Time unit (s)",
+          "zh": "时间单位（秒）"
+        },
         "defaultValue": 1.0,
         "min": 0
       }

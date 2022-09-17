@@ -41,7 +41,7 @@ let reorderCVFirst = false
 let reorderAcrossSample = false
 if (reorder) {
     reorderCVFirst = order[0] === "CVs -> VCs"
-    reorderAcrossSample = order[1] === "across sample"
+    reorderAcrossSample = ["across sample", "跨采样"].includes(order[1])
 }
 
 let appendTags = params["appendTags"]

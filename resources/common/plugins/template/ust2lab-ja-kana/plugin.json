@@ -21,14 +21,20 @@
       {
         "type": "integer",
         "name": "overlap",
-        "label": "Overlap (ms)",
+        "label": {
+          "en": "Overlap (ms)",
+          "zh": "重叠（毫秒）"
+        },
         "defaultValue": 50,
         "min": 10
       },
       {
         "type": "integer",
         "name": "vowelDelay",
-        "label": "Vowel delay when semivowel exists (ms)",
+        "label": {
+          "en": "Vowel delay when semivowel exists (ms)",
+          "zh": "存在半元音时的元音延迟（毫秒）"
+        },
         "defaultValue": 30,
         "min": 10
       }

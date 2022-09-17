@@ -422,7 +422,6 @@ private fun ParamLabel(state: PluginDialogState, index: Int, enabled: Boolean) {
             Text(
                 text = description,
                 style = MaterialTheme.typography.caption,
-                maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
         }

@@ -19,26 +19,38 @@
       {
         "type": "boolean",
         "name": "descending",
-        "label": "Descending order",
+        "label": {
+          "en": "Descending order",
+          "zh": "降序排列"
+        },
         "defaultValue": false
       },
       {
         "type": "boolean",
         "name": "useTag",
-        "label": "Sort by tag",
+        "label": {
+          "en": "Sort by tag",
+          "zh": "根据标签排序"
+        },
         "defaultValue": false
       },
       {
         "type": "boolean",
         "name": "prioritizeTag",
-        "label": "Sort by tag first",
+        "label": {
+          "en": "Sort by tag first",
+          "zh": "首先根据标签排序"
+        },
         "enableIf": "useTag",
         "defaultValue": true
       },
       {
         "type": "boolean",
         "name": "prioritizeEntryName",
-        "label": "Prioritize entry name over sample name",
+        "label": {
+          "en": "Prioritize entry name over sample name",
+          "zh": "根据条目名 > 采样名的顺序排序"
+        },
         "defaultValue": false
       }
     ]

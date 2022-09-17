@@ -27,24 +27,42 @@
       {
         "type": "float",
         "name": "offset",
-        "label": "Offset (ms)",
-        "description": "Absolute time of the first preutterance",
+        "label": {
+          "en": "Offset (ms)",
+          "zh": "前置偏移（毫秒）"
+        },
+        "description": {
+          "en": "Absolute time of the first preutterance",
+          "zh": "第一个先行发声的绝对时间"
+        },
         "defaultValue": 500,
         "min": 0
       },
       {
         "type": "integer",
         "name": "repeat",
-        "label": "Max repeated",
-        "description": "Maximum number of the created entries with the same phonemes",
+        "label": {
+          "en": "Max repeated",
+          "zh": "最大重复个数"
+        },
+        "description": {
+          "en": "Maximum number of the created entries with the same phonemes",
+          "zh": "保留使用相同音素的条目的最大数量"
+        },
         "defaultValue": 2,
         "min": 1
       },
       {
         "type": "string",
         "name": "repeatSuffix",
-        "label": "Repeat suffix template",
-        "description": "The suffix template added to the repeated entries. \"{number}\" will be replaced by the number of the repeated alias",
+        "label": {
+          "en": "Repeat suffix template",
+          "zh": "重复后缀模板"
+        },
+        "description": {
+          "en": "The suffix template added to the repeated entries. \"{number}\" will be replaced by the number of the repeated alias.",
+          "zh": "添加到重复条目的后缀模板。\"{number}\" 将被该重复的条目的编号替换。"
+        },
         "defaultValue": "{number}",
         "multiLine": false,
         "optional": false
@@ -52,8 +70,14 @@
       {
         "type": "string",
         "name": "prefix",
-        "label": "Prefix",
-        "description": "Prefix of normal file names. Leave empty if you don't have a prefix",
+        "label": {
+          "en": "Prefix",
+          "zh": "前缀"
+        },
+        "description": {
+          "en": "Prefix of normal sample's file name. Leave empty if you don't use a prefix.",
+          "zh": "常规采样的文件名前缀。如果没有前缀，请留空。"
+        },
         "defaultValue": "_",
         "multiLine": false,
         "optional": true
@@ -61,8 +85,14 @@
       {
         "type": "string",
         "name": "separator",
-        "label": "Separator",
-        "description": "Separator of syllables in the normal file names. e.g. enter \"_\" for file names like \"_あ_あ_い_あ_う_え_あ\", and leave empty for \"_ああいあうえあ\"",
+        "label": {
+          "en": "Separator",
+          "zh": "分隔符"
+        },
+        "description": {
+          "en": "Separator of syllables in the normal file names. e.g. enter \"_\" for file names like \"_あ_あ_い_あ_う_え_あ\", and leave empty for \"_ああいあうえあ\".",
+          "zh": "常规采样的文件名中音节之间的分隔符。例如，输入 \"_\" 以匹配类似 \"_あ_あ_い_あ_う_え_あ\" 的文件名，留空以匹配 \"_ああいあうえあ\"。"
+        },
         "defaultValue": "",
         "multiLine": false,
         "optional": true
@@ -70,8 +100,14 @@
       {
         "type": "string",
         "name": "suffixes",
-        "label": "Available suffixes",
-        "description": "Suffixes that should be used to create the last entry in a file. Use \",\" to separate multiple items",
+        "label": {
+          "en": "Available suffixes",
+          "zh": "可用的后缀列表"
+        },
+        "description": {
+          "en": "Suffixes that should be used to create the last entry in a file. Use \",\" to separate multiple items.",
+          "zh": "需要被用来创建一条采样中最后一个条目的后缀。使用 \",\" 分隔多个后缀。"
+        },
         "defaultValue": "R,L,B,息,吸",
         "multiLine": false,
         "optional": true
@@ -79,8 +115,14 @@
       {
         "type": "string",
         "name": "appendSuffix",
-        "label": "Append suffix",
-        "description": "Append a suffix to all normal file names. e.g. If given \"R\", a \"a R\" will be created from `_ああいあうえあ.wav`",
+        "label": {
+          "en": "Append suffix",
+          "zh": "附加后缀"
+        },
+        "description": {
+          "en": "Append a suffix to all normal file names. e.g. If given \"R\", a \"a R\" will be created from `_ああいあうえあ.wav`.",
+          "zh": "附加一个后缀到所有常规采样。例如，如果给定 \"R\"，则将在 `_ああいあうえあ.wav` 的最后创建一个 \"a R\" 条目。"
+        },
         "defaultValue": "",
         "multiLine": false,
         "optional": true
@@ -88,115 +130,199 @@
       {
         "type": "float",
         "name": "preuCV",
-        "label": "CV Preutterance (ms)",
+        "label": {
+          "en": "CV Preutterance (ms)",
+          "zh": "CV 先行发声（毫秒）"
+        },
         "defaultValue": 100,
         "min": 0
       },
       {
         "type": "float",
         "name": "ovlCV",
-        "label": "CV Overlap (ms)",
+        "label": {
+          "en": "CV Overlap (ms)",
+          "zh": "CV 重叠（毫秒）"
+        },
         "defaultValue": 50,
         "min": 0
       },
       {
         "type": "float",
         "name": "cutoffCV",
-        "label": "CV Cutoff (ms)",
+        "label": {
+          "en": "CV Cutoff (ms)",
+          "zh": "CV 右边界（毫秒）"
+        },
         "defaultValue": -350,
         "max": -1
       },
       {
         "type": "float",
         "name": "fixedCV",
-        "label": "CV Fixed/Consonant (ms)",
+        "label": {
+          "en": "CV Fixed (ms)",
+          "zh": "CV 固定（毫秒）"
+        },
         "defaultValue": 200,
         "min": 0
       },
       {
         "type": "float",
         "name": "lengthVC",
-        "label": "Consonant length (ms)",
-        "description": "Distance between the preutterances of a VC and its next CV",
+        "label": {
+          "en": "Consonant length (ms)",
+          "zh": "辅音长度（毫秒）"
+        },
+        "description": {
+          "en": "Distance between the preutterances of a VC and its next CV",
+          "zh": "VC 的先行发声和其下一个 CV 的先行发声之间的距离"
+        },
         "defaultValue": 100,
         "min": 0
       },
       {
         "type": "float",
         "name": "preuVC",
-        "label": "VC Preutterance (ms)",
+        "label": {
+          "en": "VC Preutterance (ms)",
+          "zh": "VC 先行发声（毫秒）"
+        },
         "defaultValue": 250,
         "min": 0
       },
       {
         "type": "float",
         "name": "ovlVC",
-        "label": "VC Overlap (ms)",
+        "label": {
+          "en": "VC Overlap (ms)",
+          "zh": "VC 重叠（毫秒）"
+        },
         "defaultValue": 70,
         "min": 0
       },
       {
         "type": "float",
         "name": "cutoffVC",
-        "label": "VC Cutoff (ms)",
+        "label": {
+          "en": "VC Cutoff (ms)",
+          "zh": "VC 右边界（毫秒）"
+        },
         "defaultValue": -350,
         "max": -1
       },
       {
         "type": "float",
         "name": "fixedVC",
-        "label": "VC Fixed/Consonant (ms)",
+        "label": {
+          "en": "VC Fixed (ms)",
+          "zh": "VC 固定（毫秒）"
+        },
         "defaultValue": 250,
         "min": 0
       },
       {
         "type": "boolean",
         "name": "useHeadCV",
-        "label": "Head-style CV entries",
-        "description": "Whether to create aliases like \"- か\" from the file head. Head style V entries such as \"- あ\" are created even if this is turned off",
+        "label": {
+          "en": "Head-style CV entries",
+          "zh": "创建起始 CV 条目"
+        },
+        "description": {
+          "en": "Whether to create aliases like \"- か\" from the file head. Head style V entries such as \"- あ\" are created even if this is turned off.",
+          "zh": "是否从文件头创建类似 \"- か\" 的别名。即使关闭此选项，也会创建起始 V 条目，例如 \"- あ\"。"
+        },
         "defaultValue": true
       },
       {
         "type": "boolean",
         "name": "useVCV",
-        "label": "VCV entries",
-        "description": "Whether to duplicate VCV entries from CV. VV entries such as \"a い\" are created even if this is turned off",
+        "label": {
+          "en": "VCV entries",
+          "zh": "创建 VCV 条目"
+        },
+        "description": {
+          "en": "Whether to duplicate VCV entries from CV. VV entries such as \"a い\" are created even if this is turned off.",
+          "zh": "是否根据 CV 条目创建对应的 VCV 条目。即使关闭此选项，也会创建 VV 条目，例如 \"a い\"。"
+        },
         "defaultValue": false
       },
       {
         "type": "integer",
         "name": "repeatC",
-        "label": "Max repeated entry count of Consonant-only entries",
-        "description": "Maximum number of the created Consonant-only entries with the same phonemes. e.g. \"k\" is duplicated from \"a k\" if set other than 0",
+        "label": {
+          "en": "Max repeated entry count of Consonant-only entries",
+          "zh": "纯辅音条目的最大重复个数"
+        },
+        "description": {
+          "en": "Maximum number of the created Consonant-only entries with the same phonemes. e.g. \"k\" is duplicated from \"a k\" if set other than 0.",
+          "zh": "保留使用相同音素的纯辅音条目的最大个数。如果设置为非 0 值，则会根据 \"a k\" 创建名为 \"k\" 的副本。"
+        },
         "defaultValue": 0,
         "min": 0
       },
       {
         "type": "enum",
         "name": "order",
-        "label": "Entry order",
-        "description": "Rearrange the entries by putting entries with same type together",
-        "defaultValue": "Default order",
+        "label": {
+          "en": "Entry order",
+          "zh": "条目顺序"
+        },
+        "description": {
+          "en": "Choose options to rearrange the entries by putting entries with same type (CV/VC) together.",
+          "zh": "选择选项以将具有相同类型 (CV/VC) 的条目放在一起"
+        },
+        "defaultValue": {
+          "en": "Default order",
+          "zh": "默认顺序"
+        },
         "options": [
-          "Default order",
-          "VCs -> CVs; within sample",
-          "CVs -> VCs; within sample",
-          "VCs -> CVs; across sample",
-          "CVs -> VCs; across sample"
+          {
+            "en": "Default order",
+            "zh": "默认顺序"
+          },
+          {
+            "en": "VCs -> CVs; within sample",
+            "zh": "VCs -> CVs; 仅在采样内"
+          },
+          {
+            "en": "CVs -> VCs; within sample",
+            "zh": "CVs -> VCs; 仅在采样内"
+          },
+          {
+            "en": "VCs -> CVs; across sample",
+            "zh": "VCs -> CVs; 跨采样"
+          },
+          {
+            "en": "CVs -> VCs; across sample",
+            "zh": "CVs -> VCs; 跨采样"
+          }
         ]
       },
       {
         "type": "boolean",
         "name": "appendTags",
-        "label": "Append tags",
-        "description": "Whether to append types as tags to the entries",
+        "label": {
+          "en": "Append tags",
+          "zh": "添加标签"
+        },
+        "description": {
+          "en": "Whether to append types as tags to the entries",
+          "zh": "是否在条目上添加标签以区分条目的种类"
+        },
         "defaultValue": true
       },
       {
         "type": "string",
         "name": "vowelMap",
-        "label": "Vowel map",
-        "defaultValue": "Search is applied with suffix matching",
+        "label": {
+          "en": "Vowel map",
+          "zh": "元音表"
+        },
+        "defaultValue": {
+          "en": "Search is applied with suffix matching.",
+          "zh": "搜索时使用后缀匹配。"
+        },
         "defaultValueFromFile": "vowel-map-ja.txt",
         "multiLine": true,
         "optional": false
@@ -204,8 +330,14 @@
       {
         "type": "string",
         "name": "consonantMap",
-        "label": "Consonant map",
-        "defaultValue": "Search is applied with exact matching.\n A line with no-consonant \"\" is required.",
+        "label": {
+          "en": "Consonant map",
+          "zh": "辅音表"
+        },
+        "defaultValue": {
+          "en": "Search is applied with exact matching.\n A line with no-consonant \"\" is required.",
+          "zh": "搜索时使用精确匹配。\n必须包含一行以 \"\" 开头的纯元音。"
+        },
         "defaultValueFromFile": "consonant-map-ja.txt",
         "multiLine": true,
         "optional": false

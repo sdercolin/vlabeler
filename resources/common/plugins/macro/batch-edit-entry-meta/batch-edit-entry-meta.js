@@ -1,8 +1,12 @@
 let selectedEntryIndexes = params["selector"]
 let starText = params["star"]
-let star = (starText === "Starred") ? true : (starText === "Unstarred" ? false : null)
+let starredTexts = ["Starred", "星标"]
+let unstarredTexts = ["Unstarred", "未星标"]
+let star = (starredTexts.includes(starText)) ? true : (unstarredTexts.includes(starText) ? false : null)
 let doneText = params["done"]
-let done = (doneText === "Done") ? true : (doneText === "Undone" ? false : null)
+let doneTexts = ["Done", "已完成"]
+let undoneTexts = ["Undone", "未完成"]
+let done = (doneTexts.includes(doneText)) ? true : (undoneTexts.includes(doneText) ? false : null)
 let tag = params["tag"]
 let tagValue = tag ? params["tagValue"] : null
 

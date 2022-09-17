@@ -21,7 +21,10 @@
       {
         "type": "string",
         "name": "regex",
-        "label": "Regex for extraction from sample name",
+        "label": {
+          "en": "Regex for extraction from sample name",
+          "zh": "用于提取的正则表达式"
+        },
         "defaultValue": "",
         "multiLine": false,
         "optional": false
@@ -29,8 +32,14 @@
       {
         "type": "string",
         "name": "template",
-        "label": "Template lines per sample",
-        "description": "Use `$1`, `$2`, etc. to specify the position of the extracted value",
+        "label": {
+          "en": "Template lines per sample",
+          "zh": "每个采样对应的模板"
+        },
+        "description": {
+          "en": "Use `$1`, `$2`, etc. to refer to the extracted value",
+          "zh": "使用 `$1`, `$2`, 等来引用提取到的值"
+        },
         "defaultValue": "",
         "multiLine": true,
         "optional": false

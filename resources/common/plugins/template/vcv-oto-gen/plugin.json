@@ -27,24 +27,42 @@
       {
         "type": "float",
         "name": "offset",
-        "label": "Offset (ms)",
-        "description": "Absolute time of the first preutterance",
+        "label": {
+          "en": "Offset (ms)",
+          "zh": "前置偏移（毫秒）"
+        },
+        "description": {
+          "en": "Absolute time of the first preutterance",
+          "zh": "第一个先行发声的绝对时间"
+        },
         "defaultValue": 500,
         "min": 0
       },
       {
         "type": "integer",
         "name": "repeat",
-        "label": "Max repeated",
-        "description": "Maximum number of the created entries with the same phonemes",
+        "label": {
+          "en": "Max repeated",
+          "zh": "最大重复个数"
+        },
+        "description": {
+          "en": "Maximum number of the created entries with the same phonemes",
+          "zh": "保留使用相同音素的条目的最大数量"
+        },
         "defaultValue": 2,
         "min": 1
       },
       {
         "type": "string",
         "name": "repeatSuffix",
-        "label": "Repeat suffix template",
-        "description": "The suffix template added to the repeated entries. \"{number}\" will be replaced by the number of the repeated alias",
+        "label": {
+          "en": "Repeat suffix template",
+          "zh": "重复后缀模板"
+        },
+        "description": {
+          "en": "The suffix template added to the repeated entries. \"{number}\" will be replaced by the number of the repeated alias.",
+          "zh": "添加到重复条目的后缀模板。\"{number}\" 将被该重复的条目的编号替换。"
+        },
         "defaultValue": "{number}",
         "multiLine": false,
         "optional": false
@@ -52,8 +70,14 @@
       {
         "type": "string",
         "name": "prefix",
-        "label": "Prefix",
-        "description": "Prefix of normal file names. Leave empty if you don't have a prefix",
+        "label": {
+          "en": "Prefix",
+          "zh": "前缀"
+        },
+        "description": {
+          "en": "Prefix of normal sample's file name. Leave empty if you don't use a prefix.",
+          "zh": "常规采样的文件名前缀。如果没有前缀，请留空。"
+        },
         "defaultValue": "_",
         "multiLine": false,
         "optional": true
@@ -61,8 +85,14 @@
       {
         "type": "string",
         "name": "separator",
-        "label": "Separator",
-        "description": "Separator of syllables in the normal file names. e.g. enter \"_\" for file names like \"_あ_あ_い_あ_う_え_あ\", and leave empty for \"_ああいあうえあ\"",
+        "label": {
+          "en": "Separator",
+          "zh": "分隔符"
+        },
+        "description": {
+          "en": "Separator of syllables in the normal file names. e.g. enter \"_\" for file names like \"_あ_あ_い_あ_う_え_あ\", and leave empty for \"_ああいあうえあ\".",
+          "zh": "常规采样的文件名中音节之间的分隔符。例如，输入 \"_\" 以匹配类似 \"_あ_あ_い_あ_う_え_あ\" 的文件名，留空以匹配 \"_ああいあうえあ\"。"
+        },
         "defaultValue": "",
         "multiLine": false,
         "optional": true
@@ -70,8 +100,14 @@
       {
         "type": "string",
         "name": "suffixes",
-        "label": "Available suffixes",
-        "description": "Suffixes that should be used to create the last entry in a file. Use \",\" to separate multiple items",
+        "label": {
+          "en": "Available suffixes",
+          "zh": "可用的后缀列表"
+        },
+        "description": {
+          "en": "Suffixes that should be used to create the last entry in a file. Use \",\" to separate multiple items.",
+          "zh": "需要被用来创建一条采样中最后一个条目的后缀。使用 \",\" 分隔多个后缀。"
+        },
         "defaultValue": "R,L,B,息,吸",
         "multiLine": false,
         "optional": true
@@ -79,8 +115,14 @@
       {
         "type": "string",
         "name": "appendSuffix",
-        "label": "Append suffix",
-        "description": "Append a suffix to all normal file names. e.g. If given \"R\", a \"a R\" will be created from `_ああいあうえあ.wav`",
+        "label": {
+          "en": "Append suffix",
+          "zh": "附加后缀"
+        },
+        "description": {
+          "en": "Append a suffix to all normal file names. e.g. If given \"R\", a \"a R\" will be created from `_ああいあうえあ.wav`.",
+          "zh": "附加一个后缀到所有常规采样。例如，如果给定 \"R\"，则将在 `_ああいあうえあ.wav` 的最后创建一个 \"a R\" 条目。"
+        },
         "defaultValue": "",
         "multiLine": false,
         "optional": true
@@ -88,43 +130,64 @@
       {
         "type": "float",
         "name": "preuDefault",
-        "label": "Preutterance (ms)",
+        "label": {
+          "en": "Preutterance (ms)",
+          "zh": "先行发声（毫秒）"
+        },
         "defaultValue": 300,
         "min": 0
       },
       {
         "type": "float",
         "name": "ovlDefault",
-        "label": "Overlap (ms)",
+        "label": {
+          "en": "Overlap (ms)",
+          "zh": "重叠（毫秒）"
+        },
         "defaultValue": 100,
         "min": 0
       },
       {
         "type": "float",
         "name": "cutoffDefault",
-        "label": "Cutoff (ms)",
+        "label": {
+          "en": "Cutoff (ms)",
+          "zh": "右边界（毫秒）"
+        },
         "defaultValue": -700,
         "max": -1
       },
       {
         "type": "float",
         "name": "fixedDefault",
-        "label": "Fixed/Consonant (ms)",
+        "label": {
+          "en": "Fixed (ms)",
+          "zh": "固定（毫秒）"
+        },
         "defaultValue": 450,
         "min": 0
       },
       {
         "type": "integer",
         "name": "repeatCV",
-        "label": "Max repeated entry count of CV",
-        "description": "Maximum number of the created CV entries with the same phonemes. e.g. \"あ\" is duplicated from \"- あ\" if set other than 0",
+        "label": {
+          "en": "Max repeated entry count of CV",
+          "zh": "CV 的最大重复个数"
+        },
+        "description": {
+          "en": "Maximum number of the created CV entries with the same phonemes. e.g. \"あ\" is duplicated from \"- あ\" if set other than 0.",
+          "zh": "保留使用相同音素的CV条目的最大个数。如果设置为非 0 值，则会根据 \"- あ\" 创建名为 \"あ\" 的副本。"
+        },
         "defaultValue": 0,
         "min": 0
       },
       {
         "type": "string",
         "name": "vowelMap",
-        "label": "Vowel map",
+        "label": {
+          "en": "Vowel map",
+          "zh": "元音表"
+        },
         "defaultValue": "",
         "defaultValueFromFile": "vowel-map-ja.txt",
         "multiLine": true,

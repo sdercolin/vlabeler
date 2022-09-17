@@ -20,34 +20,49 @@
       {
         "type": "float",
         "name": "offset",
-        "label": "Offset (ms)",
+        "label": {
+          "en": "Offset (ms)",
+          "zh": "左边界（毫秒）"
+        },
         "defaultValue": 100,
         "min": 0
       },
       {
         "type": "float",
         "name": "overlap",
-        "label": "Overlap (ms)",
+        "label": {
+          "en": "Overlap (ms)",
+          "zh": "重叠（毫秒）"
+        },
         "defaultValue": 30
       },
       {
         "type": "float",
         "name": "preutterance",
-        "label": "Preutterance (ms)",
+        "label": {
+          "en": "Preutterance (ms)",
+          "zh": "先行发声（毫秒）"
+        },
         "defaultValue": 60,
         "min": 0
       },
       {
         "type": "float",
         "name": "fixed",
-        "label": "Fixed (ms)",
+        "label": {
+          "en": "Fixed (ms)",
+          "zh": "固定（毫秒）"
+        },
         "defaultValue": 100,
         "min": 0
       },
       {
         "type": "float",
         "name": "cutoff",
-        "label": "Cutoff (ms)",
+        "label": {
+          "en": "Cutoff (ms)",
+          "zh": "右边界（毫秒）"
+        },
         "defaultValue": -1000
       }
     ]
