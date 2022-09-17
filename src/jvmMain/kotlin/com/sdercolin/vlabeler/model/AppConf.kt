@@ -217,24 +217,15 @@ data class AppConf(
          */
         @Serializable
         @Immutable
-        enum class LockedDrag : LocalizedText {
+        enum class LockedDrag(override val stringKey: Strings) : LocalizedText {
             @SerialName("labeler")
-            UseLabeler {
-                override val stringKey: Strings
-                    get() = Strings.PreferencesEditorPlayerLockedDragUseLabeler
-            },
+            UseLabeler(Strings.PreferencesEditorPlayerLockedDragUseLabeler),
 
             @SerialName("start")
-            UseStart {
-                override val stringKey: Strings
-                    get() = Strings.PreferencesEditorPlayerLockedDragUseStart
-            },
+            UseStart(Strings.PreferencesEditorPlayerLockedDragUseStart),
 
             @SerialName("never")
-            Never {
-                override val stringKey: Strings
-                    get() = Strings.PreferencesEditorPlayerLockedDragNever
-            },
+            Never(Strings.PreferencesEditorPlayerLockedDragNever),
         }
 
         companion object {
@@ -267,24 +258,16 @@ data class AppConf(
          */
         @Serializable
         @Immutable
-        enum class Target : LocalizedText {
+        enum class Target(override val stringKey: Strings) : LocalizedText {
+            // TODO: rename serial names using PascalCase
             @SerialName("none")
-            None {
-                override val stringKey: Strings
-                    get() = Strings.PreferencesEditorScissorsActionTargetNone
-            },
+            None(Strings.PreferencesEditorScissorsActionTargetNone),
 
             @SerialName("former")
-            Former {
-                override val stringKey: Strings
-                    get() = Strings.PreferencesEditorScissorsActionTargetFormer
-            },
+            Former(Strings.PreferencesEditorScissorsActionTargetFormer),
 
             @SerialName("latter")
-            Latter {
-                override val stringKey: Strings
-                    get() = Strings.PreferencesEditorScissorsActionTargetLatter
-            },
+            Latter(Strings.PreferencesEditorScissorsActionTargetLatter),
         }
 
         companion object {
@@ -331,11 +314,11 @@ data class AppConf(
      * Position options of views
      */
     @Immutable
-    enum class ViewPosition {
-        Left,
-        Right,
-        Top,
-        Bottom,
+    enum class ViewPosition(override val stringKey: Strings) : LocalizedText {
+        Left(Strings.PreferencesViewPositionLeft),
+        Right(Strings.PreferencesViewPositionRight),
+        Top(Strings.PreferencesViewPositionTop),
+        Bottom(Strings.PreferencesViewPositionBottom),
     }
 
     /**
@@ -379,35 +362,26 @@ data class AppConf(
          */
         @Serializable
         @Immutable
-        enum class Target : LocalizedText {
+        enum class Target(override val stringKey: Strings) : LocalizedText {
 
             /**
              * Do not conduct auto-save
              */
             @SerialName("none")
-            None {
-                override val stringKey: Strings
-                    get() = Strings.PreferencesAutoSaveTargetNone
-            },
+            None(Strings.PreferencesAutoSaveTargetNone),
 
             /**
              * Save to the current project file
              */
             @SerialName("project")
-            Project {
-                override val stringKey: Strings
-                    get() = Strings.PreferencesAutoSaveTargetProject
-            },
+            Project(Strings.PreferencesAutoSaveTargetProject),
 
             /**
              * Save to application record directory.
              * Will be discarded when the application is normally closed.
              */
             @SerialName("record")
-            Record {
-                override val stringKey: Strings
-                    get() = Strings.PreferencesAutoSaveTargetRecord
-            },
+            Record(Strings.PreferencesAutoSaveTargetRecord)
         }
 
         companion object {
