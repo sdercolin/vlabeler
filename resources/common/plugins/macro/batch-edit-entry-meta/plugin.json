@@ -1,11 +1,17 @@
 {
   "name": "batch-edit-entry-meta",
-  "version": 3,
+  "version": 4,
   "type": "macro",
-  "displayedName": "Batch edit entry notes",
+  "displayedName": {
+    "en": "Batch edit entry notes",
+    "zh": "批量编辑条目备注"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Edit the notes (starred, done, tag) of multiple entries at once.",
+  "description": {
+    "en": "Edit the notes (starred, done, tag) of multiple entries at once.",
+    "zh": "一次性编辑多个条目的备注（星标状态、完成状态、标签等）。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-entry-meta",
   "supportedLabelFileExtension": "*",
   "parameters": {

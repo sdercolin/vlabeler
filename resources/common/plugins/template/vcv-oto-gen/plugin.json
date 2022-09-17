@@ -1,11 +1,17 @@
 {
   "name": "vcv-oto-gen",
-  "version": 2,
+  "version": 3,
   "type": "template",
-  "displayedName": "VCV oto generator",
+  "displayedName": {
+    "en": "VCV oto generator",
+    "zh": "连续音 oto 生成器"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Generate template for VCV oto.",
+  "description": {
+    "en": "Generate template for VCV oto.",
+    "zh": "生成连续音 oto 的模板。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/vcv-oto-gen",
   "supportedLabelFileExtension": "ini",
   "inputFileExtension": null,

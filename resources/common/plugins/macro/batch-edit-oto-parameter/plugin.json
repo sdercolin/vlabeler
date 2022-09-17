@@ -1,11 +1,17 @@
 {
   "name": "batch-edit-oto-parameter",
-  "version": 1,
+  "version": 2,
   "type": "macro",
-  "displayedName": "Batch edit oto parameter",
+  "displayedName": {
+    "en": "Batch edit oto parameter",
+    "zh": "批量修改 oto 参数"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Edit the parameters of multiple entries in UTAU oto.ini at once.",
+  "description": {
+    "en": "Edit the parameters of multiple entries in UTAU oto.ini at once.",
+    "zh": "一次性修改 UTAU oto.ini 中多个条目的参数。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-oto-parameter",
   "supportedLabelFileExtension": "ini",
   "parameters": {

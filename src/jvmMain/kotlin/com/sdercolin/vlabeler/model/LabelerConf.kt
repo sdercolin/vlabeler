@@ -36,7 +36,7 @@ data class LabelerConf(
     val displayedName: LocalizedJsonString = name.toLocalized(),
     val author: String,
     val email: String = "",
-    val description: String = "",
+    val description: LocalizedJsonString = "".toLocalized(),
     val website: String = "",
     /**
      * Continuous mode, where the end of entry is forced set to the start of its next entry

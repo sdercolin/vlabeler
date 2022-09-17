@@ -1,11 +1,17 @@
 {
   "name": "cvvc-oto-gen",
-  "version": 3,
+  "version": 4,
   "type": "template",
-  "displayedName": "CVVC oto generator",
+  "displayedName": {
+    "en": "CVVC oto generator",
+    "zh": "CVVC oto 生成器"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Generate template for CVVC oto.",
+  "description": {
+    "en": "Generate template for CVVC oto.",
+    "zh": "生成 CVVC oto 模板。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/cvvc-oto-gen",
   "supportedLabelFileExtension": "ini",
   "inputFileExtension": null,

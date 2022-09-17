@@ -253,10 +253,11 @@ fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialo
                     maxLines = 1,
                 )
             }
-            if (item.description.isNotEmpty()) {
+            val description = item.description.get()
+            if (description.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
-                    text = item.description,
+                    text = description,
                     style = MaterialTheme.typography.caption.copy(
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.75f),
                     ),

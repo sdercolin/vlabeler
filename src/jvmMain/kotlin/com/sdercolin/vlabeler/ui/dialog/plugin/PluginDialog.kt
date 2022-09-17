@@ -232,8 +232,8 @@ private fun Content(state: PluginDialogState) {
                 Spacer(Modifier.height(15.dp))
                 Info(plugin, contactAuthor = { state.openEmail() })
                 Spacer(Modifier.height(5.dp))
-                if (plugin.description.isNotBlank()) {
-                    Description(plugin.description)
+                plugin.description.get().takeIf { it.isNotEmpty() }?.let {
+                    Description(it)
                 }
                 if (plugin.website.isNotBlank()) {
                     Website(plugin.website, state::openWebsite)

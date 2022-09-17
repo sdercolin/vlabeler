@@ -1,11 +1,17 @@
 {
   "name": "audacity2lab",
-  "version": 1,
+  "version": 2,
   "type": "template",
-  "displayedName": "Audacity labels to Sinsy lab format",
+  "displayedName": {
+    "en": "Audacity labels to Sinsy lab format",
+    "zh": "Audacity 标签转换为 Sinsy lab 格式"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Convert label file created by Audacity to Sinsy lab format. Can be used on other similar formats with configuration.",
+  "description": {
+    "en": "Convert label file created by Audacity to Sinsy lab format. Can be used on other similar formats with configuration.",
+    "zh": "将 Audacity 创建的标签文件转换为 Sinsy lab 格式。可以通过修改配置用于其他类似的格式。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/audacity2lab",
   "supportedLabelFileExtension": "lab",
   "inputFileExtension": "txt",

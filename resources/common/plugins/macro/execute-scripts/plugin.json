@@ -1,11 +1,17 @@
 {
   "name": "execute-scripts",
-  "version": 1,
+  "version": 2,
   "type": "macro",
-  "displayedName": "Execute scripts",
+  "displayedName": {
+    "en": "Execute Scripts",
+    "zh": "执行脚本"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Execute scripts from input to edit entries.",
+  "description": {
+    "en": "Execute scripts from input to edit entries.",
+    "zh": "执行输入的脚本来编辑条目。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/execute-scripts",
   "supportedLabelFileExtension": "*",
   "parameters": {

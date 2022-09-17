@@ -1,6 +1,6 @@
 {
   "name": "oto.default",
-  "version": 8,
+  "version": 9,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -9,7 +9,10 @@
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Default labeler for UTAU oto. Overlap cannot be negative.",
+  "description": {
+    "en": "Default labeler for UTAU oto. Overlap cannot be negative.",
+    "zh": "用于 UTAU oto 的默认标记器。Overlap 不能为负值。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
   "defaultValues": [
     100,

@@ -1,11 +1,17 @@
 {
   "name": "regex-raw-gen",
-  "version": 2,
+  "version": 3,
   "type": "template",
-  "displayedName": "Regex raw label generator",
+  "displayedName": {
+    "en": "Regex raw label generator",
+    "zh": "基于正则表达式的原始标签生成器"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Generate raw label templates using regex replacement.",
+  "description": {
+    "en": "Generate raw label templates using regex replacement.",
+    "zh": "使用正则表达式替换生成原始标签模板。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/regex-raw-gen",
   "supportedLabelFileExtension": "*",
   "inputFileExtension": null,

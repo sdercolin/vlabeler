@@ -13,7 +13,7 @@ abstract class CustomizableItem(
     val author: String,
     val version: Int,
     val displayedName: LocalizedJsonString,
-    val description: String,
+    val description: LocalizedJsonString,
     val email: String,
     val website: String,
     val rootFile: File,

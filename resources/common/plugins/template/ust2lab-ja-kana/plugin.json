@@ -1,11 +1,17 @@
 {
   "name": "ust2lab-ja-kana",
-  "version": 3,
+  "version": 4,
   "type": "template",
-  "displayedName": "Lab generator with ust (ja-kana)",
+  "displayedName": {
+    "en": "Lab generator with ust (ja-kana)",
+    "zh": "Lab 生成器 (使用日语假名歌词的 ust 文件)"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Parse ust with Japanese kana lyrics to sinsy lab style entries. Dictionary powered by https://github.com/oatsu-gh/oto2lab.",
+  "description": {
+    "en": "Parse ust with Japanese kana lyrics to sinsy lab style entries. Dictionary powered by https://github.com/oatsu-gh/oto2lab.",
+    "zh": "解析日语假名歌词的 ust 文件并生成 sinsy lab 格式的条目。词典由 https://github.com/oatsu-gh/oto2lab 提供。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/ust2lab-ja-kana",
   "supportedLabelFileExtension": "lab",
   "inputFileExtension": "ust",

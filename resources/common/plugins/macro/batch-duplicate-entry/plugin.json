@@ -1,11 +1,17 @@
 {
   "name": "batch-duplicate-entry",
-  "version": 1,
+  "version": 2,
   "type": "macro",
-  "displayedName": "Batch duplicate entry",
+  "displayedName": {
+    "en": "Batch Duplicate Entry",
+    "zh": "批量创建条目副本"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Duplicate multiple entries at once.",
+  "description": {
+    "en": "Duplicate multiple entries at once.",
+    "zh": "一次性创建多个条目的副本。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-duplicate-entry",
   "supportedLabelFileExtension": "*",
   "parameters": {

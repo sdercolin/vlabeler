@@ -39,7 +39,7 @@ data class Plugin(
     val displayedName: LocalizedJsonString = name.toLocalized(),
     val author: String,
     val email: String = "",
-    val description: String = "",
+    val description: LocalizedJsonString = "".toLocalized(),
     val website: String = "",
     val supportedLabelFileExtension: String,
     val inputFileExtension: String? = null,

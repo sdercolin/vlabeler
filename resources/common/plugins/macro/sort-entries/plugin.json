@@ -1,11 +1,17 @@
 {
   "name": "sort-entries",
-  "version": 4,
+  "version": 5,
   "type": "macro",
-  "displayedName": "Reorder entries",
+  "displayedName": {
+    "en": "Reorder entries",
+    "zh": "重新排序条目"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Reorder all entries by entry name or sample name",
+  "description": {
+    "en": "Reorder all entries by entry name, sample name or tag",
+    "zh": "根据条目名，采样名或标签来重新排序所有条目"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/sort-entries",
   "supportedLabelFileExtension": "*",
   "parameters": {

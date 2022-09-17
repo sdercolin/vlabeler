@@ -1,11 +1,17 @@
 {
   "name": "cv-oto-gen",
-  "version": 3,
+  "version": 4,
   "type": "template",
-  "displayedName": "CV oto generator",
+  "displayedName": {
+    "en": "CV oto generator",
+    "zh": "单独音 oto 生成器"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Generate template for CV oto.",
+  "description": {
+    "en": "Generate template for CV oto.",
+    "zh": "生成单独音 oto 模板。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/cv-oto-gen",
   "supportedLabelFileExtension": "ini",
   "inputFileExtension": null,

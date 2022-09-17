@@ -1,12 +1,18 @@
 {
   "name": "oto-plus.default",
-  "version": 6,
+  "version": 7,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
-  "displayedName": "UTAU oto labeler plus",
+  "displayedName": {
+    "en": "UTAU oto labeler plus",
+    "zh": "UTAU oto 标记器 plus"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Default labeler for UTAU oto. Left is separated from the default start, so Overlap can be set minus.",
+  "description": {
+    "en": "Default labeler for UTAU oto. Left is separated from the default start, so Overlap can be set minus.",
+    "zh": "用于 UTAU oto 的默认标记器。由于增加了独立于条目起始线的 Left 参数，所以 Overlap 可以设置为负值。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
   "defaultValues": [
     100,

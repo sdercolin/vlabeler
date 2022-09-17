@@ -1,8 +1,11 @@
 {
   "name": "lab2audacity",
-  "version": 1,
+  "version": 2,
   "type": "template",
-  "displayedName": "Sinsy lab format to Audacity Labels",
+  "displayedName": {
+    "en": "Sinsy lab format to Audacity Labels",
+    "zh": "Sinsy lab 格式转换为 Audacity 标签"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": "Convert Sinsy lab format to Audacity Labels. Can be used on other similar formats with configuration.",

@@ -1,11 +1,17 @@
 {
   "name": "batch-edit-entry-name",
-  "version": 1,
+  "version": 2,
   "type": "macro",
-  "displayedName": "Batch edit entry name",
+  "displayedName": {
+    "en": "Batch edit entry name",
+    "zh": "批量编辑条目名"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Edit the name of multiple entries at once.",
+  "description": {
+    "en": "Edit the name of multiple entries at once.",
+    "zh": "一次性编辑多个条目的名称。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-entry-name",
   "supportedLabelFileExtension": "*",
   "parameters": {

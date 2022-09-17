@@ -1,12 +1,18 @@
 {
   "name": "sinsy.default",
-  "version": 5,
+  "version": 6,
   "extension": "lab",
   "defaultInputFilePath": null,
-  "displayedName": "Sinsy lab labeler",
+  "displayedName": {
+    "en": "Sinsy lab labeler",
+    "zh": "Sinsy lab 标记器"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Default labeler for Sinsy lab file.",
+  "description": {
+    "en": "Default labeler for lab file in Sinsy's standard.",
+    "zh": "用于 Sinsy 规范的 lab 文件的默认标记器。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
   "continuous": true,
   "allowSameNameEntry": true,

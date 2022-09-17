@@ -1,12 +1,18 @@
 {
   "name": "audacity.default",
-  "version": 1,
+  "version": 2,
   "extension": "txt",
   "defaultInputFilePath": null,
-  "displayedName": "Audacity labeler",
+  "displayedName": {
+    "en": "Audacity labeler",
+    "zh": "Audacity 标记器"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Default labeler for Audacity Labels file. Basic behaviours are same as the Sinsy lab labeler.",
+  "description": {
+    "en": "Default labeler for Audacity Labels file. Basic behaviours are same as the Sinsy lab labeler.",
+    "zh": "用于 Audacity 式标签文件的默认标记器。基本行为与 Sinsy lab 标记器相同。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
   "continuous": true,
   "allowSameNameEntry": true,
