@@ -19,8 +19,14 @@
       {
         "type": "entrySelector",
         "name": "selector",
-        "label": "Entries to edit",
-        "description": "Select the entries to edit. Leave blank to edit all entries.",
+        "label": {
+          "en": "Entries to edit",
+          "zh": "要编辑的条目"
+        },
+        "description": {
+          "en": "Select the entries to edit. Leave blank to edit all entries.",
+          "zh": "选择要编辑的条目。留空以编辑所有条目。"
+        },
         "defaultValue": {
           "filters": []
         }
@@ -28,21 +34,48 @@
       {
         "type": "enum",
         "name": "parameter",
-        "label": "Parameter",
-        "defaultValue": "Offset",
+        "label": {
+          "en": "Parameter to edit",
+          "zh": "要编辑的参数"
+        },
+        "defaultValue": {
+          "en": "Offset",
+          "zh": "左边界"
+        },
         "options": [
-          "Offset",
-          "Fixed",
-          "Cutoff",
-          "Preutterance",
-          "Overlap"
+          {
+            "en": "Offset",
+            "zh": "左边界"
+          },
+          {
+            "en": "Fixed",
+            "zh": "固定"
+          },
+          {
+            "en": "Cutoff",
+            "zh": "右边界"
+          },
+          {
+            "en": "Preutterance",
+            "zh": "先行发声"
+          },
+          {
+            "en": "Overlap",
+            "zh": "重叠"
+          }
         ]
       },
       {
         "type": "string",
         "name": "expression",
-        "label": "Expression",
-        "description": "Expression to calculate the new value. Parameter placeholders such as \"${Offset}\", \"${Overlap} are available in the calculation.",
+        "label": {
+          "en": "Expression",
+          "zh": "表达式"
+        },
+        "description": {
+          "en": "Expression to calculate the new value. Parameter placeholders such as \"${Offset}\", \"${Overlap} are available in the calculation.",
+          "zh": "用于计算新值的表达式。可以在计算中使用参数占位符，例如 \"${左边界}\", \"${重叠}\"。"
+        },
         "defaultValue": "",
         "optional": false
       }

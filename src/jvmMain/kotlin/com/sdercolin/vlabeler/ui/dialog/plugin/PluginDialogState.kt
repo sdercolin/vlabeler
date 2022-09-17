@@ -37,13 +37,14 @@ class PluginDialogState(
         submit(null)
     }
 
+    @Composable
     fun getLabel(index: Int): String {
-        return paramDefs[index].label
+        return paramDefs[index].label.get()
     }
 
     @Composable
     fun getDescription(index: Int): String {
-        val description = paramDefs[index].description
+        val description = paramDefs[index].description?.get()
         val range: Pair<String?, String?> = when (val def = paramDefs[index]) {
             is Plugin.Parameter.FloatParam -> def.min?.toString() to def.max?.toString()
             is Plugin.Parameter.IntParam -> def.min?.toString() to def.max?.toString()

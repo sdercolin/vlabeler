@@ -63,6 +63,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.common.ReversedRow
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
+import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
@@ -357,7 +358,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                         is Plugin.Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange, enabled)
                         is Plugin.Parameter.EnumParam -> ParamDropDown(
                             options = def.options,
-                            value = value as String,
+                            value = value as LocalizedJsonString,
                             onValueChange = onValueChange,
                             enabled = enabled,
                         )
@@ -439,16 +440,16 @@ private fun RowScope.ParamSwitch(
 
 @Composable
 private fun ParamDropDown(
-    options: List<String>,
-    value: String,
-    onValueChange: (String) -> Unit,
+    options: List<LocalizedJsonString>,
+    value: LocalizedJsonString,
+    onValueChange: (LocalizedJsonString) -> Unit,
     enabled: Boolean,
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
         TextField(
             modifier = Modifier.widthIn(min = 200.dp),
-            value = value,
+            value = value.get(),
             onValueChange = {},
             readOnly = true,
             maxLines = 1,
@@ -470,7 +471,7 @@ private fun ParamDropDown(
                         expanded = false
                     },
                 ) {
-                    Text(text = it)
+                    Text(text = it.get())
                 }
             }
         }
@@ -532,7 +533,7 @@ private fun ParamTextField(
         modifier = modifier,
         value = value,
         onValueChange = onValueChange,
-        singleLine = singleLine,
+        maxLines = if (singleLine) 1 else Int.MAX_VALUE,
         isError = isError,
         enabled = enabled,
     )

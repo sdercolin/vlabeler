@@ -7,6 +7,7 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.json
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -20,6 +21,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.float
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
@@ -86,8 +88,8 @@ data class Plugin(
     sealed class Parameter<T : Any>(
         val type: ParameterType,
         val name: String,
-        val label: String,
-        val description: String?,
+        val label: LocalizedJsonString,
+        val description: LocalizedJsonString?,
         val enableIf: String?,
         open val defaultValue: T,
     ) {
@@ -95,8 +97,8 @@ data class Plugin(
 
         class IntParam(
             name: String,
-            label: String,
-            description: String?,
+            label: LocalizedJsonString,
+            description: LocalizedJsonString?,
             enableIf: String?,
             defaultValue: Int,
             val min: Int?,
@@ -108,8 +110,8 @@ data class Plugin(
 
         class FloatParam(
             name: String,
-            label: String,
-            description: String?,
+            label: LocalizedJsonString,
+            description: LocalizedJsonString?,
             enableIf: String?,
             defaultValue: Float,
             val min: Float?,
@@ -121,8 +123,8 @@ data class Plugin(
 
         class BooleanParam(
             name: String,
-            label: String,
-            description: String?,
+            label: LocalizedJsonString,
+            description: LocalizedJsonString?,
             enableIf: String?,
             defaultValue: Boolean,
         ) : Parameter<Boolean>(ParameterType.Boolean, name, label, description, enableIf, defaultValue) {
@@ -132,8 +134,8 @@ data class Plugin(
 
         class StringParam(
             name: String,
-            label: String,
-            description: String?,
+            label: LocalizedJsonString,
+            description: LocalizedJsonString?,
             enableIf: String?,
             defaultValue: String,
             val multiLine: Boolean,
@@ -150,20 +152,20 @@ data class Plugin(
 
         class EnumParam(
             name: String,
-            label: String,
-            description: String?,
+            label: LocalizedJsonString,
+            description: LocalizedJsonString?,
             enableIf: String?,
-            defaultValue: String,
-            val options: List<String>,
-        ) : Parameter<String>(ParameterType.Enum, name, label, description, enableIf, defaultValue) {
+            defaultValue: LocalizedJsonString,
+            val options: List<LocalizedJsonString>,
+        ) : Parameter<LocalizedJsonString>(ParameterType.Enum, name, label, description, enableIf, defaultValue) {
 
-            override fun eval(value: Any) = value is String && value.isNotEmpty()
+            override fun eval(value: Any) = value is LocalizedJsonString
         }
 
         class EntrySelectorParam(
             name: String,
-            label: String,
-            description: String?,
+            label: LocalizedJsonString,
+            description: LocalizedJsonString?,
             enableIf: String?,
             defaultValue: EntrySelector,
         ) : Parameter<EntrySelector>(ParameterType.EntrySelector, name, label, description, enableIf, defaultValue) {
@@ -197,7 +199,7 @@ data class Plugin(
         return parameters?.list.orEmpty().all { param ->
             when (param) {
                 is Parameter.BooleanParam -> (params[param.name] as? Boolean) != null
-                is Parameter.EnumParam -> (params[param.name] as? String)?.let { enumValue ->
+                is Parameter.EnumParam -> (params[param.name] as? LocalizedJsonString)?.let { enumValue ->
                     enumValue in param.options
                 } == true
                 is Parameter.FloatParam -> (params[param.name] as? Float)?.let { floatValue ->
@@ -243,8 +245,8 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
         require(element is JsonObject)
         val type = requireNotNull(element["type"]).jsonPrimitive.content.parseJson<Plugin.ParameterType>()
         val name = requireNotNull(element["name"]).jsonPrimitive.content
-        val label = requireNotNull(element["label"]).jsonPrimitive.content
-        val description = element["description"]?.jsonPrimitive?.content
+        val label = json.decodeFromJsonElement<LocalizedJsonString>(requireNotNull(element["label"]))
+        val description = element["description"]?.let { json.decodeFromJsonElement<LocalizedJsonString>(it) }
         val enableIf = element["enableIf"]?.jsonPrimitive?.content
         val defaultValue = requireNotNull(element["defaultValue"])
         return when (type) {
@@ -274,9 +276,9 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
                 Plugin.Parameter.StringParam(name, label, description, enableIf, default, multiLine, optional)
             }
             Plugin.ParameterType.Enum -> {
-                val default = defaultValue.jsonPrimitive.content
+                val default = json.decodeFromJsonElement<LocalizedJsonString>(defaultValue)
                 val options = requireNotNull(element["options"]).jsonArray.map {
-                    it.jsonPrimitive.content
+                    json.decodeFromJsonElement<LocalizedJsonString>(it)
                 }
                 Plugin.Parameter.EnumParam(name, label, description, enableIf, default, options)
             }

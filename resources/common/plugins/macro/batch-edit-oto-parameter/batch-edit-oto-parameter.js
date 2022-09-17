@@ -1,12 +1,23 @@
 let selectedEntryIndexes = params["selector"]
 let parameterName = params["parameter"]
 let hasLeft = labeler.fields.length > 3 // true if labeler is oto-plus with a standalone "left" field
+
+let nameTexts = [
+    ["offset", ["Offset", "左边界"]],
+    ["fixed", ["Fixed", "固定"]],
+    ["overlap", ["Overlap", "重叠"]],
+    ["preutterance", ["Preutterance", "先行发声"]],
+    ["cutoff", ["Cutoff", "右边界"]]
+]
+
 let expression = params["expression"]
-        .replace("${Offset}", "offset")
-        .replace("${Fixed}", "fixed")
-        .replace("${Cutoff}", "cutoff")
-        .replace("${Preutterance}", "preutterance")
-        .replace("${Overlap}", "overlap")
+for (let param of nameTexts) {
+    let key = param[0]
+    let texts = param[1]
+    for (let text of texts) {
+        expression = expression.replace(`\${${text}}`, key)
+    }
+}
 
 let unknownExpressionMatch = expression.match(/\$\{\w+}/)
 if (unknownExpressionMatch) {
@@ -17,6 +28,8 @@ if (unknownExpressionMatch) {
 if (debug) {
     console.log(`Input entries: ${entries.length}`)
     console.log(`Selected entries: ${selectedEntryIndexes.length}`)
+    console.log(`Expression: ${expression}`)
+    console.log(`Parameter: ${parameterName}`)
 }
 
 output = entries.map((entry, index) => {
@@ -44,7 +57,7 @@ output = entries.map((entry, index) => {
         expectedError = true
         throw e
     }
-    if (parameterName === "Offset") {
+    if (nameTexts.find(x => x[0] === "offset")[1].includes(parameterName)) {
         if (hasLeft) {
             edited.points[3] = newValue
             if (edited.start > newValue) {
@@ -53,13 +66,13 @@ output = entries.map((entry, index) => {
         } else {
             edited.start = newValue
         }
-    } else if (parameterName === "Fixed") {
+    } else if (nameTexts.find(x => x[0] === "fixed")[1].includes(parameterName)) {
         edited.points[0] = newValue + offset
-    } else if (parameterName === "Preutterance") {
+    } else if (nameTexts.find(x => x[0] === "preutterance")[1].includes(parameterName)) {
         edited.points[1] = newValue + offset
-    } else if (parameterName === "Overlap") {
+    } else if (nameTexts.find(x => x[0] === "overlap")[1].includes(parameterName)) {
         edited.points[2] = newValue + offset
-    } else if (parameterName === "Cutoff") {
+    } else if (nameTexts.find(x => x[0] === "cutoff")[1].includes(parameterName)) {
         if (newValue < 0) {
             edited.end = -newValue + offset
         } else {

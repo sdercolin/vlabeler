@@ -2,6 +2,8 @@ package com.sdercolin.vlabeler.util
 
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
+import com.sdercolin.vlabeler.ui.string.currentLanguage
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
@@ -59,6 +61,7 @@ private fun resolveItem(value: Any?, project: Project?, js: JavaScript?): JsonEl
                 }
             }
         }
+        is LocalizedJsonString -> JsonPrimitive(value.getCertain(currentLanguage))
         else -> throw IllegalArgumentException("$value is not supported")
     }
 }

@@ -19,8 +19,14 @@
       {
         "type": "entrySelector",
         "name": "selector",
-        "label": "Entries to duplicate",
-        "description": "Select the entries to duplicate. Leave blank to edit all entries.",
+        "label": {
+          "en": "Entries to duplicate",
+          "zh": "要创建副本的条目"
+        },
+        "description": {
+          "en": "Select the entries to duplicate. Leave blank to duplicate all entries.",
+          "zh": "选择要创建副本的条目。留空则创建所有条目的副本。"
+        },
         "defaultValue": {
           "filters": []
         }
@@ -28,17 +34,29 @@
       {
         "type": "string",
         "name": "from",
-        "label": "Rename from",
-        "description": "Regex is available.",
-        "defaultValue": "",
+        "label": {
+          "en": "Rename from",
+          "zh": "原名称"
+        },
+        "description": {
+          "en": "Regex is available. e.g. \".*\" can match the whole name.",
+          "zh": "可使用正则表达式。例如，\".*\" 可以匹配整个名称。"
+        },
+        "defaultValue": ".*",
         "optional": false
       },
       {
         "type": "string",
         "name": "to",
-        "label": "Rename to",
-        "description": "Regex captured group placeholders ($1, $2, etc.) are available.",
-        "defaultValue": "",
+        "label": {
+          "en": "Rename to",
+          "zh": "新名称"
+        },
+        "description": {
+          "en": "Regex captured group placeholders ($1, $2, etc.) are available. e.g. if \"Rename from\" is set to \".*\" and this is set to \"$1_copy\", \"_copy\" is appended to the new names.",
+          "zh": "可使用正则表达式捕获组占位符（$1、$2 等）。例如，如果“原名称”设置为“.*”，“新名称”设置为“$1_copy”，则副本的名称将为“<原条目名>_copy”。"
+        },
+        "defaultValue": "$1",
         "optional": false
       }
     ]
