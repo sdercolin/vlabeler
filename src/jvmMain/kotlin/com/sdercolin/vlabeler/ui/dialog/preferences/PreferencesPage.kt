@@ -10,6 +10,8 @@ import com.sdercolin.vlabeler.model.action.MouseScrollActionKeyBind
 import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.util.divideWithBigDecimal
+import com.sdercolin.vlabeler.util.multiplyWithBigDecimal
 
 abstract class PreferencesPage(
     val displayedName: Strings,
@@ -112,13 +114,13 @@ abstract class PreferencesPage(
                     select = { it.intensityAccuracy },
                     update = { copy(intensityAccuracy = it) },
                 )
-                float(
+                floatPercentage(
                     title = Strings.PreferencesChartsWaveformYAxisBlankRate,
-                    defaultValue = AppConf.Amplitude.DefaultYAxisBlankRate * 100,
-                    min = AppConf.Amplitude.MinYAxisBlankRate * 100,
-                    max = AppConf.Amplitude.MaxYAxisBlankRate * 100,
-                    select = { it.yAxisBlankRate * 100 },
-                    update = { copy(yAxisBlankRate = it / 100) },
+                    defaultValue = AppConf.Amplitude.DefaultYAxisBlankRate,
+                    min = AppConf.Amplitude.MinYAxisBlankRate,
+                    max = AppConf.Amplitude.MaxYAxisBlankRate,
+                    select = { it.yAxisBlankRate },
+                    update = { copy(yAxisBlankRate = it) },
                 )
                 color(
                     title = Strings.PreferencesChartsWaveformColor,
@@ -153,13 +155,13 @@ abstract class PreferencesPage(
                     select = { it.enabled },
                     update = { copy(enabled = it) },
                 )
-                float(
+                floatPercentage(
                     title = Strings.PreferencesChartsSpectrogramHeight,
-                    defaultValue = AppConf.Spectrogram.DefaultHeightWeight * 100,
-                    min = AppConf.Spectrogram.MinHeightWeight * 100,
-                    max = AppConf.Spectrogram.MaxHeightWeight * 100,
-                    select = { it.heightWeight * 100 },
-                    update = { copy(heightWeight = it / 100) },
+                    defaultValue = AppConf.Spectrogram.DefaultHeightWeight,
+                    min = AppConf.Spectrogram.MinHeightWeight,
+                    max = AppConf.Spectrogram.MaxHeightWeight,
+                    select = { it.heightWeight },
+                    update = { copy(heightWeight = it) },
                 )
                 integer(
                     title = Strings.PreferencesChartsSpectrogramPointDensity,
@@ -649,6 +651,28 @@ private class PreferencesItemContext<P>(
             update = updateWithContext(update),
             enabled = selectWithContext(enabled),
         ),
+    )
+
+    fun floatPercentage(
+        title: Strings,
+        description: Strings? = null,
+        columnStyle: Boolean = false,
+        defaultValue: Float,
+        min: Float? = null,
+        max: Float? = null,
+        select: (P) -> Float,
+        update: P.(Float) -> P,
+        enabled: (P) -> Boolean = { true },
+    ) = float(
+        title = title,
+        description = description,
+        columnStyle = columnStyle,
+        defaultValue = defaultValue.multiplyWithBigDecimal(100f),
+        min = min?.multiplyWithBigDecimal(100f),
+        max = max?.multiplyWithBigDecimal(100f),
+        select = { select(it).multiplyWithBigDecimal(100f) },
+        update = { update(it.divideWithBigDecimal(100f)) },
+        enabled = enabled,
     )
 
     fun float(
