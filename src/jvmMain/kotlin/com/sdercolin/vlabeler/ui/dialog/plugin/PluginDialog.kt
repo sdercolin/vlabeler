@@ -21,10 +21,12 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
@@ -36,6 +38,7 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -340,13 +343,13 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
             val labelInRow = state.isParamInRow(i)
             Column(Modifier.heightIn(min = 60.dp)) {
                 if (!labelInRow) {
-                    ParamLabel(state, i)
+                    ParamLabel(state, i, enabled)
                     Spacer(Modifier.height(10.dp))
                 }
                 Row {
                     if (labelInRow) {
                         Column(Modifier.width(300.dp).align(Alignment.CenterVertically)) {
-                            ParamLabel(state, i)
+                            ParamLabel(state, i, enabled)
                         }
                         Spacer(Modifier.width(20.dp))
                     }
@@ -404,22 +407,25 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
 }
 
 @Composable
-private fun ParamLabel(state: PluginDialogState, index: Int) {
-    Text(
-        text = state.getLabel(index),
-        style = MaterialTheme.typography.body2,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
-    )
-    val description = state.getDescription(index)
-    if (description.isNotBlank()) {
-        Spacer(Modifier.height(5.dp))
+private fun ParamLabel(state: PluginDialogState, index: Int, enabled: Boolean) {
+    val alpha = if (enabled) ContentAlpha.high else ContentAlpha.disabled
+    CompositionLocalProvider(LocalContentAlpha provides alpha) {
         Text(
-            text = description,
-            style = MaterialTheme.typography.caption,
-            maxLines = 3,
+            text = state.getLabel(index),
+            style = MaterialTheme.typography.body2,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
+        val description = state.getDescription(index)
+        if (description.isNotBlank()) {
+            Spacer(Modifier.height(5.dp))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.caption,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
