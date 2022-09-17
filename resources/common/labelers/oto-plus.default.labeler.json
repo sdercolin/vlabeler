@@ -32,7 +32,7 @@
         "en": "Fixed",
         "zh": "固"
       },
-      "color": "#0000ff",
+      "color": "#1b51ff",
       "height": 0.5,
       "dragBase": false,
       "filling": "left",
@@ -50,7 +50,7 @@
         "en": "Preu",
         "zh": "先"
       },
-      "color": "#ff0000",
+      "color": "#ff1a45",
       "height": 0.6667,
       "dragBase": true,
       "filling": null,
@@ -68,7 +68,7 @@
         "en": "Ovl",
         "zh": "重"
       },
-      "color": "#00ff00",
+      "color": "#7fff39",
       "height": 0.8333,
       "dragBase": false,
       "filling": null,
