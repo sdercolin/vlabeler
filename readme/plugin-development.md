@@ -21,10 +21,10 @@ A plugin for `vLabeler` is a folder containing:
 | name                        | String                 | (Required)     | all                   | Make sure the value is the same as the folder's name.                                                                                                                              |
 | version                     | Integer                | 1              | all                   |                                                                                                                                                                                    |
 | type                        | String                 | (Required)     | all                   | `template` or `macro`.                                                                                                                                                             |
-| displayedName               | String                 | same as `name` | all                   |                                                                                                                                                                                    |
+| displayedName               | String (Localized)     | same as `name` | all                   |                                                                                                                                                                                    |
 | author                      | String                 | (Required)     | all                   |                                                                                                                                                                                    |
 | email                       | String                 | ""             | all                   |                                                                                                                                                                                    |
-| description                 | String                 | ""             | all                   |                                                                                                                                                                                    |
+| description                 | String (Localized)     | ""             | all                   |                                                                                                                                                                                    |
 | website                     | String                 | ""             | all                   |                                                                                                                                                                                    |
 | supportedLabelFileExtension | String                 | (Required)     | all                   | Extension(s) of your label file (e.g. `ini` for UTAU oto). "*" and "&#124;" are supported.                                                                                         |
 | inputFileExtension          | String &#124; null     | null           | template              | Extension of your input file if any.                                                                                                                                               |
@@ -55,8 +55,8 @@ The object has the following properties:
 |----------------------|----------------------------|---------------|--------------------------|-----------------------------------------------------------------------------------------|
 | type                 | String                     | (Required)    | all                      | Can be any one of `integer`, `float`, `boolean`, `string`, `enum` and ,`entrySelector`. |
 | name                 | String                     | (Required)    | all                      | Parameter name for reference in your scripts.                                           |
-| label                | String                     | (Required)    | all                      | Displayed in the config dialog.                                                         |
-| description          | String                     | ""            | all                      | Displayed in the config dialog.                                                         |
+| label                | String (Localized)         | (Required)    | all                      | Displayed in the config dialog.                                                         |
+| description          | String (Localized)         | ""            | all                      | Displayed in the config dialog.                                                         |
 | enableIf             | String                     | null          | all                      | If set, this parameter is enabled only when the parameter with the set name is truthy.  |
 | defaultValue         | (Actual type of the value) | (Required)    | all                      | Value type is according to the parameter's `type`.                                      |
 | defaultValueFromFile | String                     | null          | string                   | Set a file name if you want its content to be used as the default value.                |
@@ -64,7 +64,7 @@ The object has the following properties:
 | max                  | (Actual type of the value) | null          | integer, float           |                                                                                         |
 | multiLine            | Boolean                    | false         | string                   | Set to `true` if you want to allow multi-line string values.                            |
 | optional             | Boolean                    | (Required)    | string                   | Set to `true` if you want to allow empty string values.                                 |
-| options              | List\<String>              | (Required)    | enum                     | Items of the enumerable.                                                                |
+| options              | List\<String> (Localized)  | (Required)    | enum                     | Items of the enumerable.                                                                |
 
 ### Types
 
@@ -73,7 +73,7 @@ The object has the following properties:
 - `boolean`: Should be either `true` or `false`.
 - `string`: String value. Should not contain line breaks if `multiLine` is `false`. Should not be empty if `optional`
   is `false`.
-- `enum`: Enumerable value described as string. Should be one of the items in `options`.
+- `enum`: Enumerable value described as string or localized string. Should be one of the items in `options`.
 - `entrySelector`: **Can only be used in a `macro` type plugin.** Instance
   of [EntrySelector](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/EntrySelector.kt) type:
 
@@ -96,8 +96,6 @@ The object has the following properties:
     ]
 }
 ```
-
-####
 
 ## Scripting Environment
 
@@ -248,10 +246,63 @@ Check the following built-in `macro` plugins as examples:
 - [execute-scripts](../resources/common/plugins/macro/execute-scripts): Execute input scripts to edit the project. It
   can be used as a debug tool when developing a plugin.
 
+## Localization
+
+All the properties with a `String (Localized)` type can be provided in multiple languages.
+
+For example, if you want to provide a localized description, you can do it like this:
+
+```
+{
+    ...,
+    "description": {
+        "en": "This is a description in English.",
+        "zh": "这是中文的描述。"
+    },
+    ...
+}
+```
+
+It's totally optional so you can still provide only the default language `en`:
+
+```
+{
+    ...,
+    "description": "This is a description in English.",
+    ...
+}
+```
+
+An option in the map is used when the current language code starts with its language code.
+e.g. If the current language code is "en-US", the entry with key "en" is used. So it's recommended to use common
+language codes like `en` and `zh` instead of `en-US` and `zh-CN`.
+
+Please note that you have to provide a default language `en` in your localization map, otherwise the plugin gets an
+parse error when being loaded.
+
+Specially, the `enum` type parameter also supports localized options:
+
+```
+{
+    ...,
+    "defaultValue": { en: "Option 1", zh: "选项1" },
+    },
+    "options": [
+        { en: "Option 1", zh: "选项1" },
+        { en: "Option 2", zh: "选项2" },
+        { en: "Option 3", zh: "选项3" }
+    ],
+    ...
+}
+```
+
+Please keep consistent with the `defaultValue` and `options` if you want to provide localized options.
+
 ## Error handling
 
-When the scripts encounter illegal inputs, you can show an error message to users by throwing an error along with
-setting the `expectedError` property to `true`.
+When the scripts encounter illegal inputs, you can show an error message to users by calling `error(message)`.
+The parameter `message` can be a string or a localized string.
+See the [Localization](#localization) section for more details.
 
 Other errors thrown in the scripts will be displayed as "Unexpected errors" without detailed information, indicating
 that it is more likely to be a bug of the plugin, rather than an illegal input or something else that may happen in
@@ -263,8 +314,15 @@ the issue.
 ```javascript
 let unknownExpressionMatch = expression.match(/\$\{\w+}/)
 if (unknownExpressionMatch) {
-    expectedError = true
-    throw new Error(`Unknown placeholder: ${unknownExpressionMatch[0]}`)
+
+    // throwing error in default language 
+    error(`Unknown placeholder: ${unknownExpressionMatch[0]}`)
+
+    // throwing error in multiple languages
+    error({
+        en: `Unknown placeholder: ${unknownExpressionMatch[0]}`,
+        zh: `未知的占位符: ${unknownExpressionMatch[0]}`
+    })
 }
 ```
 
