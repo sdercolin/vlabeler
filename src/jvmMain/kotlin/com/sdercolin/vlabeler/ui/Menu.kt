@@ -9,12 +9,12 @@ import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.editor.Tool
-import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -33,12 +33,13 @@ import java.io.File
 fun FrameWindowScope.Menu(
     mainScope: CoroutineScope,
     appState: AppState?,
+    viewConf: AppConf.View,
 ) {
     val keymap = appState?.appConf?.keymaps?.keyActionMap ?: mapOf()
 
     fun KeyAction.getKeyShortCut() = keymap.getNullableOrElse(this) { this.defaultKeySet }?.toShortCut()
 
-    CompositionLocalProvider(LocalLanguage.provides(appState?.appConf?.view?.language ?: Language.default)) {
+    CompositionLocalProvider(LocalLanguage.provides(viewConf.language)) {
         MenuBar {
             Menu(string(Strings.MenuFile), mnemonic = 'F') {
                 if (appState != null) {
