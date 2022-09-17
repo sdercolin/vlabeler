@@ -82,7 +82,7 @@ fun Labeler(
         EntryTitleBar(
             appConf = appState.appConf,
             title = editorState.entryTitle,
-            subTitle = editorState.entrySubTitle,
+            subTitle = editorState.getEntrySubTitle(),
             multiple = editorState.editedEntries.size > 1,
             done = editorState.entryDone,
             toggleDone = { editorState.toggleEntryDone(editorState.project.currentIndex) },

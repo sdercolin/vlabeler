@@ -13,6 +13,7 @@ import com.sdercolin.vlabeler.model.action.MouseClickAction
 import com.sdercolin.vlabeler.model.action.MouseClickActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseScrollAction
 import com.sdercolin.vlabeler.model.action.MouseScrollActionKeyBind
+import com.sdercolin.vlabeler.ui.string.Language
 
 class PreferencesKeymapState<K : Action>(private val item: PreferencesItem.Keymap<K>, state: PreferencesEditorState) {
 
@@ -22,16 +23,16 @@ class PreferencesKeymapState<K : Action>(private val item: PreferencesItem.Keyma
     var searchText by mutableStateOf("")
         private set
 
-    var displayedKeyBinds by mutableStateOf(filterKeyBinds(searchText))
+    var displayedKeyBinds: List<ActionKeyBind<K>> by mutableStateOf(allKeyBinds)
         private set
 
-    fun search(text: String) {
+    fun search(text: String, language: Language) {
         searchText = text
-        displayedKeyBinds = filterKeyBinds(searchText)
+        displayedKeyBinds = filterKeyBinds(searchText, language)
     }
 
-    private fun filterKeyBinds(text: String) =
-        allKeyBinds.filter { if (text.isNotEmpty()) it.title.contains(text, ignoreCase = true) else true }
+    private fun filterKeyBinds(text: String, language: Language) =
+        allKeyBinds.filter { if (text.isNotEmpty()) it.getTitle(language).contains(text, ignoreCase = true) else true }
             .sortedBy { it.action.displayOrder }
 
     private fun getAllKeyBinds(
@@ -49,10 +50,11 @@ class PreferencesKeymapState<K : Action>(private val item: PreferencesItem.Keyma
         }
             .filterIsInstance<ActionKeyBind<K>>()
             .plus(customKeyBinds)
+            .sortedBy { it.action.displayOrder }
     }
 
-    fun update(conf: AppConf) {
+    fun update(conf: AppConf, language: Language) {
         allKeyBinds = getAllKeyBinds(conf)
-        search(searchText)
+        search(searchText, language)
     }
 }

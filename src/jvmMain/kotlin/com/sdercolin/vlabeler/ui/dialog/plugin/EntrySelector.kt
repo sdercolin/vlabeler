@@ -145,16 +145,14 @@ private fun FilterRow(
 ) {
     var type by remember(value) { mutableStateOf(value::class) }
     var subject by remember(value) { mutableStateOf(value.subject) }
-    val textSubjects = remember { EntrySelector.textItemSubjects.map { it.first to string(it.second) } }
-    val textSubjectNames = remember { textSubjects.map { it.first } }
-    val numberSubjects = remember(labelerConf) { labelerConf.properties.map { it.name to it.displayedName } }
-    val numberComparers = remember(labelerConf) {
-        listOf(null to string(Strings.PluginEntrySelectorComparerValue)) +
-            labelerConf.properties.map { it.name to it.displayedName }
-    }
-    val booleanSubjects = remember { EntrySelector.booleanItemSubjects.map { it.first to string(it.second) } }
-    val booleanSubjectNames = remember { booleanSubjects.map { it.first } }
-    val subjects = remember(labelerConf) { textSubjects + numberSubjects + booleanSubjects }
+    val textSubjects = EntrySelector.textItemSubjects.map { it.first to string(it.second) }
+    val textSubjectNames = textSubjects.map { it.first }
+    val numberSubjects = labelerConf.properties.map { it.name to it.displayedName }
+    val numberComparers = listOf(null to string(Strings.PluginEntrySelectorComparerValue)) +
+        labelerConf.properties.map { it.name to it.displayedName }
+    val booleanSubjects = EntrySelector.booleanItemSubjects.map { it.first to string(it.second) }
+    val booleanSubjectNames = booleanSubjects.map { it.first }
+    val subjects = textSubjects + numberSubjects + booleanSubjects
     var textMatchType by remember(value) {
         mutableStateOf(
             (value as? EntrySelector.TextFilterItem)?.matchType

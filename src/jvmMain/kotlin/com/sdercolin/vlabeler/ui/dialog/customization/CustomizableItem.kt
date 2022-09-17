@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui.dialog.customization
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.toUri
 import java.awt.Desktop
 import java.io.File
@@ -11,7 +12,7 @@ abstract class CustomizableItem(
     val name: String,
     val author: String,
     val version: Int,
-    val displayedName: String,
+    val displayedName: LocalizedJsonString,
     val description: String,
     val email: String,
     val website: String,

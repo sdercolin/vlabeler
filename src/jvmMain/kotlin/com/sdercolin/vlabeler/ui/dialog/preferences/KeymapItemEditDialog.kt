@@ -57,6 +57,7 @@ import com.sdercolin.vlabeler.model.action.ActionType
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
+import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
@@ -152,7 +153,7 @@ fun <K : Action> KeymapItemEditDialog(
                 )
                 Spacer(Modifier.height(15.dp))
                 Text(
-                    text = args.actionKeyBind.title,
+                    text = args.actionKeyBind.getTitle(LocalLanguage.current),
                     style = MaterialTheme.typography.body2,
                     maxLines = 1,
                 )
@@ -232,7 +233,7 @@ fun <K : Action> KeymapItemEditDialog(
                             )
                             for (action in conflictedActions) {
                                 Text(
-                                    text = action.title,
+                                    text = action.getTitle(LocalLanguage.current),
                                     style = MaterialTheme.typography.caption,
                                     maxLines = 1,
                                 )

@@ -3,7 +3,10 @@
   "version": 8,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
-  "displayedName": "UTAU oto labeler",
+  "displayedName": {
+    "en": "UTAU oto labeler",
+    "zh": "UTAU oto 标记器"
+  },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": "Default labeler for UTAU oto. Overlap cannot be negative.",

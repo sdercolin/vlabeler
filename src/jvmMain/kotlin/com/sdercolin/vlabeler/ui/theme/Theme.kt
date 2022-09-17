@@ -4,10 +4,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.ui.string.Language
+import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.util.toColorOrNull
 
 private val colors = darkColors(
@@ -46,11 +49,15 @@ private val typography = Typography(
 )
 
 @Composable
-fun AppTheme(viewConf: AppConf.View? = null, content: @Composable () -> Unit) = MaterialTheme(
-    colors = colors.copy(
-        primary = viewConf?.accentColor?.toColorOrNull() ?: colors.primary,
-        primaryVariant = viewConf?.accentColorVariant?.toColorOrNull() ?: colors.primaryVariant,
-    ),
-    typography = typography,
-    content = content,
-)
+fun AppTheme(viewConf: AppConf.View? = null, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalLanguage provides (viewConf?.language ?: Language.default)) {
+        MaterialTheme(
+            colors = colors.copy(
+                primary = viewConf?.accentColor?.toColorOrNull() ?: colors.primary,
+                primaryVariant = viewConf?.accentColorVariant?.toColorOrNull() ?: colors.primaryVariant,
+            ),
+            typography = typography,
+            content = content,
+        )
+    }
+}

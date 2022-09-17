@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog.plugin
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.Plugin
@@ -40,6 +41,7 @@ class PluginDialogState(
         return paramDefs[index].label
     }
 
+    @Composable
     fun getDescription(index: Int): String {
         val description = paramDefs[index].description
         val range: Pair<String?, String?> = when (val def = paramDefs[index]) {

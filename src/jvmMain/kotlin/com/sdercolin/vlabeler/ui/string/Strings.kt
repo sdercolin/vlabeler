@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.string
 
+import androidx.compose.runtime.Composable
 import com.sdercolin.vlabeler.ui.string.Language.ChineseSimplified
 import com.sdercolin.vlabeler.ui.string.Language.English
 
@@ -356,7 +357,10 @@ enum class Strings {
     } ?: en()
 }
 
-fun string(key: Strings, vararg params: Any?): String = stringCertain(key, currentLanguage, *params)
+@Composable
+fun string(key: Strings, vararg params: Any?): String = stringCertain(key, LocalLanguage.current, *params)
+
+fun stringStatic(key: Strings, vararg params: Any?): String = stringCertain(key, currentLanguage, *params)
 
 fun stringCertain(key: Strings, language: Language, vararg params: Any?): String {
     val template = key.get(language)

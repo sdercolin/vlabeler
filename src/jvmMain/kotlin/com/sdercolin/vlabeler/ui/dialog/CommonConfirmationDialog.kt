@@ -24,9 +24,9 @@ import com.sdercolin.vlabeler.ui.string.string
 import java.io.File
 
 sealed class CommonConfirmationDialogAction(
-    val text: String,
+    val getText: @Composable () -> String,
 ) : EmbeddedDialogArgs {
-    constructor(stringKey: Strings) : this(string(stringKey))
+    constructor(stringKey: Strings) : this({ string(stringKey) })
 
     class RemoveCurrentEntry(isLastEntry: Boolean) :
         CommonConfirmationDialogAction(
@@ -42,15 +42,17 @@ sealed class CommonConfirmationDialogAction(
 
     class RedirectSampleDirectory(currentDirectory: File) :
         CommonConfirmationDialogAction(
-            string(
-                Strings.AskIfRedirectSampleDirectoryDialogDescription,
-                currentDirectory.absolutePath,
-            ),
+            {
+                string(
+                    Strings.AskIfRedirectSampleDirectoryDialogDescription,
+                    currentDirectory.absolutePath,
+                )
+            },
         )
 
     class RemoveCustomizableItem(val state: CustomizableItemManagerDialogState<*>, val item: CustomizableItem) :
         CommonConfirmationDialogAction(
-            string(Strings.CustomizableItemManagerRemoveItemConfirm, item.displayedName),
+            { string(Strings.CustomizableItemManagerRemoveItemConfirm, item.displayedName) },
         )
 }
 
@@ -69,7 +71,7 @@ fun CommonConfirmationDialog(
     Column(Modifier.widthIn(min = 350.dp)) {
         Spacer(Modifier.height(15.dp))
         Text(
-            text = action.text,
+            text = action.getText(),
             style = MaterialTheme.typography.body2,
             fontWeight = FontWeight.Bold,
         )

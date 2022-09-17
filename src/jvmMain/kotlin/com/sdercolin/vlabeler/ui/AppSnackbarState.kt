@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.ui
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.stringStatic
 
 interface AppSnackbarState {
 
@@ -11,7 +11,7 @@ interface AppSnackbarState {
 
     suspend fun showSnackbar(
         message: String,
-        actionLabel: String? = string(Strings.CommonOkay),
+        actionLabel: String? = stringStatic(Strings.CommonOkay),
         duration: SnackbarDuration = SnackbarDuration.Short,
     )
 }

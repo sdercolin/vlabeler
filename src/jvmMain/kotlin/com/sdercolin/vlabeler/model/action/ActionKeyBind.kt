@@ -1,11 +1,13 @@
 package com.sdercolin.vlabeler.model.action
 
 import com.sdercolin.vlabeler.model.key.KeySet
+import com.sdercolin.vlabeler.ui.string.Language
 
 sealed class ActionKeyBind<T : Action> {
     abstract val action: T
     abstract val keySet: KeySet?
-    val title: String get() = action.title
+
+    fun getTitle(language: Language): String = action.getTitle(language)
     abstract val editable: Boolean
     abstract val equalsDefault: Boolean
     abstract fun update(keySet: KeySet?): ActionKeyBind<T>

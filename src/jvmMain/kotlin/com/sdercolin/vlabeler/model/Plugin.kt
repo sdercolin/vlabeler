@@ -4,6 +4,8 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
+import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toParamMap
@@ -34,7 +36,7 @@ data class Plugin(
     val name: String,
     val version: Int = 1,
     val type: Type,
-    val displayedName: String = name,
+    val displayedName: LocalizedJsonString = name.toLocalized(),
     val author: String,
     val email: String = "",
     val description: String = "",

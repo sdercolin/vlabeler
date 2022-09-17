@@ -2,6 +2,7 @@
 
 package com.sdercolin.vlabeler.ui.string
 
+import androidx.compose.runtime.Composable
 import com.sdercolin.vlabeler.exception.LocalizedStringDeserializedException
 import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -30,7 +31,10 @@ data class LocalizedJsonString(
         return null
     }
 
-    fun get() = getByLanguage(currentLanguage) ?: requireNotNull(getByLanguage(Language.default))
+    fun getCertain(language: Language) = getByLanguage(language) ?: requireNotNull(getByLanguage(Language.default))
+
+    @Composable
+    fun get() = getCertain(LocalLanguage.current)
 
     fun validate(): LocalizedJsonString {
         if (localized.isEmpty()) {
@@ -44,6 +48,8 @@ data class LocalizedJsonString(
         return this
     }
 }
+
+fun String.toLocalized() = LocalizedJsonString(mapOf(Language.default.code to this))
 
 @Serializer(LocalizedJsonString::class)
 object LocalizedJsonStringSerializer : KSerializer<LocalizedJsonString> {

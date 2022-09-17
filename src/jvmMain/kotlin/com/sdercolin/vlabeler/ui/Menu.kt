@@ -266,7 +266,7 @@ fun FrameWindowScope.Menu(
                 Menu(string(Strings.MenuToolsBatchEdit)) {
                     appState.getActivePlugins(Plugin.Type.Macro).forEach {
                         Item(
-                            it.displayedName,
+                            it.displayedName.get(),
                             onClick = { appState.openMacroPluginDialog(it) },
                             enabled = it.isMacroExecutable(appState),
                         )

@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog.updater
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -45,6 +46,7 @@ class UpdaterDialogState(
     var progress: Float by mutableStateOf(0f)
         private set
 
+    @Composable
     fun getDiffSummary(textColor: Color, linkColor: Color): Pair<AnnotatedString, String> {
         val tag = "link"
         val text = buildAnnotatedString {

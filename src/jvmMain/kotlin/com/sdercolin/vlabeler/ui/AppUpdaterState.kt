@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.ui
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.repository.update.UpdateRepository
 import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.stringStatic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ class AppUpdaterStateImpl(
                 .onSuccess {
                     if (it == null) {
                         if (isAuto.not()) {
-                            snackbarState.showSnackbar(string(Strings.CheckForUpdatesAlreadyUpdated))
+                            snackbarState.showSnackbar(stringStatic(Strings.CheckForUpdatesAlreadyUpdated))
                         }
                         return@launch
                     }
@@ -40,7 +40,7 @@ class AppUpdaterStateImpl(
                     dialogState.openUpdaterDialog(it)
                 }
                 .onFailure {
-                    snackbarState.showSnackbar(string(Strings.CheckForUpdatesFailure))
+                    snackbarState.showSnackbar(stringStatic(Strings.CheckForUpdatesFailure))
                 }
         }
     }

@@ -64,6 +64,7 @@ import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 import com.sdercolin.vlabeler.ui.dialog.ColorPickerDialog
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
+import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.Text
@@ -454,15 +455,16 @@ private fun <K : Action> Keymap(
     state: PreferencesEditorState,
     keymapState: PreferencesKeymapState<K> = remember(item) { PreferencesKeymapState(item, state) },
 ) {
+    val language = LocalLanguage.current
     LaunchedEffect(state.conf) {
-        keymapState.update(state.conf)
+        keymapState.update(state.conf, language)
     }
 
     val lazyListState = rememberLazyListState()
     Column(modifier = Modifier.fillMaxSize()) {
         SearchBar(
             text = keymapState.searchText,
-            onTextChange = keymapState::search,
+            onTextChange = { keymapState.search(it, language) },
             modifier = Modifier.background(color = MaterialTheme.colors.background),
         )
         Spacer(Modifier.height(8.dp))

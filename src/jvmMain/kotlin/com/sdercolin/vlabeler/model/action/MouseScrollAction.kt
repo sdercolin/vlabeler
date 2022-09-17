@@ -3,8 +3,9 @@ package com.sdercolin.vlabeler.model.action
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
+import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.stringCertain
 import com.sdercolin.vlabeler.util.getNullableOrElse
 
 enum class MouseScrollAction(
@@ -25,8 +26,7 @@ enum class MouseScrollAction(
     override val displayOrder: Int
         get() = values().indexOf(this)
 
-    override val title: String
-        get() = string(displayedName)
+    override fun getTitle(language: Language): String = stringCertain(displayedName, language)
 
     companion object {
 

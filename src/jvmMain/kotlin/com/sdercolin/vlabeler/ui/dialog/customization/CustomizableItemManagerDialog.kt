@@ -233,7 +233,7 @@ fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialo
         Column(modifier = Modifier.weight(1f)) {
             Row {
                 Text(
-                    text = item.displayedName,
+                    text = item.displayedName.get(),
                     style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.alignByBaseline(),
                     maxLines = 1,

@@ -4,8 +4,9 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
+import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.stringCertain
 import com.sdercolin.vlabeler.util.getNullableOrElse
 
 enum class MouseClickAction(
@@ -35,8 +36,7 @@ enum class MouseClickAction(
     override val displayOrder: Int
         get() = values().indexOf(this)
 
-    override val title: String
-        get() = string(displayedName)
+    override fun getTitle(language: Language): String = stringCertain(displayedName, language)
 
     companion object {
 

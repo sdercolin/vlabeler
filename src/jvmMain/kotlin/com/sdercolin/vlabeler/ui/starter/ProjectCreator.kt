@@ -254,7 +254,7 @@ private fun LabelerSelector(
         var expanded by remember { mutableStateOf(false) }
         TextField(
             modifier = Modifier.widthIn(min = 250.dp),
-            value = state.labeler.displayedName,
+            value = state.labeler.displayedName.get(),
             onValueChange = { },
             readOnly = true,
             label = { Text(string(Strings.StarterNewLabeler)) },
@@ -277,7 +277,7 @@ private fun LabelerSelector(
                         expanded = false
                     },
                 ) {
-                    Text(text = conf.displayedName)
+                    Text(text = conf.displayedName.get())
                 }
             }
         }
@@ -293,7 +293,7 @@ private fun TemplatePluginSelector(
         var expanded by remember { mutableStateOf(false) }
         TextField(
             modifier = Modifier.widthIn(min = 250.dp),
-            value = state.templateName,
+            value = state.getTemplateName(),
             onValueChange = { },
             readOnly = true,
             label = { Text(string(Strings.StarterNewTemplatePlugin)) },
@@ -324,7 +324,7 @@ private fun TemplatePluginSelector(
                         expanded = false
                     },
                 ) {
-                    Text(text = plugin.displayedName)
+                    Text(text = plugin.displayedName.get())
                 }
             }
         }

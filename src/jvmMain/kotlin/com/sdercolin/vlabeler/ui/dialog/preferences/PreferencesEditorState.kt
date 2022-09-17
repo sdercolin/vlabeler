@@ -10,7 +10,7 @@ import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
 import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.stringStatic
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
 import java.io.File
@@ -242,21 +242,21 @@ class PreferencesEditorState(
             FilePicker.Import -> {
                 runCatching { file.readText().parseJson<AppConf>() }
                     .onSuccess {
-                        showSnackbar(string(Strings.PreferencesEditorImportSuccess))
+                        showSnackbar(stringStatic(Strings.PreferencesEditorImportSuccess))
                         _conf = it
                     }
                     .onFailure {
-                        showSnackbar(string(Strings.PreferencesEditorImportFailure))
+                        showSnackbar(stringStatic(Strings.PreferencesEditorImportFailure))
                         Log.error(it)
                     }
             }
             FilePicker.Export -> {
                 runCatching { file.writeText(conf.stringifyJson()) }
                     .onSuccess {
-                        showSnackbar(string(Strings.PreferencesEditorExportSuccess))
+                        showSnackbar(stringStatic(Strings.PreferencesEditorExportSuccess))
                     }
                     .onFailure {
-                        showSnackbar(string(Strings.PreferencesEditorExportFailure))
+                        showSnackbar(stringStatic(Strings.PreferencesEditorExportFailure))
                         Log.error(it)
                     }
             }

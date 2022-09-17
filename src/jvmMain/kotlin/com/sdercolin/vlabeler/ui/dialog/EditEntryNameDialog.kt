@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.stringStatic
 
 data class InputEntryNameDialogArgs(
     val index: Int,
@@ -74,7 +75,7 @@ fun InputEntryNameDialog(
 
     val trySubmit = {
         if (args.invalidOptions.contains(input.text)) {
-            args.showSnackbar(string(Strings.EditEntryNameDialogExistingError))
+            args.showSnackbar(stringStatic(Strings.EditEntryNameDialogExistingError))
         } else {
             submit(input.text)
         }

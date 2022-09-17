@@ -270,7 +270,7 @@ private fun Content(state: PluginDialogState) {
 @Composable
 private fun Title(plugin: Plugin) {
     Text(
-        text = plugin.displayedName,
+        text = plugin.displayedName.get(),
         style = MaterialTheme.typography.h4,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,

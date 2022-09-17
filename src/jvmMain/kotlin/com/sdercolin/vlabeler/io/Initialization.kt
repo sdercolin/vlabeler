@@ -109,8 +109,8 @@ suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatc
     availableLabelers.sortedBy { it.name }
 }
 
-suspend fun loadPlugins(): List<Plugin> = withContext(Dispatchers.IO) {
-    loadPlugins(Plugin.Type.Template) + loadPlugins(Plugin.Type.Macro)
+suspend fun loadPlugins(language: Language): List<Plugin> = withContext(Dispatchers.IO) {
+    loadPlugins(Plugin.Type.Template, language) + loadPlugins(Plugin.Type.Macro, language)
 }
 
 fun File.asLabelerConf(): Result<LabelerConf> {
@@ -145,7 +145,7 @@ suspend fun produceAppState(
     launchArguments: ArgumentMap?,
 ): AppState {
     val availableLabelerConfs = loadAvailableLabelerConfs()
-    val plugins = loadPlugins()
+    val plugins = loadPlugins(appConf.value.view.language)
 
     val scrollFitViewModel = ScrollFitViewModel(mainScope)
     val snackbarHostState = SnackbarHostState()

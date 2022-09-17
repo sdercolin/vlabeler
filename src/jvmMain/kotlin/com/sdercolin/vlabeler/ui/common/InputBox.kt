@@ -34,7 +34,7 @@ fun InputBox(
     onValueChange: (String) -> Unit,
     leadingContent: @Composable RowScope.() -> Unit = {},
     modifier: Modifier = Modifier,
-    errorPrompt: ((String) -> String?)? = null,
+    errorPrompt: @Composable ((String) -> String?)? = null,
     enabled: Boolean = true,
     fixedWidth: Boolean = false,
 ) {
@@ -100,7 +100,7 @@ fun IntegerInputBox(
 ) {
     var value by remember(intValue) { mutableStateOf(intValue.toString()) }
 
-    val getErrorPrompt = { newValue: String ->
+    val getErrorPrompt = @Composable { newValue: String ->
         val parsed = newValue.toIntOrNull()
         if (parsed == null) {
             string(Strings.CommonInputErrorPromptInteger)
@@ -115,7 +115,7 @@ fun IntegerInputBox(
         onValueChange = { newValue ->
             value = newValue
             newValue.toIntOrNull()?.let {
-                if (getErrorPrompt(newValue) == null) {
+                if (it in (min ?: Int.MIN_VALUE)..(max ?: Int.MAX_VALUE)) {
                     onValueChange(it)
                 }
             }
@@ -140,7 +140,7 @@ fun FloatInputBox(
             value = floatValue.toStringTrimmed()
         }
     }
-    val getErrorPrompt = { newValue: String ->
+    val getErrorPrompt = @Composable { newValue: String ->
         val parsed = newValue.toFloatOrNull()
         if (parsed == null) {
             string(Strings.CommonInputErrorPromptNumber)
@@ -155,7 +155,7 @@ fun FloatInputBox(
         onValueChange = { newValue ->
             value = newValue
             newValue.toFloatOrNull()?.let {
-                if (getErrorPrompt(newValue) == null) {
+                if (it in (min ?: Float.MIN_VALUE)..(max ?: Float.MAX_VALUE)) {
                     onValueChange(it)
                 }
             }
@@ -165,6 +165,7 @@ fun FloatInputBox(
     )
 }
 
+@Composable
 private fun <T : Comparable<T>> getPromptWithRange(min: T?, max: T?, parsed: T) = when {
     (min != null && max != null) && (parsed < min || parsed > max) -> {
         string(Strings.CommonInputErrorPromptNumberRange, min.toString(), max.toString())

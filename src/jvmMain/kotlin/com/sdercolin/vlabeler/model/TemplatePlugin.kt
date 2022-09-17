@@ -4,6 +4,7 @@ import androidx.compose.ui.res.useResource
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.PluginRuntimeException
+import com.sdercolin.vlabeler.exception.PluginUnexpectedRuntimeException
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.toFile
@@ -63,7 +64,11 @@ fun runTemplatePlugin(
         }
     }.getOrElse {
         val expected = js.getOrNull("expectedError") ?: false
-        throw PluginRuntimeException(expected = expected, cause = it)
+        if (expected) {
+            throw PluginRuntimeException(it)
+        } else {
+            throw PluginUnexpectedRuntimeException(it)
+        }
     }
 }
 

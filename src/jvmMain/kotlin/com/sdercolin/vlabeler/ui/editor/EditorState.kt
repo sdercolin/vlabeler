@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.editor
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,12 +64,12 @@ class EditorState(
     val entryTitle: String
         get() = project.currentEntry.name
 
-    val entrySubTitle: String
-        get() = if (editedEntries.size == 1) {
-            project.currentSampleName
-        } else {
-            string(Strings.EditorSubTitleMultiple, editedEntries.size, project.currentSampleName)
-        }
+    @Composable
+    fun getEntrySubTitle(): String = if (editedEntries.size == 1) {
+        project.currentSampleName
+    } else {
+        string(Strings.EditorSubTitleMultiple, editedEntries.size, project.currentSampleName)
+    }
 
     val entryStar: Boolean
         get() = project.currentEntry.notes.star

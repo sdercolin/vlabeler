@@ -4,6 +4,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.util.CustomPluginDir
 import com.sdercolin.vlabeler.util.DefaultPluginDir
 import com.sdercolin.vlabeler.util.ParamMap
@@ -22,7 +23,7 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-fun loadPlugins(type: Plugin.Type): List<Plugin> =
+fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
     listOf(CustomPluginDir, DefaultPluginDir)
         .let { if (isDebug) it.reversed() else it }
         .flatMap { it.resolve(type.directoryName).getChildren() }
@@ -71,7 +72,7 @@ fun loadPlugins(type: Plugin.Type): List<Plugin> =
                 )
             }
         }
-        .sortedBy { it.displayedName }
+        .sortedBy { it.displayedName.getCertain(language) }
 
 suspend fun Plugin.loadSavedParams(): ParamMap = withContext(Dispatchers.IO) {
     requireNotNull(directory).resolve(PluginSavedParamsFileName)

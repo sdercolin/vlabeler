@@ -6,7 +6,7 @@ import com.sdercolin.vlabeler.exception.ProjectParseException
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.stringStatic
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getCacheDir
@@ -36,7 +36,7 @@ fun loadProject(
 
     scope.launch(Dispatchers.IO) {
         if (file.exists().not()) {
-            showSnackbar(string(Strings.StarterRecentDeleted))
+            showSnackbar(stringStatic(Strings.StarterRecentDeleted))
             return@launch
         }
         appState.showProgress()
@@ -53,7 +53,7 @@ fun loadProject(
                 Log.info("Wrote labeler ${project.labelerConf.name} to ${labelerConfFile.absolutePath}")
                 labelerConfFile.writeText(project.labelerConf.stringifyJson())
                 showSnackbar(
-                    string(
+                    stringStatic(
                         Strings.LoadProjectWarningLabelerCreated,
                         project.labelerConf.name,
                     ),
@@ -71,7 +71,7 @@ fun loadProject(
                 )
                 labelerConfFile.writeText(project.labelerConf.stringifyJson())
                 showSnackbar(
-                    string(
+                    stringStatic(
                         Strings.LoadProjectWarningLabelerUpdated,
                         project.labelerConf.name,
                         project.labelerConf.version,
@@ -91,7 +91,7 @@ fun loadProject(
 
         val cacheDirectory = if (project.cacheDirectory.toFile().parentFile.exists().not()) {
             Project.getDefaultCacheDirectory(workingDirectory, projectName).also {
-                showSnackbar(string(Strings.LoadProjectWarningCacheDirReset))
+                showSnackbar(stringStatic(Strings.LoadProjectWarningCacheDirReset))
                 Log.info("Reset cache directory to $it")
             }
         } else {

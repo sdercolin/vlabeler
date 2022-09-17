@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
+import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.theme.Black20
 
 @Composable
@@ -36,7 +37,7 @@ fun <K : Action> PreferencesKeymapItem(
     ) {
         Row(Modifier.padding(horizontal = 30.dp)) {
             Text(
-                text = keyBind.title,
+                text = keyBind.getTitle(LocalLanguage.current),
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onBackground,
                 maxLines = 1,

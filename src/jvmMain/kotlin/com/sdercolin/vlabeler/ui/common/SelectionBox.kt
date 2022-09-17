@@ -35,7 +35,7 @@ fun <T> SelectionBox(
     value: T,
     onSelect: (T) -> Unit,
     options: Collection<T>,
-    getText: (T) -> String,
+    getText: @Composable (T) -> String,
     modifier: Modifier = Modifier,
     fixedWidth: Boolean = false,
     customPadding: Boolean = false,

@@ -2,6 +2,8 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.LabelerConf.Property
+import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
+import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.util.DefaultLabelerDir
 import kotlinx.serialization.Serializable
 
@@ -31,7 +33,7 @@ data class LabelerConf(
     /**
      * Name displayed in the UI
      */
-    val displayedName: String = name,
+    val displayedName: LocalizedJsonString = name.toLocalized(),
     val author: String,
     val email: String = "",
     val description: String = "",

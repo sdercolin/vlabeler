@@ -67,7 +67,11 @@ class ProjectCreatorState(
     var templatePluginParams: ParamMap? by mutableStateOf(null)
     var templatePluginSavedParams: ParamMap? by mutableStateOf(null)
     var templatePluginError: Boolean by mutableStateOf(false)
-    val templateName: String get() = templatePlugin?.displayedName ?: string(Strings.StarterNewTemplatePluginNone)
+
+    @Composable
+    fun getTemplateName(): String = templatePlugin?.displayedName?.get()
+        ?: string(Strings.StarterNewTemplatePluginNone)
+
     var inputFile: String by mutableStateOf("")
         private set
     private var inputFileEdited: Boolean by mutableStateOf(false)
@@ -286,6 +290,7 @@ class ProjectCreatorState(
 
     fun isInputFileEnabled(): Boolean = getSupportedInputFileExtension() != null
 
+    @Composable
     fun getInputFileLabelText(): String {
         val extension = getSupportedInputFileExtension()
         return if (extension == null) {
@@ -295,6 +300,7 @@ class ProjectCreatorState(
         }
     }
 
+    @Composable
     fun getInputFilePlaceholderText(): String? {
         return if (templatePlugin == null) string(Strings.StarterNewInputFilePlaceholder)
         else null
@@ -368,6 +374,7 @@ class ProjectCreatorState(
         }
     }
 
+    @Composable
     fun getFilePickerTitle(picker: PathPicker) = when (picker) {
         PathPicker.SampleDirectory -> string(Strings.ChooseSampleDirectoryDialogTitle)
         PathPicker.WorkingDirectory -> string(Strings.ChooseWorkingDirectoryDialogTitle)
@@ -399,10 +406,13 @@ class ProjectCreatorState(
         }
     }
 
+    @Composable
     fun getSupportedPlugins(plugins: List<Plugin>) = plugins
         .filter { it.type == Plugin.Type.Template }
         .filter { it.isLabelFileExtensionSupported(labeler.extension) }
-        .sortedBy { it.displayedName }
+        .map { it to it.displayedName.get() }
+        .sortedBy { it.second }
+        .map { it.first }
 
     fun create(create: (Project) -> Unit) {
         coroutineScope.launch(Dispatchers.IO) {

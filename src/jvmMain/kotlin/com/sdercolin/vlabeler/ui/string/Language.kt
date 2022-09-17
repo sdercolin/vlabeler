@@ -1,6 +1,10 @@
 package com.sdercolin.vlabeler.ui.string
 
+import androidx.compose.runtime.compositionLocalOf
+
 var currentLanguage: Language = Language.default
+
+val LocalLanguage = compositionLocalOf { Language.default }
 
 enum class Language(val code: String, val displayName: String) : Text {
     English("en", "English"),

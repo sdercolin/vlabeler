@@ -11,8 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
 import kotlinx.coroutines.launch
 
@@ -46,10 +44,7 @@ fun PreferencesDialog(appState: AppState) {
                 onViewPage = onViewPage,
                 showSnackbar = {
                     coroutineScope.launch {
-                        appState.showSnackbar(
-                            message = it,
-                            actionLabel = string(Strings.CommonOkay),
-                        )
+                        appState.showSnackbar(message = it)
                     }
                 },
             )
