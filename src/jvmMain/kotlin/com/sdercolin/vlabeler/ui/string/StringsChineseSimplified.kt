@@ -171,6 +171,7 @@ fun Strings.zhHans(): String? = when (this) {
     ProjectUpdateOnSampleException -> "无法将工程中的数据与当前读取到的采样进行匹配。详情请查看错误日志。"
     InvalidEditedProjectException -> "此次编辑将导致工程数据无效。详情请查看错误日志。"
     CustomizableItemLoadingException -> "无法读取该自定义组件。"
+    PluginRuntimeExceptionTemplate -> "插件运行时错误：%s"
     LabelerManagerTitle -> "标记器"
     LabelerManagerImportDialogTitle -> "导入标记器"
     TemplatePluginManagerTitle -> "模板生成器"

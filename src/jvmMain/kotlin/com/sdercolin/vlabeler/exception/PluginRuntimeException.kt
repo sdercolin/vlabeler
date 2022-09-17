@@ -1,4 +1,5 @@
 package com.sdercolin.vlabeler.exception
 
-// TODO: allow localized text from an expected error
-class PluginRuntimeException(cause: Throwable?) : Exception(cause?.message, cause)
+import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
+
+class PluginRuntimeException(cause: Throwable?, val localizedMessage: LocalizedJsonString?) : Exception(cause)

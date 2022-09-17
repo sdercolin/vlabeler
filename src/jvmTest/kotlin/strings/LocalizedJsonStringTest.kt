@@ -3,7 +3,6 @@ package strings
 import com.sdercolin.vlabeler.exception.LocalizedStringDeserializedException
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
-import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
 import org.junit.jupiter.api.assertThrows
@@ -40,8 +39,7 @@ class LocalizedJsonStringTest {
         )
         assertEquals(expected, parsed)
         assertEquals(localizedString, parsed.stringifyJson())
-        currentLanguage = Language.ChineseSimplified
-        assertEquals("你好，世界", parsed.get())
+        assertEquals("你好，世界", parsed.getCertain(Language.ChineseSimplified))
     }
 
     @Test

@@ -21,9 +21,11 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.WarningText
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.util.getLocalizedMessage
 
 @Composable
 fun ErrorDialog(
@@ -43,8 +45,9 @@ fun ErrorDialog(
             ) {
                 Column(Modifier.widthIn(min = 350.dp)) {
                     Spacer(Modifier.height(15.dp))
+                    val message = error.getLocalizedMessage(LocalLanguage.current)
                     WarningText(
-                        text = error.message ?: error.toString(),
+                        text = message,
                         style = WarningTextStyle.Error,
                     )
                     Spacer(Modifier.height(25.dp))

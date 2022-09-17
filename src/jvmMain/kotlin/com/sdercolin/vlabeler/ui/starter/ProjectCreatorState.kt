@@ -19,6 +19,7 @@ import com.sdercolin.vlabeler.model.projectOf
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.HomeDir
@@ -26,6 +27,7 @@ import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.detectEncoding
 import com.sdercolin.vlabeler.util.encodingNameEquals
 import com.sdercolin.vlabeler.util.getDirectory
+import com.sdercolin.vlabeler.util.getLocalizedMessage
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.resolveHome
@@ -444,7 +446,7 @@ class ProjectCreatorState(
                 encoding = encoding,
                 autoExportTargetPath = autoExportTargetPath.takeIf { autoExport },
             ).getOrElse {
-                val message = it.message.orEmpty()
+                val message = it.getLocalizedMessage(currentLanguage)
                 Log.error(it)
                 isLoading = false
                 appState.showSnackbar(message, duration = SnackbarDuration.Indefinite)

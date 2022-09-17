@@ -1,8 +1,10 @@
 let output = []
 let bpm = params["bpm"]
 if (bpm <= 0) {
-    expectedError = true
-    throw new Error("BPM must be greater than 0")
+    error({
+        en: "BPM must be greater than 0",
+        zh: "BPM 必须大于0"
+    })
 }
 
 let beatLength = 60000 / bpm
@@ -10,8 +12,10 @@ let offset = params["offset"]
 let repeat = params["repeat"]
 let repeatSuffix = params["repeatSuffix"]
 if (repeatSuffix.indexOf("{number}") < 0) {
-    expectedError = true
-    throw new Error("The `repeat suffix template` parameter must contain placeholder \"{number}\".")
+    error({
+        en: "The `repeat suffix template` parameter must contain placeholder \"{number}\".",
+        zh: "`重复后缀模板` 参数必须包含占位符 \"{number}\"。"
+    })
 }
 
 let prefix = params["prefix"]
@@ -56,8 +60,10 @@ let vowelLineParsed = params["vowelMap"].split('\n').flatMap(line => {
 let vowelMap = new Map()
 for (let [text, vowel] of vowelLineParsed) {
     if (vowelMap.has(text)) {
-        expectedError = true
-        throw new Error(`The vowel map contains duplicate entries for ${text}.`)
+        error({
+            en: `The vowel map contains duplicate entries for ${text}.`,
+            zh: `元音表中包含重复的项目 ${text}。`
+        })
     }
     vowelMap.set(text, vowel)
 }
@@ -74,13 +80,17 @@ let consonantLineParsed = params["consonantMap"].split('\n').flatMap(line => {
 let map = new Map()
 for (let [text, consonant] of consonantLineParsed) {
     if (map.has(text)) {
-        expectedError = true
-        throw new Error(`The consonant map contains duplicate entries for ${text}.`)
+        error({
+            en: `The consonant map contains duplicate entries for ${text}.`,
+            zh: `辅音表中包含重复的项目 ${text}。`
+        })
     }
     let vowelItem = vowelList.find(vowel => text.endsWith(vowel[0]))
     if (!vowelItem) {
-        expectedError = true
-        throw new Error(`Could not find matched item in the vowel map for ${text}.`)
+        error({
+            en: `Could not find matched item in the vowel map for ${text}.`,
+            zh: `无法在元音表中找到与 ${text} 匹配的项目。`
+        })
     }
     let vowel = vowelItem[1]
     map.set(text, [consonant, vowel])

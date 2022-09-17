@@ -169,6 +169,7 @@ enum class Strings {
     ProjectUpdateOnSampleException,
     InvalidEditedProjectException,
     CustomizableItemLoadingException,
+    PluginRuntimeExceptionTemplate,
     LabelerManagerTitle,
     LabelerManagerImportDialogTitle,
     TemplatePluginManagerTitle,

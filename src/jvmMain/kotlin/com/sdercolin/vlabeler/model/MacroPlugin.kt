@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.exception.PluginUnexpectedRuntimeException
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.Serializable
 
@@ -20,7 +21,7 @@ fun runMacroPlugin(
         logHandler = Log.infoFileHandler,
         currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile(),
     )
-    return runCatching {
+    val result = runCatching {
         val resourceTexts = plugin.readResourceFiles()
 
         js.set("debug", isDebug)
@@ -29,10 +30,10 @@ fun runMacroPlugin(
         js.setJson("params", params.resolve(project, js))
         js.setJson("resources", resourceTexts)
 
-        val entryDefCode = useResource(Resources.classEntryJs) { it.bufferedReader().readText() }
-        val editedEntryDefCode = useResource(Resources.classEditedEntryJs) { it.bufferedReader().readText() }
-        js.eval(entryDefCode)
-        js.eval(editedEntryDefCode)
+        listOf(Resources.classEntryJs, Resources.classEditedEntryJs, Resources.expectedErrorJs).forEach { path ->
+            val code = useResource(path) { it.bufferedReader().readText() }
+            js.eval(code)
+        }
 
         plugin.scriptFiles.zip(plugin.readScriptTexts()).forEach { (file, source) ->
             Log.debug("Launch script: $file")
@@ -65,11 +66,13 @@ fun runMacroPlugin(
         val expected = js.getOrNull("expectedError") ?: false
         js.close()
         if (expected) {
-            throw PluginRuntimeException(it)
+            throw PluginRuntimeException(it, it.message?.parseJson())
         } else {
             throw PluginUnexpectedRuntimeException(it)
         }
-    }.also { js.close() }
+    }
+    js.close()
+    return result
 }
 
 @Serializable

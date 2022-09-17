@@ -7,6 +7,8 @@ import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.exception.PluginUnexpectedRuntimeException
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.Serializable
 import java.io.File
@@ -29,7 +31,7 @@ fun runTemplatePlugin(
         logHandler = Log.infoFileHandler,
         currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile(),
     )
-    return runCatching {
+    val result = runCatching {
         val inputTexts = inputFiles.map { it.readText(Charset.forName(encoding)) }
         val resourceTexts = plugin.readResourceFiles()
 
@@ -40,9 +42,12 @@ fun runTemplatePlugin(
         js.setJson("params", params.resolve(project = null, js = null))
         js.setJson("resources", resourceTexts)
 
-        if (plugin.outputRawEntry.not()) {
-            val entryDefCode = useResource("class_entry.js") { String(it.readAllBytes()) }
-            js.eval(entryDefCode)
+        listOfNotNull(
+            if (plugin.outputRawEntry.not()) Resources.classEntryJs else null,
+            Resources.expectedErrorJs,
+        ).forEach { path ->
+            val code = useResource(path) { it.bufferedReader().readText() }
+            js.eval(code)
         }
 
         plugin.scriptFiles.zip(plugin.readScriptTexts()).forEach { (file, source) ->
@@ -54,22 +59,23 @@ fun runTemplatePlugin(
         if (plugin.outputRawEntry) {
             val lines = js.getJson<List<String>>("output")
             Log.info("Plugin execution got raw lines:\n" + lines.joinToString("\n"))
-            js.close()
             TemplatePluginResult.Raw(lines)
         } else {
             val entries = js.getJson<List<FlatEntry>>("output")
             Log.info("Plugin execution got entries:\n" + entries.joinToString("\n"))
-            js.close()
             TemplatePluginResult.Parsed(entries)
         }
     }.getOrElse {
         val expected = js.getOrNull("expectedError") ?: false
+        js.close()
         if (expected) {
-            throw PluginRuntimeException(it)
+            throw PluginRuntimeException(it, it.message?.parseJson())
         } else {
             throw PluginUnexpectedRuntimeException(it)
         }
     }
+    js.close()
+    return result
 }
 
 @Serializable

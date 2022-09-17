@@ -16,8 +16,10 @@ if (debug) {
 let timeUnit = params["unit"]
 
 if (timeUnit <= 0) {
-    expectedError = true
-    throw new Error("Time unit must be greater than 0")
+    error({
+        en: "Time unit must be greater than 0",
+        zh: "时间单位必须大于0"
+    })
 }
 
 let indexesOfInvalidLength = []
@@ -41,19 +43,28 @@ for (let i = 0; i < lines.length - 1; i++) {
 }
 
 if (indexesOfInvalidLength.length > 0 || indexesPairsOfInconsistentLabels.length > 0 || indexesOfEmptyLabelName.length > 0) {
-    expectedError = true
-    let message = "Illegal input: "
+    let messageEn = "Illegal input: "
+    let messageZh = "不合法的输入："
     if (indexesOfInvalidLength.length > 0) {
-        message += "\n- Invalid duration on lines: " + indexesOfInvalidLength.map(x => x + 1).join(", ")
+        let contents = indexesOfInvalidLength.map(x => x + 1).join(", ")
+        messageEn += "\n- Invalid duration on lines: " + contents
+        messageZh += "\n- 以下行的时长无效：" + contents
     }
     if (indexesOfEmptyLabelName.length > 0) {
-        message += "\n- Empty label name on lines: " + indexesOfEmptyLabelName.map(x => x + 1).join(", ")
+        let contents = indexesOfEmptyLabelName.map(x => x + 1).join(", ")
+        messageEn += "\n- Empty label name on lines: " + contents
+        messageZh += "\n- 以下行的标签名为空：" + contents
     }
     if (indexesPairsOfInconsistentLabels.length > 0) {
-        message += "\n- Inconsistent labels on lines: " + indexesPairsOfInconsistentLabels
+        let contents = indexesPairsOfInconsistentLabels
                 .map(x => "[" + x.map(y => y + 1).join(", ") + "]").join(", ")
+        messageEn += "\n- Inconsistent labels on lines: " + contents
+        messageZh += "\n- 以下行的标签不一致：" + contents
     }
-    throw new Error(message)
+    error({
+        en: messageEn,
+        zh: messageZh
+    })
 }
 
 function convert(input) {

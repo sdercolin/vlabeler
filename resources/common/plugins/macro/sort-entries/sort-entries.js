@@ -4,8 +4,10 @@ let useTag = params["useTag"]
 let prioritizeTag = params["prioritizeTag"]
 
 if (labeler.continuous) {
-    expectedError = true
-    throw new Error("Cannot sort continuous labels.")
+    error({
+        en: "Cannot sort continuous label data.",
+        zh: "无法对连续的标记数据进行排序。"
+    })
 }
 
 entries.sort((a, b) => {

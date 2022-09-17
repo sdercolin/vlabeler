@@ -21,8 +21,10 @@ for (let param of nameTexts) {
 
 let unknownExpressionMatch = expression.match(/\$\{\w+}/)
 if (unknownExpressionMatch) {
-    expectedError = true
-    throw new Error(`Unknown placeholder: ${unknownExpressionMatch[0]}`)
+    error({
+        en: `Unknown parameter in input expression: ${unknownExpressionMatch[0]}`,
+        zh: `输入的表达式中包含未知参数：${unknownExpressionMatch[0]}`
+    })
 }
 
 if (debug) {
@@ -54,8 +56,10 @@ output = entries.map((entry, index) => {
     try {
         newValue = eval(expression)
     } catch (e) {
-        expectedError = true
-        throw e
+        throwExpectedError({
+            en: "Falied to calculate the new value, cause: " + e.message,
+            zh: "计算新值失败，原因：" + e.message
+        })
     }
     if (nameTexts.find(x => x[0] === "offset")[1].includes(parameterName)) {
         if (hasLeft) {

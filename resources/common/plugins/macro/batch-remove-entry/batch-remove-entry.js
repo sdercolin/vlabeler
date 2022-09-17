@@ -6,8 +6,10 @@ if (debug) {
 }
 
 if (selectedEntryIndexes.length === entries.length) {
-    expectedError = true
-    throw new Error("Could not remove all entries.")
+    error({
+        en: "Could not remove all entries.",
+        zh: "不能删除所有条目。"
+    })
 }
 
 output = entries.flatMap((entry, index) => {
