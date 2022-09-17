@@ -111,7 +111,7 @@ data class AppConf(
             const val MaxIntensityAccuracy = DefaultIntensityAccuracy * 5
             const val MinIntensityAccuracy = DefaultIntensityAccuracy / 5
             const val DefaultYAxisBlankRate = 0.1f
-            const val MaxYAxisBlankRate = 1f
+            const val MaxYAxisBlankRate = 3f
             const val MinYAxisBlankRate = 0f
             const val DefaultColor = "#FFF2F2F2"
             const val DefaultBackgroundColor = "#00000000"
