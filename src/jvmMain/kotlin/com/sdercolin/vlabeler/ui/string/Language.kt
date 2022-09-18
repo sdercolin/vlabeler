@@ -20,7 +20,17 @@ enum class Language(val code: String, val displayName: String) : Text {
         val default = English
 
         fun find(languageTag: String): Language? {
-            return values().find { languageTag.startsWith(it.code) }
+            for (value in values()) {
+                val codeLevels = value.code.split("-").scan("") { acc, s ->
+                    if (acc.isEmpty()) s else "$acc-$s"
+                }.filter { it.isNotEmpty() }
+                for (code in codeLevels.reversed()) {
+                    if (languageTag.startsWith(code)) {
+                        return value
+                    }
+                }
+            }
+            return null
         }
     }
 }
