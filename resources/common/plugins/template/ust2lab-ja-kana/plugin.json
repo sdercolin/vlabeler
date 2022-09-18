@@ -4,13 +4,15 @@
   "type": "template",
   "displayedName": {
     "en": "Lab generator with ust (ja-kana)",
-    "zh": "Lab 生成器 (使用日语假名歌词的 ust 文件)"
+    "zh": "基于日语假名歌词的 ust 文件的 lab 生成器",
+    "ja": "日本語かな歌詞の ust による lab 生成器"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Parse ust with Japanese kana lyrics to sinsy lab style entries. Dictionary powered by https://github.com/oatsu-gh/oto2lab.",
-    "zh": "解析日语假名歌词的 ust 文件并生成 sinsy lab 格式的条目。词典由 https://github.com/oatsu-gh/oto2lab 提供。"
+    "zh": "解析日语假名歌词的 ust 文件并生成 sinsy lab 格式的条目。词典由 https://github.com/oatsu-gh/oto2lab 提供。",
+    "ja": "日本語かな歌詞の ust ファイルを解析して、sinsy lab のエントリを生成します。辞書は https://github.com/oatsu-gh/oto2lab によって提供されています。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/ust2lab-ja-kana",
   "supportedLabelFileExtension": "lab",
@@ -23,7 +25,8 @@
         "name": "overlap",
         "label": {
           "en": "Overlap (ms)",
-          "zh": "重叠（毫秒）"
+          "zh": "重叠（毫秒）",
+          "ja": "オーバーラップ（ミリ秒）"
         },
         "defaultValue": 50,
         "min": 10
@@ -33,7 +36,8 @@
         "name": "vowelDelay",
         "label": {
           "en": "Vowel delay when semivowel exists (ms)",
-          "zh": "存在半元音时的元音延迟（毫秒）"
+          "zh": "存在半元音时的元音延迟（毫秒）",
+          "ja": "半母音が存在する場合の母音の遅延（ミリ秒）"
         },
         "defaultValue": 30,
         "min": 10

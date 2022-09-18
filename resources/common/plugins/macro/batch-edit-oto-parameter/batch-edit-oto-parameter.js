@@ -4,11 +4,11 @@ let hasLeft = labeler.fields.length > 3 // true if labeler is oto-plus with a st
 let keepDistance = params["keepDistance"]
 
 let nameTexts = [
-    ["offset", ["Offset", "左边界"]],
-    ["fixed", ["Fixed", "固定"]],
+    ["offset", ["Offset", "左边界", "左ブランク"]],
+    ["fixed", ["Fixed", "固定", "固定範囲"]],
     ["overlap", ["Overlap", "重叠"]],
-    ["preutterance", ["Preutterance", "先行发声"]],
-    ["cutoff", ["Cutoff", "右边界"]]
+    ["preutterance", ["Preutterance", "先行发声", "先行発声"]],
+    ["cutoff", ["Cutoff", "右边界", "右ブランク"]],
 ]
 
 let expression = params["expression"]
@@ -24,7 +24,8 @@ let unknownExpressionMatch = expression.match(/\$\{\w+}/)
 if (unknownExpressionMatch) {
     error({
         en: `Unknown parameter in input expression: ${unknownExpressionMatch[0]}`,
-        zh: `输入的表达式中包含未知参数：${unknownExpressionMatch[0]}`
+        zh: `输入的表达式中包含未知参数：${unknownExpressionMatch[0]}`,
+        ja: `入力式に未知のパラメータが含まれています：${unknownExpressionMatch[0]}`
     })
 }
 
@@ -59,7 +60,8 @@ output = entries.map((entry, index) => {
     } catch (e) {
         throwExpectedError({
             en: "Falied to calculate the new value, cause: " + e.message,
-            zh: "计算新值失败，原因：" + e.message
+            zh: "计算新值失败，原因：" + e.message,
+            ja: "新しい値の計算に失敗しました。原因：" + e.message
         })
     }
 

@@ -3,7 +3,8 @@ let bpm = params["bpm"]
 if (bpm <= 0) {
     error({
         en: "BPM must be greater than 0",
-        zh: "BPM 必须大于0"
+        zh: "BPM 必须大于0",
+        ja: "BPMは0より大きくなければなりません"
     })
 }
 
@@ -14,7 +15,8 @@ let repeatSuffix = params["repeatSuffix"]
 if (repeatSuffix.indexOf("{number}") < 0) {
     error({
         en: "The `repeat suffix template` parameter must contain placeholder \"{number}\".",
-        zh: "`重复后缀模板` 参数必须包含占位符 \"{number}\"。"
+        zh: "`重复后缀模板` 参数必须包含占位符 \"{number}\"。",
+        ja: "`リピート接尾辞テンプレート`パラメータには、プレースホルダー\"{number}\"が含まれている必要があります。"
     })
 }
 
@@ -45,7 +47,7 @@ let reorderCVFirst = false
 let reorderAcrossSample = false
 if (reorder) {
     reorderCVFirst = order[0] === "CVs -> VCs"
-    reorderAcrossSample = ["across sample", "跨采样"].includes(order[1])
+    reorderAcrossSample = ["across sample", "跨采样", "サンプル間"].includes(order[1])
 }
 
 let appendTags = params["appendTags"]
@@ -62,7 +64,8 @@ for (let [text, vowel] of vowelLineParsed) {
     if (vowelMap.has(text)) {
         error({
             en: `The vowel map contains duplicate entries for ${text}.`,
-            zh: `元音表中包含重复的项目 ${text}。`
+            zh: `元音表中包含重复的项目 ${text}。`,
+            ja: `母音マップには、複数回 ${text} が含まれています。`
         })
     }
     vowelMap.set(text, vowel)
@@ -82,14 +85,16 @@ for (let [text, consonant] of consonantLineParsed) {
     if (map.has(text)) {
         error({
             en: `The consonant map contains duplicate entries for ${text}.`,
-            zh: `辅音表中包含重复的项目 ${text}。`
+            zh: `辅音表中包含重复的项目 ${text}。`,
+            ja: `子音マップには、複数回 ${text} が含まれています。`
         })
     }
     let vowelItem = vowelList.find(vowel => text.endsWith(vowel[0]))
     if (!vowelItem) {
         error({
             en: `Could not find matched item in the vowel map for ${text}.`,
-            zh: `无法在元音表中找到与 ${text} 匹配的项目。`
+            zh: `无法在元音表中找到与 ${text} 匹配的项目。`,
+            ja: `母音マップに ${text} とマッチする項目が見つかりませんでした。`
         })
     }
     let vowel = vowelItem[1]

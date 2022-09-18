@@ -4,13 +4,15 @@
   "type": "template",
   "displayedName": {
     "en": "VCV oto generator",
-    "zh": "连续音 oto 生成器"
+    "zh": "连续音 oto 生成器",
+    "ja": "連続音 oto 生成器"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Generate template for VCV oto.",
-    "zh": "生成连续音 oto 的模板。"
+    "zh": "生成连续音 oto 的模板。",
+    "ja": "連続音 oto のテンプレートを生成します。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/vcv-oto-gen",
   "supportedLabelFileExtension": "ini",
@@ -29,11 +31,13 @@
         "name": "offset",
         "label": {
           "en": "Offset (ms)",
-          "zh": "前置偏移（毫秒）"
+          "zh": "前置偏移（毫秒）",
+          "ja": "オフセット（ミリ秒）"
         },
         "description": {
           "en": "Absolute time of the first preutterance",
-          "zh": "第一个先行发声的绝对时间"
+          "zh": "第一个先行发声的绝对时间",
+          "ja": "最初の先行発声の絶対時間"
         },
         "defaultValue": 500,
         "min": 0
@@ -43,11 +47,13 @@
         "name": "repeat",
         "label": {
           "en": "Max repeated",
-          "zh": "最大重复个数"
+          "zh": "最大重复个数",
+          "ja": "最大リピート数"
         },
         "description": {
           "en": "Maximum number of the created entries with the same phonemes",
-          "zh": "保留使用相同音素的条目的最大数量"
+          "zh": "保留使用相同音素的条目的最大数量",
+          "ja": "同じ音素を使用したエントリの最大作成数"
         },
         "defaultValue": 2,
         "min": 1
@@ -57,11 +63,13 @@
         "name": "repeatSuffix",
         "label": {
           "en": "Repeat suffix template",
-          "zh": "重复后缀模板"
+          "zh": "重复后缀模板",
+          "ja": "リピート接尾辞テンプレート"
         },
         "description": {
           "en": "The suffix template added to the repeated entries. \"{number}\" will be replaced by the number of the repeated alias.",
-          "zh": "添加到重复条目的后缀模板。\"{number}\" 将被该重复的条目的编号替换。"
+          "zh": "添加到重复条目的后缀模板。\"{number}\" 将被该重复的条目的编号替换。",
+          "ja": "リピートしたエントリに追加される接尾辞テンプレート。「{number}」は、エイリアスの番号に置き換えられます。"
         },
         "defaultValue": "{number}",
         "multiLine": false,
@@ -72,11 +80,13 @@
         "name": "prefix",
         "label": {
           "en": "Prefix",
-          "zh": "前缀"
+          "zh": "前缀",
+          "ja": "接頭辞"
         },
         "description": {
           "en": "Prefix of normal sample's file name. Leave empty if you don't use a prefix.",
-          "zh": "常规采样的文件名前缀。如果没有前缀，请留空。"
+          "zh": "常规采样的文件名前缀。如果没有前缀，请留空。",
+          "ja": "通常のサンプルファイル名の接頭辞。接頭辞を使用していない場合は空にしくてださい。"
         },
         "defaultValue": "_",
         "multiLine": false,
@@ -87,11 +97,13 @@
         "name": "separator",
         "label": {
           "en": "Separator",
-          "zh": "分隔符"
+          "zh": "分隔符",
+          "ja": "区切り文字"
         },
         "description": {
           "en": "Separator of syllables in the normal file names. e.g. enter \"_\" for file names like \"_あ_あ_い_あ_う_え_あ\", and leave empty for \"_ああいあうえあ\".",
-          "zh": "常规采样的文件名中音节之间的分隔符。例如，输入 \"_\" 以匹配类似 \"_あ_あ_い_あ_う_え_あ\" 的文件名，留空以匹配 \"_ああいあうえあ\"。"
+          "zh": "常规采样的文件名中音节之间的分隔符。例如，输入 \"_\" 以匹配类似 \"_あ_あ_い_あ_う_え_あ\" 的文件名，留空以匹配 \"_ああいあうえあ\"。",
+          "ja": "通常のサンプルファイル名の音節間の区切り文字。e.g. \"_あ_あ_い_あ_う_え_あ\"のようなファイル名には\"_\"を入力し、\"_ああいあうえあ\"のようであれば空にしてください。"
         },
         "defaultValue": "",
         "multiLine": false,
@@ -102,11 +114,13 @@
         "name": "suffixes",
         "label": {
           "en": "Available suffixes",
-          "zh": "可用的后缀列表"
+          "zh": "可用的后缀列表",
+          "ja": "使用可能な接尾辞"
         },
         "description": {
           "en": "Suffixes that should be used to create the last entry in a file. Use \",\" to separate multiple items.",
-          "zh": "需要被用来创建一条采样中最后一个条目的后缀。使用 \",\" 分隔多个后缀。"
+          "zh": "需要被用来创建一条采样中最后一个条目的后缀。使用 \",\" 分隔多个后缀。",
+          "ja": "ファイルの最後のエントリを作成するために使用する接尾辞。複数の項目を区切るには「,」を使用してください。"
         },
         "defaultValue": "R,L,B,息,吸",
         "multiLine": false,
@@ -117,11 +131,13 @@
         "name": "appendSuffix",
         "label": {
           "en": "Append suffix",
-          "zh": "附加后缀"
+          "zh": "附加后缀",
+          "ja": "接尾辞を追加"
         },
         "description": {
           "en": "Append a suffix to all normal file names. e.g. If given \"R\", a \"a R\" will be created from `_ああいあうえあ.wav`.",
-          "zh": "附加一个后缀到所有常规采样。例如，如果给定 \"R\"，则将在 `_ああいあうえあ.wav` 的最后创建一个 \"a R\" 条目。"
+          "zh": "附加一个后缀到所有常规采样。例如，如果给定 \"R\"，则将在 `_ああいあうえあ.wav` 的最后创建一个 \"a R\" 条目。",
+          "ja": "すべての通常のサンプルファイル名に接尾辞を追加します。e.g. \"R\"が与えられた場合、`_ああいあうえあ.wav`から「a R」が作成されます。"
         },
         "defaultValue": "",
         "multiLine": false,
@@ -132,7 +148,8 @@
         "name": "preuDefault",
         "label": {
           "en": "Preutterance (ms)",
-          "zh": "先行发声（毫秒）"
+          "zh": "先行发声（毫秒）",
+          "ja": "先行発声（ミリ秒）"
         },
         "defaultValue": 300,
         "min": 0
@@ -142,7 +159,8 @@
         "name": "ovlDefault",
         "label": {
           "en": "Overlap (ms)",
-          "zh": "重叠（毫秒）"
+          "zh": "重叠（毫秒）",
+          "ja": "Overlap（ミリ秒）"
         },
         "defaultValue": 100,
         "min": 0
@@ -152,7 +170,8 @@
         "name": "cutoffDefault",
         "label": {
           "en": "Cutoff (ms)",
-          "zh": "右边界（毫秒）"
+          "zh": "右边界（毫秒）",
+          "ja": "右ブランク（ミリ秒）"
         },
         "defaultValue": -700,
         "max": -1
@@ -162,7 +181,8 @@
         "name": "fixedDefault",
         "label": {
           "en": "Fixed (ms)",
-          "zh": "固定（毫秒）"
+          "zh": "固定（毫秒）",
+          "ja": "固定範囲（ミリ秒）"
         },
         "defaultValue": 450,
         "min": 0
@@ -172,11 +192,13 @@
         "name": "repeatCV",
         "label": {
           "en": "Max repeated entry count of CV",
-          "zh": "CV 的最大重复个数"
+          "zh": "CV 的最大重复个数",
+          "ja": "CV の最大リピート数"
         },
         "description": {
           "en": "Maximum number of the created CV entries with the same phonemes. e.g. \"あ\" is duplicated from \"- あ\" if set other than 0.",
-          "zh": "保留使用相同音素的CV条目的最大个数。如果设置为非 0 值，则会根据 \"- あ\" 创建名为 \"あ\" 的副本。"
+          "zh": "保留使用相同音素的 CV 条目的最大个数。如果设置为非 0 值，则会根据 \"- あ\" 创建名为 \"あ\" 的副本。",
+          "ja": "同じ音素を使用した CV エントリの最大作成数。e.g. 1 以上に設定すると、\"- あ\" から \"あ\" が作成されます。"
         },
         "defaultValue": 0,
         "min": 0
@@ -186,7 +208,8 @@
         "name": "vowelMap",
         "label": {
           "en": "Vowel map",
-          "zh": "元音表"
+          "zh": "元音表",
+          "ja": "母音マップ"
         },
         "defaultValue": "",
         "defaultValueFromFile": "vowel-map-ja.txt",

@@ -3,7 +3,8 @@ let bpm = params["bpm"]
 if (bpm <= 0) {
     error({
         en: "BPM must be greater than 0",
-        zh: "BPM 必须大于0"
+        zh: "BPM 必须大于0",
+        ja: "BPMは0より大きくなければなりません"
     })
 }
 
@@ -14,7 +15,8 @@ let repeatSuffix = params["repeatSuffix"]
 if (repeatSuffix.indexOf("{number}") < 0) {
     error({
         en: "The `repeat suffix template` parameter must contain placeholder \"{number}\".",
-        zh: "`重复后缀模板` 参数必须包含占位符 \"{number}\"。"
+        zh: "`重复后缀模板` 参数必须包含占位符 \"{number}\"。",
+        ja: "`リピート接尾辞テンプレート`パラメータには、プレースホルダー\"{number}\"が含まれている必要があります。"
     })
 }
 
@@ -43,7 +45,8 @@ for (let [text, vowel] of vowelLineParsed) {
     if (vowelMap.has(text)) {
         error({
             en: `The vowel map contains duplicate entries for ${text}.`,
-            zh: `元音表中包含重复的项目 ${text}。`
+            zh: `元音表中包含重复的项目 ${text}。`,
+            ja: `母音マップには、複数回 ${text} が含まれています。`
         })
     }
     vowelMap.set(text, vowel)

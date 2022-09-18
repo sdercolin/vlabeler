@@ -4,13 +4,15 @@
   "type": "macro",
   "displayedName": {
     "en": "Batch edit entry notes",
-    "zh": "批量编辑条目备注"
+    "zh": "批量编辑条目备注",
+    "ja": "エントリの備考を一括編集"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Edit the notes (starred, done, tag) of multiple entries at once.",
-    "zh": "一次性编辑多个条目的备注（星标状态、完成状态、标签等）。"
+    "zh": "一次性编辑多个条目的备注（星标状态、完成状态、标签等）。",
+    "ja": "複数のエントリの備考（スターマーク状態、完了状態、タグなど）を一括編集します。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-entry-meta",
   "supportedLabelFileExtension": "*",
@@ -21,11 +23,13 @@
         "name": "selector",
         "label": {
           "en": "Entry filters",
-          "zh": "条目筛选器"
+          "zh": "条目筛选器",
+          "ja": "エントリフィルター"
         },
         "description": {
           "en": "Add filters to select the entries to edit. Leave blank to edit all entries.",
-          "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。"
+          "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。",
+          "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。"
         },
         "defaultValue": {
           "filters": []
@@ -36,24 +40,29 @@
         "name": "star",
         "label": {
           "en": "Set Starred",
-          "zh": "设置星标状态"
+          "zh": "设置星标状态",
+          "ja": "スターマーク状態を設定"
         },
         "defaultValue": {
           "en": "Do not change",
-          "zh": "不更改"
+          "zh": "不更改",
+          "ja": "変更しない"
         },
         "options": [
           {
             "en": "Do not change",
-            "zh": "不更改"
+            "zh": "不更改",
+            "ja": "変更しない"
           },
           {
             "en": "Starred",
-            "zh": "星标"
+            "zh": "添加星标",
+            "ja": "スターマークをつける"
           },
           {
             "en": "Unstarred",
-            "zh": "未星标"
+            "zh": "移除星标",
+            "ja": "スターマークを外す"
           }
         ]
       },
@@ -62,24 +71,29 @@
         "name": "done",
         "label": {
           "en": "Set Done",
-          "zh": "设置完成状态"
+          "zh": "设置完成状态",
+          "ja": "完了状態を設定"
         },
         "defaultValue": {
           "en": "Do not change",
-          "zh": "不更改"
+          "zh": "不更改",
+          "ja": "変更しない"
         },
         "options": [
           {
             "en": "Do not change",
-            "zh": "不更改"
+            "zh": "不更改",
+            "ja": "変更しない"
           },
           {
             "en": "Done",
-            "zh": "完成"
+            "zh": "设为完成",
+            "ja": "完了にする"
           },
           {
             "en": "Undone",
-            "zh": "未完成"
+            "zh": "设为未完成",
+            "ja": "未完了にする"
           }
         ]
       },
@@ -87,8 +101,9 @@
         "type": "boolean",
         "name": "tag",
         "label": {
-          "en": "Set Tags",
-          "zh": "设置标签"
+          "en": "Set Tag",
+          "zh": "设置标签",
+          "ja": "タグを設定"
         },
         "defaultValue": false
       },
@@ -96,14 +111,16 @@
         "type": "string",
         "name": "tagValue",
         "label": {
-          "en": "Tags",
-          "zh": "标签"
+          "en": "Tag",
+          "zh": "标签",
+          "ja": "タグ"
         },
         "defaultValue": "",
         "optional": true,
         "description": {
           "en": "Leave blank to remove the tag.",
-          "zh": "留空以删除标签。"
+          "zh": "留空以删除标签。",
+          "ja": "空にしておくことで、タグを削除できます。"
         },
         "enableIf": "tag"
       }

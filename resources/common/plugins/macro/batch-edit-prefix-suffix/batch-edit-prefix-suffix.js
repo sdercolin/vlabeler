@@ -1,8 +1,8 @@
 let selectedEntryIndexes = params["selector"]
 let positionText = params["position"]
-let positionIsPrefix = ["Prefix", "前缀"].includes(positionText)
+let positionIsPrefix = ["Prefix", "前缀", "接頭辞"].includes(positionText)
 let processText = params["process"]
-let processIsAdd = ["Add", "添加"].includes(processText)
+let processIsAdd = ["Add", "添加", "追加"].includes(processText)
 let text = params["text"]
 
 if (debug) {

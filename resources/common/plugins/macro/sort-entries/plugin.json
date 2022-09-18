@@ -4,13 +4,15 @@
   "type": "macro",
   "displayedName": {
     "en": "Reorder entries",
-    "zh": "重新排序条目"
+    "zh": "重新排序条目",
+    "ja": "エントリを並び替える"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Reorder all entries by entry name, sample name or tag",
-    "zh": "根据条目名，采样名或标签来重新排序所有条目"
+    "zh": "根据条目名，采样名或标签来重新排序所有条目",
+    "ja": "エントリ名、サンプル名、またはタグによってエントリを並び替えます"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/sort-entries",
   "supportedLabelFileExtension": "*",
@@ -21,7 +23,8 @@
         "name": "descending",
         "label": {
           "en": "Descending order",
-          "zh": "降序排列"
+          "zh": "降序排列",
+          "ja": "降順"
         },
         "defaultValue": false
       },
@@ -30,7 +33,8 @@
         "name": "useTag",
         "label": {
           "en": "Sort by tag",
-          "zh": "根据标签排序"
+          "zh": "根据标签排序",
+          "ja": "タグで並び替える"
         },
         "defaultValue": false
       },
@@ -39,7 +43,8 @@
         "name": "prioritizeTag",
         "label": {
           "en": "Sort by tag first",
-          "zh": "首先根据标签排序"
+          "zh": "首先根据标签排序",
+          "ja": "タグを優先して並び替える"
         },
         "enableIf": "useTag",
         "defaultValue": true
@@ -49,7 +54,8 @@
         "name": "prioritizeEntryName",
         "label": {
           "en": "Prioritize entry name over sample name",
-          "zh": "根据条目名 > 采样名的顺序排序"
+          "zh": "根据条目名 > 采样名的顺序排序",
+          "ja": "エントリ名 > サンプル名の順で並び替える"
         },
         "defaultValue": false
       }

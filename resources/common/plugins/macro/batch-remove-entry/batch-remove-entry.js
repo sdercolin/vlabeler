@@ -8,7 +8,8 @@ if (debug) {
 if (selectedEntryIndexes.length === entries.length) {
     error({
         en: "Could not remove all entries.",
-        zh: "不能删除所有条目。"
+        zh: "不能删除所有条目。",
+        ja: "すべてのエントリーを削除できません。",
     })
 }
 

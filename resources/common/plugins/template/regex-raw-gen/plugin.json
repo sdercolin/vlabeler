@@ -4,13 +4,15 @@
   "type": "template",
   "displayedName": {
     "en": "Regex raw label generator",
-    "zh": "基于正则表达式的原始标签生成器"
+    "zh": "基于正则表达式的原始标签生成器",
+    "ja": "正規表現によるラベル生成器"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Generate raw label templates using regex replacement.",
-    "zh": "使用正则表达式替换生成原始标签模板。"
+    "zh": "使用正则表达式替换生成原始标签模板。",
+    "ja": "正規表現による置換を用いてラベルテンプレートを生成します。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/regex-raw-gen",
   "supportedLabelFileExtension": "*",
@@ -23,7 +25,8 @@
         "name": "regex",
         "label": {
           "en": "Regex for extraction from sample name",
-          "zh": "用于提取的正则表达式"
+          "zh": "用于提取的正则表达式",
+          "ja": "サンプル名から抽出する正規表現"
         },
         "defaultValue": "",
         "multiLine": false,
@@ -34,11 +37,13 @@
         "name": "template",
         "label": {
           "en": "Template lines per sample",
-          "zh": "每个采样对应的模板"
+          "zh": "每个采样对应的模板",
+          "ja": "サンプルごとのテンプレート"
         },
         "description": {
           "en": "Use `$1`, `$2`, etc. to refer to the extracted value",
-          "zh": "使用 `$1`, `$2`, 等来引用提取到的值"
+          "zh": "使用 `$1`, `$2`, 等来引用提取到的值",
+          "ja": "抽出した値を参照するには `$1`, `$2`, などを使用してください"
         },
         "defaultValue": "",
         "multiLine": true,

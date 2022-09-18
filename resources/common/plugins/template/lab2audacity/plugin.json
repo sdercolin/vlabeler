@@ -4,11 +4,16 @@
   "type": "template",
   "displayedName": {
     "en": "Sinsy lab format to Audacity Labels",
-    "zh": "Sinsy lab 格式转换为 Audacity 标签"
+    "zh": "Sinsy lab 格式转换为 Audacity 标签",
+    "ja": "Sinsy lab フォーマットを Audacity ラベルに変換"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
-  "description": "Convert Sinsy lab format to Audacity Labels. Can be used on other similar formats with configuration.",
+  "description": {
+    "en": "Convert Sinsy lab format to Audacity Labels. Can be used on other similar formats with configuration.",
+    "zh": "将 Sinsy lab 格式转换为 Audacity 标签。可以通过修改配置用于其他类似的格式。",
+    "ja": "Sinsy lab フォーマットを Audacity 式ラベルに変換します。他の類似フォーマットにも設定を変更することで使用できます。"
+  },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/lab2audacity",
   "supportedLabelFileExtension": "txt",
   "inputFileExtension": "lab",
@@ -21,7 +26,8 @@
         "name": "unit",
         "label": {
           "en": "Time unit (s)",
-          "zh": "时间单位（秒）"
+          "zh": "时间单位（秒）",
+          "ja": "時間単位（秒）"
         },
         "defaultValue": 0.0000001,
         "min": 0

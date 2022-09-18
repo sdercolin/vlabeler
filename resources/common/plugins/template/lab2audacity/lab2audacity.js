@@ -18,7 +18,8 @@ let timeUnit = params["unit"]
 if (timeUnit <= 0) {
     error({
         en: "Time unit must be greater than 0",
-        zh: "时间单位必须大于0"
+        zh: "时间单位必须大于0",
+        ja: "時間単位は0より大きくなければなりません"
     })
 }
 
@@ -45,25 +46,30 @@ for (let i = 0; i < lines.length - 1; i++) {
 if (indexesOfInvalidLength.length > 0 || indexesPairsOfInconsistentLabels.length > 0 || indexesOfEmptyLabelName.length > 0) {
     let messageEn = "Illegal input: "
     let messageZh = "不合法的输入："
+    let messageJa = "不正な入力："
     if (indexesOfInvalidLength.length > 0) {
         let contents = indexesOfInvalidLength.map(x => x + 1).join(", ")
         messageEn += "\n- Invalid duration on lines: " + contents
         messageZh += "\n- 以下行的时长无效：" + contents
+        messageJa += "\n- 以下の行の長さが無効です：" + contents
     }
     if (indexesOfEmptyLabelName.length > 0) {
         let contents = indexesOfEmptyLabelName.map(x => x + 1).join(", ")
         messageEn += "\n- Empty label name on lines: " + contents
         messageZh += "\n- 以下行的标签名为空：" + contents
+        messageJa += "\n- 以下の行のラベル名が空です：" + contents
     }
     if (indexesPairsOfInconsistentLabels.length > 0) {
         let contents = indexesPairsOfInconsistentLabels
                 .map(x => "[" + x.map(y => y + 1).join(", ") + "]").join(", ")
         messageEn += "\n- Inconsistent labels on lines: " + contents
-        messageZh += "\n- 以下行的标签不一致：" + contents
+        messageZh += "\n- 以下行的标签不连续：" + contents
+        messageJa += "\n- 以下の行のラベルが連続していません：" + contents
     }
     error({
         en: messageEn,
-        zh: messageZh
+        zh: messageZh,
+        ja: messageJa
     })
 }
 
