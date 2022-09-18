@@ -298,6 +298,20 @@ Specially, the `enum` type parameter also supports localized options:
 
 Please keep consistent with the `defaultValue` and `options` if you want to provide localized options.
 
+If an `enum` parameter is localized, the value passed to your scripts is the **localized** value in the current language. Therefore, after adding a language in the definition json file, you also have to update your scripts to accept the newly added values.
+
+```
+let positionText = params["position"]
+
+// if `Prefix` is selected and current language is Japanese, the positionText will be `接頭辞`
+
+let positionIsPrefix = ["Prefix", "前缀", "接頭辞"].includes(positionText)
+if (positionIsPrefix) {
+    ...
+}
+```
+
+
 ## Error handling
 
 When the scripts encounter illegal inputs, you can show an error message to users by calling `error(message)`.
