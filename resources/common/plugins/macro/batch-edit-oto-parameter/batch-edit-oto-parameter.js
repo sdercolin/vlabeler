@@ -1,6 +1,7 @@
 let selectedEntryIndexes = params["selector"]
 let parameterName = params["parameter"]
 let hasLeft = labeler.fields.length > 3 // true if labeler is oto-plus with a standalone "left" field
+let keepDistance = params["keepDistance"]
 
 let nameTexts = [
     ["offset", ["Offset", "左边界"]],
@@ -61,27 +62,79 @@ output = entries.map((entry, index) => {
             zh: "计算新值失败，原因：" + e.message
         })
     }
-    if (nameTexts.find(x => x[0] === "offset")[1].includes(parameterName)) {
-        if (hasLeft) {
-            edited.points[3] = newValue
-            if (edited.start > newValue) {
-                edited.start = newValue
+
+    function moveAll(entry, diff, isSetEnd = false) {
+        entry.start += diff
+        if (!isSetEnd && entry.end <= 0) {
+            // if end is moved by diff (not set directly) and is negative, it should not be over 0
+            entry.end += diff
+            if (entry.end > 0) {
+                entry.end = 0
             }
         } else {
-            edited.start = newValue
+            entry.end += diff
+        }
+        entry.points = entry.points.map(p => p + diff)
+    }
+
+    let diff = 0
+    if (nameTexts.find(x => x[0] === "offset")[1].includes(parameterName)) {
+        if (hasLeft) {
+            if (keepDistance) {
+                diff = newValue - entry.points[3]
+                moveAll(edited, diff)
+            } else {
+                edited.points[3] = newValue
+            }
+        } else {
+            if (keepDistance) {
+                diff = newValue - entry.start
+                moveAll(edited, diff)
+            } else {
+                edited.start = newValue
+            }
         }
     } else if (nameTexts.find(x => x[0] === "fixed")[1].includes(parameterName)) {
-        edited.points[0] = newValue + offset
+        if (keepDistance) {
+            diff = newValue + offset - entry.points[0]
+            moveAll(edited, diff)
+        } else {
+            edited.points[0] = newValue + offset
+        }
     } else if (nameTexts.find(x => x[0] === "preutterance")[1].includes(parameterName)) {
-        edited.points[1] = newValue + offset
+        if (keepDistance) {
+            diff = newValue + offset - entry.points[1]
+            moveAll(edited, diff)
+        } else {
+            edited.points[1] = newValue + offset
+        }
     } else if (nameTexts.find(x => x[0] === "overlap")[1].includes(parameterName)) {
-        edited.points[2] = newValue + offset
+        if (keepDistance) {
+            diff = newValue + offset - entry.points[2]
+            moveAll(edited, diff)
+        } else {
+            edited.points[2] = newValue + offset
+        }
     } else if (nameTexts.find(x => x[0] === "cutoff")[1].includes(parameterName)) {
         if (newValue < 0) {
-            edited.end = -newValue + offset
+            if (keepDistance) {
+                diff = -newValue + offset - entry.end
+                moveAll(edited, diff, true)
+            } else {
+                edited.end = -newValue + offset
+            }
         } else {
-            edited.end = -newValue
+            if (keepDistance) {
+                diff = -newValue - entry.end
+                moveAll(edited, diff, true)
+            } else {
+                edited.end = -newValue
+            }
         }
+    }
+
+    if (hasLeft) {
+        edited.start = Math.min(...edited.points, edited.start)
     }
 
     if (debug) {

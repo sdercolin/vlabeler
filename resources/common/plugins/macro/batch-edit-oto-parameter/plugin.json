@@ -78,6 +78,19 @@
         },
         "defaultValue": "",
         "optional": false
+      },
+      {
+        "type": "boolean",
+        "name": "keepDistance",
+        "label": {
+          "en": "Keep relative positions",
+          "zh": "保持相对位置"
+        },
+        "description": {
+          "en": "Move all the other parameters to keep the distance with the edited parameter.",
+          "zh": "移动所有其他参数以保持与编辑的参数的距离。"
+        },
+        "defaultValue": false
       }
     ]
   },

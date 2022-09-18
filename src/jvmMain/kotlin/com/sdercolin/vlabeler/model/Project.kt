@@ -276,7 +276,15 @@ data class Project(
             if (it.end > 0) require(it.start <= it.end) {
                 "Start is greater than end in entry: $it"
             }
+
             var entryResult = it
+
+            if (it.start < 0) {
+                entryResult = entryResult.copy(start = 0f)
+            }
+
+            // do not check right border, because we don't know the length of the audio file
+
             it.points.forEachIndexed { index, point ->
                 runCatching {
                     require(point >= entryResult.start) {
@@ -297,7 +305,7 @@ data class Project(
                 }
                 if (it.end > 0) {
                     runCatching {
-                        require(point <= it.end) {
+                        require(point <= entryResult.end) {
                             "Point $point is greater than end in entry: $it"
                         }
                     }.onFailure { t ->
