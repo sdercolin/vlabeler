@@ -4,7 +4,6 @@ import com.sdercolin.vlabeler.ui.string.Strings.*
 
 fun Strings.en(): String = when (this) {
     AppName -> "vLabeler"
-    LanguageDisplayName -> Language.English.displayName
     MenuFile -> "File"
     MenuFileNewProject -> "New Project..."
     MenuFileOpen -> "Open..."
@@ -336,8 +335,8 @@ fun Strings.en(): String = when (this) {
     PreferencesPlaybackDescription -> "Customize the behavior about audio playback."
     PreferencesPlaybackPlayOnDragging -> "Preview playback"
     PreferencesPlaybackPlayOnDraggingDescription ->
-        "When dragging any parameter lines, play the audio range near " +
-            "the cursor."
+        "When dragging any parameter lines with the keys for \"Preview playback\" (see keymap), " +
+            "play the audio range near the cursor."
     PreferencesPlaybackPlayOnDraggingEnabled -> "Enabled"
     PreferencesPlaybackPlayOnDraggingRangeRadiusMillis -> "Radius (ms)"
     PreferencesPlaybackPlayOnDraggingEventQueueSize -> "Retain drag events"

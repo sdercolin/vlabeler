@@ -6,7 +6,6 @@ import com.sdercolin.vlabeler.ui.string.Strings.*
 
 fun Strings.zhHans(): String? = when (this) {
     AppName -> "vLabeler"
-    LanguageDisplayName -> Language.ChineseSimplified.displayName
     MenuFile -> "文件"
     MenuFileNewProject -> "新建工程..."
     MenuFileOpen -> "打开..."
@@ -235,7 +234,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesChartsSpectrogramMinIntensity -> "最小显示强度（dB）"
     PreferencesChartsSpectrogramMaxIntensity -> "最大显示强度（dB）"
     PreferencesChartsSpectrogramWindowType -> "窗函数"
-    PreferencesChartsSpectrogramColorPalette -> "颜色"
+    PreferencesChartsSpectrogramColorPalette -> "配色方案"
     PreferencesKeymap -> "键位映射"
     PreferencesKeymapDescription -> "编辑键盘/鼠标操作的键位映射。"
     PreferencesKeymapKeyAction -> "键盘操作"
@@ -299,7 +298,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesPlayback -> "播放"
     PreferencesPlaybackDescription -> "编辑音频播放的行为。"
     PreferencesPlaybackPlayOnDragging -> "预览播放"
-    PreferencesPlaybackPlayOnDraggingDescription -> "当拖动参数线时，播放光标附近处的音频短片段。"
+    PreferencesPlaybackPlayOnDraggingDescription -> "当使用预览播放的键位（参见键位映射）拖动参数线时，播放光标附近处的音频短片段。"
     PreferencesPlaybackPlayOnDraggingEnabled -> "启用"
     PreferencesPlaybackPlayOnDraggingRangeRadiusMillis -> "半径（毫秒）"
     PreferencesPlaybackPlayOnDraggingEventQueueSize -> "保留拖动事件的个数"

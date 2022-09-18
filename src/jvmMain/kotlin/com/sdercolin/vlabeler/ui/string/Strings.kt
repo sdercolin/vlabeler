@@ -3,10 +3,10 @@ package com.sdercolin.vlabeler.ui.string
 import androidx.compose.runtime.Composable
 import com.sdercolin.vlabeler.ui.string.Language.ChineseSimplified
 import com.sdercolin.vlabeler.ui.string.Language.English
+import com.sdercolin.vlabeler.ui.string.Language.Japanese
 
 enum class Strings {
     AppName,
-    LanguageDisplayName,
     MenuFile,
     MenuFileNewProject,
     MenuFileOpen,
@@ -360,6 +360,7 @@ enum class Strings {
     fun get(language: Language): String = when (language) {
         English -> en()
         ChineseSimplified -> zhHans()
+        Japanese -> ja()
     } ?: en()
 }
 
