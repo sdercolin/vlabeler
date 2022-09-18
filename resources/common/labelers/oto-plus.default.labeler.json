@@ -5,13 +5,15 @@
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
     "en": "UTAU oto labeler plus",
-    "zh": "UTAU oto 标记器 plus"
+    "zh": "UTAU oto 标记器 plus",
+    "ja": "UTAU oto ラベラー plus"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Default labeler for UTAU oto. Left is separated from the default start, so Overlap can be set minus.",
-    "zh": "用于 UTAU oto 的默认标记器。由于增加了独立于条目起始线的 Left 参数，所以 Overlap 可以设置为负值。"
+    "zh": "用于 UTAU oto 的默认标记器。由于增加了独立于条目起始线的`左边界`参数，所以`重叠`可以设置为负值。",
+    "ja": "UTAU oto のデフォルトラベラー。`左ブランク`はエントリの開始線から分離されているので、Overlapは負の値に設定できます。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
   "defaultValues": [
@@ -30,7 +32,8 @@
       "name": "fixed",
       "label": {
         "en": "Fixed",
-        "zh": "固"
+        "zh": "固",
+        "ja": "子"
       },
       "color": "#1b51ff",
       "height": 0.5,
@@ -48,7 +51,8 @@
       "name": "preu",
       "label": {
         "en": "Preu",
-        "zh": "先"
+        "zh": "先",
+        "ja": "先"
       },
       "color": "#ff1a45",
       "height": 0.6667,
@@ -66,7 +70,8 @@
       "name": "ovl",
       "label": {
         "en": "Ovl",
-        "zh": "重"
+        "zh": "重",
+        "ja": "オ"
       },
       "color": "#7fff39",
       "height": 0.8333,
@@ -84,7 +89,8 @@
       "name": "left",
       "label": {
         "en": "Left",
-        "zh": "左"
+        "zh": "左",
+        "ja": "左"
       },
       "color": "#dba100",
       "height": 0.9,
@@ -108,7 +114,8 @@
       "name": "left",
       "displayedName": {
         "en": "Offset",
-        "zh": "左边界"
+        "zh": "左边界",
+        "ja": "左ブランク"
       },
       "value": "{left}"
     },
@@ -116,7 +123,8 @@
       "name": "fixed",
       "displayedName": {
         "en": "Fixed",
-        "zh": "固定"
+        "zh": "固定",
+        "ja": "固定範囲"
       },
       "value": "{fixed} - {left}"
     },
@@ -124,7 +132,8 @@
       "name": "right",
       "displayedName": {
         "en": "Cutoff",
-        "zh": "右边界"
+        "zh": "右边界",
+        "ja": "右ブランク"
       },
       "value": "{end} > 0 ? {left} - {end} : parseFloat({rawRight})"
     },
@@ -132,7 +141,8 @@
       "name": "preu",
       "displayedName": {
         "en": "Preutterance",
-        "zh": "先行发声"
+        "zh": "先行发声",
+        "ja": "先行発声"
       },
       "value": "{preu} - {left}"
     },
@@ -140,7 +150,8 @@
       "name": "ovl",
       "displayedName": {
         "en": "Overlap",
-        "zh": "重叠"
+        "zh": "重叠",
+        "ja": "Overlap"
       },
       "value": "{ovl} - {left}"
     }

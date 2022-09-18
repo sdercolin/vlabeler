@@ -5,13 +5,15 @@
   "defaultInputFilePath": null,
   "displayedName": {
     "en": "Sinsy lab labeler",
-    "zh": "Sinsy lab 标记器"
+    "zh": "Sinsy lab 标记器",
+    "ja": "Sinsy lab ラベラー"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Default labeler for lab file in Sinsy's standard.",
-    "zh": "用于 Sinsy 规范的 lab 文件的默认标记器。"
+    "zh": "用于 Sinsy 规范的 lab 文件的默认标记器。",
+    "ja": "Sinsy の標準の lab ファイルのデフォルトラベラーです。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
   "continuous": true,
