@@ -362,11 +362,12 @@
           "zh": "元音表",
           "ja": "母音マップ"
         },
-        "defaultValue": {
+        "description": {
           "en": "Search is applied with suffix matching.",
           "zh": "搜索时使用后缀匹配。",
           "ja": "後方一致で検索します。"
         },
+        "defaultValue": "",
         "defaultValueFromFile": "vowel-map-ja.txt",
         "multiLine": true,
         "optional": false
@@ -379,11 +380,12 @@
           "zh": "辅音表",
           "ja": "子音マップ"
         },
-        "defaultValue": {
-          "en": "Search is applied with exact matching.\n A line with no-consonant \"\" is required.",
-          "zh": "搜索时使用精确匹配。\n必须包含一行以 \"\" 开头的纯元音。",
-          "ja": "完全一致で検索します。\n子音が空（\"\"）の行が必要です。"
+        "description": {
+          "en": "Search is applied with exact matching. A line with no-consonant \"\" is required.",
+          "zh": "搜索时使用精确匹配。必须包含一行以 \"\" 开头的纯元音。",
+          "ja": "完全一致で検索します。子音が空の行が必要です。"
         },
+        "defaultValue": "",
         "defaultValueFromFile": "consonant-map-ja.txt",
         "multiLine": true,
         "optional": false
