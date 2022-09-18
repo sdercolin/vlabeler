@@ -159,6 +159,7 @@ enum class Strings {
     PluginEntrySelectorPreviewSummaryError,
     PluginEntrySelectorPreviewSummaryInitializing,
     PluginEntrySelectorPreviewSummary,
+    PluginEntrySelectorPlaceholder,
     EditorSubTitleMultiple,
     FailedToLoadSampleFileError,
     EmptySampleDirectoryException,

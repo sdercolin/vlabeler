@@ -4,9 +4,11 @@ import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +19,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -25,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -33,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.EntrySelector
@@ -64,22 +70,33 @@ fun ParamEntrySelector(
             .background(MaterialTheme.colors.background),
     ) {
         Row(Modifier.height(160.dp).fillMaxWidth()) {
-            LazyColumn(state = verticalScrollState, modifier = Modifier.padding(15.dp)) {
-                itemsIndexed(filters) { index, filter ->
-                    FilterRow(
-                        labelerConf,
-                        index,
-                        filter,
-                        onValueChange = {
-                            filters[index] = it
-                            onValueChange(EntrySelector(filters.toList()))
-                        },
-                        onParseErrorChange = { isError ->
-                            parseErrors[index] = isError
-                            onParseErrorChange(parseErrors.any { it })
-                        },
-                        enabled = enabled,
-                    )
+            Box(Modifier.weight(1f).fillMaxHeight()) {
+                LazyColumn(state = verticalScrollState, modifier = Modifier.padding(15.dp)) {
+                    itemsIndexed(filters) { index, filter ->
+                        FilterRow(
+                            labelerConf,
+                            index,
+                            filter,
+                            onValueChange = {
+                                filters[index] = it
+                                onValueChange(EntrySelector(filters.toList()))
+                            },
+                            onParseErrorChange = { isError ->
+                                parseErrors[index] = isError
+                                onParseErrorChange(parseErrors.any { it })
+                            },
+                            enabled = enabled,
+                        )
+                    }
+                }
+                if (filters.isEmpty()) {
+                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                        Text(
+                            text = string(Strings.PluginEntrySelectorPlaceholder),
+                            modifier = Modifier.align(Alignment.Center),
+                            style = MaterialTheme.typography.body2,
+                        )
+                    }
                 }
             }
             VerticalScrollbar(rememberScrollbarAdapter(verticalScrollState))

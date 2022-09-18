@@ -169,7 +169,8 @@ fun Strings.en(): String = when (this) {
     PluginEntrySelectorComparerValue -> "Input"
     PluginEntrySelectorPreviewSummaryError -> "Invalid input"
     PluginEntrySelectorPreviewSummaryInitializing -> "Initializing..."
-    PluginEntrySelectorPreviewSummary -> "Selects %d/%d"
+    PluginEntrySelectorPreviewSummary -> "Selecting %d/%d"
+    PluginEntrySelectorPlaceholder -> "No filters, selecting all entries."
     EditorSubTitleMultiple -> "editing %1\$d entries in sample %2\$s"
     FailedToLoadSampleFileError -> "Could not load the sample file.\nIt may not exist or is not a supported format."
     EmptySampleDirectoryException ->

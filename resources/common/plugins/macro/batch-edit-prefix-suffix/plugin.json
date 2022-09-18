@@ -1,0 +1,93 @@
+{
+  "name": "batch-edit-prefix-suffix",
+  "version": 1,
+  "type": "macro",
+  "displayedName": {
+    "en": "Batch edit entry prefix/suffix",
+    "zh": "批量编辑条目前缀/后缀"
+  },
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": {
+    "en": "Add or remove prefix/suffix to entry names in batch.",
+    "zh": "批量对条目名添加或删除前缀/后缀。"
+  },
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-prefix-suffix",
+  "supportedLabelFileExtension": "*",
+  "parameters": {
+    "list": [
+      {
+        "type": "entrySelector",
+        "name": "selector",
+        "label": {
+          "en": "Entry filters",
+          "zh": "条目筛选器"
+        },
+        "description": {
+          "en": "Add filters to select the entries to edit. Leave blank to edit all entries.",
+          "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。"
+        },
+        "defaultValue": {
+          "filters": []
+        }
+      },
+      {
+        "type": "enum",
+        "name": "position",
+        "label": {
+          "en": "Position to process",
+          "zh": "操作位置"
+        },
+        "defaultValue": {
+          "en": "Suffix",
+          "zh": "后缀"
+        },
+        "options": [
+          {
+            "en": "Prefix",
+            "zh": "前缀"
+          },
+          {
+            "en": "Suffix",
+            "zh": "后缀"
+          }
+        ]
+      },
+      {
+        "type": "enum",
+        "name": "process",
+        "label": {
+          "en": "Process",
+          "zh": "操作"
+        },
+        "defaultValue": {
+          "en": "Add",
+          "zh": "添加"
+        },
+        "options": [
+          {
+            "en": "Add",
+            "zh": "添加"
+          },
+          {
+            "en": "Remove",
+            "zh": "删除"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "name": "text",
+        "label": {
+          "en": "Text to add/remove",
+          "zh": "要添加/删除的文本"
+        },
+        "defaultValue": "",
+        "optional": false
+      }
+    ]
+  },
+  "scriptFiles": [
+    "batch-edit-prefix-suffix.js"
+  ]
+}

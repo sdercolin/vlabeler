@@ -20,12 +20,12 @@
         "type": "entrySelector",
         "name": "selector",
         "label": {
-          "en": "Entries to duplicate",
-          "zh": "要创建副本的条目"
+          "en": "Entry filters",
+          "zh": "条目筛选器"
         },
         "description": {
-          "en": "Select the entries to duplicate. Leave blank to duplicate all entries.",
-          "zh": "选择要创建副本的条目。留空则创建所有条目的副本。"
+          "en": "Add filters to select the entries to duplicate. Leave blank to duplicate all entries.",
+          "zh": "添加筛选器以选择要创建的条目。留空则创建所有条目的副本。"
         },
         "defaultValue": {
           "filters": []

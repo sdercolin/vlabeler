@@ -20,12 +20,12 @@
         "type": "entrySelector",
         "name": "selector",
         "label": {
-          "en": "Entries to remove",
-          "zh": "要删除的条目"
+          "en": "Entry filters",
+          "zh": "条目筛选器"
         },
         "description": {
-          "en": "Select the entries to remove.",
-          "zh": "选择要删除的条目。"
+          "en": "Add filters to select the entries to remove.",
+          "zh": "添加筛选器以选择要编辑的条目。"
         },
         "defaultValue": {
           "filters": []

@@ -20,12 +20,12 @@
         "type": "entrySelector",
         "name": "selector",
         "label": {
-          "en": "Entries to edit",
-          "zh": "要编辑的条目"
+          "en": "Entry filters",
+          "zh": "条目筛选器"
         },
         "description": {
-          "en": "Select the entries to edit. Leave blank to edit all entries.",
-          "zh": "选择要编辑的条目。留空以编辑所有条目。"
+          "en": "Add filters to select the entries to edit. Leave blank to edit all entries.",
+          "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。"
         },
         "defaultValue": {
           "filters": []
