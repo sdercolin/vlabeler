@@ -168,6 +168,7 @@ private fun EntryTitleBar(
                         text = title,
                         style = MaterialTheme.typography.h3,
                         maxLines = 1,
+                        softWrap = false,
                     )
                     Spacer(Modifier.width(10.dp))
                     Text(
@@ -175,6 +176,7 @@ private fun EntryTitleBar(
                         text = "（$subTitle）",
                         style = MaterialTheme.typography.h5,
                         maxLines = 1,
+                        softWrap = false,
                     )
                 }
                 if (appConf.editor.let { it.showDone || it.showStar || it.showTag }) {
