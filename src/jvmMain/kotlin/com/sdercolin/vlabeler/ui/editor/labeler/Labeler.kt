@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
+
 package com.sdercolin.vlabeler.ui.editor.labeler
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,7 +46,9 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.repository.ToolCursorRepository
 import com.sdercolin.vlabeler.ui.AppState
@@ -93,6 +98,7 @@ fun Labeler(
             editTag = { editorState.editEntryTag(editorState.project.currentIndex, it) },
             isEditingTag = editorState.isEditingTag,
             setEditingTag = { editorState.isEditingTag = it },
+            tagOptions = editorState.tagOptions,
             openEditEntryNameDialog = openEditEntryNameDialog,
         )
         val cursor = remember(editorState.tool) {
@@ -144,6 +150,7 @@ private fun EntryTitleBar(
     editTag: (String) -> Unit,
     isEditingTag: Boolean,
     setEditingTag: (Boolean) -> Unit,
+    tagOptions: List<String>,
     openEditEntryNameDialog: () -> Unit,
 ) {
     Surface {
@@ -182,6 +189,7 @@ private fun EntryTitleBar(
                             TagRegion(
                                 tag = tag,
                                 editTag = editTag,
+                                tagOptions = tagOptions,
                                 isEditing = isEditingTag,
                                 setEditing = setEditingTag,
                             )
@@ -213,6 +221,7 @@ private fun EntryTitleBar(
 private fun TagRegion(
     tag: String,
     editTag: (String) -> Unit,
+    tagOptions: List<String>,
     isEditing: Boolean,
     setEditing: (Boolean) -> Unit,
 ) {
@@ -229,6 +238,9 @@ private fun TagRegion(
             .padding(horizontal = 12.dp, vertical = 8.dp)
         val textStyle = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.8f))
         if (!isEditing) {
+            LaunchedEffect(Unit) {
+                isTextFieldFocused = false
+            }
             if (tag.isEmpty()) {
                 FreeSizedIconButton(
                     onClick = { setEditing(true) },
@@ -251,20 +263,24 @@ private fun TagRegion(
             }
         } else {
             LaunchedEffect(Unit) {
+                println("request focus")
                 focusRequester.requestFocus()
             }
+
             BasicTextField(
                 modifier = Modifier
                     .width(IntrinsicSize.Min)
                     .focusRequester(focusRequester)
                     .onFocusChanged {
+                        println("focus changed: $it")
                         if (isTextFieldFocused && it.hasFocus.not()) {
+                            println("focus lost")
                             setEditing(false)
                             if (editingTag.text != tag) {
                                 editTag(editingTag.text)
                             }
                         }
-                        isTextFieldFocused = it.isFocused
+                        isTextFieldFocused = it.hasFocus
                     },
                 value = editingTag,
                 onValueChange = { editingTag = it },
@@ -280,6 +296,30 @@ private fun TagRegion(
                     }
                 },
             )
+
+            Popup(
+                alignment = Alignment.TopStart,
+                offset = IntOffset(0, 80),
+                focusable = false,
+                onDismissRequest = {},
+            ) {
+                Column(modifier = Modifier.width(IntrinsicSize.Min)) {
+                    tagOptions.forEach { option ->
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colors.surface)
+                                .clickable {
+                                    setEditing(false)
+                                    editTag(option)
+                                }
+                                .padding(10.dp),
+                            text = option,
+                            style = MaterialTheme.typography.caption,
+                        )
+                    }
+                }
+            }
         }
     }
 }

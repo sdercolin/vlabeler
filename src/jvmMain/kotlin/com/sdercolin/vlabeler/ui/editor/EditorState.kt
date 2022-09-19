@@ -77,6 +77,11 @@ class EditorState(
     val entryTag: String
         get() = project.currentEntry.notes.tag
 
+    val tagOptions get() = project.entries
+        .mapNotNull { it.notes.tag.ifEmpty { null } }
+        .distinct()
+        .sorted()
+
     val chartStore = ChartStore()
 
     val pinnedEntryListFilterState = LinkableEntryListFilterState(
