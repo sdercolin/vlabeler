@@ -102,14 +102,16 @@ private fun FieldLabelsChunk(
     Layout(
         modifier = modifier,
         content = {
-            modelChunk.models.forEach { model ->
-                Box(
-                    modifier = Modifier.requiredSize(LabelSize),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    FieldLabelText(model)
+            modelChunk.models
+                .filterNot { it.field.replaceStart || it.field.replaceEnd }
+                .forEach { model ->
+                    Box(
+                        modifier = Modifier.requiredSize(LabelSize),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        FieldLabelText(model)
+                    }
                 }
-            }
         },
     ) { measurables, constraints ->
         val placeables = measurables.map { measurable ->

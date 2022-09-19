@@ -42,7 +42,7 @@ class MarkerState(
     val entryBorders: List<Float> = entriesInPixel.fold<EntryInPixel, List<Float>>(listOf()) { acc, entryInPixel ->
         val lastEntryEnd = acc.lastOrNull()
         if (lastEntryEnd == null) {
-            acc + listOf(entryInPixel.start, entryInPixel.end)
+            acc + listOf(entryInPixel.getActualStart(labelerConf), entryInPixel.getActualEnd(labelerConf))
         } else {
             require(lastEntryEnd == entryInPixel.start) {
                 "Cannot draw non-continuous entries with $entryInPixel"
@@ -51,10 +51,10 @@ class MarkerState(
         }
     }.drop(1).dropLast(1)
 
-    private val startInPixel = entriesInPixel.first().start
-    private val endInPixel = entriesInPixel.last().end
+    private val startInPixel = entriesInPixel.first().getActualStart(labelerConf)
+    private val endInPixel = entriesInPixel.last().getActualEnd(labelerConf)
     private val middlePointsInPixel = entriesInPixel.flatMapIndexed { index: Int, entryInPixel: EntryInPixel ->
-        listOfNotNull(entryBorders.getOrNull(index - 1)) + entryInPixel.points
+        listOfNotNull(entryBorders.getOrNull(index - 1)) + entryInPixel.getActualMiddlePoints(labelerConf)
     }
     private val middlePointsInPixelSorted = middlePointsInPixel.sorted()
 
@@ -98,13 +98,13 @@ class MarkerState(
             val dxMin = leftBorder - startInPixel
             val dxMax = (rightBorder - endInPixel - 1).coerceAtLeast(0f)
             val dx = (x - getPointPosition(pointIndex)).coerceIn(dxMin, dxMax)
-            entriesInPixel.map { it.moved(dx) }
+            entriesInPixel.map { it.moved(dx).setImplicit(labelerConf) }
         } else {
             val currentX = getPointPosition(pointIndex)
             val dxMin = leftBorder - currentX
             val dxMax = (rightBorder - currentX - 1).coerceAtLeast(0f)
             val dx = (x - getPointPosition(pointIndex)).coerceIn(dxMin, dxMax)
-            entriesInPixel.map { it.moved(dx).collapsed(leftBorder, rightBorder) }
+            entriesInPixel.map { it.moved(dx).collapsed(leftBorder, rightBorder).setImplicit(labelerConf) }
         }
     }
 
@@ -117,13 +117,31 @@ class MarkerState(
         when {
             pointIndex == MarkerCursorState.NonePointIndex -> Unit
             pointIndex == MarkerCursorState.StartPointIndex -> {
-                val max = if (forcedDrag) rightBorder - 1 else middlePointsInPixelSorted.firstOrNull() ?: endInPixel
-                val firstUpdated = entries.first().copy(start = x.coerceIn(leftBorder, max))
+                val max = if (!labelerConf.useImplicitStart) {
+                    if (forcedDrag) rightBorder - 1 else middlePointsInPixelSorted.firstOrNull() ?: endInPixel
+                } else {
+                    val replacedStartIndex = labelerConf.fields.indexOfFirst { it.replaceStart }
+                    labelerConf.connectedConstraints
+                        .filter { it.first == replacedStartIndex }
+                        .minOfOrNull { entries.first().points[it.second] }
+                        ?: endInPixel
+                }
+                val start = x.coerceIn(leftBorder, max)
+                val firstUpdated = entries.first().setActualStart(labelerConf, start)
                 entries[0] = firstUpdated
             }
             pointIndex == MarkerCursorState.EndPointIndex -> {
-                val min = if (forcedDrag) leftBorder else middlePointsInPixelSorted.lastOrNull() ?: startInPixel
-                val lastUpdated = entries.last().copy(end = x.coerceIn(min, (rightBorder - 1).coerceAtLeast(min)))
+                val min = if (!labelerConf.useImplicitEnd) {
+                    if (forcedDrag) leftBorder else middlePointsInPixelSorted.lastOrNull() ?: startInPixel
+                } else {
+                    val replacedEndIndex = labelerConf.fields.indexOfFirst { it.replaceEnd }
+                    labelerConf.connectedConstraints
+                        .filter { it.second == replacedEndIndex }
+                        .maxOfOrNull { entries.last().points[it.first] }
+                        ?: startInPixel
+                }
+                val end = x.coerceIn(min, (rightBorder - 1).coerceAtLeast(min))
+                val lastUpdated = entries.last().setActualEnd(labelerConf, end)
                 entries[entries.lastIndex] = lastUpdated
             }
             isBorderIndex(pointIndex) -> {
@@ -144,12 +162,12 @@ class MarkerState(
                 val min = if (forcedDrag) leftBorder else {
                     constraints.filter { it.second == pointIndex }
                         .maxOfOrNull { points[it.first] }
-                        ?: entry.start
+                        ?: if (labelerConf.useImplicitStart) leftBorder else entry.start
                 }
                 val max = if (forcedDrag) rightBorder - 1 else {
                     constraints.filter { it.first == pointIndex }
                         .minOfOrNull { points[it.second] }
-                        ?: entry.end
+                        ?: if (labelerConf.useImplicitEnd) rightBorder - 1 else entry.end
                 }
                 val newPoints = points.toMutableList()
                 val pointInsideIndex = pointIndex % (labelerConf.fields.size + 1)
@@ -157,6 +175,12 @@ class MarkerState(
                 val newEntry = entry.copy(points = newPoints)
                 entries[entryIndex] = newEntry
             }
+        }
+        if (labelerConf.useImplicitStart) {
+            entries[0] = entries[0].setImplicit(labelerConf)
+        }
+        if (labelerConf.useImplicitEnd) {
+            entries[entries.lastIndex] = entries[entries.lastIndex].setImplicit(labelerConf)
         }
         if (forcedDrag) {
             val lastEntryIndex = entries.lastIndex
@@ -367,7 +391,7 @@ class MarkerState(
         // Only used in single edit mode
         if (entries.size != 1) return null
 
-        val fieldCount = labelerConf.fields.size
+        val fieldCount = labelerConf.fields.filter { it.shortcutIndex != null }.size
         val pointIndex = when {
             paramIndex == 0 -> MarkerCursorState.StartPointIndex
             paramIndex == fieldCount + 1 -> MarkerCursorState.EndPointIndex

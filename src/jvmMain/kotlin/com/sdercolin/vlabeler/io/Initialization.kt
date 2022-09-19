@@ -116,9 +116,9 @@ suspend fun loadPlugins(language: Language): List<Plugin> = withContext(Dispatch
 fun File.asLabelerConf(): Result<LabelerConf> {
     val text = readText()
     val result = runCatching {
-        text.parseJson<LabelerConf>().copy(
-            name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}"),
-        )
+        text.parseJson<LabelerConf>()
+            .copy(name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}"))
+            .validate()
     }
     result.exceptionOrNull()?.let {
         Log.debug("Failed to parse custom app conf: $text. Error message: {${it.message}}.")

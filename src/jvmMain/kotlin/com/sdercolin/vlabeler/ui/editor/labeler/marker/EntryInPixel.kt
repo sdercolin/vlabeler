@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.EntryNotes
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.EndPointIndex
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.StartPointIndex
 
@@ -16,6 +17,20 @@ data class EntryInPixel(
     val extras: List<String>,
     val notes: EntryNotes,
 ) {
+
+    fun setImplicit(labelerConf: LabelerConf): EntryInPixel {
+        val start = if (labelerConf.useImplicitStart) {
+            points.minOrNull() ?: start
+        } else {
+            start
+        }
+        val end = if (labelerConf.useImplicitEnd) {
+            points.maxOrNull() ?: end
+        } else {
+            end
+        }
+        return copy(start = start, end = end)
+    }
 
     fun moved(dx: Float) = copy(
         start = start + dx,
@@ -43,4 +58,37 @@ data class EntryInPixel(
         val points = points.map { it.coerceAtLeast(start).coerceAtMost(end) }
         return copy(start = start, end = end, points = points)
     }
+
+    fun getActualStart(labelerConf: LabelerConf) = if (labelerConf.useImplicitStart) {
+        points[labelerConf.fields.indexOfFirst { it.replaceStart }]
+    } else {
+        start
+    }
+
+    fun setActualStart(labelerConf: LabelerConf, value: Float) = if (labelerConf.useImplicitStart) {
+        val points = points.toMutableList()
+        points[labelerConf.fields.indexOfFirst { it.replaceStart }] = value
+        copy(points = points)
+    } else {
+        copy(start = value)
+    }
+
+    fun getActualEnd(labelerConf: LabelerConf) = if (labelerConf.useImplicitEnd) {
+        points[labelerConf.fields.indexOfFirst { it.replaceEnd }]
+    } else {
+        end
+    }
+
+    fun setActualEnd(labelerConf: LabelerConf, value: Float) = if (labelerConf.useImplicitEnd) {
+        val points = points.toMutableList()
+        points[labelerConf.fields.indexOfFirst { it.replaceEnd }] = value
+        copy(points = points)
+    } else {
+        copy(end = value)
+    }
+
+    fun getActualMiddlePoints(labelerConf: LabelerConf) = labelerConf.fields.withIndex()
+        .filterNot { it.value.replaceStart || it.value.replaceEnd }
+        .map { it.index }
+        .map { points[it] }
 }

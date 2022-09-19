@@ -123,6 +123,12 @@ data class LabelerConf(
      * also available
      * @param constraints Define value constraints between the fields. See [Constraint]
      * @param shortcutIndex Index in the shortcut list. Could be 1~8 (0 is reserved for "start")
+     * @param replaceStart Set to true if this field should replace "start" when displayed. In this case, other fields
+     * can be set smaller than the replaced "start", and the original [Entry.start] will be automatically set to the
+     * minimum value of all the fields. Cannot be used when [continuous] is true
+     * @param replaceEnd Set to true if this field should replace "end" when displayed. In this case, other fields
+     * can be set larger than the replaced "end", and the original [Entry.end] will be automatically set to the
+     * maximum value of all the fields. Cannot be used when [continuous] is true
      */
     @Serializable
     @Immutable
@@ -135,6 +141,8 @@ data class LabelerConf(
         val filling: String? = null,
         val constraints: List<Constraint> = listOf(),
         val shortcutIndex: Int? = null,
+        val replaceStart: Boolean = false,
+        val replaceEnd: Boolean = false,
     )
 
     /**
@@ -269,6 +277,20 @@ data class LabelerConf(
         val displayedName: LocalizedJsonString,
         val value: String,
     )
+
+    val useImplicitStart: Boolean
+        get() = fields.any { it.replaceStart }
+
+    val useImplicitEnd: Boolean
+        get() = fields.any { it.replaceEnd }
+
+    fun validate() = this.also {
+        if (continuous) {
+            require(useImplicitStart.not() && useImplicitEnd.not()) {
+                "Cannot use implicit start/end when continuous is true"
+            }
+        }
+    }
 
     companion object {
         const val LabelerFileExtension = "labeler.json"

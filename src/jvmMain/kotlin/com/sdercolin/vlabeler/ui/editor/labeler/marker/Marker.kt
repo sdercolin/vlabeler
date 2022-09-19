@@ -219,14 +219,24 @@ private fun FieldBorderCanvas(
         screenRange ?: return@Canvas
         try {
             val entriesInPixel = state.entriesInPixel
-            val start = entriesInPixel.first().start
-            val end = entriesInPixel.last().end
+            val labelerConf = state.labelerConf
+            val (start, startField) = if (labelerConf.useImplicitStart) {
+                val fieldIndexToReplaceStart = labelerConf.fields.indexOfFirst { it.replaceStart }
+                entriesInPixel.first().points[fieldIndexToReplaceStart] to labelerConf.fields[fieldIndexToReplaceStart]
+            } else {
+                entriesInPixel.first().start to null
+            }
+            val (end, endField) = if (labelerConf.useImplicitEnd) {
+                val fieldIndexToReplaceEnd = labelerConf.fields.indexOfFirst { it.replaceEnd }
+                entriesInPixel.last().points[fieldIndexToReplaceEnd] to labelerConf.fields[fieldIndexToReplaceEnd]
+            } else {
+                entriesInPixel.last().end to null
+            }
             val canvasActualWidth = state.canvasParams.lengthInPixel.toFloat()
             val canvasHeight = size.height
             val leftBorder = state.leftBorder
             val rightBorder = state.rightBorder
             val cursorState = state.cursorState
-            val labelerConf = state.labelerConf
             state.canvasHeightState.value = canvasHeight
 
             // Draw left border
@@ -249,7 +259,7 @@ private fun FieldBorderCanvas(
 
             // Draw start
             if (leftBorder..start in screenRange) {
-                val startColor = EditableOutsideRegionColor
+                val startColor = startField?.color?.toColor() ?: EditableOutsideRegionColor
                 val relativeLeftBorder = leftBorder - screenRange.start
                 val relativeStart = start - screenRange.start
                 val coercedLeftBorder = relativeLeftBorder.coerceAtLeast(0f)
@@ -292,6 +302,7 @@ private fun FieldBorderCanvas(
                 }
                 for (fieldIndex in labelerConf.fields.indices) {
                     val field = labelerConf.fields[fieldIndex]
+                    if (field.replaceStart || field.replaceEnd) continue
                     val x = entryInPixel.points[fieldIndex]
                     val waveformsHeight = canvasHeight * state.waveformsHeightRatio
                     val height = waveformsHeight * field.height
@@ -336,7 +347,7 @@ private fun FieldBorderCanvas(
 
             // Draw end
             if (end..rightBorder in screenRange) {
-                val endColor = EditableOutsideRegionColor
+                val endColor = endField?.color?.toColor() ?: EditableOutsideRegionColor
                 val relativeEnd = end - screenRange.start
                 val relativeRightBorder = rightBorder - screenRange.start
                 val coercedEnd = relativeEnd.coerceAtLeast(0f)
