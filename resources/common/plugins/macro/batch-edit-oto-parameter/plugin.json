@@ -1,6 +1,6 @@
 {
   "name": "batch-edit-oto-parameter",
-  "version": 2,
+  "version": 3,
   "type": "macro",
   "displayedName": {
     "en": "Batch edit oto parameter",
@@ -55,6 +55,16 @@
             "ja": "左ブランク"
           },
           {
+            "en": "Overlap",
+            "zh": "重叠",
+            "ja": "Overlap"
+          },
+          {
+            "en": "Preutterance",
+            "zh": "先行发声",
+            "ja": "先行発声"
+          },
+          {
             "en": "Fixed",
             "zh": "固定",
             "ja": "固定範囲"
@@ -63,16 +73,6 @@
             "en": "Cutoff",
             "zh": "右边界",
             "ja": "右ブランク"
-          },
-          {
-            "en": "Preutterance",
-            "zh": "先行发声",
-            "ja": "先行発声"
-          },
-          {
-            "en": "Overlap",
-            "zh": "重叠",
-            "ja": "Overlap"
           }
         ]
       },
