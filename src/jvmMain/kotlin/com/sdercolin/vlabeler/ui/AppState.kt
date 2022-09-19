@@ -336,8 +336,9 @@ class AppState(
         action: KeyAction,
         player: Player,
     ) {
+        val sampleInfo = editor?.sampleInfoResult?.getOrNull() ?: return
         if (action == KeyAction.ToggleEntryPlayback) {
-            val sampleRate = requireNotNull(editor?.sampleInfoResult?.getOrNull()?.sampleRate)
+            val sampleRate = sampleInfo.sampleRate
             val range = requireProject().currentEntry.run {
                 toFrame(start, sampleRate)..toFrame(end, sampleRate)
             }
