@@ -1,6 +1,6 @@
 {
   "name": "oto.default",
-  "version": 9,
+  "version": 10,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -97,34 +97,7 @@
         "zh": "左边界",
         "ja": "左ブランク"
       },
-      "value": "{start}"
-    },
-    {
-      "name": "fixed",
-      "displayedName": {
-        "en": "Fixed",
-        "zh": "固定",
-        "ja": "固定範囲"
-      },
-      "value": "{fixed} - {start}"
-    },
-    {
-      "name": "right",
-      "displayedName": {
-        "en": "Cutoff",
-        "zh": "右边界",
-        "ja": "右ブランク"
-      },
-      "value": "{end} > 0 ? {start} - {end} : parseFloat({rawRight})"
-    },
-    {
-      "name": "preu",
-      "displayedName": {
-        "en": "Preutterance",
-        "zh": "先行发声",
-        "ja": "先行発声"
-      },
-      "value": "{preu} - {start}"
+      "value": "{left}"
     },
     {
       "name": "ovl",
@@ -133,7 +106,34 @@
         "zh": "重叠",
         "ja": "Overlap"
       },
-      "value": "{ovl} - {start}"
+      "value": "{ovl} - {left}"
+    },
+    {
+      "name": "preu",
+      "displayedName": {
+        "en": "Preutterance",
+        "zh": "先行发声",
+        "ja": "先行発声"
+      },
+      "value": "{preu} - {left}"
+    },
+    {
+      "name": "fixed",
+      "displayedName": {
+        "en": "Fixed",
+        "zh": "固定",
+        "ja": "固定範囲"
+      },
+      "value": "{fixed} - {left}"
+    },
+    {
+      "name": "right",
+      "displayedName": {
+        "en": "Cutoff",
+        "zh": "右边界",
+        "ja": "右ブランク"
+      },
+      "value": "{end} > 0 ? {left} - {end} : parseFloat({rawRight})"
     }
   ],
   "parser": {

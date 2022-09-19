@@ -1,6 +1,6 @@
 {
   "name": "oto-plus.default",
-  "version": 7,
+  "version": 8,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -120,6 +120,24 @@
       "value": "{left}"
     },
     {
+      "name": "ovl",
+      "displayedName": {
+        "en": "Overlap",
+        "zh": "重叠",
+        "ja": "Overlap"
+      },
+      "value": "{ovl} - {left}"
+    },
+    {
+      "name": "preu",
+      "displayedName": {
+        "en": "Preutterance",
+        "zh": "先行发声",
+        "ja": "先行発声"
+      },
+      "value": "{preu} - {left}"
+    },
+    {
       "name": "fixed",
       "displayedName": {
         "en": "Fixed",
@@ -136,24 +154,6 @@
         "ja": "右ブランク"
       },
       "value": "{end} > 0 ? {left} - {end} : parseFloat({rawRight})"
-    },
-    {
-      "name": "preu",
-      "displayedName": {
-        "en": "Preutterance",
-        "zh": "先行发声",
-        "ja": "先行発声"
-      },
-      "value": "{preu} - {left}"
-    },
-    {
-      "name": "ovl",
-      "displayedName": {
-        "en": "Overlap",
-        "zh": "重叠",
-        "ja": "Overlap"
-      },
-      "value": "{ovl} - {left}"
     }
   ],
   "parser": {
