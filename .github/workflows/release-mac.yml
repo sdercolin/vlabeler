@@ -46,7 +46,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
-          arguments: notarizeDmg
+          arguments: packageDmg
 
       - name: Rename and notarize
         run: |
@@ -54,7 +54,7 @@ jobs:
           echo $VERSION
           PREFIX=$(echo $VERSION | cut -d'-' -f 1)
           echo $PREFIX
-          mv ./build/compose/notarization/main/[0-9]*-[0-9]*-[0-9]*-[0-9]*-[0-9]*-[0-9]*-dmg/vLabeler-$PREFIX.dmg ./vlabeler-$VERSION-mac.dmg
+          mv ./build/compose/binaries/main/dmg/vLabeler-$PREFIX.dmg ./vlabeler-$VERSION-mac.dmg
           xcrun notarytool submit vlabeler-$VERSION-mac.dmg --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.MACOS_APP_PWD }} --team-id ${{ secrets.APPLE_TEAM_ID }} --wait
           xcrun stapler staple vlabeler-$VERSION-mac.dmg
 
