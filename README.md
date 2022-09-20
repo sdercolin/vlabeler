@@ -57,9 +57,7 @@ For UTAU oto usages, there are two items in the built-in labeler list:
 
 - UTAU oto labeler plus
 
-  This labeler has an extra line named `Left` which is the actual `Left` value used when exporting the oto file. You
-  can move the `Ovl` line to the left of `Left` line to get negative overlap values. The white left border is not
-  used.
+  `Ovl` line can be moved to the left of the start line to get negative overlap values.
 
 #### Working on audio labels (Continuous mode)
 
