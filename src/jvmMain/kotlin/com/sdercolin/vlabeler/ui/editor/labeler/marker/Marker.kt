@@ -395,7 +395,7 @@ private fun FieldBorderCanvas(
                             color = appState.appConf.editor.scissorsColor.toColor(),
                             start = Offset(relativePosition, 0f),
                             end = Offset(relativePosition, canvasHeight),
-                            strokeWidth = StrokeWidth * 2,
+                            strokeWidth = StrokeWidth,
                         )
                     }
                 }
