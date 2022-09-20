@@ -97,7 +97,7 @@
         "zh": "左边界",
         "ja": "左ブランク"
       },
-      "value": "{left}"
+      "value": "{start}"
     },
     {
       "name": "ovl",
@@ -106,7 +106,7 @@
         "zh": "重叠",
         "ja": "Overlap"
       },
-      "value": "{ovl} - {left}"
+      "value": "{ovl} - {start}"
     },
     {
       "name": "preu",
@@ -115,7 +115,7 @@
         "zh": "先行发声",
         "ja": "先行発声"
       },
-      "value": "{preu} - {left}"
+      "value": "{preu} - {start}"
     },
     {
       "name": "fixed",
@@ -124,7 +124,7 @@
         "zh": "固定",
         "ja": "固定範囲"
       },
-      "value": "{fixed} - {left}"
+      "value": "{fixed} - {start}"
     },
     {
       "name": "right",
@@ -133,7 +133,7 @@
         "zh": "右边界",
         "ja": "右ブランク"
       },
-      "value": "{end} > 0 ? {left} - {end} : parseFloat({rawRight})"
+      "value": "{end} > 0 ? {start} - {end} : parseFloat({rawRight})"
     }
   ],
   "parser": {
