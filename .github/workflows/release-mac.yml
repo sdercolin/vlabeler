@@ -27,17 +27,37 @@ jobs:
         with:
           java-version: '16'
           distribution: 'temurin'
+
+      - name: Prepare signing
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+        run: |
+          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+          security create-keychain -p vlabeler2022 build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p vlabeler2022 build.keychain
+          security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+          security find-identity -v
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k vlabeler2022 build.keychain
+          echo $'compose.desktop.mac.sign=true\ncompose.desktop.mac.signing.identity=${{ secrets.MACOS_CERTIFICATE_IDENTITY }}\ncompose.desktop.mac.notarization.appleID=${{ secrets.APPLE_ID }}\ncompose.desktop.mac.notarization.password=${{ secrets.MACOS_APP_PWD }}' >local.properties
+          cat local.properties
+
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
-          arguments: package
-      - name: Rename
+          arguments: notarizeDmg
+
+      - name: Rename and notarize
         run: |
           VERSION=${{ github.ref_name }}
           echo $VERSION
           PREFIX=$(echo $VERSION | cut -d'-' -f 1)
           echo $PREFIX
-          mv ./build/compose/binaries/main/dmg/vLabeler-$PREFIX.dmg ./vlabeler-$VERSION-mac.dmg
+          mv ./build/compose/notarization/main/[0-9]*-[0-9]*-[0-9]*-[0-9]*-[0-9]*-[0-9]*-dmg/vLabeler-$PREFIX.dmg ./vlabeler-$VERSION-mac.dmg
+          xcrun notarytool submit vlabeler-$VERSION-mac.dmg --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.MACOS_APP_PWD }} --team-id ${{ secrets.APPLE_TEAM_ID }} --wait
+          xcrun stapler staple vlabeler-$VERSION-mac.dmg
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:

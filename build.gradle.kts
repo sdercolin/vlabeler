@@ -1,6 +1,8 @@
 import com.github.jk1.license.render.JsonReportRenderer
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.internal.localPropertiesFile
+import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
@@ -76,6 +78,32 @@ compose.desktop {
 
             macOS {
                 iconFile.set(project.file("src/jvmMain/resources/icon.icns"))
+                bundleID = "com.sdercolin.vlabeler"
+
+                if (project.localPropertiesFile.exists()) {
+                    val localProperties = Properties().apply { load(project.localPropertiesFile.inputStream()) }
+
+                    signing {
+                        sign.set(
+                            localProperties
+                                .getOrDefault("compose.desktop.mac.sign", "false").toString().toBoolean(),
+                        )
+                        identity.set(
+                            localProperties
+                                .getOrDefault("compose.desktop.mac.signing.identity", "").toString(),
+                        )
+                    }
+                    notarization {
+                        appleID.set(
+                            localProperties
+                                .getOrDefault("compose.desktop.mac.notarization.appleID", "").toString(),
+                        )
+                        password.set(
+                            localProperties
+                                .getOrDefault("compose.desktop.mac.notarization.password", "").toString(),
+                        )
+                    }
+                }
             }
             windows {
                 iconFile.set(project.file("src/jvmMain/resources/icon.ico"))
