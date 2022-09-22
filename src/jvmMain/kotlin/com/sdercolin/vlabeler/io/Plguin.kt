@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.io
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.EntrySelector
+import com.sdercolin.vlabeler.model.FileWithEncoding
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
@@ -91,6 +92,7 @@ suspend fun Plugin.loadSavedParams(): ParamMap = withContext(Dispatchers.IO) {
                             Plugin.ParameterType.Boolean -> element.jsonPrimitive.boolean
                             Plugin.ParameterType.EntrySelector -> json.decodeFromJsonElement<EntrySelector>(element)
                             Plugin.ParameterType.Enum -> json.decodeFromJsonElement<LocalizedJsonString>(element)
+                            Plugin.ParameterType.File -> json.decodeFromJsonElement<FileWithEncoding>(element)
                             else -> element.jsonPrimitive.content
                         }
                     }
@@ -110,6 +112,7 @@ suspend fun Plugin.saveParams(paramMap: ParamMap) = withContext(Dispatchers.IO) 
             is String -> JsonPrimitive(value)
             is EntrySelector -> json.encodeToJsonElement(value)
             is LocalizedJsonString -> json.encodeToJsonElement(value)
+            is FileWithEncoding -> json.encodeToJsonElement(value)
             else -> throw IllegalArgumentException("`$value` is not a supported value")
         }
     }

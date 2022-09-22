@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.util
 
 import com.sdercolin.vlabeler.model.EntrySelector
+import com.sdercolin.vlabeler.model.FileWithEncoding
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.currentLanguage
@@ -9,6 +10,7 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
+import java.nio.charset.Charset
 
 /**
  * Serializable dynamic primitive type map
@@ -62,6 +64,14 @@ private fun resolveItem(value: Any?, project: Project?, js: JavaScript?): JsonEl
             }
         }
         is LocalizedJsonString -> JsonPrimitive(value.getCertain(currentLanguage))
+        is FileWithEncoding -> {
+            val file = value.file?.toFileOrNull(ensureExists = true, ensureIsFile = true)
+            if (file == null) {
+                JsonNull
+            } else {
+                JsonPrimitive(file.readText(value.encoding?.let { charset(it) } ?: Charset.defaultCharset()))
+            }
+        }
         else -> throw IllegalArgumentException("$value is not supported")
     }
 }

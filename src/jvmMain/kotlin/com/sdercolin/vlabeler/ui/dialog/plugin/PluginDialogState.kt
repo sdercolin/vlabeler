@@ -2,7 +2,6 @@ package com.sdercolin.vlabeler.ui.dialog.plugin
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -62,38 +61,7 @@ class PluginDialogState(
         return listOfNotNull(description, suffix).joinToString("\n")
     }
 
-    fun isValid(index: Int): Boolean {
-        val value = params[index]
-        return when (val def = paramDefs[index]) {
-            is Plugin.Parameter.BooleanParam -> true
-            is Plugin.Parameter.EnumParam -> true
-            is Plugin.Parameter.FloatParam -> {
-                val floatValue = value as? Float ?: return false
-                floatValue in (def.min ?: Float.NEGATIVE_INFINITY)..(def.max ?: Float.POSITIVE_INFINITY)
-            }
-            is Plugin.Parameter.IntParam -> {
-                val intValue = value as? Int ?: return false
-                intValue in (def.min ?: Int.MIN_VALUE)..(def.max ?: Int.MAX_VALUE)
-            }
-            is Plugin.Parameter.StringParam -> {
-                val stringValue = value as? String ?: return false
-                val fulfillMultiLine = if (def.multiLine.not()) {
-                    stringValue.lines().size < 2
-                } else true
-                val fulfillOptional = if (def.optional.not()) {
-                    stringValue.isNotEmpty()
-                } else true
-                fulfillMultiLine && fulfillOptional
-            }
-            is Plugin.Parameter.EntrySelectorParam -> {
-                val entrySelectorValue = value as? EntrySelector ?: return false
-                val labelerConf = requireNotNull(project?.labelerConf) {
-                    "labelerConf is required for a EntrySelectorParam"
-                }
-                entrySelectorValue.filters.all { it.isValid(labelerConf) }
-            }
-        }
-    }
+    fun isValid(index: Int): Boolean = plugin.checkParam(paramDefs[index], params[index], project?.labelerConf)
 
     fun isAllValid() = params.indices.all { isValid(it) } && parseErrors.none { it }
 
@@ -137,6 +105,7 @@ class PluginDialogState(
 
     fun isParamInRow(index: Int): Boolean = when (val param = paramDefs[index]) {
         is Plugin.Parameter.EntrySelectorParam -> false
+        is Plugin.Parameter.FileParam -> false
         is Plugin.Parameter.StringParam -> param.multiLine.not()
         else -> true
     }

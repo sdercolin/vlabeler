@@ -63,7 +63,7 @@ The object has the following properties:
 | min                  | (Actual type of the value) | null          | integer, float           |                                                                                         |
 | max                  | (Actual type of the value) | null          | integer, float           |                                                                                         |
 | multiLine            | Boolean                    | false         | string                   | Set to `true` if you want to allow multi-line string values.                            |
-| optional             | Boolean                    | (Required)    | string                   | Set to `true` if you want to allow empty string values.                                 |
+| optional             | Boolean                    | false         | string, file             | Set to `true` if you want to allow empty string values or `null` file                   |
 | options              | List\<String> (Localized)  | (Required)    | enum                     | Items of the enumerable.                                                                |
 
 ### Types
@@ -94,6 +94,15 @@ The object has the following properties:
             "comparerName": "offset" // nullable, `name` of any property defined in the labeler
         }
     ]
+}
+```
+
+- `file`: Instance of [FileWithEncoding](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/FileWithEncoding.kt) type:
+
+```
+{
+    "file": "path/to/file", // can be null or omitted
+    "encoding": "UTF-8" // can be null or omitted
 }
 ```
 
@@ -220,6 +229,11 @@ for (index in entries) {
 }
 ```
 
+### Use an input file parameter
+
+A parameter with `file` type is passed in `params` as a string containing all the text in the input file, decoded in the
+given encoding.
+
 ### Output
 
 You have to create a list named `output` to pass the result back to the application.
@@ -298,7 +312,9 @@ Specially, the `enum` type parameter also supports localized options:
 
 Please keep consistent with the `defaultValue` and `options` if you want to provide localized options.
 
-If an `enum` parameter is localized, the value passed to your scripts is the **localized** value in the current language. Therefore, after adding a language in the definition json file, you also have to update your scripts to accept the newly added values.
+If an `enum` parameter is localized, the value passed to your scripts is the **localized** value in the current
+language. Therefore, after adding a language in the definition json file, you also have to update your scripts to accept
+the newly added values.
 
 ```
 let positionText = params["position"]
@@ -310,7 +326,6 @@ if (positionIsPrefix) {
     ...
 }
 ```
-
 
 ## Error handling
 

@@ -35,6 +35,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
@@ -61,24 +62,32 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.EntrySelector
+import com.sdercolin.vlabeler.model.FileWithEncoding
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.common.ReversedRow
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
+import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
+import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.detectEncoding
+import com.sdercolin.vlabeler.util.encodingNameEquals
+import com.sdercolin.vlabeler.util.toFile
+import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
+import java.io.File
 
 @Composable
 private fun rememberState(
@@ -374,29 +383,36 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                             enabled = enabled,
                         )
                         is Plugin.Parameter.IntParam -> ParamNumberTextField(
-                            value as Int,
-                            onValueChange,
-                            isError,
+                            value = value as Int,
+                            onValueChange = onValueChange,
+                            isError = isError,
                             parse = { it.toIntOrNull() },
                             onParseErrorChange = { state.setParseError(i, it) },
                             enabled = enabled,
                         )
                         is Plugin.Parameter.StringParam -> ParamTextField(
-                            value as String,
-                            onValueChange,
-                            isError,
+                            value = value as String,
+                            onValueChange = onValueChange,
+                            isError = isError,
                             isLong = true,
                             singleLine = def.multiLine.not(),
                             enabled = enabled,
                         )
                         is Plugin.Parameter.EntrySelectorParam -> ParamEntrySelector(
-                            requireNotNull(state.project).labelerConf,
-                            value as EntrySelector,
-                            onValueChange,
-                            isError,
+                            labelerConf = requireNotNull(state.project).labelerConf,
+                            value = value as EntrySelector,
+                            onValueChange = onValueChange,
+                            isError = isError,
                             onParseErrorChange = { state.setParseError(i, it) },
-                            requireNotNull(state.project).entries,
-                            js,
+                            entries = requireNotNull(state.project).entries,
+                            js = js,
+                            enabled = enabled,
+                        )
+                        is Plugin.Parameter.FileParam -> ParamFileTextField(
+                            value = value as FileWithEncoding,
+                            onValueChange = onValueChange,
+                            param = def,
+                            isError = isError,
                             enabled = enabled,
                         )
                     }
@@ -542,4 +558,96 @@ private fun ParamTextField(
         isError = isError,
         enabled = enabled,
     )
+}
+
+@Composable
+private fun ParamFileTextField(
+    value: FileWithEncoding,
+    onValueChange: (FileWithEncoding) -> Unit,
+    param: Plugin.Parameter.FileParam,
+    isError: Boolean,
+    enabled: Boolean,
+) {
+    var isShowingFilePicker by remember { mutableStateOf(false) }
+    var encodingExpanded by remember { mutableStateOf(false) }
+    var encoding by remember { mutableStateOf(value.encoding.orEmpty()) }
+    var path by remember { mutableStateOf(value.file.orEmpty()) }
+
+    fun submit() {
+        onValueChange(FileWithEncoding(path, encoding.takeIf { it.isNotBlank() }))
+    }
+
+    LaunchedEffect(value) {
+        if (value.encoding == null) {
+            value.file?.toFileOrNull(ensureExists = true, ensureIsFile = true)?.let { file ->
+                file.readBytes().detectEncoding()?.let { detected ->
+                    encoding = AvailableEncodings.find { encodingNameEquals(detected, it) } ?: detected
+                }
+            }
+        }
+    }
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+        TextField(
+            modifier = Modifier.weight(1f),
+            value = path,
+            onValueChange = {
+                path = it
+                submit()
+            },
+            singleLine = true,
+            isError = isError,
+            enabled = enabled,
+            trailingIcon = {
+                IconButton(onClick = { isShowingFilePicker = true }, enabled = enabled) {
+                    Icon(Icons.Default.FolderOpen, null)
+                }
+            },
+        )
+        Box {
+            TextField(
+                modifier = Modifier.width(200.dp),
+                value = encoding,
+                onValueChange = {},
+                label = { Text(string(Strings.StarterNewEncoding)) },
+                readOnly = true,
+                singleLine = true,
+                leadingIcon = {
+                    IconButton(onClick = { encodingExpanded = true }, enabled = enabled) {
+                        Icon(Icons.Default.ExpandMore, null)
+                    }
+                },
+                enabled = enabled,
+            )
+            DropdownMenu(
+                expanded = encodingExpanded,
+                onDismissRequest = { encodingExpanded = false },
+            ) {
+                AvailableEncodings.forEach {
+                    DropdownMenuItem(
+                        onClick = {
+                            encoding = it
+                            encodingExpanded = false
+                            submit()
+                        },
+                    ) {
+                        Text(text = it)
+                    }
+                }
+            }
+        }
+    }
+    if (isShowingFilePicker) {
+        val file = value.file?.toFile()
+        OpenFileDialog(
+            title = param.label.get(),
+            initialDirectory = file?.parent,
+            initialFileName = file?.name,
+            extensions = param.acceptExtensions,
+        ) { parent, name ->
+            isShowingFilePicker = false
+            if (parent == null || name == null) return@OpenFileDialog
+            path = File(parent, name).absolutePath
+            submit()
+        }
+    }
 }

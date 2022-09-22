@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.json
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.toFileOrNull
 import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -172,6 +173,19 @@ data class Plugin(
 
             override fun eval(value: Any) = value is EntrySelector && value.filters.isNotEmpty()
         }
+
+        class FileParam(
+            name: String,
+            label: LocalizedJsonString,
+            description: LocalizedJsonString?,
+            enableIf: String?,
+            defaultValue: FileWithEncoding,
+            val optional: Boolean,
+            val acceptExtensions: List<String>?,
+        ) : Parameter<FileWithEncoding>(ParameterType.File, name, label, description, enableIf, defaultValue) {
+
+            override fun eval(value: Any) = value is FileWithEncoding && value.file != null
+        }
     }
 
     @Serializable
@@ -193,35 +207,48 @@ data class Plugin(
 
         @SerialName("entrySelector")
         EntrySelector,
+
+        @SerialName("file")
+        File
     }
 
-    fun checkParams(params: ParamMap, labelerConf: LabelerConf?): Boolean {
-        return parameters?.list.orEmpty().all { param ->
-            when (param) {
-                is Parameter.BooleanParam -> (params[param.name] as? Boolean) != null
-                is Parameter.EnumParam -> (params[param.name] as? LocalizedJsonString)?.let { enumValue ->
-                    enumValue in param.options
-                } == true
-                is Parameter.FloatParam -> (params[param.name] as? Float)?.let { floatValue ->
-                    floatValue >= (param.min ?: Float.NEGATIVE_INFINITY) &&
-                        floatValue <= (param.max ?: Float.POSITIVE_INFINITY)
-                } == true
-                is Parameter.IntParam -> (params[param.name] as? Int)?.let { intValue ->
-                    intValue >= (param.min ?: Int.MIN_VALUE) && intValue <= (param.max ?: Int.MAX_VALUE)
-                } == true
-                is Parameter.StringParam -> (params[param.name] as? String)?.let { stringValue ->
-                    when {
-                        param.optional.not() && stringValue.isEmpty() -> false
-                        param.multiLine.not() && stringValue.lines().size > 1 -> false
-                        else -> true
-                    }
-                } == true
-                is Parameter.EntrySelectorParam -> (params[param.name] as? EntrySelector)?.let { selector ->
-                    selector.filters.all { it.isValid(requireNotNull(labelerConf)) }
-                } == true
-            }
+    fun checkParam(param: Parameter<*>, value: Any, labelerConf: LabelerConf?): Boolean {
+        return when (param) {
+            is Parameter.BooleanParam -> (value as? Boolean) != null
+            is Parameter.EnumParam -> (value as? LocalizedJsonString)?.let { enumValue ->
+                enumValue in param.options
+            } == true
+            is Parameter.FloatParam -> (value as? Float)?.let { floatValue ->
+                floatValue >= (param.min ?: Float.NEGATIVE_INFINITY) &&
+                    floatValue <= (param.max ?: Float.POSITIVE_INFINITY)
+            } == true
+            is Parameter.IntParam -> (value as? Int)?.let { intValue ->
+                intValue >= (param.min ?: Int.MIN_VALUE) && intValue <= (param.max ?: Int.MAX_VALUE)
+            } == true
+            is Parameter.StringParam -> (value as? String)?.let { stringValue ->
+                when {
+                    param.optional.not() && stringValue.isEmpty() -> false
+                    param.multiLine.not() && stringValue.lines().size > 1 -> false
+                    else -> true
+                }
+            } == true
+            is Parameter.EntrySelectorParam -> (value as? EntrySelector)?.let { selector ->
+                selector.filters.all { it.isValid(requireNotNull(labelerConf)) }
+            } == true
+            is Parameter.FileParam -> (value as? FileWithEncoding)?.let {
+                if (param.optional && it.file == null) return true
+                val file = it.file?.toFileOrNull(ensureIsFile = true) ?: return@let false
+                if (param.acceptExtensions != null && file.extension !in param.acceptExtensions) return@let false
+                true
+            } == true
         }
     }
+
+    fun checkParams(params: ParamMap, labelerConf: LabelerConf?): Boolean =
+        parameters?.list.orEmpty().all { param ->
+            val value = params[param.name] ?: return@all false
+            checkParam(param, value, labelerConf)
+        }
 }
 
 @Serializer(Plugin.Parameters::class)
@@ -271,7 +298,7 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
                 val default = defaultValueFromFile
                     ?.let(Plugin.Parameter.StringParam::getDefaultValueFromFile)
                     ?: defaultValue.jsonPrimitive.content
-                val optional = requireNotNull(element["optional"]).jsonPrimitive.boolean
+                val optional = element["optional"]?.jsonPrimitive?.boolean ?: false
                 val multiLine = element["multiLine"]?.jsonPrimitive?.boolean ?: false
                 Plugin.Parameter.StringParam(name, label, description, enableIf, default, multiLine, optional)
             }
@@ -285,6 +312,22 @@ object PluginParameterSerializer : KSerializer<Plugin.Parameter<*>> {
             Plugin.ParameterType.EntrySelector -> {
                 val default = decoder.json.decodeFromJsonElement(EntrySelector.serializer(), defaultValue)
                 Plugin.Parameter.EntrySelectorParam(name, label, description, enableIf, default)
+            }
+            Plugin.ParameterType.File -> {
+                val default = decoder.json.decodeFromJsonElement(FileWithEncoding.serializer(), defaultValue)
+                val optional = element["optional"]?.jsonPrimitive?.boolean ?: false
+                val extensions = element["extensions"]?.jsonArray
+                    ?.map { it.jsonPrimitive.content.trim('.') }
+                    ?.ifEmpty { null }
+                Plugin.Parameter.FileParam(
+                    name,
+                    label,
+                    description,
+                    enableIf,
+                    default,
+                    optional,
+                    extensions,
+                )
             }
         }
     }
