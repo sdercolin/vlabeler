@@ -11,7 +11,7 @@
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Compare current project entries with another oto.ini file. Can also insert missing entries in the current project.",
-    "zh": "比较当前工程和另一个 oto.ini 文件中的条目。也可以在当前项目中插入缺失的条目。",
+    "zh": "比较当前工程和另一个 oto.ini 文件中的条目。也可以在当前工程中插入缺失的条目。",
     "ja": "現在のプロジェクトのエントリを別の oto.ini ファイルと比較します。また、現在のプロジェクトに欠落しているエントリを挿入することもできます。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/compare-oto-entries",
