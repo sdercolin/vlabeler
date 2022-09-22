@@ -20,6 +20,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
+import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.runIf
@@ -47,6 +48,7 @@ interface AppDialogState {
     val isShowingLicenseDialog: Boolean
     val updaterDialogContent: Update?
     val macroPluginShownInDialog: Pair<Plugin, ParamMap>?
+    val macroPluginReport: LocalizedJsonString?
     val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
     val embeddedDialog: EmbeddedDialogRequest<*>?
@@ -88,6 +90,8 @@ interface AppDialogState {
     fun openMacroPluginDialog(plugin: Plugin)
     fun updateMacroPluginDialogInputParams(params: ParamMap)
     fun closeMacroPluginDialog()
+    fun showMacroPluginReport(report: LocalizedJsonString)
+    fun closeMacroPluginReport()
     fun openCustomizableItemManagerDialog(type: CustomizableItem.Type)
     fun closeCustomizableItemManagerDialog()
     fun requestClearCaches(scope: CoroutineScope)
@@ -99,13 +103,13 @@ interface AppDialogState {
     fun anyDialogOpening() =
         isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
-            macroPluginShownInDialog != null || customizableItemManagerTypeShownInDialog != null ||
-            embeddedDialog != null
+            macroPluginShownInDialog != null || macroPluginReport != null ||
+            customizableItemManagerTypeShownInDialog != null || embeddedDialog != null
 
     fun anyDialogOpeningExceptMacroPluginManager() =
         isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
-            macroPluginShownInDialog != null ||
+            macroPluginShownInDialog != null || macroPluginReport != null ||
             (
                 customizableItemManagerTypeShownInDialog != null &&
                     customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
@@ -137,6 +141,7 @@ class AppDialogStateImpl(
     override var isShowingLicenseDialog: Boolean by mutableStateOf(false)
     override var updaterDialogContent: Update? by mutableStateOf(null)
     override var macroPluginShownInDialog: Pair<Plugin, ParamMap>? by mutableStateOf(null)
+    override var macroPluginReport: LocalizedJsonString? by mutableStateOf(null)
     override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
     override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
     override var embeddedDialog: EmbeddedDialogRequest<*>? by mutableStateOf(null)
@@ -341,6 +346,14 @@ class AppDialogStateImpl(
         macroPluginShownInDialog = null
     }
 
+    override fun showMacroPluginReport(report: LocalizedJsonString) {
+        macroPluginReport = report
+    }
+
+    override fun closeMacroPluginReport() {
+        macroPluginReport = null
+    }
+
     override fun clearCachesAndReopen(scope: CoroutineScope) {
         projectStore.requireProject().getCacheDir().deleteRecursively()
         loadProject(scope, projectStore.requireProject().projectFile, state)
@@ -360,6 +373,7 @@ class AppDialogStateImpl(
         isShowingPreferencesDialog = false
         isShowingSampleDirectoryRedirectDialog = false
         macroPluginShownInDialog = null
+        macroPluginReport = null
         customizableItemManagerTypeShownInDialog = null
         closeEmbeddedDialog()
     }

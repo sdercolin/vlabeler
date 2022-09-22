@@ -30,6 +30,53 @@
         "extensions": [
           "ini"
         ]
+      },
+      {
+        "type": "string",
+        "name": "suffixBase",
+        "label": {
+          "en": "Input suffix",
+          "zh": "输入后缀",
+          "ja": "入力接尾辞"
+        },
+        "description": {
+          "en": "Suffix of alias in the input oto file. Aliases are compared with the suffix removed.",
+          "zh": "输入 oto 文件中别名的后缀。别名将在去除后缀后进行比较。",
+          "ja": "入力 oto ファイルのエイリアスの接尾辞。エイリアスは接尾辞を削除してから比較されます。"
+        },
+        "defaultValue": "",
+        "optional": true
+      },
+      {
+        "type": "string",
+        "name": "suffixProject",
+        "label": {
+          "en": "Current suffix",
+          "zh": "当前后缀",
+          "ja": "現在の接尾辞"
+        },
+        "description": {
+          "en": "Suffix of entry names in the current project. Aliases are compared with the suffix removed.",
+          "zh": "当前工程中条目名的后缀。别名将在去除后缀后进行比较。",
+          "ja": "現在のプロジェクトのエントリ名の接尾辞。エイリアスは接尾辞を削除してから比較されます。"
+        },
+        "defaultValue": "",
+        "optional": true
+      },
+      {
+        "type": "boolean",
+        "name": "append",
+        "label": {
+          "en": "Append missing entries",
+          "zh": "追加缺失的条目",
+          "ja": "欠落しているエントリを追加する"
+        },
+        "description": {
+          "en": "If the input oto file contains entries that are not included in the current project, append them to project.",
+          "zh": "如果输入 oto 文件包含当前工程中未包含的条目，则将它们追加到工程中。",
+          "ja": "入力 oto ファイルに現在のプロジェクトに含まれていないエントリがある場合は、それらをプロジェクトに追加します。"
+        },
+        "defaultValue": false
       }
     ]
   },

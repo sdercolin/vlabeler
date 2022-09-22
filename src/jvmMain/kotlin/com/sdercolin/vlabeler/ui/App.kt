@@ -17,6 +17,7 @@ import com.sdercolin.vlabeler.ui.dialog.ErrorDialog
 import com.sdercolin.vlabeler.ui.dialog.LicenseDialog
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
+import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginReportDialog
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesDialog
 import com.sdercolin.vlabeler.ui.dialog.prerender.PrerenderDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
@@ -130,6 +131,12 @@ fun App(
                         plugin.saveParams(it)
                     }
                 },
+            )
+        }
+        appState.macroPluginReport?.let { report ->
+            MacroPluginReportDialog(
+                report = report,
+                finish = { appState.closeMacroPluginReport() },
             )
         }
         appState.customizableItemManagerTypeShownInDialog?.let {

@@ -188,6 +188,7 @@ fun Strings.ja(): String? = when (this) {
     TemplatePluginManagerImportDialogTitle -> "テンプレート生成器をインポート"
     MacroPluginManagerTitle -> "バッチ編集プラグイン"
     MacroPluginManagerImportDialogTitle -> "バッチ編集プラグインをインポート"
+    MacroPluginReportDialogTitle -> "バッチ編集の実行結果"
     CustomizableItemManagerRemoveItemConfirm -> "「%s」を削除しますか？削除されたファイルは元に戻せません。"
     CustomizableItemManagerOpenDirectory -> "ディレクトリを開く"
     CustomizableItemManagerReload -> "再読み込み"

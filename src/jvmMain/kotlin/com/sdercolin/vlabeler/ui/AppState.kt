@@ -22,6 +22,7 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.model.runMacroPlugin
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
@@ -36,6 +37,7 @@ import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.currentLanguage
+import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.toFileOrNull
 import com.sdercolin.vlabeler.util.toFrame
@@ -409,6 +411,16 @@ class AppState(
         get() = project != null && screen is Screen.Editor && !anyDialogOpeningExceptMacroPluginManager()
 
     val isScrollFitEnabled get() = editor?.sampleInfoResult?.exceptionOrNull() == null
+
+    fun executeMacroPlugin(plugin: Plugin, params: ParamMap) {
+        val (newProject, report) = runCatching { runMacroPlugin(plugin, params, requireProject()) }
+            .getOrElse {
+                showError(it)
+                return
+            }
+        editProject { newProject }
+        report?.let { showMacroPluginReport(it) }
+    }
 
     sealed class PendingActionAfterSaved {
         object Open : PendingActionAfterSaved()

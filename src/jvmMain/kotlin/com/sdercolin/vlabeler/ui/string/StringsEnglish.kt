@@ -199,6 +199,7 @@ fun Strings.en(): String = when (this) {
     TemplatePluginManagerImportDialogTitle -> "Import template generator"
     MacroPluginManagerTitle -> "Batch Edit Plugins"
     MacroPluginManagerImportDialogTitle -> "Import batch edit plugin"
+    MacroPluginReportDialogTitle -> "Batch edit execution result"
     CustomizableItemManagerRemoveItemConfirm ->
         "Are you sure you want to remove \"%s\"? " +
             "This will remove the file(s) from the disk."

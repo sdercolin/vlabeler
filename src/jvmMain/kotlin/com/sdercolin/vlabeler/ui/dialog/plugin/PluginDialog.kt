@@ -570,8 +570,8 @@ private fun ParamFileTextField(
 ) {
     var isShowingFilePicker by remember { mutableStateOf(false) }
     var encodingExpanded by remember { mutableStateOf(false) }
-    var encoding by remember { mutableStateOf(value.encoding.orEmpty()) }
-    var path by remember { mutableStateOf(value.file.orEmpty()) }
+    var encoding by remember(value) { mutableStateOf(value.encoding.orEmpty()) }
+    var path by remember(value) { mutableStateOf(value.file.orEmpty()) }
 
     fun submit() {
         onValueChange(FileWithEncoding(path, encoding.takeIf { it.isNotBlank() }))
@@ -582,6 +582,7 @@ private fun ParamFileTextField(
             value.file?.toFileOrNull(ensureExists = true, ensureIsFile = true)?.let { file ->
                 file.readBytes().detectEncoding()?.let { detected ->
                     encoding = AvailableEncodings.find { encodingNameEquals(detected, it) } ?: detected
+                    submit()
                 }
             }
         }

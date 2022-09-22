@@ -9,14 +9,11 @@ import com.sdercolin.vlabeler.io.autoSaveTemporaryProjectFile
 import com.sdercolin.vlabeler.io.saveProjectFile
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
-import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.model.SampleInfo
-import com.sdercolin.vlabeler.model.runMacroPlugin
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
-import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.runIf
@@ -76,11 +73,6 @@ interface ProjectStore {
     fun toggleCurrentEntryStar()
     fun editEntryTag(index: Int, tag: String)
     fun editCurrentEntryTag(tag: String)
-
-    suspend fun executeMacroPlugin(
-        plugin: Plugin,
-        params: ParamMap,
-    )
 }
 
 class ProjectStoreImpl(
@@ -301,15 +293,6 @@ class ProjectStoreImpl(
                 }
             }
         }
-    }
-
-    override suspend fun executeMacroPlugin(plugin: Plugin, params: ParamMap) {
-        val newProject = runCatching { runMacroPlugin(plugin, params, requireProject()) }
-            .getOrElse {
-                errorState.showError(it)
-                return
-            }
-        editProject { newProject }
     }
 
     override fun toggleEntryDone(index: Int) {

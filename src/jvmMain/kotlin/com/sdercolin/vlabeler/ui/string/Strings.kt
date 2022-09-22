@@ -177,6 +177,7 @@ enum class Strings {
     TemplatePluginManagerImportDialogTitle,
     MacroPluginManagerTitle,
     MacroPluginManagerImportDialogTitle,
+    MacroPluginReportDialogTitle,
     CustomizableItemManagerRemoveItemConfirm,
     CustomizableItemManagerOpenDirectory,
     CustomizableItemManagerReload,

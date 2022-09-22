@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.exception.PluginUnexpectedRuntimeException
+import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Resources
@@ -16,7 +17,7 @@ fun runMacroPlugin(
     plugin: Plugin,
     params: ParamMap,
     project: Project,
-): Project {
+): Pair<Project, LocalizedJsonString?> {
     val js = JavaScript(
         logHandler = Log.infoFileHandler,
         currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile(),
@@ -30,7 +31,12 @@ fun runMacroPlugin(
         js.setJson("params", params.resolve(project, js))
         js.setJson("resources", resourceTexts)
 
-        listOf(Resources.classEntryJs, Resources.classEditedEntryJs, Resources.expectedErrorJs).forEach { path ->
+        listOf(
+            Resources.classEntryJs,
+            Resources.classEditedEntryJs,
+            Resources.expectedErrorJs,
+            Resources.reportJs,
+        ).forEach { path ->
             val code = useResource(path) { it.bufferedReader().readText() }
             js.eval(code)
         }
@@ -61,7 +67,9 @@ fun runMacroPlugin(
                 appendLine("Removed: $removedCount")
             },
         )
-        project.copy(entries = editedEntries.map { it.entry }).validate()
+        val newProject = project.copy(entries = editedEntries.map { it.entry }).validate()
+        val report = js.getOrNull<String>("reportText")
+        newProject to report?.parseJson<LocalizedJsonString>()
     }.getOrElse {
         val expected = js.getOrNull("expectedError") ?: false
         js.close()

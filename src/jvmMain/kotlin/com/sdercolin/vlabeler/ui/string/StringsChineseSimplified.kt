@@ -178,6 +178,7 @@ fun Strings.zhHans(): String? = when (this) {
     TemplatePluginManagerImportDialogTitle -> "导入模板生成器"
     MacroPluginManagerTitle -> "批量编辑插件"
     MacroPluginManagerImportDialogTitle -> "导入批量编辑插件"
+    MacroPluginReportDialogTitle -> "批量编辑执行结果"
     CustomizableItemManagerRemoveItemConfirm -> "确定要删除 \"%s\" 吗？该操作将从磁盘上删除相应的文件。"
     CustomizableItemManagerOpenDirectory -> "打开目录"
     CustomizableItemManagerReload -> "重新加载"
