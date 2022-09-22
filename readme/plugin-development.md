@@ -66,7 +66,7 @@ The object has the following properties:
 | optional             | Boolean                    | false         | string, file             | Set to `true` if you want to allow empty string values or `null` file                   |
 | options              | List\<String> (Localized)  | (Required)    | enum                     | Items of the enumerable.                                                                |
 
-### Types
+### Parameters types
 
 - `integer`: Integer value. Should be between `min` and `max` if defined.
 - `float`: Float value. Should be between `min` and `max` if defined.
@@ -75,7 +75,8 @@ The object has the following properties:
   is `false`.
 - `enum`: Enumerable value described as string or localized string. Should be one of the items in `options`.
 - `entrySelector`: **Can only be used in a `macro` type plugin.** Instance
-  of [EntrySelector](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/EntrySelector.kt) type:
+  of [EntrySelector](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/EntrySelector.kt) type. For detailed usage, see
+  section [Use an entry selector](#use-an-entry-selector). An example of valid values follows:
 
 ```
 {
@@ -97,7 +98,9 @@ The object has the following properties:
 }
 ```
 
-- `file`: Instance of [FileWithEncoding](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/FileWithEncoding.kt) type:
+- `file`: Instance of [FileWithEncoding](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/FileWithEncoding.kt). In the
+  scripts, instead of the object itself, the file's content will be passed as a string value. An example of valid values
+  follows:
 
 ```
 {
@@ -133,6 +136,11 @@ The following variables are provided before your scripts are executed.
 | resources | List\<String> | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
 | labeler   | LabelerConf   | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
 | debug     | Boolean       | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
+
+### Use an input file parameter
+
+A parameter with `file` type is passed in `params` as a string containing all the text in the input file, decoded in the
+given encoding.
 
 ### Output
 
@@ -229,11 +237,6 @@ for (index in entries) {
 }
 ```
 
-### Use an input file parameter
-
-A parameter with `file` type is passed in `params` as a string containing all the text in the input file, decoded in the
-given encoding.
-
 ### Output
 
 You have to create a list named `output` to pass the result back to the application.
@@ -325,6 +328,25 @@ let positionIsPrefix = ["Prefix", "前缀", "接頭辞"].includes(positionText)
 if (positionIsPrefix) {
     ...
 }
+```
+
+## Display a report after macro plugin execution
+
+**This feature is only available of `macro` plugins.**
+
+You can show a report after the plugin is executed successfully by calling `report(message)`.
+The parameter `message` can be a string or a localized string.
+See the [Localization](#localization) section for more details.
+
+```javascript
+// display report in default language
+report("This is a report.")
+
+// display report in multiple languages
+report({
+    en: "This is a report in English.",
+    zh: "这是中文的报告。"
+})
 ```
 
 ## Error handling
