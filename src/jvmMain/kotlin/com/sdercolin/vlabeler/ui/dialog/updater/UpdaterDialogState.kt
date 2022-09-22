@@ -16,7 +16,9 @@ import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.savedMutableStateOf
 import com.sdercolin.vlabeler.util.toFile
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -36,14 +38,20 @@ class UpdaterDialogState(
     private val repository = UpdateRepository()
     private var downloadJob: Job? = null
 
-    private var downloadDirectory: File by mutableStateOf(appRecordStore.value.updateDownloadDirectory.toFile())
-
+    var downloadDirectory: File by savedMutableStateOf(appRecordStore.value.updateDownloadDirectory.toFile()) {
+        appRecordStore.update { copy(updateDownloadDirectory = it.absolutePath) }
+    }
     private val downloadFile: File get() = File(downloadDirectory, update.fileName)
 
     var isDownloading: Boolean by mutableStateOf(false)
         private set
 
     var progress: Float by mutableStateOf(0f)
+        private set
+
+    val isDownloadPositionValid: Boolean get() = downloadDirectory.exists() && downloadDirectory.isDirectory
+
+    var isShowingChoosingDownloadPositionDialog: Boolean by mutableStateOf(false)
         private set
 
     @Composable
@@ -95,11 +103,26 @@ class UpdaterDialogState(
             repository.downloadUpdate(downloadFile, update.assetUrl, onProgress = { progress = it })
                 .onFailure {
                     downloadFile.delete()
-                    onError(it)
+                    if (it !is CancellationException) {
+                        onError(it)
+                    }
                     return@launch
                 }
             Desktop.getDesktop().open(downloadDirectory)
             finish()
+        }
+    }
+
+    fun openChooseDownloadPositionDialog() {
+        isShowingChoosingDownloadPositionDialog = true
+    }
+
+    fun handleChoosingDownloadPositionDialogResult(parent: String?, name: String?) {
+        isShowingChoosingDownloadPositionDialog = false
+        if (parent == null || name == null) return
+        val file = File(parent, name)
+        if (file.exists() && file.isDirectory) {
+            downloadDirectory = file
         }
     }
 }
