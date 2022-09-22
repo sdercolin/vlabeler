@@ -85,12 +85,9 @@ let entriesOnlyInProject = []
 
 entries.forEach(entry => {
     let key = getEntryKey(entry, suffixProject)
-    console.log(`checking ${key}`)
     if (!baseEntryKeys.includes(key)) {
-        console.log(`not found in base`)
         entriesOnlyInProject.push(entry)
     } else {
-        console.log(`found in base`)
         keysExistingInProject.push(key)
     }
 })
@@ -99,9 +96,8 @@ let entriesOnlyInBase = baseEntries.filter(entry => !keysExistingInProject.inclu
 
 let append = params["append"]
 
-output = entries.map((entry, index) => new EditedEntry(index, entry))
-
 if (append) {
+    output = entries.map((entry, index) => new EditedEntry(index, entry))
     entriesOnlyInBase.forEach(entry => {
         let newEntry = Object.assign({}, entry)
         newEntry.name = newEntry.name.replace(new RegExp(`${suffixBase}$`), suffixProject)

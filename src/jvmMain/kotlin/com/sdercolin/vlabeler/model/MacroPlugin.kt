@@ -47,27 +47,33 @@ fun runMacroPlugin(
             Log.debug("Finished script: $file")
         }
 
-        val editedEntries = js.getJson<List<PluginEditedEntry>>("output")
-        val newCount = editedEntries.count { it.originalIndex == null }
-        val editedCount = editedEntries.count {
-            if (it.originalIndex == null) {
-                false
-            } else {
-                project.entries[it.originalIndex] != it.entry
+        val editedEntries = js.getJsonOrNull<List<PluginEditedEntry>>("output")
+        if (editedEntries != null) {
+            val newCount = editedEntries.count { it.originalIndex == null }
+            val editedCount = editedEntries.count {
+                if (it.originalIndex == null) {
+                    false
+                } else {
+                    project.entries[it.originalIndex] != it.entry
+                }
             }
+            val removedCount =
+                (project.entries.indices.toSet() - editedEntries.mapNotNull { it.originalIndex }.toSet()).size
+            Log.info(
+                buildString {
+                    appendLine("Plugin execution got edited entries:")
+                    appendLine("Total: " + editedEntries.size)
+                    appendLine("New: $newCount")
+                    appendLine("Edited: $editedCount")
+                    appendLine("Removed: $removedCount")
+                },
+            )
         }
-        val removedCount =
-            (project.entries.indices.toSet() - editedEntries.mapNotNull { it.originalIndex }.toSet()).size
-        Log.info(
-            buildString {
-                appendLine("Plugin execution got edited entries:")
-                appendLine("Total: " + editedEntries.size)
-                appendLine("New: $newCount")
-                appendLine("Edited: $editedCount")
-                appendLine("Removed: $removedCount")
-            },
-        )
-        val newProject = project.copy(entries = editedEntries.map { it.entry }).validate()
+        val newProject = if (editedEntries != null) {
+            project.copy(entries = editedEntries.map { it.entry }).validate()
+        } else {
+            project
+        }
         val report = js.getOrNull<String>("reportText")
         newProject to report?.parseJson<LocalizedJsonString>()
     }.getOrElse {

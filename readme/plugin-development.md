@@ -160,7 +160,7 @@ class Entry {
         this.end = end // float value in millisecond
         this.points = points // list of float values in millisecond
         this.extras = extras // list of string values
-        this.notes = notes // notes
+        this.notes = notes // info including "done", "starred" and tag
     }
 }
 
@@ -251,6 +251,22 @@ class EditedEntry {
     }
 }
 ```
+
+The following code is an example of adding a suffix to every entry's name:
+
+```javascript
+let suffix = params["suffix"]
+
+output = []
+for (index in entries) {
+    let entry = entries[index]
+    let edited = Object.assign({}, entry)
+    edited.name += suffix
+    output.push(new EditedEntry(index, edited))
+}
+```
+
+If you don't want to change any entry, you can skip the assignment of `output`.
 
 ### Display a report after execution
 
