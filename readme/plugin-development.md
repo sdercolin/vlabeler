@@ -252,6 +252,25 @@ class EditedEntry {
 }
 ```
 
+### Display a report after execution
+
+**This feature is only available of `macro` plugins.**
+
+You can show a report after the plugin is executed successfully by calling `report(message)`.
+The parameter `message` can be a string or a localized string.
+See the [Localization](#localization) section for more details.
+
+```javascript
+// display report in default language
+report("This is a report.")
+
+// display report in multiple languages
+report({
+    en: "This is a report in English.",
+    zh: "这是中文的报告。"
+})
+```
+
 ### Examples
 
 Check the following built-in `macro` plugins as examples:
@@ -260,6 +279,8 @@ Check the following built-in `macro` plugins as examples:
   labelers. You can refer to it for the usage of the entry selector
 - [batch-edit-oto-parameter](../resources/common/plugins/macro/batch-edit-oto-parameter): Edit parameters of selected
   entries for UTAU oto. The `labeler` is used to get the specific settings about `oto.ini`
+- [compare-oto-entries](../resources/common/plugins/macro/compare-oto-entries): Compare an input oto with the current
+  project. You can refer to it for the usage of the `report()` function
 - [execute-scripts](../resources/common/plugins/macro/execute-scripts): Execute input scripts to edit the project. It
   can be used as a debug tool when developing a plugin.
 
@@ -328,25 +349,6 @@ let positionIsPrefix = ["Prefix", "前缀", "接頭辞"].includes(positionText)
 if (positionIsPrefix) {
     ...
 }
-```
-
-## Display a report after macro plugin execution
-
-**This feature is only available of `macro` plugins.**
-
-You can show a report after the plugin is executed successfully by calling `report(message)`.
-The parameter `message` can be a string or a localized string.
-See the [Localization](#localization) section for more details.
-
-```javascript
-// display report in default language
-report("This is a report.")
-
-// display report in multiple languages
-report({
-    en: "This is a report in English.",
-    zh: "这是中文的报告。"
-})
 ```
 
 ## Error handling
