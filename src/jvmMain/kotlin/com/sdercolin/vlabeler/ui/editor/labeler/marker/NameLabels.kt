@@ -65,10 +65,17 @@ fun NameLabels(
         List(chunkCount) { chunkIndex ->
             val chunkStart = chunkIndex * chunkLength
             val chunkEnd = chunkStart + chunkLength
+
+            fun EntryInPixel.isInChunk() = if (appConf.editor.continuousLabelNames.position.left) {
+                this.start >= chunkStart && this.start < chunkEnd
+            } else {
+                this.end > chunkStart && this.end <= chunkEnd
+            }
+
             NameLabelEntryChunk(
-                leftEntry = leftEntry?.takeIf { it.start >= chunkStart && it.start < chunkEnd },
-                entries = totalChunk.entries.filter { it.start >= chunkStart && it.start < chunkEnd },
-                rightEntry = rightEntry?.takeIf { it.start >= chunkStart && it.start < chunkEnd },
+                leftEntry = leftEntry?.takeIf { it.isInChunk() },
+                entries = totalChunk.entries.filter { it.isInChunk() },
+                rightEntry = rightEntry?.takeIf { it.isInChunk() },
             )
         }
     }
