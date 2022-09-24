@@ -46,9 +46,15 @@
     "showDone": true,
     "autoDone": true,
     "showStar": true,
-    "showTag": true
+    "showTag": true,
+    "continuousLabelNames": {
+      "color": "#E89F17",
+      "size": "Small",
+      "position": "TopRight"
+    }
   },
   "view": {
+    "language": "English",
     "accentColor": "#F48FB1",
     "accentColorVariant": "#AD375F",
     "pinnedEntryListPosition": "Right"
@@ -71,5 +77,9 @@
     },
     "mouseScrollActionMap": {
     }
+  },
+  "history": {
+    "maxSize": 100,
+    "squashIndex": true
   }
 }

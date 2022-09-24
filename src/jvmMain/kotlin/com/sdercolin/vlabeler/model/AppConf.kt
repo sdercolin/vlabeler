@@ -48,6 +48,9 @@ data class AppConf(
         val amplitude: Amplitude = Amplitude(),
         val spectrogram: Spectrogram = Spectrogram(),
     ) {
+        val amplitudeHeightRatio: Float
+            get() = 1f / (1f + spectrogram.heightWeight)
+
         companion object {
             const val DefaultMaxDataChunkSize = 441000
             const val MinMaxDataChunkSize = DefaultMaxDataChunkSize / 2
@@ -197,6 +200,7 @@ data class AppConf(
      * @param autoDone When true, the editor is automatically setting "done" status of entries
      * @param showStar When true, the star button/icon is shown in the editor and entry lists
      * @param showTag When true, the tag or "New tag" button is shown in the editor and entry lists
+     * @param continuousLabelNames Appearance of the label names in the editor for continuous labelers
      */
     @Serializable
     @Immutable
@@ -210,6 +214,7 @@ data class AppConf(
         val autoDone: Boolean = DefaultAutoDone,
         val showStar: Boolean = DefaultShowStar,
         val showTag: Boolean = DefaultShowTag,
+        val continuousLabelNames: ContinuousLabelNames = ContinuousLabelNames(),
     ) {
 
         /**
@@ -278,6 +283,27 @@ data class AppConf(
     }
 
     /**
+     * Configurations about the appearance of the label names in the editor for continuous labelers
+     * @param color Color hex string of the label names
+     * @param size Font size of the label names
+     * @param position Position of the label names at corners. `Bottom` here means the bottom of waveforms
+     */
+    @Serializable
+    @Immutable
+    data class ContinuousLabelNames(
+        val color: String = DefaultColor,
+        val size: FontSize = DefaultSize,
+        val position: ViewCornerPosition = DefaultPosition,
+    ) {
+
+        companion object {
+            const val DefaultColor = "#E89F17"
+            val DefaultSize = FontSize.Small
+            val DefaultPosition = ViewCornerPosition.TopRight
+        }
+    }
+
+    /**
      * Configurations about views
      * @param language Language of the app
      * @param accentColor Color hex string of the accent color
@@ -319,6 +345,31 @@ data class AppConf(
         Right(Strings.PreferencesViewPositionRight),
         Top(Strings.PreferencesViewPositionTop),
         Bottom(Strings.PreferencesViewPositionBottom),
+    }
+
+    /**
+     * Position options of views at corners
+     */
+    @Immutable
+    enum class ViewCornerPosition(
+        override val stringKey: Strings,
+        val left: Boolean,
+        val top: Boolean,
+    ) : LocalizedText {
+        TopLeft(Strings.PreferencesViewCornerPositionTopLeft, left = true, top = true),
+        TopRight(Strings.PreferencesViewCornerPositionTopRight, left = false, top = true),
+        BottomLeft(Strings.PreferencesViewCornerPositionBottomLeft, left = true, top = false),
+        BottomRight(Strings.PreferencesViewCornerPositionBottomRight, left = false, top = false),
+    }
+
+    /**
+     * Font size options
+     */
+    @Immutable
+    enum class FontSize(override val stringKey: Strings) : LocalizedText {
+        Small(Strings.PreferencesFontSizeSmall),
+        Medium(Strings.PreferencesFontSizeMedium),
+        Large(Strings.PreferencesFontSizeLarge),
     }
 
     /**

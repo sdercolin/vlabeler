@@ -345,7 +345,7 @@ abstract class PreferencesPage(
     object Editor : PreferencesPage(Strings.PreferencesEditor, Strings.PreferencesEditorDescription) {
 
         override val children: List<PreferencesPage>
-            get() = listOf(EditorScissors, EditorAutoScroll, EditorNotes)
+            get() = listOf(EditorScissors, EditorAutoScroll, EditorNotes, EditorContinuousLabelNames)
 
         override val content: List<PreferencesGroup> = buildPageContent {
             withContext(
@@ -490,6 +490,40 @@ abstract class PreferencesPage(
                     defaultValue = AppConf.AutoScroll.DefaultOnSwitched,
                     select = { it.onSwitched },
                     update = { copy(onSwitched = it) },
+                )
+            }
+        }
+    }
+
+    object EditorContinuousLabelNames : PreferencesPage(
+        Strings.PreferencesEditorContinuousLabelNames,
+        Strings.PreferencesEditorContinuousLabelNamesDescription,
+    ) {
+        override val content: List<PreferencesGroup> = buildPageContent {
+            withContext(
+                selector = { it.editor.continuousLabelNames },
+                updater = { copy(editor = editor.copy(continuousLabelNames = it)) },
+            ) {
+                color(
+                    title = Strings.PreferencesEditorContinuousLabelNamesColor,
+                    defaultValue = AppConf.ContinuousLabelNames.DefaultColor,
+                    select = { it.color },
+                    update = { copy(color = it) },
+                    useAlpha = false,
+                )
+                selection(
+                    title = Strings.PreferencesEditorContinuousLabelNamesSize,
+                    defaultValue = AppConf.ContinuousLabelNames.DefaultSize,
+                    select = { it.size },
+                    update = { copy(size = it) },
+                    options = AppConf.FontSize.values(),
+                )
+                selection(
+                    title = Strings.PreferencesEditorContinuousLabelNamesPosition,
+                    defaultValue = AppConf.ContinuousLabelNames.DefaultPosition,
+                    select = { it.position },
+                    update = { copy(position = it) },
+                    options = AppConf.ViewCornerPosition.values(),
                 )
             }
         }

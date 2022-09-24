@@ -195,6 +195,7 @@ fun MarkerLabels(
     FieldLabels(state, chunkCount, chunkLength, chunkLengthDp, chunkVisibleList)
     if (state.labelerConf.continuous) {
         NameLabels(
+            appState.appConf,
             state,
             requestRename,
             jumpToEntry,
