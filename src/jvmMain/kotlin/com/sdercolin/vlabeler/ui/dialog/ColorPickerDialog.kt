@@ -96,7 +96,7 @@ class ColorPickerState(
     private var coordinates: Point by mutableStateOf(color.toCoordinates())
 
     val valueSlider = SliderState(
-        baseColor = color,
+        baseColor = baseColor,
         value = color.toHsv()[2],
         valueApplier = { value, color -> color.toHsv().let { Color.hsv(it[0], it[1], value) } },
         update = { updateColor() },
@@ -163,6 +163,7 @@ class ColorPickerState(
         val x = (x - radius) / radius
         val y = (y - radius) / radius
         val r = (x.pow(2) + y.pow(2)).pow(0.5f)
+        if (r == 0f) return Point(0f, 0f)
         val actualR = r.coerceAtMost(1f)
         val actualX = x * actualR / r
         val actualY = y * actualR / r
