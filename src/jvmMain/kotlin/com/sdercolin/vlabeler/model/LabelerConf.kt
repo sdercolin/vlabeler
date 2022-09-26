@@ -312,6 +312,22 @@ data class LabelerConf(
      * @param parameter Definition of the parameter
      * @param injector JavaScript code that injects the parameter value into the labeler.
      *   `labeler` and `value` are available as variables.
+     *   Note the injector cannot change the following info of the labeler:
+     *   - [name]
+     *   - [version]
+     *   - [extension]
+     *   - [displayedName]
+     *   - [description]
+     *   - [author]
+     *   - [website]
+     *   - [email]
+     *   - [continuous]
+     *   - [parameters]
+     *   - size of [fields]
+     *   - size of [extraFieldNames]
+     *   - size of [defaultExtras]
+     *   - size of [defaultValues]
+     *   - [Field.name]s in [fields]
      */
     @Serializable(with = ParameterHolderSerializer::class)
     data class ParameterHolder(

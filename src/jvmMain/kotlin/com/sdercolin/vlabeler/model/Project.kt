@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.orEmpty
+import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -440,6 +441,52 @@ fun LabelerConf.injectLabelerParams(paramMap: ParamMap): LabelerConf {
     }
     val labelerResult = js.getJson<LabelerConf>("labeler")
     js.close()
+
+    listOf(
+        "name",
+        "version",
+        "extension",
+        "displayedName",
+        "description",
+        "author",
+        "website",
+        "email",
+        "continuous",
+        "parameters",
+    ).forEach {
+        val errorMessage = "Could not inject to change a basic field of LabelerConf: $it"
+        when (it) {
+            "name" -> require(labelerResult.name == name) { errorMessage }
+            "version" -> require(labelerResult.version == version) { errorMessage }
+            "extension" -> require(labelerResult.extension == this.extension) { errorMessage }
+            "displayedName" -> require(labelerResult.displayedName == displayedName) { errorMessage }
+            "description" -> require(labelerResult.description == description) { errorMessage }
+            "author" -> require(labelerResult.author == author) { errorMessage }
+            "website" -> require(labelerResult.website == website) { errorMessage }
+            "email" -> require(labelerResult.email == email) { errorMessage }
+            "continuous" -> require(labelerResult.continuous == continuous) { errorMessage }
+            "parameters" ->
+                require(labelerResult.parameters.stringifyJson() == parameters.stringifyJson()) { errorMessage }
+        }
+    }
+    listOf(
+        "defaultValues",
+        "defaultExtras",
+        "fields",
+        "extraFieldNames",
+    ).forEach {
+        val errorMessage = "Could not inject to change the size of a basic array of LabelerConf: $it"
+        when (it) {
+            "defaultValues" -> require(labelerResult.defaultValues.size == defaultValues.size) { errorMessage }
+            "defaultExtras" -> require(labelerResult.defaultExtras.size == defaultExtras.size) { errorMessage }
+            "fields" -> require(labelerResult.fields.size == fields.size) { errorMessage }
+            "extraFieldNames" ->
+                require(labelerResult.extraFieldNames.size == extraFieldNames.size) { errorMessage }
+        }
+    }
+    require(labelerResult.fields.map { it.name } == fields.map { it.name }) {
+        "Could not inject to change the name of a field of LabelerConf"
+    }
     return labelerResult
 }
 
