@@ -4,12 +4,15 @@ import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
 import com.sdercolin.vlabeler.io.fromRawLabels
+import com.sdercolin.vlabeler.model.Project.Companion.ProjectVersion
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
+import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.orEmpty
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.io.File
@@ -18,13 +21,17 @@ import java.nio.charset.Charset
 @Serializable
 @Immutable
 data class Project(
+    val version: Int = 0,
     val sampleDirectory: String,
     val workingDirectory: String,
     val projectName: String,
     val cacheDirectory: String = getDefaultCacheDirectory(workingDirectory, projectName), // TODO: Remove migration code
     val entries: List<Entry>,
     val currentIndex: Int,
-    val labelerConf: LabelerConf,
+    @SerialName("labelerConf")
+    val originalLabelerConf: LabelerConf,
+    @Transient
+    val labelerConf: LabelerConf = originalLabelerConf,
     val labelerParams: ParamTypedMap? = null,
     val encoding: String? = null,
     val multipleEditMode: Boolean = labelerConf.continuous,
@@ -332,6 +339,7 @@ data class Project(
     }
 
     companion object {
+        const val ProjectVersion = 1
         const val SampleFileExtension = "wav"
         const val ProjectFileExtension = "lbp"
         private const val DefaultCacheDirectorySuffix = ".$ProjectFileExtension.caches"
@@ -408,6 +416,32 @@ private fun List<Entry>.distinct(allowDuplicated: Boolean): List<Entry> {
     return distinctBy { it.name }
 }
 
+fun LabelerConf.injectLabelerParams(paramMap: ParamMap): LabelerConf {
+    val paramDefsToInject = paramMap
+        .mapNotNull { (key, value) ->
+            val param = parameters.find { it.parameter.name == key }
+            if (param == null) {
+                null
+            } else {
+                param to value
+            }
+        }
+        .filter { it.second != it.first.parameter.defaultValue }
+        .map { it.first }
+        .filter { it.injector.isNullOrEmpty().not() }
+    if (paramDefsToInject.isEmpty()) return this
+
+    val js = JavaScript()
+    js.setJson("labeler", this)
+    for (def in paramDefsToInject) {
+        js.setJson("value", paramMap.resolveItem(def.parameter.name, project = null, js = js))
+        def.injector.orEmpty().forEach { js.eval(it) }
+    }
+    val labelerResult = js.getJson<LabelerConf>("labeler")
+    js.close()
+    return labelerResult
+}
+
 /**
  * Should be called from IO threads, because this function runs scripting and may take time
  */
@@ -462,17 +496,21 @@ suspend fun projectOf(
     val labelerTypedParams = labelerParams?.let { ParamTypedMap.from(it, labelerConf.parameterDefs) }
 
     return runCatching {
+        val injectedLabelerConf = labelerParams?.let { labelerConf.injectLabelerParams(it) } ?: labelerConf
+
         require(entries.isNotEmpty()) {
             "No entries found"
         }
         Project(
+            version = ProjectVersion,
             sampleDirectory = sampleDirectory,
             workingDirectory = workingDirectory,
             projectName = projectName,
             cacheDirectory = cacheDirectory,
             entries = entries,
             currentIndex = 0,
-            labelerConf = labelerConf,
+            labelerConf = injectedLabelerConf,
+            originalLabelerConf = labelerConf,
             labelerParams = labelerTypedParams,
             encoding = encoding,
             autoExportTargetPath = autoExportTargetPath,

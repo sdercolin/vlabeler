@@ -60,6 +60,38 @@ class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
             put(key, resolveItem(value, project, js))
         }
     }
+
+    fun resolveItem(name: String, project: Project?, js: JavaScript?): JsonElement {
+        return resolveItem(map[name], project, js)
+    }
+
+    private fun resolveItem(value: Any?, project: Project?, js: JavaScript?): JsonElement {
+        if (value == null) return JsonNull
+        return when (value) {
+            is Number -> JsonPrimitive(value)
+            is String -> JsonPrimitive(value)
+            is Boolean -> JsonPrimitive(value)
+            is EntrySelector -> {
+                requireNotNull(project) { "Project is required to resolve EntrySelector" }
+                requireNotNull(js) { "JavaScript is required to resolve EntrySelector" }
+                buildJsonArray {
+                    for (index in value.select(project.entries, project.labelerConf, js)) {
+                        add(JsonPrimitive(index))
+                    }
+                }
+            }
+            is LocalizedJsonString -> JsonPrimitive(value.getCertain(currentLanguage))
+            is FileWithEncoding -> {
+                val file = value.file?.toFileOrNull(ensureExists = true, ensureIsFile = true)
+                if (file == null) {
+                    JsonNull
+                } else {
+                    JsonPrimitive(file.readText(value.encoding?.let { charset(it) } ?: Charset.defaultCharset()))
+                }
+            }
+            else -> throw IllegalArgumentException("$value is not supported")
+        }
+    }
 }
 
 @Serializable
@@ -72,15 +104,15 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
 
     companion object {
 
-        fun from(paramMap: ParamMap, paramDefs: List<Parameter<*>>): ParamTypedMap {
+        fun from(paramMap: ParamMap, paramDefs: List<Parameter<*>>): ParamTypedMap? {
             val map = mutableMapOf<String, TypedValue>()
             for ((key, value) in paramMap) {
                 val paramDef = paramDefs.find { it.name == key }
-                if (paramDef != null) {
+                if (paramDef != null && paramDef.defaultValue != value) {
                     map[key] = TypedValue(paramDef.type, value)
                 }
             }
-            return ParamTypedMap(map)
+            return ParamTypedMap(map).takeIf { it.map.isNotEmpty() }
         }
 
         @Serializer(TypedValue::class)
@@ -130,31 +162,3 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
 fun Map<String, Any>.toParamMap() = ParamMap(this)
 
 fun ParamMap?.orEmpty() = this ?: ParamMap(mapOf())
-
-private fun resolveItem(value: Any?, project: Project?, js: JavaScript?): JsonElement {
-    if (value == null) return JsonNull
-    return when (value) {
-        is Number -> JsonPrimitive(value)
-        is String -> JsonPrimitive(value)
-        is Boolean -> JsonPrimitive(value)
-        is EntrySelector -> {
-            requireNotNull(project) { "Project is required to resolve EntrySelector" }
-            requireNotNull(js) { "JavaScript is required to resolve EntrySelector" }
-            buildJsonArray {
-                for (index in value.select(project.entries, project.labelerConf, js)) {
-                    add(JsonPrimitive(index))
-                }
-            }
-        }
-        is LocalizedJsonString -> JsonPrimitive(value.getCertain(currentLanguage))
-        is FileWithEncoding -> {
-            val file = value.file?.toFileOrNull(ensureExists = true, ensureIsFile = true)
-            if (file == null) {
-                JsonNull
-            } else {
-                JsonPrimitive(file.readText(value.encoding?.let { charset(it) } ?: Charset.defaultCharset()))
-            }
-        }
-        else -> throw IllegalArgumentException("$value is not supported")
-    }
-}

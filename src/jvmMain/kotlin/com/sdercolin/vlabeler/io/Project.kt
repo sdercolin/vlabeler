@@ -4,6 +4,7 @@ import androidx.compose.material.SnackbarDuration
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.ProjectParseException
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.model.injectLabelerParams
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.stringStatic
@@ -47,7 +48,7 @@ fun loadProject(
                 return@launch
             }
         val existingLabelerConf = appState.availableLabelerConfs.find { it.name == project.labelerConf.name }
-        val labelerConf = when {
+        val originalLabelerConf = when {
             existingLabelerConf == null -> {
                 val labelerConfFile = CustomLabelerDir.resolve(project.labelerConf.fileName)
                 Log.info("Wrote labeler ${project.labelerConf.name} to ${labelerConfFile.absolutePath}")
@@ -80,6 +81,16 @@ fun loadProject(
                 project.labelerConf
             }
         }
+        val labelerConf = if (project.labelerParams == null) {
+            originalLabelerConf
+        } else {
+            runCatching { originalLabelerConf.injectLabelerParams(project.labelerParams.toParamMap()) }
+                .getOrElse {
+                    appState.showError(ProjectParseException(it))
+                    appState.hideProgress()
+                    return@launch
+                }
+        }
         val (workingDirectory, projectName) = when {
             autoSaved -> project.workingDirectory to project.projectName
             project.projectFile.absolutePath != file.absolutePath -> {
@@ -101,6 +112,7 @@ fun loadProject(
         Log.info("Project loaded: ${project.projectFile.absolutePath}")
         val fixedProject = project.copy(
             labelerConf = labelerConf,
+            originalLabelerConf = originalLabelerConf,
             workingDirectory = workingDirectory,
             projectName = projectName,
             cacheDirectory = cacheDirectory,
