@@ -33,6 +33,7 @@ kotlin {
     sourceSets {
         val jvmMain by getting {
             dependencies {
+                implementation(kotlin("reflect"))
                 implementation(compose.desktop.currentOs)
                 implementation(compose.materialIconsExtended)
                 implementation(compose("org.jetbrains.compose.components:components-splitpane-desktop"))

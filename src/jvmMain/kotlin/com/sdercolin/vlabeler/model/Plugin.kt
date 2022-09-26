@@ -76,6 +76,16 @@ data class Plugin(
     )
 
     fun validate(): Plugin {
+        val allParamTypes = Parameter::class.sealedSubclasses
+        val acceptedParamTypes = when (type) {
+            Type.Template -> allParamTypes.minus(Parameter.EntrySelectorParam::class)
+            Type.Macro -> allParamTypes
+        }
+        for (parameter in parameters?.list.orEmpty()) {
+            require(parameter::class in acceptedParamTypes) {
+                "Parameter type ${parameter::class.simpleName} is not supported in plugin type $type"
+            }
+        }
         return this
     }
 
