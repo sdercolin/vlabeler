@@ -352,6 +352,7 @@ data class Project(
 
 private fun generateEntriesByPlugin(
     labelerConf: LabelerConf,
+    labelerParams: ParamMap?,
     sampleNames: List<String>,
     plugin: Plugin,
     params: ParamMap?,
@@ -372,7 +373,7 @@ private fun generateEntriesByPlugin(
 
             entries.postApplyLabelerConf(labelerConf)
         }
-        is TemplatePluginResult.Raw -> fromRawLabels(result.lines, inputFile, labelerConf, sampleNames)
+        is TemplatePluginResult.Raw -> fromRawLabels(result.lines, inputFile, labelerConf, labelerParams, sampleNames)
     }
 }
 
@@ -473,7 +474,7 @@ suspend fun projectOf(
 
     val entries = when {
         plugin != null -> {
-            generateEntriesByPlugin(labelerConf, sampleNames, plugin, pluginParams, inputFile, encoding)
+            generateEntriesByPlugin(labelerConf, labelerParams, sampleNames, plugin, pluginParams, inputFile, encoding)
                 .getOrElse {
                     return Result.failure(it)
                 }
@@ -483,6 +484,7 @@ suspend fun projectOf(
                 inputFile.readLines(Charset.forName(encoding)),
                 inputFile,
                 labelerConf,
+                labelerParams,
                 sampleNames,
             )
         }

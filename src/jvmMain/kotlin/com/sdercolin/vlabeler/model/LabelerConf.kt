@@ -232,6 +232,7 @@ data class LabelerConf(
          * - String "inputFileName": Name of the input file without extension
          * - String List "sampleNames": Names of the samples without extension in the folder
          * - String "<item in [variableNames]>": Values extracted by [extractionPattern]
+         * - Map "params", created according to [parameters], see [ParameterHolder] for details
          *
          * Output variables that the scripts should set:
          * - String "sample" (sample file name without extension)
@@ -279,6 +280,8 @@ data class LabelerConf(
          * JavaScript code lines that sets "output" variable using the same variables as described in [format]
          * String type: sample, name, extras
          * Float type: start, end, and others
+         * Besides, "params" is available, which is a map created according to [parameters].
+         * See [ParameterHolder] for details.
          */
         val scripts: List<String>? = null,
     )
@@ -300,7 +303,12 @@ data class LabelerConf(
     )
 
     /**
-     * Definition of a configurable parameter used in this labeler
+     * Definition of a configurable parameter used in this labeler.
+     * The parameters are accessible
+     * 1. in the JavaScript code of [Parser.scripts] and [Writer.scripts]
+     *  - keys are defined in as `parameters[].parameter.name`
+     *  - value could be undefined, which means the parameter is not set
+     * 2. via injected (updated) [LabelerConf] by [injector], if it is not null
      * @param parameter Definition of the parameter
      * @param injector JavaScript code that injects the parameter value into the labeler.
      *   `labeler` and `value` are available as variables.
