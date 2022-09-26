@@ -11,7 +11,7 @@
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
-    "en": "Default labeler for UTAU oto. Left is separated from the default start, so Overlap can be set minus.",
+    "en": "Default labeler for UTAU oto. Left is separated from the default start, so Overlap can be set to negative value.",
     "zh": "用于 UTAU oto 的默认标记器。由于增加了独立于条目起始线的`左边界`参数，所以`重叠`可以设置为负值。",
     "ja": "UTAU oto のデフォルトラベラー。`左ブランク`はエントリの開始線から分離されているので、Overlapは負の値に設定できます。"
   },
