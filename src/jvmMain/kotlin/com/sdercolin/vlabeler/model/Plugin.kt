@@ -6,8 +6,6 @@ import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.toLocalized
-import com.sdercolin.vlabeler.util.ParamMap
-import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
@@ -28,14 +26,14 @@ import java.io.File
 @Serializable
 @Immutable
 data class Plugin(
-    val name: String,
-    val version: Int = 1,
+    override val name: String,
+    override val version: Int = 1,
     val type: Type,
-    val displayedName: LocalizedJsonString = name.toLocalized(),
-    val author: String,
-    val email: String = "",
-    val description: LocalizedJsonString = "".toLocalized(),
-    val website: String = "",
+    override val displayedName: LocalizedJsonString = name.toLocalized(),
+    override val author: String,
+    override val email: String = "",
+    override val description: LocalizedJsonString = "".toLocalized(),
+    override val website: String = "",
     val supportedLabelFileExtension: String,
     val inputFileExtension: String? = null,
     val requireInputFile: Boolean = false,
@@ -46,12 +44,19 @@ data class Plugin(
     val resourceFiles: List<String> = listOf(),
     @Transient val directory: File? = null,
     @Transient val builtIn: Boolean = false,
-) {
+) : BasePlugin {
+
+    override val parameterDefs: List<Parameter<*>>
+        get() = parameters?.list.orEmpty()
+
+    override val isSelfExecutable: Boolean
+        get() = when (type) {
+            Type.Template -> false
+            Type.Macro -> true
+        }
+
     fun readResourceFiles() = resourceFiles.map { requireNotNull(directory).resolve(it).readText() }
     fun readScriptTexts() = scriptFiles.map { requireNotNull(directory).resolve(it).readText() }
-    fun getDefaultParams() = parameters?.list.orEmpty().associate { parameter ->
-        parameter.name to requireNotNull(parameter.defaultValue)
-    }.toParamMap()
 
     fun isMacroExecutable(appState: AppState): Boolean {
         if (appState.isMacroPluginAvailable.not()) return false
@@ -89,12 +94,6 @@ data class Plugin(
         }
         return this
     }
-
-    fun checkParams(params: ParamMap, labelerConf: LabelerConf?): Boolean =
-        parameters?.list.orEmpty().all { param ->
-            val value = params[param.name] ?: return@all false
-            param.check(value, labelerConf)
-        }
 }
 
 @Serializer(Plugin.Parameters::class)

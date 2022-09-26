@@ -7,8 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.io.loadSavedParams
-import com.sdercolin.vlabeler.io.saveParams
+import com.sdercolin.vlabeler.io.getSavedParamsFile
 import com.sdercolin.vlabeler.model.ArgumentMap
 import com.sdercolin.vlabeler.model.Arguments
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -61,10 +60,15 @@ class ProjectCreatorState(
     private var cacheDirectoryEdited: Boolean by mutableStateOf(false)
     var currentPathPicker: PathPicker? by mutableStateOf(null)
         private set
+
     var labeler: LabelerConf by mutableStateOf(
         labelerConfs.firstOrNull { it.name == appRecord.labelerName } ?: labelerConfs.first(),
     )
         private set
+    var labelerParams: ParamMap? by mutableStateOf(null)
+    var labelerSavedParams: ParamMap? by mutableStateOf(null)
+    var labelerError: Boolean by mutableStateOf(false)
+
     var templatePlugin: Plugin? by mutableStateOf(null)
     var templatePluginParams: ParamMap? by mutableStateOf(null)
     var templatePluginSavedParams: ParamMap? by mutableStateOf(null)
@@ -227,14 +231,34 @@ class ProjectCreatorState(
             templatePlugin = null
             templatePluginError = false
         }
+        coroutineScope.launch {
+            val savedParams = labeler.loadSavedParams(labeler.getSavedParamsFile())
+            updateLabelerParams(savedParams)
+            labelerSavedParams = savedParams
+        }
         updateInputFileIfNeeded()
+    }
+
+    fun updateLabelerParams(params: ParamMap?) {
+        labelerParams = params
+        if (params != null) {
+            labelerError = labeler.checkParams(params, null) == false
+        }
+    }
+
+    fun saveLabelerParams(params: ParamMap) {
+        coroutineScope.launch {
+            labeler.saveParams(params, labeler.getSavedParamsFile())
+            labelerSavedParams = params
+            updateLabelerParams(params)
+        }
     }
 
     fun updatePlugin(plugin: Plugin?) {
         if (plugin != null) {
             coroutineScope.launch {
                 templatePlugin = plugin
-                val savedParams = plugin.loadSavedParams()
+                val savedParams = plugin.loadSavedParams(plugin.getSavedParamsFile())
                 updatePluginParams(savedParams)
                 templatePluginSavedParams = savedParams
                 updateInputFileIfNeeded()
@@ -257,7 +281,9 @@ class ProjectCreatorState(
 
     fun savePluginParams(params: ParamMap) {
         coroutineScope.launch {
-            templatePlugin?.saveParams(params)
+            templatePlugin?.run {
+                saveParams(params, getSavedParamsFile())
+            }
             templatePluginSavedParams = params
             updatePluginParams(params)
         }

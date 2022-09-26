@@ -61,8 +61,10 @@ import androidx.compose.ui.window.rememberDialogState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.model.BasePlugin
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.FileWithEncoding
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
@@ -91,7 +93,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 @Composable
-private fun rememberState(
+private fun rememberPluginDialogState(
     plugin: Plugin,
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
@@ -121,12 +123,14 @@ fun TemplatePluginDialog(
 ) = PluginDialog(
     appConf = appConf,
     appRecordStore = appRecordStore,
-    plugin = plugin,
-    paramMap = paramMap,
-    savedParamMap = savedParamMap,
-    project = null,
-    submit = submit,
-    save = save,
+    state = rememberPluginDialogState(
+        plugin = plugin,
+        paramMap = paramMap,
+        savedParamMap = savedParamMap,
+        project = null,
+        submit = submit,
+        save = save,
+    ),
 )
 
 @Composable
@@ -141,32 +145,59 @@ fun MacroPluginDialog(
 ) = PluginDialog(
     appConf = appConf,
     appRecordStore = appRecordStore,
-    plugin = plugin,
-    paramMap = paramMap,
-    savedParamMap = paramMap,
-    project = project,
-    submit = submit,
-    save = save,
+    state = rememberPluginDialogState(
+        plugin = plugin,
+        paramMap = paramMap,
+        savedParamMap = paramMap,
+        project = project,
+        submit = submit,
+        save = save,
+    ),
+)
+
+@Composable
+private fun rememberLabelerDialogState(
+    labeler: LabelerConf,
+    paramMap: ParamMap,
+    savedParamMap: ParamMap?,
+    submit: (ParamMap?) -> Unit,
+    save: (ParamMap) -> Unit,
+) = remember(labeler, paramMap, savedParamMap, submit, save) {
+    LabelerDialogState(
+        labeler = labeler,
+        paramMap = paramMap,
+        savedParamMap = savedParamMap,
+        submit = submit,
+        save = save,
+    )
+}
+
+@Composable
+fun LabelerPluginDialog(
+    appConf: AppConf,
+    appRecordStore: AppRecordStore,
+    labeler: LabelerConf,
+    paramMap: ParamMap,
+    savedParamMap: ParamMap,
+    submit: (ParamMap?) -> Unit,
+    save: (ParamMap) -> Unit,
+) = PluginDialog(
+    appConf = appConf,
+    appRecordStore = appRecordStore,
+    state = rememberLabelerDialogState(
+        labeler = labeler,
+        paramMap = paramMap,
+        savedParamMap = savedParamMap,
+        submit = submit,
+        save = save,
+    ),
 )
 
 @Composable
 private fun PluginDialog(
     appConf: AppConf,
     appRecordStore: AppRecordStore,
-    plugin: Plugin,
-    paramMap: ParamMap,
-    savedParamMap: ParamMap?,
-    project: Project?,
-    submit: (ParamMap?) -> Unit,
-    save: (ParamMap) -> Unit,
-    state: PluginDialogState = rememberState(
-        plugin,
-        paramMap,
-        savedParamMap,
-        project,
-        submit,
-        save,
-    ),
+    state: BasePluginDialogState,
 ) {
     val appRecord = appRecordStore.stateFlow.collectAsState()
     val dialogState = rememberResizableDialogState(appRecord)
@@ -208,10 +239,10 @@ private fun LaunchSaveDialogSize(
 }
 
 @Composable
-private fun Content(state: PluginDialogState) {
+private fun Content(state: BasePluginDialogState) {
     val scrollState = rememberScrollState()
-    val plugin = state.plugin
-    val needJsClient = plugin.parameters?.list?.any { it is Parameter.EntrySelectorParam } == true
+    val plugin = state.basePlugin
+    val needJsClient = state.needJsClient
     val js by produceState(null as JavaScript?, needJsClient) {
         if (needJsClient && value == null) {
             value = withContext(Dispatchers.IO) { JavaScript() }
@@ -268,9 +299,10 @@ private fun Content(state: PluginDialogState) {
                         enabled = state.isAllValid(),
                         onClick = { state.apply() },
                     ) {
-                        val strings = when (plugin.type) {
-                            Plugin.Type.Template -> Strings.CommonOkay
-                            Plugin.Type.Macro -> Strings.PluginDialogExecute
+                        val strings = if (plugin.isSelfExecutable) {
+                            Strings.PluginDialogExecute
+                        } else {
+                            Strings.CommonOkay
                         }
                         Text(string(strings))
                     }
@@ -282,7 +314,7 @@ private fun Content(state: PluginDialogState) {
 }
 
 @Composable
-private fun Title(plugin: Plugin) {
+private fun Title(plugin: BasePlugin) {
     Text(
         text = plugin.displayedName.get(),
         style = MaterialTheme.typography.h4,
@@ -292,7 +324,7 @@ private fun Title(plugin: Plugin) {
 }
 
 @Composable
-private fun Info(plugin: Plugin, contactAuthor: () -> Unit) {
+private fun Info(plugin: BasePlugin, contactAuthor: () -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         Text(
             text = string(Strings.PluginDialogInfoAuthor, plugin.author),
@@ -338,7 +370,7 @@ private fun Description(description: String) {
 }
 
 @Composable
-private fun Params(state: PluginDialogState, js: JavaScript?) {
+private fun Params(state: BasePluginDialogState, js: JavaScript?) {
     Column(
         modifier = Modifier.background(color = White20, shape = RoundedCornerShape(10.dp))
             .padding(30.dp),
@@ -424,7 +456,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
 }
 
 @Composable
-private fun ParamLabel(state: PluginDialogState, index: Int, enabled: Boolean) {
+private fun ParamLabel(state: BasePluginDialogState, index: Int, enabled: Boolean) {
     val alpha = if (enabled) ContentAlpha.high else ContentAlpha.disabled
     CompositionLocalProvider(LocalContentAlpha provides alpha) {
         Text(

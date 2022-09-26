@@ -61,6 +61,7 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
+import com.sdercolin.vlabeler.ui.dialog.plugin.LabelerPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.TemplatePluginDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -211,9 +212,19 @@ private fun LabelerSelectorRow(
     availableLabelerConfs: List<LabelerConf>,
     availableTemplatePlugins: List<Plugin>,
 ) {
+    var labelerDialogShown by remember { mutableStateOf(false) }
     var pluginDialogShown by remember { mutableStateOf(false) }
     Row(verticalAlignment = Alignment.CenterVertically) {
         LabelerSelector(state, availableLabelerConfs)
+        Spacer(Modifier.width(10.dp))
+        IconButton(onClick = { labelerDialogShown = true }) {
+            val color = if (state.labelerError) {
+                MaterialTheme.colors.error
+            } else {
+                LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+            }
+            Icon(Icons.Default.Settings, null, tint = color)
+        }
         Spacer(Modifier.width(60.dp))
         TemplatePluginSelector(state, availableTemplatePlugins)
         Spacer(Modifier.width(10.dp))
@@ -228,6 +239,20 @@ private fun LabelerSelectorRow(
             }
             Icon(Icons.Default.Settings, null, tint = color)
         }
+    }
+    if (labelerDialogShown) {
+        LabelerPluginDialog(
+            appConf = state.appConf,
+            appRecordStore = state.appRecordStore,
+            labeler = requireNotNull(state.labeler),
+            paramMap = requireNotNull(state.labelerParams),
+            savedParamMap = requireNotNull(state.labelerSavedParams),
+            submit = {
+                if (it != null) state.updateLabelerParams(it)
+                labelerDialogShown = false
+            },
+            save = { state.saveLabelerParams(it) },
+        )
     }
     if (pluginDialogShown) {
         TemplatePluginDialog(
@@ -250,6 +275,9 @@ private fun LabelerSelector(
     state: ProjectCreatorState,
     availableLabelerConfs: List<LabelerConf>,
 ) {
+    LaunchedEffect(Unit) {
+        state.updateLabeler(state.labeler)
+    }
     Box {
         var expanded by remember { mutableStateOf(false) }
         TextField(

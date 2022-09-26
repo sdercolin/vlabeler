@@ -7,8 +7,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import com.sdercolin.vlabeler.io.getSavedParamsFile
 import com.sdercolin.vlabeler.io.openCreatedProject
-import com.sdercolin.vlabeler.io.saveParams
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.dialog.AboutDialog
@@ -118,7 +118,7 @@ fun App(
                         if (it != null) {
                             appState.showProgress()
                             withContext(Dispatchers.IO) {
-                                plugin.saveParams(it)
+                                plugin.saveParams(it, plugin.getSavedParamsFile())
                                 appState.executeMacroPlugin(plugin, it)
                             }
                             appState.hideProgress()
@@ -128,7 +128,7 @@ fun App(
                 save = {
                     mainScope.launch(Dispatchers.IO) {
                         appState.updateMacroPluginDialogInputParams(it)
-                        plugin.saveParams(it)
+                        plugin.saveParams(it, plugin.getSavedParamsFile())
                     }
                 },
             )

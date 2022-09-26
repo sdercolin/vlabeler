@@ -6,8 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.io.getSavedParamsFile
 import com.sdercolin.vlabeler.io.loadProject
-import com.sdercolin.vlabeler.io.loadSavedParams
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
@@ -325,7 +325,7 @@ class AppDialogStateImpl(
 
     override fun openMacroPluginDialog(plugin: Plugin) {
         scope.launch(Dispatchers.IO) {
-            macroPluginShownInDialog = plugin to plugin.loadSavedParams()
+            macroPluginShownInDialog = plugin to plugin.loadSavedParams(plugin.getSavedParamsFile())
         }
     }
 

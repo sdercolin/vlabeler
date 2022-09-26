@@ -30,12 +30,12 @@ data class LabelerConf(
     /**
      * Unique name of the labeler
      */
-    val name: String,
+    override val name: String,
     /**
      * Version code in integer
      * Configurations with same [name] and [version] should always have same contents if distributed in public
      */
-    val version: Int = 1,
+    override val version: Int = 1,
     /**
      * File extension of the raw label file
      */
@@ -47,11 +47,11 @@ data class LabelerConf(
     /**
      * Name displayed in the UI (localized)
      */
-    val displayedName: LocalizedJsonString = name.toLocalized(),
-    val author: String,
-    val email: String = "",
-    val description: LocalizedJsonString = "".toLocalized(),
-    val website: String = "",
+    override val displayedName: LocalizedJsonString = name.toLocalized(),
+    override val author: String,
+    override val email: String = "",
+    override val description: LocalizedJsonString = "".toLocalized(),
+    override val website: String = "",
     /**
      * Continuous mode, where the end of entry is forced set to the start of its next entry
      */
@@ -110,10 +110,13 @@ data class LabelerConf(
      * Configurable parameters of the labeler
      */
     val parameters: List<ParameterHolder> = listOf(),
-) {
+) : BasePlugin {
 
     val fileName get() = "$name.$LabelerFileExtension"
     val isBuiltIn get() = DefaultLabelerDir.listFiles().orEmpty().any { it.name == fileName }
+
+    override val parameterDefs: List<Parameter<*>>
+        get() = parameters.map { it.parameter }
 
     /**
      * Get constraints for canvas usage
@@ -331,9 +334,11 @@ data class LabelerConf(
                         PolymorphicSerializer(Parameter::class),
                         value.parameter,
                     ),
-                    "injector" to (value.injector?.let {
-                        encoder.json.encodeToJsonElement(ListSerializer(String.serializer()), it)
-                    } ?: JsonNull),
+                    "injector" to (
+                        value.injector?.let {
+                            encoder.json.encodeToJsonElement(ListSerializer(String.serializer()), it)
+                        } ?: JsonNull
+                        ),
                 ),
             )
             encoder.encodeJsonElement(element)
