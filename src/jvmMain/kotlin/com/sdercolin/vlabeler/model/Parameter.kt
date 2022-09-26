@@ -82,7 +82,6 @@ sealed class Parameter<T : Any> {
 
         companion object {
             val DefaultValueFileReferencePattern = Regex("^file::(.*)$")
-            fun getDefaultValueFromFile(fileName: String) = "file::$fileName"
         }
     }
 

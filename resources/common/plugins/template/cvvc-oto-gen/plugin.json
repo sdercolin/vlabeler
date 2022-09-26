@@ -367,8 +367,7 @@
           "zh": "搜索时使用后缀匹配。",
           "ja": "後方一致で検索します。"
         },
-        "defaultValue": "",
-        "defaultValueFromFile": "vowel-map-ja.txt",
+        "defaultValue": "file::vowel-map-ja.txt",
         "multiLine": true,
         "optional": false
       },
@@ -385,8 +384,7 @@
           "zh": "搜索时使用精确匹配。必须包含一行以 \"\" 开头的纯元音。",
           "ja": "完全一致で検索します。子音が空の行が必要です。"
         },
-        "defaultValue": "",
-        "defaultValueFromFile": "consonant-map-ja.txt",
+        "defaultValue": "file::consonant-map-ja.txt",
         "multiLine": true,
         "optional": false
       }

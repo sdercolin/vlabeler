@@ -59,7 +59,6 @@ The object has the following properties:
 | description          | String (Localized)         | ""            | all                      | Displayed in the config dialog.                                                         |
 | enableIf             | String                     | null          | all                      | If set, this parameter is enabled only when the parameter with the set name is truthy.  |
 | defaultValue         | (Actual type of the value) | (Required)    | all                      | Value type is according to the parameter's `type`.                                      |
-| defaultValueFromFile | String                     | null          | string                   | Set a file name if you want its content to be used as the default value.                |
 | min                  | (Actual type of the value) | null          | integer, float           |                                                                                         |
 | max                  | (Actual type of the value) | null          | integer, float           |                                                                                         |
 | multiLine            | Boolean                    | false         | string                   | Set to `true` if you want to allow multi-line string values.                            |
@@ -72,7 +71,7 @@ The object has the following properties:
 - `float`: Float value. Should be between `min` and `max` if defined.
 - `boolean`: Should be either `true` or `false`.
 - `string`: String value. Should not contain line breaks if `multiLine` is `false`. Should not be empty if `optional`
-  is `false`.
+  is `false`. You can set `defaultValue` to `file::path/to/file` to load the file's content as the default value.
 - `enum`: Enumerable value described as string or localized string. Should be one of the items in `options`.
 - `entrySelector`: **Can only be used in a `macro` type plugin.** Instance
   of [EntrySelector](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/EntrySelector.kt) type. For detailed usage, see

@@ -8,7 +8,17 @@ import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.util.DefaultLabelerDir
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
 
 /**
  * Configuration of the labeler's appearances and behaviors
@@ -95,7 +105,10 @@ data class LabelerConf(
      * Defines how to write content in the original format
      */
     val writer: Writer,
-    // val parameters: List<ParameterHolder> = listOf(),
+    /**
+     * Configurable parameters of the labeler
+     */
+    val parameters: List<ParameterHolder> = listOf(),
 ) {
 
     val fileName get() = "$name.$LabelerFileExtension"
@@ -124,15 +137,15 @@ data class LabelerConf(
      * @param height Label height ratio to the height of waveforms part (0~1)
      * @param dragBase True if all the other parameter line move together with this one
      * @param filling Name of the target field to which a filled area is drawn from this field. "start" and "end" are
-     * also available
+     *   also available
      * @param constraints Define value constraints between the fields. See [Constraint]
      * @param shortcutIndex Index in the shortcut list. Could be 1~8 (0 is reserved for "start")
      * @param replaceStart Set to true if this field should replace "start" when displayed. In this case, other fields
-     * can be set smaller than the replaced "start", and the original [Entry.start] will be automatically set to the
-     * minimum value of all the fields. Cannot be used when [continuous] is true
+     *   can be set smaller than the replaced "start", and the original [Entry.start] will be automatically set to the
+     *   minimum value of all the fields. Cannot be used when [continuous] is true
      * @param replaceEnd Set to true if this field should replace "end" when displayed. In this case, other fields
-     * can be set larger than the replaced "end", and the original [Entry.end] will be automatically set to the
-     * maximum value of all the fields. Cannot be used when [continuous] is true
+     *   can be set larger than the replaced "end", and the original [Entry.end] will be automatically set to the
+     *   maximum value of all the fields. Cannot be used when [continuous] is true
      */
     @Serializable
     @Immutable
@@ -201,7 +214,7 @@ data class LabelerConf(
      * @param defaultEncoding Default text encoding of the input file
      * @param extractionPattern Regex pattern that extract groups
      * @param variableNames Definition of how the extracted string groups will be put into variables later in the parser
-     * JavaScript code. Should be in the same order as the extracted groups
+     *   JavaScript code. Should be in the same order as the extracted groups
      * @param scripts JavaScript code in lines that sets properties of [Entry] using the variables extracted
      */
     @Serializable
@@ -271,8 +284,8 @@ data class LabelerConf(
      * @param name Unique name of the property
      * @param displayedName Name displayed in property view UI (localized)
      * @param value Mathematical expression text including fields written as "{[Field.name]}" and "{start}", "{end}".
-     * Extra fields of number type defined in [extraFieldNames] are also available. The expression is evaluated in
-     * JavaScript.
+     *   Extra fields of number type defined in [extraFieldNames] are also available. The expression is evaluated in
+     *   JavaScript.
      */
     @Serializable
     @Immutable
@@ -282,10 +295,16 @@ data class LabelerConf(
         val value: String,
     )
 
-/*    @Serializable(with = ParameterHolderSerializer::class)
+    /**
+     * Definition of a configurable parameter used in this labeler
+     * @param parameter Definition of the parameter
+     * @param injector JavaScript code that injects the parameter value into the labeler.
+     *   `labeler` and `value` are available as variables.
+     */
+    @Serializable(with = ParameterHolderSerializer::class)
     data class ParameterHolder(
-        val parameter: Plugin.Parameter<*>,
-        val injector: String? = null,
+        val parameter: Parameter<*>,
+        val injector: List<String>? = null,
     )
 
     @Serializer(ParameterHolder::class)
@@ -294,12 +313,28 @@ data class LabelerConf(
             require(decoder is JsonDecoder)
             val element = decoder.decodeJsonElement()
             require(element is JsonObject)
-            val list = requireNotNull(element["list"]).jsonArray.map {
-                decoder.json.decodeFromJsonElement(PluginParameterSerializer, it)
+            val parameter = requireNotNull(element["parameter"]).let {
+                decoder.json.decodeFromJsonElement(ParameterSerializer, it)
             }
-            return Plugin.Parameters(list)
+            val injector = element["injector"]?.let {
+                decoder.json.decodeFromJsonElement(ListSerializer(String.serializer()), it)
+            }
+            return ParameterHolder(parameter, injector)
         }
-    }*/
+
+        override fun serialize(encoder: Encoder, value: ParameterHolder) {
+            require(encoder is JsonEncoder)
+            val element = JsonObject(
+                mapOf(
+                    "parameter" to encoder.json.encodeToJsonElement(ParameterSerializer, value.parameter),
+                    "injector" to (value.injector?.let {
+                        encoder.json.encodeToJsonElement(ListSerializer(String.serializer()), it)
+                    } ?: JsonNull),
+                ),
+            )
+            encoder.encodeJsonElement(element)
+        }
+    }
 
     val useImplicitStart: Boolean
         get() = fields.any { it.replaceStart }
@@ -311,6 +346,13 @@ data class LabelerConf(
         if (continuous) {
             require(useImplicitStart.not() && useImplicitEnd.not()) {
                 "Cannot use implicit start/end when continuous is true"
+            }
+        }
+        if (parameters.isNotEmpty()) {
+            parameters.map { it.parameter }.filterIsInstance<Parameter.StringParam>().forEach {
+                require(Parameter.StringParam.DefaultValueFileReferencePattern.matches(it.defaultValue).not()) {
+                    "Default value of string parameter in a labeler cannot be a file reference"
+                }
             }
         }
     }

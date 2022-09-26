@@ -211,8 +211,7 @@
           "zh": "元音表",
           "ja": "母音マップ"
         },
-        "defaultValue": "",
-        "defaultValueFromFile": "vowel-map-ja.txt",
+        "defaultValue": "file::vowel-map-ja.txt",
         "multiLine": true,
         "optional": false
       }
