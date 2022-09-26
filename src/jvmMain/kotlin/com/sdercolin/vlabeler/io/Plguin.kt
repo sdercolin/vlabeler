@@ -4,6 +4,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.FileWithEncoding
+import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
@@ -36,7 +37,7 @@ fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
         .filter { it.exists() }
         .map { it to it.readText() }
         .mapNotNull { (file, text) ->
-            runCatching { text.parseJson<Plugin>() }.getOrElse {
+            runCatching { text.parseJson<Plugin>().validate() }.getOrElse {
                 Log.debug(it)
                 Log.debug("Failed to load plugin: ${file.parent}")
                 null
@@ -45,12 +46,12 @@ fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
                 val isBuiltIn = file.absolutePath.contains(DefaultPluginDir.absolutePath)
                 val parametersInjectedWithFileContents = plugin.parameters?.list?.let { list ->
                     val newList = list.map { param ->
-                        if (param is Plugin.Parameter.StringParam) {
-                            val fileNameMatched = Plugin.Parameter.StringParam.DefaultValueFileReferencePattern
+                        if (param is Parameter.StringParam) {
+                            val fileNameMatched = Parameter.StringParam.DefaultValueFileReferencePattern
                                 .find(param.defaultValue)?.groupValues?.getOrNull(1)
                             if (fileNameMatched != null) {
                                 val content = file.parentFile.resolve(fileNameMatched).readText().trim()
-                                Plugin.Parameter.StringParam(
+                                Parameter.StringParam(
                                     name = param.name,
                                     label = param.label,
                                     description = param.description,
@@ -87,13 +88,13 @@ suspend fun Plugin.loadSavedParams(): ParamMap = withContext(Dispatchers.IO) {
                 val value = jsonObject[it.name]
                     ?.let { element ->
                         when (it) {
-                            is Plugin.Parameter.IntParam -> element.jsonPrimitive.int
-                            is Plugin.Parameter.FloatParam -> element.jsonPrimitive.float
-                            is Plugin.Parameter.BooleanParam -> element.jsonPrimitive.boolean
-                            is Plugin.Parameter.EntrySelectorParam -> json.decodeFromJsonElement<EntrySelector>(element)
-                            is Plugin.Parameter.EnumParam -> json.decodeFromJsonElement<LocalizedJsonString>(element)
-                            is Plugin.Parameter.FileParam -> json.decodeFromJsonElement<FileWithEncoding>(element)
-                            is Plugin.Parameter.StringParam -> element.jsonPrimitive.content
+                            is Parameter.IntParam -> element.jsonPrimitive.int
+                            is Parameter.FloatParam -> element.jsonPrimitive.float
+                            is Parameter.BooleanParam -> element.jsonPrimitive.boolean
+                            is Parameter.EntrySelectorParam -> json.decodeFromJsonElement<EntrySelector>(element)
+                            is Parameter.EnumParam -> json.decodeFromJsonElement<LocalizedJsonString>(element)
+                            is Parameter.FileParam -> json.decodeFromJsonElement<FileWithEncoding>(element)
+                            is Parameter.StringParam -> element.jsonPrimitive.content
                         }
                     }
                     ?: requireNotNull(it.defaultValue)

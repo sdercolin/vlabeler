@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.ui.dialog.plugin
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -45,8 +46,8 @@ class PluginDialogState(
     fun getDescription(index: Int): String {
         val description = paramDefs[index].description?.get()
         val range: Pair<String?, String?> = when (val def = paramDefs[index]) {
-            is Plugin.Parameter.FloatParam -> def.min?.toString() to def.max?.toString()
-            is Plugin.Parameter.IntParam -> def.min?.toString() to def.max?.toString()
+            is Parameter.FloatParam -> def.min?.toString() to def.max?.toString()
+            is Parameter.IntParam -> def.min?.toString() to def.max?.toString()
             else -> null to null
         }
         val suffix = when {
@@ -61,7 +62,7 @@ class PluginDialogState(
         return listOfNotNull(description, suffix).joinToString("\n")
     }
 
-    fun isValid(index: Int): Boolean = plugin.checkParam(paramDefs[index], params[index], project?.labelerConf)
+    fun isValid(index: Int): Boolean = paramDefs[index].check(params[index], project?.labelerConf)
 
     fun isAllValid() = params.indices.all { isValid(it) } && parseErrors.none { it }
 
@@ -104,9 +105,9 @@ class PluginDialogState(
     }
 
     fun isParamInRow(index: Int): Boolean = when (val param = paramDefs[index]) {
-        is Plugin.Parameter.EntrySelectorParam -> false
-        is Plugin.Parameter.FileParam -> false
-        is Plugin.Parameter.StringParam -> param.multiLine.not()
+        is Parameter.EntrySelectorParam -> false
+        is Parameter.FileParam -> false
+        is Parameter.StringParam -> param.multiLine.not()
         else -> true
     }
 }

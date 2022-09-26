@@ -63,6 +63,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.FileWithEncoding
+import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
@@ -210,7 +211,7 @@ private fun LaunchSaveDialogSize(
 private fun Content(state: PluginDialogState) {
     val scrollState = rememberScrollState()
     val plugin = state.plugin
-    val needJsClient = plugin.parameters?.list?.any { it is Plugin.Parameter.EntrySelectorParam } == true
+    val needJsClient = plugin.parameters?.list?.any { it is Parameter.EntrySelectorParam } == true
     val js by produceState(null as JavaScript?, needJsClient) {
         if (needJsClient && value == null) {
             value = withContext(Dispatchers.IO) { JavaScript() }
@@ -367,14 +368,14 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                     val isError = state.isValid(i).not()
                     val onValueChange = { newValue: Any -> state.update(i, newValue) }
                     when (def) {
-                        is Plugin.Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange, enabled)
-                        is Plugin.Parameter.EnumParam -> ParamDropDown(
+                        is Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange, enabled)
+                        is Parameter.EnumParam -> ParamDropDown(
                             options = def.options,
                             value = value as LocalizedJsonString,
                             onValueChange = onValueChange,
                             enabled = enabled,
                         )
-                        is Plugin.Parameter.FloatParam -> ParamNumberTextField(
+                        is Parameter.FloatParam -> ParamNumberTextField(
                             value = value as Float,
                             onValueChange = onValueChange,
                             isError = isError,
@@ -382,7 +383,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                             onParseErrorChange = { state.setParseError(i, it) },
                             enabled = enabled,
                         )
-                        is Plugin.Parameter.IntParam -> ParamNumberTextField(
+                        is Parameter.IntParam -> ParamNumberTextField(
                             value = value as Int,
                             onValueChange = onValueChange,
                             isError = isError,
@@ -390,7 +391,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                             onParseErrorChange = { state.setParseError(i, it) },
                             enabled = enabled,
                         )
-                        is Plugin.Parameter.StringParam -> ParamTextField(
+                        is Parameter.StringParam -> ParamTextField(
                             value = value as String,
                             onValueChange = onValueChange,
                             isError = isError,
@@ -398,7 +399,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                             singleLine = def.multiLine.not(),
                             enabled = enabled,
                         )
-                        is Plugin.Parameter.EntrySelectorParam -> ParamEntrySelector(
+                        is Parameter.EntrySelectorParam -> ParamEntrySelector(
                             labelerConf = requireNotNull(state.project).labelerConf,
                             value = value as EntrySelector,
                             onValueChange = onValueChange,
@@ -408,7 +409,7 @@ private fun Params(state: PluginDialogState, js: JavaScript?) {
                             js = js,
                             enabled = enabled,
                         )
-                        is Plugin.Parameter.FileParam -> ParamFileTextField(
+                        is Parameter.FileParam -> ParamFileTextField(
                             value = value as FileWithEncoding,
                             onValueChange = onValueChange,
                             param = def,
@@ -564,7 +565,7 @@ private fun ParamTextField(
 private fun ParamFileTextField(
     value: FileWithEncoding,
     onValueChange: (FileWithEncoding) -> Unit,
-    param: Plugin.Parameter.FileParam,
+    param: Parameter.FileParam,
     isError: Boolean,
     enabled: Boolean,
 ) {
