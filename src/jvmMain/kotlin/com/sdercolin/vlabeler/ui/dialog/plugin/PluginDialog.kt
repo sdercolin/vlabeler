@@ -210,7 +210,7 @@ private fun LaunchSaveDialogSize(
 private fun Content(state: PluginDialogState) {
     val scrollState = rememberScrollState()
     val plugin = state.plugin
-    val needJsClient = plugin.parameters?.list?.any { it.type == Plugin.ParameterType.EntrySelector } == true
+    val needJsClient = plugin.parameters?.list?.any { it is Plugin.Parameter.EntrySelectorParam } == true
     val js by produceState(null as JavaScript?, needJsClient) {
         if (needJsClient && value == null) {
             value = withContext(Dispatchers.IO) { JavaScript() }

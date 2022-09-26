@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
@@ -5,6 +7,7 @@ import com.sdercolin.vlabeler.model.LabelerConf.Property
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.util.DefaultLabelerDir
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 /**
@@ -92,6 +95,7 @@ data class LabelerConf(
      * Defines how to write content in the original format
      */
     val writer: Writer,
+    // val parameters: List<ParameterHolder> = listOf(),
 ) {
 
     val fileName get() = "$name.$LabelerFileExtension"
@@ -277,6 +281,25 @@ data class LabelerConf(
         val displayedName: LocalizedJsonString,
         val value: String,
     )
+
+/*    @Serializable(with = ParameterHolderSerializer::class)
+    data class ParameterHolder(
+        val parameter: Plugin.Parameter<*>,
+        val injector: String? = null,
+    )
+
+    @Serializer(ParameterHolder::class)
+    object ParameterHolderSerializer : KSerializer<ParameterHolder> {
+        override fun deserialize(decoder: Decoder): ParameterHolder {
+            require(decoder is JsonDecoder)
+            val element = decoder.decodeJsonElement()
+            require(element is JsonObject)
+            val list = requireNotNull(element["list"]).jsonArray.map {
+                decoder.json.decodeFromJsonElement(PluginParameterSerializer, it)
+            }
+            return Plugin.Parameters(list)
+        }
+    }*/
 
     val useImplicitStart: Boolean
         get() = fields.any { it.replaceStart }

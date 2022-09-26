@@ -86,14 +86,14 @@ suspend fun Plugin.loadSavedParams(): ParamMap = withContext(Dispatchers.IO) {
             parameters?.list.orEmpty().associate {
                 val value = jsonObject[it.name]
                     ?.let { element ->
-                        when (it.type) {
-                            Plugin.ParameterType.Integer -> element.jsonPrimitive.int
-                            Plugin.ParameterType.Float -> element.jsonPrimitive.float
-                            Plugin.ParameterType.Boolean -> element.jsonPrimitive.boolean
-                            Plugin.ParameterType.EntrySelector -> json.decodeFromJsonElement<EntrySelector>(element)
-                            Plugin.ParameterType.Enum -> json.decodeFromJsonElement<LocalizedJsonString>(element)
-                            Plugin.ParameterType.File -> json.decodeFromJsonElement<FileWithEncoding>(element)
-                            else -> element.jsonPrimitive.content
+                        when (it) {
+                            is Plugin.Parameter.IntParam -> element.jsonPrimitive.int
+                            is Plugin.Parameter.FloatParam -> element.jsonPrimitive.float
+                            is Plugin.Parameter.BooleanParam -> element.jsonPrimitive.boolean
+                            is Plugin.Parameter.EntrySelectorParam -> json.decodeFromJsonElement<EntrySelector>(element)
+                            is Plugin.Parameter.EnumParam -> json.decodeFromJsonElement<LocalizedJsonString>(element)
+                            is Plugin.Parameter.FileParam -> json.decodeFromJsonElement<FileWithEncoding>(element)
+                            is Plugin.Parameter.StringParam -> element.jsonPrimitive.content
                         }
                     }
                     ?: requireNotNull(it.defaultValue)
