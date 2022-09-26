@@ -7,6 +7,7 @@ import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.orEmpty
 import kotlinx.serialization.Serializable
@@ -24,6 +25,7 @@ data class Project(
     val entries: List<Entry>,
     val currentIndex: Int,
     val labelerConf: LabelerConf,
+    val labelerParams: ParamTypedMap? = null,
     val encoding: String? = null,
     val multipleEditMode: Boolean = labelerConf.continuous,
     val autoExportTargetPath: String? = null,
@@ -416,6 +418,7 @@ suspend fun projectOf(
     projectName: String,
     cacheDirectory: String,
     labelerConf: LabelerConf,
+    labelerParams: ParamMap?,
     plugin: Plugin?,
     pluginParams: ParamMap?,
     inputFilePath: String,
@@ -456,6 +459,8 @@ suspend fun projectOf(
         }
     }
 
+    val labelerTypedParams = labelerParams?.let { ParamTypedMap.from(it, labelerConf.parameterDefs) }
+
     return runCatching {
         require(entries.isNotEmpty()) {
             "No entries found"
@@ -468,6 +473,7 @@ suspend fun projectOf(
             entries = entries,
             currentIndex = 0,
             labelerConf = labelerConf,
+            labelerParams = labelerTypedParams,
             encoding = encoding,
             autoExportTargetPath = autoExportTargetPath,
         ).validate()

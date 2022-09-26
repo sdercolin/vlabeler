@@ -466,6 +466,7 @@ class ProjectCreatorState(
                 projectName = projectName,
                 cacheDirectory = cacheDirectory,
                 labelerConf = labeler,
+                labelerParams = labelerParams,
                 plugin = templatePlugin,
                 pluginParams = templatePluginParams,
                 inputFilePath = inputFile,

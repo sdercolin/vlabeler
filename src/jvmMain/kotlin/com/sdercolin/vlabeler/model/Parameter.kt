@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * Parameters used by a [LabelerConf] or a [Plugin]
@@ -12,6 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Immutable
 sealed class Parameter<T : Any> {
+    abstract val type: String
     abstract val name: String
     abstract val label: LocalizedJsonString
     abstract val description: LocalizedJsonString?
@@ -20,7 +22,7 @@ sealed class Parameter<T : Any> {
     abstract fun eval(value: Any): Boolean
 
     @Serializable
-    @SerialName("integer")
+    @SerialName(IntParam.Type)
     class IntParam(
         override val name: String,
         override val label: LocalizedJsonString,
@@ -31,11 +33,18 @@ sealed class Parameter<T : Any> {
         val max: Int? = null,
     ) : Parameter<Int>() {
 
+        @Transient
+        override val type: String = Type
+
         override fun eval(value: Any) = value is Int && value != 0
+
+        companion object {
+            const val Type = "integer"
+        }
     }
 
     @Serializable
-    @SerialName("float")
+    @SerialName(FloatParam.Type)
     class FloatParam(
         override val name: String,
         override val label: LocalizedJsonString,
@@ -46,11 +55,18 @@ sealed class Parameter<T : Any> {
         val max: Float? = null,
     ) : Parameter<Float>() {
 
+        @Transient
+        override val type: String = Type
+
         override fun eval(value: Any) = value is Float && value != 0f && value.isNaN().not()
+
+        companion object {
+            const val Type = "float"
+        }
     }
 
     @Serializable
-    @SerialName("boolean")
+    @SerialName(BooleanParam.Type)
     class BooleanParam(
         override val name: String,
         override val label: LocalizedJsonString,
@@ -59,11 +75,18 @@ sealed class Parameter<T : Any> {
         override val defaultValue: Boolean,
     ) : Parameter<Boolean>() {
 
+        @Transient
+        override val type: String = Type
+
         override fun eval(value: Any) = value is Boolean && value
+
+        companion object {
+            const val Type = "boolean"
+        }
     }
 
     @Serializable
-    @SerialName("string")
+    @SerialName(StringParam.Type)
     class StringParam(
         override val name: String,
         override val label: LocalizedJsonString,
@@ -74,15 +97,20 @@ sealed class Parameter<T : Any> {
         val optional: Boolean = false,
     ) : Parameter<String>() {
 
+        @Transient
+        override val type: String = Type
+
         override fun eval(value: Any) = value is String && value.isNotEmpty()
 
         companion object {
+            const val Type = "string"
+
             val DefaultValueFileReferencePattern = Regex("^file::(.*)$")
         }
     }
 
     @Serializable
-    @SerialName("enum")
+    @SerialName(EnumParam.Type)
     class EnumParam(
         override val name: String,
         override val label: LocalizedJsonString,
@@ -92,11 +120,18 @@ sealed class Parameter<T : Any> {
         val options: List<LocalizedJsonString>,
     ) : Parameter<LocalizedJsonString>() {
 
+        @Transient
+        override val type: String = Type
+
         override fun eval(value: Any) = value is LocalizedJsonString
+
+        companion object {
+            const val Type = "enum"
+        }
     }
 
     @Serializable
-    @SerialName("entrySelector")
+    @SerialName(EntrySelectorParam.Type)
     class EntrySelectorParam(
         override val name: String,
         override val label: LocalizedJsonString,
@@ -105,11 +140,18 @@ sealed class Parameter<T : Any> {
         override val defaultValue: EntrySelector,
     ) : Parameter<EntrySelector>() {
 
+        @Transient
+        override val type: String = FileParam.Type
+
         override fun eval(value: Any) = value is EntrySelector && value.filters.isNotEmpty()
+
+        companion object {
+            const val Type = "entrySelector"
+        }
     }
 
     @Serializable
-    @SerialName("file")
+    @SerialName(FileParam.Type)
     class FileParam(
         override val name: String,
         override val label: LocalizedJsonString,
@@ -120,7 +162,14 @@ sealed class Parameter<T : Any> {
         val acceptExtensions: List<String>? = null,
     ) : Parameter<FileWithEncoding>() {
 
+        @Transient
+        override val type: String = Type
+
         override fun eval(value: Any) = value is FileWithEncoding && value.file != null
+
+        companion object {
+            const val Type = "file"
+        }
     }
 
     fun check(value: Any, labelerConf: LabelerConf?): Boolean {
