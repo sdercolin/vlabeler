@@ -121,7 +121,7 @@ fun File.asLabelerConf(): Result<LabelerConf> {
             .validate()
     }
     result.exceptionOrNull()?.let {
-        Log.debug("Failed to parse custom app conf: $text. Error message: {${it.message}}.")
+        Log.debug("Failed to parse labeler conf: $text. Error message: {${it.message}}.")
     }
     return result
 }

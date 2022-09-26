@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
@@ -103,7 +104,7 @@ object PluginParameterListSerializer : KSerializer<Plugin.Parameters> {
         val element = decoder.decodeJsonElement()
         require(element is JsonObject)
         val list = requireNotNull(element["list"]).jsonArray.map {
-            decoder.json.decodeFromJsonElement(ParameterSerializer, it)
+            decoder.json.decodeFromJsonElement(PolymorphicSerializer(Parameter::class), it)
         }
         return Plugin.Parameters(list)
     }

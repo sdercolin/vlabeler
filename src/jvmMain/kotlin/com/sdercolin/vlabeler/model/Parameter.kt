@@ -5,15 +5,11 @@ import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonContentPolymorphicSerializer
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * Parameters used by a [LabelerConf] or a [Plugin]
  */
-@Serializable(with = ParameterSerializer::class)
+@Serializable
 @Immutable
 sealed class Parameter<T : Any> {
     abstract val name: String
@@ -157,19 +153,5 @@ sealed class Parameter<T : Any> {
                 true
             } == true
         }
-    }
-}
-
-object ParameterSerializer : JsonContentPolymorphicSerializer<Parameter<*>>(Parameter::class) {
-
-    override fun selectDeserializer(element: JsonElement) = when (element.jsonObject["type"]?.jsonPrimitive?.content) {
-        "integer" -> Parameter.IntParam.serializer()
-        "float" -> Parameter.FloatParam.serializer()
-        "boolean" -> Parameter.BooleanParam.serializer()
-        "string" -> Parameter.StringParam.serializer()
-        "enum" -> Parameter.EnumParam.serializer()
-        "entrySelector" -> Parameter.EntrySelectorParam.serializer()
-        "file" -> Parameter.FileParam.serializer()
-        else -> throw IllegalArgumentException("Unknown parameter type")
     }
 }

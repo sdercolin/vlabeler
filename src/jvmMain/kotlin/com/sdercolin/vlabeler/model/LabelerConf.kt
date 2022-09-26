@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.util.DefaultLabelerDir
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.builtins.ListSerializer
@@ -314,7 +315,7 @@ data class LabelerConf(
             val element = decoder.decodeJsonElement()
             require(element is JsonObject)
             val parameter = requireNotNull(element["parameter"]).let {
-                decoder.json.decodeFromJsonElement(ParameterSerializer, it)
+                decoder.json.decodeFromJsonElement(PolymorphicSerializer(Parameter::class), it)
             }
             val injector = element["injector"]?.let {
                 decoder.json.decodeFromJsonElement(ListSerializer(String.serializer()), it)
@@ -326,7 +327,10 @@ data class LabelerConf(
             require(encoder is JsonEncoder)
             val element = JsonObject(
                 mapOf(
-                    "parameter" to encoder.json.encodeToJsonElement(ParameterSerializer, value.parameter),
+                    "parameter" to encoder.json.encodeToJsonElement(
+                        PolymorphicSerializer(Parameter::class),
+                        value.parameter,
+                    ),
                     "injector" to (value.injector?.let {
                         encoder.json.encodeToJsonElement(ListSerializer(String.serializer()), it)
                     } ?: JsonNull),
