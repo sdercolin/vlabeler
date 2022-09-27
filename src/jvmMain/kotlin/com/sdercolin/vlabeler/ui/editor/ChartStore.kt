@@ -6,7 +6,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -218,11 +217,20 @@ class ChartStore {
         val color = appConf.painter.amplitude.color.toColorOrNull() ?: AppConf.Amplitude.DefaultColor.toColor()
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
             Log.info("Waveforms chunk $chunkIndex in channel $channelIndex: draw bitmap")
+            val startTime = System.currentTimeMillis()
             val yScale = maxRawY / height * 2 * (1 + appConf.painter.amplitude.yAxisBlankRate)
-            val points = data
+            data.toList()
                 .map { height / 2 - it / yScale }
-                .withIndex().map { Offset(it.index.toFloat() / dataDensity, it.value) }
-            drawPoints(points, pointMode = PointMode.Polygon, color = color)
+                .chunked(dataDensity).forEachIndexed { index, dataChunk ->
+                    val max = dataChunk.maxOrNull() ?: 0f
+                    val min = dataChunk.minOrNull() ?: 0f
+                    drawRect(
+                        color = color,
+                        topLeft = Offset(index.toFloat(), min),
+                        size = Size(1f, max - min),
+                    )
+                }
+            println("time spent: ${System.currentTimeMillis() - startTime}")
         }
         yield()
         ChartRepository.putWaveform(sampleInfo, channelIndex, chunkIndex, newBitmap)
@@ -346,6 +354,6 @@ class ChartStore {
     }
 
     companion object {
-        private const val PaintingAlgorithmVersion = 4
+        private const val PaintingAlgorithmVersion = 5
     }
 }
