@@ -1,6 +1,6 @@
 {
-  "name": "oto.default",
-  "version": 10,
+  "name": "oto-plus.default",
+  "version": 11,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -11,9 +11,9 @@
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
-    "en": "Default labeler for UTAU oto. Overlap cannot be negative.",
-    "zh": "用于 UTAU oto 的默认标记器。`重叠`不能为负值。",
-    "ja": "UTAU oto のデフォルトラベラー。Overlap は負の値にできません。"
+    "en": "Default labeler for UTAU oto.",
+    "zh": "用于 UTAU oto 的默认标记器。",
+    "ja": "UTAU oto のデフォルトラベラー。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
   "defaultValues": [
@@ -21,6 +21,7 @@
     400,
     300,
     200,
+    100,
     500
   ],
   "defaultExtras": [
@@ -37,8 +38,13 @@
       "color": "#1b51ff",
       "height": 0.5,
       "dragBase": false,
-      "filling": "start",
-      "constraints": [],
+      "filling": "left",
+      "constraints": [
+        {
+          "min": 3,
+          "max": null
+        }
+      ],
       "shortcutIndex": 3
     },
     {
@@ -54,7 +60,7 @@
       "filling": null,
       "constraints": [
         {
-          "min": null,
+          "min": 3,
           "max": 0
         }
       ],
@@ -78,6 +84,20 @@
         }
       ],
       "shortcutIndex": 1
+    },
+    {
+      "name": "left",
+      "label": {
+        "en": "Left",
+        "zh": "左",
+        "ja": "左"
+      },
+      "color": "#9c7212",
+      "height": 0.9,
+      "dragBase": false,
+      "filling": "start",
+      "constraints": [],
+      "replaceStart": true
     }
   ],
   "extraFieldNames": [
@@ -97,7 +117,7 @@
         "zh": "左边界",
         "ja": "左ブランク"
       },
-      "value": "{start}"
+      "value": "{left}"
     },
     {
       "name": "ovl",
@@ -106,7 +126,7 @@
         "zh": "重叠",
         "ja": "Overlap"
       },
-      "value": "{ovl} - {start}"
+      "value": "{ovl} - {left}"
     },
     {
       "name": "preu",
@@ -115,7 +135,7 @@
         "zh": "先行发声",
         "ja": "先行発声"
       },
-      "value": "{preu} - {start}"
+      "value": "{preu} - {left}"
     },
     {
       "name": "fixed",
@@ -124,7 +144,7 @@
         "zh": "固定",
         "ja": "固定範囲"
       },
-      "value": "{fixed} - {start}"
+      "value": "{fixed} - {left}"
     },
     {
       "name": "right",
@@ -133,7 +153,7 @@
         "zh": "右边界",
         "ja": "右ブランク"
       },
-      "value": "{end} > 0 ? {start} - {end} : parseFloat({rawRight})"
+      "value": "{end} > 0 ? {left} - {end} : parseFloat({rawRight})"
     }
   ],
   "parser": {
@@ -152,8 +172,16 @@
       "if (!name) {",
       "    name = sample",
       "}",
+      "offset = 0",
+      "if (ovl !== '') {",
+      "    ovl = parseFloat(ovl)",
+      "    if (ovl < 0) {",
+      "        offset = -ovl",
+      "    }",
+      "}",
       "if (left !== '') {",
-      "    start = parseFloat(left)",
+      "    left = parseFloat(left)",
+      "    start = left - offset",
       "}",
       "points = []",
       "extras = []",
@@ -162,14 +190,14 @@
       "    if (fixed < 0) {",
       "        fixed = 0",
       "    }",
-      "    points.push(fixed + start)",
+      "    points.push(fixed + left)",
       "}",
       "if (right !== '') {",
       "    right = parseFloat(right)",
       "    rawRight = right // for restoring from a non-negative value (distance to sample end)",
       "    extras.push(rawRight)",
       "    if (right < 0) {",
-      "        end = start - right",
+      "        end = left - right",
       "    } else {",
       "        end = -right",
       "    }",
@@ -179,23 +207,90 @@
       "    if (preu < 0) {",
       "        preu = 0",
       "    }",
-      "    points.push(preu + start)",
+      "    points.push(preu + left)",
       "}",
       "if (ovl !== '') {",
-      "    ovl = parseFloat(ovl)",
-      "    if (ovl < 0) {",
-      "        ovl = 0",
-      "    }",
-      "    points.push(ovl + start)",
+      "    points.push(ovl + left)",
       "}",
-      "for (var point of points) {",
-      "    if (end < point) {",
-      "        end = point",
-      "    }",
+      "if (left !== '') {",
+      "    points.push(left)",
       "}"
     ]
   },
   "writer": {
     "format": "{sample}.wav={name},{left},{fixed},{right},{preu},{ovl}"
-  }
+  },
+  "parameters": [
+    {
+      "parameter": {
+        "type": "boolean",
+        "name": "useNegativeOvl",
+        "label": {
+          "en": "Allow negative overlap",
+          "zh": "允许重叠为负值",
+          "ja": "負の Overlap を許容する"
+        },
+        "defaultValue": true,
+        "required": true
+      },
+      "injector": [
+        "labeler.fields[2].constraints[0].min = value ? null : 3"
+      ]
+    },
+    {
+      "parameter": {
+        "type": "enum",
+        "name": "dragBase",
+        "label": {
+          "en": "Base for fixed-drag",
+          "zh": "锁定拖动的基准参数",
+          "ja": "連動ドラッグの基準"
+        },
+        "defaultValue": "Preutterance",
+        "options": [
+          "Left",
+          "Overlap",
+          "Preutterance",
+          "Fixed"
+        ],
+        "optionDisplayedNames": [
+          {
+            "en": "Left",
+            "zh": "左边界",
+            "ja": "左ブランク"
+          },
+          {
+            "en": "Overlap",
+            "zh": "重叠",
+            "ja": "Overlap"
+          },
+          {
+            "en": "Preutterance",
+            "zh": "先行发声",
+            "ja": "先行発声"
+          },
+          {
+            "en": "Fixed",
+            "zh": "固定",
+            "ja": "固定範囲"
+          }
+        ]
+      },
+      "injector": [
+        "if (value !== 'Preutterance') {",
+        "    labeler.fields[1].dragBase = false",
+        "}",
+        "if (value === 'Fixed') {",
+        "    labeler.fields[0].dragBase = true",
+        "}",
+        "if (value === 'Overlap') {",
+        "    labeler.fields[2].dragBase = true",
+        "}",
+        "if (value === 'Left') {",
+        "    labeler.lockedDrag.useDragBase = false",
+        "    labeler.lockedDrag.useStart = true",
+        "}"
+      ]
+    }
+  ]
 }
