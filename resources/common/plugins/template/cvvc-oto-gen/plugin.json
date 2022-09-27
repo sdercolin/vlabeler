@@ -1,6 +1,6 @@
 {
   "name": "cvvc-oto-gen",
-  "version": 4,
+  "version": 5,
   "type": "template",
   "displayedName": {
     "en": "CVVC oto generator",
@@ -306,12 +306,15 @@
           "zh": "选择选项以将具有相同类型 (CV/VC) 的条目放在一起",
           "ja": "オプションによって、同じタイプ（CV/VC）のエントリをまとめます。"
         },
-        "defaultValue": {
-          "en": "Default order",
-          "zh": "默认顺序",
-          "ja": "並べ替えをしない"
-        },
+        "defaultValue": "Default order",
         "options": [
+          "Default order",
+          "VCs -> CVs; within sample",
+          "CVs -> VCs; within sample",
+          "VCs -> CVs; across sample",
+          "CVs -> VCs; across sample"
+        ],
+        "optionDisplayedNames": [
           {
             "en": "Default order",
             "zh": "默认顺序",

@@ -1,6 +1,6 @@
 {
   "name": "batch-edit-oto-parameter",
-  "version": 3,
+  "version": 4,
   "type": "macro",
   "displayedName": {
     "en": "Batch edit oto parameter",
@@ -43,12 +43,15 @@
           "zh": "要编辑的参数",
           "ja": "編集するパラメーター"
         },
-        "defaultValue": {
-          "en": "Offset",
-          "zh": "左边界",
-          "ja": "左ブランク"
-        },
+        "defaultValue": "offset",
         "options": [
+          "offset",
+          "overlap",
+          "preutterance",
+          "fixed",
+          "cutoff"
+        ],
+        "optionDisplayedNames": [
           {
             "en": "Offset",
             "zh": "左边界",

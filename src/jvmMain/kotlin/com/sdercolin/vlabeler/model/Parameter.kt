@@ -116,14 +116,15 @@ sealed class Parameter<T : Any> {
         override val label: LocalizedJsonString,
         override val description: LocalizedJsonString? = null,
         override val enableIf: String? = null,
-        override val defaultValue: LocalizedJsonString,
-        val options: List<LocalizedJsonString>,
-    ) : Parameter<LocalizedJsonString>() {
+        override val defaultValue: String,
+        val options: List<String>,
+        val optionDisplayedNames: List<LocalizedJsonString>? = null,
+    ) : Parameter<String>() {
 
         @Transient
         override val type: String = Type
 
-        override fun eval(value: Any) = value is LocalizedJsonString
+        override fun eval(value: Any) = value is String
 
         companion object {
             const val Type = "enum"
@@ -175,7 +176,7 @@ sealed class Parameter<T : Any> {
     fun check(value: Any, labelerConf: LabelerConf?): Boolean {
         return when (this) {
             is BooleanParam -> (value as? Boolean) != null
-            is EnumParam -> (value as? LocalizedJsonString)?.let { enumValue ->
+            is EnumParam -> (value as? String)?.let { enumValue ->
                 enumValue in options
             } == true
             is FloatParam -> (value as? Float)?.let { floatValue ->

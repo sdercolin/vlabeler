@@ -6,8 +6,6 @@ import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.FileWithEncoding
 import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Project
-import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
-import com.sdercolin.vlabeler.ui.string.currentLanguage
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -80,7 +78,6 @@ class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
                     }
                 }
             }
-            is LocalizedJsonString -> JsonPrimitive(value.getCertain(currentLanguage))
             is FileWithEncoding -> {
                 val file = value.file?.toFileOrNull(ensureExists = true, ensureIsFile = true)
                 if (file == null) {
@@ -123,13 +120,13 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
                 val type = element.getValue("type").jsonPrimitive.content
                 val rawValue = element.getValue("value")
                 val value: Any = when (type) {
-                    "integer" -> rawValue.jsonPrimitive.int
-                    "float" -> rawValue.jsonPrimitive.float
-                    "boolean" -> rawValue.jsonPrimitive.boolean
-                    "string" -> rawValue.jsonPrimitive.content
-                    "enum" -> json.decodeFromJsonElement<LocalizedJsonString>(rawValue)
-                    "entrySelector" -> json.decodeFromJsonElement<EntrySelector>(rawValue)
-                    "file" -> json.decodeFromJsonElement<FileWithEncoding>(rawValue)
+                    Parameter.IntParam.Type -> rawValue.jsonPrimitive.int
+                    Parameter.FloatParam.Type -> rawValue.jsonPrimitive.float
+                    Parameter.BooleanParam.Type -> rawValue.jsonPrimitive.boolean
+                    Parameter.StringParam.Type -> rawValue.jsonPrimitive.content
+                    Parameter.EnumParam.Type -> rawValue.jsonPrimitive.content
+                    Parameter.EntrySelectorParam.Type -> json.decodeFromJsonElement<EntrySelector>(rawValue)
+                    Parameter.FileParam.Type -> json.decodeFromJsonElement<FileWithEncoding>(rawValue)
                     else -> throw IllegalArgumentException("Unknown type: $type")
                 }
                 return TypedValue(type, value)
@@ -142,13 +139,13 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
                     put(
                         "value",
                         when (value.type) {
-                            "integer" -> JsonPrimitive(value.value as Int)
-                            "float" -> JsonPrimitive(value.value as Float)
-                            "boolean" -> JsonPrimitive(value.value as Boolean)
-                            "string" -> JsonPrimitive(value.value as String)
-                            "enum" -> json.encodeToJsonElement(value.value as LocalizedJsonString)
-                            "entrySelector" -> json.encodeToJsonElement(value.value as EntrySelector)
-                            "file" -> json.encodeToJsonElement(value.value as FileWithEncoding)
+                            Parameter.IntParam.Type -> JsonPrimitive(value.value as Int)
+                            Parameter.FloatParam.Type -> JsonPrimitive(value.value as Float)
+                            Parameter.BooleanParam.Type -> JsonPrimitive(value.value as Boolean)
+                            Parameter.StringParam.Type -> JsonPrimitive(value.value as String)
+                            Parameter.EnumParam.Type -> JsonPrimitive(value.value as String)
+                            Parameter.EntrySelectorParam.Type -> json.encodeToJsonElement(value.value as EntrySelector)
+                            Parameter.FileParam.Type -> json.encodeToJsonElement(value.value as FileWithEncoding)
                             else -> throw IllegalArgumentException("Unknown type: ${value.type}")
                         },
                     )

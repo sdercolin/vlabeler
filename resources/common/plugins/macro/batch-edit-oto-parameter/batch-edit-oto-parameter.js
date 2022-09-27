@@ -80,7 +80,7 @@ output = entries.map((entry, index) => {
     }
 
     let diff = 0
-    if (nameTexts.find(x => x[0] === "offset")[1].includes(parameterName)) {
+    if (parameterName === "offset") {
         if (hasLeft) {
             if (keepDistance) {
                 diff = newValue - entry.points[3]
@@ -96,28 +96,28 @@ output = entries.map((entry, index) => {
                 edited.start = newValue
             }
         }
-    } else if (nameTexts.find(x => x[0] === "fixed")[1].includes(parameterName)) {
+    } else if (parameterName === "fixed") {
         if (keepDistance) {
             diff = newValue + offset - entry.points[0]
             moveAll(edited, diff)
         } else {
             edited.points[0] = newValue + offset
         }
-    } else if (nameTexts.find(x => x[0] === "preutterance")[1].includes(parameterName)) {
+    } else if (parameterName === "preutterance") {
         if (keepDistance) {
             diff = newValue + offset - entry.points[1]
             moveAll(edited, diff)
         } else {
             edited.points[1] = newValue + offset
         }
-    } else if (nameTexts.find(x => x[0] === "overlap")[1].includes(parameterName)) {
+    } else if (parameterName === "overlap") {
         if (keepDistance) {
             diff = newValue + offset - entry.points[2]
             moveAll(edited, diff)
         } else {
             edited.points[2] = newValue + offset
         }
-    } else if (nameTexts.find(x => x[0] === "cutoff")[1].includes(parameterName)) {
+    } else if (parameterName === "cutoff") {
         if (newValue < 0) {
             if (keepDistance) {
                 diff = -newValue + offset - entry.end

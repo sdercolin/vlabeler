@@ -51,19 +51,20 @@ A plugin for `vLabeler` is a folder containing:
 Every object in `list` defines a parameter that is shown in the plugin config dialog and passed to your scripts.
 The object has the following properties:
 
-| Property             | Type                       | Default value | Supported parameter type | Description                                                                             |
-|----------------------|----------------------------|---------------|--------------------------|-----------------------------------------------------------------------------------------|
-| type                 | String                     | (Required)    | all                      | Can be any one of `integer`, `float`, `boolean`, `string`, `enum` and ,`entrySelector`. |
-| name                 | String                     | (Required)    | all                      | Parameter name for reference in your scripts.                                           |
-| label                | String (Localized)         | (Required)    | all                      | Displayed in the config dialog.                                                         |
-| description          | String (Localized)         | ""            | all                      | Displayed in the config dialog.                                                         |
-| enableIf             | String                     | null          | all                      | If set, this parameter is enabled only when the parameter with the set name is truthy.  |
-| defaultValue         | (Actual type of the value) | (Required)    | all                      | Value type is according to the parameter's `type`.                                      |
-| min                  | (Actual type of the value) | null          | integer, float           |                                                                                         |
-| max                  | (Actual type of the value) | null          | integer, float           |                                                                                         |
-| multiLine            | Boolean                    | false         | string                   | Set to `true` if you want to allow multi-line string values.                            |
-| optional             | Boolean                    | false         | string, file             | Set to `true` if you want to allow empty string values or `null` file                   |
-| options              | List\<String> (Localized)  | (Required)    | enum                     | Items of the enumerable.                                                                |
+| Property             | Type                       | Default value | Supported parameter type | Description                                                                                       |
+|----------------------|----------------------------|---------------|--------------------------|---------------------------------------------------------------------------------------------------|
+| type                 | String                     | (Required)    | all                      | Can be any one of `integer`, `float`, `boolean`, `string`, `enum` and ,`entrySelector`.           |
+| name                 | String                     | (Required)    | all                      | Parameter name for reference in your scripts.                                                     |
+| label                | String (Localized)         | (Required)    | all                      | Displayed in the config dialog.                                                                   |
+| description          | String (Localized)         | ""            | all                      | Displayed in the config dialog.                                                                   |
+| enableIf             | String                     | null          | all                      | If set, this parameter is enabled only when the parameter with the set name is truthy.            |
+| defaultValue         | (Actual type of the value) | (Required)    | all                      | Value type is according to the parameter's `type`.                                                |
+| min                  | (Actual type of the value) | null          | integer, float           |                                                                                                   |
+| max                  | (Actual type of the value) | null          | integer, float           |                                                                                                   |
+| multiLine            | Boolean                    | false         | string                   | Set to `true` if you want to allow multi-line string values.                                      |
+| optional             | Boolean                    | false         | string, file             | Set to `true` if you want to allow empty string values or `null` file                             |
+| options              | List\<String>              | (Required)    | enum                     | Items of the enumerable.                                                                          |
+| optionDisplayedNames | List\<String> (Localized)  | null          | enum                     | Displayed names of the corresponding items in `options`. If set `null`, `options` itself is used. |
 
 ### Parameters types
 
@@ -72,7 +73,7 @@ The object has the following properties:
 - `boolean`: Should be either `true` or `false`.
 - `string`: String value. Should not contain line breaks if `multiLine` is `false`. Should not be empty if `optional`
   is `false`. You can set `defaultValue` to `file::path/to/file` to load the file's content as the default value.
-- `enum`: Enumerable value described as string or localized string. Should be one of the items in `options`.
+- `enum`: Enumerable value described as string. Should be one of the items in `options`.
 - `entrySelector`: **Can only be used in a `macro` type plugin.** Instance
   of [EntrySelector](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/EntrySelector.kt) type. For detailed usage, see
   section [Use an entry selector](#use-an-entry-selector). An example of valid values follows:
@@ -333,35 +334,23 @@ language codes like `en` and `zh` instead of `en-US` and `zh-CN`.
 Please note that you have to provide a default language `en` in your localization map, otherwise the plugin gets an
 parse error when being loaded.
 
-Specially, the `enum` type parameter also supports localized options:
+Specially, the `enum` type parameter also supports localized option names by setting the optional property
+`optionDisplayedNames`:
 
 ```
 {
     ...,
-    "defaultValue": { en: "Option 1", zh: "选项1" },
-    },
+    "defaultValue": "option1",
     "options": [
+        "option1",
+        "option2",
+        "option3"
+    ]
+    "optionDisplayedNames": [
         { en: "Option 1", zh: "选项1" },
         { en: "Option 2", zh: "选项2" },
         { en: "Option 3", zh: "选项3" }
     ],
-    ...
-}
-```
-
-Please keep consistent with the `defaultValue` and `options` if you want to provide localized options.
-
-If an `enum` parameter is localized, the value passed to your scripts is the **localized** value in the current
-language. Therefore, after adding a language in the definition json file, you also have to update your scripts to accept
-the newly added values.
-
-```
-let positionText = params["position"]
-
-// if `Prefix` is selected and current language is Japanese, the positionText will be `接頭辞`
-
-let positionIsPrefix = ["Prefix", "前缀", "接頭辞"].includes(positionText)
-if (positionIsPrefix) {
     ...
 }
 ```

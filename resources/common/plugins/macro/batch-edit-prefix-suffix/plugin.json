@@ -1,6 +1,6 @@
 {
   "name": "batch-edit-prefix-suffix",
-  "version": 1,
+  "version": 2,
   "type": "macro",
   "displayedName": {
     "en": "Batch edit entry prefix/suffix",
@@ -43,12 +43,12 @@
           "zh": "操作位置",
           "ja": "処理する位置"
         },
-        "defaultValue": {
-          "en": "Suffix",
-          "zh": "后缀",
-          "ja": "接尾辞"
-        },
+        "defaultValue": "suffix",
         "options": [
+          "prefix",
+          "suffix"
+        ],
+        "optionDisplayedNames": [
           {
             "en": "Prefix",
             "zh": "前缀",
@@ -69,12 +69,12 @@
           "zh": "操作",
           "ja": "処理"
         },
-        "defaultValue": {
-          "en": "Add",
-          "zh": "添加",
-          "ja": "追加"
-        },
+        "defaultValue": "add",
         "options": [
+          "add",
+          "remove"
+        ],
+        "optionDisplayedNames": [
           {
             "en": "Add",
             "zh": "添加",

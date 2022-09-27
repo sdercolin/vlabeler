@@ -1,6 +1,6 @@
 {
   "name": "batch-edit-entry-meta",
-  "version": 4,
+  "version": 5,
   "type": "macro",
   "displayedName": {
     "en": "Batch edit entry notes",
@@ -43,12 +43,13 @@
           "zh": "设置星标状态",
           "ja": "スターマーク状態を設定"
         },
-        "defaultValue": {
-          "en": "Do not change",
-          "zh": "不更改",
-          "ja": "変更しない"
-        },
+        "defaultValue": "keep",
         "options": [
+          "keep",
+          "on",
+          "off"
+        ],
+        "optionDisplayedNames": [
           {
             "en": "Do not change",
             "zh": "不更改",
@@ -74,12 +75,13 @@
           "zh": "设置完成状态",
           "ja": "完了状態を設定"
         },
-        "defaultValue": {
-          "en": "Do not change",
-          "zh": "不更改",
-          "ja": "変更しない"
-        },
+        "defaultValue": "keep",
         "options": [
+          "keep",
+          "on",
+          "off"
+        ],
+        "optionDisplayedNames": [
           {
             "en": "Do not change",
             "zh": "不更改",

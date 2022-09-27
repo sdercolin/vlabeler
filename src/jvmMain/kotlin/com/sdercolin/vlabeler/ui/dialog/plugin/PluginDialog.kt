@@ -75,6 +75,7 @@ import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
@@ -403,7 +404,8 @@ private fun Params(state: BasePluginDialogState, js: JavaScript?) {
                         is Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange, enabled)
                         is Parameter.EnumParam -> ParamDropDown(
                             options = def.options,
-                            value = value as LocalizedJsonString,
+                            optionDisplayedNames = def.optionDisplayedNames ?: def.options.map { it.toLocalized() },
+                            value = value as String,
                             onValueChange = onValueChange,
                             enabled = enabled,
                         )
@@ -494,16 +496,18 @@ private fun RowScope.ParamSwitch(
 
 @Composable
 private fun ParamDropDown(
-    options: List<LocalizedJsonString>,
-    value: LocalizedJsonString,
-    onValueChange: (LocalizedJsonString) -> Unit,
+    options: List<String>,
+    optionDisplayedNames: List<LocalizedJsonString>,
+    value: String,
+    onValueChange: (String) -> Unit,
     enabled: Boolean,
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val text = optionDisplayedNames[options.indexOf(value)].get()
     Box {
         TextField(
             modifier = Modifier.widthIn(min = 200.dp),
-            value = value.get(),
+            value = text,
             onValueChange = {},
             readOnly = true,
             maxLines = 1,
@@ -518,14 +522,14 @@ private fun ParamDropDown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            options.forEach {
+            options.zip(optionDisplayedNames).forEach {
                 DropdownMenuItem(
                     onClick = {
-                        onValueChange(it)
+                        onValueChange(it.first)
                         expanded = false
                     },
                 ) {
-                    Text(text = it.get())
+                    Text(text = it.second.get())
                 }
             }
         }

@@ -1,12 +1,8 @@
 let selectedEntryIndexes = params["selector"]
 let starText = params["star"]
-let starredTexts = ["Starred", "添加星标", "スターマークをつける"]
-let unstarredTexts = ["Unstarred", "移除星标", "スターマークを外す"]
-let star = (starredTexts.includes(starText)) ? true : (unstarredTexts.includes(starText) ? false : null)
+let star = (starText === "on") ? true : (starText === "off") ? false : null
 let doneText = params["done"]
-let doneTexts = ["Done", "设为完成", "完了にする"]
-let undoneTexts = ["Undone", "设为未完成", "未完了にする"]
-let done = (doneTexts.includes(doneText)) ? true : (undoneTexts.includes(doneText) ? false : null)
+let done = (doneText === "on") ? true : (doneText === "off") ? false : null
 let tag = params["tag"]
 let tagValue = tag ? params["tagValue"] : null
 

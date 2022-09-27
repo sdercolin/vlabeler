@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.model
 
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.json
@@ -36,7 +37,6 @@ interface BasePlugin {
                 is Boolean -> JsonPrimitive(value)
                 is String -> JsonPrimitive(value)
                 is EntrySelector -> json.encodeToJsonElement(value)
-                is LocalizedJsonString -> json.encodeToJsonElement(value)
                 is FileWithEncoding -> json.encodeToJsonElement(value)
                 else -> throw IllegalArgumentException("`$value` is not a supported value")
             }
@@ -50,29 +50,35 @@ interface BasePlugin {
     }.toParamMap()
 
     suspend fun loadSavedParams(file: File): ParamMap = withContext(Dispatchers.IO) {
-        file.takeIf { it.exists() }
-            ?.readText()
-            ?.let { contentText ->
-                val jsonObject = json.parseToJsonElement(contentText).jsonObject
-                parameterDefs.associate {
-                    val value = jsonObject[it.name]
-                        ?.let { element ->
-                            when (it) {
-                                is Parameter.IntParam -> element.jsonPrimitive.int
-                                is Parameter.FloatParam -> element.jsonPrimitive.float
-                                is Parameter.BooleanParam -> element.jsonPrimitive.boolean
-                                is Parameter.EntrySelectorParam -> json.decodeFromJsonElement<EntrySelector>(element)
-                                is Parameter.EnumParam -> json.decodeFromJsonElement<LocalizedJsonString>(element)
-                                is Parameter.FileParam -> json.decodeFromJsonElement<FileWithEncoding>(element)
-                                is Parameter.StringParam -> element.jsonPrimitive.content
+        runCatching {
+            file.takeIf { it.exists() }
+                ?.readText()
+                ?.let { contentText ->
+                    val jsonObject = json.parseToJsonElement(contentText).jsonObject
+                    parameterDefs.associate {
+                        val value = jsonObject[it.name]
+                            ?.let { element ->
+                                when (it) {
+                                    is Parameter.IntParam -> element.jsonPrimitive.int
+                                    is Parameter.FloatParam -> element.jsonPrimitive.float
+                                    is Parameter.BooleanParam -> element.jsonPrimitive.boolean
+                                    is Parameter.EntrySelectorParam -> json.decodeFromJsonElement<EntrySelector>(
+                                        element,
+                                    )
+                                    is Parameter.EnumParam -> element.jsonPrimitive.content
+                                    is Parameter.FileParam -> json.decodeFromJsonElement<FileWithEncoding>(element)
+                                    is Parameter.StringParam -> element.jsonPrimitive.content
+                                }
                             }
-                        }
-                        ?: requireNotNull(it.defaultValue)
-                    it.name to value
+                            ?: requireNotNull(it.defaultValue)
+                        it.name to value
+                    }
                 }
-            }
-            ?.toParamMap()
-            ?: getDefaultParams()
+                ?.toParamMap()
+                ?: getDefaultParams()
+        }
+            .onFailure { Log.debug("Failed to load saved params from file ${file.absolutePath}") }
+            .getOrElse { getDefaultParams() }
     }
 
     fun checkParams(params: ParamMap, labelerConf: LabelerConf?): Boolean =
