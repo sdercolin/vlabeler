@@ -460,6 +460,8 @@ class ProjectCreatorState(
                     labelerName = this@ProjectCreatorState.labeler.name,
                 )
             }
+            labelerParams?.let { saveLabelerParams(it) }
+            templatePluginParams?.let { savePluginParams(it) }
             val project = projectOf(
                 sampleDirectory = sampleDirectory,
                 workingDirectory = workingDirectory,
