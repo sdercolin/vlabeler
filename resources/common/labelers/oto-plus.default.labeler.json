@@ -236,6 +236,61 @@
       "injector": [
         "labeler.fields[2].constraints[0].min = value ? null : 3"
       ]
+    },
+    {
+      "parameter": {
+        "type": "enum",
+        "name": "dragBase",
+        "label": {
+          "en": "Base for fixed-drag",
+          "zh": "锁定拖动的基准参数",
+          "ja": "連動ドラッグの基準"
+        },
+        "defaultValue": "Preutterance",
+        "options": [
+          "Left",
+          "Overlap",
+          "Preutterance",
+          "Fixed"
+        ],
+        "optionDisplayedNames": [
+          {
+            "en": "Left",
+            "zh": "左边界",
+            "ja": "左ブランク"
+          },
+          {
+            "en": "Overlap",
+            "zh": "重叠",
+            "ja": "Overlap"
+          },
+          {
+            "en": "Preutterance",
+            "zh": "先行发声",
+            "ja": "先行発声"
+          },
+          {
+            "en": "Fixed",
+            "zh": "固定",
+            "ja": "固定範囲"
+          }
+        ]
+      },
+      "injector": [
+        "if (value !== 'Preutterance') {",
+        "    labeler.fields[1].dragBase = false",
+        "}",
+        "if (value === 'Fixed') {",
+        "    labeler.fields[0].dragBase = true",
+        "}",
+        "if (value === 'Overlap') {",
+        "    labeler.fields[2].dragBase = true",
+        "}",
+        "if (value === 'Left') {",
+        "    labeler.lockedDrag.useDragBase = false",
+        "    labeler.lockedDrag.useStart = true",
+        "}"
+      ]
     }
   ]
 }
