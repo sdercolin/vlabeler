@@ -42,6 +42,7 @@ interface BasePlugin {
             }
         }
         val contentText = JsonObject(content).toString()
+        Log.debug("Saving params to ${file.absolutePath}")
         file.writeText(contentText)
     }
 

@@ -6,4 +6,4 @@ import java.io.File
 
 fun LabelerConf.getSavedParamsFile(): File = RecordDir.resolve(name + LabelerSavedParamsFileExtension)
 
-private const val LabelerSavedParamsFileExtension = ".param.saved.json"
+private const val LabelerSavedParamsFileExtension = ".labeler.param.json"
