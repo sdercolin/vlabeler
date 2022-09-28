@@ -37,6 +37,18 @@ sealed class AskIfSaveDialogPurpose(
     object IsExporting :
         AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeExportDialogDescription, AppState.PendingActionAfterSaved.Export)
 
+    object IsExportingOverwrite :
+        AskIfSaveDialogPurpose(
+            Strings.AskIfSaveBeforeExportDialogDescription,
+            AppState.PendingActionAfterSaved.ExportOverwrite(all = false),
+        )
+
+    object IsExportingOverwriteAll :
+        AskIfSaveDialogPurpose(
+            Strings.AskIfSaveBeforeExportDialogDescription,
+            AppState.PendingActionAfterSaved.ExportOverwrite(all = true),
+        )
+
     object IsClosing :
         AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeCloseDialogDescription, AppState.PendingActionAfterSaved.Close)
 

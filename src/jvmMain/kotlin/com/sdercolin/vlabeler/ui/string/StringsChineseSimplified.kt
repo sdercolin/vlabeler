@@ -14,6 +14,8 @@ fun Strings.zhHans(): String? = when (this) {
     MenuFileSave -> "保存"
     MenuFileSaveAs -> "另存为..."
     MenuFileExport -> "导出..."
+    MenuFileExportOverwrite -> "覆盖导出"
+    MenuFileExportOverwriteAll -> "覆盖导出全部"
     MenuFileInvalidateCaches -> "清除缓存"
     MenuFileClose -> "关闭"
     MenuEdit -> "编辑"

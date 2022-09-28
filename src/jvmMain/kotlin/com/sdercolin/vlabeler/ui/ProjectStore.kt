@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectUpdateOnSampleException
 import com.sdercolin.vlabeler.io.autoSaveTemporaryProjectFile
+import com.sdercolin.vlabeler.io.exportProjectModule
 import com.sdercolin.vlabeler.io.saveProjectFile
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
@@ -18,6 +19,7 @@ import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.savedMutableStateOf
+import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -61,7 +63,6 @@ interface ProjectStore {
     fun discardAutoSavedProjects()
     fun enableAutoSaveProject(
         autoSave: AppConf.AutoSave,
-        scope: CoroutineScope,
         unsavedChangesState: AppUnsavedChangesState,
     )
 
@@ -74,13 +75,20 @@ interface ProjectStore {
     fun editEntryTag(index: Int, tag: String)
     fun editCurrentEntryTag(tag: String)
     fun selectModule(index: Int)
+    fun canOverwriteExportCurrentModule(): Boolean
+    fun shouldShowOverwriteExportAllModules(): Boolean
+    fun canOverwriteExportAllModules(): Boolean
+    fun overwriteExportCurrentModule()
+    fun overwriteExportAllModules()
 }
 
 class ProjectStoreImpl(
+    private val scope: CoroutineScope,
     private val appConf: State<AppConf>,
     private val screenState: AppScreenState,
     private val scrollFitViewModel: ScrollFitViewModel,
     private val errorState: AppErrorState,
+    private val progressState: AppProgressState,
 ) : ProjectStore {
 
     override var project: Project? by savedMutableStateOf(null) {
@@ -289,7 +297,6 @@ class ProjectStoreImpl(
 
     override fun enableAutoSaveProject(
         autoSave: AppConf.AutoSave,
-        scope: CoroutineScope,
         unsavedChangesState: AppUnsavedChangesState,
     ) {
         autoSaveJob?.cancel()
@@ -341,5 +348,43 @@ class ProjectStoreImpl(
 
     override fun selectModule(index: Int) {
         editProject { copy(currentModuleIndex = index) }
+    }
+
+    override fun canOverwriteExportCurrentModule(): Boolean {
+        val project = project ?: return false
+        val module = project.currentModule
+        return module.rawFilePath != null
+    }
+
+    override fun shouldShowOverwriteExportAllModules(): Boolean {
+        val project = project ?: return false
+        return project.modules.size > 1
+    }
+
+    override fun canOverwriteExportAllModules(): Boolean {
+        val project = project ?: return false
+        return project.modules.any { it.rawFilePath != null }
+    }
+
+    override fun overwriteExportCurrentModule() {
+        scope.launch(Dispatchers.IO) {
+            progressState.showProgress()
+            val project = requireProject()
+            val targetFile = requireNotNull(project.currentModule.rawFilePath).toFile()
+            exportProjectModule(project, project.currentModuleIndex, targetFile)
+            progressState.hideProgress()
+        }
+    }
+
+    override fun overwriteExportAllModules() {
+        scope.launch(Dispatchers.IO) {
+            progressState.showProgress()
+            val project = requireProject()
+            project.modules.forEachIndexed { index, module ->
+                val targetFile = module.rawFilePath?.toFile() ?: return@forEachIndexed
+                exportProjectModule(project, index, targetFile)
+            }
+            progressState.hideProgress()
+        }
     }
 }

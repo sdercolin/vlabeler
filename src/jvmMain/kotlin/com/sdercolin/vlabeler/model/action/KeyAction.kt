@@ -43,6 +43,16 @@ enum class KeyAction(
         KeySet(Key.E, setOf(Key.Ctrl)),
         true,
     ),
+    ExportProjectOverwrite(
+        listOf(Strings.MenuFile, Strings.MenuFileExportOverwrite),
+        KeySet(Key.E, setOf(Key.Ctrl, Key.Shift)),
+        true,
+    ),
+    ExportProjectOverwriteAll(
+        listOf(Strings.MenuFile, Strings.MenuFileExportOverwriteAll),
+        KeySet(Key.E, setOf(Key.Ctrl, Key.Shift, Key.Alt)),
+        true,
+    ),
     InvalidateCaches(
         listOf(Strings.MenuFile, Strings.MenuFileInvalidateCaches),
         KeySet(Key.I, setOf(Key.Ctrl, Key.Shift)),

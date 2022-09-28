@@ -14,6 +14,8 @@ fun Strings.ja(): String? = when (this) {
     MenuFileSave -> "保存"
     MenuFileSaveAs -> "名前を付けて保存..."
     MenuFileExport -> "エクスポート..."
+    MenuFileExportOverwrite -> "上書きエクスポート..."
+    MenuFileExportOverwriteAll -> "すべて上書きエクスポート..."
     MenuFileInvalidateCaches -> "キャッシュを無効化"
     MenuFileClose -> "閉じる"
     MenuEdit -> "編集"

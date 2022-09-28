@@ -15,6 +15,8 @@ enum class Strings {
     MenuFileSave,
     MenuFileSaveAs,
     MenuFileExport,
+    MenuFileExportOverwrite,
+    MenuFileExportOverwriteAll,
     MenuFileInvalidateCaches,
     MenuFileClose,
     MenuEdit,

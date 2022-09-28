@@ -43,7 +43,7 @@ fun App(
         appState.checkAutoSavedProject()
     }
     LaunchedEffect(appState.appConf.autoSave) {
-        appState.enableAutoSaveProject(appState.appConf.autoSave, mainScope, appState)
+        appState.enableAutoSaveProject(appState.appConf.autoSave, appState)
     }
     LaunchedEffect(Unit) {
         appState.consumeLaunchArguments()

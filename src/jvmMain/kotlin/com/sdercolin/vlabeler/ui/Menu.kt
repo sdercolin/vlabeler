@@ -83,10 +83,24 @@ fun FrameWindowScope.Menu(
                     )
                     Item(
                         string(Strings.MenuFileExport),
-                        onClick = { appState.requestExport() },
+                        onClick = { appState.requestExport(overwrite = false) },
                         shortcut = KeyAction.ExportProject.getKeyShortCut(),
                         enabled = appState.hasProject,
                     )
+                    Item(
+                        string(Strings.MenuFileExportOverwrite),
+                        onClick = { appState.requestExport(overwrite = true) },
+                        shortcut = KeyAction.ExportProjectOverwrite.getKeyShortCut(),
+                        enabled = appState.hasProject && appState.canOverwriteExportCurrentModule(),
+                    )
+                    if (appState.shouldShowOverwriteExportAllModules()) {
+                        Item(
+                            string(Strings.MenuFileExportOverwriteAll),
+                            onClick = { appState.requestExport(overwrite = true, all = true) },
+                            shortcut = KeyAction.ExportProjectOverwriteAll.getKeyShortCut(),
+                            enabled = appState.hasProject && appState.canOverwriteExportAllModules(),
+                        )
+                    }
                     Item(
                         string(Strings.MenuFileInvalidateCaches),
                         onClick = { appState.requestClearCaches(mainScope) },

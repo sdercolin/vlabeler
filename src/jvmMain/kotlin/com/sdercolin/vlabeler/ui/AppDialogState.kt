@@ -60,7 +60,7 @@ interface AppDialogState {
     fun requestOpenRecentProject(scope: CoroutineScope, file: File)
     fun openSaveAsProjectDialog()
     fun closeSaveAsProjectDialog()
-    fun requestExport()
+    fun requestExport(overwrite: Boolean, all: Boolean = false)
     fun openExportDialog()
     fun closeExportDialog()
     fun putPendingActionAfterSaved(action: AppState.PendingActionAfterSaved?)
@@ -181,8 +181,26 @@ class AppDialogStateImpl(
         isShowingSaveAsProjectDialog = false
     }
 
-    override fun requestExport() = if (hasUnsavedChanges) askIfSaveBeforeExport() else openExportDialog()
-    private fun askIfSaveBeforeExport() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExporting)
+    override fun requestExport(overwrite: Boolean, all: Boolean) =
+        if (hasUnsavedChanges) {
+            askIfSaveBeforeExport(overwrite, all)
+        } else if (overwrite) {
+            if (all) {
+                projectStore.overwriteExportAllModules()
+            } else {
+                projectStore.overwriteExportCurrentModule()
+            }
+        } else {
+            openExportDialog()
+        }
+
+    private fun askIfSaveBeforeExport(overwrite: Boolean, all: Boolean) = openEmbeddedDialog(
+        when {
+            overwrite && all -> AskIfSaveDialogPurpose.IsExportingOverwriteAll
+            overwrite -> AskIfSaveDialogPurpose.IsExportingOverwrite
+            else -> AskIfSaveDialogPurpose.IsExporting
+        },
+    )
 
     override fun openExportDialog() {
         closeAllDialogs()

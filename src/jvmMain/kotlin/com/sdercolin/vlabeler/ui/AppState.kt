@@ -57,10 +57,18 @@ class AppState(
     availableLabelerConfs: List<LabelerConf>,
     plugins: List<Plugin>,
     private var launchArguments: ArgumentMap?,
+    appProgressState: AppProgressState = AppProgressStateImpl(),
     appErrorState: AppErrorState = AppErrorStateImpl(),
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
     screenState: AppScreenState = AppScreenStateImpl(),
-    projectStore: ProjectStore = ProjectStoreImpl(appConf, screenState, scrollFitViewModel, appErrorState),
+    projectStore: ProjectStore = ProjectStoreImpl(
+        mainScope,
+        appConf,
+        screenState,
+        scrollFitViewModel,
+        appErrorState,
+        appProgressState,
+    ),
     unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl(),
     snackbarState: AppSnackbarState = AppSnackbarStateImpl(snackbarHostState),
     dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarState),
@@ -72,7 +80,8 @@ class AppState(
     AppUnsavedChangesState by unsavedChangesState,
     AppSnackbarState by snackbarState,
     AppDialogState by dialogState,
-    AppUpdaterState by updaterState {
+    AppUpdaterState by updaterState,
+    AppProgressState by appProgressState {
 
     init {
         initDialogState(this)
@@ -83,8 +92,6 @@ class AppState(
 
     val appRecordFlow: StateFlow<AppRecord> get() = appRecordStore.stateFlow
 
-    var isBusy: Boolean by mutableStateOf(false)
-        private set
     var shouldExit: Boolean by mutableStateOf(false)
         private set
 
@@ -281,12 +288,19 @@ class AppState(
     }
 
     private fun consumePendingActionAfterSaved(action: PendingActionAfterSaved?) = when (action) {
-        PendingActionAfterSaved.Open -> openOpenProjectDialog()
-        PendingActionAfterSaved.Export -> openExportDialog()
-        PendingActionAfterSaved.Close -> reset()
-        PendingActionAfterSaved.CreatingNew -> openProjectCreator()
-        PendingActionAfterSaved.ClearCaches -> clearCachesAndReopen(mainScope)
-        PendingActionAfterSaved.Exit -> exit()
+        is PendingActionAfterSaved.Open -> openOpenProjectDialog()
+        is PendingActionAfterSaved.Export -> openExportDialog()
+        is PendingActionAfterSaved.ExportOverwrite -> {
+            if (action.all) {
+                overwriteExportAllModules()
+            } else {
+                overwriteExportCurrentModule()
+            }
+        }
+        is PendingActionAfterSaved.Close -> reset()
+        is PendingActionAfterSaved.CreatingNew -> openProjectCreator()
+        is PendingActionAfterSaved.ClearCaches -> clearCachesAndReopen(mainScope)
+        is PendingActionAfterSaved.Exit -> exit()
         is PendingActionAfterSaved.OpenRecent -> loadProject(mainScope, action.file, this)
         null -> Unit
     }
@@ -348,14 +362,6 @@ class AppState(
         } else {
             player.toggle()
         }
-    }
-
-    fun showProgress() {
-        isBusy = true
-    }
-
-    fun hideProgress() {
-        isBusy = false
     }
 
     private fun changeResolution(newValue: Int) {
@@ -426,6 +432,7 @@ class AppState(
         object Open : PendingActionAfterSaved()
         class OpenRecent(val file: File) : PendingActionAfterSaved()
         object Export : PendingActionAfterSaved()
+        class ExportOverwrite(val all: Boolean) : PendingActionAfterSaved()
         object Close : PendingActionAfterSaved()
         object CreatingNew : PendingActionAfterSaved()
         object ClearCaches : PendingActionAfterSaved()

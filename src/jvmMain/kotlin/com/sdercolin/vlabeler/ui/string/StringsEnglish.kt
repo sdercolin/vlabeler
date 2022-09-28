@@ -12,6 +12,8 @@ fun Strings.en(): String = when (this) {
     MenuFileSave -> "Save"
     MenuFileSaveAs -> "Save As..."
     MenuFileExport -> "Export..."
+    MenuFileExportOverwrite -> "Export Overwriting"
+    MenuFileExportOverwriteAll -> "Export Overwriting All"
     MenuFileInvalidateCaches -> "Invalidate Caches"
     MenuFileClose -> "Close"
     MenuEdit -> "Edit"
