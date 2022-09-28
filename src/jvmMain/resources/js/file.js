@@ -22,6 +22,7 @@ class File {
         for (let i = 0; i < arrayList.length; i++) {
             children.push(new File(arrayList[i]));
         }
+        children.sort((a, b) => a.getName().localeCompare(b.getName()));
         return children;
     }
 

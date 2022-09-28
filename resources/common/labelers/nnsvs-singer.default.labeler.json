@@ -1,0 +1,112 @@
+{
+  "name": "nnsvs-singer.default",
+  "version": 1,
+  "extension": "lab",
+  "defaultInputFilePath": null,
+  "displayedName": {
+    "en": "NNSVS singer labeler",
+    "zh": "NNSVS singer 标记器",
+    "ja": "NNSVS singer ラベラー"
+  },
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": {
+    "en": "Default labeler for NNSVS/ENUNU singer. Multiple lab files are included with the corresponding wav files. Please prepare a folder with a `lab` folder and a `wav` folder inside and set it as the sample directory.",
+    "zh": "NNSVS/ENUNU singer 的默认标记器。该标记器将可以处理多个 lab 文件，每个 lab 文件对应一个 wav 文件。请准备一个包含 `lab` 文件夹和 `wav` 文件夹的文件夹，并将其设置为采样目录。",
+    "ja": "NNSVS/ENUNU singer のデフォルトラベラーです。複数の lab ファイルと wav　ファイルを処理できます。`lab` フォルダと `wav` フォルダを含むフォルダを用意し、サンプルディレクトリとして設定してください。"
+  },
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
+  "continuous": true,
+  "allowSameNameEntry": true,
+  "defaultValues": [
+    0,
+    0
+  ],
+  "defaultExtras": [],
+  "fields": [],
+  "extraFieldNames": [],
+  "lockedDrag": {
+    "useDragBase": false,
+    "useStart": false
+  },
+  "decimalDigit": 4,
+  "properties": [
+    {
+      "name": "start",
+      "displayedName": "Start",
+      "value": "{start}"
+    },
+    {
+      "name": "end",
+      "displayedName": "End",
+      "value": "{end}"
+    }
+  ],
+  "parser": {
+    "defaultEncoding": "UTF-8",
+    "extractionPattern": "(.*) (.*) (.*)",
+    "variableNames": [
+      "left",
+      "right",
+      "name"
+    ],
+    "scripts": [
+      "start = parseFloat(left) / 10000",
+      "end = parseFloat(right) / 10000"
+    ]
+  },
+  "writer": {
+    "scripts": [
+      "output = (start * 10000).toFixed() + \" \" + (end * 10000).toFixed() + \" \"+ name"
+    ]
+  },
+  "parameters": [
+    {
+      "parameter": {
+        "name": "wavFolderName",
+        "type": "string",
+        "label": {
+          "en": "wav folder name",
+          "zh": "wav 文件夹名称",
+          "ja": "wav フォルダ名"
+        },
+        "defaultValue": "wav"
+      }
+    },
+    {
+      "parameter": {
+        "name": "labFolderName",
+        "type": "string",
+        "label": {
+          "en": "lab folder name",
+          "zh": "lab 文件夹名称",
+          "ja": "lab フォルダ名"
+        },
+        "defaultValue": "lab"
+      }
+    }
+  ],
+  "projectConstructor": {
+    "scripts": [
+      "let wavFolderName = params[\"wavFolderName\"]",
+      "let labFolderName = params[\"labFolderName\"]",
+      "// `root` is the input File object indicating the root sample directory.",
+      "let wavFolder = root.resolve(wavFolderName)",
+      "let labFolder = root.resolve(labFolderName)",
+      "let modules = []",
+      "wavFolder.listChildFiles().filter(f => f.getExtension() === \"wav\").forEach(wavFile => {",
+      "    let name = wavFile.getNameWithoutExtension()",
+      "    let labFile = labFolder.resolve(name + \".lab\")",
+      "    modules.push(",
+      "            new ModuleDefinition(",
+      "                    name,",
+      "                    wavFolder.getAbsolutePath(),",
+      "                    [wavFile.getName()],",
+      "                    [labFile.getAbsolutePath()],",
+      "                    labFile.getAbsolutePath()",
+      "            )",
+      "    )",
+      "})"
+    ]
+  }
+}
