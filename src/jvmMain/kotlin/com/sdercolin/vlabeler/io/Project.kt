@@ -177,10 +177,10 @@ suspend fun saveProjectFile(project: Project, allowAutoExport: Boolean = false):
         project.projectFile.writeText(projectContent)
         Log.debug("Project saved to ${project.projectFile}")
 
-        if (allowAutoExport) {
+        if (allowAutoExport && project.autoExport) {
             project.modules.forEachIndexed { index, module ->
-                if (module.autoExportTargetPath != null) {
-                    exportProjectModule(project, index, module.autoExportTargetPath.toFile())
+                if (module.rawFilePath != null) {
+                    exportProjectModule(project, index, module.rawFilePath.toFile())
                 }
             }
         }

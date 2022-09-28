@@ -32,34 +32,26 @@ class SampleListDialogState(
         fetch()
     }
 
-    private fun getExistingSampleFiles() = editorState.project.currentModule.sampleFileNameMap.map { it.toPair() }
-        .plus(
-            Sample.listSampleFiles(editorState.project.sampleDirectory.toFile())
-                .map { it.nameWithoutExtension to it.name },
-        )
-        .distinctBy { it.first }
+    private fun getExistingSampleFileNames() =
+        Sample.listSampleFiles(editorState.project.currentModule.sampleDirectory.toFile())
+            .map { it.name }
 
     private fun getProjectSampleFilesWithEntries() = editorState.project.currentModule.entries
         .groupBy { it.sample }
-        .map { (sample, entries) ->
-            (sample to editorState.project.currentModule.getSampleFile(sample).name) to entries
-        }
-        .toMap()
 
     private fun fetch() {
-        val existing = getExistingSampleFiles()
+        val existing = getExistingSampleFileNames()
         val projectSamplesWithEntries = getProjectSampleFilesWithEntries()
         val projectSamples = projectSamplesWithEntries.map { it.key }
         includedSampleItems = projectSamplesWithEntries.map {
             SampleListDialogItem.IncludedSample(
-                name = it.key.first,
-                fileName = it.key.second,
-                valid = existing.any { (name, _) -> name == it.key.first },
+                name = it.key,
+                valid = it.key in existing,
                 entryCount = it.value.size,
             )
         }
         excludedSampleItems = (existing - projectSamples.toSet())
-            .map { SampleListDialogItem.ExcludedSample(it.first, it.second) }
+            .map { SampleListDialogItem.ExcludedSample(it) }
         selectedSampleName?.let { selectSample(it) }
     }
 

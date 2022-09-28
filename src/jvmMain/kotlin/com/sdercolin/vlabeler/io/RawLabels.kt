@@ -7,6 +7,8 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.postApplyLabelerConf
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.matchGroups
 import com.sdercolin.vlabeler.util.orEmpty
 import com.sdercolin.vlabeler.util.replaceWithVariables
@@ -18,27 +20,30 @@ fun fromRawLabels(
     inputFile: File?,
     labelerConf: LabelerConf,
     labelerParams: ParamMap?,
-    sampleNames: List<String>,
+    sampleFiles: List<File>,
 ): List<Entry> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
     val js = JavaScript()
+    js.execResource(Resources.fileJs)
     js.setJson("params", labelerParams.orEmpty().resolve(project = null, js = js))
     val entriesBySampleName = sources.mapNotNull { source ->
         runCatching {
             val groups = source.matchGroups(extractor)
+
             parser.variableNames.mapIndexed { i, name ->
                 js.set(name, groups[i])
             }
             js.set("inputFileName", inputFile?.nameWithoutExtension)
-            js.set("sampleNames", sampleNames)
+            js.set("sampleFileNames", sampleFiles.map { it.name })
             val script = parser.scripts.joinToString("\n")
             js.eval(script)
 
             // when "sample" is not set, using the first sample's name
             // because the label file will not contain the sample name if there is only one
-            val sampleName = js.getOrNull<String>("sample")?.takeUnless { it.isEmpty() }
-                ?: sampleNames.first()
+            val sampleName = js.getOrNull<String>("sample")
+                ?.takeUnless { it.isEmpty() }
+                ?: sampleFiles.first().name
 
             // require name, otherwise ignore the entry
             val name = js.get<String>("name")

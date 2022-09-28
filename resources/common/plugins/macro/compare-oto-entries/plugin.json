@@ -1,6 +1,6 @@
 {
   "name": "compare-oto-entries",
-  "version": 1,
+  "version": 2,
   "type": "macro",
   "displayedName": {
     "en": "Compare oto entries",

@@ -217,7 +217,6 @@ class ChartStore {
         val color = appConf.painter.amplitude.color.toColorOrNull() ?: AppConf.Amplitude.DefaultColor.toColor()
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
             Log.info("Waveforms chunk $chunkIndex in channel $channelIndex: draw bitmap")
-            val startTime = System.currentTimeMillis()
             val yScale = maxRawY / height * 2 * (1 + appConf.painter.amplitude.yAxisBlankRate)
             data.toList()
                 .map { height / 2 - it / yScale }
@@ -230,7 +229,6 @@ class ChartStore {
                         size = Size(1f, max - min),
                     )
                 }
-            println("time spent: ${System.currentTimeMillis() - startTime}")
         }
         yield()
         ChartRepository.putWaveform(sampleInfo, channelIndex, chunkIndex, newBitmap)

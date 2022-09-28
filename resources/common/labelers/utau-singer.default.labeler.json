@@ -1,19 +1,18 @@
 {
-  "name": "oto-plus.default",
-  "version": 12,
+  "name": "utau-singer.default",
+  "version": 1,
   "extension": "ini",
-  "defaultInputFilePath": "oto.ini",
   "displayedName": {
-    "en": "UTAU oto labeler",
-    "zh": "UTAU oto 标记器",
-    "ja": "UTAU oto ラベラー"
+    "en": "UTAU singer labeler",
+    "zh": "UTAU singer 标记器",
+    "ja": "UTAU singer ラベラー"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
-    "en": "Default labeler for UTAU oto.",
-    "zh": "用于 UTAU oto 的默认标记器。",
-    "ja": "UTAU oto のデフォルトラベラー。"
+    "en": "Default labeler for UTAU singer (multiple pitches).",
+    "zh": "用于 UTAU singer（多音阶）的默认标记器。",
+    "ja": "UTAU singer（多音階）のデフォルトラベラー。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
   "defaultValues": [
@@ -292,5 +291,28 @@
         "}"
       ]
     }
-  ]
+  ],
+  "projectConstructor": {
+    "scripts": [
+      "// `root` is the input File object indicating the root sample directory.",
+      "// `acceptedSampleExtensions` is provided as list of strings indicating the accepted extensions of sample files",
+      "let subFolders = root.listChildDirectories()",
+      "let modules = []",
+      "for (subFolder of subFolders) {",
+      "    let samples = subFolder.listChildFiles().filter(file => acceptedSampleExtensions.includes(file.getExtension()))",
+      "    if (samples.length > 0) {",
+      "        let otoPath = subFolder.resolve(\"oto.ini\").getAbsolutePath()",
+      "        modules.push(",
+      "                new ModuleDefinition(",
+      "                        subFolder.getName(),",
+      "                        subFolder.getAbsolutePath(),",
+      "                        samples.map(f => f.getName()),",
+      "                        [otoPath],",
+      "                        otoPath",
+      "                )",
+      "        );",
+      "    }",
+      "}"
+    ]
+  }
 }

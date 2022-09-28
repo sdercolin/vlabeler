@@ -14,10 +14,10 @@ function getEntryKey(entry, suffix) {
 let baseEntries = base.split("\n").map(line => line.trim()).filter(line => line !== "").map(line => {
     try {
         let [key, value] = line.split("=")
-        let sample = key.replace(".wav", "")
+        let sample = key
         let [name, left, fixed, right, preu, ovl] = value.split(",")
         if (name === "") {
-            name = sample
+            name = getNameWithoutExtension(sample)
         }
         let offset = 0
         if (ovl !== '') {

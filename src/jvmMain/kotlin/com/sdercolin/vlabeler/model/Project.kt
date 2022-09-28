@@ -1,7 +1,7 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
-import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
 import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.io.fromRawLabels
@@ -11,6 +11,8 @@ import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
+import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.orEmpty
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
@@ -37,6 +39,7 @@ data class Project(
     val multipleEditMode: Boolean = labelerConf.continuous,
     val modules: List<Module>,
     val currentModuleIndex: Int,
+    val autoExport: Boolean,
 ) {
 
     @Serializable
@@ -46,8 +49,7 @@ data class Project(
         val sampleDirectory: String,
         val entries: List<Entry>,
         val currentIndex: Int,
-        val autoExportTargetPath: String? = null,
-        val sampleFileNameMap: Map<String, String> = emptyMap(),
+        val rawFilePath: String? = null,
         val entryFilter: EntryFilter? = null,
     ) {
         @Transient
@@ -81,12 +83,7 @@ data class Project(
             get() = getSampleFile(currentSampleName)
 
         fun getSampleFile(sampleName: String): File {
-            val fileName = sampleFileNameMap[sampleName]
-            if (fileName != null) {
-                return File(sampleDirectory, fileName)
-            }
-            return Sample.findSampleFile(sampleDirectory.toFile(), sampleName)
-                ?: File(sampleDirectory, "$sampleName.${Sample.SampleFileWavExtension}")
+            return File(sampleDirectory, sampleName)
         }
 
         @Transient
@@ -121,10 +118,9 @@ data class Project(
                     val end = sampleInfo.lengthMillis + it.value.end
                     it.copy(value = it.value.copy(end = end))
                 }
+            if (changedEntries.isEmpty()) return this
             changedEntries.forEach { entries[it.index] = it.value }
-            val sampleMap = sampleFileNameMap.toMutableMap()
-            sampleMap[sampleInfo.name] = sampleInfo.file.toFile().name
-            return copy(entries = entries, sampleFileNameMap = sampleMap)
+            return copy(entries = entries)
         }
 
         fun updateEntries(editedEntries: List<IndexedEntry>, labelerConf: LabelerConf): Module {
@@ -415,15 +411,15 @@ data class Project(
 private fun generateEntriesByPlugin(
     labelerConf: LabelerConf,
     labelerParams: ParamMap?,
-    sampleNames: List<String>,
+    sampleFiles: List<File>,
     plugin: Plugin,
     params: ParamMap?,
-    inputFile: File?,
+    inputFiles: List<File>,
     encoding: String,
 ): Result<List<Entry>> = runCatching {
     when (
         val result =
-            runTemplatePlugin(plugin, params.orEmpty(), listOfNotNull(inputFile), encoding, sampleNames, labelerConf)
+            runTemplatePlugin(plugin, params.orEmpty(), inputFiles, encoding, sampleFiles, labelerConf)
     ) {
         is TemplatePluginResult.Parsed -> {
             val entries = result.entries.map {
@@ -431,11 +427,17 @@ private fun generateEntriesByPlugin(
                     points = it.points.take(labelerConf.fields.count()),
                     extras = it.extras.take(labelerConf.extraFieldNames.count()),
                 )
-            }.map { it.toEntry(fallbackSample = sampleNames.first()) }
+            }.map { it.toEntry(fallbackSample = sampleFiles.first().nameWithoutExtension) }
 
             entries.postApplyLabelerConf(labelerConf)
         }
-        is TemplatePluginResult.Raw -> fromRawLabels(result.lines, inputFile, labelerConf, labelerParams, sampleNames)
+        is TemplatePluginResult.Raw -> fromRawLabels(
+            sources = result.lines,
+            inputFile = inputFiles.firstOrNull(),
+            labelerConf = labelerConf,
+            labelerParams = labelerParams,
+            sampleFiles = sampleFiles,
+        )
     }
 }
 
@@ -568,37 +570,80 @@ suspend fun projectOf(
     encoding: String,
     autoExportTargetPath: String?,
 ): Result<Project> {
-    val sampleDirectoryFile = File(sampleDirectory)
-    val sampleNames = Sample.listSampleFiles(sampleDirectoryFile)
-        .map { it.nameWithoutExtension }
+    val moduleDefinitions = if (labelerConf.projectConstructor != null) {
+        val js = JavaScript(logHandler = Log.infoFileHandler)
 
-    if (sampleNames.isEmpty()) return Result.failure(EmptySampleDirectoryException())
+        js.set("root", sampleDirectory.toFile())
+        js.setJson("acceptedSampleExtensions", Sample.acceptableSampleFileExtensions)
+        listOf(
+            Resources.fileJs,
+            Resources.moduleDefinitionJs,
+            Resources.prepareBuildProjectJs,
+        ).forEach { js.execResource(it) }
 
-    val inputFile = if (inputFilePath != "") {
-        File(inputFilePath)
-    } else null
+        labelerConf.projectConstructor.scripts.joinToString("\n").let { js.eval(it) }
+        val modules = js.getJson<List<RawModuleDefinition>>("modules")
+        js.close()
+        modules.map { it.toModuleDefinition() }
+    } else {
+        val sampleDirectoryFile = File(sampleDirectory)
+        val sampleFiles = Sample.listSampleFiles(sampleDirectoryFile)
+        val inputFile = inputFilePath.ifEmpty { null }?.toFile()
+        listOf(
+            ModuleDefinition(
+                name = "",
+                sampleDirectory = sampleDirectoryFile,
+                sampleFiles = sampleFiles,
+                sampleNames = sampleFiles.map { it.nameWithoutExtension },
+                inputFiles = listOfNotNull(inputFile),
+                labelFile = inputFile ?: labelerConf.defaultInputFilePath?.let { sampleDirectoryFile.resolve(it) },
+            ),
+        )
+    }
 
-    val entries = when {
-        plugin != null -> {
-            generateEntriesByPlugin(labelerConf, labelerParams, sampleNames, plugin, pluginParams, inputFile, encoding)
-                .getOrElse {
-                    return Result.failure(it)
+    val modules = moduleDefinitions.mapNotNull { def ->
+        val existingSingleInputFile = def.inputFiles?.firstOrNull { it.exists() }
+        val entries = when {
+            plugin != null -> {
+                generateEntriesByPlugin(
+                    labelerConf = labelerConf,
+                    labelerParams = labelerParams,
+                    sampleFiles = def.sampleFiles,
+                    plugin = plugin,
+                    params = pluginParams,
+                    inputFiles = def.inputFiles.orEmpty().filter { it.exists() },
+                    encoding = encoding,
+                )
+                    .getOrElse {
+                        return Result.failure(it)
+                    }
+            }
+            existingSingleInputFile != null -> {
+                fromRawLabels(
+                    existingSingleInputFile.readLines(Charset.forName(encoding)),
+                    existingSingleInputFile,
+                    labelerConf,
+                    labelerParams,
+                    def.sampleFiles,
+                )
+            }
+            else -> {
+                def.sampleNames.map {
+                    Entry.fromDefaultValues(it, it, labelerConf)
                 }
-        }
-        inputFile != null -> {
-            fromRawLabels(
-                inputFile.readLines(Charset.forName(encoding)),
-                inputFile,
-                labelerConf,
-                labelerParams,
-                sampleNames,
-            )
-        }
-        else -> {
-            sampleNames.map {
-                Entry.fromDefaultValues(it, it, labelerConf)
             }
         }
+        if (entries.isEmpty()) {
+            Log.error("No entries found for module ${def.name}")
+            return@mapNotNull null
+        }
+        Project.Module(
+            name = def.name,
+            sampleDirectory = def.sampleDirectory.absolutePath,
+            entries = entries,
+            currentIndex = 0,
+            rawFilePath = def.labelFile?.absolutePath,
+        )
     }
 
     val labelerTypedParams = labelerParams?.let { ParamTypedMap.from(it, labelerConf.parameterDefs) }
@@ -606,16 +651,9 @@ suspend fun projectOf(
     return runCatching {
         val injectedLabelerConf = labelerParams?.let { labelerConf.injectLabelerParams(it) } ?: labelerConf
 
-        require(entries.isNotEmpty()) {
-            "No entries found"
+        require(modules.isNotEmpty()) {
+            "No entries were found for any module"
         }
-        val module = Project.Module(
-            name = "",
-            sampleDirectory = sampleDirectory,
-            entries = entries,
-            currentIndex = 0,
-            autoExportTargetPath = autoExportTargetPath,
-        )
         Project(
             version = ProjectVersion,
             sampleDirectory = sampleDirectory,
@@ -626,8 +664,9 @@ suspend fun projectOf(
             originalLabelerConf = labelerConf,
             labelerParams = labelerTypedParams,
             encoding = encoding,
-            modules = listOf(module),
+            modules = modules,
             currentModuleIndex = 0,
+            autoExport = autoExportTargetPath != null,
         ).validate()
     }.onFailure {
         return Result.failure(InvalidCreatedProjectException(it))

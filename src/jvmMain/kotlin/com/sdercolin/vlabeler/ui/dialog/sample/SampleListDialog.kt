@@ -234,7 +234,7 @@ private fun ItemRow(
             }
             is Sample -> {
                 BasicText(
-                    text = item.fileName,
+                    text = item.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = mainStyle,

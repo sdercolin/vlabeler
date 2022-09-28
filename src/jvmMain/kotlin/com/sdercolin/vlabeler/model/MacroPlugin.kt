@@ -1,6 +1,5 @@
 package com.sdercolin.vlabeler.model
 
-import androidx.compose.ui.res.useResource
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.PluginRuntimeException
@@ -9,6 +8,7 @@ import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.Serializable
@@ -36,10 +36,8 @@ fun runMacroPlugin(
             Resources.classEditedEntryJs,
             Resources.expectedErrorJs,
             Resources.reportJs,
-        ).forEach { path ->
-            val code = useResource(path) { it.bufferedReader().readText() }
-            js.eval(code)
-        }
+            Resources.fileJs,
+        ).forEach { js.execResource(it) }
 
         plugin.scriptFiles.zip(plugin.readScriptTexts()).forEach { (file, source) ->
             Log.debug("Launch script: $file")

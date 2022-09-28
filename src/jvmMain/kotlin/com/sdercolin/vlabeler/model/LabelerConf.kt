@@ -110,6 +110,7 @@ data class LabelerConf(
      * Configurable parameters of the labeler
      */
     val parameters: List<ParameterHolder> = listOf(),
+    val projectConstructor: ProjectConstructor? = null,
 ) : BasePlugin {
 
     val fileName get() = "$name.$LabelerFileExtension"
@@ -330,6 +331,7 @@ data class LabelerConf(
      *   - [Field.name]s in [fields]
      */
     @Serializable(with = ParameterHolderSerializer::class)
+    @Immutable
     data class ParameterHolder(
         val parameter: Parameter<*>,
         val injector: List<String>? = null,
@@ -368,6 +370,12 @@ data class LabelerConf(
             encoder.encodeJsonElement(element)
         }
     }
+
+    @Serializable
+    @Immutable
+    data class ProjectConstructor(
+        val scripts: List<String>,
+    )
 
     val useImplicitStart: Boolean
         get() = fields.any { it.replaceStart }
