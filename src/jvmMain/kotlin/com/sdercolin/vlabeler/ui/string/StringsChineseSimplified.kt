@@ -111,6 +111,8 @@ fun Strings.zhHans(): String? = when (this) {
     SampleListOpenSampleDirectoryButton -> "打开采样目录"
     SampleListSampleDirectoryLabel -> "采样目录："
     SampleListSampleDirectoryRedirectButton -> "切换采样目录"
+    PrerendererModuleText -> "渲染子工程 %d/%d..."
+    PrerendererModuleTextFinished -> "渲染子工程 %d/%d... 完成"
     PrerendererSampleText -> "渲染采样文件 %d/%d..."
     PrerendererSampleTextFinished -> "渲染采样文件 %d/%d... 完成"
     PrerendererChartText -> "渲染图表 %d/%d..."

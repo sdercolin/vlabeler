@@ -26,13 +26,16 @@ class ChartPrerenderer(
     private val renderProgressMutex = Mutex()
 
     data class Progress(
+        val finishedModules: Int,
+        val totalModules: Int,
         val finishedFiles: Int,
         val totalFiles: Int,
         val finishedCharts: Int,
         val totalCharts: Int,
     ) {
         val finishedInFile = finishedCharts == totalCharts
-        val finished = finishedFiles == totalFiles && finishedCharts == totalCharts
+        val finishedInModule = finishedFiles == totalFiles && finishedCharts == totalCharts
+        val finished = finishedModules == totalModules
     }
 
     fun render(
@@ -41,54 +44,84 @@ class ChartPrerenderer(
         density: Density,
         layoutDirection: LayoutDirection,
     ) = scope.launch(Dispatchers.IO) {
-        val sampleDirectory = project.currentModule.sampleDirectory.toFile()
-        if (!sampleDirectory.exists()) {
-            onError(MissingSampleDirectoryException())
-            return@launch
-        }
-
-        val module = project.currentModule
-        val allSamples = module.entries.map { it.sample }.distinct().map { module.getSampleFile(it) }
-        val totalFiles = allSamples.size
-        for (sampleIndex in allSamples.indices) {
-            val sample = allSamples[sampleIndex]
-
-            val sampleInfo = SampleInfoRepository.load(sample, module.name, appConf).getOrElse {
-                Log.error(it)
-                onError(it)
+        val totalModules = project.modules.size
+        for (moduleIndex in project.modules.indices) {
+            val sampleDirectory = project.modules[moduleIndex].sampleDirectory.toFile()
+            if (!sampleDirectory.exists()) {
+                onError(MissingSampleDirectoryException())
                 return@launch
             }
 
-            val totalCharts = sampleInfo.chunkCount *
-                (sampleInfo.channels + if (sampleInfo.hasSpectrogram) 1 else 0)
+            val module = project.modules[moduleIndex]
+            val allSamples = module.entries.map { it.sample }.distinct().map { module.getSampleFile(it) }
+            val totalFiles = allSamples.size
+            for (sampleIndex in allSamples.indices) {
+                val sample = allSamples[sampleIndex]
 
-            if (chartStore.hasCachedSample(sampleInfo)) {
-                onProgress(Progress(sampleIndex, totalFiles, totalCharts, totalCharts))
-                continue
-            }
-
-            chartStore.prepareForNewLoading(project, appConf, sampleInfo.chunkCount, sampleInfo.channels)
-            var finishedCharts = 0
-            onProgress(Progress(sampleIndex, totalFiles, finishedCharts, totalCharts))
-
-            val onRenderProgress = suspend {
-                renderProgressMutex.withLock {
-                    finishedCharts++
-                    onProgress(Progress(sampleIndex, totalFiles, finishedCharts, totalCharts))
+                val sampleInfo = SampleInfoRepository.load(sample, module.name, appConf).getOrElse {
+                    Log.error(it)
+                    onError(it)
+                    return@launch
                 }
-            }
 
-            chartStore.load(
-                scope = scope,
-                sampleInfo = sampleInfo,
-                appConf = appConf,
-                density = density,
-                layoutDirection = layoutDirection,
-                startingChunkIndex = 0,
-                onRenderProgress = onRenderProgress,
-            )
-            chartStore.awaitLoad()
-            chartStore.clear()
+                val totalCharts = sampleInfo.chunkCount *
+                    (sampleInfo.channels + if (sampleInfo.hasSpectrogram) 1 else 0)
+
+                if (chartStore.hasCachedSample(sampleInfo)) {
+                    onProgress(
+                        Progress(
+                            finishedModules = moduleIndex,
+                            totalModules = totalModules,
+                            finishedFiles = sampleIndex,
+                            totalFiles = totalFiles,
+                            finishedCharts = totalCharts,
+                            totalCharts = totalCharts,
+                        ),
+                    )
+                    continue
+                }
+
+                chartStore.prepareForNewLoading(project, appConf, sampleInfo.chunkCount, sampleInfo.channels)
+                var finishedCharts = 0
+                onProgress(
+                    Progress(
+                        finishedModules = moduleIndex,
+                        totalModules = totalModules,
+                        finishedFiles = sampleIndex,
+                        totalFiles = totalFiles,
+                        finishedCharts = finishedCharts,
+                        totalCharts = totalCharts,
+                    ),
+                )
+
+                val onRenderProgress = suspend {
+                    renderProgressMutex.withLock {
+                        finishedCharts++
+                        onProgress(
+                            Progress(
+                                finishedModules = moduleIndex,
+                                totalModules = totalModules,
+                                finishedFiles = sampleIndex,
+                                totalFiles = totalFiles,
+                                finishedCharts = finishedCharts,
+                                totalCharts = totalCharts,
+                            ),
+                        )
+                    }
+                }
+
+                chartStore.load(
+                    scope = scope,
+                    sampleInfo = sampleInfo,
+                    appConf = appConf,
+                    density = density,
+                    layoutDirection = layoutDirection,
+                    startingChunkIndex = 0,
+                    onRenderProgress = onRenderProgress,
+                )
+                chartStore.awaitLoad()
+                chartStore.clear()
+            }
         }
         onComplete()
     }

@@ -112,6 +112,8 @@ fun Strings.en(): String = when (this) {
     SampleListOpenSampleDirectoryButton -> "Open sample directory"
     SampleListSampleDirectoryLabel -> "Sample directory: "
     SampleListSampleDirectoryRedirectButton -> "Change sample directory"
+    PrerendererModuleText -> "Rendering sub-projects %d/%d..."
+    PrerendererModuleTextFinished -> "Rendering sub-projects %d/%d... Done"
     PrerendererSampleText -> "Rendering sample files %d/%d..."
     PrerendererSampleTextFinished -> "Rendering sample files %d/%d... Done"
     PrerendererChartText -> "Rendering charts %d/%d..."

@@ -46,7 +46,7 @@ fun PrerenderDialog(
     finish: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    var progress by remember { mutableStateOf(ChartPrerenderer.Progress(0, 0, 0, 0)) }
+    var progress by remember { mutableStateOf(ChartPrerenderer.Progress(0, 0, 0, 0, 0, 0)) }
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     LaunchedEffect(Unit) {
@@ -77,7 +77,7 @@ fun PrerenderDialog(
                 Spacer(Modifier.height(20.dp))
                 Content(progress)
                 Spacer(Modifier.height(30.dp))
-                ButtonBar(isCompleted = progress.finished, finish = finish)
+                ButtonBar(isCompleted = progress.finishedInModule, finish = finish)
             }
         }
     }
@@ -85,7 +85,12 @@ fun PrerenderDialog(
 
 @Composable
 private fun Content(progress: ChartPrerenderer.Progress) {
-    val sampleProgressText = if (progress.finished) {
+    val moduleProgressText = if (progress.finished) {
+        string(Strings.PrerendererModuleTextFinished, progress.finishedModules, progress.totalModules)
+    } else {
+        string(Strings.PrerendererModuleText, progress.finishedModules, progress.totalModules)
+    }
+    val sampleProgressText = if (progress.finishedInModule) {
         string(Strings.PrerendererSampleTextFinished, progress.finishedFiles, progress.totalFiles)
     } else {
         string(Strings.PrerendererSampleText, progress.finishedFiles, progress.totalFiles)
@@ -96,6 +101,14 @@ private fun Content(progress: ChartPrerenderer.Progress) {
         string(Strings.PrerendererChartText, progress.finishedCharts, progress.totalCharts)
     }
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        if (progress.totalModules > 1) {
+            Text(text = moduleProgressText, maxLines = 1, style = MaterialTheme.typography.body2)
+            LinearProgressIndicator(
+                progress = progress.finishedModules.toFloat() / progress.totalModules,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+        }
         Text(text = sampleProgressText, maxLines = 1, style = MaterialTheme.typography.body2)
         LinearProgressIndicator(
             progress = progress.finishedFiles.toFloat() / progress.totalFiles,

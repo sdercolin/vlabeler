@@ -110,6 +110,8 @@ enum class Strings {
     SampleListOpenSampleDirectoryButton,
     SampleListSampleDirectoryLabel,
     SampleListSampleDirectoryRedirectButton,
+    PrerendererModuleText,
+    PrerendererModuleTextFinished,
     PrerendererSampleText,
     PrerendererSampleTextFinished,
     PrerendererChartText,
