@@ -113,8 +113,16 @@ class ProjectStoreImpl(
         history.push(edited)
     }
 
+    private fun editCurrentProjectModule(editor: Project.Module.() -> Project.Module) {
+        editProject { updateCurrentModule { editor() } }
+    }
+
     override fun updateProjectOnLoadedSample(sampleInfo: SampleInfo) {
-        val updated = runCatching { requireProject().updateOnLoadedSample(sampleInfo).validate() }
+        val updated = runCatching {
+            requireProject()
+                .updateModule(sampleInfo.moduleName) { updateOnLoadedSample(sampleInfo) }
+                .validate()
+        }
             .getOrElse {
                 errorState.showError(ProjectUpdateOnSampleException(it), AppErrorState.ErrorPendingAction.CloseEditor)
                 return
@@ -125,20 +133,22 @@ class ProjectStoreImpl(
     }
 
     override fun editEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>) = editProject {
-        updateEntries(editedEntries)
-            .runIf(appConf.value.editor.autoDone) {
-                markEntriesAsDone(editedIndexes)
-            }
+        updateCurrentModule {
+            updateEntries(editedEntries, labelerConf)
+                .runIf(appConf.value.editor.autoDone) {
+                    markEntriesAsDone(editedIndexes)
+                }
+        }
     }
 
     override fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?) {
         val autoScrollConf = appConf.value.editor.autoScroll
         if (autoScrollConf.onSwitched ||
-            (autoScrollConf.onSwitchedInMultipleEditMode && targetEntryIndex != project?.currentIndex)
+            (autoScrollConf.onSwitchedInMultipleEditMode && targetEntryIndex != project?.currentModule?.currentIndex)
         ) {
             scrollFitViewModel.emitNext()
         }
-        editProject { cutEntry(index, position, rename, newName, targetEntryIndex) }
+        editCurrentProjectModule { cutEntry(index, position, rename, newName, targetEntryIndex) }
     }
 
     override val canUndo get() = history.canUndo
@@ -153,8 +163,11 @@ class ProjectStoreImpl(
         project = history.current
     }
 
-    override val canGoNextEntryOrSample get() = project?.run { currentIndex < entryCount - 1 } == true
-    override val canGoPreviousEntryOrSample get() = project?.run { currentIndex > 0 } == true
+    override val canGoNextEntryOrSample: Boolean
+        get() = project?.currentModule?.run { currentIndex < entryCount - 1 } == true
+
+    override val canGoPreviousEntryOrSample: Boolean
+        get() = project?.currentModule?.run { currentIndex > 0 } == true
 
     private fun scrollIfNeededWhenSwitchedEntry(previousProject: Project?) {
         val autoScrollConf = appConf.value.editor.autoScroll
@@ -168,13 +181,13 @@ class ProjectStoreImpl(
 
     override fun nextEntry() {
         val previousProject = project
-        editProject { nextEntry() }
+        editCurrentProjectModule { nextEntry() }
         scrollIfNeededWhenSwitchedEntry(previousProject)
     }
 
     override fun previousEntry() {
         val previousProject = project
-        editProject { previousEntry() }
+        editCurrentProjectModule { previousEntry() }
         scrollIfNeededWhenSwitchedEntry(previousProject)
     }
 
@@ -188,18 +201,18 @@ class ProjectStoreImpl(
     }
 
     override fun nextSample() {
-        editProject { nextSample() }
+        editCurrentProjectModule { nextSample() }
         scrollIfNeededWhenSwitchedSample()
     }
 
     override fun previousSample() {
-        editProject { previousSample() }
+        editCurrentProjectModule { previousSample() }
         scrollIfNeededWhenSwitchedSample()
     }
 
     override fun jumpToEntry(index: Int) {
-        editProject {
-            requireProject().copy(currentIndex = index)
+        editCurrentProjectModule {
+            copy(currentIndex = index)
         }
         if (appConf.value.editor.autoScroll.let { it.onJumpedToEntry || it.onSwitched }) {
             scrollFitViewModel.emitNext()
@@ -207,20 +220,24 @@ class ProjectStoreImpl(
     }
 
     override fun renameEntry(index: Int, newName: String) = editProject {
-        renameEntry(index, newName)
+        updateCurrentModule {
+            renameEntry(index, newName, labelerConf)
+        }
     }
 
     override fun duplicateEntry(index: Int, newName: String) = editProject {
-        duplicateEntry(index, newName).copy(currentIndex = index + 1)
+        updateCurrentModule {
+            duplicateEntry(index, newName, labelerConf).copy(currentIndex = index + 1)
+        }
     }
 
     override val canRemoveCurrentEntry
-        get() = requireProject().entries.size > 1
+        get() = requireProject().currentModule.entries.size > 1
 
     override fun removeCurrentEntry() {
         val previousProject = requireProject()
 
-        editProject { removeCurrentEntry() }
+        editProject { updateCurrentModule { removeCurrentEntry(labelerConf) } }
         val autoScrollConf = appConf.value.editor.autoScroll
         if ((requireProject().hasSwitchedSample(previousProject) && autoScrollConf.onLoadedNewSample) ||
             autoScrollConf.onSwitched
@@ -232,12 +249,12 @@ class ProjectStoreImpl(
     override fun createDefaultEntry(sampleName: String) {
         val project = requireProject()
         val newEntry = Entry.fromDefaultValues(sampleName, sampleName, project.labelerConf)
-        editProject { copy(entries = project.entries + newEntry) }
+        editCurrentProjectModule { copy(entries = entries + newEntry) }
     }
 
     override fun isCurrentEntryTheLast(): Boolean {
         val project = requireProject()
-        return project.entries.count { it.sample == project.currentSampleName } == 1
+        return project.currentModule.entries.count { it.sample == project.currentSampleName } == 1
     }
 
     override fun toggleMultipleEditMode(on: Boolean) = editProject { copy(multipleEditMode = on) }
@@ -296,26 +313,26 @@ class ProjectStoreImpl(
     }
 
     override fun toggleEntryDone(index: Int) {
-        editProject { toggleEntryDone(index) }
+        editCurrentProjectModule { toggleEntryDone(index) }
     }
 
     override fun toggleCurrentEntryDone() {
-        editProject { toggleEntryDone(currentIndex) }
+        editCurrentProjectModule { toggleEntryDone(currentIndex) }
     }
 
     override fun toggleEntryStar(index: Int) {
-        editProject { toggleEntryStar(index) }
+        editCurrentProjectModule { toggleEntryStar(index) }
     }
 
     override fun toggleCurrentEntryStar() {
-        editProject { toggleEntryStar(currentIndex) }
+        editCurrentProjectModule { toggleEntryStar(currentIndex) }
     }
 
     override fun editEntryTag(index: Int, tag: String) {
-        editProject { editEntryTag(index, tag) }
+        editCurrentProjectModule { editEntryTag(index, tag) }
     }
 
     override fun editCurrentEntryTag(tag: String) {
-        editProject { editEntryTag(currentIndex, tag) }
+        editCurrentProjectModule { editEntryTag(currentIndex, tag) }
     }
 }

@@ -70,7 +70,7 @@ fun Labeler(
 ) {
     val project = editorState.project
     val openEditEntryNameDialog = remember(editorState, project) {
-        { editorState.openEditEntryNameDialog(project.currentIndex, InputEntryNameDialogPurpose.Rename) }
+        { editorState.openEditEntryNameDialog(project.currentModule.currentIndex, InputEntryNameDialogPurpose.Rename) }
     }
     val horizontalScrollState = rememberScrollState(0)
 
@@ -88,11 +88,11 @@ fun Labeler(
             subTitle = editorState.getEntrySubTitle(),
             multiple = editorState.editedEntries.size > 1,
             done = editorState.entryDone,
-            toggleDone = { editorState.toggleEntryDone(editorState.project.currentIndex) },
+            toggleDone = { editorState.toggleEntryDone(editorState.project.currentModule.currentIndex) },
             star = editorState.entryStar,
-            toggleStar = { editorState.toggleEntryStar(editorState.project.currentIndex) },
+            toggleStar = { editorState.toggleEntryStar(editorState.project.currentModule.currentIndex) },
             tag = editorState.entryTag,
-            editTag = { editorState.editEntryTag(editorState.project.currentIndex, it) },
+            editTag = { editorState.editEntryTag(editorState.project.currentModule.currentIndex, it) },
             isEditingTag = editorState.isEditingTag,
             setEditingTag = { editorState.isEditingTag = it },
             tagOptions = editorState.tagOptions,

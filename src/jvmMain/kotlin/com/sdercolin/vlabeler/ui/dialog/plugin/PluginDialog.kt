@@ -439,7 +439,7 @@ private fun Params(state: BasePluginDialogState, js: JavaScript?) {
                             onValueChange = onValueChange,
                             isError = isError,
                             onParseErrorChange = { state.setParseError(i, it) },
-                            entries = requireNotNull(state.project).entries,
+                            entries = requireNotNull(state.project).currentModule.entries,
                             js = js,
                             enabled = enabled,
                         )

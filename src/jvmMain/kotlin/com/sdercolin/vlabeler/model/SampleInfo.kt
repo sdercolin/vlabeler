@@ -21,6 +21,7 @@ import kotlin.math.pow
 @Serializable
 @Immutable
 data class SampleInfo(
+    val moduleName: String,
     val name: String,
     val file: String,
     val sampleRate: Float,
@@ -39,7 +40,7 @@ data class SampleInfo(
 
     companion object {
 
-        suspend fun load(file: File, appConf: AppConf): Result<SampleInfo> = runCatching {
+        suspend fun load(file: File, moduleName: String, appConf: AppConf): Result<SampleInfo> = runCatching {
             val stream = AudioSystem.getAudioInputStream(file)
             val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
             val format = stream.format.normalize(maxSampleRate)
@@ -76,6 +77,7 @@ data class SampleInfo(
             stream.close()
 
             SampleInfo(
+                moduleName = moduleName,
                 name = file.nameWithoutExtension,
                 file = file.absolutePath,
                 sampleRate = sampleRate,

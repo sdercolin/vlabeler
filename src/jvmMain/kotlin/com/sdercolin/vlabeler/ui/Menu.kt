@@ -130,7 +130,7 @@ fun FrameWindowScope.Menu(
                         string(Strings.MenuEditRenameEntry),
                         onClick = {
                             appState.openEditEntryNameDialog(
-                                index = appState.requireProject().currentIndex,
+                                index = appState.requireProject().currentModule.currentIndex,
                                 purpose = InputEntryNameDialogPurpose.Rename,
                             )
                         },
@@ -141,7 +141,7 @@ fun FrameWindowScope.Menu(
                         string(Strings.MenuEditDuplicateEntry),
                         onClick = {
                             appState.openEditEntryNameDialog(
-                                index = appState.requireProject().currentIndex,
+                                index = appState.requireProject().currentModule.currentIndex,
                                 purpose = InputEntryNameDialogPurpose.Duplicate,
                             )
                         },

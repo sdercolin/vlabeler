@@ -54,7 +54,7 @@ import com.sdercolin.vlabeler.util.runIfHave
 import java.io.File
 
 @Composable
-private fun rememberState(editorState: EditorState, sampleDirectory: String) = remember(editorState, sampleDirectory) {
+private fun rememberState(editorState: EditorState) = remember(editorState) {
     SampleListDialogState(editorState)
 }
 
@@ -62,7 +62,7 @@ private fun rememberState(editorState: EditorState, sampleDirectory: String) = r
 fun SampleListDialog(
     editorState: EditorState,
     finish: () -> Unit,
-    state: SampleListDialogState = rememberState(editorState, editorState.project.sampleDirectory),
+    state: SampleListDialogState = rememberState(editorState),
 ) {
     Box(
         modifier = Modifier.fillMaxSize()

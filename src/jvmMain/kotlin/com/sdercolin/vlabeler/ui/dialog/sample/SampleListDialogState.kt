@@ -32,17 +32,17 @@ class SampleListDialogState(
         fetch()
     }
 
-    private fun getExistingSampleFiles() = editorState.project.sampleFileNameMap.map { it.toPair() }
+    private fun getExistingSampleFiles() = editorState.project.currentModule.sampleFileNameMap.map { it.toPair() }
         .plus(
             Sample.listSampleFiles(editorState.project.sampleDirectory.toFile())
                 .map { it.nameWithoutExtension to it.name },
         )
         .distinctBy { it.first }
 
-    private fun getProjectSampleFilesWithEntries() = editorState.project.entries
+    private fun getProjectSampleFilesWithEntries() = editorState.project.currentModule.entries
         .groupBy { it.sample }
         .map { (sample, entries) ->
-            (sample to editorState.project.getSampleFile(sample).name) to entries
+            (sample to editorState.project.currentModule.getSampleFile(sample).name) to entries
         }
         .toMap()
 
@@ -65,7 +65,7 @@ class SampleListDialogState(
 
     fun selectSample(name: String) {
         selectedSampleName = name
-        val entries = editorState.project.entries
+        val entries = editorState.project.currentModule.entries
         entryItems = entries.indices.filter { entries[it].sample == name }.map {
             val indexedEntry = IndexedEntry(entries[it], it)
             SampleListDialogItem.Entry(name = indexedEntry.name, entry = indexedEntry)

@@ -153,14 +153,15 @@ fun openCreatedProject(
 }
 
 @Suppress("RedundantSuspendModifier")
-suspend fun exportProject(
+suspend fun exportProjectModule(
     project: Project,
+    moduleIndex: Int,
     outputFile: File,
 ) {
-    val outputText = project.toRawLabels()
+    val outputText = project.moduleToRawLabels(moduleIndex)
     val charset = project.encoding?.let { Charset.forName(it) } ?: Charsets.UTF_8
     outputFile.writeText(outputText, charset)
-    Log.debug("Project exported to ${outputFile.absolutePath}")
+    Log.debug("Project module \"${project.modules[moduleIndex].name}\" exported to ${outputFile.absolutePath}")
 }
 
 private var saveFileJob: Job? = null
@@ -176,8 +177,12 @@ suspend fun saveProjectFile(project: Project, allowAutoExport: Boolean = false):
         project.projectFile.writeText(projectContent)
         Log.debug("Project saved to ${project.projectFile}")
 
-        if (allowAutoExport && project.autoExportTargetPath != null) {
-            exportProject(project, project.autoExportTargetPath.toFile())
+        if (allowAutoExport) {
+            project.modules.forEachIndexed { index, module ->
+                if (module.autoExportTargetPath != null) {
+                    exportProjectModule(project, index, module.autoExportTargetPath.toFile())
+                }
+            }
         }
     }
     saveFileJob?.join()

@@ -210,7 +210,7 @@ class AppState(
 
     fun requestCutEntry(index: Int, position: Float, player: Player, sampleInfo: SampleInfo) {
         mainScope.launch {
-            val sourceEntry = requireProject().entries[index]
+            val sourceEntry = requireProject().currentModule.entries[index]
             val showSnackbar = { message: String ->
                 mainScope.launch { showSnackbar(message) }
                 Unit
@@ -236,7 +236,7 @@ class AppState(
                 val invalidOptions = if (requireProject().labelerConf.allowSameNameEntry) {
                     listOf()
                 } else {
-                    requireProject().entries.map { it.name }.minus(sourceEntry.name)
+                    requireProject().currentModule.entries.map { it.name }.minus(sourceEntry.name)
                 }
                 val result = awaitEmbeddedDialog(
                     InputEntryNameDialogArgs(
@@ -253,7 +253,7 @@ class AppState(
                 val invalidOptions = if (requireProject().labelerConf.allowSameNameEntry) {
                     listOf()
                 } else {
-                    requireProject().entries.map { it.name }
+                    requireProject().currentModule.entries.map { it.name }
                 }
 
                 val result = awaitEmbeddedDialog(
@@ -268,7 +268,7 @@ class AppState(
                 (result as InputEntryNameDialogResult?)?.name ?: return@launch
             } else getDefaultNewEntryName(
                 sourceEntry.name,
-                requireProject().entries.map { it.name },
+                requireProject().currentModule.entries.map { it.name },
                 requireProject().labelerConf.allowSameNameEntry,
             )
             val targetIndex = when (actions.goTo) {

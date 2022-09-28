@@ -148,7 +148,8 @@ fun MarkerCanvas(
     FieldBorderCanvas(horizontalScrollState, state, appState)
     LaunchAdjustScrollPosition(
         state.entriesInPixel,
-        editorState.project.currentIndex,
+        editorState.project.currentModuleIndex,
+        editorState.project.currentModule.currentIndex,
         canvasParams.lengthInPixel,
         horizontalScrollState,
         appState.scrollFitViewModel,
@@ -622,12 +623,13 @@ private fun MarkerState.editEntryIfNeeded(
 @Composable
 private fun LaunchAdjustScrollPosition(
     entriesInPixel: List<EntryInPixel>,
+    currentModuleIndex: Int,
     currentIndex: Int,
     canvasLength: Int,
     horizontalScrollState: ScrollState,
     scrollFitViewModel: ScrollFitViewModel,
 ) {
-    LaunchedEffect(entriesInPixel, currentIndex, canvasLength, horizontalScrollState.maxValue) {
+    LaunchedEffect(entriesInPixel, currentModuleIndex, currentIndex, canvasLength, horizontalScrollState.maxValue) {
         scrollFitViewModel.update(horizontalScrollState, canvasLength, entriesInPixel, currentIndex)
     }
 }

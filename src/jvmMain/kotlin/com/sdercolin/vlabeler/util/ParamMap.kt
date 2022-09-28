@@ -73,7 +73,7 @@ class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
                 requireNotNull(project) { "Project is required to resolve EntrySelector" }
                 requireNotNull(js) { "JavaScript is required to resolve EntrySelector" }
                 buildJsonArray {
-                    for (index in value.select(project.entries, project.labelerConf, js)) {
+                    for (index in value.select(project.currentModule.entries, project.labelerConf, js)) {
                         add(JsonPrimitive(index))
                     }
                 }

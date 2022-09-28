@@ -38,7 +38,7 @@ class EditorState(
     val sampleInfoResult get() = sampleInfoState.value
     val isLoading get() = sampleInfoState.value == null
     var project: Project by mutableStateOf(project)
-    var editedEntries: List<IndexedEntry> by mutableStateOf(project.getEntriesForEditing())
+    var editedEntries: List<IndexedEntry> by mutableStateOf(project.getEntriesForEditing().second)
     private val isActive get() = appState.isEditorActive
     private val appConf = appState.appConf
     val keyboardViewModel = appState.keyboardViewModel
@@ -77,17 +77,18 @@ class EditorState(
     val entryTag: String
         get() = project.currentEntry.notes.tag
 
-    val tagOptions get() = project.entries
-        .mapNotNull { it.notes.tag.ifEmpty { null } }
-        .distinct()
-        .sorted()
+    val tagOptions
+        get() = project.currentModule.entries
+            .mapNotNull { it.notes.tag.ifEmpty { null } }
+            .distinct()
+            .sorted()
 
     val chartStore = ChartStore()
 
     val pinnedEntryListFilterState = LinkableEntryListFilterState(
         project = project,
         submitFilter = {
-            appState.editProject { copy(entryFilter = it) }
+            appState.editProject { updateEntryFilter(it) }
         },
     )
 
@@ -106,7 +107,7 @@ class EditorState(
     }
 
     fun submitEntries() {
-        val changedEntries = editedEntries - project.getEntriesForEditing().toSet()
+        val changedEntries = editedEntries - project.getEntriesForEditing().second.toSet()
         if (changedEntries.isNotEmpty()) {
             Log.info("Submit entries: $changedEntries")
             appState.editEntries(changedEntries, editedIndexes)
@@ -130,7 +131,7 @@ class EditorState(
     }
 
     private fun loadNewEntries() {
-        val newValues = project.getEntriesForEditing()
+        val newValues = project.getEntriesForEditing().second
         if (newValues != editedEntries) {
             Log.info("Load new entries: $newValues")
             editedIndexes.clear()
@@ -140,7 +141,8 @@ class EditorState(
 
     suspend fun loadSample(appConf: AppConf) {
         withContext(Dispatchers.IO) {
-            val sampleDirectory = project.sampleDirectory.toFile()
+            val moduleName = project.currentModule.name
+            val sampleDirectory = project.currentModule.sampleDirectory.toFile()
             if (!sampleDirectory.exists()) {
                 sampleInfoState.value = Result.failure(MissingSampleDirectoryException())
                 appState.confirmIfRedirectSampleDirectory(sampleDirectory)
@@ -148,7 +150,7 @@ class EditorState(
             }
 
             sampleInfoState.value = null
-            val sampleInfo = SampleInfoRepository.load(project.currentSampleFile, appConf)
+            val sampleInfo = SampleInfoRepository.load(project.currentSampleFile, moduleName, appConf)
             sampleInfoState.value = sampleInfo
             sampleInfo.getOrElse {
                 Log.error(it)

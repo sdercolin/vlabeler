@@ -42,8 +42,9 @@ fun rememberBottomBarState(
 ) = remember(
     project,
     project.labelerConf,
-    project.currentIndex,
-    project.entryCount,
+    project.currentModuleIndex,
+    project.currentModule.currentIndex,
+    project.currentModule.entryCount,
     project.multipleEditMode,
     editorState,
     editorState.canvasResolution,
@@ -53,8 +54,8 @@ fun rememberBottomBarState(
     appState.canGoPreviousEntryOrSample,
 ) {
     BottomBarState(
-        currentEntryIndexInTotal = project.currentIndex,
-        totalEntryCount = project.entryCount,
+        currentEntryIndexInTotal = project.currentModule.currentIndex,
+        totalEntryCount = project.currentModule.entryCount,
         resolution = editorState.canvasResolution,
         onChangeResolution = { editorState.changeResolution(it) },
         openSetResolutionDialog = {

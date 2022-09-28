@@ -24,7 +24,7 @@ object SampleInfoRepository {
         cacheDirectory.mkdirs()
     }
 
-    suspend fun load(file: File, appConf: AppConf): Result<SampleInfo> {
+    suspend fun load(file: File, moduleName: String, appConf: AppConf): Result<SampleInfo> {
         val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
         val normalize = appConf.painter.amplitude.normalize
         infoMap[file.nameWithoutExtension]?.let {
@@ -52,13 +52,13 @@ object SampleInfoRepository {
             Log.info("Returning cached sample info for ${file.nameWithoutExtension}")
             return Result.success(existingInfo)
         }
-        return loadSampleInfo(file, appConf)
+        return loadSampleInfo(file, moduleName, appConf)
     }
 
-    private suspend fun loadSampleInfo(file: File, appConf: AppConf): Result<SampleInfo> {
+    private suspend fun loadSampleInfo(file: File, moduleName: String, appConf: AppConf): Result<SampleInfo> {
         Log.debug("Loading sample ${file.absolutePath}")
 
-        val info = SampleInfo.load(file, appConf).getOrElse {
+        val info = SampleInfo.load(file, moduleName, appConf).getOrElse {
             return Result.failure(it)
         }
         infoMap[info.name] = info

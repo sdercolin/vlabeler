@@ -71,10 +71,10 @@ fun fromRawLabels(
     return entriesBySampleName.postApplyLabelerConf(labelerConf)
 }
 
-fun Project.toRawLabels(): String {
+fun Project.moduleToRawLabels(moduleIndex: Int): String {
     val js = JavaScript()
     js.setJson("params", labelerParams?.toParamMap().orEmpty().resolve(project = null, js = js))
-    val lines = entries
+    val lines = modules[moduleIndex].entries
         .map { entry ->
             val fields = labelerConf.getFieldMap(entry)
             val extras = labelerConf.getExtraMap(entry)

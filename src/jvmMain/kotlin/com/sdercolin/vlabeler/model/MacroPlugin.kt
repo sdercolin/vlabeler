@@ -27,7 +27,7 @@ fun runMacroPlugin(
 
         js.set("debug", isDebug)
         js.setJson("labeler", project.labelerConf)
-        js.setJson("entries", project.entries)
+        js.setJson("entries", project.currentModule.entries)
         js.setJson("params", params.resolve(project, js))
         js.setJson("resources", resourceTexts)
 
@@ -54,11 +54,14 @@ fun runMacroPlugin(
                 if (it.originalIndex == null) {
                     false
                 } else {
-                    project.entries[it.originalIndex] != it.entry
+                    project.currentModule.entries[it.originalIndex] != it.entry
                 }
             }
             val removedCount =
-                (project.entries.indices.toSet() - editedEntries.mapNotNull { it.originalIndex }.toSet()).size
+                (
+                    project.currentModule.entries.indices.toSet() -
+                        editedEntries.mapNotNull { it.originalIndex }.toSet()
+                    ).size
             Log.info(
                 buildString {
                     appendLine("Plugin execution got edited entries:")
@@ -70,7 +73,7 @@ fun runMacroPlugin(
             )
         }
         val newProject = if (editedEntries != null) {
-            project.copy(entries = editedEntries.map { it.entry }).validate()
+            project.updateCurrentModule { copy(entries = editedEntries.map { it.entry }) }.validate()
         } else {
             project
         }

@@ -81,14 +81,13 @@ import com.sdercolin.vlabeler.util.animateScrollToShowItem
 import com.sdercolin.vlabeler.util.runIf
 
 class EntryListState(
-    val editorConf: AppConf.Editor,
     private val filterState: EntryListFilterState,
     project: Project,
     private val jumpToEntry: (Int) -> Unit,
 ) {
-    var entries = project.entries.withIndex().toList()
+    var entries = project.currentModule.entries.withIndex().toList()
         private set
-    var currentIndex = project.currentIndex
+    var currentIndex = project.currentModule.currentIndex
         private set
 
     var searchResult: List<IndexedValue<Entry>> by mutableStateOf(calculateResult())
@@ -108,8 +107,8 @@ class EntryListState(
     private fun calculateResult(): List<IndexedValue<Entry>> = entries.filter { filterState.filter.matches(it.value) }
 
     fun updateProject(project: Project) {
-        entries = project.entries.withIndex().toList()
-        currentIndex = project.currentIndex
+        entries = project.currentModule.entries.withIndex().toList()
+        currentIndex = project.currentModule.currentIndex
         updateSearch()
     }
 
@@ -134,7 +133,6 @@ fun EntryList(
     onFocusedChanged: (Boolean) -> Unit,
     state: EntryListState = remember(editorConf, filterState, jumpToEntry) {
         EntryListState(
-            editorConf,
             filterState,
             project,
             jumpToEntry,

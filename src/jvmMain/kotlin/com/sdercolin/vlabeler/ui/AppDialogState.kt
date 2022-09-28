@@ -227,11 +227,11 @@ class AppDialogStateImpl(
 
     override fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose) {
         val project = projectStore.requireProject()
-        val entry = project.entries[index]
+        val entry = project.currentModule.entries[index]
         val invalidOptions = if (project.labelerConf.allowSameNameEntry) {
             listOf()
         } else {
-            project.entries.map { it.name }
+            project.currentModule.entries.map { it.name }
                 .runIf(purpose == InputEntryNameDialogPurpose.Rename) { minus(entry.name) }
         }
         openEmbeddedDialog(

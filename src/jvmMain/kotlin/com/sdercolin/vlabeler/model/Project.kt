@@ -27,9 +27,7 @@ data class Project(
     val sampleDirectory: String,
     val workingDirectory: String,
     val projectName: String,
-    val cacheDirectory: String = getDefaultCacheDirectory(workingDirectory, projectName), // TODO: Remove migration code
-    val entries: List<Entry>,
-    val currentIndex: Int,
+    val cacheDirectory: String,
     @SerialName("labelerConf")
     val originalLabelerConf: LabelerConf,
     @Transient
@@ -37,316 +35,369 @@ data class Project(
     val labelerParams: ParamTypedMap? = null,
     val encoding: String? = null,
     val multipleEditMode: Boolean = labelerConf.continuous,
-    val autoExportTargetPath: String? = null,
-    val entryFilter: EntryFilter? = null,
-    val sampleFileNameMap: Map<String, String> = emptyMap(),
+    val modules: List<Module>,
+    val currentModuleIndex: Int,
 ) {
-    @Transient
-    private val filteredEntryIndexes: List<Int> = entries.indices.filter { entryFilter?.matches(entries[it]) ?: true }
 
-    @Transient
-    private val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
+    @Serializable
+    @Immutable
+    data class Module(
+        val name: String,
+        val sampleDirectory: String,
+        val entries: List<Entry>,
+        val currentIndex: Int,
+        val autoExportTargetPath: String? = null,
+        val sampleFileNameMap: Map<String, String> = emptyMap(),
+        val entryFilter: EntryFilter? = null,
+    ) {
+        @Transient
+        private val filteredEntryIndexes: List<Int> =
+            entries.indices.filter { entryFilter?.matches(entries[it]) ?: true }
 
-    @Transient
-    private val filteredEntryIndexGroupIndexes: List<Pair<Int, List<Int>>> = entryIndexGroups
-        .mapIndexed { index, pair -> index to pair.second }
-        .map { (groupIndex, entryIndexes) ->
-            groupIndex to entryIndexes.filter { entryFilter?.matches(entries[it]) ?: true }
+        @Transient
+        private val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
+
+        @Transient
+        private val filteredEntryIndexGroupIndexes: List<Pair<Int, List<Int>>> = entryIndexGroups
+            .mapIndexed { index, pair -> index to pair.second }
+            .map { (groupIndex, entryIndexes) ->
+                groupIndex to entryIndexes.filter { entryFilter?.matches(entries[it]) ?: true }
+            }
+            .filter { it.second.isNotEmpty() }
+
+        @Transient
+        private val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
+
+        val currentEntry: Entry
+            get() = entries[currentIndex]
+
+        private val currentGroupIndex: Int
+            get() = getGroupIndex(currentIndex)
+
+        val currentSampleName: String
+            get() = currentEntry.sample
+
+        val currentSampleFile: File
+            get() = getSampleFile(currentSampleName)
+
+        fun getSampleFile(sampleName: String): File {
+            val fileName = sampleFileNameMap[sampleName]
+            if (fileName != null) {
+                return File(sampleDirectory, fileName)
+            }
+            return Sample.findSampleFile(sampleDirectory.toFile(), sampleName)
+                ?: File(sampleDirectory, "$sampleName.${Sample.SampleFileWavExtension}")
         }
-        .filter { it.second.isNotEmpty() }
 
-    @Transient
-    private val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
+        @Transient
+        val entryCount: Int = entries.size
+        private fun getGroupIndex(entryIndex: Int) = entryIndexGroups.indexOfFirst { it.second.contains(entryIndex) }
 
-    val currentEntry: Entry
-        get() = entries[currentIndex]
-
-    private val currentGroupIndex: Int
-        get() = getGroupIndex(currentIndex)
-
-    val currentSampleName: String
-        get() = currentEntry.sample
-
-    val currentSampleFile: File
-        get() = getSampleFile(currentSampleName)
-
-    fun getSampleFile(sampleName: String): File {
-        val fileName = sampleFileNameMap[sampleName]
-        if (fileName != null) {
-            return File(sampleDirectory, fileName)
+        fun getEntriesForEditing(index: Int?, multipleEditMode: Boolean) = if (!multipleEditMode) {
+            listOf(getEntryForEditing(index ?: currentIndex))
+        } else {
+            getEntriesInGroupForEditing(getGroupIndex(index ?: currentIndex))
         }
-        return Sample.findSampleFile(sampleDirectory.toFile(), sampleName)
-            ?: File(sampleDirectory, "$sampleName.${Sample.SampleFileWavExtension}")
+
+        private fun getEntryForEditing(index: Int = currentIndex) = IndexedEntry(
+            entry = entries[index],
+            index = index,
+        )
+
+        fun getEntriesInGroupForEditing(groupIndex: Int = currentGroupIndex) = entryIndexGroups[groupIndex].second
+            .map {
+                IndexedEntry(
+                    entry = entries[it],
+                    index = it,
+                )
+            }
+
+        fun updateOnLoadedSample(sampleInfo: SampleInfo): Module {
+            val entries = entries.toMutableList()
+            val changedEntries = entries.withIndex()
+                .filter { it.value.sample == sampleInfo.name }
+                .filter { it.value.end <= 0f }
+                .map {
+                    val end = sampleInfo.lengthMillis + it.value.end
+                    it.copy(value = it.value.copy(end = end))
+                }
+            changedEntries.forEach { entries[it.index] = it.value }
+            val sampleMap = sampleFileNameMap.toMutableMap()
+            sampleMap[sampleInfo.name] = sampleInfo.file.toFile().name
+            return copy(entries = entries, sampleFileNameMap = sampleMap)
+        }
+
+        fun updateEntries(editedEntries: List<IndexedEntry>, labelerConf: LabelerConf): Module {
+            val entries = entries.toMutableList()
+            if (labelerConf.continuous) {
+                val previousIndex = editedEntries.first().index - 1
+                entries.getOrNull(previousIndex)
+                    ?.takeIf { it.sample == editedEntries.first().sample }
+                    ?.copy(end = editedEntries.first().start)
+                    ?.let { entries[previousIndex] = it }
+                val nextIndex = editedEntries.last().index + 1
+                entries.getOrNull(nextIndex)
+                    ?.takeIf { it.sample == editedEntries.last().sample }
+                    ?.copy(start = editedEntries.last().end)
+                    ?.let { entries[nextIndex] = it }
+            }
+            editedEntries.forEach {
+                entries[it.index] = it.entry
+            }
+            return copy(entries = entries)
+        }
+
+        private fun updateEntry(editedEntry: IndexedEntry, labelerConf: LabelerConf) =
+            updateEntries(listOf(editedEntry), labelerConf)
+
+        fun markEntriesAsDone(editedIndexes: Set<Int>): Module {
+            val entries = entries.toMutableList()
+            editedIndexes.forEach {
+                entries[it] = entries[it].done()
+            }
+            return copy(entries = entries)
+        }
+
+        fun renameEntry(index: Int, newName: String, labelerConf: LabelerConf): Module {
+            val editedEntry = getEntryForEditing(index)
+            val renamed = editedEntry.entry.copy(name = newName)
+            return updateEntry(editedEntry.edit(renamed), labelerConf)
+        }
+
+        fun duplicateEntry(index: Int, newName: String, labelerConf: LabelerConf): Module {
+            val entries = entries.toMutableList()
+            var original = entries[index]
+            var duplicated = original.copy(name = newName)
+            if (labelerConf.continuous) {
+                val splitPoint = (original.start + original.end) / 2
+                original = original.copy(end = splitPoint)
+                duplicated = duplicated.copy(start = splitPoint)
+                entries[index] = original
+            }
+            entries.add(index + 1, duplicated)
+            return copy(entries = entries, currentIndex = index)
+        }
+
+        fun removeCurrentEntry(labelerConf: LabelerConf): Module {
+            val index = currentIndex
+            val entries = entries.toMutableList()
+            val removed = requireNotNull(entries.removeAt(index))
+            val newIndex = index - 1
+            if (labelerConf.continuous) {
+                val previousIndex = index - 1
+                entries.getOrNull(previousIndex)
+                    ?.takeIf { it.sample == removed.sample }
+                    ?.copy(end = removed.end)
+                    ?.let { entries[previousIndex] = it }
+            }
+            return copy(entries = entries, currentIndex = newIndex)
+        }
+
+        fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?): Module {
+            val entries = entries.toMutableList()
+            val entry = entries[index]
+            val editedCurrentEntry = entry.copy(
+                name = rename ?: entry.name,
+                end = position,
+                points = entry.points.map { it.coerceAtMost(position) },
+                notes = entry.notes.copy(done = true),
+            )
+            val newEntry = entry.copy(
+                name = newName,
+                start = position,
+                points = entry.points.map { it.coerceAtLeast(position) },
+                notes = entry.notes.copy(done = true),
+            )
+            entries[index] = editedCurrentEntry
+            entries.add(index + 1, newEntry)
+            val newIndex = targetEntryIndex ?: index
+            return copy(entries = entries, currentIndex = newIndex)
+        }
+
+        fun nextEntry() = switchEntry(reverse = false)
+        fun previousEntry() = switchEntry(reverse = true)
+        private fun switchEntry(reverse: Boolean): Module {
+            val targetIndex = if (reverse) {
+                filteredEntryIndexes.lastOrNull { it < currentIndex } ?: currentIndex
+            } else {
+                filteredEntryIndexes.firstOrNull { it > currentIndex } ?: currentIndex
+            }
+            return copy(currentIndex = targetIndex)
+        }
+
+        fun nextSample() = switchSample(reverse = false)
+        fun previousSample() = switchSample(reverse = true)
+        private fun switchSample(reverse: Boolean): Module {
+            val currentGroupIndex = getGroupIndex(currentIndex)
+            val targetGroupIndex = if (reverse) {
+                filteredEntryIndexGroupIndexes.lastOrNull { it.first < currentGroupIndex }?.first ?: currentGroupIndex
+            } else {
+                filteredEntryIndexGroupIndexes.firstOrNull { it.first > currentGroupIndex }?.first ?: currentGroupIndex
+            }
+            val targetEntryIndex = if (targetGroupIndex == currentGroupIndex) {
+                val indexesInCurrentGroup = filteredEntryIndexGroupIndexes.first { it.first == targetGroupIndex }.second
+                if (reverse) indexesInCurrentGroup.first() else indexesInCurrentGroup.last()
+            } else {
+                val indexesInTargetGroup = filteredEntryIndexGroupIndexes.first { it.first == targetGroupIndex }.second
+                if (reverse) indexesInTargetGroup.last() else indexesInTargetGroup.first()
+            }
+            return copy(currentIndex = targetEntryIndex)
+        }
+
+        fun hasSwitchedSample(previous: Module?) = previous != null && previous.currentSampleName != currentSampleName
+
+        fun toggleEntryDone(index: Int): Module {
+            val entry = entries[index]
+            val editedEntry = entry.doneToggled()
+            return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
+        }
+
+        fun toggleEntryStar(index: Int): Module {
+            val entry = entries[index]
+            val editedEntry = entry.starToggled()
+            return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
+        }
+
+        fun editEntryTag(index: Int, tag: String): Module {
+            val entry = entries[index]
+            val editedEntry = entry.tagEdited(tag)
+            return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
+        }
+
+        fun validate(multipleEditMode: Boolean, labelerConf: LabelerConf): Module {
+            // Check multiMode enabled
+            if (multipleEditMode) require(
+                labelerConf.continuous,
+            ) { "Multi-entry mode can only be used in continuous labelers." }
+
+            // Check currentIndex valid
+            requireNotNull(entries.getOrNull(currentIndex)) { "Invalid currentIndex: $currentIndex" }
+
+            // Check continuous
+            if (labelerConf.continuous) {
+                entryGroups.forEach { (_, entries) ->
+                    entries.zipWithNext().forEach {
+                        require(it.first.end == it.second.start) {
+                            "Not continuous between entries: $it"
+                        }
+                    }
+                }
+            }
+
+            // check entry name duplicates
+            if (!labelerConf.allowSameNameEntry) {
+                val names = entries.map { it.name }
+                require(names.distinct().size == names.size) { "Duplicate entry names found." }
+            }
+
+            // Check points
+            val entries = entries.map {
+                require(it.points.size == labelerConf.fields.size) {
+                    "Point size doesn't match in entry: $it. Required point size = ${labelerConf.fields.size}"
+                }
+                require(it.extras.size == labelerConf.extraFieldNames.size) {
+                    "Extra size doesn't match in entry: $it. Required extra size = ${labelerConf.extraFieldNames.size}"
+                }
+                if (it.end > 0) require(it.start <= it.end) {
+                    "Start is greater than end in entry: $it"
+                }
+
+                var entryResult = it
+
+                if (it.start < 0) {
+                    entryResult = entryResult.copy(start = 0f)
+                }
+
+                // do not check right border, because we don't know the length of the audio file
+
+                it.points.forEachIndexed { index, point ->
+                    runCatching {
+                        require(point >= entryResult.start) {
+                            "Point $point is smaller than start in entry: $it"
+                        }
+                    }.onFailure { t ->
+                        when (labelerConf.overflowBeforeStart) {
+                            LabelerConf.PointOverflow.AdjustBorder -> {
+                                entryResult = entryResult.copy(start = point)
+                            }
+                            LabelerConf.PointOverflow.AdjustPoint -> {
+                                val points = entryResult.points.toMutableList()
+                                points[index] = entryResult.start
+                                entryResult = entryResult.copy(points = points)
+                            }
+                            LabelerConf.PointOverflow.Error -> throw t
+                        }
+                    }
+                    if (it.end > 0) {
+                        runCatching {
+                            require(point <= entryResult.end) {
+                                "Point $point is greater than end in entry: $it"
+                            }
+                        }.onFailure { t ->
+                            when (labelerConf.overflowAfterEnd) {
+                                LabelerConf.PointOverflow.AdjustBorder -> {
+                                    entryResult = entryResult.copy(end = point)
+                                }
+                                LabelerConf.PointOverflow.AdjustPoint -> {
+                                    val points = entryResult.points.toMutableList()
+                                    points[index] = entryResult.end
+                                    entryResult = entryResult.copy(points = points)
+                                }
+                                LabelerConf.PointOverflow.Error -> throw t
+                            }
+                        }
+                    }
+                }
+                entryResult
+            }
+
+            return copy(entries = entries)
+        }
     }
-
-    @Transient
-    val entryCount: Int = entries.size
 
     val projectFile: File
         get() = File(workingDirectory).resolve("$projectName.$ProjectFileExtension")
 
     val isUsingDefaultCacheDirectory get() = cacheDirectory == getDefaultCacheDirectory(workingDirectory, projectName)
 
-    private fun getGroupIndex(entryIndex: Int) = entryIndexGroups.indexOfFirst { it.second.contains(entryIndex) }
+    val currentModule: Module
+        get() = modules[currentModuleIndex]
 
-    fun getEntriesForEditing(index: Int = currentIndex) = if (!multipleEditMode) {
-        listOf(getEntryForEditing(index))
-    } else {
-        getEntriesInGroupForEditing(getGroupIndex(index))
+    val currentEntry: Entry
+        get() = currentModule.currentEntry
+
+    val currentSampleName: String
+        get() = currentEntry.sample
+
+    val currentSampleFile: File
+        get() = currentModule.currentSampleFile
+
+    fun getModule(name: String) = modules.first { it.name == name }
+
+    fun updateModule(name: String, updater: Module.() -> Module): Project {
+        val module = getModule(name)
+        val index = modules.indexOf(module)
+        return copy(modules = modules.toMutableList().apply { this[index] = module.updater() })
     }
 
-    private fun getEntryForEditing(index: Int = currentIndex) = IndexedEntry(
-        entry = entries[index],
-        index = index,
-    )
-
-    fun getEntriesInGroupForEditing(groupIndex: Int = currentGroupIndex) = entryIndexGroups[groupIndex].second
-        .map {
-            IndexedEntry(
-                entry = entries[it],
-                index = it,
-            )
-        }
-
-    fun updateOnLoadedSample(sampleInfo: SampleInfo): Project {
-        val entries = entries.toMutableList()
-        val changedEntries = entries.withIndex()
-            .filter { it.value.sample == sampleInfo.name }
-            .filter { it.value.end <= 0f }
-            .map {
-                val end = sampleInfo.lengthMillis + it.value.end
-                it.copy(value = it.value.copy(end = end))
-            }
-        changedEntries.forEach { entries[it.index] = it.value }
-        val sampleMap = sampleFileNameMap.toMutableMap()
-        sampleMap[sampleInfo.name] = sampleInfo.file.toFile().name
-        return copy(entries = entries, sampleFileNameMap = sampleMap)
+    fun updateCurrentModule(updater: Module.() -> Module): Project {
+        return updateModule(currentModule.name, updater)
     }
 
-    fun updateEntries(editedEntries: List<IndexedEntry>): Project {
-        val entries = entries.toMutableList()
-        if (labelerConf.continuous) {
-            val previousIndex = editedEntries.first().index - 1
-            entries.getOrNull(previousIndex)
-                ?.takeIf { it.sample == editedEntries.first().sample }
-                ?.copy(end = editedEntries.first().start)
-                ?.let { entries[previousIndex] = it }
-            val nextIndex = editedEntries.last().index + 1
-            entries.getOrNull(nextIndex)
-                ?.takeIf { it.sample == editedEntries.last().sample }
-                ?.copy(start = editedEntries.last().end)
-                ?.let { entries[nextIndex] = it }
-        }
-        editedEntries.forEach {
-            entries[it.index] = it.entry
-        }
-        return copy(entries = entries)
+    fun updateEntryFilter(entryFilter: EntryFilter?): Project {
+        return copy(modules = modules.map { it.copy(entryFilter = entryFilter) })
     }
 
-    private fun updateEntry(editedEntry: IndexedEntry) = updateEntries(listOf(editedEntry))
+    fun getEntriesForEditing(index: Int? = null) =
+        currentModule.name to currentModule.getEntriesForEditing(index, multipleEditMode)
 
-    fun markEntriesAsDone(editedIndexes: Set<Int>): Project {
-        val entries = entries.toMutableList()
-        editedIndexes.forEach {
-            entries[it] = entries[it].done()
-        }
-        return copy(entries = entries)
+    fun hasSwitchedSample(previous: Project?): Boolean {
+        if (previous?.currentModuleIndex != currentModuleIndex) return true
+        return currentModule.hasSwitchedSample(previous.currentModule)
     }
 
-    fun renameEntry(index: Int, newName: String): Project {
-        val editedEntry = getEntryForEditing(index)
-        val renamed = editedEntry.entry.copy(name = newName)
-        return updateEntry(editedEntry.edit(renamed))
-    }
-
-    fun duplicateEntry(index: Int, newName: String): Project {
-        val entries = entries.toMutableList()
-        var original = entries[index]
-        var duplicated = original.copy(name = newName)
-        if (labelerConf.continuous) {
-            val splitPoint = (original.start + original.end) / 2
-            original = original.copy(end = splitPoint)
-            duplicated = duplicated.copy(start = splitPoint)
-            entries[index] = original
-        }
-        entries.add(index + 1, duplicated)
-        return copy(entries = entries, currentIndex = index)
-    }
-
-    fun removeCurrentEntry(): Project {
-        val index = currentIndex
-        val entries = entries.toMutableList()
-        val removed = requireNotNull(entries.removeAt(index))
-        val newIndex = index - 1
-        if (labelerConf.continuous) {
-            val previousIndex = index - 1
-            entries.getOrNull(previousIndex)
-                ?.takeIf { it.sample == removed.sample }
-                ?.copy(end = removed.end)
-                ?.let { entries[previousIndex] = it }
-        }
-        return copy(entries = entries, currentIndex = newIndex)
-    }
-
-    fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?): Project {
-        val entries = entries.toMutableList()
-        val entry = entries[index]
-        val editedCurrentEntry = entry.copy(
-            name = rename ?: entry.name,
-            end = position,
-            points = entry.points.map { it.coerceAtMost(position) },
-            notes = entry.notes.copy(done = true),
-        )
-        val newEntry = entry.copy(
-            name = newName,
-            start = position,
-            points = entry.points.map { it.coerceAtLeast(position) },
-            notes = entry.notes.copy(done = true),
-        )
-        entries[index] = editedCurrentEntry
-        entries.add(index + 1, newEntry)
-        val newIndex = targetEntryIndex ?: index
-        return copy(entries = entries, currentIndex = newIndex)
-    }
-
-    fun nextEntry() = switchEntry(reverse = false)
-    fun previousEntry() = switchEntry(reverse = true)
-    private fun switchEntry(reverse: Boolean): Project {
-        val targetIndex = if (reverse) {
-            filteredEntryIndexes.lastOrNull { it < currentIndex } ?: currentIndex
-        } else {
-            filteredEntryIndexes.firstOrNull { it > currentIndex } ?: currentIndex
-        }
-        return copy(currentIndex = targetIndex)
-    }
-
-    fun nextSample() = switchSample(reverse = false)
-    fun previousSample() = switchSample(reverse = true)
-    private fun switchSample(reverse: Boolean): Project {
-        val currentGroupIndex = getGroupIndex(currentIndex)
-        val targetGroupIndex = if (reverse) {
-            filteredEntryIndexGroupIndexes.lastOrNull { it.first < currentGroupIndex }?.first ?: currentGroupIndex
-        } else {
-            filteredEntryIndexGroupIndexes.firstOrNull { it.first > currentGroupIndex }?.first ?: currentGroupIndex
-        }
-        val targetEntryIndex = if (targetGroupIndex == currentGroupIndex) {
-            val indexesInCurrentGroup = filteredEntryIndexGroupIndexes.first { it.first == targetGroupIndex }.second
-            if (reverse) indexesInCurrentGroup.first() else indexesInCurrentGroup.last()
-        } else {
-            val indexesInTargetGroup = filteredEntryIndexGroupIndexes.first { it.first == targetGroupIndex }.second
-            if (reverse) indexesInTargetGroup.last() else indexesInTargetGroup.first()
-        }
-        return copy(currentIndex = targetEntryIndex)
-    }
-
-    fun hasSwitchedSample(previous: Project?) = previous != null && previous.currentSampleName != currentSampleName
-
-    fun toggleEntryDone(index: Int): Project {
-        val entry = entries[index]
-        val editedEntry = entry.doneToggled()
-        return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
-    }
-
-    fun toggleEntryStar(index: Int): Project {
-        val entry = entries[index]
-        val editedEntry = entry.starToggled()
-        return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
-    }
-
-    fun editEntryTag(index: Int, tag: String): Project {
-        val entry = entries[index]
-        val editedEntry = entry.tagEdited(tag)
-        return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
-    }
-
-    fun validate(): Project {
-        // Check multiMode enabled
-        if (multipleEditMode) require(
-            labelerConf.continuous,
-        ) { "Multi-entry mode can only be used in continuous labelers." }
-
-        // Check currentIndex valid
-        requireNotNull(entries.getOrNull(currentIndex)) { "Invalid currentIndex: $currentIndex" }
-
-        // Check continuous
-        if (labelerConf.continuous) {
-            entryGroups.forEach { (_, entries) ->
-                entries.zipWithNext().forEach {
-                    require(it.first.end == it.second.start) {
-                        "Not continuous between entries: $it"
-                    }
-                }
-            }
-        }
-
-        // check entry name duplicates
-        if (!labelerConf.allowSameNameEntry) {
-            val names = entries.map { it.name }
-            require(names.distinct().size == names.size) { "Duplicate entry names found." }
-        }
-
-        // Check points
-        val entries = entries.map {
-            require(it.points.size == labelerConf.fields.size) {
-                "Point size doesn't match in entry: $it. Required point size = ${labelerConf.fields.size}"
-            }
-            require(it.extras.size == labelerConf.extraFieldNames.size) {
-                "Extra size doesn't match in entry: $it. Required extra size = ${labelerConf.extraFieldNames.size}"
-            }
-            if (it.end > 0) require(it.start <= it.end) {
-                "Start is greater than end in entry: $it"
-            }
-
-            var entryResult = it
-
-            if (it.start < 0) {
-                entryResult = entryResult.copy(start = 0f)
-            }
-
-            // do not check right border, because we don't know the length of the audio file
-
-            it.points.forEachIndexed { index, point ->
-                runCatching {
-                    require(point >= entryResult.start) {
-                        "Point $point is smaller than start in entry: $it"
-                    }
-                }.onFailure { t ->
-                    when (labelerConf.overflowBeforeStart) {
-                        LabelerConf.PointOverflow.AdjustBorder -> {
-                            entryResult = entryResult.copy(start = point)
-                        }
-                        LabelerConf.PointOverflow.AdjustPoint -> {
-                            val points = entryResult.points.toMutableList()
-                            points[index] = entryResult.start
-                            entryResult = entryResult.copy(points = points)
-                        }
-                        LabelerConf.PointOverflow.Error -> throw t
-                    }
-                }
-                if (it.end > 0) {
-                    runCatching {
-                        require(point <= entryResult.end) {
-                            "Point $point is greater than end in entry: $it"
-                        }
-                    }.onFailure { t ->
-                        when (labelerConf.overflowAfterEnd) {
-                            LabelerConf.PointOverflow.AdjustBorder -> {
-                                entryResult = entryResult.copy(end = point)
-                            }
-                            LabelerConf.PointOverflow.AdjustPoint -> {
-                                val points = entryResult.points.toMutableList()
-                                points[index] = entryResult.end
-                                entryResult = entryResult.copy(points = points)
-                            }
-                            LabelerConf.PointOverflow.Error -> throw t
-                        }
-                    }
-                }
-            }
-            entryResult
-        }
-
-        return copy(entries = entries)
+    fun validate() = this.apply {
+        modules.forEach { it.validate(multipleEditMode, labelerConf) }
     }
 
     companion object {
@@ -558,19 +609,25 @@ suspend fun projectOf(
         require(entries.isNotEmpty()) {
             "No entries found"
         }
+        val module = Project.Module(
+            name = "",
+            sampleDirectory = sampleDirectory,
+            entries = entries,
+            currentIndex = 0,
+            autoExportTargetPath = autoExportTargetPath,
+        )
         Project(
             version = ProjectVersion,
             sampleDirectory = sampleDirectory,
             workingDirectory = workingDirectory,
             projectName = projectName,
             cacheDirectory = cacheDirectory,
-            entries = entries,
-            currentIndex = 0,
             labelerConf = injectedLabelerConf,
             originalLabelerConf = labelerConf,
             labelerParams = labelerTypedParams,
             encoding = encoding,
-            autoExportTargetPath = autoExportTargetPath,
+            modules = listOf(module),
+            currentModuleIndex = 0,
         ).validate()
     }.onFailure {
         return Result.failure(InvalidCreatedProjectException(it))

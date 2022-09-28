@@ -47,12 +47,13 @@ class ChartPrerenderer(
             return@launch
         }
 
-        val allSamples = project.entries.map { it.sample }.distinct().map { project.getSampleFile(it) }
+        val module = project.currentModule
+        val allSamples = module.entries.map { it.sample }.distinct().map { module.getSampleFile(it) }
         val totalFiles = allSamples.size
         for (sampleIndex in allSamples.indices) {
             val sample = allSamples[sampleIndex]
 
-            val sampleInfo = SampleInfoRepository.load(sample, appConf).getOrElse {
+            val sampleInfo = SampleInfoRepository.load(sample, module.name, appConf).getOrElse {
                 Log.error(it)
                 onError(it)
                 return@launch

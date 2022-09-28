@@ -2,7 +2,7 @@ package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.runtime.Composable
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.io.exportProject
+import com.sdercolin.vlabeler.io.exportProjectModule
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
@@ -60,18 +60,19 @@ fun StandaloneDialogs(
         }
         appState.isShowingExportDialog -> {
             val project = appState.requireProject()
+            val currentModuleNameSection = project.currentModule.name.ifEmpty { null }?.let { "_$it" }
             SaveFileDialog(
                 title = string(Strings.ExportDialogTitle),
                 extensions = listOf(project.labelerConf.extension),
-                initialDirectory = project.sampleDirectory,
+                initialDirectory = project.currentModule.sampleDirectory,
                 initialFileName = project.labelerConf.defaultInputFilePath?.lastPathSection
-                    ?: "${project.projectName}.${project.labelerConf.extension}",
+                    ?: "${project.projectName}$currentModuleNameSection.${project.labelerConf.extension}",
             ) { parent, name ->
                 appState.closeExportDialog()
                 if (parent != null && name != null) {
                     mainScope.launch(Dispatchers.IO) {
                         appState.showProgress()
-                        exportProject(appState.requireProject(), File(parent, name))
+                        exportProjectModule(appState.requireProject(), project.currentModuleIndex, File(parent, name))
                         appState.hideProgress()
                     }
                 }

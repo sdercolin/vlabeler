@@ -442,7 +442,9 @@ fun rememberMarkerState(
     val sampleLengthMillis = sampleInfo.lengthMillis
     val entries = editorState.editedEntries
     val project = editorState.project
-    val allEntriesInCurrentGroup = remember(entries) { project.getEntriesInGroupForEditing() }
+    val allEntriesInCurrentGroup = remember(entries, project.currentModuleIndex) {
+        project.currentModule.getEntriesInGroupForEditing()
+    }
     val labelerConf = project.labelerConf
     val entryConverter = remember(sampleInfo.sampleRate, canvasParams.resolution) {
         EntryConverter(sampleInfo.sampleRate, canvasParams.resolution)
