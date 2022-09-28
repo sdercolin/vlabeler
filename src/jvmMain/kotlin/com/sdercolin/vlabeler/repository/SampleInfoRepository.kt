@@ -17,7 +17,7 @@ object SampleInfoRepository {
 
     private lateinit var cacheDirectory: File
 
-    private val infoMap = mutableMapOf<String, SampleInfo>()
+    private val infoMap = mutableMapOf<Pair<String, String>, SampleInfo>()
 
     fun init(project: Project) {
         cacheDirectory = project.getCacheDir().resolve(SampleInfoCacheFolderName)
@@ -27,19 +27,19 @@ object SampleInfoRepository {
     suspend fun load(file: File, moduleName: String, appConf: AppConf): Result<SampleInfo> {
         val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
         val normalize = appConf.painter.amplitude.normalize
-        infoMap[file.nameWithoutExtension]?.let {
+        infoMap[moduleName to file.name]?.let {
             if (it.maxSampleRate == maxSampleRate &&
                 it.normalize == normalize &&
                 it.file.toFile().exists() &&
                 it.lastModified == file.lastModified()
             ) {
                 // Return memory cached sample info
-                Log.info("Returning cached sample info for ${file.nameWithoutExtension}")
+                Log.info("Returning cached sample info for ${file.name} in module $moduleName")
                 return Result.success(it)
             }
         }
         val existingInfo = runCatching {
-            getSampleInfoFile(file).takeIf { it.exists() }?.readText()?.parseJson<SampleInfo>()
+            getSampleInfoFile(file, moduleName).takeIf { it.exists() }?.readText()?.parseJson<SampleInfo>()
         }.getOrNull()
         if (existingInfo != null &&
             existingInfo.algorithmVersion == WaveLoadingAlgorithmVersion &&
@@ -49,7 +49,7 @@ object SampleInfoRepository {
             existingInfo.lastModified == file.lastModified()
         ) {
             // Return file cached sample info
-            Log.info("Returning cached sample info for ${file.nameWithoutExtension}")
+            Log.info("Returning cached sample info for ${file.name} in module $moduleName")
             return Result.success(existingInfo)
         }
         return loadSampleInfo(file, moduleName, appConf)
@@ -61,13 +61,19 @@ object SampleInfoRepository {
         val info = SampleInfo.load(file, moduleName, appConf).getOrElse {
             return Result.failure(it)
         }
-        infoMap[info.name] = info
-        getSampleInfoFile(file).writeText(info.stringifyJson())
+        infoMap[moduleName to info.name] = info
+        getSampleInfoFile(file, moduleName).writeText(info.stringifyJson())
         return Result.success(info)
     }
 
-    private fun getSampleInfoFile(wavFile: File) =
-        cacheDirectory.resolve("${wavFile.nameWithoutExtension}_info.json")
+    private fun getSampleInfoFile(wavFile: File, moduleName: String) =
+        cacheDirectory.resolve(moduleName)
+            .also { it.mkdir() }
+            .resolve("${wavFile.name}.info.json")
+
+    fun clearMemory() {
+        infoMap.clear()
+    }
 
     private const val SampleInfoCacheFolderName = "sample-info"
 }

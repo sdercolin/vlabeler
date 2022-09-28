@@ -34,7 +34,7 @@ fun fromRawLabels(
             parser.variableNames.mapIndexed { i, name ->
                 js.set(name, groups[i])
             }
-            js.set("inputFileName", inputFile?.nameWithoutExtension)
+            js.set("inputFileName", inputFile?.name)
             js.set("sampleFileNames", sampleFiles.map { it.name })
             val script = parser.scripts.joinToString("\n")
             js.eval(script)

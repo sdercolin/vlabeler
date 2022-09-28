@@ -90,12 +90,17 @@ object ChartRepository {
         sampleInfo: SampleInfo,
         channelIndex: Int,
         chunkIndex: Int,
-    ) = cacheDirectory.resolve("${sampleInfo.name}_waveform_${channelIndex}_$chunkIndex.png")
+    ) = getModuleSubDirectory(sampleInfo.moduleName)
+        .resolve("${sampleInfo.name}_waveform_${channelIndex}_$chunkIndex.png")
 
     fun getSpectrogramImageFile(
         sampleInfo: SampleInfo,
         chunkIndex: Int,
-    ) = cacheDirectory.resolve("${sampleInfo.name}_spectrogram_$chunkIndex.png")
+    ) = getModuleSubDirectory(sampleInfo.moduleName)
+        .resolve("${sampleInfo.name}_spectrogram_$chunkIndex.png")
+
+    private fun getModuleSubDirectory(moduleName: String) = cacheDirectory.resolve(moduleName)
+        .also { it.mkdir() }
 
     private const val ChartsCacheFolderName = "charts"
 }

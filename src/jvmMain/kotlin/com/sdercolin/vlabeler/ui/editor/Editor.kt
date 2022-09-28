@@ -44,8 +44,9 @@ fun Editor(state: EditorState, appState: AppState) {
     val keyboardState by state.keyboardViewModel.keyboardStateFlow.collectAsState()
 
     LaunchedEffect(
+        state.project.currentModuleIndex,
         state.project.currentSampleName,
-        state.project.sampleDirectory,
+        state.project.currentModule.sampleDirectory,
         appState.isShowingPrerenderDialog,
         state,
     ) {

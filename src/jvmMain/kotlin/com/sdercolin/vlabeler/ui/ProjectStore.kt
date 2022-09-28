@@ -261,7 +261,9 @@ class ProjectStoreImpl(
     override fun toggleMultipleEditMode(on: Boolean) = editProject { copy(multipleEditMode = on) }
 
     override fun changeSampleDirectory(directory: File) {
-        editProject { copy(sampleDirectory = directory.absolutePath) }
+        editCurrentProjectModule {
+            copy(sampleDirectory = directory.absolutePath)
+        }
     }
 
     private fun listAutoSavedProjectFiles() = RecordDir.getChildren()

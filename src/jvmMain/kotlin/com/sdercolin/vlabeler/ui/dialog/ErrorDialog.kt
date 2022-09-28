@@ -1,6 +1,5 @@
 package com.sdercolin.vlabeler.ui.dialog
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,16 +20,15 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.WarningText
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.common.plainClickable
-import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
-import com.sdercolin.vlabeler.util.getLocalizedMessage
 
 @Composable
-fun ErrorDialog(
-    error: Throwable,
+fun WarningDialog(
+    message: String,
     finish: () -> Unit,
+    style: WarningTextStyle,
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -45,10 +43,9 @@ fun ErrorDialog(
             ) {
                 Column(Modifier.widthIn(min = 350.dp)) {
                     Spacer(Modifier.height(15.dp))
-                    val message = error.getLocalizedMessage(LocalLanguage.current)
                     WarningText(
                         text = message,
-                        style = WarningTextStyle.Error,
+                        style = style,
                     )
                     Spacer(Modifier.height(25.dp))
                     Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
@@ -61,7 +58,3 @@ fun ErrorDialog(
         }
     }
 }
-
-@Composable
-@Preview
-private fun Preview() = ErrorDialog(IllegalStateException()) {}

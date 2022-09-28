@@ -15,10 +15,9 @@ data class RawModuleDefinition(
     fun toModuleDefinition(): ModuleDefinition {
         val sampleDirectory = File(sampleDirectoryPath)
         val sampleFiles = sampleFileNames.map { sampleDirectory.resolve(it) }
-        val sampleNames = sampleFiles.map { it.nameWithoutExtension }
         val inputFiles = inputFilePaths?.map { File(it) }
         val labelFile = labelFilePath?.toFile()
-        return ModuleDefinition(name, sampleDirectory, sampleFiles, sampleNames, inputFiles, labelFile)
+        return ModuleDefinition(name, sampleDirectory, sampleFiles, inputFiles, labelFile)
     }
 }
 
@@ -26,7 +25,6 @@ class ModuleDefinition(
     val name: String,
     val sampleDirectory: File,
     val sampleFiles: List<File>,
-    val sampleNames: List<String>,
     val inputFiles: List<File>?,
     val labelFile: File?,
 )

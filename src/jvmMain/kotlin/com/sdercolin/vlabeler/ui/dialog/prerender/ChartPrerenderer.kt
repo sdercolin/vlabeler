@@ -41,7 +41,7 @@ class ChartPrerenderer(
         density: Density,
         layoutDirection: LayoutDirection,
     ) = scope.launch(Dispatchers.IO) {
-        val sampleDirectory = project.sampleDirectory.toFile()
+        val sampleDirectory = project.currentModule.sampleDirectory.toFile()
         if (!sampleDirectory.exists()) {
             onError(MissingSampleDirectoryException())
             return@launch

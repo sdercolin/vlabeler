@@ -26,7 +26,6 @@ import java.nio.charset.Charset
 @Immutable
 data class Project(
     val version: Int = 0,
-    val sampleDirectory: String,
     val workingDirectory: String,
     val projectName: String,
     val cacheDirectory: String,
@@ -430,7 +429,7 @@ private fun generateEntriesByPlugin(
                     points = it.points.take(labelerConf.fields.count()),
                     extras = it.extras.take(labelerConf.extraFieldNames.count()),
                 )
-            }.map { it.toEntry(fallbackSample = sampleFiles.first().nameWithoutExtension) }
+            }.map { it.toEntry(fallbackSample = sampleFiles.first().name) }
 
             entries.postApplyLabelerConf(labelerConf)
         }
@@ -597,7 +596,6 @@ suspend fun projectOf(
                 name = "",
                 sampleDirectory = sampleDirectoryFile,
                 sampleFiles = sampleFiles,
-                sampleNames = sampleFiles.map { it.nameWithoutExtension },
                 inputFiles = listOfNotNull(inputFile),
                 labelFile = inputFile ?: labelerConf.defaultInputFilePath?.let { sampleDirectoryFile.resolve(it) },
             ),
@@ -631,8 +629,8 @@ suspend fun projectOf(
                 )
             }
             else -> {
-                def.sampleNames.map {
-                    Entry.fromDefaultValues(it, it, labelerConf)
+                def.sampleFiles.map {
+                    Entry.fromDefaultValues(it.name, it.nameWithoutExtension, labelerConf)
                 }
             }
         }
@@ -659,7 +657,6 @@ suspend fun projectOf(
         }
         Project(
             version = ProjectVersion,
-            sampleDirectory = sampleDirectory,
             workingDirectory = workingDirectory,
             projectName = projectName,
             cacheDirectory = cacheDirectory,

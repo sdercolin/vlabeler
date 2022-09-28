@@ -82,7 +82,7 @@ class SampleListDialogState(
         editorState.jumpToEntry(index)
     }
 
-    val sampleDirectory: File get() = editorState.project.sampleDirectory.toFile()
+    val sampleDirectory: File get() = editorState.project.currentModule.sampleDirectory.toFile()
 
     fun isSampleDirectoryExisting() = sampleDirectory.let {
         it.exists() && it.isDirectory

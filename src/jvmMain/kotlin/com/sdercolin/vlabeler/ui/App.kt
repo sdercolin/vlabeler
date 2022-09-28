@@ -11,10 +11,11 @@ import com.sdercolin.vlabeler.io.getSavedParamsFile
 import com.sdercolin.vlabeler.io.openCreatedProject
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
+import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.dialog.AboutDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
-import com.sdercolin.vlabeler.ui.dialog.ErrorDialog
 import com.sdercolin.vlabeler.ui.dialog.LicenseDialog
+import com.sdercolin.vlabeler.ui.dialog.WarningDialog
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginReportDialog
@@ -25,6 +26,8 @@ import com.sdercolin.vlabeler.ui.dialog.updater.UpdaterDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
+import com.sdercolin.vlabeler.ui.string.LocalLanguage
+import com.sdercolin.vlabeler.util.getLocalizedMessage
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -149,12 +152,13 @@ fun App(
             EmbeddedDialog(request)
         }
         appState.error?.let { error ->
-            ErrorDialog(
-                error,
+            WarningDialog(
+                message = error.getLocalizedMessage(LocalLanguage.current),
                 finish = {
                     appState.handleErrorPendingAction(appState.errorPendingAction)
                     appState.clearError()
                 },
+                style = WarningTextStyle.Error,
             )
         }
     }

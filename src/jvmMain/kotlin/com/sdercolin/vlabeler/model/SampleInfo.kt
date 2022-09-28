@@ -78,7 +78,7 @@ data class SampleInfo(
 
             SampleInfo(
                 moduleName = moduleName,
-                name = file.nameWithoutExtension,
+                name = file.name,
                 file = file.absolutePath,
                 sampleRate = sampleRate,
                 maxSampleRate = maxSampleRate,

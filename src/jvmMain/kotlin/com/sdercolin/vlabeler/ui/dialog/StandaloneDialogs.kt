@@ -82,7 +82,7 @@ fun StandaloneDialogs(
             val project = appState.requireProject()
             OpenFileDialog(
                 title = string(Strings.ChooseSampleDirectoryDialogTitle),
-                initialDirectory = project.sampleDirectory.toFileOrNull()?.absolutePath,
+                initialDirectory = project.currentModule.sampleDirectory.toFileOrNull()?.absolutePath,
                 extensions = null,
                 directoryMode = true,
             ) { parent, name ->
