@@ -96,7 +96,7 @@ fun Strings.en(): String = when (this) {
         "Automatically export the project to overwrite the given input file (if not given, " +
             "the default file position defined by labeler) when the project is saved."
     StarterNewWarningSelfConstructedLabelerWithTemplatePlugin ->
-        "You are trying to use a template generator with a labeler that manages multiple folders. " +
+        "You are trying to use a template generator with a labeler that manages multiple sub-projects. " +
             "This is dangerous because it may overwrite all your existing label files with the generated entries. " +
             "Please double confirm that the settings meet your needs."
     SampleListIncludedHeader -> "Project sample files"
