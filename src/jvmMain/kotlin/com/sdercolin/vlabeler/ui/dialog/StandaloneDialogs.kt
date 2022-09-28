@@ -60,7 +60,7 @@ fun StandaloneDialogs(
         }
         appState.isShowingExportDialog -> {
             val project = appState.requireProject()
-            val currentModuleNameSection = project.currentModule.name.ifEmpty { null }?.let { "_$it" }
+            val currentModuleNameSection = project.currentModule.name.ifEmpty { null }?.let { "_$it" }.orEmpty()
             SaveFileDialog(
                 title = string(Strings.ExportDialogTitle),
                 extensions = listOf(project.labelerConf.extension),

@@ -228,6 +228,9 @@ class ProjectCreatorState(
     private fun getSupportedInputFileExtension(): String? {
         val plugin = templatePlugin
         if (plugin != null) {
+            if (labeler.isSelfConstructed && plugin.inputFinderScriptFile != null) {
+                return null
+            }
             return plugin.inputFileExtension
         }
         if (labeler.isSelfConstructed) return null
@@ -336,13 +339,14 @@ class ProjectCreatorState(
 
     @Composable
     fun getInputFileLabelText(): String {
-        val hasPlugin = templatePlugin != null
+        val plugin = templatePlugin
         val extension = getSupportedInputFileExtension()
-        if (hasPlugin) {
-            return if (extension == null) {
-                string(Strings.StarterNewInputFileDisabledByPlugin)
-            } else {
-                string(Strings.StarterNewInputFile, extension)
+        if (plugin != null) {
+            return when {
+                labeler.isSelfConstructed && plugin.inputFinderScriptFile != null ->
+                    string(Strings.StarterNewInputFileDisabledByLabeler)
+                extension == null -> string(Strings.StarterNewInputFileDisabledByPlugin)
+                else -> string(Strings.StarterNewInputFile, extension)
             }
         }
         return if (extension == null) {
@@ -359,6 +363,7 @@ class ProjectCreatorState(
     }
 
     fun isInputFileValid(): Boolean {
+        if (isInputFileEnabled().not()) return true
         val plugin = templatePlugin
         if (plugin == null) {
             if (inputFile == "") {

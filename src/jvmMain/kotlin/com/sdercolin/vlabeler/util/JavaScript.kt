@@ -83,6 +83,41 @@ class JavaScript(logHandler: Handler? = null, currentWorkingDirectory: File? = n
         return getJson(name)
     }
 
+    /**
+     * Only for JavaScript array types with unserializable elements. For serializable types, use [getJson]
+     */
+    fun <T : Any> getArrayOrNull(name: String, ofClass: Class<T>): List<T>? {
+        val value = bindings.getMember(name) ?: return null
+        if (value.isNull) return null
+        if (!value.hasArrayElements()) return null
+        return List(value.arraySize.toInt()) {
+            value.getArrayElement(it.toLong()).`as`(ofClass)
+        }
+    }
+
+    /**
+     * Only for JavaScript array types with unserializable elements. For serializable types, use [getJson]
+     */
+    inline fun <reified T : Any> getArray(name: String): List<T> {
+        return requireNotNull(getArrayOrNull(name, T::class.java))
+    }
+
+    /**
+     * Only for JavaScript array types with unserializable elements. For serializable types, use [getJson]
+     */
+    inline fun <reified T : Any> getArrayOrNull(name: String): List<T>? {
+        return getArrayOrNull(name, T::class.java)
+    }
+
+    /**
+     * Only for JavaScript array types with unserializable elements. For serializable types, use [setJson]
+     */
+    fun setArray(name: String, list: List<Any?>) {
+        val array = eval("[]")!!
+        list.forEachIndexed { index, value -> array.setArrayElement(index.toLong(), value) }
+        bindings.putMember(name, array)
+    }
+
     override fun close() {
         context.close()
     }

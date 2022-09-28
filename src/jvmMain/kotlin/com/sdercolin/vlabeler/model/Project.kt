@@ -411,6 +411,8 @@ data class Project(
 }
 
 private fun generateEntriesByPlugin(
+    rootSampleDirectory: String,
+    moduleDefinition: ModuleDefinition,
     labelerConf: LabelerConf,
     labelerParams: ParamMap?,
     sampleFiles: List<File>,
@@ -420,8 +422,16 @@ private fun generateEntriesByPlugin(
     encoding: String,
 ): Result<List<Entry>> = runCatching {
     when (
-        val result =
-            runTemplatePlugin(plugin, params.orEmpty(), inputFiles, encoding, sampleFiles, labelerConf)
+        val result = runTemplatePlugin(
+            plugin = plugin,
+            params = params.orEmpty(),
+            inputFiles = inputFiles,
+            encoding = encoding,
+            sampleFiles = sampleFiles,
+            labelerConf = labelerConf,
+            rootSampleDirectory = rootSampleDirectory,
+            moduleDefinition = moduleDefinition,
+        )
     ) {
         is TemplatePluginResult.Parsed -> {
             val entries = result.entries.map {
@@ -597,7 +607,8 @@ suspend fun projectOf(
                 sampleDirectory = sampleDirectoryFile,
                 sampleFiles = sampleFiles,
                 inputFiles = listOfNotNull(inputFile),
-                labelFile = inputFile ?: labelerConf.defaultInputFilePath?.let { sampleDirectoryFile.resolve(it) },
+                labelFile = inputFile.takeIf { plugin == null }
+                    ?: labelerConf.defaultInputFilePath?.let { sampleDirectoryFile.resolve(it) },
             ),
         )
     }
@@ -607,6 +618,8 @@ suspend fun projectOf(
         val entries = when {
             plugin != null -> {
                 generateEntriesByPlugin(
+                    rootSampleDirectory = sampleDirectory,
+                    moduleDefinition = def,
                     labelerConf = labelerConf,
                     labelerParams = labelerParams,
                     sampleFiles = def.sampleFiles,

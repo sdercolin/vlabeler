@@ -26,27 +26,42 @@ fun runTemplatePlugin(
     encoding: String,
     sampleFiles: List<File>,
     labelerConf: LabelerConf,
+    rootSampleDirectory: String,
+    moduleDefinition: ModuleDefinition,
 ): TemplatePluginResult {
     val js = JavaScript(
         logHandler = Log.infoFileHandler,
         currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile(),
     )
     val result = runCatching {
-        val inputTexts = inputFiles.map { it.readText(Charset.forName(encoding)) }
-        val resourceTexts = plugin.readResourceFiles()
-
         js.set("debug", isDebug)
         js.setJson("labeler", labelerConf)
-        js.setJson("inputs", inputTexts)
-        js.setJson("samples", sampleFiles.map { it.name })
         js.setJson("params", params.resolve(project = null, js = null))
-        js.setJson("resources", resourceTexts)
 
         listOfNotNull(
             if (plugin.outputRawEntry.not()) Resources.classEntryJs else null,
             Resources.expectedErrorJs,
             Resources.fileJs,
         ).forEach { js.execResource(it) }
+
+        val inputFinderScriptFile = plugin.inputFinderScriptFile
+        val inputTexts = if (labelerConf.isSelfConstructed && inputFinderScriptFile != null) {
+            val inputFinderScriptTexts = plugin.directory.resolve(inputFinderScriptFile).readText()
+            js.set("root", rootSampleDirectory)
+            js.set("moduleName", moduleDefinition.name)
+            js.execResource(Resources.prepareBuildProjectJs)
+            js.exec(inputFinderScriptFile, inputFinderScriptTexts)
+            val encodingByScript = js.getOrNull<String>("encoding")
+            js.getJson<List<String>>("inputFilePaths").map {
+                it.toFile().readText(Charset.forName(encodingByScript ?: encoding))
+            }
+        } else {
+            inputFiles.map { it.readText(Charset.forName(encoding)) }
+        }
+        js.setJson("inputs", inputTexts)
+        val resourceTexts = plugin.readResourceFiles()
+        js.setJson("resources", resourceTexts)
+        js.setJson("samples", sampleFiles.map { it.name })
 
         plugin.scriptFiles.zip(plugin.readScriptTexts()).forEach { (file, source) ->
             Log.debug("Launch script: $file")

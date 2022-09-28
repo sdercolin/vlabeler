@@ -1,4 +1,5 @@
 import com.sdercolin.vlabeler.util.JavaScript
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -102,6 +103,15 @@ class JavaScriptTest {
             )
             val expected = listOf("c" to 1, "d" to 2, "e" to 3)
             assertEquals(expected, it.getJson("list"))
+        }
+    }
+
+    @Test
+    fun testRawObjectList() {
+        JavaScript().use {
+            val list = listOf(File("a"), File("b"))
+            it.setArray("list", list)
+            assertEquals(list, it.getArray("list"))
         }
     }
 }

@@ -42,6 +42,7 @@ data class Plugin(
     val parameters: Parameters? = null,
     val scriptFiles: List<String>,
     val resourceFiles: List<String> = listOf(),
+    val inputFinderScriptFile: String? = null,
     @Transient val directory: File? = null,
     @Transient val builtIn: Boolean = false,
 ) : BasePlugin {
