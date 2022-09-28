@@ -346,7 +346,7 @@ data class LabelerConf(
             val parameter = requireNotNull(element["parameter"]).let {
                 decoder.json.decodeFromJsonElement(PolymorphicSerializer(Parameter::class), it)
             }
-            val injector = element["injector"]?.let {
+            val injector = element["injector"]?.takeUnless { it is JsonNull }?.let {
                 decoder.json.decodeFromJsonElement(ListSerializer(String.serializer()), it)
             }
             return ParameterHolder(parameter, injector)

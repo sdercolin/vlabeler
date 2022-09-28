@@ -300,6 +300,10 @@ class EditorState(
         appState.editEntryTag(index, tag)
     }
 
+    fun selectModule(index: Int) {
+        appState.selectModule(index)
+    }
+
     fun clear() {
         Log.info("EditorState clear()")
         chartStore.clear()

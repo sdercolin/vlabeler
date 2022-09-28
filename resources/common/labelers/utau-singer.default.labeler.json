@@ -290,6 +290,19 @@
         "    labeler.lockedDrag.useStart = true",
         "}"
       ]
+    },
+    {
+      "parameter": {
+        "name": "useRootDirectory",
+        "type": "boolean",
+        "label": {
+          "en": "Include samples under the root directory of the singer",
+          "zh": "包括歌手根目录下的采样",
+          "ja": "歌手のルートディレクトリ以下のサンプルを含める"
+        },
+        "defaultValue": false
+      },
+      "injector": null
     }
   ],
   "projectConstructor": {
@@ -297,6 +310,9 @@
       "// `root` is the input File object indicating the root sample directory.",
       "// `acceptedSampleExtensions` is provided as list of strings indicating the accepted extensions of sample files",
       "let subFolders = root.listChildDirectories()",
+      "if (params['useRootDirectory']) {",
+      "    subFolders.unshift(root)",
+      "}",
       "let modules = []",
       "for (subFolder of subFolders) {",
       "    let samples = subFolder.listChildFiles().filter(file => acceptedSampleExtensions.includes(file.getExtension()))",

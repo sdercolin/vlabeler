@@ -73,6 +73,7 @@ interface ProjectStore {
     fun toggleCurrentEntryStar()
     fun editEntryTag(index: Int, tag: String)
     fun editCurrentEntryTag(tag: String)
+    fun selectModule(index: Int)
 }
 
 class ProjectStoreImpl(
@@ -334,5 +335,9 @@ class ProjectStoreImpl(
 
     override fun editCurrentEntryTag(tag: String) {
         editCurrentProjectModule { editEntryTag(currentIndex, tag) }
+    }
+
+    override fun selectModule(index: Int) {
+        editProject { copy(currentModuleIndex = index) }
     }
 }

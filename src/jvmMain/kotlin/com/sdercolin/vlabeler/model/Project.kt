@@ -368,7 +368,10 @@ data class Project(
     val currentSampleFile: File
         get() = currentModule.currentSampleFile
 
-    fun getModule(name: String) = modules.first { it.name == name }
+    val isMultiModule: Boolean
+        get() = modules.size > 1
+
+    private fun getModule(name: String) = modules.first { it.name == name }
 
     fun updateModule(name: String, updater: Module.() -> Module): Project {
         val module = getModule(name)
@@ -580,7 +583,7 @@ suspend fun projectOf(
             Resources.moduleDefinitionJs,
             Resources.prepareBuildProjectJs,
         ).forEach { js.execResource(it) }
-
+        labelerParams?.resolve(project = null, js = js)?.let { js.setJson("params", it) }
         labelerConf.projectConstructor.scripts.joinToString("\n").let { js.eval(it) }
         val modules = js.getJson<List<RawModuleDefinition>>("modules")
         js.close()

@@ -14,18 +14,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NewLabel
+import androidx.compose.material.icons.filled.Tab
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,10 +44,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
@@ -58,8 +67,10 @@ import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.editor.RenderStatusLabel
 import com.sdercolin.vlabeler.ui.editor.ToolboxView
 import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.ui.theme.DarkGray
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
+import com.sdercolin.vlabeler.util.animateScrollToShowItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -82,6 +93,14 @@ fun Labeler(
     }
 
     Column(Modifier.fillMaxSize()) {
+        if (project.isMultiModule) {
+            ModuleSelectorBar(
+                moduleNames = project.modules.map { it.name },
+                currentModuleIndex = project.currentModuleIndex,
+                selectModule = { editorState.selectModule(it) },
+            )
+            Divider(color = DarkGray.copy(alpha = 0.5f))
+        }
         EntryTitleBar(
             appConf = appState.appConf,
             title = editorState.entryTitle,
@@ -130,6 +149,74 @@ fun Labeler(
         )
         val bottomBarState = rememberBottomBarState(project, appState, editorState)
         BottomBar(bottomBarState, appState)
+    }
+}
+
+@Composable
+private fun ModuleSelectorBar(
+    moduleNames: List<String>,
+    currentModuleIndex: Int,
+    selectModule: (Int) -> Unit,
+) {
+    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = currentModuleIndex)
+    LaunchedEffect(currentModuleIndex) {
+        lazyListState.animateScrollToShowItem(currentModuleIndex)
+    }
+    var isShowingDropdown by remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier.fillMaxWidth().background(LightGray.copy(alpha = 0.08f)),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier.height(IntrinsicSize.Max)
+                .padding(horizontal = 15.dp)
+                .clickable { isShowingDropdown = true },
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = Icons.Default.Tab,
+                tint = MaterialTheme.colors.onBackground,
+                contentDescription = null,
+            )
+        }
+        DropdownMenu(isShowingDropdown, onDismissRequest = { isShowingDropdown = false }) {
+            moduleNames.forEachIndexed { index, name ->
+                DropdownMenuItem(
+                    onClick = {
+                        selectModule(index)
+                        isShowingDropdown = false
+                    },
+                ) {
+                    Text(text = name)
+                }
+            }
+        }
+        LazyRow {
+            items(moduleNames.size) { index ->
+                val moduleName = moduleNames[index]
+                val isSelected = index == currentModuleIndex
+                val backgroundColor = if (isSelected) {
+                    MaterialTheme.colors.primaryVariant
+                } else {
+                    Color.Transparent
+                }
+                val textColor = MaterialTheme.colors.onSurface
+                Box(
+                    modifier = Modifier
+                        .background(color = backgroundColor)
+                        .clickable { selectModule(index) }
+                        .padding(vertical = 10.dp, horizontal = 15.dp),
+                ) {
+                    Text(
+                        text = moduleName,
+                        style = MaterialTheme.typography.caption,
+                        color = textColor,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+        }
     }
 }
 
