@@ -75,6 +75,8 @@ class ProjectCreatorState(
     var templatePluginSavedParams: ParamMap? by mutableStateOf(null)
     var templatePluginError: Boolean by mutableStateOf(false)
 
+    var warningText: Strings? by mutableStateOf(null)
+
     @Composable
     fun getTemplateName(): String = templatePlugin?.displayedName?.get()
         ?: string(Strings.StarterNewTemplatePluginNone)
@@ -93,16 +95,21 @@ class ProjectCreatorState(
             labeler.defaultInputFilePath?.let { sampleDirectory.toFile().resolve(it) }?.absolutePath
         }
 
-    private val encodingState = mutableStateOf(
-        run {
-            val parser = labeler.parser
-            val encodingName = encodings.find { encodingNameEquals(parser.defaultEncoding, it) }
-                ?: encodings.first().takeIf { it.isNotBlank() }
-                ?: encodings.first()
-            encodingName
-        },
-    )
-    var encoding: String by encodingState
+    val canAutoExport: Boolean
+        get() = if (labeler.isSelfConstructed) {
+            true
+        } else {
+            autoExportTargetPath != null
+        }
+
+    var encoding: String by mutableStateOf(getEncodingByLabeler())
+
+    private fun getEncodingByLabeler(): String {
+        val parser = labeler.parser
+        return encodings.find { encodingNameEquals(parser.defaultEncoding, it) }
+            ?: encodings.first().takeIf { it.isNotBlank() }
+            ?: encodings.first()
+    }
 
     fun consumeLaunchArguments() {
         val args = launchArguments ?: return
@@ -223,6 +230,7 @@ class ProjectCreatorState(
         if (plugin != null) {
             return plugin.inputFileExtension
         }
+        if (labeler.isSelfConstructed) return null
         return labeler.extension
     }
 
@@ -236,8 +244,12 @@ class ProjectCreatorState(
             val savedParams = labeler.loadSavedParams(labeler.getSavedParamsFile())
             updateLabelerParams(savedParams)
             labelerSavedParams = savedParams
+            if (labeler.isSelfConstructed) {
+                encoding = getEncodingByLabeler()
+                updatePlugin(null)
+            }
+            updateInputFileIfNeeded()
         }
-        updateInputFileIfNeeded()
     }
 
     fun updateLabelerParams(params: ParamMap?) {
@@ -263,6 +275,9 @@ class ProjectCreatorState(
                 updatePluginParams(savedParams)
                 templatePluginSavedParams = savedParams
                 updateInputFileIfNeeded()
+                if (labeler.isSelfConstructed) {
+                    warningText = Strings.StarterNewWarningSelfConstructedLabelerWithTemplatePlugin
+                }
             }
         } else {
             templatePlugin = null
@@ -321,9 +336,17 @@ class ProjectCreatorState(
 
     @Composable
     fun getInputFileLabelText(): String {
+        val hasPlugin = templatePlugin != null
         val extension = getSupportedInputFileExtension()
+        if (hasPlugin) {
+            return if (extension == null) {
+                string(Strings.StarterNewInputFileDisabledByPlugin)
+            } else {
+                string(Strings.StarterNewInputFile, extension)
+            }
+        }
         return if (extension == null) {
-            string(Strings.StarterNewInputFileDisabled)
+            string(Strings.StarterNewInputFileDisabledByLabeler)
         } else {
             string(Strings.StarterNewInputFile, extension)
         }
@@ -376,7 +399,8 @@ class ProjectCreatorState(
         currentPathPicker = PathPicker.InputFile
     }
 
-    val isEncodingSelectionEnabled get() = inputFile != ""
+    val isEncodingSelectionEnabled: Boolean
+        get() = getSupportedInputFileExtension() != null || labeler.isSelfConstructed
 
     fun getFilePickerDirectoryMode(picker: PathPicker) =
         picker != PathPicker.InputFile

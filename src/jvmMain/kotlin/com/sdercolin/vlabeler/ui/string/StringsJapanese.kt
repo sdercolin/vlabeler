@@ -89,12 +89,17 @@ fun Strings.ja(): String? = when (this) {
     StarterNewTemplatePluginNone -> "なし"
     StarterNewInputFile -> "入力ファイル (.%s)"
     StarterNewInputFilePlaceholder -> "（空白の場合、ラベラーによってデフォルトのテンプレートが作成されます）"
-    StarterNewInputFileDisabled -> "現在選択されているテンプレート生成器は入力ファイルを必要としません。"
+    StarterNewInputFileDisabledByLabeler -> "現在選択されているラベラーは入力ファイルを必要としません"
+    StarterNewInputFileDisabledByPlugin -> "現在選択されているテンプレート生成器は入力ファイルを必要としません"
     StarterNewEncoding -> "エンコーディング"
     StarterNewAutoExport -> "自動エクスポート"
     StarterNewAutoExportHelp ->
         "保存時、自動的にプロジェクトを入力ファイルに上書きエクスポートします。" +
             "入力ファイルが指定されていない場合、ラベラーが指定した場所にエクスポートされます。"
+    StarterNewWarningSelfConstructedLabelerWithTemplatePlugin ->
+        "複数のフォルダを管理するラベラーとともに、テンプレート生成器を使用しようとしています。" +
+            "これは、すべての既存のラベルファイルを生成されたエントリで上書きする可能性があるため、危険です。" +
+            "この設定が必要なものであることを再度確認してください。"
     SampleListIncludedHeader -> "使用されているサンプル"
     SampleListIncludedItemEntryCountSingle -> "%d 個のエントリ"
     SampleListIncludedItemEntryCountPlural -> "%d 個のエントリ"

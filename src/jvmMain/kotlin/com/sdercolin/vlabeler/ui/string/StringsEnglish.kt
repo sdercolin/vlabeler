@@ -86,12 +86,17 @@ fun Strings.en(): String = when (this) {
     StarterNewTemplatePluginNone -> "None"
     StarterNewInputFile -> "Input file (.%s)"
     StarterNewInputFilePlaceholder -> "(One would be created if left blank)"
-    StarterNewInputFileDisabled -> "No input file is required by the selected template generator"
+    StarterNewInputFileDisabledByLabeler -> "No input file is required by the selected labeler"
+    StarterNewInputFileDisabledByPlugin -> "No input file is required by the selected template generator"
     StarterNewEncoding -> "Encoding"
     StarterNewAutoExport -> "Auto-export"
     StarterNewAutoExportHelp ->
         "Automatically export the project to overwrite the given input file (if not given, " +
             "the default file position defined by labeler) when the project is saved."
+    StarterNewWarningSelfConstructedLabelerWithTemplatePlugin ->
+        "You are trying to use a template generator with a labeler that manages multiple folders. " +
+            "This is dangerous because it may overwrite all your existing label files with the generated entries. " +
+            "Please double confirm that the settings meet your needs."
     SampleListIncludedHeader -> "Project sample files"
     SampleListIncludedItemEntryCountSingle -> "%d entry"
     SampleListIncludedItemEntryCountPlural -> "%d entries"

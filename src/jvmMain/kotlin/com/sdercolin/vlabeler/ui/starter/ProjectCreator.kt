@@ -60,7 +60,9 @@ import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.Tooltip
+import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
+import com.sdercolin.vlabeler.ui.dialog.WarningDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.LabelerPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.TemplatePluginDialog
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -128,6 +130,9 @@ fun ProjectCreator(
             }
             state.currentPathPicker?.let { picker ->
                 PickerDialog(state, picker)
+            }
+            state.warningText?.let {
+                WarningDialog(string(it), finish = { state.warningText = null }, style = WarningTextStyle.Warning)
             }
         }
     }
@@ -427,7 +432,7 @@ private fun EncodingSelector(state: ProjectCreatorState) {
 @Composable
 private fun AutoExportSwitch(state: ProjectCreatorState) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        val contentAlpha = if (state.autoExportTargetPath != null) {
+        val contentAlpha = if (state.canAutoExport) {
             LocalContentAlpha.current
         } else {
             ContentAlpha.disabled
@@ -437,7 +442,7 @@ private fun AutoExportSwitch(state: ProjectCreatorState) {
                 checked = state.autoExport,
                 onCheckedChange = { state.toggleAutoExport(it) },
                 colors = getSwitchColors(),
-                enabled = state.autoExportTargetPath != null,
+                enabled = state.canAutoExport,
             )
             Spacer(Modifier.width(10.dp))
             Text(string(Strings.StarterNewAutoExport))

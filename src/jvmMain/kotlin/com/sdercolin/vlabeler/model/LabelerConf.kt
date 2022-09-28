@@ -115,6 +115,7 @@ data class LabelerConf(
 
     val fileName get() = "$name.$LabelerFileExtension"
     val isBuiltIn get() = DefaultLabelerDir.listFiles().orEmpty().any { it.name == fileName }
+    val isSelfConstructed get() = projectConstructor != null
 
     override val parameterDefs: List<Parameter<*>>
         get() = parameters.map { it.parameter }

@@ -88,10 +88,14 @@ fun Strings.zhHans(): String? = when (this) {
     StarterNewTemplatePluginNone -> "无"
     StarterNewInputFile -> "输入文件 (.%s)"
     StarterNewInputFilePlaceholder -> "（如留空，将根据标记器来创建默认模版）"
-    StarterNewInputFileDisabled -> "当前选择的模版生成器不需要输入文件"
+    StarterNewInputFileDisabledByLabeler -> "当前选择的标记器不需要输入文件"
+    StarterNewInputFileDisabledByPlugin -> "当前选择的模版生成器不需要输入文件"
     StarterNewEncoding -> "编码"
     StarterNewAutoExport -> "自动导出"
     StarterNewAutoExportHelp -> "保存时，自动将工程覆盖导出到输入文件（如未指定输入文件，将自动导出到由标记器指定的位置）"
+    StarterNewWarningSelfConstructedLabelerWithTemplatePlugin ->
+        "您正在尝试在一个管理多个文件夹的标记器上使用模板生成器。" +
+            "这是危险的，因为它可能会用生成的条目覆盖所有现有的标记文件。请再次确认设置是否符合您的需求。"
     SampleListIncludedHeader -> "工程中使用到的采样"
     SampleListIncludedItemEntryCountSingle -> "%d 条目"
     SampleListIncludedItemEntryCountPlural -> "%d 条目"
