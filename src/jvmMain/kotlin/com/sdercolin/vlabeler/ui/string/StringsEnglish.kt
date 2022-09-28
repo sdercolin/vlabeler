@@ -137,7 +137,7 @@ fun Strings.en(): String = when (this) {
             "This entry is the only one that has reference of the current sample file.\n" +
             "If you need to add an entry on it later, please see menu `View` -> `Sample List`."
     AskIfLoadAutoSavedProjectDialogDescription ->
-        "Auto-saved project file found. Do you want to load it?" +
+        "Auto-saved project file found. Do you want to load it? " +
             "The file will be discarded if you opened or created another one."
     AskIfRedirectSampleDirectoryDialogDescription ->
         "The sample directory of this project (%s) is not found. " +
