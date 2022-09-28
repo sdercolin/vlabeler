@@ -126,6 +126,7 @@ class EntryListState(
 @Composable
 fun EntryList(
     editorConf: AppConf.Editor,
+    viewConf: AppConf.View,
     pinned: Boolean,
     filterState: EntryListFilterState,
     project: Project,
@@ -210,7 +211,7 @@ fun EntryList(
             FilterRow(filterState as LinkableEntryListFilterState, state::updateSearch)
         }
 
-        List(editorConf, state)
+        List(editorConf, viewConf, state)
     }
 }
 
@@ -323,7 +324,7 @@ private fun FilterRow(filterState: LinkableEntryListFilterState, updateSearch: (
 }
 
 @Composable
-private fun ColumnScope.List(editorConf: AppConf.Editor, state: EntryListState) {
+private fun ColumnScope.List(editorConf: AppConf.Editor, viewConf: AppConf.View, state: EntryListState) {
     var pressedIndex by remember { mutableStateOf<Int?>(null) }
     val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = state.currentIndex)
     val scrollbarAdapter = remember { ScrollbarAdapter(scrollState) }
@@ -368,7 +369,7 @@ private fun ColumnScope.List(editorConf: AppConf.Editor, state: EntryListState) 
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    ItemContent(editorConf, item)
+                    ItemContent(editorConf, viewConf, item)
                 }
             }
         }
@@ -380,7 +381,7 @@ private fun ColumnScope.List(editorConf: AppConf.Editor, state: EntryListState) 
 }
 
 @Composable
-private fun ItemContent(editorConf: AppConf.Editor, item: IndexedValue<Entry>) {
+private fun ItemContent(editorConf: AppConf.Editor, viewConf: AppConf.View, item: IndexedValue<Entry>) {
     Layout(
         content = {
             BasicText(
@@ -397,7 +398,9 @@ private fun ItemContent(editorConf: AppConf.Editor, item: IndexedValue<Entry>) {
                     style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
                 )
                 BasicText(
-                    text = item.value.sample,
+                    text = item.value.sample.runIf(viewConf.hideSampleExtension) {
+                        substringBeforeLast('.')
+                    },
                     modifier = Modifier.padding(start = 10.dp, top = 3.dp),
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,

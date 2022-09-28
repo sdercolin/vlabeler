@@ -102,6 +102,7 @@ fun Editor(state: EditorState, appState: AppState) {
             ) {
                 EntryList(
                     editorConf = appState.appConf.editor,
+                    viewConf = appState.appConf.view,
                     pinned = true,
                     filterState = state.pinnedEntryListFilterState,
                     project = state.project,

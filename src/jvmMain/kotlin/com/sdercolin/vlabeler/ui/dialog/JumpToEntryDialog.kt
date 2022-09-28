@@ -7,7 +7,11 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.editor.EntryList
 import com.sdercolin.vlabeler.ui.editor.EntryListFilterState
 
-data class JumpToEntryDialogArgs(val project: Project, val editorConf: AppConf.Editor) : EmbeddedDialogArgs {
+data class JumpToEntryDialogArgs(
+    val project: Project,
+    val editorConf: AppConf.Editor,
+    val viewConf: AppConf.View
+) : EmbeddedDialogArgs {
     override val customMargin: Boolean
         get() = true
 
@@ -25,6 +29,7 @@ fun JumpToEntryDialog(
     val filterState = remember { EntryListFilterState() }
     EntryList(
         editorConf = args.editorConf,
+        viewConf = args.viewConf,
         pinned = false,
         filterState = filterState,
         project = args.project,

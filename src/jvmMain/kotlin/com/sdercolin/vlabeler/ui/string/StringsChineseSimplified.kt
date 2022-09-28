@@ -262,6 +262,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesView -> "视图"
     PreferencesViewDescription -> "编辑视图的外观。"
     PreferencesViewLanguage -> "语言"
+    PreferencesViewHideSampleExtension -> "隐藏采样文件扩展名"
     PreferencesViewAppAccentColor -> "应用程序主题色（亮色）"
     PreferencesViewAppAccentColorVariant -> "应用程序主题色（暗色）"
     PreferencesViewPinnedEntryListPosition -> "固定条目列表的位置"

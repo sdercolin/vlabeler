@@ -272,6 +272,7 @@ fun Strings.ja(): String? = when (this) {
     PreferencesView -> "表示"
     PreferencesViewDescription -> "アプリケーションの表示を編集します。"
     PreferencesViewLanguage -> "言語"
+    PreferencesViewHideSampleExtension -> "サンプル名の拡張子を隠す"
     PreferencesViewAppAccentColor -> "アプリケーションのアクセント色（ライト）"
     PreferencesViewAppAccentColorVariant -> "アプリケーションのアクセント色（ダーク）"
     PreferencesViewPinnedEntryListPosition -> "ピン留めされたエントリリストの位置"

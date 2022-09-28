@@ -55,6 +55,7 @@
   },
   "view": {
     "language": "English",
+    "hideSampleExtension": true,
     "accentColor": "#F48FB1",
     "accentColorVariant": "#AD375F",
     "pinnedEntryListPosition": "Right"

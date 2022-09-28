@@ -223,7 +223,7 @@ class AppDialogStateImpl(
         }
 
     override fun openJumpToEntryDialog() = openEmbeddedDialog(
-        JumpToEntryDialogArgs(projectStore.requireProject(), state.appConf.editor),
+        JumpToEntryDialogArgs(projectStore.requireProject(), state.appConf.editor, state.appConf.view),
     )
 
     override fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose) {

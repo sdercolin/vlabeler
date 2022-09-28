@@ -317,6 +317,12 @@ abstract class PreferencesPage(
                     update = { copy(language = it) },
                     options = Language.values(),
                 )
+                switch(
+                    title = Strings.PreferencesViewHideSampleExtension,
+                    defaultValue = AppConf.View.DefaultHideSampleExtension,
+                    select = { it.hideSampleExtension },
+                    update = { copy(hideSampleExtension = it) },
+                )
                 color(
                     title = Strings.PreferencesViewAppAccentColor,
                     defaultValue = AppConf.View.DefaultAccentColor,

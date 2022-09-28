@@ -306,6 +306,7 @@ data class AppConf(
     /**
      * Configurations about views
      * @param language Language of the app
+     * @param hideSampleExtension When true, the extension of sample file names is hidden in the editor and entry lists
      * @param accentColor Color hex string of the accent color
      * @param accentColorVariant Color hex string of the accent color variant
      * @param pinnedEntryListPosition Position of the pinned entry list in the window
@@ -314,6 +315,7 @@ data class AppConf(
     @Immutable
     data class View(
         val language: Language = DefaultLanguage,
+        val hideSampleExtension: Boolean = DefaultHideSampleExtension,
         val accentColor: String = DefaultAccentColor,
         val accentColorVariant: String = DefaultAccentColorVariant,
         val pinnedEntryListPosition: ViewPosition = DefaultPinnedEntryListPosition,
@@ -322,6 +324,7 @@ data class AppConf(
         companion object {
 
             val DefaultLanguage = Language.English
+            const val DefaultHideSampleExtension = true
 
             /**
              * Equals to [com.sdercolin.vlabeler.ui.theme.Pink]

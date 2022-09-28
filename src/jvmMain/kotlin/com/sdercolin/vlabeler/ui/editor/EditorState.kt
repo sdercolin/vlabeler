@@ -22,6 +22,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,7 @@ class EditorState(
     var project: Project by mutableStateOf(project)
     var editedEntries: List<IndexedEntry> by mutableStateOf(project.getEntriesForEditing().second)
     private val isActive get() = appState.isEditorActive
-    private val appConf = appState.appConf
+    private val appConf get() = appState.appConf
     val keyboardViewModel = appState.keyboardViewModel
     val scrollFitViewModel = appState.scrollFitViewModel
     private val player get() = appState.player
@@ -62,10 +63,15 @@ class EditorState(
         get() = project.currentEntry.name
 
     @Composable
-    fun getEntrySubTitle(): String = if (editedEntries.size == 1) {
-        project.currentSampleName
-    } else {
-        string(Strings.EditorSubTitleMultiple, editedEntries.size, project.currentSampleName)
+    fun getEntrySubTitle(): String {
+        val currentSampleName = project.currentSampleName.runIf(appConf.view.hideSampleExtension) {
+            substringBeforeLast('.')
+        }
+        return if (editedEntries.size == 1) {
+            currentSampleName
+        } else {
+            string(Strings.EditorSubTitleMultiple, editedEntries.size, currentSampleName)
+        }
     }
 
     val entryStar: Boolean
