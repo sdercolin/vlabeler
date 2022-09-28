@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
 import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.io.fromRawLabels
@@ -585,10 +586,12 @@ suspend fun projectOf(
     val moduleDefinitions = if (labelerConf.projectConstructor != null) {
         val js = JavaScript(logHandler = Log.infoFileHandler)
 
+        js.set("debug", isDebug)
         js.set("root", sampleDirectory.toFile())
         js.setJson("acceptedSampleExtensions", Sample.acceptableSampleFileExtensions)
         listOf(
             Resources.fileJs,
+            Resources.expectedErrorJs,
             Resources.moduleDefinitionJs,
             Resources.prepareBuildProjectJs,
         ).forEach { js.execResource(it) }

@@ -42,7 +42,6 @@ class LinkableEntryListFilterState(project: Project, private val submitFilter: (
     fun updateProject(project: Project) {
         projectFiler = project.currentModule.entryFilter
         linked = projectFiler != null
-        // TODO: update filters in other modules according to config
         project.currentModule.entryFilter?.let { filter = it }
     }
 

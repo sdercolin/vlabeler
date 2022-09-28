@@ -23,92 +23,59 @@ import kotlinx.serialization.json.JsonObject
 
 /**
  * Configuration of the labeler's appearances and behaviors
+ * @property name Unique name of the labeler
+ * @property version Version code in integer. Configurations with same [name] and [version] should always have same
+ *   contents if distributed in public
+ * @property extension File extension of the raw label file
+ * @property defaultInputFilePath Default name of the input file relative to the sample directory
+ * @property displayedName Name displayed in the UI (localized)
+ * @property author Author of the labeler
+ * @property email Email of the author
+ * @property description Description of the labeler (localized)
+ * @property website Website url of the labeler
+ * @property continuous Whether the labeler use continuous mode, where the end of entry is forced set to the start of
+ *   its next entry
+ * @property allowSameNameEntry Whether to allow more than one entry with a shared name in one sample
+ * @property defaultValues Default value listed as [start, *fields, end] in millisecond
+ * @property defaultExtras Default [extraFieldNames] values
+ * @property fields Objects in [Field] type containing data used in the label files, except for built-in "start" and
+ *   "end". Corresponds to [Entry.points]
+ * @property extraFieldNames Extra field names for some data only for calculation. These fields are saved as String
+ * @property lockedDrag Defines when to use locked dragging (all parameters will move with dragged one)
+ * @property overflowBeforeStart Action taken when there are points before "start"
+ * @property overflowAfterEnd Action taken when there are points after "end"
+ * @property decimalDigit Decimal digit count used in [properties] and [writer]
+ * @property properties Properties that are used in the following procedures. See [Property]
+ * @property parser Defines how data from the original label format are parsed
+ * @property writer Defines how to write content in the original label format
+ * @property parameters Configurable parameters of the labeler. See [ParameterHolder]
+ * @property projectConstructor Scripts to construct a project with sub-projects. See [ProjectConstructor]
  */
 @Serializable
 @Immutable
 data class LabelerConf(
-    /**
-     * Unique name of the labeler
-     */
     override val name: String,
-    /**
-     * Version code in integer
-     * Configurations with same [name] and [version] should always have same contents if distributed in public
-     */
     override val version: Int = 1,
-    /**
-     * File extension of the raw label file
-     */
     val extension: String,
-    /**
-     * Default name of the input file relative to the sample directory
-     */
     val defaultInputFilePath: String? = null,
-    /**
-     * Name displayed in the UI (localized)
-     */
     override val displayedName: LocalizedJsonString = name.toLocalized(),
     override val author: String,
     override val email: String = "",
     override val description: LocalizedJsonString = "".toLocalized(),
     override val website: String = "",
-    /**
-     * Continuous mode, where the end of entry is forced set to the start of its next entry
-     */
     val continuous: Boolean = false,
-    /**
-     * Whether to allow more than one entry with a shared name in one sample
-     */
     val allowSameNameEntry: Boolean = false,
-    /**
-     * Default value listed as [start, *fields, end] in millisecond
-     */
     val defaultValues: List<Float>,
-    /**
-     * Default [extraFieldNames] values
-     */
     val defaultExtras: List<String>,
-    /**
-     * Fields defined except for built-in "start" and "end".
-     * Corresponds to [Entry.points]
-     */
     val fields: List<Field> = listOf(),
-    /**
-     * Extra field names for some data only for calculation.
-     * Saved as String
-     */
     val extraFieldNames: List<String> = listOf(),
-    /**
-     * Defines when to use locked dragging (all parameters will move with dragged one)
-     */
     val lockedDrag: LockedDrag = LockedDrag(),
-    /**
-     * Action taken when there are points before "start"
-     */
     val overflowBeforeStart: PointOverflow = PointOverflow.Error,
-    /**
-     * Action taken when there are points after "end"
-     */
     val overflowAfterEnd: PointOverflow = PointOverflow.Error,
-    /**
-     * Decimal digit count of the properties and writer
-     */
     val decimalDigit: Int = 2,
-    /**
-     * Properties that are used in the following procedures. See [Property]
-     */
     val properties: List<Property> = listOf(),
-    /**
-     * Defines how data from the original format are parsed
-     */
     val parser: Parser,
-    /**
-     * Defines how to write content in the original format
-     */
     val writer: Writer,
-    /**
-     * Configurable parameters of the labeler
-     */
     val parameters: List<ParameterHolder> = listOf(),
     val projectConstructor: ProjectConstructor? = null,
 ) : BasePlugin {
@@ -137,19 +104,19 @@ data class LabelerConf(
 
     /**
      * Custom field of the labeler
-     * @param name Unique name of the field
-     * @param label Label displayed in the UI (localized)
-     * @param color Color code in format of "#ffffff"
-     * @param height Label height ratio to the height of waveforms part (0~1)
-     * @param dragBase True if all the other parameter line move together with this one
-     * @param filling Name of the target field to which a filled area is drawn from this field. "start" and "end" are
+     * @property name Unique name of the field
+     * @property label Label displayed in the UI (localized)
+     * @property color Color code in format of "#ffffff"
+     * @property height Label height ratio to the height of waveforms part (0~1)
+     * @property dragBase True if all the other parameter line move together with this one
+     * @property filling Name of the target field to which a filled area is drawn from this field. "start" and "end" are
      *   also available
-     * @param constraints Define value constraints between the fields. See [Constraint]
-     * @param shortcutIndex Index in the shortcut list. Could be 1~8 (0 is reserved for "start")
-     * @param replaceStart Set to true if this field should replace "start" when displayed. In this case, other fields
+     * @property constraints Define value constraints between the fields. See [Constraint]
+     * @property shortcutIndex Index in the shortcut list. Could be 1~8 (0 is reserved for "start")
+     * @property replaceStart Set to true if this field should replace "start" when displayed. In this case, other fields
      *   can be set smaller than the replaced "start", and the original [Entry.start] will be automatically set to the
      *   minimum value of all the fields. Cannot be used when [continuous] is true
-     * @param replaceEnd Set to true if this field should replace "end" when displayed. In this case, other fields
+     * @property replaceEnd Set to true if this field should replace "end" when displayed. In this case, other fields
      *   can be set larger than the replaced "end", and the original [Entry.end] will be automatically set to the
      *   maximum value of all the fields. Cannot be used when [continuous] is true
      */
@@ -171,8 +138,8 @@ data class LabelerConf(
     /**
      * Except for "start" and "end" (all fields should be between "start" and "end").
      * You don't have to declare the same constraint in both two fields
-     * @param min Index of the field that should be smaller or equal to this field
-     * @param max Index of the field that should be greater or equal to this field
+     * @property min Index of the field that should be smaller or equal to this field
+     * @property max Index of the field that should be greater or equal to this field
      */
     @Serializable
     @Immutable
@@ -183,8 +150,8 @@ data class LabelerConf(
 
     /**
      * Definition of when should all parameter lines move together when dragging
-     * @param useDragBase True if locked drag is enabled when field with [Field.dragBase] == true is dragged
-     * @param useStart True if locked drag is enabled when the start line is dragged
+     * @property useDragBase True if locked drag is enabled when field with [Field.dragBase] == true is dragged
+     * @property useStart True if locked drag is enabled when the start line is dragged
      */
     @Serializable
     @Immutable
@@ -217,11 +184,11 @@ data class LabelerConf(
 
     /**
      * Definition for parsing the raw label file to local [Entry]
-     * @param defaultEncoding Default text encoding of the input file
-     * @param extractionPattern Regex pattern that extract groups
-     * @param variableNames Definition of how the extracted string groups will be put into variables later in the parser
-     *   JavaScript code. Should be in the same order as the extracted groups
-     * @param scripts JavaScript code in lines that sets properties of [Entry] using the variables extracted
+     * @property defaultEncoding Default text encoding of the input file
+     * @property extractionPattern Regex pattern that extract groups
+     * @property variableNames Definition of how the extracted string groups will be put into variables later in the
+     *   parser JavaScript code. Should be in the same order as the extracted groups
+     * @property scripts JavaScript code in lines that sets properties of [Entry] using the variables extracted
      */
     @Serializable
     @Immutable
@@ -232,7 +199,7 @@ data class LabelerConf(
         /**
          * Available input variables:
          * - String "inputFileName": Name of the input file without extension
-         * - String List "sampleNames": Names of the samples without extension in the folder
+         * - String array "sampleNames": Names of the samples without extension in the folder
          * - String "<item in [variableNames]>": Values extracted by [extractionPattern]
          * - Map "params", created according to [parameters], see [ParameterHolder] for details
          *
@@ -241,8 +208,8 @@ data class LabelerConf(
          * - String "name"
          * - Float "start" (in millisecond)
          * - Float "end" (in millisecond)
-         * - Float List "points" (in millisecond)
-         * - String List corresponding values defined in [extraFieldNames]
+         * - Float array "points" (in millisecond)
+         * - String array corresponding values defined in [extraFieldNames]
          *
          * If "sample" is not set, the first sample file is used by all entries in case all entries are bound to the
          * only one sample file, so the file name doesn't exist in the line.
@@ -256,8 +223,8 @@ data class LabelerConf(
 
     /**
      * Definition for line format in the raw label file
-     * @param format String format to generate the output line
-     * @param scripts JavaScript code in lines that generate the output line
+     * @property format String format to generate the output line
+     * @property scripts JavaScript code in lines that generate the output line
      * Either [format] or [scripts] should be given. If both of them are given, [scripts] is used
      */
     @Serializable
@@ -290,9 +257,9 @@ data class LabelerConf(
 
     /**
      * Definition of properties that will be written to the raw label file
-     * @param name Unique name of the property
-     * @param displayedName Name displayed in property view UI (localized)
-     * @param value Mathematical expression text including fields written as "{[Field.name]}" and "{start}", "{end}".
+     * @property name Unique name of the property
+     * @property displayedName Name displayed in property view UI (localized)
+     * @property value Mathematical expression text including fields written as "{[Field.name]}" and "{start}", "{end}".
      *   Extra fields of number type defined in [extraFieldNames] are also available. The expression is evaluated in
      *   JavaScript.
      */
@@ -311,8 +278,9 @@ data class LabelerConf(
      *  - keys are defined in as `parameters[].parameter.name`
      *  - value could be undefined, which means the parameter is not set
      * 2. via injected (updated) [LabelerConf] by [injector], if it is not null
-     * @param parameter Definition of the parameter
-     * @param injector JavaScript code that injects the parameter value into the labeler.
+     * @property parameter Definition of the parameter. They are the same with the parameters used by a plugin, so you
+     *   can also see [readme/plugin-development.md] for details
+     * @property injector JavaScript code that injects the parameter value into the labeler.
      *   `labeler` and `value` are available as variables.
      *   Note the injector cannot change the following info of the labeler:
      *   - [name]
@@ -372,6 +340,28 @@ data class LabelerConf(
         }
     }
 
+    /**
+     * In order to edit multiple label files in a single project, the labeler should be able to construct sub-projects
+     * when creating the project.
+     * This property defines the sub-project structure and building procedure.
+     * In the source code, we call the sub-project as "Module".
+     * The [scripts] is JavaScript code lines that creates [RawModuleDefinition] objects.
+     *
+     * Available input variables:
+     * - File "root": the root directory of the project (the `Sample Directory` choosed in the project creation page)
+     *   the `File` type is a wrapper of Java's `java.io.File` class.
+     *   Please check the documentation in [readme/file-api.md],
+     *   or the source code in [src/main/jvmMain/resources/js/file.js]
+     * - Map "params", created according to [parameters], see [ParameterHolder] for details
+     * - String array "acceptedSampleExtensions": the array of accepted sample extensions in the current application.
+     *   Defined in [com.sdercolin.vlabeler.io.Sample.acceptableSampleFileExtensions]
+     *
+     * Output variables that the scripts should set:
+     * - Array "modules": an array of [RawModuleDefinition] objects.
+     *   Use `new ModuleDefinition()` to create a new object.
+     *   Please check the JavaScript source code with documentations in
+     *   [src/main/jvmMain/resources/js/module_definition.js] for details.
+     */
     @Serializable
     @Immutable
     data class ProjectConstructor(

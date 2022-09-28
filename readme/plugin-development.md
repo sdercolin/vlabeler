@@ -33,6 +33,7 @@ A plugin for `vLabeler` is a folder containing:
 | parameters                  | Parameters &#124; null | null           | all                   | See the `Defining Parameters` section for detail.                                                                                                                                  |
 | scriptFiles                 | List\<String>          | (Required)     | all                   | File names of all your scripts files. The files will be executed in the same order as declared.                                                                                    |
 | resourceFiles               | List\<String>          | empty list     | all                   | List of String. File names of all the files that you use as resources in your scripts. The contents will be passed to your scripts as string values in the same order as declared. |
+| inputFinderScriptFile       | String &#124; null     | null           | template              | File name of the script file to help find the input files dynamically if the labeler creates multiple sub-projects.                                                                |
 
 ### Defining Parameters
 
@@ -131,11 +132,36 @@ The following variables are provided before your scripts are executed.
 | name      | type          | description                                                                                                        |
 |-----------|---------------|--------------------------------------------------------------------------------------------------------------------|
 | inputs    | List\<String> | List of texts read from the input files. Check the list size if your input file is optional.                       |
-| samples   | List\<String> | List of file names of the sample files. Extension `.wav` is not included.                                          |
+| samples   | List\<String> | List of file names of the sample files.                                                                            |
 | params    | Dictionary    | Use `name` of the defined parameters as the key to get values in their actual types.                               |
 | resources | List\<String> | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
 | labeler   | LabelerConf   | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
 | debug     | Boolean       | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
+
+### Find input files dynamically when constructing a project with sub-projects
+
+When you use a labeler which constructs a project with sub-projects, you may want to find input files dynamically for
+every sub-project. The `Input file` field in the `New Project` page is not suitable for this purpose because it only
+accepts a single file (thus it's disabled in this case). Instead, you can provide a script file via the plugin's
+`inputFinderScriptFile` property in the `plugin.json`.
+
+The script file should be a JavaScript file which:
+
+- takes a variable `root` of `File` type as input, which indicates the root directory of the project, i.e.
+  the `Sample Directory` set in the project creation page.
+- takes a variable `moduleName` of `String` type as input, which indicates the name of the sub-project.
+- takes variables `debug`, `labeler`, `params` as input, which are the same as the ones provided in the template
+  generation
+  scripts.
+- should set a variable `inputFilePaths` of `String[]` type as output, which contains all the absolute paths of the
+  input files you want to use.
+- may set a variable `encoding` of `String` type as output, which indicates the encoding of the input files. If not set,
+  the encoding selected in the project creation page is used.
+
+The `File` type is a JavaScript wrapper of Java's `java.io.File` class. See the [documentation](file-api.md) for
+details.
+
+Check the [audacity2lab plugin](../resources/common/plugins/template/audacity2lab) for an example.
 
 ### Use an input file parameter
 
@@ -154,7 +180,7 @@ Put items in the following type to the `output` list (the class is defined befor
 ```javascript
 class Entry {
     constructor(sample, name, start, end, points, extras, notes = new Notes()) {
-        this.sample = sample // sample file name without extension
+        this.sample = sample // sample file name
         this.name = name // entry name (alias)
         this.start = start // float value in millisecond
         this.end = end // float value in millisecond
@@ -201,6 +227,10 @@ Check the following built-in `template` plugins as examples:
 - [cv-oto-gen](../resources/common/plugins/template/cv-oto-gen): Generate CV oto entries from parameters
 - [regex-raw-gen](../resources/common/plugins/template/regex-raw-gen): Use a regular expression to generate raw entry
   lines. Supports all types of labelers.
+- [audacity2lab](../resources/common/plugins/template/audacity2lab): Generate lab entries from an audacity label file.
+  It also supports the `NNSVS singer labeler` which constructs a project with sub-projects.
+  See [Find input files dynamically when constructing a project with sub-projects](#find-input-files-dynamically-when-constructing-a-project-with-sub-projects)
+  for details.
 
 ## Batch Edit (Macro) Scripts
 

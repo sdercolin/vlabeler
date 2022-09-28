@@ -53,11 +53,13 @@ For UTAU oto usages, there are two items in the built-in labeler list:
 
 - UTAU oto labeler
 
-  If you don't need negative overlap values, please choose this one.
+  If you only want to edit one `oto.ini` file, please use this labeler.
 
-- UTAU oto labeler plus
+- UTAU singer labeler
 
-  `Ovl` line can be moved to the left of the start line to get negative overlap values.
+  If you want to edit multiple `oto.ini` files under a singer voicebank, please use this labeler.
+  Please set the singer's root folder (which usually contains a `charactor.txt` file) as the `Sample Directory` when you
+  create the project.
 
 #### Working on audio labels (Continuous mode)
 
@@ -69,11 +71,31 @@ For label files used in NNSVS/ENUNU and similar systems, the following options a
 
   This labeler is for Sinsy (NNSVS/ENUNU) lab files, which uses `100ns` as the time unit and use ` ` (space) as the
   separator.
+  It only accepts one label file per project. A wav file is bound to the label file by the file name, e.g.,
+  if the input label file is `foo.lab`, the wav file named `foo.wav` will be selected from the `Sample Directory`.
 
 - Audacity labeler
 
   This labeler is for `Labels` file created by Audacity, which uses `s` as the time unit and use `\t` (tab) as the
   separator.
+  It only accepts one label file per project. A wav file is bound to the label file by the file name, e.g.,
+  if the input label file is `foo.txt`, the wav file named `foo.wav` will be selected from the `Sample Directory`.
+
+- NNSVS singer labeler
+
+  This labeler is basically the same with the `Sinsy lab labeler`, but it can handle multiple label files.
+  Typically, if you have the following file structures:
+  ```
+  - singer
+      - wav
+        - 1.wav
+        - 2.wav
+      - lab
+        - 1.lab
+        - 2.lab
+  ```
+  you can create a project containing all the label files by setting `Sample Directory` to the `singer` folder.
+  You can change the `wav` and `lab` folder names in the labeler's settings.
 
 ## Get started
 
@@ -86,8 +108,9 @@ For label files used in NNSVS/ENUNU and similar systems, the following options a
 6. Select a label file template and its encoding (e.g. a pre-filled oto file), or leave it blank to use the default
    template (not recommended)
 7. If you don't have a template file, select a template generator along with an input file that it requires
-8. Click `OK` and start editing
-9. Click `Export` in the menu to get the edited label file
+8. Check the settings of the labeler and the plugin you selected
+9. Click `OK` and start editing
+10. Click `Export` in the menu to get the edited label file
 
 ## Available keyboard/mouse actions
 
@@ -170,7 +193,7 @@ There are two components showing an entry list:
 In both types of entry list, you can use the following syntax to search entries:
 
 ```
-aaa;name=bbb;sample=ccc;tag=ddd
+aaa;name:bbb;sample:ccc;tag:ddd
 ```
 
 Multiple conditions can be combined with `;`. Only entries that match all the conditions are shown.
@@ -250,23 +273,20 @@ A labeler defines:
 - whether entries should be connected (e.g. `Sinsy lab Labeler` does)
 - how to parse the label file to a `vLabeler` project
 - how to generate the label file from a `vLabeler` project
+- how to build sub-projects under a `vLabeler` project
 - and more behaviors when editing the certain type of label files
 
-After the first run, you can find built-in labeler files named `labelers/*.labeler.json` under `.../<user>/vLabeler`
-directory. (For macOS it's `~/Library/vLabeler`)
-You can edit the labelers, but please
-check [LabelerConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) and make sure you understand the
-content before you edit them.
+A labeler may also support some configurable fields via GUI, without changing its content.
+You can find the settings in the `Settings` icon next to the labeler selector in the `New Project` page.
 
 If you want to edit the labels for a singing voice generation software that is not supported by `vLabeler`,
 instead of requesting development supporting that software, you can create a labeler to make it work. (it requires
 some knowledge of the coding though).
-After you put a new labeler file under the directory and restart the application, it will be available in
-the `New Project` page.
-You can distribute the labelers created by yourself to other users.
-You are also welcome to submit your labeler files to our project to make it built-in.
+Please check [LabelerConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) to understand how to
+develop a labeler.
 
-You can import/delete/disable labelers in `Settings` -> `Labelers...`.
+You can import your own labelers in `Settings` -> `Labelers...`.
+You can also distribute the labelers created by yourself to other users, or contact us for making them built-in.
 
 ## Plugins
 
