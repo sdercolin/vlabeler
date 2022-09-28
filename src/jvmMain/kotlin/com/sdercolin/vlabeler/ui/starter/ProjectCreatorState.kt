@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.io.getSavedParamsFile
 import com.sdercolin.vlabeler.model.ArgumentMap
 import com.sdercolin.vlabeler.model.Arguments
@@ -383,7 +384,7 @@ class ProjectCreatorState(
     fun getFilePickerExtensions(
         picker: PathPicker,
     ) = when (picker) {
-        PathPicker.SampleDirectory -> listOf(Project.SampleFileExtension)
+        PathPicker.SampleDirectory -> Sample.acceptableSampleFileExtensions
         PathPicker.WorkingDirectory -> null
         PathPicker.CacheDirectory -> null
         PathPicker.InputFile -> getSupportedInputFileExtension()?.let { listOf(it) }

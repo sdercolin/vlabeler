@@ -15,7 +15,7 @@ import kotlinx.serialization.json.JsonDecoder
 @Immutable
 data class Entry(
     /**
-     * File name of the sample wav file without extension
+     * Sample file name without extension
      */
     val sample: String,
     /**

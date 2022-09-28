@@ -3,10 +3,9 @@ package com.sdercolin.vlabeler.ui.dialog.sample
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
-import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.toFile
 import java.awt.Desktop
 import java.io.File
@@ -33,11 +32,19 @@ class SampleListDialogState(
         fetch()
     }
 
-    private fun getExistingSampleFiles() = File(editorState.project.sampleDirectory).getChildren()
-        .filter { it.extension == Project.SampleFileExtension }
-        .map { it.nameWithoutExtension }
+    private fun getExistingSampleFiles() = editorState.project.sampleFileNameMap.map { it.toPair() }
+        .plus(
+            Sample.listSampleFiles(editorState.project.sampleDirectory.toFile())
+                .map { it.nameWithoutExtension to it.name },
+        )
+        .distinctBy { it.first }
 
-    private fun getProjectSampleFilesWithEntries() = editorState.project.entries.groupBy { it.sample }
+    private fun getProjectSampleFilesWithEntries() = editorState.project.entries
+        .groupBy { it.sample }
+        .map { (sample, entries) ->
+            (sample to editorState.project.getSampleFile(sample).name) to entries
+        }
+        .toMap()
 
     private fun fetch() {
         val existing = getExistingSampleFiles()
@@ -45,12 +52,14 @@ class SampleListDialogState(
         val projectSamples = projectSamplesWithEntries.map { it.key }
         includedSampleItems = projectSamplesWithEntries.map {
             SampleListDialogItem.IncludedSample(
-                name = it.key,
-                valid = it.key in existing,
+                name = it.key.first,
+                fileName = it.key.second,
+                valid = existing.any { (name, _) -> name == it.key.first },
                 entryCount = it.value.size,
             )
         }
-        excludedSampleItems = (existing - projectSamples.toSet()).map { SampleListDialogItem.ExcludedSample(it) }
+        excludedSampleItems = (existing - projectSamples.toSet())
+            .map { SampleListDialogItem.ExcludedSample(it.first, it.second) }
         selectedSampleName?.let { selectSample(it) }
     }
 

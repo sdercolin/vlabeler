@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.exception.EmptySampleDirectoryException
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
+import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.io.fromRawLabels
 import com.sdercolin.vlabeler.model.Project.Companion.ProjectVersion
 import com.sdercolin.vlabeler.model.filter.EntryFilter
@@ -10,9 +11,9 @@ import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
-import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.orEmpty
 import com.sdercolin.vlabeler.util.stringifyJson
+import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -38,6 +39,7 @@ data class Project(
     val multipleEditMode: Boolean = labelerConf.continuous,
     val autoExportTargetPath: String? = null,
     val entryFilter: EntryFilter? = null,
+    val sampleFileNameMap: Map<String, String> = emptyMap(),
 ) {
     @Transient
     private val filteredEntryIndexes: List<Int> = entries.indices.filter { entryFilter?.matches(entries[it]) ?: true }
@@ -68,7 +70,14 @@ data class Project(
     val currentSampleFile: File
         get() = getSampleFile(currentSampleName)
 
-    fun getSampleFile(sampleName: String) = File(sampleDirectory).resolve("$sampleName.$SampleFileExtension")
+    fun getSampleFile(sampleName: String): File {
+        val fileName = sampleFileNameMap[sampleName]
+        if (fileName != null) {
+            return File(sampleDirectory, fileName)
+        }
+        return Sample.findSampleFile(sampleDirectory.toFile(), sampleName)
+            ?: File(sampleDirectory, "$sampleName.${Sample.SampleFileWavExtension}")
+    }
 
     @Transient
     val entryCount: Int = entries.size
@@ -108,9 +117,10 @@ data class Project(
                 val end = sampleInfo.lengthMillis + it.value.end
                 it.copy(value = it.value.copy(end = end))
             }
-        if (changedEntries.isEmpty()) return this
         changedEntries.forEach { entries[it.index] = it.value }
-        return copy(entries = entries)
+        val sampleMap = sampleFileNameMap.toMutableMap()
+        sampleMap[sampleInfo.name] = sampleInfo.file.toFile().name
+        return copy(entries = entries, sampleFileNameMap = sampleMap)
     }
 
     fun updateEntries(editedEntries: List<IndexedEntry>): Project {
@@ -341,7 +351,7 @@ data class Project(
 
     companion object {
         const val ProjectVersion = 1
-        const val SampleFileExtension = "wav"
+
         const val ProjectFileExtension = "lbp"
         private const val DefaultCacheDirectorySuffix = ".$ProjectFileExtension.caches"
 
@@ -508,10 +518,8 @@ suspend fun projectOf(
     autoExportTargetPath: String?,
 ): Result<Project> {
     val sampleDirectoryFile = File(sampleDirectory)
-    val sampleNames = sampleDirectoryFile.getChildren()
-        .filter { it.extension == Project.SampleFileExtension }
+    val sampleNames = Sample.listSampleFiles(sampleDirectoryFile)
         .map { it.nameWithoutExtension }
-        .sorted()
 
     if (sampleNames.isEmpty()) return Result.failure(EmptySampleDirectoryException())
 
