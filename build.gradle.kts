@@ -47,6 +47,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:2.1.0")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.0")
                 implementation("ch.qos.logback:logback-classic:1.2.6")
+                implementation("org.zeromq:jeromq:0.5.2")
 
                 val lwjglVersion = "3.3.1"
                 listOf("lwjgl", "lwjgl-nfd").forEach { lwjglDep ->

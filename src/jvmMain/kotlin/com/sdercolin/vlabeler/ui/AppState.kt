@@ -13,6 +13,8 @@ import com.sdercolin.vlabeler.exception.InvalidOpenedProjectException
 import com.sdercolin.vlabeler.io.loadAvailableLabelerConfs
 import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.io.loadProject
+import com.sdercolin.vlabeler.ipc.AppIpcState
+import com.sdercolin.vlabeler.ipc.AppIpcStateImpl
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.ArgumentMap
@@ -57,8 +59,8 @@ class AppState(
     availableLabelerConfs: List<LabelerConf>,
     plugins: List<Plugin>,
     private var launchArguments: ArgumentMap?,
-    appProgressState: AppProgressState = AppProgressStateImpl(),
-    appErrorState: AppErrorState = AppErrorStateImpl(),
+    progressState: AppProgressState = AppProgressStateImpl(),
+    errorState: AppErrorState = AppErrorStateImpl(),
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
     screenState: AppScreenState = AppScreenStateImpl(),
     projectStore: ProjectStore = ProjectStoreImpl(
@@ -66,14 +68,15 @@ class AppState(
         appConf,
         screenState,
         scrollFitViewModel,
-        appErrorState,
-        appProgressState,
+        errorState,
+        progressState,
     ),
     unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl(),
     snackbarState: AppSnackbarState = AppSnackbarStateImpl(snackbarHostState),
     dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarState),
     updaterState: AppUpdaterState = AppUpdaterStateImpl(snackbarState, dialogState, appRecordStore, mainScope),
-) : AppErrorState by appErrorState,
+    ipcState: AppIpcState = AppIpcStateImpl(mainScope),
+) : AppErrorState by errorState,
     AppViewState by viewState,
     AppScreenState by screenState,
     ProjectStore by projectStore,
@@ -81,7 +84,8 @@ class AppState(
     AppSnackbarState by snackbarState,
     AppDialogState by dialogState,
     AppUpdaterState by updaterState,
-    AppProgressState by appProgressState {
+    AppProgressState by progressState,
+    AppIpcState by ipcState {
 
     init {
         initDialogState(this)
