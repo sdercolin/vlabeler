@@ -581,7 +581,7 @@ suspend fun projectOf(
     pluginParams: ParamMap?,
     inputFilePath: String,
     encoding: String,
-    autoExportTargetPath: String?,
+    autoExport: Boolean,
 ): Result<Project> {
     val moduleDefinitions = if (labelerConf.projectConstructor != null) {
         val js = JavaScript(logHandler = Log.infoFileHandler)
@@ -682,7 +682,7 @@ suspend fun projectOf(
             encoding = encoding,
             modules = modules,
             currentModuleIndex = 0,
-            autoExport = autoExportTargetPath != null,
+            autoExport = autoExport,
         ).validate()
     }.onFailure {
         return Result.failure(InvalidCreatedProjectException(it))

@@ -31,7 +31,6 @@ import com.sdercolin.vlabeler.util.getLocalizedMessage
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.resolveHome
-import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -88,18 +87,12 @@ class ProjectCreatorState(
     var autoExport: Boolean by mutableStateOf(appRecord.autoExport)
         private set
 
-    val autoExportTargetPath: String?
-        get() = if (inputFile.isNotEmpty() && templatePlugin == null) {
-            inputFile.toFile().absolutePath
-        } else {
-            labeler.defaultInputFilePath?.let { sampleDirectory.toFile().resolve(it) }?.absolutePath
-        }
-
     val canAutoExport: Boolean
-        get() = if (labeler.isSelfConstructed) {
-            true
-        } else {
-            autoExportTargetPath != null
+        get() = when {
+            labeler.isSelfConstructed -> true
+            inputFile.isNotEmpty() && templatePlugin == null -> true
+            labeler.defaultInputFilePath != null -> true
+            else -> false
         }
 
     var encoding: String by mutableStateOf(getEncodingByLabeler())
@@ -503,7 +496,7 @@ class ProjectCreatorState(
                 pluginParams = templatePluginParams,
                 inputFilePath = inputFile,
                 encoding = encoding,
-                autoExportTargetPath = autoExportTargetPath.takeIf { autoExport },
+                autoExport = autoExport,
             ).getOrElse {
                 val message = it.getLocalizedMessage(currentLanguage)
                 Log.error(it)
