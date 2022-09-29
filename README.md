@@ -47,7 +47,7 @@ Currently, built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU)
 
 #### Working on UTAU oto.ini (Single entry mode, SetParam style)
 
-![](readme/oto.gif)
+![](readme/utau-singer.mp4)
 
 For UTAU oto usages, there are two items in the built-in labeler list:
 
@@ -63,7 +63,7 @@ For UTAU oto usages, there are two items in the built-in labeler list:
 
 #### Working on audio labels (Continuous mode)
 
-![](readme/lab.gif)
+![](readme/nnsvs-singer.mp4)
 
 For label files used in NNSVS/ENUNU and similar systems, the following options are available now:
 
