@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.ipc
 
 import com.sdercolin.vlabeler.ipc.request.HeartbeatRequest
 import com.sdercolin.vlabeler.ipc.request.IpcRequest
+import com.sdercolin.vlabeler.ipc.request.OpenOrCreateRequest
 import com.sdercolin.vlabeler.ipc.response.HeartbeatResponse
 import com.sdercolin.vlabeler.ipc.response.IpcResponse
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +37,7 @@ class AppIpcStateImpl(private val scope: CoroutineScope) : AppIpcState {
     private fun handleRequest(request: IpcRequest) {
         val response = when (request) {
             is HeartbeatRequest -> HeartbeatResponse(request.sentAt, System.currentTimeMillis())
+            is OpenOrCreateRequest -> TODO()
         }
         response(response)
     }
