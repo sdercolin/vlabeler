@@ -20,48 +20,51 @@ let baseEntries = base.split("\n").map(line => line.trim()).filter(line => line 
             name = getNameWithoutExtension(sample)
         }
         let offset = 0
-        if (ovl !== '') {
-            ovl = parseFloat(ovl)
-            if (ovl < 0 && hasLeft) {
-                offset = -ovl
-            }
+        if (ovl === '') {
+            ovl = '0'
+        }
+        ovl = parseFloat(ovl)
+        if (ovl < 0 && hasLeft) {
+            offset = -ovl
         }
         let start = 0
-        if (left !== '') {
-            left = parseFloat(left)
-            start = left - offset
+        if (left === '') {
+            left = '0'
         }
+        left = parseFloat(left)
+        start = left - offset
         let points = []
         let extras = []
-        if (fixed !== '') {
-            fixed = parseFloat(fixed)
-            if (fixed < 0) {
-                fixed = 0
-            }
-            points.push(fixed + left)
+        if (fixed === '') {
+            fixed = '0'
         }
+        fixed = parseFloat(fixed)
+        if (fixed < 0) {
+            fixed = 0
+        }
+        points.push(fixed + left)
         let end = 0
-        if (right !== '') {
-            right = parseFloat(right)
-            let rawRight = right // for restoring from a non-negative value (distance to sample end)
-            extras.push(rawRight)
-            if (right < 0) {
-                end = left - right
-            } else {
-                end = -right
-            }
+        if (right === '') {
+            right = '0'
         }
-        if (preu !== '') {
-            preu = parseFloat(preu)
-            if (preu < 0) {
-                preu = 0
-            }
-            points.push(preu + left)
+        right = parseFloat(right)
+        let rawRight = right // for restoring from a non-negative value (distance to sample end)
+        extras.push(rawRight)
+        if (right < 0) {
+            end = left - right
+        } else {
+            end = -right
         }
-        if (ovl !== '') {
-            points.push(ovl + left)
+        if (preu === '') {
+            preu = '0'
         }
-        if (left !== '' && hasLeft) {
+        preu = parseFloat(preu)
+        if (preu < 0) {
+            preu = 0
+        }
+        points.push(preu + left)
+        points.push(ovl + left)
+        if (hasLeft) {
             points.push(left)
         }
         return new Entry(sample, name, start, end, points, extras)
