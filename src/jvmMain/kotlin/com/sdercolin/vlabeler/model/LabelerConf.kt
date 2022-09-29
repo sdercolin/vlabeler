@@ -35,7 +35,7 @@ import kotlinx.serialization.json.JsonObject
  * @property website Website url of the labeler
  * @property continuous Whether the labeler use continuous mode, where the end of entry is forced set to the start of
  *   its next entry
- * @property allowSameNameEntry Whether to allow more than one entry with a shared name in one sample
+ * @property allowSameNameEntry Whether to allow more than one entry with a shared name in the project module
  * @property defaultValues Default value listed as [start, *fields, end] in millisecond
  * @property defaultExtras Default [extraFieldNames] values
  * @property fields Objects in [Field] type containing data used in the label files, except for built-in "start" and
