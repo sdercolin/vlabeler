@@ -46,7 +46,7 @@ fun PrerenderDialog(
     finish: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    var progress by remember { mutableStateOf(ChartPrerenderer.Progress(0, 0, 0, 0, 0, 0)) }
+    var progress by remember { mutableStateOf(ChartPrerenderer.Progress(0, project.modules.size, 0, 0, 0, 0)) }
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     LaunchedEffect(Unit) {
@@ -55,9 +55,6 @@ fun PrerenderDialog(
             chartStore,
             onError,
             onProgress = { progress = it },
-            onComplete = {
-                progress = progress.copy(finishedFiles = progress.totalFiles)
-            },
         ).render(
             project = project,
             appConf = appConf,
@@ -77,7 +74,7 @@ fun PrerenderDialog(
                 Spacer(Modifier.height(20.dp))
                 Content(progress)
                 Spacer(Modifier.height(30.dp))
-                ButtonBar(isCompleted = progress.finishedInModule, finish = finish)
+                ButtonBar(isCompleted = progress.finished, finish = finish)
             }
         }
     }
