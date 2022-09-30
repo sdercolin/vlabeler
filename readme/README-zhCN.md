@@ -3,7 +3,7 @@
 
 [![Discord](https://img.shields.io/discord/984044285584359444?style=for-the-badge&label=discord&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/yrTqG2SrRd)
 
-选择语言：[English](../README.md) | [简体中文](README-zhCH.md)
+选择语言：[English](../README.md) | [简体中文](README-zhCN.md) | [日本語](README-ja.md)
 
 `vLabeler` 是一个开源的语音标注应用程序，旨在提供：
 
@@ -62,7 +62,7 @@ vLabeler 的许多行为都依赖于可定制的 `标注器`。
 - UTAU singer 标注器
 
   如果您想编辑一个歌手声库下的多个 oto.ini 文件，请使用此标注器。
-  请在创建工程时将 `采样目录`设置为歌手的根文件夹（通常包含一个 `charactor.txt` 文件）。
+  请在创建工程时将 `采样目录`设置为歌手的根文件夹（通常包含一个 `character.txt` 文件）。
 
 #### 处理音频分割标注（连续编辑模式）
 
@@ -79,8 +79,8 @@ vLabeler 的许多行为都依赖于可定制的 `标注器`。
 - Audacity 标注器
 
   此标注器适用于 Audacity 创建的 `Labels` 文件，它使用 `s` 作为时间单位，并使用 `\t` (tab) 作为分隔符。
-  每个工程只接受一个标签文件。wav 文件通过文件名绑定到标签文件。 
-  例如，如果输入标签文件是 `foo.txt`，则会从 `Sample Directory` 中选择名为 `foo.wav` 的 wav 文件。
+  每个工程只接受一个标注文件。wav 文件通过文件名绑定到标注文件。 
+  例如，如果输入标注文件是 `foo.txt`，则会从 `Sample Directory` 中选择名为 `foo.wav` 的 wav 文件。
 
 - NNSVS singer 标注器
 
@@ -256,19 +256,19 @@ aaa;name:bbb;sample:ccc;tag:ddd
 
 一个标注器包含以下定义：
 
-- 语音条目应包含哪些数据/字段（例如，对于 UTAU，一个条目需要 `固定范围`、`先行发声`、`重叠` 等）
+- 语音条目应包含哪些数据/字段（例如，对于 UTAU，一个条目需要 `固定`、`先行发声`、`重叠` 等）
 - 数据/字段显示在编辑器中时的外观
 - 条目之间是否连续（指任何条目的开始都应等于其前一个条目的结束）
-- 如何将标签文件解析为 `vLabeler` 工程
-- 如何从 `vLabeler` 工程生成标签文件
+- 如何将标注文件解析为 `vLabeler` 工程
+- 如何从 `vLabeler` 工程生成标注文件
 - 如何在 `vLabeler` 工程下构建子工程
-- 其他编辑特定类型标签文件时的行为
+- 其他编辑特定类型标注文件时的行为
 
 一些标注器还提供了一些可以在 GUI 中更改的设置项目，而无需编辑标注器配置文件本身。
 您可以点击 `新建工程` 页面的 `标注器` 选择框右边的 `齿轮` 按钮来打开标注器设置对话框。
 
 如果你想编辑一个 `vLabeler` 暂不支持的语音合成软件的标注文件，您可以自己编写一个标注器配置文件来实现它，而无需等待我们的开发（尽管需要一定的编程知识）。
-请查看 [LabelerConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) 来了解如何开发一个标注器。
+请查看 [LabelerConf.kt](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) 来了解如何开发一个标注器。
 
 您可以在 `设置` -> `标注器...` 中导入自己的标注器。您也可以将自己编写的标注器分发给其他用户，或联系我们将其内置。
 
