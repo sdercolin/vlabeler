@@ -1,17 +1,17 @@
 {
   "name": "utau-singer.default",
-  "version": 2,
+  "version": 3,
   "extension": "ini",
   "displayedName": {
     "en": "UTAU singer labeler",
-    "zh": "UTAU singer 标记器",
+    "zh": "UTAU singer 标注器",
     "ja": "UTAU singer ラベラー"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Default labeler for UTAU singer (multiple pitches). `oto.ini` files under every folder that contains sample voices will be created/edited. Please set the sample directory to the root directory of the singer.",
-    "zh": "用于 UTAU singer（多音阶）的默认标记器。会在包含采样音频的每个文件夹下创建/编辑 `oto.ini` 文件。请将采样目录设置为歌手的根目录。",
+    "zh": "用于 UTAU singer（多音阶）的默认标注器。会在包含采样音频的每个文件夹下创建/编辑 `oto.ini` 文件。请将采样目录设置为歌手的根目录。",
     "ja": "UTAU singer（多音階）のデフォルトラベラーです。サンプル音声を含むフォルダーの中に `oto.ini` ファイルを作成/編集します。サンプルディレクトリを歌手のルートディレクトリに設定してください。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
