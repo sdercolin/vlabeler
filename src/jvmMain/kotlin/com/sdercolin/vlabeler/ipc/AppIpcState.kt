@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.ipc.request.IpcRequest
 import com.sdercolin.vlabeler.ipc.request.OpenOrCreateRequest
 import com.sdercolin.vlabeler.ipc.response.HeartbeatResponse
 import com.sdercolin.vlabeler.ipc.response.IpcResponse
+import com.sdercolin.vlabeler.ipc.response.OpenOrCreateResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,11 +19,11 @@ interface AppIpcState {
     fun response(response: IpcResponse)
 }
 
-class AppIpcStateImpl(private val scope: CoroutineScope) : AppIpcState {
+class AppIpcStateImpl(scope: CoroutineScope) : AppIpcState {
 
     private val ipcServer = IpcServer(scope)
 
-    override val ipcRequestFlow: MutableSharedFlow<IpcRequest> = MutableSharedFlow<IpcRequest>()
+    override val ipcRequestFlow: MutableSharedFlow<IpcRequest> = MutableSharedFlow()
 
     init {
         ipcRequestFlow.onEach(::handleRequest).launchIn(scope)
@@ -37,7 +38,7 @@ class AppIpcStateImpl(private val scope: CoroutineScope) : AppIpcState {
     private fun handleRequest(request: IpcRequest) {
         val response = when (request) {
             is HeartbeatRequest -> HeartbeatResponse(request.sentAt, System.currentTimeMillis())
-            is OpenOrCreateRequest -> TODO()
+            is OpenOrCreateRequest -> OpenOrCreateResponse(request.sentAt, System.currentTimeMillis())
         }
         response(response)
     }
