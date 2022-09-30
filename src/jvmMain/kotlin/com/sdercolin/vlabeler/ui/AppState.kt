@@ -13,8 +13,7 @@ import com.sdercolin.vlabeler.exception.InvalidOpenedProjectException
 import com.sdercolin.vlabeler.io.loadAvailableLabelerConfs
 import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.io.loadProject
-import com.sdercolin.vlabeler.ipc.AppIpcState
-import com.sdercolin.vlabeler.ipc.AppIpcStateImpl
+import com.sdercolin.vlabeler.ipc.IpcState
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.ArgumentMap
@@ -75,7 +74,6 @@ class AppState(
     snackbarState: AppSnackbarState = AppSnackbarStateImpl(snackbarHostState),
     dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarState),
     updaterState: AppUpdaterState = AppUpdaterStateImpl(snackbarState, dialogState, appRecordStore, mainScope),
-    ipcState: AppIpcState = AppIpcStateImpl(mainScope),
 ) : AppErrorState by errorState,
     AppViewState by viewState,
     AppScreenState by screenState,
@@ -84,8 +82,7 @@ class AppState(
     AppSnackbarState by snackbarState,
     AppDialogState by dialogState,
     AppUpdaterState by updaterState,
-    AppProgressState by progressState,
-    AppIpcState by ipcState {
+    AppProgressState by progressState {
 
     init {
         initDialogState(this)
@@ -106,6 +103,8 @@ class AppState(
         mainScope,
         playerState,
     )
+
+    val ipcState: IpcState = IpcState(this)
 
     private fun reset() {
         clearProject()

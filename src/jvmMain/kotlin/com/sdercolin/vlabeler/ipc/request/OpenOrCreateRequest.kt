@@ -13,7 +13,7 @@ class OpenOrCreateRequest(
     val gotoEntryByName: GotoEntryByName? = null,
     val gotoEntryByIndex: GotoEntryByIndex? = null, // index is used in higher priority
     val newProjectArgs: NewProjectArgs,
-    val sentAt: Long
+    val sentAt: Long,
 ) : IpcRequest() {
 
     @Serializable
@@ -44,4 +44,3 @@ class OpenOrCreateRequest(
     @Transient
     override val type: IpcMessageType = IpcMessageType.OpenOrCreate
 }
-

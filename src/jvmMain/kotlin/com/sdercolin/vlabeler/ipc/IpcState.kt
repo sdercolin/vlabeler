@@ -6,33 +6,25 @@ import com.sdercolin.vlabeler.ipc.request.OpenOrCreateRequest
 import com.sdercolin.vlabeler.ipc.response.HeartbeatResponse
 import com.sdercolin.vlabeler.ipc.response.IpcResponse
 import com.sdercolin.vlabeler.ipc.response.OpenOrCreateResponse
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import com.sdercolin.vlabeler.ui.AppState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-interface AppIpcState {
+class IpcState(private val appState: AppState) {
 
-    val ipcRequestFlow: Flow<IpcRequest>
+    private val server = IpcServer(appState.mainScope)
 
-    fun response(response: IpcResponse)
-}
-
-class AppIpcStateImpl(scope: CoroutineScope) : AppIpcState {
-
-    private val ipcServer = IpcServer(scope)
-
-    override val ipcRequestFlow: MutableSharedFlow<IpcRequest> = MutableSharedFlow()
+    private val requestFlow: MutableSharedFlow<IpcRequest> = MutableSharedFlow()
 
     init {
-        ipcRequestFlow.onEach(::handleRequest).launchIn(scope)
-        ipcServer.bind()
-        ipcServer.startReceive(ipcRequestFlow)
+        requestFlow.onEach(::handleRequest).launchIn(appState.mainScope)
+        server.bind()
+        server.startReceive(requestFlow)
     }
 
-    override fun response(response: IpcResponse) {
-        ipcServer.send(response)
+    private fun response(response: IpcResponse) {
+        server.send(response)
     }
 
     private fun handleRequest(request: IpcRequest) {
