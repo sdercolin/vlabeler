@@ -38,6 +38,11 @@ child path string.
 
 `getAbsolutePath(): string` : get the absolute path of this file (directory).
 
+### Related global functions
+`getNameWithoutExtension(fileName: string): string` : get the name without extension of the input string as a file name.
+
+`getExtension(fileName: string): string` : get the extension of the input string as a file name.
+
 ### Source file
 
 If you know Java and Javascript well enough, you can also read the source file for the `File`
