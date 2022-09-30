@@ -2,7 +2,7 @@
 
 [![Discord](https://img.shields.io/discord/984044285584359444?style=for-the-badge&label=discord&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/yrTqG2SrRd)
 
-Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md)
+Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | [日本語](readme/README-ja.md)
 
 `vLabeler` is an open-sourced voice labeling application, aiming:
 
@@ -61,7 +61,7 @@ For UTAU oto editing, there are two items in the built-in labeler list:
 - UTAU singer labeler
 
   If you want to edit multiple `oto.ini` files under a singer voicebank, please use this labeler.
-  Please set the singer's root folder (which usually contains a `charactor.txt` file) as the `Sample Directory` when you
+  Please set the singer's root folder (which usually contains a `character.txt` file) as the `Sample Directory` when you
   create the project.
 
 #### Working on audio labels (Continuous mode)
