@@ -16,7 +16,7 @@
 
 ## ダウンロード
 
-[Releases](https://github.com/sdercolin/vlabeler/) を参照してください。
+[Releases](https://github.com/sdercolin/vlabeler/releases) を参照してください。
 
 Releases では、次のプラットフォーム用のアプリケーションパッケージが提供されます。
 
