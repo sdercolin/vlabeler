@@ -9,8 +9,6 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.io.getSavedParamsFile
-import com.sdercolin.vlabeler.model.ArgumentMap
-import com.sdercolin.vlabeler.model.Arguments
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
@@ -30,8 +28,6 @@ import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.getLocalizedMessage
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
-import com.sdercolin.vlabeler.util.resolveHome
-import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,7 +38,6 @@ class ProjectCreatorState(
     private val coroutineScope: CoroutineScope,
     private val labelerConfs: List<LabelerConf>,
     val appRecordStore: AppRecordStore,
-    private var launchArguments: ArgumentMap?,
 ) {
     val appConf get() = appState.appConf
     private val appRecord get() = appRecordStore.value
@@ -102,41 +97,6 @@ class ProjectCreatorState(
         return encodings.find { encodingNameEquals(parser.defaultEncoding, it) }
             ?: encodings.first().takeIf { it.isNotBlank() }
             ?: encodings.first()
-    }
-
-    fun consumeLaunchArguments() {
-        val args = launchArguments ?: return
-        launchArguments = null
-        val projectFile = args[Arguments.OpenOrCreate]
-            ?.toFileOrNull(allowHomePlaceholder = true, ensureExists = false)
-            ?: return
-        workingDirectory = projectFile.parent
-        workingDirectoryEdited = true
-        projectName = projectFile.nameWithoutExtension
-        projectNameEdited = true
-        sampleDirectory = args[Arguments.SampleDirectory]?.resolveHome() ?: workingDirectory
-        cacheDirectory = args[Arguments.CacheDirectory]?.resolveHome()
-            ?.also { cacheDirectoryEdited = true }
-            ?: getDefaultCacheDirectory(workingDirectory, projectName)
-        val encodingText = args[Arguments.Encoding]
-        val encoding =
-            if (encodingText != null) AvailableEncodings.find { charset(encodingText) == charset(it) } else null
-        if (encoding != null) {
-            this.encoding = encoding
-        }
-        val labelerName = args[Arguments.LabelerName]
-        val labeler = labelerConfs.find { it.name == labelerName }
-        if (labeler != null) {
-            this.labeler = labeler
-            val inputFile = args[Arguments.InputFile]?.toFileOrNull(allowHomePlaceholder = true, ensureIsFile = true)
-            if (inputFile != null && inputFile.extension == labeler.extension) {
-                this.inputFile = inputFile.absolutePath
-                inputFileEdited = true
-            } else {
-                updateInputFileIfNeeded(detectEncoding = encoding == null)
-            }
-        }
-        args[Arguments.AutoExport]?.toBooleanStrictOrNull()?.let { autoExport = it }
     }
 
     fun updateSampleDirectory(path: String) {
@@ -516,9 +476,8 @@ fun rememberProjectCreatorState(
     coroutineScope: CoroutineScope,
     activeLabelerConfs: List<LabelerConf>,
     appRecordStore: AppRecordStore,
-    launchArguments: ArgumentMap?,
 ) = remember(appRecordStore) {
-    ProjectCreatorState(appState, coroutineScope, activeLabelerConfs, appRecordStore, launchArguments)
+    ProjectCreatorState(appState, coroutineScope, activeLabelerConfs, appRecordStore)
 }
 
 enum class PathPicker {

@@ -33,7 +33,6 @@ import com.sdercolin.vlabeler.io.loadAppConf
 import com.sdercolin.vlabeler.io.produceAppState
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.action.KeyAction
-import com.sdercolin.vlabeler.model.parseArguments
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
@@ -56,7 +55,7 @@ import kotlinx.coroutines.flow.onEach
 
 var hasUncaughtError = false
 
-fun main(vararg args: String) = application {
+fun main() = application {
     remember { Log.init() }
     remember { ensureDirectories() }
 
@@ -70,7 +69,7 @@ fun main(vararg args: String) = application {
     currentLanguage = appConf.value.view.language
 
     val appState by produceState(null as AppState?) {
-        value = produceAppState(mainScope, appConf, appRecordStore, parseArguments(args.toList()))
+        value = produceAppState(mainScope, appConf, appRecordStore)
     }
     val onCloseRequest = {
         if (hasUncaughtError) {

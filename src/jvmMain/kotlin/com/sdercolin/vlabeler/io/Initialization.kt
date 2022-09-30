@@ -7,7 +7,6 @@ import com.sdercolin.vlabeler.env.Locale
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.ArgumentMap
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.AppRecordStore
@@ -142,7 +141,6 @@ suspend fun produceAppState(
     mainScope: CoroutineScope,
     appConf: MutableState<AppConf>,
     appRecordStore: AppRecordStore,
-    launchArguments: ArgumentMap?,
 ): AppState {
     val availableLabelerConfs = loadAvailableLabelerConfs()
     val plugins = loadPlugins(appConf.value.view.language)
@@ -160,6 +158,5 @@ suspend fun produceAppState(
         appConf,
         availableLabelerConfs,
         plugins,
-        launchArguments,
     )
 }

@@ -320,10 +320,6 @@ You can distribute your plugin anywhere, or create a pull request to make it bui
 
 See [Plugin API Document](readme/plugin-development.md) for details.
 
-## Launch Arguments
-
-See [Launch Arguments](readme/launch-arguments.md) for details.
-
 ## Logs
 
 Log files are saved under `.../vLabeler/.logs` folder.

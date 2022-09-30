@@ -3,7 +3,6 @@ package com.sdercolin.vlabeler.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.sdercolin.vlabeler.model.ArgumentMap
 import com.sdercolin.vlabeler.ui.editor.EditorState
 
 interface AppScreenState {
@@ -13,7 +12,7 @@ interface AppScreenState {
 
 sealed class Screen {
     object Starter : Screen()
-    class ProjectCreator(val launchArguments: ArgumentMap? = null) : Screen()
+    object ProjectCreator : Screen()
     class Editor(val state: EditorState) : Screen()
 }
 

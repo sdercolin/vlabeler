@@ -52,7 +52,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.model.ArgumentMap
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
@@ -80,20 +79,14 @@ fun ProjectCreator(
     activeTemplatePlugins: List<Plugin>,
     appRecordStore: AppRecordStore,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    launchArguments: ArgumentMap?,
     state: ProjectCreatorState = rememberProjectCreatorState(
         appState,
         coroutineScope,
         activeLabelerConfs,
         appRecordStore,
-        launchArguments,
     ),
 ) {
     val scrollState = rememberScrollState()
-
-    LaunchedEffect(Unit) {
-        state.consumeLaunchArguments()
-    }
 
     Surface(Modifier.fillMaxSize()) {
         Box {

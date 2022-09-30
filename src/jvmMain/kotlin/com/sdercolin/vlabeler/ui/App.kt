@@ -46,9 +46,6 @@ fun App(
         appState.enableAutoSaveProject(appState.appConf.autoSave, appState)
     }
     LaunchedEffect(Unit) {
-        appState.consumeLaunchArguments()
-    }
-    LaunchedEffect(Unit) {
         appState.checkUpdates(isAuto = true)
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
@@ -62,7 +59,6 @@ fun App(
                     activeLabelerConfs = appState.activeLabelerConfs,
                     activeTemplatePlugins = appState.getActivePlugins(Plugin.Type.Template),
                     appRecordStore = appState.appRecordStore,
-                    launchArguments = screen.launchArguments,
                 )
             is Screen.Editor -> Editor(screen.state, appState)
         }
