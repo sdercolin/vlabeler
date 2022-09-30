@@ -2,10 +2,12 @@
 
 [![Discord](https://img.shields.io/discord/984044285584359444?style=for-the-badge&label=discord&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/yrTqG2SrRd)
 
+Select Language: [English](README.md) | [简体中文](readme/README-zhCH.md)
+
 `vLabeler` is an open-sourced voice labeling application, aiming:
 
 - Modern and fluent UI/UX
-- Customizable labeling/import/export, to be used by different types of voice editor apps
+- Customizable labeling process, to be used by different types of voice generation software
 - High performance with multiplatform support
 
 **The project is now in Alpha.
@@ -25,7 +27,7 @@ For other types of Linux os, you may have to build it by yourself.
 
 ## Building
 
-vLabeler is built by [Compose Multiplatform](https://github.com/JetBrains/compose-jb). You can use Gradle to build the
+vLabeler is built with [Compose Multiplatform](https://github.com/JetBrains/compose-jb). You can use Gradle to build the
 application. [See more](https://github.com/JetBrains/compose-jb/tree/master/tutorials/Native_distributions_and_local_execution)
 
 Currently, cross-platform building is not supported. Only packages for your OS are built.
@@ -43,13 +45,14 @@ Please ensure you have **JDK 15+** for building.
 ## Scenarios
 
 Many behaviors of vLabeler depend on customizable `labeler`s.
-Currently, built-in labelers include `UTAU oto labeler` and `Sinsy (NNSVS/ENUNU) lab labeler`.
 
-#### Working on UTAU oto.ini (Single entry mode, SetParam style)
+Currently, the followings are provided as built-in labelers:
+
+#### Working on UTAU oto.ini
 
 ![](readme/utau-singer.gif)
 
-For UTAU oto usages, there are two items in the built-in labeler list:
+For UTAU oto editing, there are two items in the built-in labeler list:
 
 - UTAU oto labeler
 
@@ -99,16 +102,15 @@ For label files used in NNSVS/ENUNU and similar systems, the following options a
 
 ## Get started
 
-1. Click `New project..`
-2. Select a folder containing your sample files
+1. Click `New project...`
+2. Select a folder containing your sample files as `Sample Directory`
 3. Change `Project location` and `Project name` if you would like
 4. Change `Cache directory` if you would like to save the cache files (rendered images, processed wav files, etc.)
    somewhere else
-5. Select a labeler (e.g. UTAU oto labeler if you are editing UTAU oto)
-6. Select a label file template and its encoding (e.g. a pre-filled oto file), or leave it blank to use the default
-   template (not recommended)
-7. If you don't have a template file, select a template generator along with an input file that it requires
-8. Check the settings of the labeler and the plugin you selected
+5. Select a labeler, see [Scenarios](#scenarios) for which labeler to use
+6. Select a template generator if you don't have an existing label file
+7. If you want to edit an existing label file, choose an input file and its encoding
+8. Check the settings of the labeler and the template generator you selected
 9. Click `OK` and start editing
 10. Click `Export` in the menu to get the edited label file
 
@@ -116,7 +118,7 @@ For label files used in NNSVS/ENUNU and similar systems, the following options a
 
 Note that the following `Ctrl` is mapped to `Command` if you are using macOS.
 
-You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`
+You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`.
 
 ### Move parameter lines
 
@@ -128,7 +130,7 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`
 
 - `Space`: play the current entry, or stop playing if already playing
 - `Shift` + `Space`: play the current sample file or stop playing if already playing
-- `Ctrl` + mouse click: play the clicked section
+- Mouse right click: play the clicked section
 - `Alt` + mouse drag on parameters: play the audio near the cursor's position while moving
 
 ### Scrolling
@@ -155,29 +157,32 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`
 
 ### Set notes for entry
 
-- `J` or click the `Add tag` button in the entry title bar: Start editing the entry's tag
-- `K` or click the `Star` button in the entry title bar: Toggle the entry's `Starred` status
-- `L` or click the `Done` button in the entry title bar: Toggle the entry's `Done` status
+- `J` or `Add tag` button in the entry title bar: Start editing the entry's tag
+- `K` or `Star` button in the entry title bar: Toggle the entry's `Starred` status
+- `L` or `Done` button in the entry title bar: Toggle the entry's `Done` status
 
 #### Settings for notes
 
-You can customize the notes display in `Settings` -> `Prefereneces` -> `Editor` -> `Notes` to hide the items that
+You can change settings in `Settings` -> `Prefereneces` -> `Editor` -> `Notes` to hide the items that
 you don't need.
 
 The `Done` status is by default automatically set when you edit any values in a entry. You can disable this behavior in
 the settings too.
 
-## Multiple editing mode
+## Multi-entry editing mode
 
-For labelers with `continuous: true` (currently only the sinsy lab labeler), you can switch between the normal editing
-mode and
-a multiple editing mode which shows and allows you to edit all the connected entries in the same sample file.
-It's enabled by default. You can toggle the menu item `Edit` -> `Edit All Connected Entries` to enable or disable it.
+For labelers in [continuous mode](#working-on-audio-labels-continuous-mode), you can switch between the
+single entry editing mode and a multi-entry editing mode which shows and allows you to edit all the connected entries in
+the same sample file.
 
-By clicking the name of entries displayed at the top of the editor, the following actions are conducted:
+It's enabled by default. You can click the `Single/Mutiple` button in the center of the bottom bar to enable or disable
+it.
 
-- click: Rename the entry
-- long click: Go to the entry
+In the multi-entry editing mode, names of the entries are displayed at the top of the editor.
+By clicking the names, the following actions are conducted:
+
+- Click: Rename the entry
+- Long click: Go to the entry
 
 ## Browse and filter entries
 
@@ -197,7 +202,8 @@ aaa;name:bbb;sample:ccc;tag:ddd
 ```
 
 Multiple conditions can be combined with `;`. Only entries that match all the conditions are shown.
-The following condition keys are supported:
+
+The following condition keys (the part left to `:`) are supported:
 
 - no key: search in the entry name, sample name or tag
 - `name`: search in the entry name
@@ -235,14 +241,14 @@ without changing or clearing your filter settings in the pinned entry list.
 ## Tools
 
 The following editing tool is provided.
-You can use shortcuts or menu items under `Edit` -> `Tools` to switch tools, or toggle the Toolbox view by menu `View`
+You can use shortcuts or menu items under `Edit` -> `Tools` to switch tools, or toggle the toolbox by menu `View`
 -> `Show Toolbox`.
 
-Note that you can use the `Play the clicked section` feature by `Ctrl + Click` with any tool.
+Note that you can use the `Play the clicked section` feature by `Right click` with any tool.
 
 ### Cursor
 
-The normal cursor tool to drag parameter controllers (lines or labels).
+The normal cursor tool to drag parameter controllers.
 
 ### Scissors
 
@@ -252,34 +258,34 @@ By default, when you click on a valid position with the scissors:
 1. Audio of the former (left) part after cutting is played so that you can confirm the phoneme
 2. A dialog is shown, asking you to rename the former entry
 3. Cutting and renaming are conducted
-4. The editor navigates to the former entry if needed
+4. The editor goes to the former entry
+
+These actions can be customized in `Prefereneces` -> `Editor` -> `Scissors`.
 
 ### Pan
 
-Or the hand tool. Drag the charts to scroll the canvas.
-
-These actions can be customized in `Settings` -> `Prefereneces`.
+Or the hand tool. Drag on the editor to scroll the canvas.
 
 ## Labelers
 
-A "labeler" is a configuration file for `vLabeler` which defines the behavior of a certain type of singing voice
-generation software.
+A "labeler" is a configuration file for `vLabeler` which defines the behavior of a certain type of voice generation
+software.
 For example, the built-in `UTAU oto labeler` is a labeler for editing UTAU's `oto.ini` files.
 
 A labeler defines:
 
-- what data/fields a voice entry should contain (e.g. for UTAU, you need `fixed`, `pre-utterance`, `overlap`, etc.)
+- what data/fields a voice entry should contain (e.g. for UTAU, you need `fixed`, `preutterance`, `overlap`, etc.)
 - how the data/fields are displayed in the editor as parameter controllers
-- whether entries should be connected (e.g. `Sinsy lab Labeler` does)
-- how to parse the label file to a `vLabeler` project
-- how to generate the label file from a `vLabeler` project
+- whether entries should be connected (every entry's start should be the same as the previous entry's end)
+- how to parse a label file to a `vLabeler` project
+- how to generate a label file from a `vLabeler` project
 - how to build sub-projects under a `vLabeler` project
 - and more behaviors when editing the certain type of label files
 
-A labeler may also support some configurable fields via GUI, without changing its content.
+A labeler may also support some configurable fields via GUI, without changing the labeler's file itself.
 You can find the settings in the `Settings` icon next to the labeler selector in the `New Project` page.
 
-If you want to edit the labels for a singing voice generation software that is not supported by `vLabeler`,
+If you want to edit the labels for a voice generation software that is not supported by `vLabeler`,
 instead of requesting development supporting that software, you can create a labeler to make it work. (it requires
 some knowledge of the coding though).
 Please check [LabelerConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) to understand how to
@@ -320,15 +326,11 @@ You can distribute your plugin anywhere, or create a pull request to make it bui
 
 See [Plugin API Document](readme/plugin-development.md) for details.
 
-## Launch Arguments
-
-See [Launch Arguments](readme/launch-arguments.md) for details.
-
 ## Logs
 
-Log files are saved under `.../vLabeler/.logs` folder.
-You can check the logs for development/debug/test purposes.
-When reporting issues, please attach the recent log files.
+You can find the logs by clicking `Help` -> `Open Log Directory`, for development/debug/test purposes.
+
+When reporting issues to us, please attach the recent log files.
 
 ## Known issues
 
