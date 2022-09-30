@@ -8,7 +8,7 @@
 `vLabeler` 是一个开源的语音标注应用程序，旨在提供：
 
 - 现代，流畅的 UI/UX
-- 可定制的标注流程，供不同类型的语音编辑软件使用
+- 可定制的标注流程，以供多个语音合成软件使用
 - 高性能的多平台支持
 
 **该项目现在处于 Alpha 阶段。
@@ -28,7 +28,7 @@ Releases 中提供了适用于以下平台的应用程序包。
 
 ## 构建
 
-vLabeler 基于 [Compose Multiplatform](https://github.com/JetBrains/compose-jb) 构建。
+vLabeler 基于 [Compose Multiplatform](https://github.com/JetBrains/compose-jb) 开发。
 您可以使用 Gradle 来构建应用。[查看更多](https://github.com/JetBrains/compose-jb/tree/master/tutorials/Native_distributions_and_local_execution)
 
 目前不支持跨平台构建。您只能构建适用于您的操作系统的应用程序包。
@@ -300,7 +300,7 @@ aaa;name:bbb;sample:ccc;tag:ddd
 我们欢迎您为 vLabeler 开发插件。
 您可以在任何地方分发您的插件，或者创建一个 Pull Request 来将其内置在 vLabeler 中。
 
-详见 [Plugin API Document](readme/plugin-development.md)。
+详见 [插件 API 文档](plugin-development.md)。
 
 ## 日志
 
