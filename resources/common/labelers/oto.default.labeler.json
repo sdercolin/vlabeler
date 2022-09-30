@@ -1,18 +1,18 @@
 {
   "name": "oto-plus.default",
-  "version": 13,
+  "version": 14,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
     "en": "UTAU oto labeler",
-    "zh": "UTAU oto 标记器",
+    "zh": "UTAU oto 标注器",
     "ja": "UTAU oto ラベラー"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Default labeler for UTAU oto.",
-    "zh": "用于 UTAU oto 的默认标记器。",
+    "zh": "用于 UTAU oto 的默认标注器。",
     "ja": "UTAU oto のデフォルトラベラー。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",

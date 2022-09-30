@@ -1,6 +1,6 @@
 {
   "name": "audacity2lab",
-  "version": 3,
+  "version": 4,
   "type": "template",
   "displayedName": {
     "en": "Audacity labels to Sinsy lab format",
@@ -42,7 +42,7 @@
         },
         "description": {
           "en": "The folder name of the input files. Only needed when the labeler multiplies sub-projects. Please put the input files in the folder with the same name as their corresponding wav files.",
-          "zh": "输入文件的文件夹名称。仅在标记器将创建多个子工程时需要。请将输入文件的文件名设为与其对应的 wav 文件相同，并放在该文件夹中。",
+          "zh": "输入文件的文件夹名称。仅在标注器将创建多个子工程时需要。请将输入文件的文件名设为与其对应的 wav 文件相同，并放在该文件夹中。",
           "ja": "入力ファイルのフォルダ名。ラベラーが複数のサブプロジェクトを対応している場合にのみ必要になります。入力ファイルのファイル名を、それらの対応する wav ファイルと同じ名前にして、そのフォルダに入れてください。"
         },
         "defaultValue": "audacity"
