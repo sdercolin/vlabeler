@@ -573,7 +573,7 @@ suspend fun projectOf(
     labelerParams: ParamMap?,
     plugin: Plugin?,
     pluginParams: ParamMap?,
-    inputFilePath: String,
+    inputFilePath: String?,
     encoding: String,
     autoExport: Boolean,
 ): Result<Project> {
@@ -597,7 +597,7 @@ suspend fun projectOf(
     } else {
         val sampleDirectoryFile = File(sampleDirectory)
         val sampleFiles = Sample.listSampleFiles(sampleDirectoryFile)
-        val inputFile = inputFilePath.ifEmpty { null }?.toFile()
+        val inputFile = inputFilePath?.ifEmpty { null }?.toFile()
         listOf(
             ModuleDefinition(
                 name = "",

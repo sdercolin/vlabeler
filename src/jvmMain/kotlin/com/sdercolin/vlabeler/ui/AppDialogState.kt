@@ -151,7 +151,7 @@ class AppDialogStateImpl(
 
     override fun requestOpenProject() = if (hasUnsavedChanges) askIfSaveBeforeOpenProject() else openOpenProjectDialog()
 
-    private fun askIfSaveBeforeOpenProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpening)
+    fun askIfSaveBeforeOpenProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpening)
 
     override fun openOpenProjectDialog() {
         closeAllDialogs()

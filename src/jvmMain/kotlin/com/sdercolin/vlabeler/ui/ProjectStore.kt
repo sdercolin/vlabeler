@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectUpdateOnSampleException
 import com.sdercolin.vlabeler.io.autoSaveTemporaryProjectFile
@@ -50,6 +51,9 @@ interface ProjectStore {
     fun previousEntry()
     fun nextSample()
     fun previousSample()
+    fun jumpToModuleAndEntry(moduleIndex: Int, entryIndex: Int)
+    fun jumpToModuleByNameAndEntry(moduleName: String, entryIndex: Int)
+    fun jumpToModuleByNameAndEntryName(moduleName: String, entryName: String)
     fun jumpToEntry(index: Int)
     fun renameEntry(index: Int, newName: String)
     fun duplicateEntry(index: Int, newName: String)
@@ -217,6 +221,41 @@ class ProjectStoreImpl(
     override fun previousSample() {
         editCurrentProjectModule { previousSample() }
         scrollIfNeededWhenSwitchedSample()
+    }
+
+    override fun jumpToModuleAndEntry(moduleIndex: Int, entryIndex: Int) {
+        editProject {
+            copy(currentModuleIndex = moduleIndex)
+                .updateCurrentModule { copy(currentIndex = entryIndex) }
+        }
+        if (appConf.value.editor.autoScroll.let { it.onJumpedToEntry || it.onSwitched }) {
+            scrollFitViewModel.emitNext()
+        }
+    }
+
+    private fun findModuleIndexByName(moduleName: String): Int? {
+        val moduleIndex = project?.modules?.indexOfFirst { it.name == moduleName }?.takeIf { it >= 0 }
+        if (moduleIndex == null) {
+            Log.error("Module not found: $moduleName")
+            return null
+        }
+        return moduleIndex
+    }
+
+    override fun jumpToModuleByNameAndEntry(moduleName: String, entryIndex: Int) {
+        val moduleIndex = findModuleIndexByName(moduleName) ?: return
+        jumpToModuleAndEntry(moduleIndex, entryIndex)
+    }
+
+    override fun jumpToModuleByNameAndEntryName(moduleName: String, entryName: String) {
+        val moduleIndex = findModuleIndexByName(moduleName) ?: return
+        val entryIndex = project?.modules?.get(moduleIndex)?.entries
+            ?.indexOfFirst { it.name == entryName }?.takeIf { it >= 0 }
+        if (entryIndex == null) {
+            Log.error("Entry not found in module $moduleName: $entryName")
+            return
+        }
+        jumpToModuleAndEntry(moduleIndex, entryIndex)
     }
 
     override fun jumpToEntry(index: Int) {

@@ -10,10 +10,14 @@ import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.InvalidOpenedProjectException
+import com.sdercolin.vlabeler.io.awaitLoadProject
+import com.sdercolin.vlabeler.io.awaitOpenCreatedProject
 import com.sdercolin.vlabeler.io.loadAvailableLabelerConfs
 import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.io.loadProject
+import com.sdercolin.vlabeler.io.saveProjectFile
 import com.sdercolin.vlabeler.ipc.IpcState
+import com.sdercolin.vlabeler.ipc.request.OpenOrCreateRequest
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.ArgumentMap
@@ -40,6 +44,7 @@ import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
+import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFileOrNull
 import com.sdercolin.vlabeler.util.toFrame
 import kotlinx.coroutines.CoroutineScope
@@ -429,6 +434,58 @@ class AppState(
             }
         editProject { newProject }
         report?.let { showMacroPluginReport(it) }
+    }
+
+    fun consumeOpenOrCreateIpcRequest(request: OpenOrCreateRequest) = mainScope.launch {
+        // check if the project is already opened
+        val isProjectAlreadyOpened = request.projectFile.toFile().absolutePath == project?.projectFile?.absolutePath
+        if (!isProjectAlreadyOpened) {
+            // check if the project exists
+            val isProjectExisting = request.projectFile.toFile().exists()
+
+            // save current project if it is not saved
+            if (project != null && hasUnsavedChanges) {
+                val purpose = if (isProjectExisting) {
+                    AskIfSaveDialogPurpose.IsOpening
+                } else {
+                    AskIfSaveDialogPurpose.IsCreatingNew
+                }
+                val result = awaitEmbeddedDialog(purpose) as AskIfSaveDialogResult?
+                when {
+                    result == null -> {
+                        // canceled, the request is discarded
+                        return@launch
+                    }
+                    result.save -> {
+                        saveProjectFile(project)
+                    }
+                }
+            }
+            if (isProjectExisting) {
+                // load the project
+                awaitLoadProject(request.projectFile.toFile(), this@AppState)
+            } else {
+                // create a new project
+                val newProject = request.newProjectArgs.create(
+                    projectFile = request.projectFile.toFile(),
+                    availableLabelers = activeLabelerConfs,
+                    availableTemplatePlugins = getActivePlugins(Plugin.Type.Template),
+                ).getOrElse {
+                    showError(it)
+                    return@launch
+                }
+                awaitOpenCreatedProject(newProject, this@AppState)
+            }
+        }
+
+        // go to the entry
+        request.gotoEntryByIndex?.let {
+            jumpToModuleByNameAndEntry(it.parentFolderName, it.entryIndex)
+            return@launch
+        }
+        request.gotoEntryByName?.let {
+            jumpToModuleByNameAndEntryName(it.parentFolderName, it.entryName)
+        }
     }
 
     sealed class PendingActionAfterSaved {

@@ -30,7 +30,10 @@ class IpcState(private val appState: AppState) {
     private fun handleRequest(request: IpcRequest) {
         val response = when (request) {
             is HeartbeatRequest -> HeartbeatResponse(request.sentAt, System.currentTimeMillis())
-            is OpenOrCreateRequest -> OpenOrCreateResponse(request.sentAt, System.currentTimeMillis())
+            is OpenOrCreateRequest -> {
+                appState.consumeOpenOrCreateIpcRequest(request) // async
+                OpenOrCreateResponse(request.sentAt, System.currentTimeMillis())
+            }
         }
         response(response)
     }

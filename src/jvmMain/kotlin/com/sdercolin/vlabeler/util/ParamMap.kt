@@ -157,5 +157,6 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
 }
 
 fun Map<String, Any>.toParamMap() = ParamMap(this)
+fun Map<String, ParamTypedMap.TypedValue>.toParamTypedMap() = ParamTypedMap(this)
 
 fun ParamMap?.orEmpty() = this ?: ParamMap(mapOf())

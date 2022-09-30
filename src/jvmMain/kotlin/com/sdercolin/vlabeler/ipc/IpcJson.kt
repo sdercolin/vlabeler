@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.ipc.request.IpcRequest
 import com.sdercolin.vlabeler.ipc.request.OpenOrCreateRequest
 import com.sdercolin.vlabeler.ipc.response.HeartbeatResponse
 import com.sdercolin.vlabeler.ipc.response.IpcResponse
+import com.sdercolin.vlabeler.ipc.response.OpenOrCreateResponse
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -22,6 +23,7 @@ val jsonForIpc = Json {
         }
         polymorphic(IpcResponse::class) {
             subclass(HeartbeatResponse::class)
+            subclass(OpenOrCreateResponse::class)
         }
     }
 }
