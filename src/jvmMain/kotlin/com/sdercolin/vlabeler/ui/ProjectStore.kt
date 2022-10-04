@@ -347,7 +347,9 @@ class ProjectStoreImpl(
     }
 
     override fun selectModule(index: Int) {
+        val previousProject = requireProject()
         editProject { copy(currentModuleIndex = index) }
+        scrollIfNeededWhenSwitchedEntry(previousProject)
     }
 
     override fun canOverwriteExportCurrentModule(): Boolean {
