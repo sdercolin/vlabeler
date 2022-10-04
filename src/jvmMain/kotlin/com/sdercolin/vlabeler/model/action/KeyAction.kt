@@ -189,6 +189,7 @@ enum class KeyAction(
         true,
     ),
     PrerenderAll(listOf(Strings.MenuTools, Strings.MenuToolsPrerender), null, true),
+    RecycleMemory(listOf(Strings.MenuTools, Strings.MenuToolsRecycleMemory), null, true),
     ManageTemplatePlugins(
         listOf(Strings.MenuSettings, Strings.MenuSettingsTemplatePlugins),
         KeySet(Key.Apostrophe, setOf(Key.Ctrl)),

@@ -50,6 +50,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuToolsBatchEdit -> "批量编辑"
     MenuToolsBatchEditManagePlugins -> "管理插件..."
     MenuToolsPrerender -> "预渲染所有图表..."
+    MenuToolsRecycleMemory -> "回收内存"
     MenuSettings -> "设置"
     MenuSettingsPreferences -> "偏好设置..."
     MenuSettingsLabelers -> "标注器..."
