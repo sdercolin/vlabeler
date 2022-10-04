@@ -18,6 +18,7 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
     private var waitingNext = false
 
     fun update(
+        showLeftSide: Boolean,
         horizontalScrollState: ScrollState,
         canvasLength: Int,
         entriesInPixel: List<EntryInPixel>,
@@ -31,7 +32,11 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
         val center = if (end - start <= screenLength - (2 * screenLength / MinScreenRatioOffset)) {
             (start + end) / 2
         } else {
-            start + screenLength / 2 - screenLength / MinScreenRatioOffset
+            if (showLeftSide) {
+                start + screenLength / 2 - screenLength / MinScreenRatioOffset
+            } else {
+                end - screenLength / 2 + screenLength / MinScreenRatioOffset
+            }
         }
         val target = (center - screenLength / 2).toInt().coerceAtMost(scrollMax).coerceAtLeast(0)
         update(target)
