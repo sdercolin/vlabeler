@@ -374,10 +374,11 @@ class AppState(
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
 
-    private fun exit() {
+    fun exit() {
         mainScope.launch {
             terminateAutoSaveProject()
             discardAutoSavedProjects()
+            ipcState.close()
             shouldExit = true
         }
     }

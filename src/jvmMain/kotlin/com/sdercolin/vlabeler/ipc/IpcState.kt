@@ -37,4 +37,8 @@ class IpcState(private val appState: AppState) {
         }
         response(response)
     }
+
+    fun close() {
+        server.close()
+    }
 }

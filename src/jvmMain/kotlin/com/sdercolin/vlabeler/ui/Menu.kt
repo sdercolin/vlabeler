@@ -2,8 +2,12 @@ package com.sdercolin.vlabeler.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.debug.DebugState
@@ -35,9 +39,16 @@ fun FrameWindowScope.Menu(
     appState: AppState?,
     viewConf: AppConf.View,
 ) {
+    var errorForDebug by remember { mutableStateOf<Throwable?>(null) }
     val keymap = appState?.appConf?.keymaps?.keyActionMap ?: mapOf()
 
     fun KeyAction.getKeyShortCut() = keymap.getNullableOrElse(this) { this.defaultKeySet }?.toShortCut()
+
+    LaunchedEffect(errorForDebug) {
+        errorForDebug?.let {
+            throw it
+        }
+    }
 
     CompositionLocalProvider(LocalLanguage.provides(viewConf.language)) {
         MenuBar {
@@ -366,7 +377,7 @@ fun FrameWindowScope.Menu(
                     if (appState != null) {
                         Item(
                             "Throw Exception",
-                            onClick = { throw IllegalStateException("Test exception from menu") },
+                            onClick = { errorForDebug = IllegalStateException("Test exception from menu") },
                         )
                         Item(
                             "Export AppConfig",
