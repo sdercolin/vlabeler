@@ -303,6 +303,11 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.PrerenderAll.getKeyShortCut(),
                         enabled = appState.isEditorActive,
                     )
+                    Item(
+                        string(Strings.MenuToolsRecycleMemory),
+                        onClick = { System.gc() },
+                        shortcut = KeyAction.RecycleMemory.getKeyShortCut(),
+                    )
                 }
             }
             Menu(string(Strings.MenuSettings), mnemonic = 'S') {

@@ -51,6 +51,7 @@ enum class Strings {
     MenuToolsBatchEdit,
     MenuToolsBatchEditManagePlugins,
     MenuToolsPrerender,
+    MenuToolsRecycleMemory,
     MenuSettings,
     MenuSettingsPreferences,
     MenuSettingsLabelers,

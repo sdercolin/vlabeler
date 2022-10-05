@@ -50,6 +50,7 @@ fun Strings.ja(): String? = when (this) {
     MenuToolsBatchEdit -> "バッチ編集"
     MenuToolsBatchEditManagePlugins -> "プラグインマネージャー..."
     MenuToolsPrerender -> "すべてのグラフをプリレンダリング"
+    MenuToolsRecycleMemory -> "メモリを回収"
     MenuSettings -> "設定"
     MenuSettingsPreferences -> "環境設定..."
     MenuSettingsLabelers -> "ラベラー..."

@@ -147,6 +147,7 @@ fun MarkerCanvas(
 ) {
     FieldBorderCanvas(horizontalScrollState, state, appState)
     LaunchAdjustScrollPosition(
+        appState.appConf,
         state.entriesInPixel,
         editorState.project.currentModuleIndex,
         editorState.project.currentModule.currentIndex,
@@ -622,6 +623,7 @@ private fun MarkerState.editEntryIfNeeded(
 
 @Composable
 private fun LaunchAdjustScrollPosition(
+    appConf: AppConf,
     entriesInPixel: List<EntryInPixel>,
     currentModuleIndex: Int,
     currentIndex: Int,
@@ -629,7 +631,15 @@ private fun LaunchAdjustScrollPosition(
     horizontalScrollState: ScrollState,
     scrollFitViewModel: ScrollFitViewModel,
 ) {
-    LaunchedEffect(entriesInPixel, currentModuleIndex, currentIndex, canvasLength, horizontalScrollState.maxValue) {
-        scrollFitViewModel.update(horizontalScrollState, canvasLength, entriesInPixel, currentIndex)
+    val isLabelOnLeft = appConf.editor.continuousLabelNames.position.left
+    LaunchedEffect(
+        isLabelOnLeft,
+        entriesInPixel,
+        currentModuleIndex,
+        currentIndex,
+        canvasLength,
+        horizontalScrollState.maxValue,
+    ) {
+        scrollFitViewModel.update(isLabelOnLeft, horizontalScrollState, canvasLength, entriesInPixel, currentIndex)
     }
 }

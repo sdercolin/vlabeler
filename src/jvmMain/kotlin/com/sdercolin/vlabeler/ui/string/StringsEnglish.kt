@@ -48,6 +48,7 @@ fun Strings.en(): String = when (this) {
     MenuToolsBatchEdit -> "Batch Edit"
     MenuToolsBatchEditManagePlugins -> "Manage Plugins..."
     MenuToolsPrerender -> "Prerender All Charts..."
+    MenuToolsRecycleMemory -> "Recycle Memory"
     MenuSettings -> "Settings"
     MenuSettingsPreferences -> "Preferences..."
     MenuSettingsLabelers -> "Labelers..."

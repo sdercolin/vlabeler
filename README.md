@@ -336,4 +336,6 @@ When reporting issues to us, please attach the recent log files.
 
 1. On Linux, the file chooser may not be able to select an empty folder. Please create something inside, or copy + paste
    its path
-2. Sometimes the window freezes unexpectedly. You can resize the window to refresh it
+2. On Linux, sometimes the application may not be able to recycle memory properly.
+   You can use `Tools` -> `Recycle Memory` to force it to recycle memory.
+3. Sometimes the window freezes unexpectedly. You can resize the window to refresh it
