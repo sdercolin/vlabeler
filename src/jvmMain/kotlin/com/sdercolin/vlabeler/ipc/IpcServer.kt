@@ -38,7 +38,7 @@ class IpcServer(val coroutineScope: CoroutineScope) {
     fun startReceive(requestFlow: MutableSharedFlow<IpcRequest>) {
         job?.cancel()
         job = coroutineScope.launch(Dispatchers.IO) {
-            while (job?.isActive == true) {
+            while (job?.isActive == true && zContext.isClosed.not()) {
                 try {
                     delay(ThrottlePeriodMs)
                     val message = socket.recvStr()
