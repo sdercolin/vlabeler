@@ -26,7 +26,6 @@ import kotlinx.serialization.json.float
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import java.nio.charset.Charset
 
 /**
  * Serializable dynamic type map
@@ -83,7 +82,7 @@ class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
                 if (file == null) {
                     JsonNull
                 } else {
-                    JsonPrimitive(file.readText(value.encoding?.let { charset(it) } ?: Charset.defaultCharset()))
+                    JsonPrimitive(file.readTextByEncoding(value.encoding))
                 }
             }
             else -> throw IllegalArgumentException("$value is not supported")

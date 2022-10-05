@@ -9,10 +9,10 @@ import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.readTextByEncoding
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.Serializable
 import java.io.File
-import java.nio.charset.Charset
 
 sealed class TemplatePluginResult {
     data class Raw(val lines: List<String>) : TemplatePluginResult()
@@ -53,10 +53,10 @@ fun runTemplatePlugin(
             js.exec(inputFinderScriptFile, inputFinderScriptTexts)
             val encodingByScript = js.getOrNull<String>("encoding")
             js.getJson<List<String>>("inputFilePaths").map {
-                it.toFile().readText(Charset.forName(encodingByScript ?: encoding))
+                it.toFile().readTextByEncoding(encodingByScript ?: encoding)
             }
         } else {
-            inputFiles.map { it.readText(Charset.forName(encoding)) }
+            inputFiles.map { it.readTextByEncoding(encoding) }
         }
         js.setJson("inputs", inputTexts)
         val resourceTexts = plugin.readResourceFiles()

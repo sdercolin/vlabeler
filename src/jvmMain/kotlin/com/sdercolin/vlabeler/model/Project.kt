@@ -15,13 +15,13 @@ import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.orEmpty
+import com.sdercolin.vlabeler.util.readTextByEncoding
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.io.File
-import java.nio.charset.Charset
 
 @Serializable
 @Immutable
@@ -631,7 +631,7 @@ suspend fun projectOf(
             }
             existingSingleInputFile != null -> {
                 fromRawLabels(
-                    existingSingleInputFile.readLines(Charset.forName(encoding)),
+                    existingSingleInputFile.readTextByEncoding(encoding).lines(),
                     existingSingleInputFile,
                     labelerConf,
                     labelerParams,
