@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.util
 
 import java.io.File
 import java.io.FilenameFilter
+import java.nio.charset.Charset
 
 fun File.getDirectory(): File = if (isDirectory) this else parentFile
 fun File.getChildren(filenameFilter: FilenameFilter? = null): List<File> =
@@ -18,3 +19,7 @@ fun String.toFileOrNull(
     .runIfNotNull(ensureExists) { takeIf { it.exists() } }
     ?.runIfNotNull(ensureIsFile && ensureExists) { takeIf { it.isFile } }
     ?.runIfNotNull(ensureIsDirectory && ensureExists) { takeIf { it.isDirectory } }
+
+fun File.readTextByEncoding(encoding: String?): String = readText(
+    encoding?.let { Charset.forName(it) } ?: Charset.defaultCharset(),
+).trim('\uFEFF')
