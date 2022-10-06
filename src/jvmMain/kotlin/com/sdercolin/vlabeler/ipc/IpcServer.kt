@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ipc
 
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.hasUncaughtError
 import com.sdercolin.vlabeler.ipc.request.IpcRequest
 import com.sdercolin.vlabeler.ipc.response.IpcResponse
 import kotlinx.coroutines.CancellationException
@@ -28,7 +29,7 @@ class IpcServer(val coroutineScope: CoroutineScope) {
         socket = zContext.createSocket(SocketType.REP)
         try {
             socket.bind("tcp://*:$Port")
-            Log.debug("IpcServer bind to port $Port")
+            Log.debug("IpcServer bound to port $Port")
         } catch (t: Throwable) {
             Log.error("Failed to bind socket:")
             Log.error(t)
@@ -39,6 +40,10 @@ class IpcServer(val coroutineScope: CoroutineScope) {
         job?.cancel()
         job = coroutineScope.launch(Dispatchers.IO) {
             while (job?.isActive == true && zContext.isClosed.not()) {
+                if (hasUncaughtError) {
+                    close()
+                    return@launch
+                }
                 try {
                     delay(ThrottlePeriodMs)
                     val message = socket.recvStr()
@@ -65,9 +70,11 @@ class IpcServer(val coroutineScope: CoroutineScope) {
     }
 
     fun close() {
-        job?.cancel()
-        zContext.destroy()
-        Log.debug("IpcServer closed")
+        runCatching {
+            job?.cancel()
+            zContext.destroy()
+            Log.debug("IpcServer closed")
+        }
     }
 
     companion object {
