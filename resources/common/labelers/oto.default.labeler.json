@@ -1,6 +1,6 @@
 {
   "name": "oto-plus.default",
-  "version": 14,
+  "version": 15,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -170,7 +170,9 @@
     ],
     "scripts": [
       "if (!name) {",
-      "    name = getNameWithoutExtension(sample)",
+      "    if (sample) {",
+      "        name = getNameWithoutExtension(sample)",
+      "    }",
       "}",
       "offset = 0",
       "if (ovl === '') {",

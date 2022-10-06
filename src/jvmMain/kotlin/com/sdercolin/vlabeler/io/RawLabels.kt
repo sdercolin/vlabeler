@@ -27,12 +27,17 @@ fun fromRawLabels(
     val js = JavaScript()
     js.execResource(Resources.fileJs)
     js.setJson("params", labelerParams.orEmpty().resolve(project = null, js = js))
-    val entriesBySampleName = sources.mapNotNull { source ->
+    val entriesBySampleName = sources.mapIndexedNotNull { index, source ->
+        if (source.isBlank()) return@mapIndexedNotNull null
+        val errorMessageSuffix = "in file ${inputFile?.absolutePath}, line ${index + 1}: $source"
         runCatching {
             val groups = source.matchGroups(extractor)
+            require(groups.size >= parser.variableNames.size) {
+                "Extracted groups less than required $errorMessageSuffix"
+            }
 
             parser.variableNames.mapIndexed { i, name ->
-                js.set(name, groups[i])
+                js.set(name, groups.getOrNull(i))
             }
             js.set("inputFileName", inputFile?.name)
             js.set("sampleFileNames", sampleFiles.map { it.name })
@@ -47,7 +52,7 @@ fun fromRawLabels(
 
             // require name, otherwise ignore the entry
             val name = js.get<String>("name")
-            require(name.isNotEmpty()) { "Cannot get `name` from parser in `$source`" }
+            require(name.isNotEmpty()) { "Cannot get `name` from parser $errorMessageSuffix" }
 
             // optional start, end, points
             val start = js.getOrNull<Double>("start")?.toFloat()
@@ -60,7 +65,7 @@ fun fromRawLabels(
             if (start == null || end == null || points.size != labelerConf.fields.size) {
                 // use default except name if data size is not enough
                 Entry.fromDefaultValues(sampleName, name, labelerConf).also {
-                    Log.info("Entry parse failed, fallback to default: $it")
+                    Log.info("Entry parse failed, fallback to default: $it, $errorMessageSuffix")
                 }
             } else {
                 Entry(sample = sampleName, name = name, start = start, end = end, points = points, extras = extras)
