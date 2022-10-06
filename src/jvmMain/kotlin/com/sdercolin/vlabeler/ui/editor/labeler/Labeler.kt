@@ -66,6 +66,8 @@ import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.editor.RenderStatusLabel
 import com.sdercolin.vlabeler.ui.editor.ToolboxView
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.DarkGray
 import com.sdercolin.vlabeler.ui.theme.LightGray
@@ -94,7 +96,7 @@ fun Labeler(
     Column(Modifier.fillMaxSize()) {
         if (project.isMultiModule) {
             ModuleSelectorBar(
-                moduleNames = project.modules.map { it.name },
+                moduleNames = project.modules.map { it.name.ifEmpty { string(Strings.EditorModuleRootNameTitle) } },
                 currentModuleIndex = project.currentModuleIndex,
                 selectModule = { editorState.selectModule(it) },
             )

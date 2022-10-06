@@ -1,6 +1,6 @@
 {
   "name": "utau-singer.default",
-  "version": 4,
+  "version": 5,
   "extension": "ini",
   "displayedName": {
     "en": "UTAU singer labeler",
@@ -312,26 +312,27 @@
     "scripts": [
       "// `root` is the input File object indicating the root sample directory.",
       "// `acceptedSampleExtensions` is provided as list of strings indicating the accepted extensions of sample files",
-      "let subFolders = root.listChildDirectories()",
-      "if (params['useRootDirectory']) {",
-      "    subFolders.unshift(root)",
-      "}",
       "let modules = []",
-      "for (subFolder of subFolders) {",
-      "    let samples = subFolder.listChildFiles().filter(file => acceptedSampleExtensions.includes(file.getExtension()))",
+      "function putFolder(folder, isRoot) {",
+      "    let samples = folder.listChildFiles().filter(file => acceptedSampleExtensions.includes(file.getExtension()))",
       "    if (samples.length > 0) {",
-      "        let otoPath = subFolder.resolve(\"oto.ini\").getAbsolutePath()",
+      "        let otoPath = folder.resolve('oto.ini').getAbsolutePath()",
       "        modules.push(",
       "                new ModuleDefinition(",
-      "                        subFolder.getName(),",
-      "                        subFolder.getAbsolutePath(),",
+      "                        isRoot ? '' : folder.getName(),",
+      "                        folder.getAbsolutePath(),",
       "                        samples.map(f => f.getName()),",
       "                        [otoPath],",
       "                        otoPath",
       "                )",
       "        )",
       "    }",
-      "}"
+      "}",
+      "if (params['useRootDirectory']) {",
+      "    putFolder(root, true)",
+      "}",
+      "let subFolders = root.listChildDirectories()",
+      "subFolders.forEach(folder => putFolder(folder, false))"
     ]
   }
 }

@@ -178,6 +178,7 @@ fun Strings.ja(): String? = when (this) {
     PluginEntrySelectorPreviewSummary -> "選択中 %d/%d"
     PluginEntrySelectorPlaceholder -> "フィルターがないため、全てのエントリが選択されます"
     EditorSubTitleMultiple -> "サンプル %2\$s の中の%1\$dエントリを編集"
+    EditorModuleRootNameTitle -> "（ルート）"
     FailedToLoadSampleFileError ->
         "サンプルファイルを読み込めませんでした。存在しないか、サポートされていないフォーマットの可能性があります。"
     EmptySampleDirectoryException -> "プロジェクトを作成できませんでした。サンプルディレクトリにサンプルファイルがありません。"

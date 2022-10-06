@@ -67,8 +67,8 @@ object SampleInfoRepository {
     }
 
     private fun getSampleInfoFile(wavFile: File, moduleName: String) =
-        cacheDirectory.resolve(moduleName)
-            .also { it.mkdir() }
+        cacheDirectory.resolve(File(moduleName))
+            .also { it.mkdirs() }
             .resolve("${wavFile.name}.info.json")
 
     fun clearMemory() {

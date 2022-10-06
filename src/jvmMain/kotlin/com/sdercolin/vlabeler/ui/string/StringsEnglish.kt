@@ -181,6 +181,7 @@ fun Strings.en(): String = when (this) {
     PluginEntrySelectorPreviewSummary -> "Selecting %d/%d"
     PluginEntrySelectorPlaceholder -> "No filters, selecting all entries."
     EditorSubTitleMultiple -> "editing %1\$d entries in sample %2\$s"
+    EditorModuleRootNameTitle -> "(Root)"
     FailedToLoadSampleFileError -> "Could not load the sample file.\nIt may not exist or is not a supported format."
     EmptySampleDirectoryException ->
         "Could not create the project because no sample files are found " +

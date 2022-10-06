@@ -171,6 +171,7 @@ fun Strings.zhHans(): String? = when (this) {
     PluginEntrySelectorPreviewSummary -> "已选中 %d/%d"
     PluginEntrySelectorPlaceholder -> "无筛选条件，将选中所有条目"
     EditorSubTitleMultiple -> "编辑采样 %2\$s 中的%1\$d个条目"
+    EditorModuleRootNameTitle -> "（根）"
     FailedToLoadSampleFileError -> "无法读取该采样文件。它可能不存在，或是不支持的格式。"
     EmptySampleDirectoryException -> "无法创建工程。采样目录中不存在任何采样文件。"
     PluginRuntimeUnexpectedException -> "插件执行过程中发生了意外的错误。请联系插件作者以获取更多信息。"

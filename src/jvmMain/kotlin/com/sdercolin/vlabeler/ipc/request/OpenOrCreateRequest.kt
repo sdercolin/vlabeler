@@ -30,13 +30,13 @@ class OpenOrCreateRequest(
 
     @Serializable
     class GotoEntryByName(
-        val parentFolderName: String, // "" for single-module project
+        val parentFolderName: String, // "" for single-module project, or root of multi-module project
         val entryName: String,
     )
 
     @Serializable
     class GotoEntryByIndex(
-        val parentFolderName: String, // "" for single-module project
+        val parentFolderName: String, // "" for single-module project, or root of multi-module project
         val entryIndex: Int,
     )
 
