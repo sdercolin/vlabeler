@@ -103,7 +103,7 @@ class ColorPickerState(
     )
 
     val alphaSlider = SliderState(
-        baseColor = color,
+        baseColor = color.copy(alpha = 1f),
         value = color.alpha,
         valueApplier = { value, color -> color.copy(alpha = value) },
         update = { updateColor() },
