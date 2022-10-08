@@ -10,8 +10,10 @@ Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | 
 - Customizable labeling process, to be used by different types of voice generation software
 - High performance with multiplatform support
 
-**The project is now in Alpha.
+**The project is now in Beta.
 For help, suggestions, issue reports, etc. please join our [Discord](https://discord.gg/yrTqG2SrRd).**
+
+Demo video: [https://youtu.be/Ol1cYjuCH00](https://youtu.be/Ol1cYjuCH00)
 
 ## Download
 
