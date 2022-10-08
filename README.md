@@ -13,7 +13,7 @@ Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | 
 **The project is now in Beta.
 For help, suggestions, issue reports, etc. please join our [Discord](https://discord.gg/yrTqG2SrRd).**
 
-Demo video: [https://youtu.be/Ol1cYjuCH00](https://youtu.be/Ol1cYjuCH00)
+Demo video (in English): [YouTube](https://youtu.be/xFX8SRrJEzM) | [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
 
 ## Download
 

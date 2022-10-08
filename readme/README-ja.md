@@ -12,7 +12,9 @@
 - さまざまな種類の音声生成ソフトウェアで使用される、カスタマイズ可能なラベル付けプロセス
 - マルチプラットフォームをサポートする高性能
 
-**このプロジェクトは現在アルファ版です。 ヘルプ、提案、問題レポートなどについては、[Discord](https://discord.gg/yrTqG2SrRd) に参加してください。**
+**このプロジェクトは現在ベータ版です。 ヘルプ、提案、問題レポートなどについては、[Discord](https://discord.gg/yrTqG2SrRd) に参加してください。**
+
+デモ動画（英語）：[YouTube](https://youtu.be/xFX8SRrJEzM) | [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
 
 ## ダウンロード
 
