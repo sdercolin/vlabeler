@@ -75,5 +75,9 @@ object SampleInfoRepository {
         infoMap.clear()
     }
 
+    fun clear(project: Project) {
+        project.getCacheDir().resolve(SampleInfoCacheFolderName).deleteRecursively()
+    }
+
     private const val SampleInfoCacheFolderName = "sample-info"
 }

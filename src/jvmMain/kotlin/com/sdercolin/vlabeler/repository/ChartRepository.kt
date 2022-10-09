@@ -102,6 +102,10 @@ object ChartRepository {
     private fun getModuleSubDirectory(moduleName: String) = cacheDirectory.resolve(moduleName)
         .also { it.mkdir() }
 
+    fun clear(project: Project) {
+        project.getCacheDir().resolve(ChartsCacheFolderName).deleteRecursively()
+    }
+
     private const val ChartsCacheFolderName = "charts"
 }
 

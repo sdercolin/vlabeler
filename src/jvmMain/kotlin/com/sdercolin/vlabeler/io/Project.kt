@@ -10,7 +10,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.stringStatic
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
-import com.sdercolin.vlabeler.util.getCacheDir
+import com.sdercolin.vlabeler.util.clearCache
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
@@ -158,7 +158,7 @@ suspend fun awaitOpenCreatedProject(
     appState: AppState,
 ) {
     val file = saveProjectFile(project)
-    project.getCacheDir().deleteRecursively()
+    project.clearCache()
     appState.openEditor(project)
     appState.discardAutoSavedProjects()
     appState.addRecentProject(file)

@@ -4,6 +4,8 @@ import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.model.LabelerConf.Companion.LabelerFileExtension
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.repository.ChartRepository
+import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import java.io.File
 import java.io.FilenameFilter
 
@@ -48,6 +50,10 @@ fun getCustomLabelers() = CustomLabelerDir.getChildren(labelerFileFilter)
 
 // Project files
 fun Project.getCacheDir() = File(cacheDirectory)
+fun Project.clearCache() {
+    ChartRepository.clear(this)
+    SampleInfoRepository.clear(this)
+}
 
 private val invalidCharsForFileName = arrayOf('"', '*', ':', '<', '>', '?', '\\', '|', Char(0x7F), '\u0000')
 

@@ -23,7 +23,7 @@ import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.ParamMap
-import com.sdercolin.vlabeler.util.getCacheDir
+import com.sdercolin.vlabeler.util.clearCache
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CancellationException
@@ -375,7 +375,7 @@ class AppDialogStateImpl(
 
     override fun clearCachesAndReopen(scope: CoroutineScope) {
         SampleInfoRepository.clearMemory()
-        projectStore.requireProject().getCacheDir().deleteRecursively()
+        projectStore.requireProject().clearCache()
         loadProject(scope, projectStore.requireProject().projectFile, state)
     }
 
