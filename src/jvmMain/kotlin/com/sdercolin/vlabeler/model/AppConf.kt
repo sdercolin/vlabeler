@@ -106,7 +106,7 @@ data class AppConf(
         companion object {
             const val DefaultResampleDownToHz = 44100
             const val MinResampleDownToHz = 0
-            const val DefaultNormalize = true
+            const val DefaultNormalize = false
             const val DefaultUnitSize = 60
             const val MaxUnitSize = DefaultUnitSize * 10
             const val MinUnitSize = 1

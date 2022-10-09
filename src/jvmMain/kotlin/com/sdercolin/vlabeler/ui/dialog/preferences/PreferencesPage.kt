@@ -93,6 +93,7 @@ abstract class PreferencesPage(
                 )
                 switch(
                     title = Strings.PreferencesChartsWaveformNormalize,
+                    description = Strings.PreferencesChartsWaveformNormalizeDescription,
                     defaultValue = AppConf.Amplitude.DefaultNormalize,
                     select = { it.normalize },
                     update = { copy(normalize = it) },

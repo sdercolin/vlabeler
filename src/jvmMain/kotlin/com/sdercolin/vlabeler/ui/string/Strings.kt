@@ -215,6 +215,7 @@ enum class Strings {
     PreferencesChartsWaveformResampleDownTo,
     PreferencesChartsWaveformResampleDownToDescription,
     PreferencesChartsWaveformNormalize,
+    PreferencesChartsWaveformNormalizeDescription,
     PreferencesChartsWaveformUnitSize,
     PreferencesChartsWaveformUnitSizeDescription,
     PreferencesChartsWaveformIntensityAccuracy,
