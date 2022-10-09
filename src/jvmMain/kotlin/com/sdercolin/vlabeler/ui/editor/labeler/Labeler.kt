@@ -159,7 +159,7 @@ private fun ModuleSelectorBar(
     currentModuleIndex: Int,
     selectModule: (Int) -> Unit,
 ) {
-    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = currentModuleIndex)
+    val lazyListState = rememberLazyListState()
     LaunchedEffect(currentModuleIndex) {
         lazyListState.animateScrollToShowItem(currentModuleIndex)
     }
@@ -193,7 +193,7 @@ private fun ModuleSelectorBar(
                 }
             }
         }
-        LazyRow {
+        LazyRow(state = lazyListState) {
             items(moduleNames.size) { index ->
                 val moduleName = moduleNames[index]
                 val isSelected = index == currentModuleIndex
