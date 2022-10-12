@@ -5,8 +5,10 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
 import com.sdercolin.vlabeler.io.Sample
-import com.sdercolin.vlabeler.io.fromRawLabels
+import com.sdercolin.vlabeler.io.moduleFromRawLabels
+import com.sdercolin.vlabeler.io.moduleGroupFromRawLabels
 import com.sdercolin.vlabeler.model.Project.Companion.ProjectVersion
+import com.sdercolin.vlabeler.model.Project.Module
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.JavaScript
@@ -438,12 +440,14 @@ private fun generateEntriesByPlugin(
 
             entries.postApplyLabelerConf(labelerConf)
         }
-        is TemplatePluginResult.Raw -> fromRawLabels(
+        is TemplatePluginResult.Raw -> moduleFromRawLabels(
             sources = result.lines,
             inputFile = inputFiles.firstOrNull(),
             labelerConf = labelerConf,
             labelerParams = labelerParams,
             sampleFiles = sampleFiles,
+            encoding = encoding,
+            legacyMode = labelerConf.parser.scope == null,
         )
     }
 }
@@ -582,6 +586,7 @@ suspend fun projectOf(
 
         js.set("debug", isDebug)
         js.set("root", sampleDirectory.toFile())
+        js.set("encoding", encoding)
         js.setJson("acceptedSampleExtensions", Sample.acceptableSampleFileExtensions)
         listOf(
             Resources.fileJs,
@@ -610,51 +615,10 @@ suspend fun projectOf(
         )
     }
 
-    val modules = moduleDefinitions.mapNotNull { def ->
-        val existingSingleInputFile = def.inputFiles?.firstOrNull { it.exists() }
-        val entries = when {
-            plugin != null -> {
-                generateEntriesByPlugin(
-                    rootSampleDirectory = sampleDirectory,
-                    moduleDefinition = def,
-                    labelerConf = labelerConf,
-                    labelerParams = labelerParams,
-                    sampleFiles = def.sampleFiles,
-                    plugin = plugin,
-                    params = pluginParams,
-                    inputFiles = def.inputFiles.orEmpty().filter { it.exists() },
-                    encoding = encoding,
-                )
-                    .getOrElse {
-                        return Result.failure(it)
-                    }
-            }
-            existingSingleInputFile != null -> {
-                fromRawLabels(
-                    existingSingleInputFile.readTextByEncoding(encoding).lines(),
-                    existingSingleInputFile,
-                    labelerConf,
-                    labelerParams,
-                    def.sampleFiles,
-                )
-            }
-            else -> {
-                def.sampleFiles.map {
-                    Entry.fromDefaultValues(it.name, it.nameWithoutExtension, labelerConf)
-                }
-            }
-        }
-        if (entries.isEmpty()) {
-            Log.error("No entries found for module ${def.name}")
-            return@mapNotNull null
-        }
-        Project.Module(
-            name = def.name,
-            sampleDirectory = def.sampleDirectory.absolutePath,
-            entries = entries,
-            currentIndex = 0,
-            rawFilePath = def.labelFile?.absolutePath,
-        )
+    val modules = runCatching {
+        parseModule(moduleDefinitions, plugin, sampleDirectory, labelerConf, labelerParams, pluginParams, encoding)
+    }.getOrElse {
+        return Result.failure(InvalidCreatedProjectException(it))
     }
 
     val labelerTypedParams = labelerParams?.let { ParamTypedMap.from(it, labelerConf.parameterDefs) }
@@ -680,5 +644,110 @@ suspend fun projectOf(
         ).validate()
     }.onFailure {
         return Result.failure(InvalidCreatedProjectException(it))
+    }
+}
+
+private fun parseModule(
+    moduleDefinitions: List<ModuleDefinition>,
+    plugin: Plugin?,
+    sampleDirectory: String,
+    labelerConf: LabelerConf,
+    labelerParams: ParamMap?,
+    pluginParams: ParamMap?,
+    encoding: String,
+): List<Module> {
+    if (labelerConf.parser.scope != LabelerConf.Scope.Modules) {
+        return parseSingleModule(
+            moduleDefinitions,
+            plugin,
+            sampleDirectory,
+            labelerConf,
+            labelerParams,
+            pluginParams,
+            encoding,
+        )
+    }
+
+    val moduleGroups = moduleDefinitions.groupBy { it.copy(name = "") }.map { it.value }
+
+    return moduleGroups.flatMap { group ->
+        parseModuleGroup(group, labelerConf, labelerParams, encoding)
+    }
+}
+
+private fun parseSingleModule(
+    moduleDefinitions: List<ModuleDefinition>,
+    plugin: Plugin?,
+    sampleDirectory: String,
+    labelerConf: LabelerConf,
+    labelerParams: ParamMap?,
+    pluginParams: ParamMap?,
+    encoding: String,
+) = moduleDefinitions.mapNotNull { def ->
+    val existingSingleInputFile = def.inputFiles?.firstOrNull { it.exists() }
+    val entries = when {
+        plugin != null -> {
+            generateEntriesByPlugin(
+                rootSampleDirectory = sampleDirectory,
+                moduleDefinition = def,
+                labelerConf = labelerConf,
+                labelerParams = labelerParams,
+                sampleFiles = def.sampleFiles,
+                plugin = plugin,
+                params = pluginParams,
+                inputFiles = def.inputFiles.orEmpty().filter { it.exists() },
+                encoding = encoding,
+            ).getOrThrow()
+        }
+        existingSingleInputFile != null -> {
+            moduleFromRawLabels(
+                existingSingleInputFile.readTextByEncoding(encoding).lines(),
+                existingSingleInputFile,
+                labelerConf,
+                labelerParams,
+                def.sampleFiles,
+                encoding = encoding,
+                legacyMode = labelerConf.parser.scope == null,
+            )
+        }
+        else -> {
+            def.sampleFiles.map {
+                Entry.fromDefaultValues(it.name, it.nameWithoutExtension, labelerConf)
+            }
+        }
+    }
+    if (entries.isEmpty()) {
+        Log.error("No entries found for module ${def.name}")
+        return@mapNotNull null
+    }
+    Module(
+        name = def.name,
+        sampleDirectory = def.sampleDirectory.absolutePath,
+        entries = entries,
+        currentIndex = 0,
+        rawFilePath = def.labelFile?.absolutePath,
+    )
+}
+
+private fun parseModuleGroup(
+    moduleDefinitionGroup: List<ModuleDefinition>,
+    // TODO: plugin: Plugin?,
+    labelerConf: LabelerConf,
+    labelerParams: ParamMap?,
+    // TODO: pluginParams: ParamMap?,
+    encoding: String,
+): List<Module> {
+    val result = moduleGroupFromRawLabels(moduleDefinitionGroup, labelerConf, labelerParams, encoding)
+    require(moduleDefinitionGroup.size == result.size) {
+        "Module group size mismatch: ${moduleDefinitionGroup.size} != ${result.size}"
+    }
+    return moduleDefinitionGroup.zip(result).map { (def, entries) ->
+        Module(
+            name = def.name,
+            sampleDirectory = def.sampleDirectory.absolutePath,
+            entries = entries,
+            currentIndex = 0,
+            rawFilePath = def.labelFile?.absolutePath,
+        )
     }
 }

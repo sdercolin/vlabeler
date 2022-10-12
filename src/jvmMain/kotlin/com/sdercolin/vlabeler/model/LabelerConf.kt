@@ -3,6 +3,9 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.model.LabelerConf.Field
+import com.sdercolin.vlabeler.model.LabelerConf.ParameterHolder
+import com.sdercolin.vlabeler.model.LabelerConf.ProjectConstructor
 import com.sdercolin.vlabeler.model.LabelerConf.Property
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.toLocalized
@@ -183,40 +186,57 @@ data class LabelerConf(
     }
 
     /**
+     * Process scope of [Parser] and [Writer]
+     */
+    enum class Scope {
+        /**
+         * Read/Write a line for every entry.
+         */
+        Entry,
+
+        /**
+         * Read/Write a file for all modules that are corresponding to the same file.
+         */
+        Modules,
+    }
+
+    /**
      * Definition for parsing the raw label file to local [Entry]
+     * @property scope Scope of the parser. If not set, the parser works in a legacy mode, which is used before [scope]
+     *   is introduced (we do not document the legacy mode anymore)
      * @property defaultEncoding Default text encoding of the input file
-     * @property extractionPattern Regex pattern that extract groups
+     * @property extractionPattern Regex pattern that extract groups. Only used when [scope] is [Scope.Entry]
      * @property variableNames Definition of how the extracted string groups will be put into variables later in the
-     *   parser JavaScript code. Should be in the same order as the extracted groups
+     *   parser JavaScript code. Should be in the same order as the extracted groups. Only used when [scope] is
+     *   [Scope.Entry]
      * @property scripts JavaScript code in lines that sets properties of [Entry] using the variables extracted
      */
     @Serializable
     @Immutable
     data class Parser(
-        val defaultEncoding: String,
-        val extractionPattern: String,
-        val variableNames: List<String>,
+        val scope: Scope? = null,
+        val defaultEncoding: String = "UTF-8",
+        val extractionPattern: String = "",
+        val variableNames: List<String> = emptyList(),
         /**
          * Available input variables:
-         * - String "inputFileName": Name of the input file without extension
-         * - String array "sampleNames": Names of the samples without extension in the folder
-         * - String "<item in [variableNames]>": Values extracted by [extractionPattern]
+         * - String array "inputFileNames": Name of the input files
+         * - String array "sampleFileNames": Name of the samples files in the folder
+         * - String "<item in [variableNames]>": Values extracted by [extractionPattern].
+         *  Only available when [scope] is [Scope.Entry]
+         * - String "moduleNames": Name of the modules that the scripts need to build.
+         *  Only available when [scope] is [Scope.Modules]
+         * - String[] array "inputs": Input file contents in lines that belong to this module set.
+         *  Only available when [scope] is [Scope.Modules]
          * - Map "params", created according to [parameters], see [ParameterHolder] for details
+         * - String "encoding": the encoding selected in the project creation page
          *
          * Output variables that the scripts should set:
-         * - String "sample" (sample file name without extension)
-         * - String "name"
-         * - Float "start" (in millisecond)
-         * - Float "end" (in millisecond)
-         * - Float array "points" (in millisecond)
-         * - String array corresponding values defined in [extraFieldNames]
-         *
-         * If "sample" is not set, the first sample file is used by all entries in case all entries are bound to the
-         * only one sample file, so the file name doesn't exist in the line.
-         *
-         * If "name" is not set, this entry is ignored.
-         * If any of "start", "end" is not set, or points don't have a same size with [fields], this entry will fall
-         * back to default values except the entry name.
+         * - entry: the JavaScript object for [Entry]. This is only required when [scope] is [Scope.Entry].
+         *  See src/main/resources/labeler/entry.js for the actual JavaScript class definition
+         * - modules: an array of entry (described above) arrays. This is only required when [scope] is [Scope.Modules].
+         *  The array should have the same order as 'moduleNames' given as input.
+         *  Every item in the array should be an array of [Entry] objects in this module
          */
         val scripts: List<String>,
     )
@@ -353,6 +373,7 @@ data class LabelerConf(
      *   Please check the documentation in [readme/file-api.md],
      *   or the source code in [src/main/jvmMain/resources/js/file.js]
      * - Map "params", created according to [parameters], see [ParameterHolder] for details
+     * - String "encoding": the encoding selected in the project creation page
      * - String array "acceptedSampleExtensions": the array of accepted sample extensions in the current application.
      *   Defined in [com.sdercolin.vlabeler.io.Sample.acceptableSampleFileExtensions]
      *
@@ -361,6 +382,8 @@ data class LabelerConf(
      *   Use `new ModuleDefinition()` to create a new object.
      *   Please check the JavaScript source code with documentations in
      *   [src/main/jvmMain/resources/js/module_definition.js] for details.
+     *   Specifically, if there are multiple modules that only differ in `name`, they will be processed together in
+     *   [Parser] and [Writer] if the [Scope] is set to [Scope.Modules]
      */
     @Serializable
     @Immutable

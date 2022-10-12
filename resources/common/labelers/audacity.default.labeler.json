@@ -1,6 +1,6 @@
 {
   "name": "audacity.default",
-  "version": 4,
+  "version": 5,
   "extension": "txt",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -51,8 +51,8 @@
       "name"
     ],
     "scripts": [
-      "if (inputFileName) {",
-      "    let inputFileNameWithoutExtension = getNameWithoutExtension(inputFileName)",
+      "if (inputFileNames[0]) {",
+      "    let inputFileNameWithoutExtension = getNameWithoutExtension(inputFileNames[0])",
       "    for (sampleFileName of sampleFileNames) {",
       "        let sampleFileNameWithoutExtension = getNameWithoutExtension(sampleFileName)",
       "        if (sampleFileNameWithoutExtension === inputFileNameWithoutExtension) {",

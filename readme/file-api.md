@@ -38,7 +38,13 @@ child path string.
 
 `getAbsolutePath(): string` : get the absolute path of this file (directory).
 
+`readText(encoding = 'UTF-8'): string` : read the content of this file as a string using the specified encoding.
+
+`readLines(encoding = 'UTF-8'): string[]` : read the content of this file as an array of lines using the specified
+encoding.
+
 ### Related global functions
+
 `getNameWithoutExtension(fileName: string): string` : get the name without extension of the input string as a file name.
 
 `getExtension(fileName: string): string` : get the extension of the input string as a file name.

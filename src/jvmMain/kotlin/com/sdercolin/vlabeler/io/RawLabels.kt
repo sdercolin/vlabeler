@@ -1,8 +1,10 @@
 package com.sdercolin.vlabeler.io
 
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.ModuleDefinition
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.postApplyLabelerConf
 import com.sdercolin.vlabeler.util.JavaScript
@@ -11,23 +13,26 @@ import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.matchGroups
 import com.sdercolin.vlabeler.util.orEmpty
+import com.sdercolin.vlabeler.util.readTextByEncoding
 import com.sdercolin.vlabeler.util.replaceWithVariables
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
 import java.io.File
 
-fun fromRawLabels(
+fun moduleFromRawLabels(
     sources: List<String>,
     inputFile: File?,
     labelerConf: LabelerConf,
     labelerParams: ParamMap?,
     sampleFiles: List<File>,
+    encoding: String,
+    legacyMode: Boolean,
 ): List<Entry> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
-    val js = JavaScript()
-    js.execResource(Resources.fileJs)
-    js.setJson("params", labelerParams.orEmpty().resolve(project = null, js = js))
-    val entriesBySampleName = sources.mapIndexedNotNull { index, source ->
+    val inputFileNames = listOfNotNull(inputFile?.name)
+    val sampleFileNames = sampleFiles.map { it.name }
+    val js = prepareJsForParsing(labelerParams, inputFileNames, sampleFileNames, encoding)
+    val entries = sources.mapIndexedNotNull { index, source ->
         if (source.isBlank()) return@mapIndexedNotNull null
         val errorMessageSuffix = "in file ${inputFile?.absolutePath}, line ${index + 1}: $source"
         runCatching {
@@ -39,36 +44,38 @@ fun fromRawLabels(
             parser.variableNames.mapIndexed { i, name ->
                 js.set(name, groups.getOrNull(i))
             }
-            js.set("inputFileName", inputFile?.name)
-            js.set("sampleFileNames", sampleFiles.map { it.name })
             val script = parser.scripts.joinToString("\n")
             js.eval(script)
 
-            // when "sample" is not set, using the first sample's name
-            // because the label file will not contain the sample name if there is only one
-            val sampleName = js.getOrNull<String>("sample")
-                ?.takeUnless { it.isEmpty() }
-                ?: sampleFiles.first().name
+            if (legacyMode) {
+                // when "sample" is not set, using the first sample's name
+                // because the label file will not contain the sample name if there is only one
+                val sampleName = js.getOrNull<String>("sample")
+                    ?.takeUnless { it.isEmpty() }
+                    ?: sampleFiles.first().name
 
-            // require name, otherwise ignore the entry
-            val name = js.get<String>("name")
-            require(name.isNotEmpty()) { "Cannot get `name` from parser $errorMessageSuffix" }
+                // require name, otherwise ignore the entry
+                val name = js.get<String>("name")
+                require(name.isNotEmpty()) { "Cannot get `name` from parser $errorMessageSuffix" }
 
-            // optional start, end, points
-            val start = js.getOrNull<Double>("start")?.toFloat()
-            val end = js.getOrNull<Double>("end")?.toFloat()
-            val points = js.getOrNull<List<Double>>("points")?.map { it.toFloat() } ?: listOf()
+                // optional start, end, points
+                val start = js.getOrNull<Double>("start")?.toFloat()
+                val end = js.getOrNull<Double>("end")?.toFloat()
+                val points = js.getOrNull<List<Double>>("points")?.map { it.toFloat() } ?: listOf()
 
-            // optional extras
-            val extras = js.getJsonOrNull("extras") ?: labelerConf.defaultExtras
+                // optional extras
+                val extras = js.getJsonOrNull("extras") ?: labelerConf.defaultExtras
 
-            if (start == null || end == null || points.size != labelerConf.fields.size) {
-                // use default except name if data size is not enough
-                Entry.fromDefaultValues(sampleName, name, labelerConf).also {
-                    Log.info("Entry parse failed, fallback to default: $it, $errorMessageSuffix")
+                if (start == null || end == null || points.size != labelerConf.fields.size) {
+                    // use default except name if data size is not enough
+                    Entry.fromDefaultValues(sampleName, name, labelerConf).also {
+                        Log.info("Entry parse failed, fallback to default: $it, $errorMessageSuffix")
+                    }
+                } else {
+                    Entry(sample = sampleName, name = name, start = start, end = end, points = points, extras = extras)
                 }
             } else {
-                Entry(sample = sampleName, name = name, start = start, end = end, points = points, extras = extras)
+                js.getJson("entry")
             }
         }.getOrElse {
             Log.debug(it)
@@ -78,7 +85,59 @@ fun fromRawLabels(
 
     js.close()
 
-    return entriesBySampleName.postApplyLabelerConf(labelerConf)
+    return entries.postApplyLabelerConf(labelerConf)
+}
+
+fun moduleGroupFromRawLabels(
+    definitionGroup: List<ModuleDefinition>,
+    labelerConf: LabelerConf,
+    labelerParams: ParamMap?,
+    encoding: String,
+): List<List<Entry>> {
+    val inputFileNames = definitionGroup.first().inputFiles.orEmpty().map { it.name }
+    val sampleFileNames = definitionGroup.first().sampleFiles.map { it.name }
+
+    if (inputFileNames.isEmpty()) {
+        Log.info("No input files, fallback to default values")
+        return definitionGroup.map {
+            sampleFileNames.map { sampleName ->
+                Entry.fromDefaultValues(sampleName, sampleName.substringBeforeLast('.'), labelerConf)
+            }
+        }
+    }
+
+    val js = prepareJsForParsing(labelerParams, inputFileNames, sampleFileNames, encoding)
+    val inputs = requireNotNull(definitionGroup.first().inputFiles).map { it.readTextByEncoding(encoding).lines() }
+    js.setJson("moduleNames", definitionGroup.map { it.name })
+    js.setJson("inputs", inputs)
+
+    val script = labelerConf.parser.scripts.joinToString("\n")
+    js.eval(script)
+
+    val result = js.getJson<List<List<Entry>>>("modules")
+    js.close()
+
+    return result
+}
+
+private fun prepareJsForParsing(
+    labelerParams: ParamMap?,
+    inputFileNames: List<String>,
+    sampleFileNames: List<String>,
+    encoding: String,
+): JavaScript {
+    val js = JavaScript()
+    listOf(
+        Resources.classEntryJs,
+        Resources.expectedErrorJs,
+        Resources.fileJs,
+    ).forEach { js.execResource(it) }
+    js.set("debug", isDebug)
+    js.setJson("params", labelerParams.orEmpty().resolve(project = null, js = js))
+    js.setJson("inputFileNames", inputFileNames)
+    js.setJson("sampleFileNames", sampleFileNames)
+    js.set("encoding", encoding)
+    return js
 }
 
 fun Project.moduleToRawLabels(moduleIndex: Int): String {

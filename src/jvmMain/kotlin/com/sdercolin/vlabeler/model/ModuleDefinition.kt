@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.model
 
 import com.sdercolin.vlabeler.util.toFile
+import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.serialization.Serializable
 import java.io.File
 
@@ -15,13 +16,13 @@ data class RawModuleDefinition(
     fun toModuleDefinition(): ModuleDefinition {
         val sampleDirectory = File(sampleDirectoryPath)
         val sampleFiles = sampleFileNames.map { sampleDirectory.resolve(it) }
-        val inputFiles = inputFilePaths?.map { File(it) }
+        val inputFiles = inputFilePaths?.mapNotNull { it.toFileOrNull(ensureIsFile = true) }
         val labelFile = labelFilePath?.toFile()
         return ModuleDefinition(name, sampleDirectory, sampleFiles, inputFiles, labelFile)
     }
 }
 
-class ModuleDefinition(
+data class ModuleDefinition(
     val name: String,
     val sampleDirectory: File,
     val sampleFiles: List<File>,
