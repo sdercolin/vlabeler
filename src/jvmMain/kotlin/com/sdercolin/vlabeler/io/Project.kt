@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.io
 import androidx.compose.material.SnackbarDuration
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.ProjectParseException
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.injectLabelerParams
 import com.sdercolin.vlabeler.ui.AppState
@@ -167,16 +168,46 @@ suspend fun awaitOpenCreatedProject(
     }
 }
 
+suspend fun exportProject(project: Project) {
+    val allModules = project.modules.withIndex()
+    val groups = allModules.filter { it.value.rawFilePath != null }.groupBy { it.value.rawFilePath }
+        .map { it.value }
+
+    for (group in groups) {
+        exportProjectModule(project, group.first().index, requireNotNull(group.first().value.rawFilePath).toFile())
+    }
+}
+
 @Suppress("RedundantSuspendModifier")
 suspend fun exportProjectModule(
     project: Project,
     moduleIndex: Int,
     outputFile: File,
 ) {
-    val outputText = project.moduleToRawLabels(moduleIndex)
+    val inEntryScope = project.labelerConf.writer.scope == LabelerConf.Scope.Entry
+    val outputModuleNames = mutableListOf<String>()
+    val outputText = runCatching {
+        if (inEntryScope) {
+            outputModuleNames.add(project.modules[moduleIndex].name)
+            project.singleModuleToRawLabels(moduleIndex)
+        } else {
+            val relatedModules = project.modules.withIndex().filter {
+                if (it.value == project.modules[moduleIndex]) {
+                    true
+                } else {
+                    it.value.rawFilePath == project.modules[moduleIndex].rawFilePath && it.value.rawFilePath != null
+                }
+            }
+            outputModuleNames.addAll(relatedModules.map { it.value.name })
+            project.modulesToRawLabels(relatedModules.map { it.index })
+        }
+    }.getOrElse {
+        Log.error(it)
+        return
+    }
     val charset = project.encoding?.let { Charset.forName(it) } ?: Charsets.UTF_8
     outputFile.writeText(outputText, charset)
-    Log.debug("Project module \"${project.modules[moduleIndex].name}\" exported to ${outputFile.absolutePath}")
+    Log.debug("Project module ${outputModuleNames.joinToString { "\"$it\"" }} exported to ${outputFile.absolutePath}")
 }
 
 private var saveFileJob: Job? = null
@@ -193,11 +224,7 @@ suspend fun saveProjectFile(project: Project, allowAutoExport: Boolean = false):
         Log.debug("Project saved to ${project.projectFile}")
 
         if (allowAutoExport && project.autoExport) {
-            project.modules.forEachIndexed { index, module ->
-                if (module.rawFilePath != null) {
-                    exportProjectModule(project, index, module.rawFilePath.toFile())
-                }
-            }
+            exportProject(project)
         }
     }
     saveFileJob?.join()

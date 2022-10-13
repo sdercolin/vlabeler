@@ -75,7 +75,7 @@ data class LabelerConf(
     val lockedDrag: LockedDrag = LockedDrag(),
     val overflowBeforeStart: PointOverflow = PointOverflow.Error,
     val overflowAfterEnd: PointOverflow = PointOverflow.Error,
-    val decimalDigit: Int = 2,
+    val decimalDigit: Int? = 2,
     val properties: List<Property> = listOf(),
     val parser: Parser,
     val writer: Writer,
@@ -243,6 +243,7 @@ data class LabelerConf(
 
     /**
      * Definition for line format in the raw label file
+     * @property scope Scope of the writer
      * @property format String format to generate the output line
      * @property scripts JavaScript code in lines that generate the output line
      * Either [format] or [scripts] should be given. If both of them are given, [scripts] is used
@@ -250,8 +251,9 @@ data class LabelerConf(
     @Serializable
     @Immutable
     data class Writer(
+        val scope: Scope = Scope.Entry,
         /**
-         * String format using the following variables written as "{<var_name>}":
+         * String format using the following variables written as "{<var_name>}", only used by [Scope.Entry]:
          * {sample} - sample file name without extension
          * {name} - entry name
          * {start} - [Entry.start]
@@ -267,10 +269,22 @@ data class LabelerConf(
         val format: String? = null,
         /**
          * JavaScript code lines that sets "output" variable using the same variables as described in [format]
-         * String type: sample, name, extras
-         * Float type: start, end, and others
-         * Besides, "params" is available, which is a map created according to [parameters].
-         * See [ParameterHolder] for details.
+         *
+         * Available input variables in scope [Scope.Entry]:
+         * - String "sample": [Entry.sample]
+         * - String "name": [Entry.name]
+         * - Number "start": [Entry.start]
+         * - Number "end": [Entry.end]
+         * - Number array "points": [Entry.points]
+         * - String array "extras": [Entry.extras]
+         * - Object "notes": [EntryNotes]
+         * - Number "[Property.name]": Evaluated value of a [Property]
+         * - Map "params", created according to [parameters], see [ParameterHolder] for details
+         *
+         * Available input variables in scope [Scope.Modules]:
+         * - String array "moduleNames": Name of the modules that the scripts need to handle
+         * - Object[] array "modules": An array of [Entry] arrays. The array has the same order as 'moduleNames'
+         * - Map "params", created according to [parameters], see [ParameterHolder] for details
          */
         val scripts: List<String>? = null,
     )

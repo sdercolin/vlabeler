@@ -7,6 +7,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectUpdateOnSampleException
 import com.sdercolin.vlabeler.io.autoSaveTemporaryProjectFile
+import com.sdercolin.vlabeler.io.exportProject
 import com.sdercolin.vlabeler.io.exportProjectModule
 import com.sdercolin.vlabeler.io.saveProjectFile
 import com.sdercolin.vlabeler.model.AppConf
@@ -421,10 +422,7 @@ class ProjectStoreImpl(
         scope.launch(Dispatchers.IO) {
             progressState.showProgress()
             val project = requireProject()
-            project.modules.forEachIndexed { index, module ->
-                val targetFile = module.rawFilePath?.toFile() ?: return@forEachIndexed
-                exportProjectModule(project, index, targetFile)
-            }
+            exportProject(project)
             progressState.hideProgress()
         }
     }

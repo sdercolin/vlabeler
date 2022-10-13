@@ -140,9 +140,22 @@ private fun prepareJsForParsing(
     return js
 }
 
-fun Project.moduleToRawLabels(moduleIndex: Int): String {
-    val js = JavaScript()
-    js.setJson("params", labelerParams?.toParamMap().orEmpty().resolve(project = null, js = js))
+fun Project.modulesToRawLabels(moduleIndexes: List<Int>): String {
+    val js = prepareJsForWriting()
+    val relatedModules = moduleIndexes.map { modules[it] }
+    js.setJson("moduleNames", relatedModules.map { it.name })
+    js.setJson("modules", relatedModules.map { it.entries })
+    val scripts = labelerConf.writer.scripts
+    requireNotNull(scripts) { "Writer scripts are required when scope is Scope.Modules" }
+
+    js.eval(scripts.joinToString("\n"))
+    val result = js.get<String>("output")
+    js.close()
+    return result
+}
+
+fun Project.singleModuleToRawLabels(moduleIndex: Int): String {
+    val js = prepareJsForWriting()
     val lines = modules[moduleIndex].entries
         .map { entry ->
             val fields = labelerConf.getFieldMap(entry)
@@ -172,6 +185,18 @@ fun Project.moduleToRawLabels(moduleIndex: Int): String {
         }
     js.close()
     return lines.joinToString("\n")
+}
+
+private fun Project.prepareJsForWriting(): JavaScript {
+    val js = JavaScript()
+    listOf(
+        Resources.classEntryJs,
+        Resources.expectedErrorJs,
+        Resources.fileJs,
+    ).forEach { js.execResource(it) }
+    js.set("debug", isDebug)
+    js.setJson("params", labelerParams?.toParamMap().orEmpty().resolve(project = null, js = js))
+    return js
 }
 
 private fun LabelerConf.getFieldMap(entry: Entry) =
