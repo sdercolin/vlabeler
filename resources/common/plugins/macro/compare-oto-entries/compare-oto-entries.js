@@ -129,16 +129,16 @@ if (enReport === "") {
 let zhReport = ""
 if (entriesOnlyInBaseText.length > 0) {
     if (!append) {
-        zhReport += `当前工程中缺失以下条目：\n${entriesOnlyInBaseText.join("")}\n`
+        zhReport += `当前项目中缺失以下条目：\n${entriesOnlyInBaseText.join("")}\n`
     } else {
-        zhReport += `当前工程缺失以下条目，已被添加：\n${entriesOnlyInBaseText.join("")}\n`
+        zhReport += `当前项目缺失以下条目，已被添加：\n${entriesOnlyInBaseText.join("")}\n`
     }
 }
 if (entriesOnlyInProjectText.length > 0) {
-    zhReport += `以下条目仅在当前工程中存在：\n${entriesOnlyInProjectText.join("")}\n`
+    zhReport += `以下条目仅在当前项目中存在：\n${entriesOnlyInProjectText.join("")}\n`
 }
 if (zhReport === "") {
-    zhReport += "当前工程和输入的 oto 文件完全一致。"
+    zhReport += "当前项目和输入的 oto 文件完全一致。"
 }
 
 let jaReport = ""
