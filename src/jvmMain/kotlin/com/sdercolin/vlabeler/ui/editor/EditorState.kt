@@ -165,10 +165,12 @@ class EditorState(
                 Log.error(it)
                 null
             }?.let {
-                chartStore.prepareForNewLoading(project, appConf, it)
-                appState.updateProjectOnLoadedSample(it)
-                val renderProgressTotal = it.chunkCount * (it.channels + if (it.hasSpectrogram) 1 else 0)
-                _renderProgress = 0 to renderProgressTotal
+                val updated = chartStore.prepareForNewLoading(project, appConf, it)
+                appState.updateProjectOnLoadedSample(it, moduleName)
+                if (updated) {
+                    val renderProgressTotal = it.chunkCount * (it.channels + if (it.hasSpectrogram) 1 else 0)
+                    _renderProgress = 0 to renderProgressTotal
+                }
                 player.load(File(it.file))
             }
         }

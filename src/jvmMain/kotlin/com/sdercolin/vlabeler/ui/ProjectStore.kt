@@ -40,7 +40,7 @@ interface ProjectStore {
     fun newProject(newProject: Project)
     fun clearProject()
     fun editProject(editor: Project.() -> Project)
-    fun updateProjectOnLoadedSample(sampleInfo: SampleInfo)
+    fun updateProjectOnLoadedSample(sampleInfo: SampleInfo, moduleName: String)
     fun editEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>)
     fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?)
     val canUndo: Boolean
@@ -132,10 +132,10 @@ class ProjectStoreImpl(
         editProject { updateCurrentModule { editor() } }
     }
 
-    override fun updateProjectOnLoadedSample(sampleInfo: SampleInfo) {
+    override fun updateProjectOnLoadedSample(sampleInfo: SampleInfo, moduleName: String) {
         val updated = runCatching {
             requireProject()
-                .updateModule(sampleInfo.moduleName) { updateOnLoadedSample(sampleInfo) }
+                .updateModule(moduleName) { updateOnLoadedSample(sampleInfo) }
                 .validate()
         }
             .getOrElse {

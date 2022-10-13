@@ -53,11 +53,17 @@ class ChartStore {
         launchGcDelayed()
     }
 
+    private var currentSampleInfo: SampleInfo? = null
+
     fun prepareForNewLoading(
         project: Project,
         appConf: AppConf,
         sampleInfo: SampleInfo,
     ): Boolean {
+        if (currentSampleInfo == sampleInfo) {
+            return false
+        }
+        currentSampleInfo = sampleInfo
         job?.cancel()
         initializeStates(sampleInfo.chunkCount, sampleInfo.channels)
         ChartRepository.init(project, appConf, PaintingAlgorithmVersion)

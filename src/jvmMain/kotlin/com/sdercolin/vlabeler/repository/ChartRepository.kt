@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.util.findUnusedFile
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
@@ -99,18 +100,19 @@ object ChartRepository {
         channelIndex: Int,
         chunkIndex: Int,
     ) = cacheMap[sampleInfo.getCacheKey(KeyWaveform, channelIndex, chunkIndex)]?.toFileOrNull(ensureIsFile = true)
-        ?: getModuleSubDirectory(sampleInfo.moduleName)
-            .resolve("${sampleInfo.name}_${KeyWaveform}_${channelIndex}_$chunkIndex.png")
+        ?: run {
+            val baseFileName = "${sampleInfo.name}_${KeyWaveform}_${channelIndex}_$chunkIndex.$Extension"
+            cacheDirectory.findUnusedFile(baseFileName, cacheMap.values.toSet())
+        }
 
     fun getSpectrogramImageFile(
         sampleInfo: SampleInfo,
         chunkIndex: Int,
     ) = cacheMap[sampleInfo.getCacheKey(KeySpectrogram, chunkIndex)]?.toFileOrNull(ensureIsFile = true)
-        ?: getModuleSubDirectory(sampleInfo.moduleName)
-            .resolve("${sampleInfo.name}_${KeySpectrogram}_$chunkIndex.png")
-
-    private fun getModuleSubDirectory(moduleName: String) = cacheDirectory.resolve(moduleName)
-        .also { it.mkdir() }
+        ?: run {
+            val baseFileName = "${sampleInfo.name}_${KeySpectrogram}_$chunkIndex.$Extension"
+            cacheDirectory.findUnusedFile(baseFileName, cacheMap.values.toSet())
+        }
 
     private fun SampleInfo.getCacheKey(vararg keys: Any): String {
         return (listOf(file) + keys).joinToString(separator = "//")
@@ -127,6 +129,7 @@ object ChartRepository {
     private const val ChartsCacheFolderName = "charts"
     private const val KeyWaveform = "waveform"
     private const val KeySpectrogram = "spectrogram"
+    private const val Extension = "png"
 }
 
 @Serializable

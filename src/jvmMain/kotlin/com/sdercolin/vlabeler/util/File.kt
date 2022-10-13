@@ -23,3 +23,17 @@ fun String.toFileOrNull(
 fun File.readTextByEncoding(encoding: String?): String = readText(
     encoding?.let { Charset.forName(it) } ?: Charset.defaultCharset(),
 ).trim('\uFEFF')
+
+fun File.findUnusedFile(base: String, existingAbsolutePaths: Set<String>): File {
+    var result = base
+    while (existingAbsolutePaths.contains(resolve(result).absolutePath)) {
+        val firstPart = result.substringBeforeLast('.')
+        val lastPart = result.substringAfterLast('.')
+        if (lastPart.toIntOrNull() != null) {
+            result = firstPart + "." + lastPart.toInt().inc().toString()
+        } else {
+            result += ".1"
+        }
+    }
+    return resolve(result)
+}
