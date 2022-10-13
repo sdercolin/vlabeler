@@ -34,18 +34,18 @@ fun runMacroPlugin(
         listOfNotNull(
             Resources.classEntryJs,
             Resources.classEditedEntryJs,
-            if (plugin.macroScope == Plugin.MacroScope.Project) Resources.classModuleJs else null,
+            if (plugin.scope == Plugin.PluginProcessScope.Project) Resources.classModuleJs else null,
             Resources.expectedErrorJs,
             Resources.reportJs,
             Resources.fileJs,
         ).forEach { js.execResource(it) }
 
-        when (plugin.macroScope) {
-            Plugin.MacroScope.Project -> {
+        when (plugin.scope) {
+            Plugin.PluginProcessScope.Project -> {
                 js.setJson("modules", project.modules)
                 js.set("currentModuleIndex", project.currentModuleIndex)
             }
-            Plugin.MacroScope.Module -> {
+            Plugin.PluginProcessScope.Module -> {
                 js.setJson("entries", project.currentModule.entries)
             }
         }
@@ -56,8 +56,8 @@ fun runMacroPlugin(
             Log.debug("Finished script: $file")
         }
 
-        val newProject = when (plugin.macroScope) {
-            Plugin.MacroScope.Project -> {
+        val newProject = when (plugin.scope) {
+            Plugin.PluginProcessScope.Project -> {
                 val modules = js.getJsonOrNull<List<Module>>("modules")
                 if (modules != null) {
                     project.copy(
@@ -68,7 +68,7 @@ fun runMacroPlugin(
                     project
                 }
             }
-            Plugin.MacroScope.Module -> {
+            Plugin.PluginProcessScope.Module -> {
                 val editedEntries = js.getJsonOrNull<List<PluginEditedEntry>>("output") // Legacy
                 val entries = editedEntries?.map { it.entry } ?: js.getJsonOrNull("entries")
                 if (entries != null) {
