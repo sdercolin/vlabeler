@@ -11,6 +11,7 @@ import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
+import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import org.jetbrains.skiko.toBufferedImage
@@ -23,6 +24,8 @@ object ChartRepository {
     private lateinit var cacheDirectory: File
     private val cacheParamsFile get() = cacheDirectory.resolve("params.json")
     private lateinit var cacheParams: ChartCacheParams
+    private val cacheMapFile get() = cacheDirectory.resolve("map.json")
+    private var cacheMap: MutableMap<String, String> = mutableMapOf()
 
     fun init(project: Project, appConf: AppConf, version: Int) {
         cacheDirectory = project.getCacheDir().resolve(ChartsCacheFolderName)
@@ -39,6 +42,9 @@ object ChartRepository {
             cacheDirectory.mkdirs()
             cacheParamsFile.writeText(cacheParams.stringifyJson())
         }
+        cacheMap = runCatching {
+            cacheMapFile.takeIf { it.exists() }?.readText()?.parseJson<Map<String, String>>()?.toMutableMap()
+        }.getOrNull() ?: mutableMapOf()
     }
 
     suspend fun getWaveform(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int): ImageBitmap {
@@ -67,15 +73,15 @@ object ChartRepository {
         waveform: ImageBitmap,
     ) {
         val file = getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
-        saveImage(waveform, file)
+        saveImage(waveform, file, sampleInfo.getCacheKey(KeyWaveform, channelIndex, chunkIndex))
     }
 
     fun putSpectrogram(sampleInfo: SampleInfo, chunkIndex: Int, spectrogram: ImageBitmap) {
         val file = getSpectrogramImageFile(sampleInfo, chunkIndex)
-        saveImage(spectrogram, file)
+        saveImage(spectrogram, file, sampleInfo.getCacheKey(KeySpectrogram, chunkIndex))
     }
 
-    private fun saveImage(image: ImageBitmap, file: File) {
+    private fun saveImage(image: ImageBitmap, file: File, cacheKey: String) {
         if (file.parentFile.exists().not()) {
             file.parentFile.mkdirs()
         }
@@ -83,6 +89,8 @@ object ChartRepository {
         ImageIO.write(image.asSkiaBitmap().toBufferedImage(), "png", outputStream)
         outputStream.flush()
         outputStream.close()
+        cacheMap[cacheKey] = file.absolutePath
+        cacheMapFile.writeText(cacheMap.stringifyJson())
         Log.debug("Written to $file")
     }
 
@@ -90,23 +98,35 @@ object ChartRepository {
         sampleInfo: SampleInfo,
         channelIndex: Int,
         chunkIndex: Int,
-    ) = getModuleSubDirectory(sampleInfo.moduleName)
-        .resolve("${sampleInfo.name}_waveform_${channelIndex}_$chunkIndex.png")
+    ) = cacheMap[sampleInfo.getCacheKey(KeyWaveform, channelIndex, chunkIndex)]?.toFileOrNull(ensureIsFile = true)
+        ?: getModuleSubDirectory(sampleInfo.moduleName)
+            .resolve("${sampleInfo.name}_${KeyWaveform}_${channelIndex}_$chunkIndex.png")
 
     fun getSpectrogramImageFile(
         sampleInfo: SampleInfo,
         chunkIndex: Int,
-    ) = getModuleSubDirectory(sampleInfo.moduleName)
-        .resolve("${sampleInfo.name}_spectrogram_$chunkIndex.png")
+    ) = cacheMap[sampleInfo.getCacheKey(KeySpectrogram, chunkIndex)]?.toFileOrNull(ensureIsFile = true)
+        ?: getModuleSubDirectory(sampleInfo.moduleName)
+            .resolve("${sampleInfo.name}_${KeySpectrogram}_$chunkIndex.png")
 
     private fun getModuleSubDirectory(moduleName: String) = cacheDirectory.resolve(moduleName)
         .also { it.mkdir() }
+
+    private fun SampleInfo.getCacheKey(vararg keys: Any): String {
+        return (listOf(file) + keys).joinToString(separator = "//")
+    }
+
+    fun clearMemory() {
+        cacheMap.clear()
+    }
 
     fun clear(project: Project) {
         project.getCacheDir().resolve(ChartsCacheFolderName).deleteRecursively()
     }
 
     private const val ChartsCacheFolderName = "charts"
+    private const val KeyWaveform = "waveform"
+    private const val KeySpectrogram = "spectrogram"
 }
 
 @Serializable

@@ -53,10 +53,15 @@ class ChartStore {
         launchGcDelayed()
     }
 
-    fun prepareForNewLoading(project: Project, appConf: AppConf, chunkCount: Int, channelCount: Int) {
+    fun prepareForNewLoading(
+        project: Project,
+        appConf: AppConf,
+        sampleInfo: SampleInfo,
+    ): Boolean {
         job?.cancel()
-        initializeStates(chunkCount, channelCount)
+        initializeStates(sampleInfo.chunkCount, sampleInfo.channels)
         ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
+        return true
     }
 
     fun load(

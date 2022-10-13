@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
+import com.sdercolin.vlabeler.util.toFileOrNull
 import java.io.File
 
 @Stable
@@ -19,9 +20,15 @@ object SampleInfoRepository {
 
     private val infoMap = mutableMapOf<Pair<String, String>, SampleInfo>()
 
+    private val cacheMapFile get() = cacheDirectory.resolve("map.json")
+    private var cacheMap: MutableMap<String, String> = mutableMapOf()
+
     fun init(project: Project) {
         cacheDirectory = project.getCacheDir().resolve(SampleInfoCacheFolderName)
         cacheDirectory.mkdirs()
+        cacheMap = runCatching {
+            cacheMapFile.takeIf { it.exists() }?.readText()?.parseJson<Map<String, String>>()?.toMutableMap()
+        }.getOrNull() ?: mutableMapOf()
     }
 
     suspend fun load(file: File, moduleName: String, appConf: AppConf): Result<SampleInfo> {
@@ -50,7 +57,9 @@ object SampleInfoRepository {
         ) {
             // Return file cached sample info
             Log.info("Returning cached sample info for ${file.name} in module $moduleName")
-            return Result.success(existingInfo)
+            val info = existingInfo.copy(moduleName = moduleName)
+            infoMap[moduleName to info.name] = info
+            return Result.success(info)
         }
         return loadSampleInfo(file, moduleName, appConf)
     }
@@ -62,17 +71,22 @@ object SampleInfoRepository {
             return Result.failure(it)
         }
         infoMap[moduleName to info.name] = info
-        getSampleInfoFile(file, moduleName).writeText(info.stringifyJson())
+        val infoFile = getSampleInfoFile(file, moduleName)
+        infoFile.writeText(info.stringifyJson())
+        cacheMap[file.absolutePath] = infoFile.absolutePath
+        cacheMapFile.writeText(cacheMap.stringifyJson())
         return Result.success(info)
     }
 
     private fun getSampleInfoFile(wavFile: File, moduleName: String) =
-        cacheDirectory.resolve(File(moduleName))
-            .also { it.mkdirs() }
-            .resolve("${wavFile.name}.info.json")
+        cacheMap[wavFile.absolutePath]?.toFileOrNull(ensureIsFile = true)
+            ?: cacheDirectory.resolve(File(moduleName))
+                .also { it.mkdirs() }
+                .resolve("${wavFile.name}.info.json")
 
     fun clearMemory() {
         infoMap.clear()
+        cacheMap.clear()
     }
 
     fun clear(project: Project) {

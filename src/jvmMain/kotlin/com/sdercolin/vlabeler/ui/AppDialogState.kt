@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.getSavedParamsFile
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
@@ -374,6 +375,7 @@ class AppDialogStateImpl(
     }
 
     override fun clearCachesAndReopen(scope: CoroutineScope) {
+        ChartRepository.clearMemory()
         SampleInfoRepository.clearMemory()
         projectStore.requireProject().clearCache()
         loadProject(scope, projectStore.requireProject().projectFile, state)

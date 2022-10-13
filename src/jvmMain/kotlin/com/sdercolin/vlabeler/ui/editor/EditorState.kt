@@ -155,14 +155,17 @@ class EditorState(
                 return@withContext
             }
 
-            sampleInfoState.value = null
+            val previousSampleInfo = sampleInfoState.value?.getOrNull()
+            if (previousSampleInfo?.file != project.currentSampleFile.absolutePath) {
+                sampleInfoState.value = null
+            }
             val sampleInfo = SampleInfoRepository.load(project.currentSampleFile, moduleName, appConf)
             sampleInfoState.value = sampleInfo
             sampleInfo.getOrElse {
                 Log.error(it)
                 null
             }?.let {
-                chartStore.prepareForNewLoading(project, appConf, it.chunkCount, it.channels)
+                chartStore.prepareForNewLoading(project, appConf, it)
                 appState.updateProjectOnLoadedSample(it)
                 val renderProgressTotal = it.chunkCount * (it.channels + if (it.hasSpectrogram) 1 else 0)
                 _renderProgress = 0 to renderProgressTotal
@@ -183,6 +186,7 @@ class EditorState(
         density: Density,
         layoutDirection: LayoutDirection,
     ) {
+        Log.info("Render charts")
         chartStore.clear()
         val chunkCount = sampleInfo.chunkCount
         val chunkSizeInMilliSec = sampleInfo.lengthMillis / chunkCount

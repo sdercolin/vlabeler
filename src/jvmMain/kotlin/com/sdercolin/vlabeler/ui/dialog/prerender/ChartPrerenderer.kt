@@ -76,7 +76,7 @@ class ChartPrerenderer(
                     continue
                 }
 
-                chartStore.prepareForNewLoading(project, appConf, sampleInfo.chunkCount, sampleInfo.channels)
+                chartStore.prepareForNewLoading(project, appConf, sampleInfo)
                 var finishedCharts = 0
                 progress = progress.copy(finishedCharts = finishedCharts)
                 onProgress(progress)
