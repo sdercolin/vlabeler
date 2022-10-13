@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.io.exportProjectModule
 import com.sdercolin.vlabeler.io.saveProjectFile
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
+import com.sdercolin.vlabeler.model.Module
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -127,7 +128,7 @@ class ProjectStoreImpl(
         history.push(edited)
     }
 
-    private fun editCurrentProjectModule(editor: Project.Module.() -> Project.Module) {
+    private fun editCurrentProjectModule(editor: Module.() -> Module) {
         editProject { updateCurrentModule { editor() } }
     }
 

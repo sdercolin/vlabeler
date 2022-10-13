@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -188,7 +187,6 @@ private fun Chunk(
             repeat(sampleInfo.channels) { channelIndex ->
                 Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
                     val imageStatus = editorState.chartStore.getWaveformStatus(channelIndex, chunkIndex)
-                    println("imageStatus: $imageStatus, channelIndex: $channelIndex, chunkIndex: $chunkIndex")
                     if (imageStatus == ChartStore.ChartLoadingStatus.Loaded) {
                         WaveformChunk(sampleInfo, channelIndex, chunkIndex, backgroundColor)
                     }
@@ -211,12 +209,6 @@ private fun Chunk(
 
 @Composable
 private fun WaveformChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int, backgroundColor: Color) {
-    DisposableEffect(Unit) {
-        Log.info("Waveform (channel $channelIndex, chunk $chunkIndex): composed")
-        onDispose {
-            println("Waveform (channel $channelIndex, chunk $chunkIndex): disposed")
-        }
-    }
     Box(Modifier.fillMaxSize().background(backgroundColor)) {
         ChunkAsyncImage(
             load = { ChartRepository.getWaveform(sampleInfo, channelIndex, chunkIndex) },

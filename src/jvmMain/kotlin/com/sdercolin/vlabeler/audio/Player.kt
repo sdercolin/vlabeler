@@ -35,6 +35,7 @@ class Player(
     private var writingJob: Job? = null
 
     suspend fun load(newFile: File) {
+        if (file == newFile) return
         openJob?.cancelAndJoin()
         stop()
         file = newFile

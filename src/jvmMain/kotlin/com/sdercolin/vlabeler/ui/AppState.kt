@@ -366,7 +366,6 @@ class AppState(
             }
         }
         if (appConf.view.language != newConf.view.language) {
-            println("Language changed: ${newConf.view.language}")
             currentLanguage = newConf.view.language
         }
         appConf = newConf

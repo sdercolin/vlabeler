@@ -43,9 +43,15 @@ data class Plugin(
     val scriptFiles: List<String>,
     val resourceFiles: List<String> = listOf(),
     val inputFinderScriptFile: String? = null,
+    val macroScope: MacroScope = MacroScope.Module,
     @Transient val directory: File? = null,
     @Transient val builtIn: Boolean = false,
 ) : BasePlugin {
+
+    enum class MacroScope {
+        Project,
+        Module
+    }
 
     override val parameterDefs: List<Parameter<*>>
         get() = parameters?.list.orEmpty()

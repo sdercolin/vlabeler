@@ -30,9 +30,10 @@ A plugin for `vLabeler` is a folder containing:
 | inputFileExtension          | String &#124; null     | null           | template              | Extension of your input file if any.                                                                                                                                               |
 | requireInputFile            | Boolean                | false          | template              | Set to `true` if you always require an input file.                                                                                                                                 |
 | outputRawEntry              | Boolean                | false          | template              | Set to `true` if you want to output the raw entry instead of parsed object.                                                                                                        |
+| macroScope                  | String                 | "Module"       | macro                 | `Module` or `Project`. The scope that macro plugin can access and edit.                                                                                                            |
 | parameters                  | Parameters &#124; null | null           | all                   | See the `Defining Parameters` section for detail.                                                                                                                                  |
-| scriptFiles                 | List\<String>          | (Required)     | all                   | File names of all your scripts files. The files will be executed in the same order as declared.                                                                                    |
-| resourceFiles               | List\<String>          | empty list     | all                   | List of String. File names of all the files that you use as resources in your scripts. The contents will be passed to your scripts as string values in the same order as declared. |
+| scriptFiles                 | String[]               | (Required)     | all                   | File names of all your scripts files. The files will be executed in the same order as declared.                                                                                    |
+| resourceFiles               | String[]               | []             | all                   | List of String. File names of all the files that you use as resources in your scripts. The contents will be passed to your scripts as string values in the same order as declared. |
 | inputFinderScriptFile       | String &#124; null     | null           | template              | File name of the script file to help find the input files dynamically if the labeler creates multiple sub-projects.                                                                |
 
 ### Defining Parameters
@@ -64,8 +65,8 @@ The object has the following properties:
 | max                  | (Actual type of the value) | null          | integer, float           |                                                                                                   |
 | multiLine            | Boolean                    | false         | string                   | Set to `true` if you want to allow multi-line string values.                                      |
 | optional             | Boolean                    | false         | string, file             | Set to `true` if you want to allow empty string values or `null` file                             |
-| options              | List\<String>              | (Required)    | enum                     | Items of the enumerable.                                                                          |
-| optionDisplayedNames | List\<String> (Localized)  | null          | enum                     | Displayed names of the corresponding items in `options`. If set `null`, `options` itself is used. |
+| options              | String[]                   | (Required)    | enum                     | Items of the enumerable.                                                                          |
+| optionDisplayedNames | String[] (Localized)       | null          | enum                     | Displayed names of the corresponding items in `options`. If set `null`, `options` itself is used. |
 
 ### Parameters types
 
@@ -129,14 +130,14 @@ It should create a list of entries for subsequent editions.
 
 The following variables are provided before your scripts are executed.
 
-| name      | type          | description                                                                                                        |
-|-----------|---------------|--------------------------------------------------------------------------------------------------------------------|
-| inputs    | List\<String> | List of texts read from the input files. Check the list size if your input file is optional.                       |
-| samples   | List\<String> | List of file names of the sample files.                                                                            |
-| params    | Dictionary    | Use `name` of the defined parameters as the key to get values in their actual types.                               |
-| resources | List\<String> | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
-| labeler   | LabelerConf   | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
-| debug     | Boolean       | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
+| name      | type        | description                                                                                                        |
+|-----------|-------------|--------------------------------------------------------------------------------------------------------------------|
+| inputs    | String[]    | List of texts read from the input files. Check the list size if your input file is optional.                       |
+| samples   | String[]    | List of file names of the sample files.                                                                            |
+| params    | Dictionary  | Use `name` of the defined parameters as the key to get values in their actual types.                               |
+| resources | String[]    | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
+| labeler   | LabelerConf | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
+| debug     | Boolean     | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
 
 ### Find input files dynamically when constructing a project with sub-projects
 
@@ -237,19 +238,26 @@ Check the following built-in `template` plugins as examples:
 A plugin with `macro` type is executed by an item in the menu `Tools` -> `Batch Edit`. It is only available when editing
 a project.
 
-Basically, it takes a list of entry objects and edits them, then sets the result to the `output` list.
+According to the `macroScope` property in the `plugin.json`, the plugin can be executed on the whole project or on the
+current module (sub-project).
+If `macroScope` is set to `Module`, the input includes a list of `Entry` object in the current module named `entries`,
+and you can modify it.
+If `macroScope` is set to `Project`, the input includes a list of `Module` object named `modules` along with an integer
+named `currentModuleIndex`. You can modify both of them to conduct batch edit on the whole project.
 
 ### Input
 
 The following variables are provided before your scripts are executed.
 
-| name      | type          | description                                                                                                        |
-|-----------|---------------|--------------------------------------------------------------------------------------------------------------------|
-| entries   | List\<Entry>  | List of current [Entry](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Entry.kt) objects in the project.       |
-| params    | Dictionary    | Use `name` of the defined parameters as the key to get values in their actual types.                               |
-| resources | List\<String> | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
-| labeler   | LabelerConf   | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
-| debug     | Boolean       | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
+| name               | type        | description                                                                                                                                                                    |
+|--------------------|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| entries            | Entry[]     | Only available when the plugin's `macroScope` is `Module`. List of current [Entry](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Entry.kt) objects in the current module. |
+| modules            | Module[]    | Only available when the plugin's `macroScope` is `Project`. List of current [Module](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Module.kt) objects in the project.     |
+| currentModuleIndex | Integer     | Only available when the plugin's `macroScope` is `Project`. The index of current shown module.                                                                                 |
+| params             | Dictionary  | Use `name` of the defined parameters as the key to get values in their actual types.                                                                                           |
+| resources          | String[]    | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                                               |
+| labeler            | LabelerConf | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                                             |
+| debug              | Boolean     | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                                          |
 
 ### Use an entry selector
 
@@ -269,34 +277,18 @@ for (index in entries) {
 
 ### Output
 
-You have to create a list named `output` to pass the result back to the application.
+Change the content of the given `entries` or `modules` list to change the project's content.
 
-`output` needs to be a list of objects in the following type:
-
-```javascript
-class EditedEntry {
-    constructor(originalIndex, entry) {
-        this.originalIndex = originalIndex // null for newly added entries
-        this.entry = entry
-    }
-}
-```
-
-The following code is an example of adding a suffix to every entry's name:
+The following code is an example of adding a suffix to every entry's name in the current module:
 
 ```javascript
 let suffix = params["suffix"]
 
-output = []
-for (index in entries) {
-    let entry = entries[index]
-    let edited = Object.assign({}, entry)
-    edited.name += suffix
-    output.push(new EditedEntry(index, edited))
+// This is `Module` scope, so `entries` is available
+for (let entry of entries) {
+    entry.name += suffix
 }
 ```
-
-If you don't want to change any entry, you can skip the assignment of `output`.
 
 ### Display a report after execution
 

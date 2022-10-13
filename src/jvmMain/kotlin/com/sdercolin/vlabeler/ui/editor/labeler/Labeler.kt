@@ -350,7 +350,6 @@ private fun TagRegion(
             }
         } else {
             LaunchedEffect(Unit) {
-                println("request focus")
                 focusRequester.requestFocus()
             }
 
@@ -359,9 +358,7 @@ private fun TagRegion(
                     .width(IntrinsicSize.Min)
                     .focusRequester(focusRequester)
                     .onFocusChanged {
-                        println("focus changed: $it")
                         if (isTextFieldFocused && it.hasFocus.not()) {
-                            println("focus lost")
                             setEditing(false)
                             if (editingTag.text != tag) {
                                 editTag(editingTag.text)

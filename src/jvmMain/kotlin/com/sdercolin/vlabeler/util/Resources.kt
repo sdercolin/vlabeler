@@ -9,6 +9,7 @@ object Resources {
     val licensesJson get() = "licenses.json"
     val classEditedEntryJs get() = "js/class_edited_entry.js"
     val classEntryJs get() = "js/class_entry.js"
+    val classModuleJs get() = "js/class_module.js"
     val expectedErrorJs get() = "js/expected_error.js"
     val fileJs get() = "js/file.js"
     val moduleDefinitionJs get() = "js/module_definition.js"
