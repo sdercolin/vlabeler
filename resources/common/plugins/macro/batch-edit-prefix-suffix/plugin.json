@@ -1,6 +1,6 @@
 {
   "name": "batch-edit-prefix-suffix",
-  "version": 2,
+  "version": 3,
   "type": "macro",
   "displayedName": {
     "en": "Batch edit entry prefix/suffix",

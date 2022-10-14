@@ -9,25 +9,20 @@ if (debug) {
     console.log(`isPrefix: ${positionIsPrefix}, isAdd: ${processIsAdd}, text: ${text}`)
 }
 
-output = entries.map((entry, index) => {
-    if (!selectedEntryIndexes.includes(index)) {
-        return new EditedEntry(index, entry)
-    }
-    let edited = Object.assign({}, entry)
+for (let index of selectedEntryIndexes) {
+    let entry = entries[index]
 
     if (processIsAdd) {
         if (positionIsPrefix) {
-            edited.name = text + edited.name
+            entry.name = text + entry.name
         } else {
-            edited.name = edited.name + text
+            entry.name = entry.name + text
         }
     } else {
         if (positionIsPrefix) {
-            edited.name = edited.name.replace(new RegExp(`^${text}`), "")
+            entry.name = entry.name.replace(new RegExp(`^${text}`), "")
         } else {
-            edited.name = edited.name.replace(new RegExp(`${text}$`), "")
+            entry.name = entry.name.replace(new RegExp(`${text}$`), "")
         }
     }
-
-    return new EditedEntry(index, edited)
-})
+}
