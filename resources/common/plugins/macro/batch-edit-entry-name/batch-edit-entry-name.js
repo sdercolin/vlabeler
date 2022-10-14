@@ -7,21 +7,17 @@ if (debug) {
     console.log(`Selected entries: ${selectedEntryIndexes.length}`)
 }
 
-output = entries.map((entry, index) => {
-    if (!selectedEntryIndexes.includes(index)) {
-        return new EditedEntry(index, entry)
-    }
-    let edited = Object.assign({}, entry)
-    let match = edited.name.match(new RegExp(from))
+for (let index of selectedEntryIndexes) {
+    let entry = entries[index]
+    let match = entry.name.match(new RegExp(from))
     if (!match) {
-        return edited
+        continue
     }
     if (debug) {
-        console.log(`Matched ${edited.name}, match: ${match}`)
+        console.log(`Matched ${entry.name}, match: ${match}`)
     }
-    edited.name = edited.name.replace(new RegExp(from), to)
+    entry.name = entry.name.replace(new RegExp(from), to)
     if (debug) {
-        console.log(`Replaced: ${edited.name}`)
+        console.log(`Replaced: ${entry.name}`)
     }
-    return new EditedEntry(index, edited)
-})
+}
