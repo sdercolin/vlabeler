@@ -1,6 +1,6 @@
 {
   "name": "sort-entries",
-  "version": 6,
+  "version": 7,
   "type": "macro",
   "displayedName": {
     "en": "Reorder entries",

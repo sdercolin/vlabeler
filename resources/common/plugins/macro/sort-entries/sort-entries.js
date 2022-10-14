@@ -54,5 +54,3 @@ if (debug) {
         console.log("\"" + entry.name + "\" in sample: \"" + entry.sample + "\"")
     })
 }
-
-output = entries.map((entry, index) => new EditedEntry(index, entry))
