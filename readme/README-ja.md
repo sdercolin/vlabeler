@@ -100,6 +100,9 @@ NNSVS/ENUNU および類似なシステムで使用されるラベルファイ�
   `サンプルディレクトリ` を `singer` フォルダに設定することで、すべてのラベルファイルを含むプロジェクトを作成できます。
   ラベラーの設定で、`wav` および `lab ` フォルダ名を変更できます。
 
+#### その他（ビルトインではない）
+- TextGrid labeler (for Praat TextGrid files): [GitHub](https://github.com/sdercolin/vlabeler-textgrid)
+
 ## 始めましょう
 
 1. `新規プロジェクト...` をクリックします

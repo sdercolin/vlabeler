@@ -100,6 +100,9 @@ vLabeler 的许多行为都依赖于可定制的 `标注器`。
   您可以通过将 `采样目录` 设置为 `singer` 文件夹来创建包含所有 lab 文件的项目。
   您可以在标注器的设置中更改 `wav` 和 `lab` 文件夹名称。
 
+#### 其他（非内建）
+- TextGrid labeler (for Praat TextGrid files): [GitHub](https://github.com/sdercolin/vlabeler-textgrid)
+
 ## 基本使用流程
 
 1. 点击 `新建项目...`

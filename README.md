@@ -102,6 +102,9 @@ For label files used in NNSVS/ENUNU and similar systems, the following options a
   you can create a project containing all the label files by setting `Sample Directory` to the `singer` folder.
   You can change the `wav` and `lab` folder names in the labeler's settings.
 
+#### Other labelers (not built-in)
+- TextGrid labeler (for Praat TextGrid files): [GitHub](https://github.com/sdercolin/vlabeler-textgrid)
+
 ## Get started
 
 1. Click `New project...`
