@@ -191,6 +191,7 @@ class AppState(
     fun notifySaved() {
         projectSaved()
         consumePendingActionAfterSaved(pendingActionAfterSaved)
+        discardAutoSavedProjects()
     }
 
     fun requestCutEntry(index: Int, position: Float, player: Player, sampleInfo: SampleInfo) {
