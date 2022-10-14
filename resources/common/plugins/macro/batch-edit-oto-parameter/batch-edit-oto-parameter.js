@@ -1,6 +1,5 @@
 let selectedEntryIndexes = params["selector"]
 let parameterName = params["parameter"]
-let hasLeft = labeler.fields.length > 3 // true if labeler is oto-plus with a standalone "left" field
 let keepDistance = params["keepDistance"]
 
 let nameTexts = [
@@ -36,15 +35,10 @@ if (debug) {
     console.log(`Parameter: ${parameterName}`)
 }
 
-output = entries.map((entry, index) => {
-    if (!selectedEntryIndexes.includes(index)) {
-        return new EditedEntry(index, entry)
-    }
+for (let index of selectedEntryIndexes) {
+    let entry = entries[index]
     let edited = Object.assign({}, entry)
-    let offset = entry.start
-    if (hasLeft) {
-        offset = entry.points[3]
-    }
+    let offset = entry.points[3]
     let fixed = entry.points[0] - offset
     let preutterance = entry.points[1] - offset
     let overlap = entry.points[2] - offset
@@ -58,7 +52,7 @@ output = entries.map((entry, index) => {
     try {
         newValue = eval(expression)
     } catch (e) {
-        throwExpectedError({
+        error({
             en: "Falied to calculate the new value, cause: " + e.message,
             zh: "计算新值失败，原因：" + e.message,
             ja: "新しい値の計算に失敗しました。原因：" + e.message
@@ -81,20 +75,11 @@ output = entries.map((entry, index) => {
 
     let diff = 0
     if (parameterName === "offset") {
-        if (hasLeft) {
-            if (keepDistance) {
-                diff = newValue - entry.points[3]
-                moveAll(edited, diff)
-            } else {
-                edited.points[3] = newValue
-            }
+        if (keepDistance) {
+            diff = newValue - entry.points[3]
+            moveAll(edited, diff)
         } else {
-            if (keepDistance) {
-                diff = newValue - entry.start
-                moveAll(edited, diff)
-            } else {
-                edited.start = newValue
-            }
+            edited.points[3] = newValue
         }
     } else if (parameterName === "fixed") {
         if (keepDistance) {
@@ -135,12 +120,10 @@ output = entries.map((entry, index) => {
         }
     }
 
-    if (hasLeft) {
-        edited.start = Math.min(...edited.points, edited.start)
-    }
+    edited.start = Math.min(...edited.points, edited.start)
 
     if (debug) {
         console.log(`Edited: ${JSON.stringify(edited)}`)
     }
-    return new EditedEntry(index, edited)
-})
+    entries[index] = edited
+}
