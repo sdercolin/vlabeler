@@ -240,10 +240,12 @@ a project.
 
 According to the `macroScope` property in the `plugin.json`, the plugin can be executed on the whole project or on the
 current module (sub-project).
-If `macroScope` is set to `Module`, the input includes a list of `Entry` object in the current module named `entries`,
-and you can modify it.
+If `macroScope` is set to `Module`, the input includes a list of `Entry` object in the current module named `entries`
+along with an integer named `currentEntryIndex`.
 If `macroScope` is set to `Project`, the input includes a list of `Module` object named `modules` along with an integer
-named `currentModuleIndex`. You can modify both of them to conduct batch edit on the whole project.
+named `currentModuleIndex`.
+
+You can modify these variables directly to conduct batch edit on the whole project.
 
 ### Input
 
@@ -252,6 +254,7 @@ The following variables are provided before your scripts are executed.
 | name               | type        | description                                                                                                                                                                    |
 |--------------------|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | entries            | Entry[]     | Only available when the plugin's `macroScope` is `Module`. List of current [Entry](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Entry.kt) objects in the current module. |
+| currentEntryIndex  | Entry[]     | Only available when the plugin's `macroScope` is `Module`. The index of current shown entry.                                                                                   |
 | modules            | Module[]    | Only available when the plugin's `macroScope` is `Project`. List of current [Module](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Module.kt) objects in the project.     |
 | currentModuleIndex | Integer     | Only available when the plugin's `macroScope` is `Project`. The index of current shown module.                                                                                 |
 | params             | Dictionary  | Use `name` of the defined parameters as the key to get values in their actual types.                                                                                           |

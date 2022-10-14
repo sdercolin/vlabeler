@@ -47,6 +47,7 @@ fun runMacroPlugin(
             }
             Plugin.PluginProcessScope.Module -> {
                 js.setJson("entries", project.currentModule.entries)
+                js.set("currentEntryIndex", project.currentModule.currentIndex)
             }
         }
 
@@ -72,7 +73,12 @@ fun runMacroPlugin(
                 val editedEntries = js.getJsonOrNull<List<PluginEditedEntry>>("output") // Legacy
                 val entries = editedEntries?.map { it.entry } ?: js.getJsonOrNull("entries")
                 if (entries != null) {
-                    project.updateCurrentModule { copy(entries = entries) }.validate()
+                    project.updateCurrentModule {
+                        copy(
+                            entries = entries,
+                            currentIndex = js.getOrNull("currentEntryIndex") ?: currentIndex,
+                        )
+                    }.validate()
                 } else {
                     project
                 }

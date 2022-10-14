@@ -13,10 +13,16 @@ if (selectedEntryIndexes.length === entries.length) {
     })
 }
 
-output = entries.flatMap((entry, index) => {
+let result = entries.flatMap((entry, index) => {
     if (selectedEntryIndexes.includes(index)) {
         return []
     } else {
-        return [new EditedEntry(index, entry)]
+        return [entry]
     }
 })
+
+entries = result
+
+if (currentEntryIndex >= entries.length) {
+    currentEntryIndex = entries.length - 1
+}
