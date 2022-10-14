@@ -7,15 +7,14 @@ if (debug) {
     console.log(`Selected entries: ${selectedEntryIndexes.length}`)
 }
 
-output = entries.flatMap((entry, index) => {
-    let original = new EditedEntry(index, entry)
+let result = entries.flatMap((entry, index) => {
     if (!selectedEntryIndexes.includes(index)) {
-        return [original]
+        return [entry]
     }
     let duplicate = Object.assign({}, entry)
     let match = duplicate.name.match(new RegExp(from))
     if (!match) {
-        return duplicate
+        return [entry]
     }
     if (debug) {
         console.log(`Matched ${duplicate.name}, match: ${match}`)
@@ -24,5 +23,7 @@ output = entries.flatMap((entry, index) => {
     if (debug) {
         console.log(`Created: ${duplicate.name}`)
     }
-    return [original, new EditedEntry(null, duplicate)]
+    return [entry, duplicate]
 })
+
+entries = result
