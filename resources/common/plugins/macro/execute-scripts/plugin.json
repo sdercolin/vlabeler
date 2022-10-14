@@ -1,6 +1,6 @@
 {
   "name": "execute-scripts",
-  "version": 2,
+  "version": 3,
   "type": "macro",
   "displayedName": {
     "en": "Execute Scripts",
@@ -27,9 +27,9 @@
           "ja": "スクリプト"
         },
         "description": {
-          "en": "Edit the array named `entries` directly in JavaScript to have your project updated. Note that this plugin is more of a plugin for development, which requires you understand vLabeler's `Entry` and `LabelerConf` definitions.",
-          "zh": "直接在 JavaScript 中编辑名为 `entries` 的数组以更新您的项目。请注意，此插件主要用于开发用途，需要您了解 vLabeler 的 `Entry` 和 `LabelerConf` 定义。",
-          "ja": "プロジェクトを更新するために、JavaScript で `entries` という名前の配列を直接編集してください。このプラグインは主に開発用のプラグインであり、使用するにあたって、vLabeler の `Entry` と `LabelerConf` の定義を理解する必要があることに注意してください。"
+          "en": "Edit the array named `entries` directly in JavaScript to have the current sub-project updated. Note that this plugin is more of a plugin for development, which requires you understand vLabeler's `Entry` and `LabelerConf` definitions.",
+          "zh": "直接在 JavaScript 中编辑名为 `entries` 的数组以更新当前的子项目。请注意，此插件主要用于开发用途，需要您了解 vLabeler 的 `Entry` 和 `LabelerConf` 定义。",
+          "ja": "現在のサブプロジェクトを更新するために、JavaScript で `entries` という名前の配列を直接編集してください。このプラグインは主に開発用のプラグインであり、使用するにあたって、vLabeler の `Entry` と `LabelerConf` の定義を理解する必要があることに注意してください。"
         },
         "defaultValue": "",
         "multiLine": true,
