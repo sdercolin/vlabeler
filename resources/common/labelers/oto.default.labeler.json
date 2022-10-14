@@ -1,6 +1,6 @@
 {
   "name": "oto-plus.default",
-  "version": 15,
+  "version": 16,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -157,6 +157,7 @@
     }
   ],
   "parser": {
+    "scope": "Entry",
     "defaultEncoding": "Shift-JIS",
     "extractionPattern": "(.*)=(.*),(.*),(.*),(.*),(.*),(.*)",
     "variableNames": [
@@ -169,10 +170,11 @@
       "ovl"
     ],
     "scripts": [
+      "if (!sample) {",
+      "    error('Sample name is empty.')",
+      "}",
       "if (!name) {",
-      "    if (sample) {",
-      "        name = getNameWithoutExtension(sample)",
-      "    }",
+      "    name = getNameWithoutExtension(sample)",
       "}",
       "offset = 0",
       "if (ovl === '') {",
@@ -217,10 +219,12 @@
       "}",
       "points.push(preu + left)",
       "points.push(ovl + left)",
-      "points.push(left)"
+      "points.push(left)",
+      "entry = new Entry(sample, name, start, end, points, extras)"
     ]
   },
   "writer": {
+    "scope": "Entry",
     "format": "{sample}={name},{left},{fixed},{right},{preu},{ovl}"
   },
   "parameters": [

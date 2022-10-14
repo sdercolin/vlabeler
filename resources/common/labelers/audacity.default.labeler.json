@@ -1,6 +1,6 @@
 {
   "name": "audacity.default",
-  "version": 5,
+  "version": 6,
   "extension": "txt",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -43,6 +43,7 @@
     }
   ],
   "parser": {
+    "scope": "Entry",
     "defaultEncoding": "UTF-8",
     "extractionPattern": "(.*)\t(.*)\t(.*)",
     "variableNames": [
@@ -61,11 +62,16 @@
       "        }",
       "    }",
       "}",
+      "if (!sample) {",
+      "    sample = sampleFileNames[0]",
+      "}",
       "start = parseFloat(left) * 1000",
-      "end = parseFloat(right) * 1000"
+      "end = parseFloat(right) * 1000",
+      "entry = new Entry(sample, name, start, end, [], [])"
     ]
   },
   "writer": {
+    "scope": "Entry",
     "scripts": [
       "output = (start / 1000).toFixed(6) + \" \" + (end / 1000).toFixed(6) + \" \"+ name"
     ]

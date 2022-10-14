@@ -1,6 +1,6 @@
 {
   "name": "nnsvs-singer.default",
-  "version": 2,
+  "version": 3,
   "extension": "lab",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -43,6 +43,7 @@
     }
   ],
   "parser": {
+    "scope": "Entry",
     "defaultEncoding": "UTF-8",
     "extractionPattern": "(.*) (.*) (.*)",
     "variableNames": [
@@ -52,10 +53,13 @@
     ],
     "scripts": [
       "start = parseFloat(left) / 10000",
-      "end = parseFloat(right) / 10000"
+      "end = parseFloat(right) / 10000",
+      "sample = sampleFileNames[0]",
+      "entry = new Entry(sample, name, start, end, [], [])"
     ]
   },
   "writer": {
+    "scope": "Entry",
     "scripts": [
       "output = (start * 10000).toFixed() + \" \" + (end * 10000).toFixed() + \" \"+ name"
     ]
