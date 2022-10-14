@@ -130,14 +130,15 @@ It should create a list of entries for subsequent editions.
 
 The following variables are provided before your scripts are executed.
 
-| name      | type        | description                                                                                                        |
-|-----------|-------------|--------------------------------------------------------------------------------------------------------------------|
-| inputs    | String[]    | List of texts read from the input files. Check the list size if your input file is optional.                       |
-| samples   | String[]    | List of file names of the sample files.                                                                            |
-| params    | Dictionary  | Use `name` of the defined parameters as the key to get values in their actual types.                               |
-| resources | String[]    | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
-| labeler   | LabelerConf | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
-| debug     | Boolean     | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
+| name          | type        | description                                                                                                        |
+|---------------|-------------|--------------------------------------------------------------------------------------------------------------------|
+| inputs        | String[]    | List of texts read from the input files. Check the list size if your input file is optional.                       |
+| samples       | String[]    | List of file names of the sample files.                                                                            |
+| params        | Dictionary  | Use `name` of the defined parameters as the key to get values in their actual types.                               |
+| resources     | String[]    | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
+| labeler       | LabelerConf | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
+| labelerParams | Dictionary  | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.            |
+| debug         | Boolean     | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
 
 ### Find input files dynamically when constructing a project with sub-projects
 
@@ -260,6 +261,7 @@ The following variables are provided before your scripts are executed.
 | params             | Dictionary  | Use `name` of the defined parameters as the key to get values in their actual types.                                                                                           |
 | resources          | String[]    | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                                               |
 | labeler            | LabelerConf | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                                             |
+| labelerParams      | Dictionary  | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                                        |
 | debug              | Boolean     | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                                          |
 
 ### Use an entry selector

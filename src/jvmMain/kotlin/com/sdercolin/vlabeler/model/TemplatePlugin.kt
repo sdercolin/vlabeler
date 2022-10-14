@@ -4,13 +4,16 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.exception.PluginUnexpectedRuntimeException
+import com.sdercolin.vlabeler.io.getResolvedParamsWithDefaults
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.execResource
+import com.sdercolin.vlabeler.util.orEmpty
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.readTextByEncoding
 import com.sdercolin.vlabeler.util.toFile
+import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.serialization.Serializable
 import java.io.File
 
@@ -26,6 +29,7 @@ fun runTemplatePlugin(
     encoding: String,
     sampleFiles: List<File>,
     labelerConf: LabelerConf,
+    labelerParams: ParamMap?,
     rootSampleDirectory: String,
     moduleDefinition: ModuleDefinition,
 ): TemplatePluginResult {
@@ -36,6 +40,7 @@ fun runTemplatePlugin(
     val result = runCatching {
         js.set("debug", isDebug)
         js.setJson("labeler", labelerConf)
+        js.setJson("labelerParams", labelerConf.getResolvedParamsWithDefaults(labelerParams, js))
         js.setJson("params", params.resolve(project = null, js = null))
 
         listOfNotNull(

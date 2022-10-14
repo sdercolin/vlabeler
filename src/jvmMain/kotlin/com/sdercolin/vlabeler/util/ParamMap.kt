@@ -156,6 +156,16 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
 }
 
 fun Map<String, Any>.toParamMap() = ParamMap(this)
+fun ParamMap.mergeDefaults(defaultMap: Map<String, Any>): ParamMap {
+    val result = this.toMutableMap()
+    for ((key, value) in defaultMap) {
+        if (!result.containsKey(key)) {
+            result[key] = value
+        }
+    }
+    return result.toParamMap()
+}
+
 fun Map<String, ParamTypedMap.TypedValue>.toParamTypedMap() = ParamTypedMap(this)
 
 fun ParamMap?.orEmpty() = this ?: ParamMap(mapOf())

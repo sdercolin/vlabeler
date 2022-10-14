@@ -124,6 +124,7 @@ private fun generateEntriesByPlugin(
             encoding = encoding,
             sampleFiles = sampleFiles,
             labelerConf = labelerConf,
+            labelerParams = labelerParams,
             rootSampleDirectory = rootSampleDirectory,
             moduleDefinition = moduleDefinition,
         )
