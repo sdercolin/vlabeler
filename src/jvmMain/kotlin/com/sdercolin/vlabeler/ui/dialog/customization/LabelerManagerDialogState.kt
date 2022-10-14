@@ -31,8 +31,8 @@ class LabelerManagerDialogState(
 
     override suspend fun importNewItem(configFile: File) = runCatching {
         configFile.asLabelerConf().getOrThrow()
-        val targetFolder = CustomLabelerDir
-        configFile.copyTo(targetFolder, overwrite = true)
+        val targetPath = CustomLabelerDir.resolve(configFile.name)
+        configFile.copyTo(targetPath, overwrite = true)
         Unit
     }.getOrElse {
         throw CustomizedItemLoadingException(it)

@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.injectLabelerParams
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.ui.string.stringStatic
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
@@ -66,7 +67,7 @@ suspend fun awaitLoadProject(
             showSnackbar(
                 stringStatic(
                     Strings.LoadProjectWarningLabelerCreated,
-                    project.labelerConf.name,
+                    project.labelerConf.displayedName.getCertain(currentLanguage),
                 ),
             )
             project.labelerConf
@@ -84,7 +85,7 @@ suspend fun awaitLoadProject(
             showSnackbar(
                 stringStatic(
                     Strings.LoadProjectWarningLabelerUpdated,
-                    project.labelerConf.name,
+                    project.labelerConf.displayedName.getCertain(currentLanguage),
                     project.labelerConf.version,
                 ),
             )

@@ -52,7 +52,7 @@ sealed class CommonConfirmationDialogAction(
 
     class RemoveCustomizableItem(val state: CustomizableItemManagerDialogState<*>, val item: CustomizableItem) :
         CommonConfirmationDialogAction(
-            { string(Strings.CustomizableItemManagerRemoveItemConfirm, item.displayedName) },
+            { string(Strings.CustomizableItemManagerRemoveItemConfirm, item.displayedName.get()) },
         )
 }
 
