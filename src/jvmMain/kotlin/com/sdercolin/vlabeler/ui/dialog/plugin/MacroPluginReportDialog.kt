@@ -15,20 +15,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.util.Clipboard
 
 @Composable
 fun MacroPluginReportDialog(report: LocalizedJsonString, finish: () -> Unit) {
@@ -54,9 +58,11 @@ fun MacroPluginReportDialog(report: LocalizedJsonString, finish: () -> Unit) {
                 ) {
                     val scrollState = rememberScrollState()
                     Box(modifier = Modifier.fillMaxWidth().verticalScroll(scrollState)) {
-                        Text(
-                            text = report.get(),
-                            style = MaterialTheme.typography.body2,
+                        BasicTextField(
+                            value = report.get(),
+                            onValueChange = {},
+                            readOnly = true,
+                            textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
                         )
                     }
                     VerticalScrollbar(
@@ -65,15 +71,20 @@ fun MacroPluginReportDialog(report: LocalizedJsonString, finish: () -> Unit) {
                     )
                 }
                 Spacer(Modifier.height(30.dp))
-                ButtonBar(finish = finish)
+                val localLanguage = LocalLanguage.current
+                ButtonBar(copy = { Clipboard.copyToClipboard(report.getCertain(localLanguage)) }, finish = finish)
             }
         }
     }
 }
 
 @Composable
-private fun ButtonBar(finish: () -> Unit) {
+private fun ButtonBar(copy: () -> Unit, finish: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        TextButton(onClick = { copy() }) {
+            Text(string(Strings.MacroPluginReportDialogCopy))
+        }
+        Spacer(Modifier.weight(1f))
         Button(onClick = { finish() }) {
             Text(string(Strings.CommonOkay))
         }

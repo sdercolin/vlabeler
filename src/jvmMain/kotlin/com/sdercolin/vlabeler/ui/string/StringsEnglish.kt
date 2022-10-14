@@ -211,6 +211,7 @@ fun Strings.en(): String = when (this) {
     MacroPluginManagerTitle -> "Batch Edit Plugins"
     MacroPluginManagerImportDialogTitle -> "Import batch edit plugin"
     MacroPluginReportDialogTitle -> "Batch edit execution result"
+    MacroPluginReportDialogCopy -> "Copy"
     CustomizableItemManagerRemoveItemConfirm ->
         "Are you sure you want to remove \"%s\"? " +
             "This will remove the file(s) from the disk."
