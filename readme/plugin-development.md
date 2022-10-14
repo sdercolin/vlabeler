@@ -267,11 +267,9 @@ The following code is an example of using an entry selector:
 
 ```javascript
 let selectedIndexes = params["selector"] // use actual name of your parameter
-for (index in entries) {
+for (let index of selectedIndexes) {
     let entry = entries[index]
-    if (selectedIndexes.includes(index)) {
-        // edit the entry and set to the output list
-    }
+    // edit the entry
 }
 ```
 

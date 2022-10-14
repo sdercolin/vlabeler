@@ -1,6 +1,6 @@
 {
   "name": "batch-edit-entry-meta",
-  "version": 5,
+  "version": 6,
   "type": "macro",
   "displayedName": {
     "en": "Batch edit entry notes",

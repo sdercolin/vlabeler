@@ -9,15 +9,12 @@ let tagValue = tag ? params["tagValue"] : null
 if (debug) {
     console.log(`Input entries: ${entries.length}`)
     console.log(`Selected entries: ${selectedEntryIndexes.length}`)
+    console.log(`Star: ${star}, Done: ${done}, Tag: ${tag}, Tag value: ${tagValue}`)
 }
 
-output = entries.map((entry, index) => {
-    if (!selectedEntryIndexes.includes(index)) {
-        return new EditedEntry(index, entry)
-    }
-    let edited = Object.assign({}, entry)
-    if (star !== null) edited.notes.star = star
-    if (done !== null) edited.notes.done = done
-    if (tag) edited.notes.tag = tagValue
-    return new EditedEntry(index, edited)
-})
+for (let index of selectedEntryIndexes) {
+    let entry = entries[index]
+    if (star !== null) entry.notes.star = star
+    if (done !== null) entry.notes.done = done
+    if (tag) entry.notes.tag = tagValue
+}
