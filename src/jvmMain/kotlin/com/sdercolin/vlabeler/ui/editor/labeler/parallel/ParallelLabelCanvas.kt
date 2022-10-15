@@ -112,7 +112,7 @@ fun ColumnScope.ModuleRow(
                     }
                     Box(
                         modifier = Modifier.fillMaxHeight().weight(weight)
-                            .clickable { editorState.selectModule(module.name, targetEntryIndex = entry.index) },
+                            .clickable { editorState.jumpToModule(module.name, targetEntryIndex = entry.index) },
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
@@ -148,7 +148,7 @@ fun ColumnScope.ModuleRow(
             Box(
                 modifier = Modifier.fillMaxHeight()
                     .background(titleBackgroundColor)
-                    .clickable { editorState.selectModule(module.name) }
+                    .clickable { editorState.jumpToModule(module.name) }
                     .padding(vertical = 3.dp, horizontal = 7.dp)
                     .align(Alignment.CenterStart),
                 contentAlignment = Alignment.CenterStart,

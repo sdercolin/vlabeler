@@ -312,13 +312,13 @@ class EditorState(
         appState.editEntryTag(index, tag)
     }
 
-    fun selectModule(index: Int) {
-        appState.selectModule(index)
+    fun jumpToModule(index: Int) {
+        appState.jumpToModule(index)
     }
 
-    fun selectModule(name: String, targetEntryIndex: Int? = null) {
+    fun jumpToModule(name: String, targetEntryIndex: Int? = null) {
         val index = project.modules.indexOfFirst { it.name == name }
-        appState.selectModule(index, targetEntryIndex)
+        appState.jumpToModule(index, targetEntryIndex)
     }
 
     fun clear() {

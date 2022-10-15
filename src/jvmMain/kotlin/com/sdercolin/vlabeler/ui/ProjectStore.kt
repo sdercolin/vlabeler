@@ -80,7 +80,7 @@ interface ProjectStore {
     fun toggleCurrentEntryStar()
     fun editEntryTag(index: Int, tag: String)
     fun editCurrentEntryTag(tag: String)
-    fun selectModule(index: Int, targetEntryIndex: Int? = null)
+    fun jumpToModule(index: Int, targetEntryIndex: Int? = null)
     fun canOverwriteExportCurrentModule(): Boolean
     fun shouldShowOverwriteExportAllModules(): Boolean
     fun canOverwriteExportAllModules(): Boolean
@@ -387,7 +387,7 @@ class ProjectStoreImpl(
         editCurrentProjectModule { editEntryTag(currentIndex, tag) }
     }
 
-    override fun selectModule(index: Int, targetEntryIndex: Int?) {
+    override fun jumpToModule(index: Int, targetEntryIndex: Int?) {
         val previousProject = requireProject()
         if (index == previousProject.currentModuleIndex &&
             (targetEntryIndex == null || targetEntryIndex == previousProject.currentModule.currentIndex)

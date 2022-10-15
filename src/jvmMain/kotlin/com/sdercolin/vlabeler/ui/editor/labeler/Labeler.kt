@@ -98,7 +98,7 @@ fun Labeler(
             ModuleSelectorBar(
                 moduleNames = project.modules.map { it.name.ifEmpty { string(Strings.EditorModuleRootNameTitle) } },
                 currentModuleIndex = project.currentModuleIndex,
-                selectModule = { editorState.selectModule(it) },
+                selectModule = { editorState.jumpToModule(it) },
             )
             Divider(color = DarkGray.copy(alpha = 0.5f))
         }
