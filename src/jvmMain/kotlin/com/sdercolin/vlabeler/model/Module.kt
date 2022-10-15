@@ -308,6 +308,8 @@ data class Module(
 
         return copy(entries = entries)
     }
+
+    fun isParallelTo(other: Module) = this != other && this.rawFilePath == other.rawFilePath && this.rawFilePath != null
 }
 
 fun List<Entry>.postApplyLabelerConf(

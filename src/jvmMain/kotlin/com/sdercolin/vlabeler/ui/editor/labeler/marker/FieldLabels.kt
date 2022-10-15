@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.string.Language
@@ -42,7 +41,6 @@ fun FieldLabels(
     state: MarkerState,
     chunkCount: Int,
     chunkLength: Float,
-    chunkLengthDp: Dp,
     chunkVisibleList: List<Boolean>,
 ) {
     val labelIndexes = remember(state.entriesInPixel.indices, state.labelerConf.fields) {
@@ -74,18 +72,22 @@ fun FieldLabels(
         List(chunkCount) { FieldLabelModelChunk(groups[it]?.toList() ?: listOf()) }
     }
 
-    val modifier = Modifier.fillMaxHeight().requiredWidth(chunkLengthDp)
+    val lengthBias = chunkLength - chunkLength.toInt()
     Row {
         repeat(chunkCount) { index ->
+            val biasFix = ((index + 1) * lengthBias).toInt() - (index * lengthBias).toInt()
+            val actualLengthDp = with(LocalDensity.current) {
+                (chunkLength.toInt() + biasFix).toDp()
+            }
             if (chunkVisibleList[index]) {
                 FieldLabelsChunk(
-                    modifier = modifier,
+                    modifier = Modifier.fillMaxHeight().requiredWidth(actualLengthDp),
                     offset = index * chunkLength,
                     modelChunk = chunks[index],
                     waveformsHeightRatio = state.waveformsHeightRatio,
                 )
             } else {
-                Box(modifier)
+                Box(Modifier.fillMaxHeight().requiredWidth(actualLengthDp))
             }
         }
     }

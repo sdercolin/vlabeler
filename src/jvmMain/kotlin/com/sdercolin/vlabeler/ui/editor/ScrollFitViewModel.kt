@@ -20,12 +20,12 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
     fun update(
         showLeftSide: Boolean,
         horizontalScrollState: ScrollState,
-        canvasLength: Int,
+        canvasLength: Float,
         entriesInPixel: List<EntryInPixel>,
         currentIndex: Int,
     ) {
         val scrollMax = horizontalScrollState.maxValue
-        val screenLength = canvasLength.toFloat() - scrollMax
+        val screenLength = canvasLength - scrollMax
         val entry = entriesInPixel.find { it.index == currentIndex } ?: return
         val start = entry.start
         val end = entry.end

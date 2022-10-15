@@ -11,7 +11,7 @@ data class CanvasParams(
     val resolution: Int,
     val density: Density,
 ) {
-    val lengthInPixel = dataLength / resolution
+    val lengthInPixel = dataLength.toFloat() / resolution
     val canvasWidthInDp = with(density) { lengthInPixel.toDp() }
 
     @Immutable

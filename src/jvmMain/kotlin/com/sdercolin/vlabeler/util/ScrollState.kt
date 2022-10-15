@@ -4,9 +4,9 @@ import androidx.compose.foundation.ScrollState
 
 typealias FloatRange = ClosedFloatingPointRange<Float>
 
-fun ScrollState.getScreenRange(canvasLength: Int): FloatRange? {
+fun ScrollState.getScreenRange(canvasLength: Float): FloatRange? {
     if (maxValue == Int.MAX_VALUE) return null
-    val screenLength = canvasLength.toFloat() - maxValue
+    val screenLength = canvasLength - maxValue
     if (screenLength <= 0) return null
     val start = value.toFloat()
     val end = value.toFloat() + screenLength

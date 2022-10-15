@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.model.AppConf
@@ -48,7 +48,6 @@ fun NameLabels(
     onHovered: (Int, Boolean) -> Unit,
     chunkCount: Int,
     chunkLength: Float,
-    chunkLengthDp: Dp,
     chunkVisibleList: List<Boolean>,
 ) {
     val leftEntry = remember(state.entriesInCurrentGroup, state.entries.first().index) {
@@ -79,14 +78,17 @@ fun NameLabels(
             )
         }
     }
-
-    val modifier = Modifier.fillMaxHeight().requiredWidth(chunkLengthDp)
+    val lengthBias = chunkLength - chunkLength.toInt()
     Row {
         repeat(chunkCount) { index ->
+            val biasFix = ((index + 1) * lengthBias).toInt() - (index * lengthBias).toInt()
+            val actualLengthDp = with(LocalDensity.current) {
+                (chunkLength.toInt() + biasFix).toDp()
+            }
             if (chunkVisibleList[index]) {
                 NameLabelsChunk(
                     appConf = appConf,
-                    modifier = modifier,
+                    modifier = Modifier.fillMaxHeight().requiredWidth(actualLengthDp),
                     entryChunk = chunks[index],
                     offset = index * chunkLength,
                     requestRename = requestRename,
@@ -94,12 +96,13 @@ fun NameLabels(
                     onHovered = onHovered,
                 )
             } else {
-                Box(modifier)
+                Box(Modifier.fillMaxHeight().requiredWidth(actualLengthDp))
             }
         }
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun NameLabel(
     index: Int,
@@ -128,7 +131,7 @@ private fun NameLabel(
             .onPointerEvent(eventType = PointerEventType.Exit) {
                 onHovered(index, false)
             }
-            .padding(vertical = 2.dp, horizontal = 5.dp),
+            .padding(vertical = 5.dp, horizontal = 5.dp),
         maxLines = 1,
         text = name,
         color = color,

@@ -7,8 +7,8 @@ import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 class ScrollOnResolutionChangeViewModel {
     private var scrollMax: Int? = null
     private var scrollValue: Int = 0
-    private var canvasLength: Int? = null
-    private var pendingLastCanvasLength: Int? = null
+    private var canvasLength: Float? = null
+    private var pendingLastCanvasLength: Float? = null
 
     private var sampleInfo: SampleInfo? = null
     private var skipped = false

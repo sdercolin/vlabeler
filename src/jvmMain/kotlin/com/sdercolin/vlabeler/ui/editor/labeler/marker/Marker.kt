@@ -145,7 +145,7 @@ fun MarkerCanvas(
     editorState: EditorState,
     appState: AppState,
 ) {
-    FieldBorderCanvas(horizontalScrollState, state, appState)
+    FieldBorderCanvas(horizontalScrollState, state, appState.appConf.editor)
     LaunchAdjustScrollPosition(
         appState.appConf,
         state.entriesInPixel,
@@ -186,15 +186,15 @@ fun MarkerLabels(
         { index, hovered -> state.onLabelHovered(index, hovered) }
     }
 
-    val chunkCount = ceil(state.canvasParams.lengthInPixel.toFloat() / LabelMaxChunkLength).toInt()
-    val chunkLength = state.canvasParams.lengthInPixel.toFloat() / chunkCount
+    val chunkCount = ceil(state.canvasParams.lengthInPixel / LabelMaxChunkLength).toInt()
+    val chunkLength = state.canvasParams.lengthInPixel / chunkCount
     val chunkLengthDp = state.canvasParams.canvasWidthInDp / chunkCount
 
     val chunkVisibleList = List(chunkCount) {
         val range = (it * chunkLength)..((it + 1) * chunkLength)
         screenRange?.contains(range) == true
     }
-    FieldLabels(state, chunkCount, chunkLength, chunkLengthDp, chunkVisibleList)
+    FieldLabels(state, chunkCount, chunkLength, chunkVisibleList)
     if (state.labelerConf.continuous) {
         NameLabels(
             appState.appConf,
@@ -204,7 +204,6 @@ fun MarkerLabels(
             onHovered,
             chunkCount,
             chunkLength,
-            chunkLengthDp,
             chunkVisibleList,
         )
     }
@@ -214,7 +213,7 @@ fun MarkerLabels(
 private fun FieldBorderCanvas(
     horizontalScrollState: ScrollState,
     state: MarkerState,
-    appState: AppState,
+    editorConf: AppConf.Editor,
 ) {
     val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
 
@@ -395,7 +394,7 @@ private fun FieldBorderCanvas(
                     if (position in screenRange) {
                         val relativePosition = position - screenRange.start
                         drawLine(
-                            color = appState.appConf.editor.scissorsColor.toColor(),
+                            color = editorConf.scissorsColor.toColor(),
                             start = Offset(relativePosition, 0f),
                             end = Offset(relativePosition, canvasHeight),
                             strokeWidth = StrokeWidth,
@@ -627,7 +626,7 @@ private fun LaunchAdjustScrollPosition(
     entriesInPixel: List<EntryInPixel>,
     currentModuleIndex: Int,
     currentIndex: Int,
-    canvasLength: Int,
+    canvasLength: Float,
     horizontalScrollState: ScrollState,
     scrollFitViewModel: ScrollFitViewModel,
 ) {

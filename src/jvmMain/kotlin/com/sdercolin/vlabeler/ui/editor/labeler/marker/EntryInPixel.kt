@@ -38,10 +38,10 @@ data class EntryInPixel(
         points = points.map { it + dx },
     )
 
-    fun validate(canvasWidthInPixel: Int) = copy(
-        start = start.coerceAtMost(canvasWidthInPixel.toFloat()),
-        end = end.coerceAtMost(canvasWidthInPixel.toFloat()),
-        points = points.map { it.coerceAtMost(canvasWidthInPixel.toFloat()) },
+    fun validate(canvasWidthInPixel: Float) = copy(
+        start = start.coerceAtMost(canvasWidthInPixel),
+        end = end.coerceAtMost(canvasWidthInPixel),
+        points = points.map { it.coerceAtMost(canvasWidthInPixel) },
     )
 
     fun getPoint(index: Int) = when (index) {

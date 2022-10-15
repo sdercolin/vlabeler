@@ -187,17 +187,14 @@ suspend fun exportProjectModule(
 ) {
     val inEntryScope = project.labelerConf.writer.scope == LabelerConf.Scope.Entry
     val outputModuleNames = mutableListOf<String>()
+    val module = project.modules[moduleIndex]
     val outputText = runCatching {
         if (inEntryScope) {
-            outputModuleNames.add(project.modules[moduleIndex].name)
+            outputModuleNames.add(module.name)
             project.singleModuleToRawLabels(moduleIndex)
         } else {
             val relatedModules = project.modules.withIndex().filter {
-                if (it.value == project.modules[moduleIndex]) {
-                    true
-                } else {
-                    it.value.rawFilePath == project.modules[moduleIndex].rawFilePath && it.value.rawFilePath != null
-                }
+                it.value == module || it.value.isParallelTo(module)
             }
             outputModuleNames.addAll(relatedModules.map { it.value.name })
             project.modulesToRawLabels(relatedModules.map { it.index })
