@@ -393,11 +393,12 @@ class ProjectStoreImpl(
             (targetEntryIndex == null || targetEntryIndex == previousProject.currentModule.currentIndex)
         ) return
         val targetModule = previousProject.modules[index]
-        val isParallelSwitch = targetModule.isParallelTo(previousProject.currentModule)
         editProject { copy(currentModuleIndex = index) }
         if (targetEntryIndex != null) {
             editCurrentProjectModule { copy(currentIndex = targetEntryIndex) }
         }
+        val isParallelSwitch = targetModule.isParallelTo(previousProject.currentModule) &&
+            project?.currentSampleFile == previousProject.currentSampleFile
         if (!isParallelSwitch || targetEntryIndex != null) {
             scrollIfNeededWhenSwitchedEntry(previousProject)
         }
