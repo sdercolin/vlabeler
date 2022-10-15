@@ -316,6 +316,11 @@ class EditorState(
         appState.selectModule(index)
     }
 
+    fun selectModule(name: String, targetEntryIndex: Int? = null) {
+        val index = project.modules.indexOfFirst { it.name == name }
+        appState.selectModule(index, targetEntryIndex)
+    }
+
     fun clear() {
         Log.info("EditorState clear()")
         chartStore.clear()

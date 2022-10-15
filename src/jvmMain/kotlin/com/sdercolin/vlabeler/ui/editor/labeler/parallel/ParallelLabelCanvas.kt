@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.ui.editor.labeler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
@@ -28,7 +27,6 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Module
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
-import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.EntryConverter
@@ -117,7 +115,8 @@ fun ColumnScope.ModuleRow(
                             (screenRange.endInclusive - screenRange.start)
                     }
                     Box(
-                        modifier = Modifier.fillMaxHeight().weight(weight),
+                        modifier = Modifier.fillMaxHeight().weight(weight)
+                            .clickable { editorState.selectModule(module.name, targetEntryIndex = entry.index) },
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
@@ -153,7 +152,7 @@ fun ColumnScope.ModuleRow(
             Box(
                 modifier = Modifier.fillMaxHeight()
                     .background(titleBackgroundColor)
-                    .plainClickable { }
+                    .clickable { editorState.selectModule(module.name) }
                     .padding(vertical = 3.dp, horizontal = 7.dp)
                     .align(Alignment.CenterStart),
                 contentAlignment = Alignment.CenterStart,
