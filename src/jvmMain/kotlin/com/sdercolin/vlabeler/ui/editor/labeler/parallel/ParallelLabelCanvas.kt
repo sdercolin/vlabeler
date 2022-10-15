@@ -31,7 +31,6 @@ import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.EntryConverter
 import com.sdercolin.vlabeler.ui.theme.Black
-import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.toRgbColor
@@ -61,11 +60,8 @@ fun ParallelLabelCanvas(
                 sampleInfo = sampleInfo,
                 editorConf = editorConf,
             )
-            if (index != modules.lastIndex) {
-                Divider(color = LightGray.copy(alpha = 0.4f), thickness = 1.dp)
-            } else {
-                Divider(color = Black50, thickness = 1.dp)
-            }
+            val dividerAlpha = if (index == modules.lastIndex) 0.1f else 0.4f
+            Divider(color = LightGray.copy(alpha = dividerAlpha), thickness = 1.dp)
         }
     }
 }
