@@ -34,6 +34,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(kotlin("reflect"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
                 implementation(compose.desktop.currentOs)
                 implementation(compose.materialIconsExtended)
                 implementation(compose("org.jetbrains.compose.components:components-splitpane-desktop"))
