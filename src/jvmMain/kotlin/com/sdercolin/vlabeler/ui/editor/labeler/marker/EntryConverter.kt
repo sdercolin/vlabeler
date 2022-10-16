@@ -9,12 +9,12 @@ class EntryConverter(
     private val sampleRate: Float,
     private val resolution: Int,
 ) {
-    fun convertToPixel(entry: IndexedEntry, sampleFileLengthMillis: Float) = EntryInPixel(
+    fun convertToPixel(entry: IndexedEntry, sampleFileLengthMillis: Float, nextEntry: IndexedEntry?) = EntryInPixel(
         index = entry.index,
         sample = entry.sample,
         name = entry.name,
         start = convertToPixel(entry.start),
-        end = if (entry.end <= 0) {
+        end = if (entry.end <= 0 && nextEntry == null) {
             convertToPixel(sampleFileLengthMillis + entry.end)
         } else {
             convertToPixel(entry.end)

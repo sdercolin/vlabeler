@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.util.getNextOrNull
 import com.sdercolin.vlabeler.util.getPreviousOrNull
@@ -50,13 +51,19 @@ fun NameLabels(
     chunkLength: Float,
     chunkVisibleList: List<Boolean>,
 ) {
+    fun convertEntry(entry: IndexedEntry?): EntryInPixel? {
+        entry ?: return null
+        val next = state.entriesInCurrentGroup.find { it.index == entry.index + 1 }
+        return entry.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis, next) }
+    }
+
     val leftEntry = remember(state.entriesInCurrentGroup, state.entries.first().index) {
         val entry = state.entriesInCurrentGroup.getPreviousOrNull { it.index == state.entries.first().index }
-        entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
+        convertEntry(entry)
     }
     val rightEntry = remember(state.entriesInCurrentGroup, state.entries.last().index) {
         val entry = state.entriesInCurrentGroup.getNextOrNull { it.index == state.entries.last().index }
-        entry?.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
+        convertEntry(entry)
     }
 
     val chunks = remember(leftEntry, rightEntry, state.entriesInPixel, chunkCount, chunkLength, chunkVisibleList) {

@@ -33,7 +33,9 @@ data class Module(
         .filter { it.second.isNotEmpty() }
 
     @Transient
-    val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
+    val entryGroups: List<Pair<String, List<IndexedEntry>>> = entries.entryGroupsConnected()
+
+    val currentEntryGroup get() = entryGroups[currentGroupIndex].second
 
     val currentEntry: Entry
         get() = entries[currentIndex]
@@ -78,7 +80,7 @@ data class Module(
         val entries = entries.toMutableList()
         val changedEntries = entries.withIndex()
             .filter { it.value.sample == sampleInfo.name }
-            .filter { it.value.end <= 0f }
+            .filter { it.index == entries.lastIndex && it.value.end <= 0f }
             .map {
                 val end = sampleInfo.lengthMillis + it.value.end
                 it.copy(value = it.value.copy(end = end))
@@ -329,7 +331,7 @@ private fun List<Entry>.indexGroupsConnected(): List<Pair<String, List<Int>>> = 
     }.map { group -> group.first to group.second.map { it.index } }
 
 private fun List<Entry>.entryGroupsConnected() = indexGroupsConnected().map { group ->
-    group.first to group.second.map { this[it] }
+    group.first to group.second.map { IndexedEntry(entry = this[it], index = it) }
 }
 
 private fun List<Entry>.toContinuous(continuous: Boolean): List<Entry> {
@@ -337,6 +339,7 @@ private fun List<Entry>.toContinuous(continuous: Boolean): List<Entry> {
     return entryGroupsConnected()
         .flatMap { (_, entries) ->
             entries
+                .map { it.entry }
                 .sortedBy { it.start }
                 .distinctBy { it.start }
                 .let {

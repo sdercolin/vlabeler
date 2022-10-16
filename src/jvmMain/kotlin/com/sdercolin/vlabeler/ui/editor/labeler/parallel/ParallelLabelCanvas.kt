@@ -23,7 +23,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Module
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -80,9 +79,10 @@ fun ColumnScope.ModuleRow(
     val entryConverter = remember(sampleInfo.sampleRate, canvasParams.resolution) {
         EntryConverter(sampleInfo.sampleRate, canvasParams.resolution)
     }
-    val entriesInPixel = remember(module.entries, canvasParams.lengthInPixel, sampleInfo.lengthMillis) {
-        module.entries.mapIndexed { index: Int, entry: Entry ->
-            entryConverter.convertToPixel(IndexedEntry(entry, index), sampleInfo.lengthMillis)
+    val entriesInPixel = remember(module.currentEntryGroup, canvasParams.lengthInPixel, sampleInfo.lengthMillis) {
+        module.currentEntryGroup.map { entry: IndexedEntry ->
+            val next = module.currentEntryGroup.find { it.index == entry.index + 1 }
+            entryConverter.convertToPixel(entry, sampleInfo.lengthMillis, next)
                 .validate(canvasParams.lengthInPixel)
         }
     }

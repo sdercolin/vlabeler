@@ -469,13 +469,15 @@ fun rememberMarkerState(
         EntryConverter(sampleInfo.sampleRate, canvasParams.resolution)
     }
     val entriesInPixel = remember(entries, canvasParams, sampleLengthMillis) {
-        entries.map {
-            entryConverter.convertToPixel(it, sampleLengthMillis).validate(canvasParams.lengthInPixel)
+        entries.map { entry ->
+            val next = allEntriesInCurrentGroup.find { it.index == entry.index + 1 }
+            entryConverter.convertToPixel(entry, sampleLengthMillis, next).validate(canvasParams.lengthInPixel)
         }
     }
     val entriesInSampleInPixel = remember(entriesInPixel) {
-        allEntriesInCurrentGroup.map {
-            entryConverter.convertToPixel(it, sampleLengthMillis).validate(canvasParams.lengthInPixel)
+        allEntriesInCurrentGroup.map { entry ->
+            val next = allEntriesInCurrentGroup.find { it.index == entry.index + 1 }
+            entryConverter.convertToPixel(entry, sampleLengthMillis, next).validate(canvasParams.lengthInPixel)
         }
     }
     val leftBorder = remember(entriesInPixel) {
