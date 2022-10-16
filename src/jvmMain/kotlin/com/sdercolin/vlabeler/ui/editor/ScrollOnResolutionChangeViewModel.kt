@@ -51,9 +51,9 @@ class ScrollOnResolutionChangeViewModel {
         pendingLastCanvasLength = null
         val lastValue = scrollValue
         val lastScreenLength = lastCanvasLength - lastMax
-        val ratio = (lastValue + lastScreenLength.toFloat() / 2) / lastCanvasLength
+        val ratio = (lastValue + lastScreenLength / 2) / lastCanvasLength
         val newScreenLength = canvasLength - max
-        val newValue = (ratio * canvasLength - newScreenLength.toFloat() / 2).toInt()
+        val newValue = (ratio * canvasLength - newScreenLength / 2).toInt()
         return newValue.coerceAtLeast(0).coerceAtMost(max).also { scrollValue = it }
     }
 }

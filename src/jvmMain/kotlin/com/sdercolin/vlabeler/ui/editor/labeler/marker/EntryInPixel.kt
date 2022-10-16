@@ -18,7 +18,7 @@ data class EntryInPixel(
     val notes: EntryNotes,
 ) {
 
-    fun setImplicit(labelerConf: LabelerConf): EntryInPixel {
+    fun validateImplicit(labelerConf: LabelerConf): EntryInPixel {
         val start = if (labelerConf.useImplicitStart) {
             points.minOrNull() ?: start
         } else {

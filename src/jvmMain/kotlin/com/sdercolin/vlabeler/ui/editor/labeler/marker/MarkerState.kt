@@ -17,9 +17,11 @@ import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
+import com.sdercolin.vlabeler.ui.editor.labeler.parallel.SnapDrag
 import com.sdercolin.vlabeler.util.clear
 import com.sdercolin.vlabeler.util.getNextOrNull
 import com.sdercolin.vlabeler.util.getPreviousOrNull
+import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.update
 import kotlin.math.absoluteValue
 
@@ -31,6 +33,7 @@ class MarkerState(
     val sampleLengthMillis: Float,
     val entryConverter: EntryConverter,
     val entriesInPixel: List<EntryInPixel>,
+    val entriesInSampleInPixel: List<EntryInPixel>,
     val leftBorder: Float,
     val rightBorder: Float,
     val cursorState: MutableState<MarkerCursorState>,
@@ -38,6 +41,7 @@ class MarkerState(
     val panState: MutableState<MarkerPanState?>,
     val canvasHeightState: MutableState<Float>,
     val waveformsHeightRatio: Float,
+    private val snapDrag: SnapDrag,
 ) {
     val entryBorders: List<Float> = entriesInPixel.fold<EntryInPixel, List<Float>>(listOf()) { acc, entryInPixel ->
         val lastEntryEnd = acc.lastOrNull()
@@ -98,13 +102,13 @@ class MarkerState(
             val dxMin = leftBorder - startInPixel
             val dxMax = (rightBorder - endInPixel - 1).coerceAtLeast(0f)
             val dx = (x - getPointPosition(pointIndex)).coerceIn(dxMin, dxMax)
-            entriesInPixel.map { it.moved(dx).setImplicit(labelerConf) }
+            entriesInPixel.map { it.moved(dx).validateImplicit(labelerConf) }
         } else {
             val currentX = getPointPosition(pointIndex)
             val dxMin = leftBorder - currentX
             val dxMax = (rightBorder - currentX - 1).coerceAtLeast(0f)
             val dx = (x - getPointPosition(pointIndex)).coerceIn(dxMin, dxMax)
-            entriesInPixel.map { it.moved(dx).collapsed(leftBorder, rightBorder).setImplicit(labelerConf) }
+            entriesInPixel.map { it.moved(dx).collapsed(leftBorder, rightBorder).validateImplicit(labelerConf) }
         }
     }
 
@@ -114,6 +118,7 @@ class MarkerState(
         forcedDrag: Boolean,
     ): List<EntryInPixel> {
         val entries = entriesInPixel.toMutableList()
+        val currentEntries = entriesInSampleInPixel
         when {
             pointIndex == MarkerCursorState.NonePointIndex -> Unit
             pointIndex == MarkerCursorState.StartPointIndex -> {
@@ -126,7 +131,10 @@ class MarkerState(
                         .minOfOrNull { entries.first().points[it.second] }
                         ?: endInPixel
                 }
-                val start = x.coerceIn(leftBorder, max)
+                val start = x.coerceIn(leftBorder, max).runIf(!forcedDrag) {
+                    snapDrag.update(current = currentEntries.first().getActualStart(labelerConf), max = max)
+                    snapDrag.snap(this)
+                }
                 val firstUpdated = entries.first().setActualStart(labelerConf, start)
                 entries[0] = firstUpdated
             }
@@ -140,7 +148,11 @@ class MarkerState(
                         .maxOfOrNull { entries.last().points[it.first] }
                         ?: startInPixel
                 }
-                val end = x.coerceIn(min, (rightBorder - 1).coerceAtLeast(min))
+                val max = (rightBorder - 1).coerceAtLeast(min)
+                val end = x.coerceIn(min, max).runIf(!forcedDrag) {
+                    snapDrag.update(current = currentEntries.last().getActualEnd(labelerConf), min = min, max = max)
+                    snapDrag.snap(this)
+                }
                 val lastUpdated = entries.last().setActualEnd(labelerConf, end)
                 entries[entries.lastIndex] = lastUpdated
             }
@@ -149,7 +161,10 @@ class MarkerState(
                 val min = if (forcedDrag) leftBorder else entries[firstEntryIndex].run { points.maxOrNull() ?: start }
                 val max =
                     if (forcedDrag) rightBorder - 1 else entries[secondEntryIndex].run { points.minOrNull() ?: end }
-                val newBorder = x.coerceIn(min, max)
+                val newBorder = x.coerceIn(min, max).runIf(!forcedDrag) {
+                    snapDrag.update(current = currentEntries[firstEntryIndex].end, min = min, max = max)
+                    snapDrag.snap(this)
+                }
                 entries[firstEntryIndex] = entries[firstEntryIndex].copy(end = newBorder)
                 entries[secondEntryIndex] = entries[secondEntryIndex].copy(start = newBorder)
             }
@@ -171,16 +186,20 @@ class MarkerState(
                 }
                 val newPoints = points.toMutableList()
                 val pointInsideIndex = pointIndex % (labelerConf.fields.size + 1)
-                newPoints[pointInsideIndex] = x.coerceIn(min, max)
+                newPoints[pointInsideIndex] = x.coerceIn(min, max).runIf(!forcedDrag) {
+                    val currentPoints = currentEntries[entryIndex].points
+                    snapDrag.update(current = currentPoints[pointInsideIndex], min = min, max = max)
+                    snapDrag.snap(this)
+                }
                 val newEntry = entry.copy(points = newPoints)
                 entries[entryIndex] = newEntry
             }
         }
         if (labelerConf.useImplicitStart) {
-            entries[0] = entries[0].setImplicit(labelerConf)
+            entries[0] = entries[0].validateImplicit(labelerConf)
         }
         if (labelerConf.useImplicitEnd) {
-            entries[entries.lastIndex] = entries[entries.lastIndex].setImplicit(labelerConf)
+            entries[entries.lastIndex] = entries[entries.lastIndex].validateImplicit(labelerConf)
         }
         if (forcedDrag) {
             val lastEntryIndex = entries.lastIndex
@@ -449,7 +468,7 @@ fun rememberMarkerState(
     val entryConverter = remember(sampleInfo.sampleRate, canvasParams.resolution) {
         EntryConverter(sampleInfo.sampleRate, canvasParams.resolution)
     }
-    val entriesInPixel = remember(entries, canvasParams.lengthInPixel, sampleLengthMillis) {
+    val entriesInPixel = remember(entries, canvasParams, sampleLengthMillis) {
         entries.map {
             entryConverter.convertToPixel(it, sampleLengthMillis).validate(canvasParams.lengthInPixel)
         }
@@ -469,7 +488,7 @@ fun rememberMarkerState(
         val nextEntry = if (labelerConf.continuous) {
             entriesInSampleInPixel.getNextOrNull { it.index == entriesInPixel.last().index }
         } else null
-        nextEntry?.end ?: canvasParams.lengthInPixel.toFloat()
+        nextEntry?.end ?: canvasParams.lengthInPixel
     }
     val cursorState = remember { mutableStateOf(MarkerCursorState()) }
     val scissorsState = remember { mutableStateOf<MarkerScissorsState?>(null) }
@@ -479,6 +498,13 @@ fun rememberMarkerState(
         val spectrogram = appState.appConf.painter.spectrogram
         val totalWeight = 1f + if (spectrogram.enabled) spectrogram.heightWeight else 0f
         1f / totalWeight
+    }
+    val snapDrag = remember(project, canvasParams) {
+        SnapDrag(
+            project,
+            canvasParams.lengthInPixel,
+            entryConverter,
+        )
     }
 
     return remember(
@@ -507,6 +533,7 @@ fun rememberMarkerState(
             sampleLengthMillis,
             entryConverter,
             entriesInPixel,
+            entriesInSampleInPixel,
             leftBorder,
             rightBorder,
             cursorState,
@@ -514,6 +541,7 @@ fun rememberMarkerState(
             panState,
             canvasHeightState,
             waveformsHeightRatio,
+            snapDrag,
         )
     }
 }

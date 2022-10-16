@@ -234,7 +234,7 @@ private fun FieldBorderCanvas(
             } else {
                 entriesInPixel.last().end to null
             }
-            val canvasActualWidth = state.canvasParams.lengthInPixel.toFloat()
+            val canvasActualWidth = state.canvasParams.lengthInPixel
             val canvasHeight = size.height
             val leftBorder = state.leftBorder
             val rightBorder = state.rightBorder

@@ -24,7 +24,7 @@ class EntryConverter(
         notes = entry.entry.notes,
     )
 
-    private fun convertToPixel(millis: Float) =
+    fun convertToPixel(millis: Float) =
         toFrame(millis, sampleRate).div(resolution)
 
     fun convertToMillis(entry: EntryInPixel) = IndexedEntry(

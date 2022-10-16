@@ -33,7 +33,7 @@ data class Module(
         .filter { it.second.isNotEmpty() }
 
     @Transient
-    private val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
+    val entryGroups: List<Pair<String, List<Entry>>> = entries.entryGroupsConnected()
 
     val currentEntry: Entry
         get() = entries[currentIndex]
