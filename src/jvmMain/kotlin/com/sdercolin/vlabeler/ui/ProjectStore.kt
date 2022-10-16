@@ -81,7 +81,14 @@ interface ProjectStore {
     fun toggleCurrentEntryStar()
     fun editEntryTag(index: Int, tag: String)
     fun editCurrentEntryTag(tag: String)
+
+    fun shouldShowModuleNavigation(): Boolean
+    val canGoNextModule: Boolean
+    val canGoPreviousModule: Boolean
+    fun nextModule()
+    fun previousModule()
     fun jumpToModule(index: Int, targetEntryIndex: Int? = null)
+
     fun canOverwriteExportCurrentModule(): Boolean
     fun shouldShowOverwriteExportAllModules(): Boolean
     fun canOverwriteExportAllModules(): Boolean
@@ -390,6 +397,29 @@ class ProjectStoreImpl(
 
     override fun editCurrentEntryTag(tag: String) {
         editCurrentProjectModule { editEntryTag(currentIndex, tag) }
+    }
+
+    override fun shouldShowModuleNavigation(): Boolean {
+        val project = project ?: return false
+        return project.modules.size > 1
+    }
+
+    override val canGoNextModule: Boolean
+        get() = project?.let { it.currentModuleIndex < it.modules.size - 1 } ?: false
+
+    override val canGoPreviousModule: Boolean
+        get() = project?.let { it.currentModuleIndex > 0 } ?: false
+
+    override fun nextModule() {
+        val project = requireProject()
+        val nextIndex = (project.currentModuleIndex + 1).coerceAtMost(project.modules.lastIndex)
+        jumpToModule(nextIndex)
+    }
+
+    override fun previousModule() {
+        val project = requireProject()
+        val previousIndex = (project.currentModuleIndex - 1).coerceAtLeast(0)
+        jumpToModule(previousIndex)
     }
 
     override fun jumpToModule(index: Int, targetEntryIndex: Int?) {

@@ -303,6 +303,20 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.NavigatePreviousSample.getKeyShortCut(),
                         enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample,
                     )
+                    if (appState.shouldShowModuleNavigation()) {
+                        Item(
+                            string(Strings.MenuNavigateNextModule),
+                            onClick = { appState.nextModule() },
+                            shortcut = KeyAction.NavigateNextModule.getKeyShortCut(),
+                            enabled = appState.isEditorActive && appState.canGoNextModule,
+                        )
+                        Item(
+                            string(Strings.MenuNavigatePreviousModule),
+                            onClick = { appState.previousModule() },
+                            shortcut = KeyAction.NavigatePreviousModule.getKeyShortCut(),
+                            enabled = appState.isEditorActive && appState.canGoPreviousModule,
+                        )
+                    }
                     Item(
                         string(Strings.MenuNavigateJumpToEntry),
                         onClick = { appState.openJumpToEntryDialog() },

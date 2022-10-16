@@ -48,6 +48,8 @@ fun Strings.ja(): String? = when (this) {
     MenuNavigatePreviousEntry -> "前のエントリ"
     MenuNavigateNextSample -> "次のサンプル"
     MenuNavigatePreviousSample -> "前のサンプル"
+    MenuNavigateNextModule -> "次のサブプロジェクト"
+    MenuNavigatePreviousModule -> "前のサブプロジェクト"
     MenuNavigateJumpToEntry -> "エントリに移動..."
     MenuNavigateScrollFit -> "このエントリを表示するようにスクロール"
     MenuTools -> "ツール"

@@ -188,9 +188,19 @@ enum class KeyAction(
         KeySet(Key.Up, setOf(Key.Ctrl)),
         true,
     ),
+    NavigateNextModule(
+        listOf(Strings.MenuNavigate, Strings.MenuNavigateNextModule),
+        null,
+        true,
+    ),
     NavigateJumpToEntry(
         listOf(Strings.MenuNavigate, Strings.MenuNavigateJumpToEntry),
         KeySet(Key.G, setOf(Key.Ctrl)),
+        true,
+    ),
+    NavigatePreviousModule(
+        listOf(Strings.MenuNavigate, Strings.MenuNavigatePreviousModule),
+        null,
         true,
     ),
     NavigateScrollFit(

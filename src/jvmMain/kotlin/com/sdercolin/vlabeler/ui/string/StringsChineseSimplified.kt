@@ -48,6 +48,8 @@ fun Strings.zhHans(): String? = when (this) {
     MenuNavigatePreviousEntry -> "上一个条目"
     MenuNavigateNextSample -> "下一个采样"
     MenuNavigatePreviousSample -> "上一个采样"
+    MenuNavigateNextModule -> "下一个子项目"
+    MenuNavigatePreviousModule -> "上一个子项目"
     MenuNavigateJumpToEntry -> "跳转到条目..."
     MenuNavigateScrollFit -> "滚动至显示当前条目"
     MenuTools -> "工具"

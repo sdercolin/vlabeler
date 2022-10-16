@@ -46,6 +46,8 @@ fun Strings.en(): String = when (this) {
     MenuNavigatePreviousEntry -> "Go to Previous Entry"
     MenuNavigateNextSample -> "Go to Next Sample"
     MenuNavigatePreviousSample -> "Go to Previous Sample"
+    MenuNavigateNextModule -> "Go to Next Sub-project"
+    MenuNavigatePreviousModule -> "Go to Previous Sub-project"
     MenuNavigateJumpToEntry -> "Go to Entry..."
     MenuNavigateScrollFit -> "Scroll to Show the Current Entry"
     MenuTools -> "Tools"

@@ -49,6 +49,8 @@ enum class Strings {
     MenuNavigatePreviousEntry,
     MenuNavigateNextSample,
     MenuNavigatePreviousSample,
+    MenuNavigateNextModule,
+    MenuNavigatePreviousModule,
     MenuNavigateJumpToEntry,
     MenuNavigateScrollFit,
     MenuTools,
