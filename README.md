@@ -130,6 +130,8 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`.
 - Mouse drag on normal parameters: move itself
 - Mouse drag on primary parameters: move all the lines together
 - `Shift`: invert normal/primary. e.g. mouse drag on primary parameters with Shift pressed only moves itself.
+- `Q`/`W`/`E`/`R`/... : move the corresponding parameter line to current cursor position. The order is defined in the
+  labeler. Note that this feature is only available in the single entry editing mode.
 
 ### Audio playback
 
@@ -173,6 +175,10 @@ you don't need.
 
 The `Done` status is by default automatically set when you edit any values in a entry. You can disable this behavior in
 the settings too.
+
+### Quickly launch batch edit plugins
+- `F1`~`F8`: launch the corresponding batch edit plugin. Need to be configured in
+  `Tools` -> `Batch Edit` -> `Slot Settings...` before use. About plugins, see [Plugins](#plugins) for more details.
 
 ## Multi-entry editing mode
 

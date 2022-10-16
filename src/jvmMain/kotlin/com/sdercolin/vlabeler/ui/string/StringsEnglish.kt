@@ -462,7 +462,7 @@ fun Strings.en(): String = when (this) {
     QuickLaunchManagerDialogDescription ->
         "You can set frequently used batch edit plugins with their parameters to plugin slots " +
             "for quick access. The parameters stored in the plugin slots are independent of each other, " +
-            "and do not affect the parameters saved when using normally."
+            "and do not affect the parameters saved when used normally."
     QuickLaunchManagerDialogHeaderTitle -> "Slot"
     QuickLaunchManagerDialogHeaderPlugin -> "Plugin"
     QuickLaunchManagerDialogHeaderForceAskParams -> "Always ask for parameters"
