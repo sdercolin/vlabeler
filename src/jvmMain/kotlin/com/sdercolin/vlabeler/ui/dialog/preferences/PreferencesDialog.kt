@@ -19,6 +19,7 @@ fun PreferencesDialog(appState: AppState) {
     val currentConf = remember { appState.appConf }
     val initialPage = remember { appState.lastViewedPreferencesPage }
     val onViewPage = remember { { page: PreferencesPage -> appState.lastViewedPreferencesPage = page } }
+    val args = remember { appState.preferencesDialogArgs }
     val finish = remember {
         { result: AppConf? ->
             appState.closePreferencesDialog()
@@ -47,6 +48,7 @@ fun PreferencesDialog(appState: AppState) {
                         appState.showSnackbar(message = it)
                     }
                 },
+                launchArgs = args,
             )
         }
     }

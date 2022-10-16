@@ -64,6 +64,7 @@ import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 import com.sdercolin.vlabeler.ui.dialog.ColorPickerDialog
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
+import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -84,6 +85,7 @@ private fun rememberPreferencesEditorState(
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit,
     showSnackbar: (String) -> Unit,
+    launchArgs: PreferencesEditorState.LaunchArgs?,
 ) =
     remember(currentConf, submit, initialPage, onViewPage) {
         PreferencesEditorState(
@@ -93,6 +95,7 @@ private fun rememberPreferencesEditorState(
             initialPage = initialPage,
             onViewPage = onViewPage,
             showSnackbar = showSnackbar,
+            launchArgs = launchArgs,
         )
     }
 
@@ -104,6 +107,7 @@ fun PreferencesEditor(
     initialPage: PreferencesPage?,
     onViewPage: (PreferencesPage) -> Unit,
     showSnackbar: (String) -> Unit,
+    launchArgs: PreferencesEditorState.LaunchArgs?,
     state: PreferencesEditorState = rememberPreferencesEditorState(
         currentConf,
         submit,
@@ -111,6 +115,7 @@ fun PreferencesEditor(
         initialPage,
         onViewPage,
         showSnackbar,
+        launchArgs,
     ),
 ) {
     Box(Modifier.fillMaxSize(0.8f).plainClickable()) {
@@ -458,6 +463,13 @@ private fun <K : Action> Keymap(
     val language = LocalLanguage.current
     LaunchedEffect(state.conf) {
         keymapState.update(state.conf, language)
+    }
+
+    LaunchedEffect(Unit) {
+        if (state.launchArgs is PreferencesEditorState.LaunchArgs.Keymap && state.isLaunchArgsHandled.not()) {
+            keymapState.search(state.launchArgs.searchText, Language.default)
+            state.isLaunchArgsHandled = true
+        }
     }
 
     val lazyListState = rememberLazyListState()

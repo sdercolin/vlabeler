@@ -416,9 +416,12 @@ fun Strings.zhHans(): String? = when (this) {
     FilterLinked -> "筛选器已应用到项目导航"
     ColorPickerDialogTitle -> "vLabeler - 选色器"
     QuickLaunchManagerDialogTitle -> "插件槽位"
+    QuickLaunchManagerDialogDescription ->
+        "你可以将常用的批量编辑插件连同其参数一起设置到插件槽位中，以便快速调用。插件槽位中存放的参数各自独立，也不影响通常使用时保存的参数。"
     QuickLaunchManagerDialogHeaderTitle -> "槽位"
     QuickLaunchManagerDialogHeaderPlugin -> "插件"
     QuickLaunchManagerDialogHeaderForceAskParams -> "总是询问参数"
     QuickLaunchManagerDialogItemTitle -> "槽位 %d"
+    QuickLaunchManagerDialogOpenKeymap -> "打开键位映射"
     else -> null
 }

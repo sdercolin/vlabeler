@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog.preferences
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +23,7 @@ class PreferencesEditorState(
     initialPage: PreferencesPage?,
     private val onViewPage: (PreferencesPage) -> Unit,
     private val showSnackbar: (String) -> Unit,
+    val launchArgs: LaunchArgs?,
 ) {
     var savedConf: AppConf by mutableStateOf(initConf)
         private set
@@ -31,11 +33,14 @@ class PreferencesEditorState(
     val pages = mutableStateListOf<PreferencesPageListItem>().apply {
         val rootPages = PreferencesPage.getRootPages().toTypedArray().map { PreferencesPageListItem(it, 0) }
         addAll(rootPages)
-        if (initialPage != null) {
+
+        val pageToOpen = launchArgs?.page ?: initialPage
+
+        if (pageToOpen != null) {
             val route = mutableListOf<PreferencesPage>()
 
             fun search(page: PreferencesPage): Boolean {
-                if (page == initialPage) {
+                if (page == pageToOpen) {
                     return true
                 }
                 route.add(page)
@@ -67,12 +72,20 @@ class PreferencesEditorState(
         }
     }
     var selectedPage: PreferencesPageListItem by mutableStateOf(
-        if (initialPage != null) {
-            pages.first { it.model == initialPage }
-        } else {
-            pages.first()
+        when {
+            launchArgs != null -> {
+                pages.first { it.model == launchArgs.page }
+            }
+            initialPage != null -> {
+                pages.first { it.model == initialPage }
+            }
+            else -> {
+                pages.first()
+            }
         },
     )
+
+    var isLaunchArgsHandled: Boolean by mutableStateOf(false)
 
     val needSave get() = savedConf != _conf
 
@@ -281,5 +294,16 @@ class PreferencesEditorState(
             initialFileName = "vLabeler.conf.json",
             extensions = listOf("json"),
         ),
+    }
+
+    @Immutable
+    sealed class LaunchArgs(val page: PreferencesPage) {
+        @Immutable
+        data class Keymap(
+            /**
+             * Use English
+             */
+            val searchText: String,
+        ) : LaunchArgs(PreferencesPage.KeymapKeyAction)
     }
 }

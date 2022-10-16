@@ -23,6 +23,7 @@ import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesEditorState
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.clearCache
@@ -45,6 +46,8 @@ interface AppDialogState {
     val isShowingSaveAsProjectDialog: Boolean
     val isShowingExportDialog: Boolean
     val isShowingPreferencesDialog: Boolean
+    val preferencesDialogArgs: PreferencesEditorState.LaunchArgs?
+
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
     val isShowingPrerenderDialog: Boolean
@@ -84,7 +87,7 @@ interface AppDialogState {
     fun closeSampleDirectoryRedirectDialog()
     fun openPrerenderDialog()
     fun closePrerenderDialog()
-    fun openPreferencesDialog()
+    fun openPreferencesDialog(args: PreferencesEditorState.LaunchArgs? = null)
     fun closePreferencesDialog()
     fun openAboutDialog()
     fun closeAboutDialog()
@@ -142,6 +145,7 @@ class AppDialogStateImpl(
     override var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingExportDialog: Boolean by mutableStateOf(false)
     override var isShowingPreferencesDialog: Boolean by mutableStateOf(false)
+    override var preferencesDialogArgs: PreferencesEditorState.LaunchArgs? by mutableStateOf(null)
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
     override var isShowingPrerenderDialog: Boolean by mutableStateOf(false)
@@ -312,13 +316,15 @@ class AppDialogStateImpl(
         isShowingPrerenderDialog = false
     }
 
-    override fun openPreferencesDialog() {
+    override fun openPreferencesDialog(args: PreferencesEditorState.LaunchArgs?) {
         closeAllDialogs()
         isShowingPreferencesDialog = true
+        preferencesDialogArgs = args
     }
 
     override fun closePreferencesDialog() {
         isShowingPreferencesDialog = false
+        preferencesDialogArgs = null
     }
 
     override fun requestClearCaches(scope: CoroutineScope) =
@@ -413,6 +419,7 @@ class AppDialogStateImpl(
         isShowingExportDialog = false
         isShowingSampleListDialog = false
         isShowingPreferencesDialog = false
+        preferencesDialogArgs = null
         isShowingSampleDirectoryRedirectDialog = false
         macroPluginShownInDialog = null
         macroPluginReport = null

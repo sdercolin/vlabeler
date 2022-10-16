@@ -399,10 +399,12 @@ enum class Strings {
     FilterLinked,
     ColorPickerDialogTitle,
     QuickLaunchManagerDialogTitle,
+    QuickLaunchManagerDialogDescription,
     QuickLaunchManagerDialogHeaderTitle,
     QuickLaunchManagerDialogHeaderPlugin,
     QuickLaunchManagerDialogHeaderForceAskParams,
     QuickLaunchManagerDialogItemTitle,
+    QuickLaunchManagerDialogOpenKeymap,
     ;
 
     fun get(language: Language): String = when (language) {

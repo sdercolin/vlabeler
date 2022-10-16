@@ -25,6 +25,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
@@ -43,6 +44,7 @@ import com.sdercolin.vlabeler.model.PluginQuickLaunch
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesEditorState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
@@ -116,6 +118,10 @@ class QuickLaunchManagerDialogState(private val appState: AppState) {
     fun finish() {
         appState.closeQuickLaunchManagerDialog()
     }
+
+    fun openKeymap() {
+        appState.openPreferencesDialog(PreferencesEditorState.LaunchArgs.Keymap("Launch Plugin Slot"))
+    }
 }
 
 @Composable
@@ -131,6 +137,11 @@ fun QuickLaunchManagerDialog(appState: AppState, state: QuickLaunchManagerDialog
                     Text(
                         text = string(Strings.QuickLaunchManagerDialogTitle),
                         style = MaterialTheme.typography.h4,
+                    )
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = string(Strings.QuickLaunchManagerDialogDescription),
+                        style = MaterialTheme.typography.body2,
                     )
                     Spacer(modifier = Modifier.height(25.dp))
                     Content(state)
@@ -288,6 +299,10 @@ private fun Item(index: Int, state: QuickLaunchManagerDialogState) {
 @Composable
 private fun BottomButtonBar(state: QuickLaunchManagerDialogState) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        TextButton(onClick = state::openKeymap) {
+            Text(text = string(Strings.QuickLaunchManagerDialogOpenKeymap))
+        }
+        Spacer(modifier = Modifier.weight(1f))
         Button(onClick = state::finish) {
             Text(string(Strings.CommonOkay))
         }

@@ -427,9 +427,13 @@ fun Strings.ja(): String? = when (this) {
     FilterLinked -> "フィルターはプロジェクトのナビゲーションにも使かわれている"
     ColorPickerDialogTitle -> "vLabeler - カラーピッカー"
     QuickLaunchManagerDialogTitle -> "プラグインスロット"
+    QuickLaunchManagerDialogDescription ->
+        "よく使うバッチ処理プラグインをプラグインスロットに登録しておくと、簡単に呼び出すことができます。" +
+            "プラグインスロットに登録されたパラメータは、通常のパラメータとは独立し、各自保存されます。"
     QuickLaunchManagerDialogHeaderTitle -> "スロット"
     QuickLaunchManagerDialogHeaderPlugin -> "プラグイン"
     QuickLaunchManagerDialogHeaderForceAskParams -> "パラメータを常に確認"
     QuickLaunchManagerDialogItemTitle -> "スロット %d"
+    QuickLaunchManagerDialogOpenKeymap -> "キーマップを開く"
     else -> null
 }
