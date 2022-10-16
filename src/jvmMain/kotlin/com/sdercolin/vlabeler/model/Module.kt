@@ -80,7 +80,7 @@ data class Module(
         val entries = entries.toMutableList()
         val changedEntries = entries.withIndex()
             .filter { it.value.sample == sampleInfo.name }
-            .filter { it.index == entries.lastIndex && it.value.end <= 0f }
+            .filter { entry -> currentEntryGroup.any { it.index == entry.index + 1 } && entry.value.end <= 0f }
             .map {
                 val end = sampleInfo.lengthMillis + it.value.end
                 it.copy(value = it.value.copy(end = end))

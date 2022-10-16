@@ -33,7 +33,7 @@ class MarkerState(
     val sampleLengthMillis: Float,
     val entryConverter: EntryConverter,
     val entriesInPixel: List<EntryInPixel>,
-    val entriesInSampleInPixel: List<EntryInPixel>,
+    private val entriesInSampleInPixel: List<EntryInPixel>,
     val leftBorder: Float,
     val rightBorder: Float,
     val cursorState: MutableState<MarkerCursorState>,
