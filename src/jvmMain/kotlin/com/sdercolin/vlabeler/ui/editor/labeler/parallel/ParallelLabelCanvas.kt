@@ -110,19 +110,21 @@ fun ColumnScope.ModuleRow(
                             ) /
                             (screenRange.endInclusive - screenRange.start)
                     }
-                    Box(
-                        modifier = Modifier.fillMaxHeight().weight(weight)
-                            .clickable { editorState.jumpToModule(module.name, targetEntryIndex = entry.index) },
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(vertical = 2.dp, horizontal = 5.dp),
-                            text = entry.name,
-                            style = MaterialTheme.typography.caption,
-                            color = labelColor,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
+                    if (weight > 0) {
+                        Box(
+                            modifier = Modifier.fillMaxHeight().weight(weight)
+                                .clickable { editorState.jumpToModule(module.name, targetEntryIndex = entry.index) },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(vertical = 2.dp, horizontal = 5.dp),
+                                text = entry.name,
+                                style = MaterialTheme.typography.caption,
+                                color = labelColor,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
                     }
                 }
             }
