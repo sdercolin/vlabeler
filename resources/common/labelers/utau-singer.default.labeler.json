@@ -1,6 +1,6 @@
 {
   "name": "utau-singer.default",
-  "version": 6,
+  "version": 7,
   "extension": "ini",
   "displayedName": {
     "en": "UTAU singer labeler",
@@ -310,6 +310,19 @@
         "defaultValue": false
       },
       "injector": null
+    },
+    {
+      "parameter": {
+        "name": "forceRecursive",
+        "type": "boolean",
+        "label": {
+          "en": "Scan samples recursively",
+          "zh": "递归扫描采样",
+          "ja": "サンプルを再帰的にスキャンする"
+        },
+        "defaultValue": false
+      },
+      "injector": null
     }
   ],
   "projectConstructor": {
@@ -317,26 +330,34 @@
       "// `root` is the input File object indicating the root sample directory.",
       "// `acceptedSampleExtensions` is provided as list of strings indicating the accepted extensions of sample files",
       "let modules = []",
-      "function putFolder(folder, isRoot) {",
+      "function putFolder(folder, parentPath, depth) {",
+      "    let thisName = depth === 0 ? '' : parentPath + '/' + folder.getName()",
       "    let samples = folder.listChildFiles().filter(file => acceptedSampleExtensions.includes(file.getExtension()))",
       "    if (samples.length > 0) {",
-      "        let otoPath = folder.resolve('oto.ini').getAbsolutePath()",
-      "        modules.push(",
+      "        let otoFile = folder.resolve('oto.ini')",
+      "        let otoPath = otoFile.getAbsolutePath()",
+      "        let included = true",
+      "        if (depth === 0) {",
+      "            included = params['useRootDirectory']",
+      "        }",
+      "        if (depth > 1) {",
+      "            included = otoFile.exists() || params['forceRecursive']",
+      "        }",
+      "        if (included) {",
+      "            modules.push(",
       "                new ModuleDefinition(",
-      "                        isRoot ? '' : folder.getName(),",
+      "                        thisName,",
       "                        folder.getAbsolutePath(),",
       "                        samples.map(f => f.getName()),",
       "                        [otoPath],",
       "                        otoPath",
       "                )",
-      "        )",
+      "            )",
+      "        }",
       "    }",
+      "    folder.listChildDirectories().forEach(f => putFolder(f, thisName, depth + 1))",
       "}",
-      "if (params['useRootDirectory']) {",
-      "    putFolder(root, true)",
-      "}",
-      "let subFolders = root.listChildDirectories()",
-      "subFolders.forEach(folder => putFolder(folder, false))"
+      "putFolder(root, '', 0)"
     ]
   }
 }
