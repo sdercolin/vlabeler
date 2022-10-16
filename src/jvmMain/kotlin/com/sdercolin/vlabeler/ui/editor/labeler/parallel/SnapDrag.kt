@@ -7,6 +7,7 @@ import kotlin.math.abs
 class SnapDrag(project: Project, lengthInPixel: Float, entryConverter: EntryConverter) {
 
     private val map = project.modules
+        .filter { it.isParallelTo(project.currentModule) || it == project.currentModule }
         .flatMap { module ->
             module.entryGroups.flatMap { (_, entryGroup) ->
                 entryGroup.zipWithNext().map { it.first.end }
