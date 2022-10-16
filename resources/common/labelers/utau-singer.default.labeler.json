@@ -1,6 +1,6 @@
 {
   "name": "utau-singer.default",
-  "version": 7,
+  "version": 8,
   "extension": "ini",
   "displayedName": {
     "en": "UTAU singer labeler",
@@ -331,7 +331,7 @@
       "// `acceptedSampleExtensions` is provided as list of strings indicating the accepted extensions of sample files",
       "let modules = []",
       "function putFolder(folder, parentPath, depth) {",
-      "    let thisName = depth === 0 ? '' : parentPath + '/' + folder.getName()",
+      "    let thisName = depth === 0 ? '' : ( depth ===1  ? folder.getName() : parentPath + '/' + folder.getName())",
       "    let samples = folder.listChildFiles().filter(file => acceptedSampleExtensions.includes(file.getExtension()))",
       "    if (samples.length > 0) {",
       "        let otoFile = folder.resolve('oto.ini')",
