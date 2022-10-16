@@ -188,7 +188,6 @@ fun MarkerLabels(
 
     val chunkCount = ceil(state.canvasParams.lengthInPixel / LabelMaxChunkLength).toInt()
     val chunkLength = state.canvasParams.lengthInPixel / chunkCount
-    val chunkLengthDp = state.canvasParams.canvasWidthInDp / chunkCount
 
     val chunkVisibleList = List(chunkCount) {
         val range = (it * chunkLength)..((it + 1) * chunkLength)

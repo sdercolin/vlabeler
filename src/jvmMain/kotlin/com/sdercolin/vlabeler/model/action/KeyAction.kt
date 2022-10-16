@@ -153,6 +153,21 @@ enum class KeyAction(
         KeySet(Key.Nine, setOf(Key.Ctrl)),
         true,
     ),
+    NavigateOpenRootDirectory(
+        listOf(Strings.MenuNavigate, Strings.MenuNavigateOpenLocation, Strings.MenuNavigateOpenLocationRootDirectory),
+        null,
+        true,
+    ),
+    NavigateOpenModuleDirectory(
+        listOf(Strings.MenuNavigate, Strings.MenuNavigateOpenLocation, Strings.MenuNavigateOpenLocationModuleDirectory),
+        null,
+        true,
+    ),
+    NavigateOpenProjectLocation(
+        listOf(Strings.MenuNavigate, Strings.MenuNavigateOpenLocation, Strings.MenuNavigateOpenLocationProjectLocation),
+        null,
+        true,
+    ),
     NavigateNextEntry(
         listOf(Strings.MenuNavigate, Strings.MenuNavigateNextEntry),
         KeySet(Key.Down),

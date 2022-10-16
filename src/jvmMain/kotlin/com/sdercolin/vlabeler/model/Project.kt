@@ -27,6 +27,7 @@ import java.io.File
 @Immutable
 data class Project(
     val version: Int = 0,
+    val rootSampleDirectory: String? = null,
     val workingDirectory: String,
     val projectName: String,
     val cacheDirectory: String,
@@ -94,7 +95,7 @@ data class Project(
     }
 
     companion object {
-        const val ProjectVersion = 1
+        const val ProjectVersion = 2
 
         const val ProjectFileExtension = "lbp"
         private const val DefaultCacheDirectorySuffix = ".$ProjectFileExtension.caches"
@@ -290,6 +291,7 @@ suspend fun projectOf(
         }
         Project(
             version = ProjectVersion,
+            rootSampleDirectory = sampleDirectory,
             workingDirectory = workingDirectory,
             projectName = projectName,
             cacheDirectory = cacheDirectory,

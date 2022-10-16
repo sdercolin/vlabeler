@@ -30,6 +30,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.awt.Desktop
 import java.io.File
 
 interface ProjectStore {
@@ -86,6 +87,10 @@ interface ProjectStore {
     fun canOverwriteExportAllModules(): Boolean
     fun overwriteExportCurrentModule()
     fun overwriteExportAllModules()
+
+    fun openRootDirectory()
+    fun openCurrentModuleDirectory()
+    fun openProjectLocation()
 }
 
 class ProjectStoreImpl(
@@ -437,5 +442,33 @@ class ProjectStoreImpl(
             exportProject(project)
             progressState.hideProgress()
         }
+    }
+
+    private fun openDirectory(directory: File) {
+        if (directory.exists() && directory.isDirectory) {
+            Desktop.getDesktop().open(directory)
+        }
+    }
+
+    override fun openRootDirectory() {
+        val project = project ?: return
+        val rootDir = if (project.rootSampleDirectory != null) {
+            project.rootSampleDirectory.toFile()
+        } else if (project.modules.size == 1) {
+            project.modules.first().sampleDirectory.toFile()
+        } else {
+            project.projectFile.parentFile
+        }
+        openDirectory(rootDir)
+    }
+
+    override fun openCurrentModuleDirectory() {
+        val project = project ?: return
+        openDirectory(project.currentModule.sampleDirectory.toFile())
+    }
+
+    override fun openProjectLocation() {
+        val project = project ?: return
+        openDirectory(project.projectFile.parentFile)
     }
 }

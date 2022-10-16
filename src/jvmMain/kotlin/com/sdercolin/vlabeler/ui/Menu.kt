@@ -253,6 +253,32 @@ fun FrameWindowScope.Menu(
             }
             Menu(string(Strings.MenuNavigate), mnemonic = 'N') {
                 if (appState != null) {
+                    Menu(string(Strings.MenuNavigateOpenLocation)) {
+                        Item(
+                            string(Strings.MenuNavigateOpenLocationRootDirectory),
+                            onClick = { appState.openRootDirectory() },
+                            shortcut = KeyAction.NavigateOpenRootDirectory.getKeyShortCut(),
+                            enabled = appState.isEditorActive,
+                        )
+                        Item(
+                            string(Strings.MenuNavigateOpenLocationModuleDirectory),
+                            onClick = { appState.openCurrentModuleDirectory() },
+                            shortcut = KeyAction.NavigateOpenModuleDirectory.getKeyShortCut(),
+                            enabled = appState.isEditorActive,
+                        )
+                        Item(
+                            string(Strings.MenuNavigateOpenLocationProjectLocation),
+                            onClick = { appState.openProjectLocation() },
+                            shortcut = KeyAction.NavigateOpenProjectLocation.getKeyShortCut(),
+                            enabled = appState.isEditorActive,
+                        )
+                    }
+                    Item(
+                        string(Strings.MenuNavigateNextEntry),
+                        onClick = { appState.nextEntry() },
+                        shortcut = KeyAction.NavigateNextEntry.getKeyShortCut(),
+                        enabled = appState.isEditorActive && appState.canGoNextEntryOrSample,
+                    )
                     Item(
                         string(Strings.MenuNavigateNextEntry),
                         onClick = { appState.nextEntry() },
