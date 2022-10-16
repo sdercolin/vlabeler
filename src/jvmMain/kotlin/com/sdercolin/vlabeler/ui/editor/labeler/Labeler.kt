@@ -133,14 +133,24 @@ fun Labeler(
                 editorState = editorState,
                 appState = appState,
             )
-            if (appState.isPropertyViewDisplayed) {
-                PropertyView(editorState.project)
-            }
-            if (appState.isToolboxDisplayed) {
-                ToolboxView(
-                    selectedTool = editorState.tool,
-                    select = { editorState.tool = it },
-                )
+            Column(modifier = Modifier.fillMaxSize()) {
+                val parallelModulesCount = remember(project) {
+                    project.modules.count { it.isParallelTo(project.currentModule) && project.labelerConf.continuous }
+                }
+                if (parallelModulesCount > 0) {
+                    Spacer(modifier = Modifier.weight(0.1f * parallelModulesCount))
+                }
+                Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                    if (appState.isPropertyViewDisplayed) {
+                        PropertyView(editorState.project)
+                    }
+                    if (appState.isToolboxDisplayed) {
+                        ToolboxView(
+                            selectedTool = editorState.tool,
+                            select = { editorState.tool = it },
+                        )
+                    }
+                }
             }
             RenderStatusLabel(editorState.renderProgress)
         }
