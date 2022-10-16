@@ -3,9 +3,12 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.toLocalized
+import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.ParamTypedMap
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
@@ -101,17 +104,33 @@ data class Plugin(
         }
         return this
     }
-}
 
-@Serializer(Plugin.Parameters::class)
-object PluginParameterListSerializer : KSerializer<Plugin.Parameters> {
-    override fun deserialize(decoder: Decoder): Plugin.Parameters {
-        require(decoder is JsonDecoder)
-        val element = decoder.decodeJsonElement()
-        require(element is JsonObject)
-        val list = requireNotNull(element["list"]).jsonArray.map {
-            decoder.json.decodeFromJsonElement(PolymorphicSerializer(Parameter::class), it)
+    suspend fun saveMacroParams(paramMap: ParamMap, defaultFile: File, appRecordStore: AppRecordStore, slot: Int?) {
+        if (slot == null) {
+            saveParams(paramMap, defaultFile)
+        } else {
+            val paramTypedMap = ParamTypedMap.from(paramMap, parameterDefs)
+            val quickLaunch = PluginQuickLaunch(
+                pluginName = name,
+                params = paramTypedMap,
+            )
+            appRecordStore.update {
+                val existing = pluginQuickLaunchSlots[slot]
+                saveQuickLaunch(slot, quickLaunch.copy(skipDialog = existing?.skipDialog ?: false))
+            }
         }
-        return Plugin.Parameters(list)
+    }
+
+    @Serializer(Parameters::class)
+    object PluginParameterListSerializer : KSerializer<Parameters> {
+        override fun deserialize(decoder: Decoder): Parameters {
+            require(decoder is JsonDecoder)
+            val element = decoder.decodeJsonElement()
+            require(element is JsonObject)
+            val list = requireNotNull(element["list"]).jsonArray.map {
+                decoder.json.decodeFromJsonElement(PolymorphicSerializer(Parameter::class), it)
+            }
+            return Parameters(list)
+        }
     }
 }

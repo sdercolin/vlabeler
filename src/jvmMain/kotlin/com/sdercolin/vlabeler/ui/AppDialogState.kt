@@ -22,9 +22,11 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
+import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.clearCache
+import com.sdercolin.vlabeler.util.orEmpty
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CancellationException
@@ -48,8 +50,9 @@ interface AppDialogState {
     val isShowingPrerenderDialog: Boolean
     val isShowingAboutDialog: Boolean
     val isShowingLicenseDialog: Boolean
+    val isShowingQuickLaunchManagerDialog: Boolean
     val updaterDialogContent: Update?
-    val macroPluginShownInDialog: Pair<Plugin, ParamMap>?
+    val macroPluginShownInDialog: MacroPluginDialogArgs?
     val macroPluginReport: LocalizedJsonString?
     val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
@@ -87,9 +90,12 @@ interface AppDialogState {
     fun closeAboutDialog()
     fun openLicenseDialog()
     fun closeLicenseDialog()
+    fun openQuickLaunchManagerDialog()
+    fun closeQuickLaunchManagerDialog()
     fun openUpdaterDialog(update: Update)
     fun closeUpdaterDialog()
     fun openMacroPluginDialog(plugin: Plugin)
+    fun openMacroPluginDialogFromSlot(plugin: Plugin, params: ParamMap?, slot: Int)
     fun updateMacroPluginDialogInputParams(params: ParamMap)
     fun closeMacroPluginDialog()
     fun showMacroPluginReport(report: LocalizedJsonString)
@@ -105,13 +111,13 @@ interface AppDialogState {
     fun anyDialogOpening() =
         isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
-            macroPluginShownInDialog != null || macroPluginReport != null ||
+            macroPluginShownInDialog != null || macroPluginReport != null || isShowingQuickLaunchManagerDialog ||
             customizableItemManagerTypeShownInDialog != null || embeddedDialog != null
 
     fun anyDialogOpeningExceptMacroPluginManager() =
         isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
-            macroPluginShownInDialog != null || macroPluginReport != null ||
+            macroPluginShownInDialog != null || macroPluginReport != null || isShowingQuickLaunchManagerDialog ||
             (
                 customizableItemManagerTypeShownInDialog != null &&
                     customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
@@ -141,8 +147,9 @@ class AppDialogStateImpl(
     override var isShowingPrerenderDialog: Boolean by mutableStateOf(false)
     override var isShowingAboutDialog: Boolean by mutableStateOf(false)
     override var isShowingLicenseDialog: Boolean by mutableStateOf(false)
+    override var isShowingQuickLaunchManagerDialog: Boolean by mutableStateOf(false)
     override var updaterDialogContent: Update? by mutableStateOf(null)
-    override var macroPluginShownInDialog: Pair<Plugin, ParamMap>? by mutableStateOf(null)
+    override var macroPluginShownInDialog: MacroPluginDialogArgs? by mutableStateOf(null)
     override var macroPluginReport: LocalizedJsonString? by mutableStateOf(null)
     override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
     override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
@@ -152,7 +159,7 @@ class AppDialogStateImpl(
 
     override fun requestOpenProject() = if (hasUnsavedChanges) askIfSaveBeforeOpenProject() else openOpenProjectDialog()
 
-    fun askIfSaveBeforeOpenProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpening)
+    private fun askIfSaveBeforeOpenProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpening)
 
     override fun openOpenProjectDialog() {
         closeAllDialogs()
@@ -343,14 +350,27 @@ class AppDialogStateImpl(
         isShowingLicenseDialog = false
     }
 
+    override fun openQuickLaunchManagerDialog() {
+        isShowingQuickLaunchManagerDialog = true
+    }
+
+    override fun closeQuickLaunchManagerDialog() {
+        isShowingQuickLaunchManagerDialog = false
+    }
+
     override fun openMacroPluginDialog(plugin: Plugin) {
         scope.launch(Dispatchers.IO) {
-            macroPluginShownInDialog = plugin to plugin.loadSavedParams(plugin.getSavedParamsFile())
+            macroPluginShownInDialog =
+                MacroPluginDialogArgs(plugin, plugin.loadSavedParams(plugin.getSavedParamsFile()))
         }
     }
 
+    override fun openMacroPluginDialogFromSlot(plugin: Plugin, params: ParamMap?, slot: Int) {
+        macroPluginShownInDialog = MacroPluginDialogArgs(plugin, params.orEmpty(), slot)
+    }
+
     override fun updateMacroPluginDialogInputParams(params: ParamMap) {
-        macroPluginShownInDialog = macroPluginShownInDialog?.let { it.first to params }
+        macroPluginShownInDialog = macroPluginShownInDialog?.copy(paramMap = params)
     }
 
     override fun openCustomizableItemManagerDialog(type: CustomizableItem.Type) {
@@ -397,6 +417,7 @@ class AppDialogStateImpl(
         macroPluginShownInDialog = null
         macroPluginReport = null
         customizableItemManagerTypeShownInDialog = null
+        isShowingQuickLaunchManagerDialog = false
         closeEmbeddedDialog()
     }
 }

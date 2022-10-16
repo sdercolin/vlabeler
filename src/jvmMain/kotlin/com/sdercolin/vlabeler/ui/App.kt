@@ -104,12 +104,11 @@ fun App(
                 finish = { appState.closeUpdaterDialog() },
             )
         }
-        appState.macroPluginShownInDialog?.let { (plugin, params) ->
+        appState.macroPluginShownInDialog?.let { args ->
             MacroPluginDialog(
                 appConf = appState.appConf,
                 appRecordStore = appState.appRecordStore,
-                plugin = plugin,
-                paramMap = params,
+                args = args,
                 project = appState.requireProject(),
                 submit = {
                     mainScope.launch {
@@ -117,8 +116,13 @@ fun App(
                         if (it != null) {
                             appState.showProgress()
                             withContext(Dispatchers.IO) {
-                                plugin.saveParams(it, plugin.getSavedParamsFile())
-                                appState.executeMacroPlugin(plugin, it)
+                                args.plugin.saveMacroParams(
+                                    it,
+                                    args.plugin.getSavedParamsFile(),
+                                    appState.appRecordStore,
+                                    slot = args.slot,
+                                )
+                                appState.executeMacroPlugin(args.plugin, it)
                             }
                             appState.hideProgress()
                         }
@@ -127,7 +131,12 @@ fun App(
                 save = {
                     mainScope.launch(Dispatchers.IO) {
                         appState.updateMacroPluginDialogInputParams(it)
-                        plugin.saveParams(it, plugin.getSavedParamsFile())
+                        args.plugin.saveMacroParams(
+                            it,
+                            args.plugin.getSavedParamsFile(),
+                            appState.appRecordStore,
+                            slot = args.slot,
+                        )
                     }
                 },
             )
@@ -143,6 +152,9 @@ fun App(
                 it,
                 appState,
             )
+        }
+        if (appState.isShowingQuickLaunchManagerDialog) {
+            QuickLaunchManagerDialog(appState = appState)
         }
         appState.embeddedDialog?.let { request ->
             EmbeddedDialog(request)

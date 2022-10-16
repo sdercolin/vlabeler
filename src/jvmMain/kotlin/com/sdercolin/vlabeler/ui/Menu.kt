@@ -333,6 +333,7 @@ fun FrameWindowScope.Menu(
             }
             Menu(string(Strings.MenuTools), mnemonic = 'T') {
                 if (appState != null) {
+                    val appRecord by appState.appRecordFlow.collectAsState()
                     Menu(string(Strings.MenuToolsBatchEdit)) {
                         appState.getActivePlugins(Plugin.Type.Macro).forEach {
                             Item(
@@ -340,6 +341,31 @@ fun FrameWindowScope.Menu(
                                 onClick = { appState.openMacroPluginDialog(it) },
                                 enabled = it.isMacroExecutable(appState),
                             )
+                        }
+                        Separator()
+                        Item(
+                            string(Strings.MenuToolsBatchEditQuickLaunchManager),
+                            onClick = { appState.openQuickLaunchManagerDialog() },
+                            shortcut = KeyAction.ManageMacroPluginsQuickLaunch.getKeyShortCut(),
+                        )
+                        appRecord.getUsedPluginQuickLaunchSlots().forEach { slot ->
+                            val quickLaunch = appRecord.getPluginQuickLaunch(slot)
+                            if (quickLaunch != null) {
+                                val plugin = appState.getActivePlugins(Plugin.Type.Macro)
+                                    .find { it.name == quickLaunch.pluginName }
+                                if (plugin != null) {
+                                    Item(
+                                        string(
+                                            Strings.MenuToolsBatchEditQuickLaunch,
+                                            slot + 1,
+                                            plugin.displayedName.get(),
+                                        ),
+                                        onClick = { quickLaunch.launch(plugin, appState, slot) },
+                                        shortcut = KeyAction.getQuickLaunchAction(slot).getKeyShortCut(),
+                                        enabled = plugin.isMacroExecutable(appState),
+                                    )
+                                }
+                            }
                         }
                         Separator()
                         Item(

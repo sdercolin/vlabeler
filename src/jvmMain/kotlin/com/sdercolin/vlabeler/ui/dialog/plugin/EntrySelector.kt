@@ -52,12 +52,12 @@ import com.sdercolin.vlabeler.util.runIf
 
 @Composable
 fun ParamEntrySelector(
-    labelerConf: LabelerConf,
+    labelerConf: LabelerConf?,
     value: EntrySelector,
     onValueChange: (EntrySelector) -> Unit,
     isError: Boolean,
     onParseErrorChange: (Boolean) -> Unit,
-    entries: List<Entry>,
+    entries: List<Entry>?,
     js: JavaScript?,
     enabled: Boolean,
 ) {
@@ -136,9 +136,11 @@ fun ParamEntrySelector(
             } else {
                 val text = if (js == null) {
                     string(Strings.PluginEntrySelectorPreviewSummaryInitializing)
-                } else {
+                } else if (entries != null && labelerConf != null) {
                     val selectedCount = EntrySelector(filters.toList()).select(entries, labelerConf, js).size
                     string(Strings.PluginEntrySelectorPreviewSummary, selectedCount, entries.size)
+                } else {
+                    ""
                 }
                 Text(
                     text = text,
@@ -152,7 +154,7 @@ fun ParamEntrySelector(
 
 @Composable
 private fun FilterRow(
-    labelerConf: LabelerConf,
+    labelerConf: LabelerConf?,
     index: Int,
     value: EntrySelector.FilterItem,
     onValueChange: (EntrySelector.FilterItem) -> Unit,
@@ -163,9 +165,9 @@ private fun FilterRow(
     var subject by remember(value) { mutableStateOf(value.subject) }
     val textSubjects = EntrySelector.textItemSubjects.map { it.first to string(it.second) }
     val textSubjectNames = textSubjects.map { it.first }
-    val numberSubjects = labelerConf.properties.map { it.name to it.displayedName.get() }
+    val numberSubjects = labelerConf?.properties?.map { it.name to it.displayedName.get() }.orEmpty()
     val numberComparers = listOf(null to string(Strings.PluginEntrySelectorComparerValue)) +
-        labelerConf.properties.map { it.name to it.displayedName.get() }
+        labelerConf?.properties?.map { it.name to it.displayedName.get() }.orEmpty()
     val booleanSubjects = EntrySelector.booleanItemSubjects.map { it.first to string(it.second) }
     val booleanSubjectNames = booleanSubjects.map { it.first }
     val subjects = textSubjects + numberSubjects + booleanSubjects
@@ -249,7 +251,7 @@ private fun FilterRow(
             modifier = Modifier.width(30.dp),
         )
         SelectionBox(
-            value = subjects.firstOrNull { it.first == subject } ?: subjects.first(),
+            value = subjects.firstOrNull { it.first == subject } ?: (subject to subject),
             onSelect = {
                 subject = it.first
                 type = when (it.first) {

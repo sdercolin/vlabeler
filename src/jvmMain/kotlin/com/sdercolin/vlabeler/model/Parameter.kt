@@ -142,7 +142,7 @@ sealed class Parameter<T : Any> {
     ) : Parameter<EntrySelector>() {
 
         @Transient
-        override val type: String = FileParam.Type
+        override val type: String = Type
 
         override fun eval(value: Any) = value is EntrySelector && value.filters.isNotEmpty()
 
@@ -194,7 +194,7 @@ sealed class Parameter<T : Any> {
                 }
             } == true
             is EntrySelectorParam -> (value as? EntrySelector)?.let { selector ->
-                selector.filters.all { it.isValid(requireNotNull(labelerConf)) }
+                selector.filters.all { if (labelerConf != null) it.isValid(labelerConf) else false }
             } == true
             is FileParam -> (value as? FileWithEncoding)?.let {
                 if (optional && it.file == null) return true

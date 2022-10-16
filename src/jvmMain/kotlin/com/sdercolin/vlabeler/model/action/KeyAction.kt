@@ -208,6 +208,11 @@ enum class KeyAction(
         KeySet(Key.F),
         true,
     ),
+    ManageMacroPluginsQuickLaunch(
+        listOf(Strings.MenuTools, Strings.MenuToolsBatchEdit, Strings.MenuToolsBatchEditQuickLaunchManager),
+        null,
+        true,
+    ),
     ManageMacroPlugins(
         listOf(Strings.MenuTools, Strings.MenuToolsBatchEdit, Strings.MenuToolsBatchEditManagePlugins),
         KeySet(Key.Semicolon, setOf(Key.Ctrl)),
@@ -316,6 +321,46 @@ enum class KeyAction(
         KeySet(Key.P),
         false,
     ),
+    QuickLaunch1(
+        listOf(Strings.ActionQuickLaunch1),
+        KeySet(Key.F1),
+        true,
+    ),
+    QuickLaunch2(
+        listOf(Strings.ActionQuickLaunch2),
+        KeySet(Key.F2),
+        true,
+    ),
+    QuickLaunch3(
+        listOf(Strings.ActionQuickLaunch3),
+        KeySet(Key.F3),
+        true,
+    ),
+    QuickLaunch4(
+        listOf(Strings.ActionQuickLaunch4),
+        KeySet(Key.F4),
+        true,
+    ),
+    QuickLaunch5(
+        listOf(Strings.ActionQuickLaunch5),
+        KeySet(Key.F5),
+        true,
+    ),
+    QuickLaunch6(
+        listOf(Strings.ActionQuickLaunch6),
+        KeySet(Key.F6),
+        true,
+    ),
+    QuickLaunch7(
+        listOf(Strings.ActionQuickLaunch7),
+        KeySet(Key.F7),
+        true,
+    ),
+    QuickLaunch8(
+        listOf(Strings.ActionQuickLaunch8),
+        KeySet(Key.F8),
+        true,
+    ),
     ;
 
     override val displayOrder: Int
@@ -334,5 +379,7 @@ enum class KeyAction(
             }
             .groupBy { it.first.mainKey }
             .flatMap { map -> map.value.sortedByDescending { it.first.subKeys.count() } }
+
+        fun getQuickLaunchAction(index: Int) = values().first { it.name == "QuickLaunch${index + 1}" }
     }
 }

@@ -32,6 +32,7 @@ data class AppRecord(
     val ignoredUpdateVersions: Set<String> = setOf(),
     val updateDownloadDirectory: String = DefaultDownloadDir.absolutePath,
     val hasSavedDetectedLanguage: Boolean = false,
+    val pluginQuickLaunchSlots: Map<Int, PluginQuickLaunch> = mapOf(),
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(
@@ -64,6 +65,22 @@ data class AppRecord(
     fun versionIgnored(version: Version) = copy(
         ignoredUpdateVersions = ignoredUpdateVersions + version.toString(),
     )
+
+    fun getPluginQuickLaunch(slot: Int) = pluginQuickLaunchSlots[slot]
+
+    fun getUsedPluginQuickLaunchSlots() =
+        (0 until PluginQuickLaunch.SlotCount).filter { pluginQuickLaunchSlots.containsKey(it) }
+
+    fun saveQuickLaunch(slot: Int, pluginQuickLaunch: PluginQuickLaunch?) =
+        copy(
+            pluginQuickLaunchSlots = pluginQuickLaunchSlots.toMutableMap().apply {
+                if (pluginQuickLaunch != null) {
+                    this[slot] = pluginQuickLaunch
+                } else {
+                    this.remove(slot)
+                }
+            }.toMap(),
+        )
 }
 
 private const val MaxRecentProjectCount = 10

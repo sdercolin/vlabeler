@@ -1,0 +1,295 @@
+package com.sdercolin.vlabeler.ui
+
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Switch
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.model.PluginQuickLaunch
+import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
+import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.ui.theme.getSwitchColors
+import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.ParamTypedMap
+import com.sdercolin.vlabeler.util.orEmpty
+
+@Composable
+private fun rememberState(appState: AppState) = remember(appState) {
+    QuickLaunchManagerDialogState(appState)
+}
+
+class QuickLaunchManagerDialogState(private val appState: AppState) {
+
+    private var slots by mutableStateOf(
+        (0 until PluginQuickLaunch.SlotCount).map { appState.appRecordStore.value.getPluginQuickLaunch(it) },
+    )
+
+    val appConf get() = appState.appConf
+    val appRecordStore get() = appState.appRecordStore
+    val project get() = appState.project
+
+    fun getPluginOptions(): List<Plugin?> = listOf(null) + appState.getPlugins(Plugin.Type.Macro)
+
+    fun getSlot(slot: Int): PluginQuickLaunch? = slots.getOrNull(slot)
+
+    fun findPlugin(quickLaunch: PluginQuickLaunch) =
+        appState.getPlugins(Plugin.Type.Macro).find { it.name == quickLaunch.pluginName }
+
+    fun hasValidParams(slot: Int, plugin: Plugin?): Boolean {
+        plugin ?: return false
+        val quickLaunch = slots.getOrNull(slot) ?: return false
+        return quickLaunch.checkParamsValid(plugin, appState.project?.labelerConf)
+    }
+
+    fun setSlotPlugin(slot: Int, plugin: Plugin?) {
+        val existing = slots[slot]
+        if (plugin === null) {
+            save(slot, null)
+            return
+        }
+        val new = if (existing == null) {
+            PluginQuickLaunch(plugin.name, params = null, skipDialog = false)
+        } else {
+            if (existing.pluginName == plugin.name) {
+                return
+            }
+            existing.copy(pluginName = plugin.name, params = null)
+        }
+        save(slot, new)
+    }
+
+    fun setSlotParams(slot: Int, plugin: Plugin, params: ParamMap?) {
+        val existing = slots[slot] ?: return
+        val new = existing.copy(params = ParamTypedMap.from(params.orEmpty(), plugin.parameterDefs))
+        save(slot, new)
+    }
+
+    fun setSlotSkipDialog(slot: Int, skipDialog: Boolean) {
+        val existing = slots[slot] ?: return
+        val new = existing.copy(skipDialog = skipDialog)
+        save(slot, new)
+    }
+
+    private fun save(slot: Int, quickLaunch: PluginQuickLaunch?) {
+        slots = slots.toMutableList().apply { set(slot, quickLaunch) }
+        appState.appRecordStore.update { saveQuickLaunch(slot, quickLaunch) }
+    }
+
+    fun finish() {
+        appState.closeQuickLaunchManagerDialog()
+    }
+}
+
+@Composable
+fun QuickLaunchManagerDialog(appState: AppState, state: QuickLaunchManagerDialogState = rememberState(appState)) {
+    Box(
+        modifier = Modifier.fillMaxSize().background(color = Black50),
+        contentAlignment = Alignment.Center,
+    ) {
+        Surface {
+            Box(Modifier.fillMaxSize(0.8f).plainClickable()) {
+                Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 30.dp)) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = string(Strings.QuickLaunchManagerDialogTitle),
+                        style = MaterialTheme.typography.h4,
+                    )
+                    Spacer(modifier = Modifier.height(25.dp))
+                    Content(state)
+                    Spacer(modifier = Modifier.height(25.dp))
+                    BottomButtonBar(state)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.Content(state: QuickLaunchManagerDialogState) {
+    Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
+        val scrollState = rememberScrollState()
+        Column(modifier = Modifier.weight(1f).verticalScroll(scrollState)) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(modifier = Modifier.width(100.dp)) {
+                    Text(
+                        text = string(Strings.QuickLaunchManagerDialogHeaderTitle),
+                        style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold),
+                    )
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                Box(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = string(Strings.QuickLaunchManagerDialogHeaderPlugin),
+                        style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold),
+                    )
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                Box(modifier = Modifier.width(150.dp)) {
+                    Text(
+                        text = string(Strings.QuickLaunchManagerDialogHeaderForceAskParams),
+                        style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
+                    )
+                }
+            }
+            repeat(PluginQuickLaunch.SlotCount) { index ->
+                Item(index, state)
+            }
+        }
+        VerticalScrollbar(
+            modifier = Modifier.align(Alignment.CenterVertically).width(15.dp),
+            adapter = rememberScrollbarAdapter(scrollState),
+        )
+    }
+}
+
+@Composable
+private fun Item(index: Int, state: QuickLaunchManagerDialogState) {
+    val quickLaunch = state.getSlot(index)
+    val plugin = quickLaunch?.let { state.findPlugin(it) }
+    var isPluginDialogShown by remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(modifier = Modifier.width(100.dp)) {
+            Text(
+                text = string(Strings.QuickLaunchManagerDialogItemTitle, index + 1),
+                style = MaterialTheme.typography.body1,
+            )
+        }
+        Spacer(modifier = Modifier.width(20.dp))
+        Box(modifier = Modifier.weight(1f)) {
+            var expanded by remember { mutableStateOf(false) }
+            val text = if (quickLaunch == null) "" else plugin?.displayedName?.get() ?: quickLaunch.pluginName
+            val color = if (quickLaunch != null && plugin == null) {
+                MaterialTheme.colors.error
+            } else {
+                MaterialTheme.colors.onSurface
+            }
+            Row(modifier = Modifier.fillMaxWidth()) {
+                TextField(
+                    modifier = Modifier.weight(1f),
+                    value = text,
+                    onValueChange = { },
+                    textStyle = MaterialTheme.typography.body1.copy(color = color),
+                    readOnly = true,
+                    singleLine = true,
+                    leadingIcon = {
+                        IconButton(onClick = { expanded = true }) {
+                            Icon(Icons.Default.ExpandMore, null)
+                        }
+                    },
+                )
+                Spacer(modifier = Modifier.width(15.dp))
+                IconButton(
+                    enabled = plugin != null,
+                    onClick = { isPluginDialogShown = true },
+                ) {
+                    Icon(Icons.Default.Settings, null)
+                }
+            }
+            DropdownMenu(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+            ) {
+                state.getPluginOptions().forEach { plugin ->
+                    DropdownMenuItem(
+                        onClick = {
+                            state.setSlotPlugin(index, plugin)
+                            expanded = false
+                        },
+                    ) {
+                        Text(text = plugin?.displayedName?.get().orEmpty())
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.width(20.dp))
+        Box(modifier = Modifier.width(150.dp)) {
+            Switch(
+                modifier = Modifier.align(Alignment.CenterStart),
+                checked = quickLaunch?.skipDialog == false,
+                onCheckedChange = { state.setSlotSkipDialog(index, !it) },
+                colors = getSwitchColors(),
+                enabled = plugin != null,
+            )
+        }
+    }
+    if (isPluginDialogShown) {
+        if (plugin != null) {
+            MacroPluginDialog(
+                appConf = state.appConf,
+                appRecordStore = state.appRecordStore,
+                args = MacroPluginDialogArgs(
+                    plugin = plugin,
+                    paramMap = quickLaunch.getMergedParams(plugin),
+                    slot = index,
+                ),
+                project = state.project,
+                save = { params ->
+                    state.setSlotParams(index, plugin, params)
+                },
+                submit = { params ->
+                    if (params != null) {
+                        state.setSlotParams(index, plugin, params)
+                    }
+                    isPluginDialogShown = false
+                },
+                executable = false,
+            )
+        } else {
+            isPluginDialogShown = false
+        }
+    }
+}
+
+@Composable
+private fun BottomButtonBar(state: QuickLaunchManagerDialogState) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        Button(onClick = state::finish) {
+            Text(string(Strings.CommonOkay))
+        }
+    }
+}

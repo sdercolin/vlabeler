@@ -40,6 +40,7 @@ import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -101,6 +102,7 @@ private fun rememberPluginDialogState(
     project: Project?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
+    executable: Boolean,
 ) = remember(plugin, paramMap, savedParamMap, submit, save) {
     PluginDialogState(
         plugin,
@@ -109,6 +111,7 @@ private fun rememberPluginDialogState(
         project,
         submit,
         save,
+        executable,
     )
 }
 
@@ -131,28 +134,37 @@ fun TemplatePluginDialog(
         project = null,
         submit = submit,
         save = save,
+        executable = false,
     ),
+)
+
+@Immutable
+data class MacroPluginDialogArgs(
+    val plugin: Plugin,
+    val paramMap: ParamMap,
+    val slot: Int? = null,
 )
 
 @Composable
 fun MacroPluginDialog(
     appConf: AppConf,
     appRecordStore: AppRecordStore,
-    plugin: Plugin,
-    paramMap: ParamMap,
+    args: MacroPluginDialogArgs,
     project: Project?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
+    executable: Boolean = true,
 ) = PluginDialog(
     appConf = appConf,
     appRecordStore = appRecordStore,
     state = rememberPluginDialogState(
-        plugin = plugin,
-        paramMap = paramMap,
-        savedParamMap = paramMap,
+        plugin = args.plugin,
+        paramMap = args.paramMap,
+        savedParamMap = args.paramMap,
         project = project,
         submit = submit,
         save = save,
+        executable = executable,
     ),
 )
 
@@ -300,11 +312,12 @@ private fun Content(state: BasePluginDialogState) {
                         enabled = state.isAllValid(),
                         onClick = { state.apply() },
                     ) {
-                        val strings = if (plugin.isSelfExecutable) {
-                            Strings.PluginDialogExecute
-                        } else {
-                            Strings.CommonOkay
-                        }
+                        val strings =
+                            if (plugin.isSelfExecutable && (state as? PluginDialogState)?.executable == true) {
+                                Strings.PluginDialogExecute
+                            } else {
+                                Strings.CommonOkay
+                            }
                         Text(string(strings))
                     }
                 }
@@ -434,12 +447,12 @@ private fun Params(state: BasePluginDialogState, js: JavaScript?) {
                             enabled = enabled,
                         )
                         is Parameter.EntrySelectorParam -> ParamEntrySelector(
-                            labelerConf = requireNotNull(state.project).labelerConf,
+                            labelerConf = state.project?.labelerConf,
                             value = value as EntrySelector,
                             onValueChange = onValueChange,
                             isError = isError,
                             onParseErrorChange = { state.setParseError(i, it) },
-                            entries = requireNotNull(state.project).currentModule.entries,
+                            entries = state.project?.currentModule?.entries,
                             js = js,
                             enabled = enabled,
                         )

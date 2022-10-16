@@ -12,6 +12,7 @@ class PluginDialogState(
     override val project: Project?,
     override val submit: (ParamMap?) -> Unit,
     override val save: (ParamMap) -> Unit,
+    val executable: Boolean,
 ) : BasePluginDialogState(paramMap) {
 
     override val basePlugin: BasePlugin
