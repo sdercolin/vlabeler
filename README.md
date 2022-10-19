@@ -13,7 +13,8 @@ Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | 
 **The project is now in Beta.
 For help, suggestions, issue reports, etc. please join our [Discord](https://discord.gg/yrTqG2SrRd).**
 
-Demo video (in English): [YouTube](https://youtu.be/xFX8SRrJEzM) | [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
+Demo video (in English): [YouTube](https://youtu.be/xFX8SRrJEzM)
+| [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
 
 ## Download
 
@@ -103,6 +104,7 @@ For label files used in NNSVS/ENUNU and similar systems, the following options a
   You can change the `wav` and `lab` folder names in the labeler's settings.
 
 #### Other labelers (not built-in)
+
 - TextGrid labeler (for Praat TextGrid files): [GitHub](https://github.com/sdercolin/vlabeler-textgrid)
 
 ## Get started
@@ -177,6 +179,7 @@ The `Done` status is by default automatically set when you edit any values in a 
 the settings too.
 
 ### Quickly launch batch edit plugins
+
 - `F1`~`F8`: launch the corresponding batch edit plugin. Need to be configured in
   `Tools` -> `Batch Edit` -> `Slot Settings...` before use. About plugins, see [Plugins](#plugins) for more details.
 
@@ -345,8 +348,11 @@ When reporting issues to us, please attach the recent log files.
 
 ## Known issues
 
-1. On Linux, the file chooser may not be able to select an empty folder. Please create something inside, or copy + paste
+1. The `Scroll Canvas to Left/Right` actions in `Keymap` -> `Mouse scroll actions` cannot be changed at present.
+   If you are using a trackpad, we recommend you to disable the `Go to Next/Previous Entry` actions in the same page, so
+   that you can scroll the canvas by trackpad without triggering the entry navigation actions.
+2. On Linux, the file chooser may not be able to select an empty folder. Please create something inside, or copy + paste
    its path
-2. On Linux, sometimes the application may not be able to recycle memory properly.
+3. On Linux, sometimes the application may not be able to recycle memory properly.
    You can use `Tools` -> `Recycle Memory` to force it to recycle memory.
-3. Sometimes the window freezes unexpectedly. You can resize the window to refresh it
+4. Sometimes the window freezes unexpectedly. You can resize the window to refresh it
