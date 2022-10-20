@@ -39,6 +39,8 @@ class TrackingService(appRecordStore: AppRecordStore, mainScope: CoroutineScope)
         }
             .launchIn(mainScope)
 
+        Log.fatalErrorTracker = Log.FatalErrorTracker { track(it) }
+
         if (isDebug) {
             // TODO: check if user has allowed tracking
             appRecordStore.update {

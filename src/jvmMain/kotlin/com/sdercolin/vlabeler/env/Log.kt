@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.env
 
 import com.sdercolin.vlabeler.hasUncaughtError
+import com.sdercolin.vlabeler.tracking.event.FatalErrorEvent
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.ResourcePath
 import java.io.File
@@ -83,9 +84,25 @@ object Log {
         infoLogger.severe(message)
         errorLogger.severe(message)
         errorStreamHandler.flush()
+        fatalErrorTracker?.track(
+            FatalErrorEvent(
+                appVersion = appVersion.toString(),
+                runtime = runtimeVersion.toString(),
+                os = osInfo,
+                isDebug = isDebug,
+                locale = Locale.toString(),
+                error = message,
+            ),
+        )
     }
 
     fun error(exception: Throwable) {
         error(exception.stackTraceToString())
+    }
+
+    var fatalErrorTracker: FatalErrorTracker? = null
+
+    fun interface FatalErrorTracker {
+        fun track(fatalErrorEvent: FatalErrorEvent)
     }
 }
