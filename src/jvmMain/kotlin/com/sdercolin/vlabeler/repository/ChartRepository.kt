@@ -28,6 +28,11 @@ object ChartRepository {
     private val cacheMapFile get() = cacheDirectory.resolve("map.json")
     private var cacheMap: MutableMap<String, String> = mutableMapOf()
 
+    fun needReset(appConf: AppConf, version: Int): Boolean {
+        val params = ChartCacheParams(version, appConf.painter)
+        return params != cacheParams
+    }
+
     fun init(project: Project, appConf: AppConf, version: Int) {
         cacheDirectory = project.getCacheDir().resolve(ChartsCacheFolderName)
         cacheDirectory.mkdirs()

@@ -60,7 +60,7 @@ class ChartStore {
         appConf: AppConf,
         sampleInfo: SampleInfo,
     ): Boolean {
-        if (currentSampleInfo == sampleInfo) {
+        if (currentSampleInfo == sampleInfo && !ChartRepository.needReset(appConf, PaintingAlgorithmVersion)) {
             return false
         }
         currentSampleInfo = sampleInfo
