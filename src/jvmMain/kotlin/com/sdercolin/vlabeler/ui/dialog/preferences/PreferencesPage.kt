@@ -364,9 +364,9 @@ abstract class PreferencesPage(
                     description = Strings.PreferencesEditorPlayerLockedDragDescription,
                     columnStyle = true,
                     defaultValue = AppConf.Editor.DefaultLockedDrag,
-                    select = { it.lockedDrag },
+                    select = { it.lockedDrag.convertLegacy() },
                     update = { copy(lockedDrag = it) },
-                    options = AppConf.Editor.LockedDrag.values(),
+                    options = AppConf.Editor.LockedDrag.valuesV2(),
                 )
                 switch(
                     title = Strings.PreferencesEditorPlayerLockedSettingParameterWithCursor,

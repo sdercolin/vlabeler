@@ -424,18 +424,19 @@ class MarkerState(
             else -> return null
         }
         val cursorPosition = cursorState.value.position ?: return null
-        val lockDrag = appConf.editor.lockedSettingParameterWithCursor && when (appConf.editor.lockedDrag) {
-            AppConf.Editor.LockedDrag.UseLabeler -> {
-                val lockedDragByBaseField =
-                    labelerConf.lockedDrag.useDragBase &&
-                        labelerConf.fields.getOrNull(pointIndex)?.dragBase == true
-                val lockedDragByStart =
-                    labelerConf.lockedDrag.useStart && pointIndex == MarkerCursorState.StartPointIndex
-                lockedDragByBaseField || lockedDragByStart
+        val lockDrag = appConf.editor.lockedSettingParameterWithCursor &&
+            when (appConf.editor.lockedDrag.convertLegacy()) {
+                AppConf.Editor.LockedDrag.UseLabeler -> {
+                    val lockedDragByBaseField =
+                        labelerConf.lockedDrag.useDragBase &&
+                            labelerConf.fields.getOrNull(pointIndex)?.dragBase == true
+                    val lockedDragByStart =
+                        labelerConf.lockedDrag.useStart && pointIndex == MarkerCursorState.StartPointIndex
+                    lockedDragByBaseField || lockedDragByStart
+                }
+                AppConf.Editor.LockedDrag.UseStart -> pointIndex == MarkerCursorState.StartPointIndex
+                else -> false
             }
-            AppConf.Editor.LockedDrag.UseStart -> pointIndex == MarkerCursorState.StartPointIndex
-            AppConf.Editor.LockedDrag.Never -> false
-        }
         return if (lockDrag) {
             getLockedDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
         } else {

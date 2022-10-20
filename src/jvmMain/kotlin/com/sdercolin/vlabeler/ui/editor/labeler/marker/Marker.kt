@@ -514,7 +514,7 @@ private fun MarkerState.handleCursorPress(
         val cursorStateValue = cursorState.value
         if (cursorStateValue.mouse == MarkerCursorState.Mouse.Hovering) {
             val invertLockedDrag = action == MouseClickAction.MoveParameterInvertingPrimary
-            val lockedDrag = when (appConf.editor.lockedDrag) {
+            val lockedDrag = when (appConf.editor.lockedDrag.convertLegacy()) {
                 AppConf.Editor.LockedDrag.UseLabeler -> {
                     val lockedDragByBaseField =
                         labelerConf.lockedDrag.useDragBase &&
@@ -524,7 +524,7 @@ private fun MarkerState.handleCursorPress(
                     lockedDragByBaseField || lockedDragByStart
                 }
                 AppConf.Editor.LockedDrag.UseStart -> cursorStateValue.usingStartPoint
-                AppConf.Editor.LockedDrag.Never -> false
+                else -> false
             } xor invertLockedDrag
             val withPreview = action == MouseClickAction.MoveParameterWithPlaybackPreview
             val forcedDrag = action == MouseClickAction.MoveParameterIgnoringConstraints

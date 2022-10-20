@@ -224,14 +224,40 @@ data class AppConf(
         @Serializable
         @Immutable
         enum class LockedDrag(override val stringKey: Strings) : LocalizedText {
-            @SerialName("labeler")
+            @SerialName("Labeler")
             UseLabeler(Strings.PreferencesEditorPlayerLockedDragUseLabeler),
 
-            @SerialName("start")
+            @SerialName("Start")
             UseStart(Strings.PreferencesEditorPlayerLockedDragUseStart),
 
-            @SerialName("never")
+            @SerialName("Never")
             Never(Strings.PreferencesEditorPlayerLockedDragNever),
+
+            @SerialName("labeler")
+            UseLabelerLegacy(Strings.PreferencesEditorPlayerLockedDragUseLabeler),
+
+            @SerialName("start")
+            UseStartLegacy(Strings.PreferencesEditorPlayerLockedDragUseStart),
+
+            @SerialName("never")
+            NeverLegacy(Strings.PreferencesEditorPlayerLockedDragNever),
+            ;
+
+            fun convertLegacy(): LockedDrag {
+                return when (this) {
+                    UseLabelerLegacy -> UseLabeler
+                    UseStartLegacy -> UseStart
+                    NeverLegacy -> Never
+                    else -> this
+                }
+            }
+
+            companion object {
+
+                fun valuesV2(): Array<LockedDrag> {
+                    return arrayOf(UseLabeler, UseStart, Never)
+                }
+            }
         }
 
         companion object {
