@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
@@ -392,7 +393,11 @@ class MarkerState(
         isLabelHovered = hoveredIndexSet.isNotEmpty()
     }
 
-    fun getUpdatedEntriesByKeyAction(action: KeyAction): List<EntryInPixel>? {
+    fun getUpdatedEntriesByKeyAction(
+        action: KeyAction,
+        appConf: AppConf,
+        labelerConf: LabelerConf,
+    ): List<EntryInPixel>? {
         val paramIndex = when (action) {
             KeyAction.SetValue1 -> 0
             KeyAction.SetValue2 -> 1
@@ -410,16 +415,32 @@ class MarkerState(
         // Only used in single edit mode
         if (entries.size != 1) return null
 
-        val fieldCount = labelerConf.fields.filter { it.shortcutIndex != null }.size
+        val fieldCount = this.labelerConf.fields.filter { it.shortcutIndex != null }.size
         val pointIndex = when {
             paramIndex == 0 -> MarkerCursorState.StartPointIndex
             paramIndex == fieldCount + 1 -> MarkerCursorState.EndPointIndex
-            paramIndex <= fieldCount -> labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
+            paramIndex <= fieldCount -> this.labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
                 .takeIf { it >= 0 } ?: return null
             else -> return null
         }
         val cursorPosition = cursorState.value.position ?: return null
-        return getDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
+        val lockDrag = when (appConf.editor.lockedDrag) {
+            AppConf.Editor.LockedDrag.UseLabeler -> {
+                val lockedDragByBaseField =
+                    labelerConf.lockedDrag.useDragBase &&
+                        labelerConf.fields.getOrNull(pointIndex)?.dragBase == true
+                val lockedDragByStart =
+                    labelerConf.lockedDrag.useStart && pointIndex == MarkerCursorState.StartPointIndex
+                lockedDragByBaseField || lockedDragByStart
+            }
+            AppConf.Editor.LockedDrag.UseStart -> pointIndex == MarkerCursorState.StartPointIndex
+            AppConf.Editor.LockedDrag.Never -> false
+        }
+        return if (lockDrag) {
+            getLockedDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
+        } else {
+            getDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
+        }
     }
 
     fun switchTool(tool: Tool) {
