@@ -42,7 +42,7 @@
       "onSwitchedInMultipleEditMode": true,
       "onSwitched": false
     },
-    "lockedDrag": "labeler",
+    "lockedDrag": "Labeler",
     "lockedSettingParameterWithCursor": true,
     "showDone": true,
     "autoDone": true,
