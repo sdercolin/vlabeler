@@ -32,9 +32,9 @@
     "playerCursorColor": "#FFFF00",
     "scissorsColor": "#FFFFFF00",
     "scissorsActions": {
-      "goTo": "former",
-      "askForName": "former",
-      "play": "former"
+      "goTo": "Former",
+      "askForName": "Former",
+      "play": "Former"
     },
     "autoScroll": {
       "onLoadedNewSample": true,
@@ -43,6 +43,7 @@
       "onSwitched": false
     },
     "lockedDrag": "labeler",
+    "lockedSettingParameterWithCursor": true,
     "showDone": true,
     "autoDone": true,
     "showStar": true,

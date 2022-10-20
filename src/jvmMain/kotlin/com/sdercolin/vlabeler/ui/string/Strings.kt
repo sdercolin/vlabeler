@@ -288,6 +288,8 @@ enum class Strings {
     PreferencesEditorPlayerLockedDragUseLabeler,
     PreferencesEditorPlayerLockedDragUseStart,
     PreferencesEditorPlayerLockedDragNever,
+    PreferencesEditorPlayerLockedSettingParameterWithCursor,
+    PreferencesEditorPlayerLockedSettingParameterWithCursorDescription,
     PreferencesEditorNotes,
     PreferencesEditorNotesDescription,
     PreferencesEditorShowDone,

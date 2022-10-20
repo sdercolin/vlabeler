@@ -272,7 +272,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesKeymapEditDialogDescriptionMouseClick -> "通过在该输入框上左键/右键单击来输入对应键位。"
     PreferencesKeymapEditDialogDescriptionMouseScroll -> "通过在该输入框上滚动鼠标滚轮来输入对应键位。"
     PreferencesKeymapEditDialogConflictingLabel -> "该键位已被以下操作占用："
-    PreferencesKeymapEditDialogConflictingWarning -> "该键位组合已被分配到其他动作。是否要移除其他分配？"
+    PreferencesKeymapEditDialogConflictingWarning -> "该键位组合已被分配到其他操作。是否要移除其他分配？"
     PreferencesKeymapEditDialogConflictingWarningKeep -> "保持"
     PreferencesKeymapEditDialogConflictingWarningRemove -> "移除"
     PreferencesView -> "视图"
@@ -303,6 +303,9 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorPlayerLockedDragUseLabeler -> "使用标注器的定义"
     PreferencesEditorPlayerLockedDragUseStart -> "当拖动条目的起始线时"
     PreferencesEditorPlayerLockedDragNever -> "从不启用"
+    PreferencesEditorPlayerLockedSettingParameterWithCursor -> "光标设定时也应用锁定拖动"
+    PreferencesEditorPlayerLockedSettingParameterWithCursorDescription ->
+        "使用\"将参数设置到光标位置\"键盘操作时也应用上面的锁定拖动的设置。"
     PreferencesEditorNotes -> "备注"
     PreferencesEditorNotesDescription -> "编辑与条目备注（星标，完成，标签）相关的外观与行为。 "
     PreferencesEditorShowDone -> "显示\"完成\"状态"

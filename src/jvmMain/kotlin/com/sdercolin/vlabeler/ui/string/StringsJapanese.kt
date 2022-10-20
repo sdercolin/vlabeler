@@ -312,6 +312,9 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorPlayerLockedDragUseLabeler -> "ラベラーに従う"
     PreferencesEditorPlayerLockedDragUseStart -> "開始位置をドラッグするとき"
     PreferencesEditorPlayerLockedDragNever -> "有効にしない"
+    PreferencesEditorPlayerLockedSettingParameterWithCursor -> "カーソル位置に設定する場合も連動ドラッグを有効にする"
+    PreferencesEditorPlayerLockedSettingParameterWithCursorDescription ->
+        "「パラメータをカーソル位置に設定」キーボード操作でパラメータを設定するときにも、上記の連動ドラッグ設定を適用します。"
     PreferencesEditorNotes -> "備考"
     PreferencesEditorNotesDescription -> "エントリの備考（スターマーク、完了、タグ）に関する表示と動作を編集します。"
     PreferencesEditorShowDone -> "\"完了\"状態を表示"

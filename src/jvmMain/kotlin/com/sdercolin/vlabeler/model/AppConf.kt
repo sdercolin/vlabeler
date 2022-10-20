@@ -210,6 +210,7 @@ data class AppConf(
         val scissorsActions: ScissorsActions = ScissorsActions(),
         val autoScroll: AutoScroll = AutoScroll(),
         val lockedDrag: LockedDrag = DefaultLockedDrag,
+        val lockedSettingParameterWithCursor: Boolean = DefaultLockedSettingParameterWithCursor,
         val showDone: Boolean = DefaultShowDone,
         val autoDone: Boolean = DefaultAutoDone,
         val showStar: Boolean = DefaultShowStar,
@@ -237,6 +238,7 @@ data class AppConf(
             const val DefaultPlayerCursorColor = "#FFFF00"
             const val DefaultScissorsColor = "#FFFFFF00"
             val DefaultLockedDrag = LockedDrag.UseLabeler
+            const val DefaultLockedSettingParameterWithCursor = true
             const val DefaultShowDone = true
             const val DefaultAutoDone = true
             const val DefaultShowStar = true
@@ -264,15 +266,41 @@ data class AppConf(
         @Serializable
         @Immutable
         enum class Target(override val stringKey: Strings) : LocalizedText {
-            // TODO: rename serial names using PascalCase
-            @SerialName("none")
+
+            @SerialName("None")
             None(Strings.PreferencesEditorScissorsActionTargetNone),
 
-            @SerialName("former")
+            @SerialName("Former")
             Former(Strings.PreferencesEditorScissorsActionTargetFormer),
 
-            @SerialName("latter")
+            @SerialName("Latter")
             Latter(Strings.PreferencesEditorScissorsActionTargetLatter),
+
+            @SerialName("none")
+            NoneLegacy(Strings.PreferencesEditorScissorsActionTargetNone),
+
+            @SerialName("former")
+            FormerLegacy(Strings.PreferencesEditorScissorsActionTargetFormer),
+
+            @SerialName("latter")
+            LatterLegacy(Strings.PreferencesEditorScissorsActionTargetLatter),
+            ;
+
+            fun convertLegacy(): Target {
+                return when (this) {
+                    NoneLegacy -> None
+                    FormerLegacy -> Former
+                    LatterLegacy -> Latter
+                    else -> this
+                }
+            }
+
+            companion object {
+
+                fun valuesV2(): Array<Target> {
+                    return arrayOf(None, Former, Latter)
+                }
+            }
         }
 
         companion object {
