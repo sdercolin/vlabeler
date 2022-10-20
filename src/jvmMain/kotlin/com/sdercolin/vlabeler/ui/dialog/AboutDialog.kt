@@ -38,6 +38,7 @@ import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.osInfo
 import com.sdercolin.vlabeler.env.runtimeVersion
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
@@ -48,6 +49,7 @@ import com.sdercolin.vlabeler.util.Resources
 
 @Composable
 fun AboutDialog(
+    appRecord: AppRecord,
     appConf: AppConf,
     showLicenses: () -> Unit,
     finish: () -> Unit,
@@ -61,6 +63,7 @@ fun AboutDialog(
     ) {
         AppTheme(appConf.view) {
             Content(
+                appRecord = appRecord,
                 showLicenses = showLicenses,
                 finish = finish,
             )
@@ -70,6 +73,7 @@ fun AboutDialog(
 
 @Composable
 private fun Content(
+    appRecord: AppRecord,
     showLicenses: () -> Unit,
     finish: () -> Unit,
 ) {
@@ -82,6 +86,7 @@ private fun Content(
         Debug mode: $isDebug
         User directory: $AppDir
         Resource directory: $ResourcePath
+        Tracking id: ${appRecord.trackingId}
         """.trimIndent()
     }
     Surface(modifier = Modifier.fillMaxSize()) {

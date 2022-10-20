@@ -49,6 +49,7 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.0")
                 implementation("ch.qos.logback:logback-classic:1.2.6")
                 implementation("org.zeromq:jeromq:0.5.2")
+                implementation("com.segment.analytics.kotlin:core:1.9.1")
 
                 val lwjglVersion = "3.3.1"
                 listOf("lwjgl", "lwjgl-nfd").forEach { lwjglDep ->

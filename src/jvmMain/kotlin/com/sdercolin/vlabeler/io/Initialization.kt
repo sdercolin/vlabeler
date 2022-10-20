@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.tracking.TrackingService
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
@@ -149,11 +150,14 @@ suspend fun produceAppState(
     val snackbarHostState = SnackbarHostState()
     val keyboardViewModel = KeyboardViewModel(mainScope, appConf.value.keymaps)
 
+    val trackingService = TrackingService(appRecordStore, mainScope)
+
     return AppState(
         mainScope,
         keyboardViewModel,
         scrollFitViewModel,
         appRecordStore,
+        trackingService,
         snackbarHostState,
         appConf,
         availableLabelerConfs,

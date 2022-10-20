@@ -26,6 +26,8 @@ import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.runMacroPlugin
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
+import com.sdercolin.vlabeler.tracking.TrackingService
+import com.sdercolin.vlabeler.tracking.event.TrackingEvent
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
@@ -54,6 +56,7 @@ class AppState(
     val keyboardViewModel: KeyboardViewModel,
     val scrollFitViewModel: ScrollFitViewModel,
     val appRecordStore: AppRecordStore,
+    private val trackingService: TrackingService,
     snackbarHostState: SnackbarHostState,
     appConf: MutableState<AppConf>,
     availableLabelerConfs: List<LabelerConf>,
@@ -458,6 +461,8 @@ class AppState(
             jumpToModuleByNameAndEntryName(it.parentFolderName, it.entryName)
         }
     }
+
+    fun track(event: TrackingEvent) = trackingService.track(event)
 
     sealed class PendingActionAfterSaved {
         object Open : PendingActionAfterSaved()

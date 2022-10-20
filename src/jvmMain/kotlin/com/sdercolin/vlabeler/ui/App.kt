@@ -81,6 +81,7 @@ fun App(
         }
         if (appState.isShowingAboutDialog) {
             AboutDialog(
+                appRecord = appState.appRecordFlow.value,
                 appConf = appState.appConf,
                 showLicenses = {
                     appState.closeAboutDialog()

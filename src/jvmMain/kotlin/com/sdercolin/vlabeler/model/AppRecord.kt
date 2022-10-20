@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.util.DefaultDownloadDir
 import com.sdercolin.vlabeler.util.asPathRelativeToHome
 import com.sdercolin.vlabeler.util.asSimplifiedPaths
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Immutable
 @Serializable
@@ -33,6 +34,7 @@ data class AppRecord(
     val updateDownloadDirectory: String = DefaultDownloadDir.absolutePath,
     val hasSavedDetectedLanguage: Boolean = false,
     val pluginQuickLaunchSlots: Map<Int, PluginQuickLaunch> = mapOf(),
+    val trackingId: String? = null,
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(
@@ -81,6 +83,10 @@ data class AppRecord(
                 }
             }.toMap(),
         )
+
+    fun clearTrackingId() = copy(trackingId = null)
+    fun generateTrackingId() = copy(trackingId = UUID.randomUUID().toString())
+    fun generateTackingIdIfNeeded() = if (trackingId == null) generateTrackingId() else this
 }
 
 private const val MaxRecentProjectCount = 10
