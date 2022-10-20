@@ -255,14 +255,14 @@ data class Module(
             require(it.extras.size == labelerConf.extraFieldNames.size) {
                 "Extra size doesn't match in entry: $it. Required extra size = ${labelerConf.extraFieldNames.size}"
             }
-            if (it.end > 0) require(it.start <= it.end) {
-                "Start is greater than end in entry: $it"
-            }
 
             var entryResult = it
 
             if (it.start < 0) {
                 entryResult = entryResult.copy(start = 0f)
+            }
+            if (entryResult.end > 0 && entryResult.start > entryResult.end) {
+                entryResult = entryResult.copy(end = entryResult.start)
             }
 
             // do not check right border, because we don't know the length of the audio file
