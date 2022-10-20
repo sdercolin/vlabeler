@@ -266,7 +266,7 @@ data class AppConf(
         @Serializable
         @Immutable
         enum class Target(override val stringKey: Strings) : LocalizedText {
-            // TODO: rename serial names using PascalCase
+            
             @SerialName("None")
             None(Strings.PreferencesEditorScissorsActionTargetNone),
 
