@@ -210,6 +210,7 @@ data class AppConf(
         val scissorsActions: ScissorsActions = ScissorsActions(),
         val autoScroll: AutoScroll = AutoScroll(),
         val lockedDrag: LockedDrag = DefaultLockedDrag,
+        val lockedSettingParameterWithCursor: Boolean = DefaultLockedSettingParameterWithCursor,
         val showDone: Boolean = DefaultShowDone,
         val autoDone: Boolean = DefaultAutoDone,
         val showStar: Boolean = DefaultShowStar,
@@ -237,6 +238,7 @@ data class AppConf(
             const val DefaultPlayerCursorColor = "#FFFF00"
             const val DefaultScissorsColor = "#FFFFFF00"
             val DefaultLockedDrag = LockedDrag.UseLabeler
+            const val DefaultLockedSettingParameterWithCursor = true
             const val DefaultShowDone = true
             const val DefaultAutoDone = true
             const val DefaultShowStar = true

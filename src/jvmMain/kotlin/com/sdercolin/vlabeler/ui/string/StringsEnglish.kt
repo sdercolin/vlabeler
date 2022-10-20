@@ -337,6 +337,10 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorPlayerLockedDragUseLabeler -> "Use settings defined by the labeler"
     PreferencesEditorPlayerLockedDragUseStart -> "Fixed-drag at the entry's start"
     PreferencesEditorPlayerLockedDragNever -> "Never do fixed-drag"
+    PreferencesEditorPlayerLockedSettingParameterWithCursor -> "Apply fixed-drag with cursor setting"
+    PreferencesEditorPlayerLockedSettingParameterWithCursorDescription ->
+        "Apply the fixed-drag setting above also when " +
+            "setting the parameters with \"Set Parameter To Cursor Position\" key actions"
     PreferencesEditorNotes -> "Notes"
     PreferencesEditorNotesDescription ->
         "Customize the editor's appearance and behavior about entry " +

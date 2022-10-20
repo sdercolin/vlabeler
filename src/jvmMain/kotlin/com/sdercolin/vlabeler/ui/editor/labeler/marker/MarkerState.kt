@@ -424,7 +424,7 @@ class MarkerState(
             else -> return null
         }
         val cursorPosition = cursorState.value.position ?: return null
-        val lockDrag = when (appConf.editor.lockedDrag) {
+        val lockDrag = appConf.editor.lockedSettingParameterWithCursor && when (appConf.editor.lockedDrag) {
             AppConf.Editor.LockedDrag.UseLabeler -> {
                 val lockedDragByBaseField =
                     labelerConf.lockedDrag.useDragBase &&

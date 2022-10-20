@@ -368,6 +368,13 @@ abstract class PreferencesPage(
                     update = { copy(lockedDrag = it) },
                     options = AppConf.Editor.LockedDrag.values(),
                 )
+                switch(
+                    title = Strings.PreferencesEditorPlayerLockedSettingParameterWithCursor,
+                    description = Strings.PreferencesEditorPlayerLockedSettingParameterWithCursorDescription,
+                    defaultValue = AppConf.Editor.DefaultLockedSettingParameterWithCursor,
+                    select = { it.lockedSettingParameterWithCursor },
+                    update = { copy(lockedSettingParameterWithCursor = it) },
+                )
                 color(
                     title = Strings.PreferencesEditorPlayerCursorColor,
                     defaultValue = AppConf.Editor.DefaultPlayerCursorColor,
