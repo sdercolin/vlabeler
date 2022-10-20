@@ -54,7 +54,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
-import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.CircularProgress
@@ -73,7 +72,7 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun ProjectCreator(
     appState: AppState,
-    create: (Project) -> Unit,
+    onCreateListener: ProjectCreatorState.OnCreateListener,
     cancel: () -> Unit,
     activeLabelerConfs: List<LabelerConf>,
     activeTemplatePlugins: List<Plugin>,
@@ -114,7 +113,7 @@ fun ProjectCreator(
                     }
 
                     Spacer(Modifier.height(30.dp))
-                    ButtonBar(cancel, state, create)
+                    ButtonBar(cancel, state, onCreateListener)
                 }
                 VerticalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.width(15.dp))
             }
@@ -458,14 +457,14 @@ private fun AutoExportSwitch(state: ProjectCreatorState) {
 private fun ButtonBar(
     cancel: () -> Unit,
     state: ProjectCreatorState,
-    create: (Project) -> Unit,
+    onCreateListener: ProjectCreatorState.OnCreateListener,
 ) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         OutlinedButton(onClick = cancel) {
             Text(string(Strings.CommonCancel))
         }
         Button(
-            onClick = { state.create(create) },
+            onClick = { state.create(onCreateListener) },
             enabled = state.isValid(),
         ) {
             Text(string(Strings.CommonOkay))

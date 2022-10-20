@@ -425,7 +425,11 @@ class ProjectCreatorState(
         .sortedBy { it.second }
         .map { it.first }
 
-    fun create(create: (Project) -> Unit) {
+    fun interface OnCreateListener {
+        fun onCreate(project: Project, plugin: Plugin?, pluginParams: ParamMap?)
+    }
+
+    fun create(listener: OnCreateListener) {
         coroutineScope.launch(Dispatchers.IO) {
             isLoading = true
             Log.debug(
@@ -464,7 +468,7 @@ class ProjectCreatorState(
                 appState.showSnackbar(message, duration = SnackbarDuration.Indefinite)
                 return@launch
             }
-            create(project)
+            listener.onCreate(project, templatePlugin, templatePluginParams)
             isLoading = false
         }
     }

@@ -14,6 +14,7 @@ import com.sdercolin.vlabeler.io.awaitOpenCreatedProject
 import com.sdercolin.vlabeler.io.loadAvailableLabelerConfs
 import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.io.loadProject
+import com.sdercolin.vlabeler.io.openCreatedProject
 import com.sdercolin.vlabeler.io.saveProjectFile
 import com.sdercolin.vlabeler.ipc.IpcState
 import com.sdercolin.vlabeler.ipc.request.OpenOrCreateRequest
@@ -28,6 +29,10 @@ import com.sdercolin.vlabeler.model.runMacroPlugin
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.tracking.TrackingService
 import com.sdercolin.vlabeler.tracking.event.TrackingEvent
+import com.sdercolin.vlabeler.tracking.trackMacroPluginExecution
+import com.sdercolin.vlabeler.tracking.trackNewAppConf
+import com.sdercolin.vlabeler.tracking.trackProjectCreation
+import com.sdercolin.vlabeler.tracking.trackTemplateGeneration
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
@@ -40,6 +45,7 @@ import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.starter.ProjectCreatorState
 import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
@@ -373,6 +379,7 @@ class AppState(
             currentLanguage = newConf.view.language
         }
         appConf = newConf
+        trackNewAppConf(newConf)
     }
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
@@ -400,7 +407,7 @@ class AppState(
 
     val isScrollFitEnabled get() = editor?.sampleInfoResult?.exceptionOrNull() == null
 
-    fun executeMacroPlugin(plugin: Plugin, params: ParamMap) {
+    fun executeMacroPlugin(plugin: Plugin, params: ParamMap, slot: Int?) {
         val (newProject, report) = runCatching { runMacroPlugin(plugin, params, requireProject()) }
             .getOrElse {
                 showError(it)
@@ -408,6 +415,7 @@ class AppState(
             }
         editProject { newProject }
         report?.let { showMacroPluginReport(it) }
+        trackMacroPluginExecution(plugin, params, quickLaunch = slot != null)
     }
 
     fun consumeOpenOrCreateIpcRequest(request: OpenOrCreateRequest) = mainScope.launch {
@@ -448,6 +456,7 @@ class AppState(
                     showError(it)
                     return@launch
                 }
+                trackProjectCreation(newProject, byIpcRequest = true)
                 awaitOpenCreatedProject(newProject, this@AppState)
             }
         }
@@ -460,6 +469,14 @@ class AppState(
         request.gotoEntryByName?.let {
             jumpToModuleByNameAndEntryName(it.parentFolderName, it.entryName)
         }
+    }
+
+    val onCreateProjectListener = ProjectCreatorState.OnCreateListener { project, plugin, pluginParams ->
+        trackProjectCreation(project, byIpcRequest = false)
+        if (plugin != null) {
+            trackTemplateGeneration(plugin, pluginParams)
+        }
+        openCreatedProject(mainScope, project, this)
     }
 
     fun track(event: TrackingEvent) = trackingService.track(event)

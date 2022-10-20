@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.io.getSavedParamsFile
-import com.sdercolin.vlabeler.io.openCreatedProject
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
@@ -54,7 +53,7 @@ fun App(
             is Screen.ProjectCreator ->
                 ProjectCreator(
                     appState = appState,
-                    create = { openCreatedProject(mainScope, it, appState) },
+                    onCreateListener = appState.onCreateProjectListener,
                     cancel = { appState.closeProjectCreator() },
                     activeLabelerConfs = appState.activeLabelerConfs,
                     activeTemplatePlugins = appState.getActivePlugins(Plugin.Type.Template),
@@ -123,7 +122,7 @@ fun App(
                                     appState.appRecordStore,
                                     slot = args.slot,
                                 )
-                                appState.executeMacroPlugin(args.plugin, it)
+                                appState.executeMacroPlugin(args.plugin, it, args.slot)
                             }
                             appState.hideProgress()
                         }

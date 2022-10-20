@@ -13,16 +13,26 @@ val json = Json {
     ignoreUnknownKeys = true
     prettyPrint = true
     encodeDefaults = true
-    serializersModule = SerializersModule {
-        polymorphic(Parameter::class) {
-            subclass(Parameter.IntParam::class)
-            subclass(Parameter.FloatParam::class)
-            subclass(Parameter.BooleanParam::class)
-            subclass(Parameter.StringParam::class)
-            subclass(Parameter.EnumParam::class)
-            subclass(Parameter.EntrySelectorParam::class)
-            subclass(Parameter.FileParam::class)
-        }
+    serializersModule = getSerializersModule()
+}
+
+val jsonMinified = Json {
+    isLenient = true
+    ignoreUnknownKeys = true
+    prettyPrint = false
+    encodeDefaults = false
+    serializersModule = getSerializersModule()
+}
+
+private fun getSerializersModule() = SerializersModule {
+    polymorphic(Parameter::class) {
+        subclass(Parameter.IntParam::class)
+        subclass(Parameter.FloatParam::class)
+        subclass(Parameter.BooleanParam::class)
+        subclass(Parameter.StringParam::class)
+        subclass(Parameter.EnumParam::class)
+        subclass(Parameter.EntrySelectorParam::class)
+        subclass(Parameter.FileParam::class)
     }
 }
 

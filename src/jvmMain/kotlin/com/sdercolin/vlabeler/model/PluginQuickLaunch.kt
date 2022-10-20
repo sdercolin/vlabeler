@@ -40,7 +40,7 @@ data class PluginQuickLaunch(
         if (skipDialog && allValid) {
             appState.mainScope.launch(Dispatchers.IO) {
                 appState.showProgress()
-                appState.executeMacroPlugin(plugin, mergedParams.toParamMap())
+                appState.executeMacroPlugin(plugin, mergedParams.toParamMap(), slot)
                 appState.hideProgress()
             }
         } else {

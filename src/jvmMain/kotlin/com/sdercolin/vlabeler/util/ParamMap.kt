@@ -169,3 +169,4 @@ fun ParamMap.mergeDefaults(defaultMap: Map<String, Any>): ParamMap {
 fun Map<String, ParamTypedMap.TypedValue>.toParamTypedMap() = ParamTypedMap(this)
 
 fun ParamMap?.orEmpty() = this ?: ParamMap(mapOf())
+fun ParamTypedMap?.orEmpty() = this ?: ParamTypedMap(mapOf())

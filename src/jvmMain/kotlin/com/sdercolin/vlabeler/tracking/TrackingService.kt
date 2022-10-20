@@ -5,14 +5,14 @@ import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.tracking.event.InitializeEvent
 import com.sdercolin.vlabeler.tracking.event.TrackingEvent
 import com.sdercolin.vlabeler.ui.AppRecordStore
-import com.sdercolin.vlabeler.util.json
-import com.sdercolin.vlabeler.util.stringifyJson
+import com.sdercolin.vlabeler.util.jsonMinified
 import com.segment.analytics.kotlin.core.Analytics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 
@@ -54,9 +54,9 @@ class TrackingService(appRecordStore: AppRecordStore, mainScope: CoroutineScope)
     fun track(event: TrackingEvent) {
         if (!enabled) return
         try {
-            val eventObject = json.encodeToJsonElement(event) as JsonObject
+            val eventObject = jsonMinified.encodeToJsonElement(event) as JsonObject
             analytics.track(event.name, eventObject)
-            Log.debug("${event.name}: ${eventObject.stringifyJson()}")
+            Log.debug("${event.name}: ${jsonMinified.encodeToString(event)}")
         } catch (e: Throwable) {
             Log.error(e)
         }
