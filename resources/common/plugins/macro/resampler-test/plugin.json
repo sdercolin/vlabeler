@@ -34,16 +34,48 @@
         "defaultValue": ""
       },
       {
-        "type": "integer",
-        "name": "noteKey",
+        "type": "enum",
+        "name": "keyName",
         "label": {
-          "en": "MIDI note key (60 = C4)",
-          "zh": "MIDI 音符音高（60 = C4）",
-          "ja": "MIDI ノートキー（60 = C4）"
+          "en": "Key",
+          "zh": "音名",
+          "ja": "キー"
         },
-        "defaultValue": 60,
-        "min": 0,
-        "max": 127
+        "defaultValue": "C",
+        "options": [
+          "C",
+          "C#",
+          "D",
+          "D#",
+          "E",
+          "F",
+          "F#",
+          "G",
+          "G#",
+          "A",
+          "A#",
+          "B"
+        ]
+      },
+      {
+        "type": "enum",
+        "name": "octave",
+        "label": {
+          "en": "Octave",
+          "zh": "八度",
+          "ja": "オクターブ"
+        },
+        "defaultValue": "4",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ]
       },
       {
         "type": "float",

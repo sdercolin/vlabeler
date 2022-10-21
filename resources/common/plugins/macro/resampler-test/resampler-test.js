@@ -42,14 +42,8 @@ let sampleFilePath = sampleFile.getAbsolutePath()
 args.push(sampleFilePath)
 args.push(tempFile.getAbsolutePath())
 
-function parseNoteKey(noteKey) {
-    let noteString = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-    let octave = Math.floor((noteKey / 12)) - 1;
-    let noteIndex = (noteKey % 12);
-    return noteString[noteIndex] + octave.toString();
-}
-
-args.push(parseNoteKey(params["noteKey"]))
+let noteNum = params["keyName"] + params["octave"]
+args.push(noteNum)
 args.push(params["velocity"].toString())
 args.push(params["flags"].toString())
 
