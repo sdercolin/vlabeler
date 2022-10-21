@@ -64,6 +64,7 @@ enum class Strings {
     MenuSettingsPreferences,
     MenuSettingsLabelers,
     MenuSettingsTemplatePlugins,
+    MenuSettingsTracking,
     MenuHelp,
     MenuHelpCheckForUpdates,
     MenuHelpOpenLogDirectory,
@@ -78,6 +79,7 @@ enum class Strings {
     CommonNo,
     CommonWarning,
     CommonError,
+    CommonDetails,
     CommonInputErrorPromptNumber,
     CommonInputErrorPromptInteger,
     CommonInputErrorPromptNumberRange,
@@ -407,6 +409,11 @@ enum class Strings {
     QuickLaunchManagerDialogHeaderForceAskParams,
     QuickLaunchManagerDialogItemTitle,
     QuickLaunchManagerDialogOpenKeymap,
+    TrackingSettingsDialogTitle,
+    TrackingSettingsDialogDescription,
+    TrackingSettingsDialogFirstTimeAlert,
+    TrackingSettingsDialogEnabled,
+    TrackingSettingsDialogTrackingIdLabel,
     ;
 
     fun get(language: Language): String = when (language) {

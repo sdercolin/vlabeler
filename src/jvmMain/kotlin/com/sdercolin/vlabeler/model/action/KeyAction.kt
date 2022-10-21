@@ -235,6 +235,7 @@ enum class KeyAction(
         KeySet(Key.Period, setOf(Key.Ctrl)),
         true,
     ),
+    ManageTracking(listOf(Strings.MenuSettings, Strings.MenuSettingsTracking), null, true),
     CheckForUpdates(listOf(Strings.MenuHelp, Strings.MenuHelpCheckForUpdates), null, true),
     OpenLogDirectory(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLogDirectory), null, true),
     OpenLatestRelease(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLatestRelease), null, true),

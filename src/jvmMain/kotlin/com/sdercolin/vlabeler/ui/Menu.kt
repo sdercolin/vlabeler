@@ -404,6 +404,11 @@ fun FrameWindowScope.Menu(
                         onClick = { appState.openCustomizableItemManagerDialog(CustomizableItem.Type.TemplatePlugin) },
                         shortcut = KeyAction.ManageTemplatePlugins.getKeyShortCut(),
                     )
+                    Item(
+                        string(Strings.MenuSettingsTracking),
+                        onClick = { appState.openTrackingSettingsDialog() },
+                        shortcut = KeyAction.ManageTracking.getKeyShortCut(),
+                    )
                 }
             }
             Menu(string(Strings.MenuHelp), mnemonic = 'H') {

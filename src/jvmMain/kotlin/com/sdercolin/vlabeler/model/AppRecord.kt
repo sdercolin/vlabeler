@@ -34,6 +34,7 @@ data class AppRecord(
     val updateDownloadDirectory: String = DefaultDownloadDir.absolutePath,
     val hasSavedDetectedLanguage: Boolean = false,
     val pluginQuickLaunchSlots: Map<Int, PluginQuickLaunch> = mapOf(),
+    val hasAskedForTrackingPermission: Boolean = false,
     val trackingId: String? = null,
 ) {
     val recentProjectPathsWithDisplayNames

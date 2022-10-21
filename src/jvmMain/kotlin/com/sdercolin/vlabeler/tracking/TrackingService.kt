@@ -1,7 +1,6 @@
 package com.sdercolin.vlabeler.tracking
 
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.tracking.event.InitializeEvent
 import com.sdercolin.vlabeler.tracking.event.TrackingEvent
 import com.sdercolin.vlabeler.ui.AppRecordStore
@@ -18,7 +17,7 @@ import kotlinx.serialization.json.encodeToJsonElement
 
 class TrackingService(appRecordStore: AppRecordStore, mainScope: CoroutineScope) {
 
-    private var enabled = false
+    private var enabled: Boolean? = null
 
     private val analytics = Analytics(WriteKey) {
         application = ApplicationName
@@ -29,30 +28,27 @@ class TrackingService(appRecordStore: AppRecordStore, mainScope: CoroutineScope)
             .map { it.trackingId }
             .distinctUntilChanged()
         trackingIdFlow.onEach {
-            enabled = it != null
             if (it != null) {
                 // Only use the random uuid to identify user
                 analytics.identify(it)
+                Log.debug("Analytics identify: $it")
             } else {
                 analytics.reset()
+                Log.debug("Analytics reset")
+            }
+            val lastEnabled = enabled
+            enabled = it != null
+            if (lastEnabled != null && it != null) {
+                track(InitializeEvent(it))
             }
         }
             .launchIn(mainScope)
 
         Log.fatalErrorTracker = Log.FatalErrorTracker { track(it) }
-
-        if (isDebug) {
-            // TODO: check if user has allowed tracking
-            appRecordStore.update {
-                generateTackingIdIfNeeded().also {
-                    track(InitializeEvent(it.trackingId.orEmpty()))
-                }
-            }
-        }
     }
 
     fun track(event: TrackingEvent) {
-        if (!enabled) return
+        if (enabled != true) return
         try {
             val eventObject = jsonMinified.encodeToJsonElement(event) as JsonObject
             analytics.track(event.name, eventObject)

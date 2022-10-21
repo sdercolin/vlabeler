@@ -63,6 +63,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuSettingsPreferences -> "偏好设置..."
     MenuSettingsLabelers -> "标注器..."
     MenuSettingsTemplatePlugins -> "模板生成器..."
+    MenuSettingsTracking -> "统计使用数据..."
     MenuHelp -> "帮助"
     MenuHelpCheckForUpdates -> "检查更新..."
     MenuHelpOpenLogDirectory -> "打开日志目录"
@@ -77,6 +78,7 @@ fun Strings.zhHans(): String? = when (this) {
     CommonNo -> "否"
     CommonWarning -> "警告"
     CommonError -> "错误"
+    CommonDetails -> "详情"
     CommonInputErrorPromptNumber -> "请输入一个数字。"
     CommonInputErrorPromptInteger -> "请输入一个整数。"
     CommonInputErrorPromptNumberRange -> "请输入一个介于 %s 与 %s 之间的数字。"
@@ -147,7 +149,7 @@ fun Strings.zhHans(): String? = when (this) {
     AskIfRemoveEntryDialogDescription -> "将要删除当前条目..."
     AskIfRemoveEntryLastDialogDescription ->
         "将要删除当前条目...\n" +
-            "该条目是当前采样文件关联到的唯一条目。如果你想重新关联这个采样文件，请前往菜单 `视图` -> `采样列表`"
+            "该条目是当前采样文件关联到的唯一条目。如果您想重新关联这个采样文件，请前往菜单 `视图` -> `采样列表`"
     AskIfLoadAutoSavedProjectDialogDescription -> "发现自动保存的项目文件。是否读取？该文件将会在您打开或创建别的项目时被删除。"
     AskIfRedirectSampleDirectoryDialogDescription -> "未找到该项目的采样目录(%s)。 是否要重定向到其他目录？"
     PluginDialogTitle -> "vLabeler - 插件"
@@ -420,11 +422,21 @@ fun Strings.zhHans(): String? = when (this) {
     ColorPickerDialogTitle -> "vLabeler - 选色器"
     QuickLaunchManagerDialogTitle -> "插件槽位"
     QuickLaunchManagerDialogDescription ->
-        "你可以将常用的批量编辑插件连同其参数一起设置到插件槽位中，以便快速调用。插件槽位中存放的参数各自独立，也不影响通常使用时保存的参数。"
+        "您可以将常用的批量编辑插件连同其参数一起设置到插件槽位中，以便快速调用。插件槽位中存放的参数各自独立，也不影响通常使用时保存的参数。"
     QuickLaunchManagerDialogHeaderTitle -> "槽位"
     QuickLaunchManagerDialogHeaderPlugin -> "插件"
     QuickLaunchManagerDialogHeaderForceAskParams -> "总是询问参数"
     QuickLaunchManagerDialogItemTitle -> "槽位 %d"
     QuickLaunchManagerDialogOpenKeymap -> "打开键位映射"
+    TrackingSettingsDialogTitle -> "统计使用数据"
+    TrackingSettingsDialogDescription ->
+        "您可以在这里启用/禁用使用数据统计。它会收集匿名的使用事件，例如 `启动应用` 和 `使用插件`。" +
+            "收集的数据将用于改进 vLabeler。这些数据不包含任何关于您的项目、数据或个人信息的具体信息。" +
+            "如果您觉得这是可以接受的，请启用统计，我们将十分感谢。另外，您可以点击 `详细信息` 按钮查看更多详情。"
+    TrackingSettingsDialogFirstTimeAlert ->
+        "由于您首次启动了包含使用数据统计功能的 vLabeler，本对话框已自动被打开。" +
+            "您可以在菜单 `设置` -> `统计使用数据...` 中随时再次打开本对话框，进行设置的修改。"
+    TrackingSettingsDialogEnabled -> "启用"
+    TrackingSettingsDialogTrackingIdLabel -> "Tracking ID："
     else -> null
 }

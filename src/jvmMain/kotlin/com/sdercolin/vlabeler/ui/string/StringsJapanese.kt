@@ -63,6 +63,7 @@ fun Strings.ja(): String? = when (this) {
     MenuSettingsPreferences -> "環境設定..."
     MenuSettingsLabelers -> "ラベラー..."
     MenuSettingsTemplatePlugins -> "テンプレート生成器..."
+    MenuSettingsTracking -> "使用状況のトラッキング..."
     MenuHelp -> "ヘルプ"
     MenuHelpCheckForUpdates -> "アップデートを確認"
     MenuHelpOpenLogDirectory -> "ログディレクトリを開く"
@@ -77,6 +78,7 @@ fun Strings.ja(): String? = when (this) {
     CommonNo -> "いいえ"
     CommonWarning -> "警告"
     CommonError -> "エラー"
+    CommonDetails -> "詳細"
     CommonInputErrorPromptNumber -> "数値を入力してください。"
     CommonInputErrorPromptInteger -> "整数を入力してください。"
     CommonInputErrorPromptNumberRange -> "%s 与 %s の間の数値を入力してください。"
@@ -438,5 +440,17 @@ fun Strings.ja(): String? = when (this) {
     QuickLaunchManagerDialogHeaderForceAskParams -> "パラメータを常に確認"
     QuickLaunchManagerDialogItemTitle -> "スロット %d"
     QuickLaunchManagerDialogOpenKeymap -> "キーマップを開く"
+    TrackingSettingsDialogTitle -> "使用状況のトラッキング"
+    TrackingSettingsDialogDescription ->
+        "ここで、匿名の使用状況データの収集を有効/無効にすることができます。" +
+            "収集されるデータには、`アプリの起動` や `プラグインの使用` などの使用状況イベントが含まれます。" +
+            "収集されるデータは、vLabeler の改善に使用され、プロジェクトやデータ、個人情報に関する特定の情報は含まれません。" +
+            "これらのデータが収集されることにご同意いただける場合は、有効にしてください。" +
+            "詳細を確認するには、`詳細`ボタンをクリックしてください。"
+    TrackingSettingsDialogFirstTimeAlert ->
+        "トラッキングをサポートした vLabeler が初めて起動されたため、このダイアログが表示されています。" +
+            "このダイアログの中の設定は、メニューの `設定` -> `使用状況のトラッキング...` からいつでも変更することができます。"
+    TrackingSettingsDialogEnabled -> "有効"
+    TrackingSettingsDialogTrackingIdLabel -> "Tracking ID："
     else -> null
 }

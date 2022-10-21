@@ -14,6 +14,7 @@ import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.dialog.AboutDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.LicenseDialog
+import com.sdercolin.vlabeler.ui.dialog.TrackingSettingsDialog
 import com.sdercolin.vlabeler.ui.dialog.WarningDialog
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
@@ -41,10 +42,13 @@ fun App(
     LaunchedEffect(appState) {
         appState.checkAutoSavedProject()
     }
+    LaunchedEffect(appState) {
+        appState.checkTrackingPermissionSettings()
+    }
     LaunchedEffect(appState.appConf.autoSave) {
         appState.enableAutoSaveProject(appState.appConf.autoSave, appState)
     }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(appState) {
         appState.checkUpdates(isAuto = true)
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
@@ -158,6 +162,15 @@ fun App(
         }
         appState.embeddedDialog?.let { request ->
             EmbeddedDialog(request)
+        }
+        if (appState.isShowingTrackingSettingsDialog) {
+            TrackingSettingsDialog(
+                appState.trackingState,
+                finish = {
+                    appState.closeTrackingSettingsDialog()
+                    appState.trackingState.finishSettings()
+                },
+            )
         }
         appState.error?.let { error ->
             WarningDialog(

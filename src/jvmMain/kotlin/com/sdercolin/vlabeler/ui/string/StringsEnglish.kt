@@ -61,6 +61,7 @@ fun Strings.en(): String = when (this) {
     MenuSettingsPreferences -> "Preferences..."
     MenuSettingsLabelers -> "Labelers..."
     MenuSettingsTemplatePlugins -> "Template Generators..."
+    MenuSettingsTracking -> "Track App Usages..."
     MenuHelp -> "Help"
     MenuHelpCheckForUpdates -> "Check for Updates..."
     MenuHelpOpenLogDirectory -> "Open Log Directory"
@@ -75,6 +76,7 @@ fun Strings.en(): String = when (this) {
     CommonNo -> "No"
     CommonWarning -> "Warning"
     CommonError -> "Error"
+    CommonDetails -> "Details"
     CommonInputErrorPromptNumber -> "Please enter a number."
     CommonInputErrorPromptInteger -> "Please enter an integer number."
     CommonInputErrorPromptNumberRange -> "Please enter a number between %s and %s."
@@ -472,4 +474,17 @@ fun Strings.en(): String = when (this) {
     QuickLaunchManagerDialogHeaderForceAskParams -> "Always ask for parameters"
     QuickLaunchManagerDialogItemTitle -> "Slot %d"
     QuickLaunchManagerDialogOpenKeymap -> "Open keymap"
+    TrackingSettingsDialogTitle -> "Track App Usages"
+    TrackingSettingsDialogDescription ->
+        "You can enable/disable usage data tracking here, which collects anonymous usage events such as " +
+            "`Launch App` and `Use Plugin`. The collected data is used to improve vLabeler, " +
+            "and it doesn't include any specific information about your project, data or personal information. " +
+            "Please kindly enable tracking if you think it's acceptable. " +
+            "You can check more details by clicking the `Details` button."
+    TrackingSettingsDialogFirstTimeAlert ->
+        "We are showing you this dialog because you are using vLabeler with tracking for the first time. " +
+            "You can open this dialog and change the tracking settings anytime in the menu " +
+            "`Setting` -> `Track App Usages...`"
+    TrackingSettingsDialogEnabled -> "Enabled"
+    TrackingSettingsDialogTrackingIdLabel -> "Tracking ID:"
 }

@@ -28,6 +28,7 @@ import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.runMacroPlugin
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.tracking.TrackingService
+import com.sdercolin.vlabeler.tracking.TrackingState
 import com.sdercolin.vlabeler.tracking.event.TrackingEvent
 import com.sdercolin.vlabeler.tracking.trackMacroPluginExecution
 import com.sdercolin.vlabeler.tracking.trackNewAppConf
@@ -113,7 +114,8 @@ class AppState(
         playerState,
     )
 
-    val ipcState: IpcState = IpcState(this)
+    private val ipcState: IpcState = IpcState(this)
+    val trackingState = TrackingState(appRecordStore, mainScope)
 
     private fun reset() {
         clearProject()
@@ -360,6 +362,12 @@ class AppState(
         val file = getAutoSavedProjectFile()
         if (file != null) {
             confirmIfLoadAutoSavedProject(file)
+        }
+    }
+
+    fun checkTrackingPermissionSettings() {
+        if (trackingState.hasNotAskedForTrackingPermission()) {
+            openTrackingSettingsDialog()
         }
     }
 

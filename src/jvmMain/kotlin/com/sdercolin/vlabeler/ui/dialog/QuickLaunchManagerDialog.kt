@@ -75,12 +75,6 @@ class QuickLaunchManagerDialogState(private val appState: AppState) {
     fun findPlugin(quickLaunch: PluginQuickLaunch) =
         appState.getPlugins(Plugin.Type.Macro).find { it.name == quickLaunch.pluginName }
 
-    fun hasValidParams(slot: Int, plugin: Plugin?): Boolean {
-        plugin ?: return false
-        val quickLaunch = slots.getOrNull(slot) ?: return false
-        return quickLaunch.checkParamsValid(plugin, appState.project?.labelerConf)
-    }
-
     fun setSlotPlugin(slot: Int, plugin: Plugin?) {
         val existing = slots[slot]
         if (plugin === null) {

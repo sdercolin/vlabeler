@@ -54,6 +54,7 @@ interface AppDialogState {
     val isShowingAboutDialog: Boolean
     val isShowingLicenseDialog: Boolean
     val isShowingQuickLaunchManagerDialog: Boolean
+    val isShowingTrackingSettingsDialog: Boolean
     val updaterDialogContent: Update?
     val macroPluginShownInDialog: MacroPluginDialogArgs?
     val macroPluginReport: LocalizedJsonString?
@@ -95,6 +96,8 @@ interface AppDialogState {
     fun closeLicenseDialog()
     fun openQuickLaunchManagerDialog()
     fun closeQuickLaunchManagerDialog()
+    fun openTrackingSettingsDialog()
+    fun closeTrackingSettingsDialog()
     fun openUpdaterDialog(update: Update)
     fun closeUpdaterDialog()
     fun openMacroPluginDialog(plugin: Plugin)
@@ -107,6 +110,7 @@ interface AppDialogState {
     fun closeCustomizableItemManagerDialog()
     fun requestClearCaches(scope: CoroutineScope)
     fun clearCachesAndReopen(scope: CoroutineScope)
+    fun askForTrackingPermission()
 
     fun closeEmbeddedDialog()
     fun closeAllDialogs()
@@ -152,6 +156,7 @@ class AppDialogStateImpl(
     override var isShowingAboutDialog: Boolean by mutableStateOf(false)
     override var isShowingLicenseDialog: Boolean by mutableStateOf(false)
     override var isShowingQuickLaunchManagerDialog: Boolean by mutableStateOf(false)
+    override var isShowingTrackingSettingsDialog: Boolean by mutableStateOf(false)
     override var updaterDialogContent: Update? by mutableStateOf(null)
     override var macroPluginShownInDialog: MacroPluginDialogArgs? by mutableStateOf(null)
     override var macroPluginReport: LocalizedJsonString? by mutableStateOf(null)
@@ -364,6 +369,14 @@ class AppDialogStateImpl(
         isShowingQuickLaunchManagerDialog = false
     }
 
+    override fun openTrackingSettingsDialog() {
+        isShowingTrackingSettingsDialog = true
+    }
+
+    override fun closeTrackingSettingsDialog() {
+        isShowingTrackingSettingsDialog = false
+    }
+
     override fun openMacroPluginDialog(plugin: Plugin) {
         scope.launch(Dispatchers.IO) {
             macroPluginShownInDialog =
@@ -405,6 +418,9 @@ class AppDialogStateImpl(
         SampleInfoRepository.clearMemory()
         projectStore.requireProject().clearCache()
         loadProject(scope, projectStore.requireProject().projectFile, state)
+    }
+
+    override fun askForTrackingPermission() {
     }
 
     override fun closeEmbeddedDialog() {
