@@ -6,5 +6,6 @@ import java.lang.Runtime.Version
 val runtimeVersion: Version? get() = Runtime.version()
 
 val isDebug: Boolean by lazy {
-    ProcessHandle.current().info().command().get().lastPathSection == "java"
+    val process = ProcessHandle.current().info().command().get().lastPathSection
+    process in listOf("java", "java.exe")
 }
