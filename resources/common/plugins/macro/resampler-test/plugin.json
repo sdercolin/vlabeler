@@ -103,14 +103,6 @@
         "defaultValue": 0,
         "min": 0,
         "max": 100
-      },
-      {
-        "type": "float",
-        "name": "bpm",
-        "label": "BPM",
-        "defaultValue": 120,
-        "min": 60,
-        "max": 240
       }
     ]
   },

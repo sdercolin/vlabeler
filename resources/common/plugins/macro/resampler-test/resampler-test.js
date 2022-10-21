@@ -66,7 +66,6 @@ args.push(cutoff.toString())
 
 args.push(params["volume"].toString())
 args.push(params["modulation"].toString())
-args.push(params["bpm"].toString())
 args.push("")
 
 let result = executeCommand(...args)
