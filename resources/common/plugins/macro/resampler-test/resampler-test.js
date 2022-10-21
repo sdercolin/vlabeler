@@ -69,8 +69,7 @@ args.push(params["modulation"].toString())
 args.push("")
 
 let result = executeCommand(...args)
-console.log("Output:\n" + result)
 
-if (tempFile.exists()) {
+if (result === 0 && tempFile.exists()) {
     requestAudioFilePlayback(tempFile.getAbsolutePath())
 }
