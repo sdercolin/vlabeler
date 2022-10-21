@@ -98,6 +98,16 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
 
     fun toParamMap() = ParamMap(map.mapValues { it.value.value })
 
+    fun stripFilePaths() = ParamTypedMap(
+        map.mapValues { (_, value) ->
+            if (value.type == Parameter.FileParam.Type) {
+                TypedValue(value.type, FileWithEncoding("*", null))
+            } else {
+                value
+            }
+        },
+    )
+
     companion object {
 
         fun from(paramMap: ParamMap, paramDefs: List<Parameter<*>>): ParamTypedMap? {

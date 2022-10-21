@@ -20,7 +20,7 @@ import kotlinx.serialization.json.encodeToJsonElement
 fun AppState.trackProjectCreation(project: Project, byIpcRequest: Boolean) {
     val labelerUsageEvent = CreateProjectEvent(
         labeler = project.labelerConf.toBox(),
-        params = project.labelerParams.orEmpty(),
+        params = project.labelerParams.orEmpty().stripFilePaths(),
         autoExport = project.autoExport,
         byIpcRequest = byIpcRequest,
     )
@@ -30,7 +30,7 @@ fun AppState.trackProjectCreation(project: Project, byIpcRequest: Boolean) {
 fun AppState.trackTemplateGeneration(plugin: Plugin, params: ParamMap?) {
     val templatePluginUsageEvent = TemplatePluginUsageEvent(
         plugin = plugin.toBox(),
-        params = ParamTypedMap.from(params.orEmpty(), plugin.parameterDefs).orEmpty(),
+        params = ParamTypedMap.from(params.orEmpty(), plugin.parameterDefs).orEmpty().stripFilePaths(),
     )
     track(templatePluginUsageEvent)
 }
@@ -38,7 +38,7 @@ fun AppState.trackTemplateGeneration(plugin: Plugin, params: ParamMap?) {
 fun AppState.trackMacroPluginExecution(plugin: Plugin, params: ParamMap?, quickLaunch: Boolean) {
     val macroPluginUsageEvent = MacroPluginUsageEvent(
         plugin = plugin.toBox(),
-        params = ParamTypedMap.from(params.orEmpty(), plugin.parameterDefs).orEmpty(),
+        params = ParamTypedMap.from(params.orEmpty(), plugin.parameterDefs).orEmpty().stripFilePaths(),
         quickLaunch = quickLaunch,
     )
     track(macroPluginUsageEvent)

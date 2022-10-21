@@ -33,10 +33,9 @@ The data collected includes:
     - Only fatal errors are collected, not warnings or other types of errors.
 - Project creation, including the labeler, the labeler parameters and some other settings.
     - Paths or contents of the input file, paths of all directories used and project names are not collected.
-    - If you used a `file` type parameter in the labeler's settings, only the path to the file is collected, not the
-      file content.
+    - If you used a `file` type parameter in the labeler's settings, the path or content of the file is not collected.
 - Plugin usages, including the parameters that are used.
-    - If you used a `file` type parameter, only the path to the file is collected, not the file content.
+    - If you used a `file` type parameter, the path or content of the file is not collected.
 - Configuration changes
     - The configuration doesn't contain any personal information, file names, file contents, or paths.
 
