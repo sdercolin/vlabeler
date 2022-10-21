@@ -18,7 +18,7 @@ fun ConfirmButton(
     text: String = string(Strings.CommonOkay),
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
-    useEnterKey: Boolean = true,
+    useEnterKey: Boolean = false,
 ) {
     if (useEnterKey) {
         val focusRequester = remember { FocusRequester() }

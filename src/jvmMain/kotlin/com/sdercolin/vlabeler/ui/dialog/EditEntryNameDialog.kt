@@ -121,7 +121,6 @@ fun InputEntryNameDialog(
             ConfirmButton(
                 enabled = input.text.isNotBlank(),
                 onClick = trySubmit,
-                useEnterKey = false,
             )
         }
     }

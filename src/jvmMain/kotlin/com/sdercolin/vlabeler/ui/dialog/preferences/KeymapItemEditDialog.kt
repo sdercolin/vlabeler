@@ -252,7 +252,6 @@ fun <K : Action> KeymapItemEditDialog(
                     ConfirmButton(
                         enabled = state.isValid,
                         onClick = state::submit,
-                        useEnterKey = false,
                     )
                 }
             }

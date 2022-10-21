@@ -103,7 +103,6 @@ fun SetResolutionDialog(
             ConfirmButton(
                 enabled = value != null,
                 onClick = submitIfValid,
-                useEnterKey = false,
             )
         }
     }

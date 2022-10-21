@@ -46,7 +46,7 @@ fun WarningDialog(
                     )
                     Spacer(Modifier.height(25.dp))
                     Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
-                        ConfirmButton(onClick = finish)
+                        ConfirmButton(onClick = finish, useEnterKey = true)
                     }
                 }
             }
