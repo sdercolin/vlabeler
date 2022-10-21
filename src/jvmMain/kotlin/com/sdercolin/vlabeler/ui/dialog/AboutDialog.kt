@@ -19,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -39,6 +38,7 @@ import com.sdercolin.vlabeler.env.osInfo
 import com.sdercolin.vlabeler.env.runtimeVersion
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
@@ -164,10 +164,6 @@ private fun ButtonBar(copyInfo: () -> Unit, showLicenses: () -> Unit, finish: ()
             Text(string(Strings.AboutDialogCopyInfo))
         }
         Spacer(Modifier.weight(1f))
-        Button(
-            onClick = finish,
-        ) {
-            Text(string(Strings.CommonOkay))
-        }
+        ConfirmButton(onClick = finish)
     }
 }

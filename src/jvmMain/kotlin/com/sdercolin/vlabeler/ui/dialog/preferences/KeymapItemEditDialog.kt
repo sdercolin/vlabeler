@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -57,6 +56,7 @@ import com.sdercolin.vlabeler.model.action.ActionType
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -249,12 +249,11 @@ fun <K : Action> KeymapItemEditDialog(
                         Text(string(Strings.CommonCancel))
                     }
                     Spacer(Modifier.width(25.dp))
-                    Button(
+                    ConfirmButton(
                         enabled = state.isValid,
-                        onClick = { state.submit() },
-                    ) {
-                        Text(string(Strings.CommonOkay))
-                    }
+                        onClick = state::submit,
+                        useEnterKey = false,
+                    )
                 }
             }
         }

@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -57,6 +56,7 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.CircularProgress
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
@@ -463,12 +463,11 @@ private fun ButtonBar(
         OutlinedButton(onClick = cancel) {
             Text(string(Strings.CommonCancel))
         }
-        Button(
+
+        ConfirmButton(
             onClick = { state.create(onCreateListener) },
             enabled = state.isValid(),
-        ) {
-            Text(string(Strings.CommonOkay))
-        }
+        )
     }
 }
 

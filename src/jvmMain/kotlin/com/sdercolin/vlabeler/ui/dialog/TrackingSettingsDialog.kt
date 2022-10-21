@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
@@ -25,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.tracking.TrackingState
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -112,10 +112,6 @@ private fun ButtonBar(openDetails: () -> Unit, finish: () -> Unit) {
             Text(string(Strings.CommonDetails))
         }
         Spacer(Modifier.weight(1f))
-        Button(
-            onClick = { finish() },
-        ) {
-            Text(string(Strings.CommonOkay))
-        }
+        ConfirmButton(onClick = finish)
     }
 }

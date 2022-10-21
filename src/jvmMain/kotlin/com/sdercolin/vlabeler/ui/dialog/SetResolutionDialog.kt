@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -24,9 +23,12 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
@@ -42,8 +44,14 @@ fun SetResolutionDialog(
     val dismiss = { finish(null) }
     val submit = { newValue: Int -> finish(SetResolutionDialogResult(newValue)) }
 
-    var input by remember { mutableStateOf(args.current.toString()) }
+    var input by remember {
+        mutableStateOf(
+            TextFieldValue(args.current.toString(), selection = TextRange(0, args.current.toString().length)),
+        )
+    }
     var value by remember { mutableStateOf<Int?>(args.current) }
+
+    val submitIfValid: () -> Unit = remember { { input.text.toIntOrNull()?.let { submit(it) } } }
 
     Column {
         Spacer(Modifier.height(15.dp))
@@ -57,7 +65,7 @@ fun SetResolutionDialog(
             modifier = Modifier.width(150.dp)
                 .onKeyEvent { event ->
                     if (event.isReleased(Key.Enter)) {
-                        input.toIntOrNull()?.let { submit(it) }
+                        submitIfValid()
                         true
                     } else {
                         false
@@ -67,7 +75,7 @@ fun SetResolutionDialog(
             singleLine = true,
             onValueChange = {
                 input = it
-                val intValue = it.toIntOrNull()
+                val intValue = it.text.toIntOrNull()
                 value = if (intValue != null && intValue in args.min..args.max) {
                     intValue
                 } else {
@@ -83,12 +91,11 @@ fun SetResolutionDialog(
                 Text(string(Strings.CommonCancel))
             }
             Spacer(Modifier.width(25.dp))
-            Button(
+            ConfirmButton(
                 enabled = value != null,
-                onClick = { input.toIntOrNull()?.let { submit(it) } },
-            ) {
-                Text(string(Strings.CommonOkay))
-            }
+                onClick = submitIfValid,
+                useEnterKey = false,
+            )
         }
     }
 }

@@ -10,18 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Button
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.WarningText
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.common.plainClickable
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
 
 @Composable
@@ -49,9 +46,7 @@ fun WarningDialog(
                     )
                     Spacer(Modifier.height(25.dp))
                     Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
-                        Button(onClick = finish) {
-                            Text(string(Strings.CommonOkay))
-                        }
+                        ConfirmButton(onClick = finish)
                     }
                 }
             }

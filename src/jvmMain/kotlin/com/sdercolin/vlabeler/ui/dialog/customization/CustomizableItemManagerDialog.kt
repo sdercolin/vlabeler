@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.common.plainClickable
@@ -299,8 +300,6 @@ fun BottomButtonBar(state: CustomizableItemManagerDialogState<*>) {
             Text(string(Strings.CustomizableItemManagerReload))
         }
         Spacer(Modifier.weight(1f))
-        Button(onClick = state::finish) {
-            Text(string(Strings.CommonOkay))
-        }
+        ConfirmButton(onClick = state::finish)
     }
 }

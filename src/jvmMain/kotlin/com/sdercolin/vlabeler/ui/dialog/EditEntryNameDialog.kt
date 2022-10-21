@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -32,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.string.stringStatic
@@ -118,12 +118,11 @@ fun InputEntryNameDialog(
                 Text(string(Strings.CommonCancel))
             }
             Spacer(Modifier.width(25.dp))
-            Button(
+            ConfirmButton(
                 enabled = input.text.isNotBlank(),
-                onClick = { trySubmit() },
-            ) {
-                Text(string(Strings.CommonOkay))
-            }
+                onClick = trySubmit,
+                useEnterKey = false,
+            )
         }
     }
 }

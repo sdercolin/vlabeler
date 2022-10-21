@@ -38,6 +38,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.rememberDialogState
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.license.LicenseReport
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -168,10 +169,6 @@ private fun ColumnScope.ReportBox(report: LicenseReport) {
 @Composable
 private fun ButtonBar(finish: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        Button(
-            onClick = finish,
-        ) {
-            Text(string(Strings.CommonOkay))
-        }
+        ConfirmButton(onClick = finish)
     }
 }

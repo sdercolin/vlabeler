@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.PluginQuickLaunch
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
@@ -297,8 +298,6 @@ private fun BottomButtonBar(state: QuickLaunchManagerDialogState) {
             Text(text = string(Strings.QuickLaunchManagerDialogOpenKeymap))
         }
         Spacer(modifier = Modifier.weight(1f))
-        Button(onClick = state::finish) {
-            Text(string(Strings.CommonOkay))
-        }
+        ConfirmButton(onClick = state::finish)
     }
 }

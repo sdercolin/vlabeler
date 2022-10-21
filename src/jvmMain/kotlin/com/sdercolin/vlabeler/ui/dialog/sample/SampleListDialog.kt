@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.Entry
@@ -378,10 +379,6 @@ private fun ButtonBar(
             Text(string(Strings.SampleListJumpToSelectedEntryButton))
         }
         Spacer(Modifier.width(25.dp))
-        Button(
-            onClick = { finish() },
-        ) {
-            Text(string(Strings.CommonOkay))
-        }
+        ConfirmButton(onClick = finish)
     }
 }

@@ -20,7 +20,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -70,6 +69,7 @@ import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppRecordStore
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.ReversedRow
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
@@ -308,18 +308,18 @@ private fun Content(state: BasePluginDialogState) {
                         Text(string(Strings.CommonCancel))
                     }
                     Spacer(Modifier.width(40.dp))
-                    Button(
+
+                    ConfirmButton(
+                        onClick = state::apply,
                         enabled = state.isAllValid(),
-                        onClick = { state.apply() },
-                    ) {
-                        val strings =
+                        text = string(
                             if (plugin.isSelfExecutable && (state as? PluginDialogState)?.executable == true) {
                                 Strings.PluginDialogExecute
                             } else {
                                 Strings.CommonOkay
-                            }
-                        Text(string(strings))
-                    }
+                            },
+                        ),
+                    )
                 }
             }
             VerticalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.width(15.dp))

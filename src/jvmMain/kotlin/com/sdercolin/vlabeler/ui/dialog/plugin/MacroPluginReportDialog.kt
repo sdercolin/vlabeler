@@ -17,7 +17,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -26,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
@@ -85,8 +85,6 @@ private fun ButtonBar(copy: () -> Unit, finish: () -> Unit) {
             Text(string(Strings.MacroPluginReportDialogCopy))
         }
         Spacer(Modifier.weight(1f))
-        Button(onClick = { finish() }) {
-            Text(string(Strings.CommonOkay))
-        }
+        ConfirmButton(onClick = finish)
     }
 }

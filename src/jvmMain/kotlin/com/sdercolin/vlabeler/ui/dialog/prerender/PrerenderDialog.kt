@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -31,6 +30,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.editor.ChartStore
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -129,11 +129,6 @@ private fun ButtonBar(isCompleted: Boolean, finish: () -> Unit) {
             Text(string(Strings.CommonCancel))
         }
         Spacer(Modifier.width(25.dp))
-        Button(
-            enabled = isCompleted,
-            onClick = { finish() },
-        ) {
-            Text(string(Strings.CommonOkay))
-        }
+        ConfirmButton(onClick = finish, enabled = isCompleted)
     }
 }

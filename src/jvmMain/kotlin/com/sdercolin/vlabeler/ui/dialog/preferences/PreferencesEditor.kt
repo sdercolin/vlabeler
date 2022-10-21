@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -54,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.ui.common.ColorHexInputBox
+import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
 import com.sdercolin.vlabeler.ui.common.IntegerInputBox
 import com.sdercolin.vlabeler.ui.common.SearchBar
@@ -572,11 +572,7 @@ private fun ButtonBar(
             Text(string(Strings.CommonApply))
         }
         Spacer(Modifier.width(25.dp))
-        Button(
-            onClick = { finish() },
-        ) {
-            Text(string(Strings.CommonOkay))
-        }
+        ConfirmButton(onClick = finish)
     }
 }
 
