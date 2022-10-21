@@ -1,4 +1,6 @@
 let JavaFile = Java.type('java.io.File')
+let JavaFiles = Java.type('java.nio.file.Files')
+let Path = Java.type('java.nio.file.Path')
 let BufferedReader = Java.type('java.io.BufferedReader')
 let FileInputStream = Java.type('java.io.FileInputStream')
 let InputStreamReader = Java.type('java.io.InputStreamReader')
@@ -97,6 +99,40 @@ class File {
         }
         bufferedReader.close()
         return lines
+    }
+
+    mkdir() {
+        return this.javaFile.mkdir()
+    }
+
+    mkdirs() {
+        return this.javaFile.mkdirs()
+    }
+
+    delete() {
+        if (this.isFile()) {
+            return JavaFiles.deleteIfExists(Path.of(this.getAbsolutePath()))
+        } else if (this.isDirectory()) {
+            if (this.listChildren().length === 0) {
+                return JavaFiles.deleteIfExists(Path.of(this.getAbsolutePath()))
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+
+    deleteRecursively() {
+        if (this.isFile()) {
+            this.delete()
+        } else if (this.isDirectory()) {
+            let children = this.listChildren()
+            for (let i = 0; i < children.length; i++) {
+                children[i].deleteRecursively()
+            }
+            JavaFiles.deleteIfExists(Path.of(this.getAbsolutePath()))
+        }
     }
 }
 

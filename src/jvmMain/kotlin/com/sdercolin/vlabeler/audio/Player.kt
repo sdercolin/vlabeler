@@ -4,8 +4,11 @@ import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.normalize
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.AudioPlaybackRequest
 import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.JobQueue
+import com.sdercolin.vlabeler.util.toFile
+import com.sdercolin.vlabeler.util.toFrame
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -186,6 +189,10 @@ class Player(
             stop()
             flush()
         }
+        extraLine?.run {
+            stop()
+            flush()
+        }
         writingJob?.cancelAndJoin()
         writingJob = null
     }
@@ -199,6 +206,11 @@ class Player(
             flush()
             close()
         }
+        extraLine?.run {
+            stop()
+            flush()
+            close()
+        }
     }
 
     fun loadNewConfIfNeeded(appConf: AppConf) {
@@ -207,6 +219,44 @@ class Player(
         }
         if (maxSampleRate != appConf.painter.amplitude.resampleDownToHz) {
             maxSampleRate = appConf.painter.amplitude.resampleDownToHz
+        }
+    }
+
+    private var extraLine: SourceDataLine? = null
+
+    fun handleRequest(request: AudioPlaybackRequest) {
+        when (request) {
+            is AudioPlaybackRequest.PlayFile -> coroutineScope.launch(Dispatchers.IO) {
+                if (state.isPlaying) {
+                    stop()
+                }
+                Log.info("Player.load(\"${request.path}\")")
+                val file = request.path.toFile()
+                val stream = AudioSystem.getAudioInputStream(file)
+                val format = stream.format.normalize(maxSampleRate)
+                val data = AudioSystem.getAudioInputStream(format, stream).use {
+                    val bytes = it.readAllBytes()
+                    Log.info("Player.load: read ${bytes.size} bytes")
+                    bytes
+                }
+                val line = AudioSystem.getSourceDataLine(format)
+                stream.close()
+                this@Player.extraLine = line
+                line.open()
+                line.start()
+                state.startPlaying()
+                writingJob = coroutineScope.launch(Dispatchers.IO) {
+                    val offset = (toFrame(request.offset.toFloat(), format.sampleRate) * format.frameSize).toInt()
+                    val length = request.duration?.let { toFrame(it.toFloat(), format.sampleRate) * format.frameSize }
+                        ?.toInt()
+                        ?.coerceAtMost(data.size)
+                        ?: data.size
+                    line.write(data, offset, length)
+                    line.drain()
+                    line.flush()
+                }
+                writingJob?.join()
+            }
         }
     }
 

@@ -11,9 +11,12 @@ object Resources {
     val classEntryJs get() = "js/class_entry.js"
     val classModuleJs get() = "js/class_module.js"
     val expectedErrorJs get() = "js/expected_error.js"
+    val envJs get() = "js/env.js"
     val fileJs get() = "js/file.js"
     val moduleDefinitionJs get() = "js/module_definition.js"
     val prepareBuildProjectJs get() = "js/prepare_build_project.js"
+    val commandLineJs get() = "js/command_line.js"
+    val requestAudioPlaybackJs get() = "js/request_audio_playback.js"
     val reportJs get() = "js/report.js"
     val transparencyGridPng get() = "img/transparency_grid.png"
 }

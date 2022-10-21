@@ -113,7 +113,6 @@ The object has the following properties:
 
 - `rawFile`: File path as string. In the scripts, it's passed as a string value without file reading.
 
-
 ## Scripting Environment
 
 `vLabeler` uses embedded [JavaScript](https://developer.mozilla.org/ja/docs/Web/JavaScript) engine provided
@@ -133,15 +132,16 @@ It should create a list of entries for subsequent editions.
 
 The following variables are provided before your scripts are executed.
 
-| name          | type        | description                                                                                                        |
-|---------------|-------------|--------------------------------------------------------------------------------------------------------------------|
-| inputs        | String[]    | List of texts read from the input files. Check the list size if your input file is optional.                       |
-| samples       | String[]    | List of file names of the sample files.                                                                            |
-| params        | Dictionary  | Use `name` of the defined parameters as the key to get values in their actual types.                               |
-| resources     | String[]    | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
-| labeler       | LabelerConf | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
-| labelerParams | Dictionary  | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.            |
-| debug         | Boolean     | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
+| name            | type                | description                                                                                                        |
+|-----------------|---------------------|--------------------------------------------------------------------------------------------------------------------|
+| inputs          | String[]            | List of texts read from the input files. Check the list size if your input file is optional.                       |
+| samples         | String[]            | List of file names of the sample files.                                                                            |
+| params          | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                               |
+| resources       | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
+| labeler         | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
+| labelerParams   | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.            |
+| debug           | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
+| pluginDirectory | [File](file-api.md) | Directory of this plugin                                                                                           |
 
 ### Find input files dynamically when constructing a project with sub-projects
 
@@ -255,17 +255,19 @@ You can modify these variables directly to conduct batch edit on the whole proje
 
 The following variables are provided before your scripts are executed.
 
-| name               | type        | description                                                                                                                                                                    |
-|--------------------|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| entries            | Entry[]     | Only available when the plugin's `macroScope` is `Module`. List of current [Entry](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Entry.kt) objects in the current module. |
-| currentEntryIndex  | Entry[]     | Only available when the plugin's `macroScope` is `Module`. The index of current shown entry.                                                                                   |
-| modules            | Module[]    | Only available when the plugin's `macroScope` is `Project`. List of current [Module](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Module.kt) objects in the project.     |
-| currentModuleIndex | Integer     | Only available when the plugin's `macroScope` is `Project`. The index of current shown module.                                                                                 |
-| params             | Dictionary  | Use `name` of the defined parameters as the key to get values in their actual types.                                                                                           |
-| resources          | String[]    | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                                               |
-| labeler            | LabelerConf | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                                             |
-| labelerParams      | Dictionary  | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                                        |
-| debug              | Boolean     | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                                          |
+| name               | type                | description                                                                                                                                                                    |
+|--------------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| entries            | Entry[]             | Only available when the plugin's `macroScope` is `Module`. List of current [Entry](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Entry.kt) objects in the current module. |
+| currentEntryIndex  | Entry[]             | Only available when the plugin's `macroScope` is `Module`. The index of current shown entry.                                                                                   |
+| module             | Module              | Only available when the plugin's `macroScope` is `Module`. The current [Module](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Module.kt) object.                          |
+| modules            | Module[]            | Only available when the plugin's `macroScope` is `Project`. List of current [Module](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Module.kt) objects in the project.     |
+| currentModuleIndex | Integer             | Only available when the plugin's `macroScope` is `Project`. The index of current shown module.                                                                                 |
+| params             | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                                                                           |
+| resources          | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                                               |
+| labeler            | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                                             |
+| labelerParams      | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                                        |
+| debug              | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                                          |
+| pluginDirectory    | [File](file-api.md) | Directory of this plugin                                                                                                                                                       |
 
 ### Use an entry selector
 

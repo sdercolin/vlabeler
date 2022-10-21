@@ -249,6 +249,7 @@ suspend fun projectOf(
         js.set("encoding", encoding)
         js.setJson("acceptedSampleExtensions", Sample.acceptableSampleFileExtensions)
         listOf(
+            Resources.envJs,
             Resources.fileJs,
             Resources.expectedErrorJs,
             Resources.moduleDefinitionJs,

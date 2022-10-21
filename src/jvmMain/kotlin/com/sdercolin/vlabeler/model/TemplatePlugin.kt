@@ -44,7 +44,9 @@ fun runTemplatePlugin(
         listOfNotNull(
             if (plugin.outputRawEntry.not()) Resources.classEntryJs else null,
             Resources.expectedErrorJs,
+            Resources.envJs,
             Resources.fileJs,
+            Resources.commandLineJs,
         ).forEach { js.execResource(it) }
 
         val inputFinderScriptFile = plugin.inputFinderScriptFile
@@ -65,6 +67,8 @@ fun runTemplatePlugin(
         val resourceTexts = plugin.readResourceFiles()
         js.setJson("resources", resourceTexts)
         js.setJson("samples", sampleFiles.map { it.name })
+        js.set("pluginDirectory", requireNotNull(plugin.directory))
+        js.eval("pluginDirectory = new File(pluginDirectory)")
 
         plugin.scriptFiles.zip(plugin.readScriptTexts()).forEach { (file, source) ->
             Log.debug("Launch script: $file")

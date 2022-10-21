@@ -130,6 +130,7 @@ private fun prepareJsForParsing(
     listOf(
         Resources.classEntryJs,
         Resources.expectedErrorJs,
+        Resources.envJs,
         Resources.fileJs,
     ).forEach { js.execResource(it) }
     js.set("debug", isDebug)
@@ -192,6 +193,7 @@ private fun Project.prepareJsForWriting(): JavaScript {
     listOf(
         Resources.classEntryJs,
         Resources.expectedErrorJs,
+        Resources.envJs,
         Resources.fileJs,
     ).forEach { js.execResource(it) }
     js.set("debug", isDebug)

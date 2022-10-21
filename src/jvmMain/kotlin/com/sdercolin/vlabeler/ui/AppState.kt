@@ -21,6 +21,7 @@ import com.sdercolin.vlabeler.ipc.request.OpenOrCreateRequest
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.MacroPluginExecutionListener
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -415,14 +416,18 @@ class AppState(
 
     val isScrollFitEnabled get() = editor?.sampleInfoResult?.exceptionOrNull() == null
 
+    private val macroPluginExecutionListener = MacroPluginExecutionListener(
+        onReport = { showMacroPluginReport(it) },
+        onAudioPlaybackRequest = { player.handleRequest(it) },
+    )
+
     fun executeMacroPlugin(plugin: Plugin, params: ParamMap, slot: Int?) {
-        val (newProject, report) = runCatching { runMacroPlugin(plugin, params, requireProject()) }
+        val newProject = runCatching { runMacroPlugin(plugin, params, requireProject(), macroPluginExecutionListener) }
             .getOrElse {
                 showError(it)
                 return
             }
         editProject { newProject }
-        report?.let { showMacroPluginReport(it) }
         trackMacroPluginExecution(plugin, params, quickLaunch = slot != null)
     }
 

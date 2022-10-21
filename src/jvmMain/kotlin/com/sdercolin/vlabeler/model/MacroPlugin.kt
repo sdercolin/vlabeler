@@ -15,11 +15,17 @@ import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.Serializable
 
+class MacroPluginExecutionListener(
+    val onAudioPlaybackRequest: (AudioPlaybackRequest) -> Unit,
+    val onReport: (LocalizedJsonString) -> Unit,
+)
+
 fun runMacroPlugin(
     plugin: Plugin,
     params: ParamMap,
     project: Project,
-): Pair<Project, LocalizedJsonString?> {
+    listener: MacroPluginExecutionListener,
+): Project {
     val js = JavaScript(
         logHandler = Log.infoFileHandler,
         currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile(),
@@ -40,8 +46,14 @@ fun runMacroPlugin(
             if (plugin.scope == Plugin.PluginProcessScope.Project) Resources.classModuleJs else null,
             Resources.expectedErrorJs,
             Resources.reportJs,
+            Resources.envJs,
             Resources.fileJs,
+            Resources.commandLineJs,
+            Resources.requestAudioPlaybackJs,
         ).forEach { js.execResource(it) }
+
+        js.set("pluginDirectory", requireNotNull(plugin.directory))
+        js.eval("pluginDirectory = new File(pluginDirectory)")
 
         when (plugin.scope) {
             Plugin.PluginProcessScope.Project -> {
@@ -51,6 +63,7 @@ fun runMacroPlugin(
             Plugin.PluginProcessScope.Module -> {
                 js.setJson("entries", project.currentModule.entries)
                 js.set("currentEntryIndex", project.currentModule.currentIndex)
+                js.setJson("module", project.currentModule)
             }
         }
 
@@ -87,8 +100,15 @@ fun runMacroPlugin(
                 }
             }
         }
-        val report = js.getOrNull<String>("reportText")
-        newProject to report?.parseJson<LocalizedJsonString>()
+        val report = js.getOrNull<String>("reportText")?.parseJson<LocalizedJsonString>()
+        if (report != null) {
+            listener.onReport(report)
+        }
+        val audioPlaybackRequest = js.getJsonOrNull<AudioPlaybackRequest>("audioPlaybackRequest")
+        if (audioPlaybackRequest != null) {
+            listener.onAudioPlaybackRequest(audioPlaybackRequest)
+        }
+        newProject
     }.getOrElse {
         val expected = js.getOrNull("expectedError") ?: false
         js.close()
