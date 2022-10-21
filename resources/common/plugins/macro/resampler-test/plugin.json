@@ -27,9 +27,9 @@
           "ja": "合成エンジン"
         },
         "description": {
-          "en": "UTAU synthesis engine (executable file), e.g. resampler.exe",
-          "zh": "UTAU 合成引擎（可执行文件），例如 resampler.exe",
-          "ja": "UTAU 合成エンジン（実行可能ファイル），e.g. resampler.exe"
+          "en": "UTAU synthesis engine (executable file). We recommend using `MacRes` (https://github.com/titinko/macres) because we have tested it on all platforms. Please grant permissions for the executable file before using it, e.g. `chmod +x ./my_resampler`",
+          "zh": "UTAU 合成引擎（可执行文件）。我们推荐使用 `MacRes` (https://github.com/titinko/macres)，因为它在所有平台上都已经过测试。在使用之前，请为可执行文件授予权限，例如 `chmod +x ./my_resampler`",
+          "ja": "UTAU 合成エンジン（実行可能ファイル）。すべてのプラットフォームでテストされている `MacRes` (https://github.com/titinko/macres) をお勧めします。使用する前に、実行可能ファイルに権限を付与してください。e.g.`chmod +x ./my_resampler`"
         },
         "defaultValue": ""
       },
