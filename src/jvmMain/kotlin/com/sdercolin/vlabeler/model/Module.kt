@@ -145,7 +145,7 @@ data class Module(
         val index = currentIndex
         val entries = entries.toMutableList()
         val removed = requireNotNull(entries.removeAt(index))
-        val newIndex = index - 1
+        val newIndex = (index - 1).coerceAtLeast(0)
         if (labelerConf.continuous) {
             val previousIndex = index - 1
             entries.getOrNull(previousIndex)
