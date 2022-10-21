@@ -256,6 +256,9 @@ class Player(
                     line.flush()
                 }
                 writingJob?.join()
+                if (state.isPlaying) {
+                    stop()
+                }
             }
         }
     }
