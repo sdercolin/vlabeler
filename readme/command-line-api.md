@@ -4,8 +4,8 @@ This is the documentation for the custom `CommandLine` API provided in `vLabeler
 
 ### Global functions
 
-`executeCommand(...args: string[]): string` : execute a command in the command line, wait for it to finish, and return
-the output as a string. The args will be automatically wrapped by `""`.
+`executeCommand(...args: string[]): int` : execute a command in the command line, wait for it to finish, and return the
+exit code. The args will be automatically wrapped by `""`.
 
 e.g.
 
