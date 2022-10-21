@@ -14,6 +14,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.TextRange
@@ -53,6 +56,11 @@ fun SetResolutionDialog(
 
     val submitIfValid: () -> Unit = remember { { input.text.toIntOrNull()?.let { submit(it) } } }
 
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     Column {
         Spacer(Modifier.height(15.dp))
         Text(
@@ -63,6 +71,7 @@ fun SetResolutionDialog(
         Spacer(Modifier.height(20.dp))
         OutlinedTextField(
             modifier = Modifier.width(150.dp)
+                .focusRequester(focusRequester)
                 .onKeyEvent { event ->
                     if (event.isReleased(Key.Enter)) {
                         submitIfValid()
