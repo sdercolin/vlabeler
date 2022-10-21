@@ -11,9 +11,9 @@ sealed class AudioPlaybackRequest {
 
     /**
      * A request to play an audio file of wav format.
-     * @property path The audio file to play as path.
-     * @property offset The starting position of the audio file to play, in milliseconds, default to 0.
-     * @property duration The duration of the audio file to play, in milliseconds.
+     * @property path Audio file to play as path.
+     * @property offset Starting position of the audio file to play, in milliseconds, default to 0.
+     * @property duration Duration of the audio file to play, in milliseconds.
      *   If not given, the whole file will be played.
      */
     @Serializable

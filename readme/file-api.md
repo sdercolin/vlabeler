@@ -43,6 +43,16 @@ child path string.
 `readLines(encoding = 'UTF-8'): string[]` : read the content of this file as an array of lines using the specified
 encoding.
 
+`mkdir(): boolean` : create this directory, return `true` if the directory is created successfully.
+
+`mkdirs(): boolean` : create this directory and all parent directories, return `true` if the directory is created
+successfully.
+
+`delete(): boolean` : delete this file or empty directory, return `true` if the file (directory) is deleted
+successfully.
+
+`deleteRecursively(): void` : delete this file or directory recursively
+
 ### Related global functions
 
 `getNameWithoutExtension(fileName: string): string` : get the name without extension of the input string as a file name.

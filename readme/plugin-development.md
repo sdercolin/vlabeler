@@ -317,6 +317,15 @@ report({
 })
 ```
 
+### Request audio playback after execution
+
+**This feature is only available of `macro` plugins.**
+
+You can ask vLabeler to conduct audio playback after the plugin is executed successfully by
+calling `requestAudioFilePlayback(path, offset = 0, duration = null)`.
+
+See the [source code](../src/jvmMain/resources/js/request_audio_playback.js) for more details.
+
 ### Examples
 
 Check the following built-in `macro` plugins as examples:
@@ -329,6 +338,14 @@ Check the following built-in `macro` plugins as examples:
   project. You can refer to it for the usage of the `report()` function
 - [execute-scripts](../resources/common/plugins/macro/execute-scripts): Execute input scripts to edit the project. It
   can be used as a debug tool when developing a plugin.
+- [resampler-test](../resources/common/plugins/macro/resampler-test): Test the resampler synthesis of the current entry.
+  You can refer to it for the usage of the `requestAudioFilePlayback()` function and `Env`, `File`, `CommandLine` APIs
+
+## Custom API list
+
+- [Env](env-api.md): For getting some environment information, such as OS name.
+- [File](file-api.md): For accessing files.
+- [CommandLine](command-line-api.md): For executing command line programs.
 
 ## Localization
 
