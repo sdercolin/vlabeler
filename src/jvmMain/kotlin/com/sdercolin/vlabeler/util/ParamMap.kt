@@ -100,10 +100,16 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
 
     fun stripFilePaths() = ParamTypedMap(
         map.mapValues { (_, value) ->
-            if (value.type == Parameter.FileParam.Type) {
-                TypedValue(value.type, FileWithEncoding("*", null))
-            } else {
-                value
+            when (value.type) {
+                Parameter.FileParam.Type -> {
+                    TypedValue(value.type, FileWithEncoding("*", null))
+                }
+                Parameter.RawFileParam.Type -> {
+                    TypedValue(value.type, "*")
+                }
+                else -> {
+                    value
+                }
             }
         },
     )
@@ -136,6 +142,7 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
                     Parameter.EnumParam.Type -> rawValue.jsonPrimitive.content
                     Parameter.EntrySelectorParam.Type -> json.decodeFromJsonElement<EntrySelector>(rawValue)
                     Parameter.FileParam.Type -> json.decodeFromJsonElement<FileWithEncoding>(rawValue)
+                    Parameter.RawFileParam.Type -> rawValue.jsonPrimitive.content
                     else -> throw IllegalArgumentException("Unknown type: $type")
                 }
                 return TypedValue(type, value)
@@ -155,6 +162,7 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
                             Parameter.EnumParam.Type -> JsonPrimitive(value.value as String)
                             Parameter.EntrySelectorParam.Type -> json.encodeToJsonElement(value.value as EntrySelector)
                             Parameter.FileParam.Type -> json.encodeToJsonElement(value.value as FileWithEncoding)
+                            Parameter.RawFileParam.Type -> JsonPrimitive(value.value as String)
                             else -> throw IllegalArgumentException("Unknown type: ${value.type}")
                         },
                     )

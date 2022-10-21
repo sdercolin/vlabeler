@@ -463,6 +463,13 @@ private fun Params(state: BasePluginDialogState, js: JavaScript?) {
                             isError = isError,
                             enabled = enabled,
                         )
+                        is Parameter.RawFileParam -> ParamRawFileTextField(
+                            value = value as String,
+                            onValueChange = onValueChange,
+                            param = def,
+                            isError = isError,
+                            enabled = enabled,
+                        )
                     }
                 }
             }
@@ -689,6 +696,55 @@ private fun ParamFileTextField(
     }
     if (isShowingFilePicker) {
         val file = value.file?.toFile()
+        OpenFileDialog(
+            title = param.label.get(),
+            initialDirectory = file?.parent,
+            initialFileName = file?.name,
+            extensions = param.acceptExtensions,
+        ) { parent, name ->
+            isShowingFilePicker = false
+            if (parent == null || name == null) return@OpenFileDialog
+            path = File(parent, name).absolutePath
+            submit()
+        }
+    }
+}
+
+@Composable
+private fun ParamRawFileTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    param: Parameter.RawFileParam,
+    isError: Boolean,
+    enabled: Boolean,
+) {
+    var isShowingFilePicker by remember { mutableStateOf(false) }
+    var path by remember(value) { mutableStateOf(value) }
+
+    fun submit() {
+        onValueChange(path)
+    }
+
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+        TextField(
+            modifier = Modifier.weight(1f),
+            value = path,
+            onValueChange = {
+                path = it
+                submit()
+            },
+            singleLine = true,
+            isError = isError,
+            enabled = enabled,
+            trailingIcon = {
+                IconButton(onClick = { isShowingFilePicker = true }, enabled = enabled) {
+                    Icon(Icons.Default.FolderOpen, null)
+                }
+            },
+        )
+    }
+    if (isShowingFilePicker) {
+        val file = path.toFileOrNull(ensureExists = true, ensureIsFile = true)
         OpenFileDialog(
             title = param.label.get(),
             initialDirectory = file?.parent,

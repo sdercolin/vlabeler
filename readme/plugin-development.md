@@ -111,6 +111,9 @@ The object has the following properties:
 }
 ```
 
+- `rawFile`: File path as string. In the scripts, it's passed as a string value without file reading.
+
+
 ## Scripting Environment
 
 `vLabeler` uses embedded [JavaScript](https://developer.mozilla.org/ja/docs/Web/JavaScript) engine provided

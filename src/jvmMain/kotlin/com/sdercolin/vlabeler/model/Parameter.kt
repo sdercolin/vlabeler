@@ -173,6 +173,28 @@ sealed class Parameter<T : Any> {
         }
     }
 
+    @Serializable
+    @SerialName(RawFileParam.Type)
+    class RawFileParam(
+        override val name: String,
+        override val label: LocalizedJsonString,
+        override val description: LocalizedJsonString? = null,
+        override val enableIf: String? = null,
+        override val defaultValue: String,
+        val optional: Boolean = false,
+        val acceptExtensions: List<String>? = null,
+    ) : Parameter<String>() {
+
+        @Transient
+        override val type: String = Type
+
+        override fun eval(value: Any) = value is String && value.isNotEmpty()
+
+        companion object {
+            const val Type = "rawFile"
+        }
+    }
+
     fun check(value: Any, labelerConf: LabelerConf?): Boolean {
         return when (this) {
             is BooleanParam -> (value as? Boolean) != null
@@ -199,6 +221,12 @@ sealed class Parameter<T : Any> {
             is FileParam -> (value as? FileWithEncoding)?.let {
                 if (optional && it.file == null) return true
                 val file = it.file?.toFileOrNull(ensureIsFile = true) ?: return@let false
+                if (acceptExtensions != null && file.extension !in acceptExtensions) return@let false
+                true
+            } == true
+            is RawFileParam -> (value as? String)?.let { stringValue ->
+                if (optional && stringValue.isEmpty()) return true
+                val file = stringValue.toFileOrNull(ensureIsFile = true) ?: return@let false
                 if (acceptExtensions != null && file.extension !in acceptExtensions) return@let false
                 true
             } == true

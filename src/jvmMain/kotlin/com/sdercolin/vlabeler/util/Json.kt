@@ -33,6 +33,7 @@ private fun getSerializersModule() = SerializersModule {
         subclass(Parameter.EnumParam::class)
         subclass(Parameter.EntrySelectorParam::class)
         subclass(Parameter.FileParam::class)
+        subclass(Parameter.RawFileParam::class)
     }
 }
 

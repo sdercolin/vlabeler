@@ -69,6 +69,7 @@ interface BasePlugin {
                                     is Parameter.EnumParam -> element.jsonPrimitive.content
                                     is Parameter.FileParam -> json.decodeFromJsonElement<FileWithEncoding>(element)
                                     is Parameter.StringParam -> element.jsonPrimitive.content
+                                    is Parameter.RawFileParam -> element.jsonPrimitive.content
                                 }
                             }
                             ?: requireNotNull(it.defaultValue)

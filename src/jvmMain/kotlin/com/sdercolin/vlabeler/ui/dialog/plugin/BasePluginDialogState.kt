@@ -107,6 +107,7 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
     fun isParamInRow(index: Int): Boolean = when (val param = paramDefs[index]) {
         is Parameter.EntrySelectorParam -> false
         is Parameter.FileParam -> false
+        is Parameter.RawFileParam -> false
         is Parameter.StringParam -> param.multiLine.not()
         else -> true
     }
