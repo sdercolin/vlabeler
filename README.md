@@ -346,6 +346,9 @@ You can find the logs by clicking `Help` -> `Open Log Directory`, for developmen
 
 When reporting issues to us, please attach the recent log files.
 
+## App usage tracking
+Please check [App Usage Tracking](readme/tracking.md) for details.
+
 ## Known issues
 
 1. The `Scroll Canvas to Left/Right` actions in `Keymap` -> `Mouse scroll actions` cannot be changed at present.
