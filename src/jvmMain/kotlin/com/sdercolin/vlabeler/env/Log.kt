@@ -2,6 +2,8 @@ package com.sdercolin.vlabeler.env
 
 import com.sdercolin.vlabeler.hasUncaughtError
 import com.sdercolin.vlabeler.tracking.event.FatalErrorEvent
+import com.sdercolin.vlabeler.tracking.event.LocaleInfo
+import com.sdercolin.vlabeler.tracking.event.OsInfo
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.ResourcePath
 import java.io.File
@@ -52,6 +54,7 @@ object Log {
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
             hasUncaughtError = true
             error("Uncaught exception in Thread ${t.name}: ${e.stackTraceToString()}")
+            fatal(e)
         }
 
         info("Log initialized")
@@ -84,20 +87,23 @@ object Log {
         infoLogger.severe(message)
         errorLogger.severe(message)
         errorStreamHandler.flush()
-        fatalErrorTracker?.track(
-            FatalErrorEvent(
-                appVersion = appVersion.toString(),
-                runtime = runtimeVersion.toString(),
-                os = osInfo,
-                isDebug = isDebug,
-                locale = Locale.toString(),
-                error = message,
-            ),
-        )
     }
 
     fun error(exception: Throwable) {
         error(exception.stackTraceToString())
+    }
+
+    private fun fatal(exception: Throwable) {
+        fatalErrorTracker?.track(
+            FatalErrorEvent(
+                appVersion = appVersion.toString(),
+                runtime = runtimeVersion.toString(),
+                os = OsInfo.get(),
+                isDebug = isDebug,
+                locale = LocaleInfo.get(),
+                error = exception.stackTraceToString(),
+            ),
+        )
     }
 
     var fatalErrorTracker: FatalErrorTracker? = null

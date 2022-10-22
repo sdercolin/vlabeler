@@ -27,11 +27,9 @@ import androidx.compose.ui.window.rememberWindowState
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
-import com.sdercolin.vlabeler.env.Locale
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.appVersion
 import com.sdercolin.vlabeler.env.isDebug
-import com.sdercolin.vlabeler.env.osInfo
 import com.sdercolin.vlabeler.env.runtimeVersion
 import com.sdercolin.vlabeler.io.ensureDirectories
 import com.sdercolin.vlabeler.io.loadAppConf
@@ -39,6 +37,8 @@ import com.sdercolin.vlabeler.io.produceAppState
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.tracking.event.LaunchEvent
+import com.sdercolin.vlabeler.tracking.event.LocaleInfo
+import com.sdercolin.vlabeler.tracking.event.OsInfo
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
@@ -207,9 +207,9 @@ private fun LaunchTrackingLaunch(appState: AppState) {
             LaunchEvent(
                 appVersion = appVersion.toString(),
                 runtime = runtimeVersion?.toString().orEmpty(),
-                os = osInfo,
+                os = OsInfo.get(),
                 isDebug = isDebug,
-                locale = Locale.toString(),
+                locale = LocaleInfo.get(),
             ),
         )
     }

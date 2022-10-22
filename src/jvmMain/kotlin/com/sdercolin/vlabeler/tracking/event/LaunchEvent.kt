@@ -7,9 +7,9 @@ import kotlinx.serialization.Transient
 data class LaunchEvent(
     val appVersion: String,
     val runtime: String,
-    val os: String,
+    val os: OsInfo,
     val isDebug: Boolean,
-    val locale: String,
+    val locale: LocaleInfo,
 ) : TrackingEvent() {
 
     @Transient
