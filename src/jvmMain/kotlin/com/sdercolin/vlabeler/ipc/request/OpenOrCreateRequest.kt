@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.model.projectOf
 import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.encodingNameEquals
+import com.sdercolin.vlabeler.util.resolve
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFileOrNull
 import com.sdercolin.vlabeler.util.toParamTypedMap
@@ -67,20 +68,21 @@ class OpenOrCreateRequest(
                 ?.takeIf { it.parentFile?.exists() == true && it.parentFile?.isDirectory == true }
                 ?.absolutePath
                 ?: Project.getDefaultCacheDirectory(workingDirectory, projectName)
-
+            val labelerConf = availableLabelers.find { it.name == labelerName }
+                ?: return Result.failure(IllegalArgumentException("Labeler $labelerName not found"))
+            val plugin = if (pluginName != null) {
+                availableTemplatePlugins.find { it.name == pluginName }
+                    ?: return Result.failure(IllegalArgumentException("Template plugin $pluginName not found"))
+            } else null
             return projectOf(
                 sampleDirectory = sampleDirectory,
                 workingDirectory = workingDirectory,
                 projectName = projectName,
                 cacheDirectory = cacheDirectory,
-                labelerConf = availableLabelers.find { it.name == labelerName }
-                    ?: return Result.failure(IllegalArgumentException("Labeler $labelerName not found")),
-                labelerParams = labelerParams?.toParamTypedMap()?.toParamMap(),
-                plugin = if (pluginName != null) {
-                    availableTemplatePlugins.find { it.name == pluginName }
-                        ?: return Result.failure(IllegalArgumentException("Template plugin $pluginName not found"))
-                } else null,
-                pluginParams = pluginParams?.toParamTypedMap()?.toParamMap(),
+                labelerConf = labelerConf,
+                labelerParams = labelerParams?.toParamTypedMap().resolve(labelerConf),
+                plugin = plugin,
+                pluginParams = plugin?.let { pluginParams?.toParamTypedMap().resolve(it) },
                 inputFilePath = inputFile,
                 encoding = AvailableEncodings.find { encodingNameEquals(it, encoding) }
                     ?: Charset.defaultCharset().name,

@@ -4,8 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
-import com.sdercolin.vlabeler.util.orEmpty
-import com.sdercolin.vlabeler.util.toParamMap
+import com.sdercolin.vlabeler.util.resolve
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -18,16 +17,10 @@ data class PluginQuickLaunch(
     val skipDialog: Boolean = false,
 ) {
 
-    fun getMergedParams(plugin: Plugin): ParamMap {
-        val savedParams = params?.toParamMap().orEmpty()
-        val mergedParams = plugin.parameterDefs.associate {
-            it.name to (savedParams[it.name] ?: it.defaultValue)
-        }
-        return mergedParams.toParamMap()
-    }
+    fun getMergedParams(plugin: Plugin): ParamMap = params.resolve(plugin)
 
-    fun checkParamsValid(plugin: Plugin, labelerConf: LabelerConf?): Boolean {
-        val savedParams = params?.toParamMap().orEmpty()
+    private fun checkParamsValid(plugin: Plugin, labelerConf: LabelerConf?): Boolean {
+        val savedParams = params.resolve(plugin)
         return plugin.parameterDefs.all { def ->
             def.check(savedParams[def.name] ?: def.defaultValue, labelerConf)
         }
@@ -40,11 +33,11 @@ data class PluginQuickLaunch(
         if (skipDialog && allValid) {
             appState.mainScope.launch(Dispatchers.IO) {
                 appState.showProgress()
-                appState.executeMacroPlugin(plugin, mergedParams.toParamMap(), slot)
+                appState.executeMacroPlugin(plugin, mergedParams, slot)
                 appState.hideProgress()
             }
         } else {
-            appState.openMacroPluginDialogFromSlot(plugin, mergedParams.toParamMap(), slot)
+            appState.openMacroPluginDialogFromSlot(plugin, mergedParams, slot)
         }
     }
 

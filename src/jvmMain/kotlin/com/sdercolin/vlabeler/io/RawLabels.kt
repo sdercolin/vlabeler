@@ -12,9 +12,9 @@ import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.matchGroups
-import com.sdercolin.vlabeler.util.orEmpty
 import com.sdercolin.vlabeler.util.readTextByEncoding
 import com.sdercolin.vlabeler.util.replaceWithVariables
+import com.sdercolin.vlabeler.util.resolve
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
 import java.io.File
 
@@ -22,7 +22,7 @@ fun moduleFromRawLabels(
     sources: List<String>,
     inputFile: File?,
     labelerConf: LabelerConf,
-    labelerParams: ParamMap?,
+    labelerParams: ParamMap,
     sampleFiles: List<File>,
     encoding: String,
     legacyMode: Boolean,
@@ -91,7 +91,7 @@ fun moduleFromRawLabels(
 fun moduleGroupFromRawLabels(
     definitionGroup: List<ModuleDefinition>,
     labelerConf: LabelerConf,
-    labelerParams: ParamMap?,
+    labelerParams: ParamMap,
     encoding: String,
 ): List<List<Entry>> {
     val inputFileNames = definitionGroup.first().inputFiles.orEmpty().map { it.name }
@@ -121,7 +121,7 @@ fun moduleGroupFromRawLabels(
 }
 
 private fun prepareJsForParsing(
-    labelerParams: ParamMap?,
+    labelerParams: ParamMap,
     inputFileNames: List<String>,
     sampleFileNames: List<String>,
     encoding: String,
@@ -134,7 +134,7 @@ private fun prepareJsForParsing(
         Resources.fileJs,
     ).forEach { js.execResource(it) }
     js.set("debug", isDebug)
-    js.setJson("params", labelerParams.orEmpty().resolve(project = null, js = js))
+    js.setJson("params", labelerParams.resolve(project = null, js = js))
     js.setJson("inputFileNames", inputFileNames)
     js.setJson("sampleFileNames", sampleFileNames)
     js.set("encoding", encoding)
@@ -197,7 +197,7 @@ private fun Project.prepareJsForWriting(): JavaScript {
         Resources.fileJs,
     ).forEach { js.execResource(it) }
     js.set("debug", isDebug)
-    js.setJson("params", labelerParams?.toParamMap().orEmpty().resolve(project = null, js = js))
+    js.setJson("params", labelerParams.resolve(labelerConf).resolve(project = null, js = js))
     return js
 }
 

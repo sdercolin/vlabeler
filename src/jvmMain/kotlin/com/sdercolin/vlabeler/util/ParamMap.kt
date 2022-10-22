@@ -2,10 +2,12 @@
 
 package com.sdercolin.vlabeler.util
 
+import com.sdercolin.vlabeler.model.BasePlugin
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.FileWithEncoding
 import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.util.ParamTypedMap.TypedValue
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -28,7 +30,8 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
- * Serializable dynamic type map
+ * Serializable dynamic type map.
+ * Basically it should contain all the parameters of a [BasePlugin].
  */
 class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
 
@@ -90,13 +93,16 @@ class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
     }
 }
 
+/**
+ * Serializable dynamic type map with [TypedValue].
+ * We don't expect it to contain all the parameters of a [BasePlugin], instead, when it's actually used,
+ * it will be converted to a [ParamMap] with [resolve], which will fill all the missing parameters with default values.
+ */
 @Serializable
 class ParamTypedMap(private val map: Map<String, TypedValue>) {
 
     @Serializable(with = TypedValueSerializer::class)
     class TypedValue(val type: String, val value: Any)
-
-    fun toParamMap() = ParamMap(map.mapValues { it.value.value })
 
     fun stripFilePaths() = ParamTypedMap(
         map.mapValues { (_, value) ->
@@ -114,9 +120,12 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
         },
     )
 
+    fun get(key: String): TypedValue? = map[key]
+
     companion object {
 
-        fun from(paramMap: ParamMap, paramDefs: List<Parameter<*>>): ParamTypedMap? {
+        fun from(paramMap: ParamMap?, paramDefs: List<Parameter<*>>): ParamTypedMap? {
+            if (paramMap == null) return null
             val map = mutableMapOf<String, TypedValue>()
             for ((key, value) in paramMap) {
                 val paramDef = paramDefs.find { it.name == key }
@@ -174,17 +183,11 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
 }
 
 fun Map<String, Any>.toParamMap() = ParamMap(this)
-fun ParamMap.mergeDefaults(defaultMap: Map<String, Any>): ParamMap {
-    val result = this.toMutableMap()
-    for ((key, value) in defaultMap) {
-        if (!result.containsKey(key)) {
-            result[key] = value
-        }
-    }
-    return result.toParamMap()
-}
-
-fun Map<String, ParamTypedMap.TypedValue>.toParamTypedMap() = ParamTypedMap(this)
+fun Map<String, TypedValue>.toParamTypedMap() = ParamTypedMap(this)
 
 fun ParamMap?.orEmpty() = this ?: ParamMap(mapOf())
 fun ParamTypedMap?.orEmpty() = this ?: ParamTypedMap(mapOf())
+
+fun ParamTypedMap?.resolve(plugin: BasePlugin): ParamMap = plugin.parameterDefs
+    .associate { it.name to (this?.get(it.name)?.value ?: it.defaultValue) }
+    .toParamMap()

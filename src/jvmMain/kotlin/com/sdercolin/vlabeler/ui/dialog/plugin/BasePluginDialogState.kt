@@ -2,12 +2,14 @@ package com.sdercolin.vlabeler.ui.dialog.plugin
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.BasePlugin
 import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.toParamMap
 import com.sdercolin.vlabeler.util.toUri
 import java.awt.Desktop
@@ -17,7 +19,11 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
     protected abstract val savedParamMap: ParamMap?
     abstract val project: Project?
     protected abstract val submit: (ParamMap?) -> Unit
+    protected abstract val load: (ParamMap) -> Unit
     protected abstract val save: (ParamMap) -> Unit
+    protected abstract suspend fun import(target: BasePluginPresetTarget)
+    protected abstract suspend fun export(params: ParamMap, target: BasePluginPresetTarget)
+    protected abstract val showSnackbar: suspend (String) -> Unit
 
     val paramDefs: List<Parameter<*>> get() = basePlugin.parameterDefs
     val params = mutableStateListOf(*paramMap.map { it.value }.toTypedArray())
@@ -111,4 +117,22 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
         is Parameter.StringParam -> param.multiLine.not()
         else -> true
     }
+
+    protected fun getDefaultPresetTargets(): List<BasePluginPresetItem> = listOf(
+        BasePluginPresetItem.Memory(
+            preset = BasePluginPreset(
+                pluginName = basePlugin.name,
+                pluginVersion = basePlugin.version,
+                params = ParamTypedMap.from(savedParamMap, basePlugin.parameterDefs),
+            ),
+            slot = null,
+            isCurrent = true,
+            available = true,
+        ),
+        BasePluginPresetItem.File,
+    )
+
+    open fun getImportablePresets(record: AppRecord): List<BasePluginPresetItem> = getDefaultPresetTargets()
+
+    open fun getExportablePresets(record: AppRecord): List<BasePluginPresetItem> = getDefaultPresetTargets()
 }

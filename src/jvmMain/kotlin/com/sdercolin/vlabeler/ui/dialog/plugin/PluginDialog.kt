@@ -97,21 +97,29 @@ import java.io.File
 @Composable
 private fun rememberPluginDialogState(
     plugin: Plugin,
+    appRecordStore: AppRecordStore,
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
     project: Project?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
+    load: (ParamMap) -> Unit,
+    showSnackbar: suspend (String) -> Unit,
     executable: Boolean,
-) = remember(plugin, paramMap, savedParamMap, submit, save) {
+    slot: Int?,
+) = remember(plugin, paramMap, savedParamMap, submit, save, load) {
     PluginDialogState(
-        plugin,
-        paramMap,
-        savedParamMap,
-        project,
-        submit,
-        save,
-        executable,
+        plugin = plugin,
+        appRecordStore = appRecordStore,
+        paramMap = paramMap,
+        savedParamMap = savedParamMap,
+        project = project,
+        submit = submit,
+        save = save,
+        load = load,
+        showSnackbar = showSnackbar,
+        executable = executable,
+        slot = slot,
     )
 }
 
@@ -124,17 +132,23 @@ fun TemplatePluginDialog(
     savedParamMap: ParamMap?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
+    load: (ParamMap) -> Unit,
+    showSnackbar: suspend (String) -> Unit,
 ) = PluginDialog(
     appConf = appConf,
     appRecordStore = appRecordStore,
     state = rememberPluginDialogState(
         plugin = plugin,
+        appRecordStore = appRecordStore,
         paramMap = paramMap,
         savedParamMap = savedParamMap,
         project = null,
         submit = submit,
         save = save,
+        load = load,
+        showSnackbar = showSnackbar,
         executable = false,
+        slot = null,
     ),
 )
 
@@ -153,18 +167,24 @@ fun MacroPluginDialog(
     project: Project?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
+    load: (ParamMap) -> Unit,
+    showSnackbar: suspend (String) -> Unit,
     executable: Boolean = true,
 ) = PluginDialog(
     appConf = appConf,
     appRecordStore = appRecordStore,
     state = rememberPluginDialogState(
         plugin = args.plugin,
+        appRecordStore = appRecordStore,
         paramMap = args.paramMap,
         savedParamMap = args.paramMap,
         project = project,
         submit = submit,
         save = save,
+        load = load,
+        showSnackbar = showSnackbar,
         executable = executable,
+        slot = args.slot,
     ),
 )
 
@@ -175,13 +195,17 @@ private fun rememberLabelerDialogState(
     savedParamMap: ParamMap?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
-) = remember(labeler, paramMap, savedParamMap, submit, save) {
+    load: (ParamMap) -> Unit,
+    showSnackbar: suspend (String) -> Unit,
+) = remember(labeler, paramMap, savedParamMap, submit, save, load) {
     LabelerDialogState(
         labeler = labeler,
         paramMap = paramMap,
         savedParamMap = savedParamMap,
         submit = submit,
         save = save,
+        load = load,
+        showSnackbar = showSnackbar,
     )
 }
 
@@ -194,6 +218,8 @@ fun LabelerPluginDialog(
     savedParamMap: ParamMap,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
+    load: (ParamMap) -> Unit,
+    showSnackbar: suspend (String) -> Unit,
 ) = PluginDialog(
     appConf = appConf,
     appRecordStore = appRecordStore,
@@ -203,6 +229,8 @@ fun LabelerPluginDialog(
         savedParamMap = savedParamMap,
         submit = submit,
         save = save,
+        load = load,
+        showSnackbar = showSnackbar,
     ),
 )
 

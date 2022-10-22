@@ -5,13 +5,13 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.exception.PluginUnexpectedRuntimeException
-import com.sdercolin.vlabeler.io.getResolvedParamsWithDefaults
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.resolve
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.Serializable
 
@@ -35,7 +35,7 @@ fun runMacroPlugin(
 
         js.set("debug", isDebug)
         js.setJson("labeler", project.labelerConf)
-        val labelerParams = project.labelerConf.getResolvedParamsWithDefaults(project.labelerParams?.toParamMap(), js)
+        val labelerParams = project.labelerParams.resolve(project.labelerConf).resolve(project, js)
         js.setJson("labelerParams", labelerParams)
         js.setJson("params", params.resolve(project, js))
         js.setJson("resources", resourceTexts)

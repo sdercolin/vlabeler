@@ -51,7 +51,6 @@ import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
-import com.sdercolin.vlabeler.util.orEmpty
 
 @Composable
 private fun rememberState(appState: AppState) = remember(appState) {
@@ -92,9 +91,9 @@ class QuickLaunchManagerDialogState(private val appState: AppState) {
         save(slot, new)
     }
 
-    fun setSlotParams(slot: Int, plugin: Plugin, params: ParamMap?) {
+    fun setSlotParams(slot: Int, plugin: Plugin, params: ParamMap) {
         val existing = slots[slot] ?: return
-        val new = existing.copy(params = ParamTypedMap.from(params.orEmpty(), plugin.parameterDefs))
+        val new = existing.copy(params = ParamTypedMap.from(params, plugin.parameterDefs))
         save(slot, new)
     }
 
@@ -115,6 +114,10 @@ class QuickLaunchManagerDialogState(private val appState: AppState) {
 
     fun openKeymap() {
         appState.openPreferencesDialog(PreferencesEditorState.LaunchArgs.Keymap("Launch Plugin Slot"))
+    }
+
+    suspend fun showSnackbar(message: String) {
+        appState.showSnackbar(message)
     }
 }
 
@@ -190,7 +193,8 @@ private fun ColumnScope.Content(state: QuickLaunchManagerDialogState) {
 
 @Composable
 private fun Item(index: Int, state: QuickLaunchManagerDialogState) {
-    val quickLaunch = state.getSlot(index)
+    val savedQuickLaunch = state.getSlot(index)
+    var quickLaunch by remember(savedQuickLaunch) { mutableStateOf(savedQuickLaunch) }
     val plugin = quickLaunch?.let { state.findPlugin(it) }
     var isPluginDialogShown by remember { mutableStateOf(false) }
     Row(
@@ -206,7 +210,9 @@ private fun Item(index: Int, state: QuickLaunchManagerDialogState) {
         Spacer(modifier = Modifier.width(20.dp))
         Box(modifier = Modifier.weight(1f)) {
             var expanded by remember { mutableStateOf(false) }
-            val text = if (quickLaunch == null) "" else plugin?.displayedName?.get() ?: quickLaunch.pluginName
+            val text = quickLaunch?.let {
+                plugin?.displayedName?.get() ?: it.pluginName
+            }.orEmpty()
             val color = if (quickLaunch != null && plugin == null) {
                 MaterialTheme.colors.error
             } else {
@@ -269,12 +275,17 @@ private fun Item(index: Int, state: QuickLaunchManagerDialogState) {
                 appRecordStore = state.appRecordStore,
                 args = MacroPluginDialogArgs(
                     plugin = plugin,
-                    paramMap = quickLaunch.getMergedParams(plugin),
+                    paramMap = requireNotNull(quickLaunch).getMergedParams(plugin),
                     slot = index,
                 ),
                 project = state.project,
                 save = { params ->
                     state.setSlotParams(index, plugin, params)
+                },
+                load = {
+                    quickLaunch = requireNotNull(quickLaunch).copy(
+                        params = ParamTypedMap.from(it, plugin.parameterDefs),
+                    )
                 },
                 submit = { params ->
                     if (params != null) {
@@ -282,6 +293,7 @@ private fun Item(index: Int, state: QuickLaunchManagerDialogState) {
                     }
                     isPluginDialogShown = false
                 },
+                showSnackbar = { state.showSnackbar(it) },
                 executable = false,
             )
         } else {

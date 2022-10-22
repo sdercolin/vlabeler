@@ -110,17 +110,17 @@ private fun generateEntriesByPlugin(
     rootSampleDirectory: String,
     moduleDefinition: ModuleDefinition,
     labelerConf: LabelerConf,
-    labelerParams: ParamMap?,
+    labelerParams: ParamMap,
     sampleFiles: List<File>,
     plugin: Plugin,
-    params: ParamMap?,
+    params: ParamMap,
     inputFiles: List<File>,
     encoding: String,
 ): Result<List<Entry>> = runCatching {
     when (
         val result = runTemplatePlugin(
             plugin = plugin,
-            params = params.orEmpty(),
+            params = params,
             inputFiles = inputFiles,
             encoding = encoding,
             sampleFiles = sampleFiles,
@@ -234,7 +234,7 @@ suspend fun projectOf(
     projectName: String,
     cacheDirectory: String,
     labelerConf: LabelerConf,
-    labelerParams: ParamMap?,
+    labelerParams: ParamMap,
     plugin: Plugin?,
     pluginParams: ParamMap?,
     inputFilePath: String?,
@@ -255,7 +255,7 @@ suspend fun projectOf(
             Resources.moduleDefinitionJs,
             Resources.prepareBuildProjectJs,
         ).forEach { js.execResource(it) }
-        labelerParams?.resolve(project = null, js = js)?.let { js.setJson("params", it) }
+        labelerParams.resolve(project = null, js = js).let { js.setJson("params", it) }
         labelerConf.projectConstructor.scripts.joinToString("\n").let { js.eval(it) }
         val modules = js.getJson<List<RawModuleDefinition>>("modules")
         js.close()
@@ -282,10 +282,10 @@ suspend fun projectOf(
         return Result.failure(InvalidCreatedProjectException(it))
     }
 
-    val labelerTypedParams = labelerParams?.let { ParamTypedMap.from(it, labelerConf.parameterDefs) }
+    val labelerTypedParams = labelerParams.let { ParamTypedMap.from(it, labelerConf.parameterDefs) }
 
     return runCatching {
-        val injectedLabelerConf = labelerParams?.let { labelerConf.injectLabelerParams(it) } ?: labelerConf
+        val injectedLabelerConf = labelerParams.let { labelerConf.injectLabelerParams(it) }
 
         require(modules.isNotEmpty()) {
             "No entries were found for any module"
@@ -314,7 +314,7 @@ private fun parseModule(
     plugin: Plugin?,
     sampleDirectory: String,
     labelerConf: LabelerConf,
-    labelerParams: ParamMap?,
+    labelerParams: ParamMap,
     pluginParams: ParamMap?,
     encoding: String,
 ): List<Module> {
@@ -342,7 +342,7 @@ private fun parseSingleModule(
     plugin: Plugin?,
     sampleDirectory: String,
     labelerConf: LabelerConf,
-    labelerParams: ParamMap?,
+    labelerParams: ParamMap,
     pluginParams: ParamMap?,
     encoding: String,
 ) = moduleDefinitions.mapNotNull { def ->
@@ -356,7 +356,7 @@ private fun parseSingleModule(
                 labelerParams = labelerParams,
                 sampleFiles = def.sampleFiles,
                 plugin = plugin,
-                params = pluginParams,
+                params = requireNotNull(pluginParams),
                 inputFiles = def.inputFiles.orEmpty().filter { it.exists() },
                 encoding = encoding,
             ).getOrThrow()
@@ -395,7 +395,7 @@ private fun parseModuleGroup(
     moduleDefinitionGroup: List<ModuleDefinition>,
     // TODO: plugin: Plugin?,
     labelerConf: LabelerConf,
-    labelerParams: ParamMap?,
+    labelerParams: ParamMap,
     // TODO: pluginParams: ParamMap?,
     encoding: String,
 ): List<Module> {

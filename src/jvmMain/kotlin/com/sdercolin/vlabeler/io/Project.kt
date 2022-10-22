@@ -14,6 +14,7 @@ import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.clearCache
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.resolve
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
@@ -95,7 +96,7 @@ suspend fun awaitLoadProject(
     val labelerConf = if (project.labelerParams == null) {
         originalLabelerConf
     } else {
-        runCatching { originalLabelerConf.injectLabelerParams(project.labelerParams.toParamMap()) }
+        runCatching { originalLabelerConf.injectLabelerParams(project.labelerParams.resolve(originalLabelerConf)) }
             .getOrElse {
                 appState.showError(ProjectParseException(it))
                 appState.hideProgress()

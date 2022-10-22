@@ -143,6 +143,8 @@ fun App(
                         )
                     }
                 },
+                load = { appState.updateMacroPluginDialogInputParams(it) },
+                showSnackbar = { appState.showSnackbar(it) },
             )
         }
         appState.macroPluginReport?.let { report ->

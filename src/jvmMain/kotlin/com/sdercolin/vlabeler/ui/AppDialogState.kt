@@ -27,7 +27,6 @@ import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesEditorState
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.clearCache
-import com.sdercolin.vlabeler.util.orEmpty
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CancellationException
@@ -385,7 +384,7 @@ class AppDialogStateImpl(
     }
 
     override fun openMacroPluginDialogFromSlot(plugin: Plugin, params: ParamMap?, slot: Int) {
-        macroPluginShownInDialog = MacroPluginDialogArgs(plugin, params.orEmpty(), slot)
+        macroPluginShownInDialog = MacroPluginDialogArgs(plugin, params ?: plugin.getDefaultParams(), slot)
     }
 
     override fun updateMacroPluginDialogInputParams(params: ParamMap) {

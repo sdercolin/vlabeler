@@ -36,7 +36,7 @@ import java.io.File
 class ProjectCreatorState(
     private val appState: AppState,
     private val coroutineScope: CoroutineScope,
-    private val labelerConfs: List<LabelerConf>,
+    labelerConfs: List<LabelerConf>,
     val appRecordStore: AppRecordStore,
 ) {
     val appConf get() = appState.appConf
@@ -417,6 +417,10 @@ class ProjectCreatorState(
         }
     }
 
+    suspend fun showSnackBar(message: String) {
+        appState.showSnackbar(message)
+    }
+
     @Composable
     fun getSupportedPlugins(plugins: List<Plugin>) = plugins
         .filter { it.type == Plugin.Type.Template }
@@ -447,7 +451,8 @@ class ProjectCreatorState(
                     labelerName = this@ProjectCreatorState.labeler.name,
                 )
             }
-            labelerParams?.let { saveLabelerParams(it) }
+            val labelerParams = requireNotNull(labelerParams)
+            saveLabelerParams(labelerParams)
             templatePluginParams?.let { savePluginParams(it) }
             val project = projectOf(
                 sampleDirectory = sampleDirectory,

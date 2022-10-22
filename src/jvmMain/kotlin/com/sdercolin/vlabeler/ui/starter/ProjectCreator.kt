@@ -249,6 +249,8 @@ private fun LabelerSelectorRow(
                 labelerDialogShown = false
             },
             save = { state.saveLabelerParams(it) },
+            load = { state.updateLabelerParams(it) },
+            showSnackbar = { state.showSnackBar(it) },
         )
     }
     if (pluginDialogShown) {
@@ -262,7 +264,9 @@ private fun LabelerSelectorRow(
                 if (it != null) state.updatePluginParams(it)
                 pluginDialogShown = false
             },
+            load = { state.updatePluginParams(it) },
             save = { state.savePluginParams(it) },
+            showSnackbar = { state.showSnackBar(it) },
         )
     }
 }
