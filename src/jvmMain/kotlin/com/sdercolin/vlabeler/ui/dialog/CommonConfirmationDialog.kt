@@ -86,7 +86,7 @@ fun CommonConfirmationDialog(
                 Text(string(Strings.CommonCancel))
             }
             Spacer(Modifier.width(25.dp))
-            ConfirmButton(onClick = confirm, useEnterKey = true)
+            ConfirmButton(onClick = confirm, autoFocus = true)
         }
     }
 }

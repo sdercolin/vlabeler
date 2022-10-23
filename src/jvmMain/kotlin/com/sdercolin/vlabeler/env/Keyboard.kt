@@ -5,13 +5,11 @@ package com.sdercolin.vlabeler.env
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -98,11 +96,3 @@ fun KeyEvent.isReleased(key: ActualKey) = released && this.key == key
 val KeyEvent.isNativeCtrlPressed get() = if (isMacOS) isMetaPressed else isCtrlPressed
 val KeyEvent.isNativeMetaPressed get() = if (isMacOS) isCtrlPressed else isMetaPressed
 val KeyEvent.released get() = type == KeyEventType.KeyUp
-fun Modifier.onEnterKey(action: () -> Unit) = onKeyEvent {
-    if (it.isReleased(ActualKey.Enter)) {
-        action()
-        true
-    } else {
-        false
-    }
-}

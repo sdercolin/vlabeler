@@ -8,7 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import com.sdercolin.vlabeler.env.onEnterKey
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
@@ -18,15 +17,15 @@ fun ConfirmButton(
     text: String = string(Strings.CommonOkay),
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
-    useEnterKey: Boolean = false,
+    autoFocus: Boolean = false,
 ) {
-    if (useEnterKey) {
+    if (autoFocus) {
         val focusRequester = remember { FocusRequester() }
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
         }
         Button(
-            modifier = modifier.focusRequester(focusRequester).onEnterKey { if (enabled) onClick() },
+            modifier = modifier.focusRequester(focusRequester),
             onClick = { onClick() },
             enabled = enabled,
         ) {
