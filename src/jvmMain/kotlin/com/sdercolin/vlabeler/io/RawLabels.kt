@@ -163,7 +163,7 @@ fun Project.singleModuleToRawLabels(moduleIndex: Int): String {
             val extras = labelerConf.getExtraMap(entry)
             val properties = labelerConf.getPropertyMap(fields, extras, js)
             val variables: Map<String, Any> =
-                fields.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
+                fields.mapValues { (it.value as? Float)?.roundToDecimalDigit(labelerConf.decimalDigit) ?: it.value } +
                     // if a name is shared in fields and properties, its value will be overwritten by properties
                     // See source of Kotlin's `fun Map<out K, V>.plus(map: Map<out K, V>)`
                     properties.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
@@ -205,6 +205,7 @@ private fun LabelerConf.getFieldMap(entry: Entry) =
     mapOf(
         "start" to entry.start,
         "end" to entry.end,
+        "needSync" to entry.needSync,
     ) + fields.mapIndexed { index, field ->
         field.name to entry.points[index]
     }.toMap()
@@ -213,13 +214,13 @@ private fun LabelerConf.getExtraMap(entry: Entry) = extraFieldNames.mapIndexed {
     name to entry.extras[index]
 }.toMap()
 
-private fun LabelerConf.getPropertyBaseMap(fields: Map<String, Float>, extras: Map<String, String>, js: JavaScript) =
+private fun LabelerConf.getPropertyBaseMap(fields: Map<String, Any>, extras: Map<String, String>, js: JavaScript) =
     properties.associateWith {
         val expression = it.value.replaceWithVariables(fields + extras)
         js.eval(expression)!!.asDouble()
     }
 
-private fun LabelerConf.getPropertyMap(fields: Map<String, Float>, extras: Map<String, String>, js: JavaScript) =
+private fun LabelerConf.getPropertyMap(fields: Map<String, Any>, extras: Map<String, String>, js: JavaScript) =
     getPropertyBaseMap(fields, extras, js).mapKeys { it.key.name }
 
 fun LabelerConf.getPropertyMap(entry: Entry, js: JavaScript) =

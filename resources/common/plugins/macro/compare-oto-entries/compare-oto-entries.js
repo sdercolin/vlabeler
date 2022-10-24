@@ -67,7 +67,8 @@ let baseEntries = base.split("\n").map(line => line.trim()).filter(line => line 
         if (hasLeft) {
             points.push(left)
         }
-        return new Entry(sample, name, start, end, points, extras)
+        let needSync = right >= 0
+        return new Entry(sample, name, start, end, points, extras, new Notes(), needSync)
     } catch (e) {
         error({
             en: `Invalid input line: ${line}`,

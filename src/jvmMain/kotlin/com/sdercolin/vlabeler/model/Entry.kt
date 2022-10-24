@@ -44,6 +44,10 @@ data class Entry(
      * Other properties of an entry which are only used in vLabeler
      */
     val notes: EntryNotes = EntryNotes(),
+    /**
+     * Whether the entry need to be updated with the sample file
+     */
+    val needSync: Boolean = false,
 ) {
 
     fun starToggled() = copy(notes = notes.copy(star = !notes.star))
@@ -62,6 +66,7 @@ data class Entry(
         val notes: EntryNotes? = null,
         // for backward compatibility
         val meta: EntryNotes? = null,
+        val needSync: Boolean = false,
     ) {
 
         fun toEntry() = Entry(
@@ -72,6 +77,7 @@ data class Entry(
             points = points,
             extras = extras,
             notes = notes ?: meta ?: EntryNotes(),
+            needSync = needSync,
         )
     }
 

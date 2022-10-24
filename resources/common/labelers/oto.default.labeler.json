@@ -1,6 +1,6 @@
 {
   "name": "oto-plus.default",
-  "version": 16,
+  "version": 17,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -153,7 +153,7 @@
         "zh": "右边界",
         "ja": "右ブランク"
       },
-      "value": "{end} > 0 ? {left} - {end} : parseFloat({rawRight})"
+      "value": "{needSync} ? parseFloat({rawRight}) : {left} - {end}"
     }
   ],
   "parser": {
@@ -220,7 +220,8 @@
       "points.push(preu + left)",
       "points.push(ovl + left)",
       "points.push(left)",
-      "entry = new Entry(sample, name, start, end, points, extras)"
+      "needSync = right >= 0",
+      "entry = new Entry(sample, name, start, end, points, extras, new Notes(), needSync)"
     ]
   },
   "writer": {

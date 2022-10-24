@@ -184,7 +184,7 @@ Put items in the following type to the `output` list (the class is defined befor
 
 ```javascript
 class Entry {
-    constructor(sample, name, start, end, points, extras, notes = new Notes()) {
+    constructor(sample, name, start, end, points, extras, notes = new Notes(), needSync = false) {
         this.sample = sample // sample file name
         this.name = name // entry name (alias)
         this.start = start // float value in millisecond
@@ -192,6 +192,8 @@ class Entry {
         this.points = points // list of float values in millisecond
         this.extras = extras // list of string values
         this.notes = notes // info including "done", "starred" and tag
+        this.needSync = needSync // set true if the entry needs to be updated with the sample's length,
+                                 // typically for UTAU entries with non-negative cutoff values.
     }
 }
 

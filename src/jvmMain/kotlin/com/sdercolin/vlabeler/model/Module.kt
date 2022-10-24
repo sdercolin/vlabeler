@@ -80,10 +80,10 @@ data class Module(
         val entries = entries.toMutableList()
         val changedEntries = entries.withIndex()
             .filter { it.value.sample == sampleInfo.name }
-            .filter { entry -> currentEntryGroup.none { it.index == entry.index + 1 } && entry.value.end <= 0f }
+            .filter { entry -> entry.value.needSync && entry.value.end <= 0f }
             .map {
                 val end = sampleInfo.lengthMillis + it.value.end
-                it.copy(value = it.value.copy(end = end))
+                it.copy(value = it.value.copy(end = end, needSync = false))
             }
         if (changedEntries.isEmpty()) return this
         changedEntries.forEach { entries[it.index] = it.value }
