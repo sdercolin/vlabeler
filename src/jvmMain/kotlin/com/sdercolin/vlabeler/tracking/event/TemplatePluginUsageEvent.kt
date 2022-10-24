@@ -1,13 +1,13 @@
 package com.sdercolin.vlabeler.tracking.event
 
-import com.sdercolin.vlabeler.util.ParamTypedMap
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 @Serializable
 data class TemplatePluginUsageEvent(
-    val plugin: BasePluginBox,
-    val params: ParamTypedMap,
+    val pluginName: String,
+    val pluginNameVer: String,
+    val params: String,
 ) : TrackingEvent() {
 
     @Transient

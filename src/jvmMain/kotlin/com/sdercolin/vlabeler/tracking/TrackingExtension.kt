@@ -1,10 +1,8 @@
 package com.sdercolin.vlabeler.tracking
 
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.BasePlugin
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
-import com.sdercolin.vlabeler.tracking.event.BasePluginBox
 import com.sdercolin.vlabeler.tracking.event.CreateProjectEvent
 import com.sdercolin.vlabeler.tracking.event.MacroPluginUsageEvent
 import com.sdercolin.vlabeler.tracking.event.SaveAppConfEvent
@@ -14,39 +12,39 @@ import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.jsonMinified
 import com.sdercolin.vlabeler.util.orEmpty
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.encodeToJsonElement
+import com.sdercolin.vlabeler.util.stringifyJson
+import kotlinx.serialization.encodeToString
 
 fun AppState.trackProjectCreation(project: Project, byIpcRequest: Boolean) {
-    val labelerUsageEvent = CreateProjectEvent(
-        labeler = project.labelerConf.toBox(),
-        params = project.labelerParams.orEmpty().stripFilePaths(),
+    val createProjectEvent = CreateProjectEvent(
+        labelerName = project.labelerConf.name,
+        labelerNameVer = "${project.labelerConf.name} ${project.labelerConf.version}",
+        params = project.labelerParams.orEmpty().stripFilePaths().stringifyJson(),
         autoExport = project.autoExport,
         byIpcRequest = byIpcRequest,
     )
-    track(labelerUsageEvent)
+    track(createProjectEvent)
 }
 
 fun AppState.trackTemplateGeneration(plugin: Plugin, params: ParamMap?) {
     val templatePluginUsageEvent = TemplatePluginUsageEvent(
-        plugin = plugin.toBox(),
-        params = ParamTypedMap.from(params.orEmpty(), plugin.parameterDefs).orEmpty().stripFilePaths(),
+        pluginName = plugin.name,
+        pluginNameVer = "${plugin.name} ${plugin.version}",
+        params = ParamTypedMap.from(params.orEmpty(), plugin.parameterDefs).orEmpty().stripFilePaths().stringifyJson(),
     )
     track(templatePluginUsageEvent)
 }
 
 fun AppState.trackMacroPluginExecution(plugin: Plugin, params: ParamMap?, quickLaunch: Boolean) {
     val macroPluginUsageEvent = MacroPluginUsageEvent(
-        plugin = plugin.toBox(),
-        params = ParamTypedMap.from(params.orEmpty(), plugin.parameterDefs).orEmpty().stripFilePaths(),
+        pluginName = plugin.name,
+        pluginNameVer = "${plugin.name} ${plugin.version}",
+        params = ParamTypedMap.from(params.orEmpty(), plugin.parameterDefs).orEmpty().stripFilePaths().stringifyJson(),
         quickLaunch = quickLaunch,
     )
     track(macroPluginUsageEvent)
 }
 
 fun AppState.trackNewAppConf(appConf: AppConf) {
-    val jsonObject = jsonMinified.encodeToJsonElement(appConf) as JsonObject
-    track(SaveAppConfEvent(jsonObject))
+    track(SaveAppConfEvent(jsonMinified.encodeToString(appConf)))
 }
-
-private fun BasePlugin.toBox() = BasePluginBox(name, version)

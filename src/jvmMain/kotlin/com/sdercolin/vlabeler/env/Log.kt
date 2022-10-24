@@ -2,8 +2,6 @@ package com.sdercolin.vlabeler.env
 
 import com.sdercolin.vlabeler.hasUncaughtError
 import com.sdercolin.vlabeler.tracking.event.FatalErrorEvent
-import com.sdercolin.vlabeler.tracking.event.LocaleInfo
-import com.sdercolin.vlabeler.tracking.event.OsInfo
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.ResourcePath
 import java.io.File
@@ -98,9 +96,9 @@ object Log {
             FatalErrorEvent(
                 appVersion = appVersion.toString(),
                 runtime = runtimeVersion.toString(),
-                os = OsInfo.get(),
+                osInfo = osInfo,
                 isDebug = isDebug,
-                locale = LocaleInfo.get(),
+                locale = Locale.toString(),
                 error = exception.stackTraceToString(),
             ),
         )

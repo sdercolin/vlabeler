@@ -7,9 +7,9 @@ import kotlinx.serialization.Transient
 data class FatalErrorEvent(
     val appVersion: String,
     val runtime: String,
-    val os: OsInfo,
+    val osInfo: String,
     val isDebug: Boolean,
-    val locale: LocaleInfo,
+    val locale: String,
     val error: String,
 ) : TrackingEvent() {
 

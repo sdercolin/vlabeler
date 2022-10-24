@@ -6,7 +6,7 @@ import kotlinx.serialization.json.JsonObject
 
 @Serializable
 data class SaveAppConfEvent(
-    val conf: JsonObject,
+    val conf: String,
 ) : TrackingEvent() {
 
     @Transient
