@@ -27,6 +27,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -34,6 +37,8 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Save
@@ -47,6 +52,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -73,6 +79,7 @@ import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.ReversedRow
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
+import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -88,9 +95,11 @@ import com.sdercolin.vlabeler.util.detectEncoding
 import com.sdercolin.vlabeler.util.encodingNameEquals
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFileOrNull
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -98,26 +107,26 @@ import java.io.File
 private fun rememberPluginDialogState(
     plugin: Plugin,
     appRecordStore: AppRecordStore,
+    snackbarHostState: SnackbarHostState,
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
     project: Project?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
     load: (ParamMap) -> Unit,
-    showSnackbar: suspend (String) -> Unit,
     executable: Boolean,
     slot: Int?,
 ) = remember(plugin, paramMap, savedParamMap, submit, save, load) {
     PluginDialogState(
         plugin = plugin,
         appRecordStore = appRecordStore,
+        snackbarHostState = snackbarHostState,
         paramMap = paramMap,
         savedParamMap = savedParamMap,
         project = project,
         submit = submit,
         save = save,
         load = load,
-        showSnackbar = showSnackbar,
         executable = executable,
         slot = slot,
     )
@@ -127,26 +136,26 @@ private fun rememberPluginDialogState(
 fun TemplatePluginDialog(
     appConf: AppConf,
     appRecordStore: AppRecordStore,
+    snackbarHostState: SnackbarHostState,
     plugin: Plugin,
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
     load: (ParamMap) -> Unit,
-    showSnackbar: suspend (String) -> Unit,
 ) = PluginDialog(
     appConf = appConf,
     appRecordStore = appRecordStore,
     state = rememberPluginDialogState(
         plugin = plugin,
         appRecordStore = appRecordStore,
+        snackbarHostState = snackbarHostState,
         paramMap = paramMap,
         savedParamMap = savedParamMap,
         project = null,
         submit = submit,
         save = save,
         load = load,
-        showSnackbar = showSnackbar,
         executable = false,
         slot = null,
     ),
@@ -163,12 +172,12 @@ data class MacroPluginDialogArgs(
 fun MacroPluginDialog(
     appConf: AppConf,
     appRecordStore: AppRecordStore,
+    snackbarHostState: SnackbarHostState,
     args: MacroPluginDialogArgs,
     project: Project?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
     load: (ParamMap) -> Unit,
-    showSnackbar: suspend (String) -> Unit,
     executable: Boolean = true,
 ) = PluginDialog(
     appConf = appConf,
@@ -176,13 +185,13 @@ fun MacroPluginDialog(
     state = rememberPluginDialogState(
         plugin = args.plugin,
         appRecordStore = appRecordStore,
+        snackbarHostState = snackbarHostState,
         paramMap = args.paramMap,
         savedParamMap = args.paramMap,
         project = project,
         submit = submit,
         save = save,
         load = load,
-        showSnackbar = showSnackbar,
         executable = executable,
         slot = args.slot,
     ),
@@ -191,21 +200,21 @@ fun MacroPluginDialog(
 @Composable
 private fun rememberLabelerDialogState(
     labeler: LabelerConf,
+    snackbarHostState: SnackbarHostState,
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
     load: (ParamMap) -> Unit,
-    showSnackbar: suspend (String) -> Unit,
 ) = remember(labeler, paramMap, savedParamMap, submit, save, load) {
     LabelerDialogState(
         labeler = labeler,
+        snackbarHostState = snackbarHostState,
         paramMap = paramMap,
         savedParamMap = savedParamMap,
         submit = submit,
         save = save,
         load = load,
-        showSnackbar = showSnackbar,
     )
 }
 
@@ -213,24 +222,24 @@ private fun rememberLabelerDialogState(
 fun LabelerPluginDialog(
     appConf: AppConf,
     appRecordStore: AppRecordStore,
+    snackbarHostState: SnackbarHostState,
     labeler: LabelerConf,
     paramMap: ParamMap,
     savedParamMap: ParamMap,
     submit: (ParamMap?) -> Unit,
     save: (ParamMap) -> Unit,
     load: (ParamMap) -> Unit,
-    showSnackbar: suspend (String) -> Unit,
 ) = PluginDialog(
     appConf = appConf,
     appRecordStore = appRecordStore,
     state = rememberLabelerDialogState(
         labeler = labeler,
+        snackbarHostState = snackbarHostState,
         paramMap = paramMap,
         savedParamMap = savedParamMap,
         submit = submit,
         save = save,
         load = load,
-        showSnackbar = showSnackbar,
     ),
 )
 
@@ -250,7 +259,7 @@ private fun PluginDialog(
     ) {
         LaunchSaveDialogSize(dialogState, appRecordStore)
         AppTheme(appConf.view) {
-            Content(state)
+            Content(state, appRecordStore)
         }
     }
 }
@@ -280,7 +289,8 @@ private fun LaunchSaveDialogSize(
 }
 
 @Composable
-private fun Content(state: BasePluginDialogState) {
+private fun Content(state: BasePluginDialogState, appRecordStore: AppRecordStore) {
+    val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     val plugin = state.basePlugin
     val needJsClient = state.needJsClient
@@ -298,6 +308,8 @@ private fun Content(state: BasePluginDialogState) {
             ) {
                 ReversedRow(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Row(Modifier.requiredWidthIn(min = 116.dp)) {
+                        ExportButton(state, appRecordStore, coroutineScope)
+                        ImportButton(state, appRecordStore, coroutineScope)
                         IconButton(
                             modifier = Modifier.padding(start = 10.dp),
                             onClick = state::reset,
@@ -351,6 +363,19 @@ private fun Content(state: BasePluginDialogState) {
                 }
             }
             VerticalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.width(15.dp))
+        }
+        Box(Modifier.fillMaxSize()) {
+            SnackbarHost(
+                state.snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            ) {
+                Snackbar(
+                    it,
+                    actionColor = MaterialTheme.colors.primary,
+                    backgroundColor = MaterialTheme.colors.background,
+                    contentColor = MaterialTheme.colors.onBackground,
+                )
+            }
         }
     }
 }
@@ -783,6 +808,103 @@ private fun ParamRawFileTextField(
             if (parent == null || name == null) return@OpenFileDialog
             path = File(parent, name).absolutePath
             submit()
+        }
+    }
+}
+
+@Composable
+private fun ImportButton(state: BasePluginDialogState, appRecordStore: AppRecordStore, coroutineScope: CoroutineScope) {
+    var expanded by remember { mutableStateOf(false) }
+    var isShowingFilePicker by remember { mutableStateOf(false) }
+    Box(modifier = Modifier.padding(start = 10.dp)) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(Icons.Default.FileDownload, null)
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            val record = appRecordStore.stateFlow.collectAsState()
+            state.getImportablePresets(record.value)
+                .forEach { item ->
+                    DropdownMenuItem(
+                        enabled = item.available,
+                        onClick = {
+                            expanded = false
+                            when (item) {
+                                is BasePluginPresetItem.Memory -> {
+                                    coroutineScope.launch { state.import(item.resolve()) }
+                                }
+                                is BasePluginPresetItem.File -> {
+                                    isShowingFilePicker = true
+                                }
+                            }
+                        },
+                    ) {
+                        Text(item.getImportText())
+                    }
+                }
+        }
+    }
+    if (isShowingFilePicker) {
+        OpenFileDialog(
+            title = string(Strings.PluginDialogImportFromFile),
+            extensions = listOf("json"),
+        ) { parent, name ->
+            isShowingFilePicker = false
+            if (parent == null || name == null) return@OpenFileDialog
+            coroutineScope.launch(Dispatchers.IO) {
+                state.import(BasePluginPresetItem.File.resolve(File(parent, name)))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExportButton(state: BasePluginDialogState, appRecordStore: AppRecordStore, coroutineScope: CoroutineScope) {
+    var expanded by remember { mutableStateOf(false) }
+    var isShowingFilePicker by remember { mutableStateOf(false) }
+    Box(modifier = Modifier.padding(start = 10.dp)) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(Icons.Default.FileUpload, null)
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            val record = appRecordStore.stateFlow.collectAsState()
+            state.getExportablePresets(record.value)
+                .forEach { item ->
+                    DropdownMenuItem(
+                        enabled = item.available,
+                        onClick = {
+                            expanded = false
+                            when (item) {
+                                is BasePluginPresetItem.Memory -> {
+                                    coroutineScope.launch { state.export(item.resolve()) }
+                                }
+                                is BasePluginPresetItem.File -> {
+                                    isShowingFilePicker = true
+                                }
+                            }
+                        },
+                    ) {
+                        Text(item.getExportText())
+                    }
+                }
+        }
+    }
+    if (isShowingFilePicker) {
+        SaveFileDialog(
+            title = string(Strings.PluginDialogExportToFile),
+            initialFileName = state.basePlugin.getSavedParamsFile().name,
+            extensions = listOf("json"),
+        ) { parent, name ->
+            isShowingFilePicker = false
+            if (parent == null || name == null) return@SaveFileDialog
+            coroutineScope.launch(Dispatchers.IO) {
+                state.export(BasePluginPresetItem.File.resolve(File(parent, name)))
+            }
         }
     }
 }

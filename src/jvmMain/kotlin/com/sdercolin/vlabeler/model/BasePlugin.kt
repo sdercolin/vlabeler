@@ -88,4 +88,6 @@ interface BasePlugin {
             val value = params[param.name] ?: return@all false
             param.check(value, labelerConf)
         }
+
+    fun getSavedParamsFile(): File
 }

@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.model.LabelerConf.Property
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.util.DefaultLabelerDir
+import com.sdercolin.vlabeler.util.RecordDir
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
@@ -23,6 +24,7 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
+import java.io.File
 
 /**
  * Configuration of the labeler's appearances and behaviors
@@ -426,7 +428,10 @@ data class LabelerConf(
         }
     }
 
+    override fun getSavedParamsFile(): File = RecordDir.resolve(name + LabelerSavedParamsFileExtension)
+
     companion object {
         const val LabelerFileExtension = "labeler.json"
+        private const val LabelerSavedParamsFileExtension = ".labeler.param.json"
     }
 }

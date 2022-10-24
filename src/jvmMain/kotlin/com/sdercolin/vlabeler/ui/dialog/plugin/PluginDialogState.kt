@@ -1,7 +1,7 @@
 package com.sdercolin.vlabeler.ui.dialog.plugin
 
+import androidx.compose.material.SnackbarHostState
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.io.getSavedParamsFile
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.BasePlugin
 import com.sdercolin.vlabeler.model.Plugin
@@ -19,13 +19,13 @@ import com.sdercolin.vlabeler.util.stringifyJson
 class PluginDialogState(
     val plugin: Plugin,
     private val appRecordStore: AppRecordStore,
+    override val snackbarHostState: SnackbarHostState,
     paramMap: ParamMap,
     override val savedParamMap: ParamMap?,
     override val project: Project?,
     override val submit: (ParamMap?) -> Unit,
     override val load: (ParamMap) -> Unit,
     override val save: (ParamMap) -> Unit,
-    override val showSnackbar: suspend (String) -> Unit,
     val executable: Boolean,
     val slot: Int? = null,
 ) : BasePluginDialogState(paramMap) {
@@ -46,17 +46,8 @@ class PluginDialogState(
 
         val slots = List(PluginQuickLaunch.SlotCount) { index ->
             val quickLaunch = record.pluginQuickLaunchSlots[index]
-            val preset = if (quickLaunch?.pluginName == plugin.name) {
-                BasePluginPreset(
-                    plugin.name,
-                    plugin.version,
-                    quickLaunch.params,
-                )
-            } else {
-                null
-            }
             BasePluginPresetItem.Memory(
-                preset = preset,
+                pluginName = quickLaunch?.pluginName,
                 slot = index,
                 isCurrent = slot == index,
                 available = false,
@@ -70,12 +61,12 @@ class PluginDialogState(
 
     override fun getImportablePresets(record: AppRecord) = getPresetItems(
         record = record,
-        isAvailable = { it.isCurrent || it.preset?.pluginName == plugin.name },
+        isAvailable = { it.isCurrent || it.pluginName == plugin.name },
     )
 
     override fun getExportablePresets(record: AppRecord): List<BasePluginPresetItem> = getPresetItems(
         record = record,
-        isAvailable = { it.isCurrent || it.preset?.pluginName == plugin.name || it.preset == null },
+        isAvailable = { it.isCurrent || it.pluginName == plugin.name || it.pluginName == null },
     )
 
     override suspend fun import(target: BasePluginPresetTarget) = runCatching {
@@ -87,7 +78,25 @@ class PluginDialogState(
                 }
                 load(preset.params.resolve(plugin))
             }
-            is BasePluginPresetTarget.Memory -> load(requireNotNull(target.item.preset).params.resolve(plugin))
+            is BasePluginPresetTarget.Memory -> {
+                val slot = target.item.slot
+                if (slot == null) {
+                    val params = ParamTypedMap.from(
+                        basePlugin.loadSavedParams(basePlugin.getSavedParamsFile()),
+                        basePlugin.parameterDefs,
+                    )
+                    load(params.resolve(plugin))
+                } else {
+                    val record = appRecordStore.value
+                    val quickLaunch = record.pluginQuickLaunchSlots[slot]
+                    if (quickLaunch?.pluginName != plugin.name) {
+                        throw IllegalArgumentException(
+                            "Plugin name mismatch: ${quickLaunch?.pluginName} != ${plugin.name}",
+                        )
+                    }
+                    load(quickLaunch.params.resolve(plugin))
+                }
+            }
         }
     }
         .onSuccess { showSnackbar(stringStatic(Strings.PluginDialogImportSuccess)) }
@@ -96,7 +105,8 @@ class PluginDialogState(
             showSnackbar(stringStatic(Strings.PluginDialogImportFailure))
         }
 
-    override suspend fun export(params: ParamMap, target: BasePluginPresetTarget) = runCatching {
+    override suspend fun export(target: BasePluginPresetTarget) = runCatching {
+        val params = getCurrentParamMap()
         when (target) {
             is BasePluginPresetTarget.File -> {
                 val preset = BasePluginPreset(
@@ -119,9 +129,9 @@ class PluginDialogState(
             }
         }
     }
-        .onSuccess { showSnackbar(stringStatic(Strings.PluginDialogImportSuccess)) }
+        .onSuccess { showSnackbar(stringStatic(Strings.PluginDialogExportSuccess)) }
         .getOrElse {
             Log.error(it)
-            showSnackbar(stringStatic(Strings.PluginDialogImportFailure))
+            showSnackbar(stringStatic(Strings.PluginDialogExportFailure))
         }
 }

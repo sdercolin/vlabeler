@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
+import com.sdercolin.vlabeler.util.RecordDir
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
@@ -121,6 +122,8 @@ data class Plugin(
         }
     }
 
+    override fun getSavedParamsFile(): File = RecordDir.resolve(name + PluginSavedParamsFileExtension)
+
     @Serializer(Parameters::class)
     object PluginParameterListSerializer : KSerializer<Parameters> {
         override fun deserialize(decoder: Decoder): Parameters {
@@ -132,5 +135,9 @@ data class Plugin(
             }
             return Parameters(list)
         }
+    }
+
+    companion object {
+        private const val PluginSavedParamsFileExtension = ".plugin.param.json"
     }
 }

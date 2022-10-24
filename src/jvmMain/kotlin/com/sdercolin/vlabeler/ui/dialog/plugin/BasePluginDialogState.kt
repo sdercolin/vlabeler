@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog.plugin
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import com.sdercolin.vlabeler.model.AppRecord
@@ -8,8 +9,8 @@ import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.stringStatic
 import com.sdercolin.vlabeler.util.ParamMap
-import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.toParamMap
 import com.sdercolin.vlabeler.util.toUri
 import java.awt.Desktop
@@ -21,9 +22,13 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
     protected abstract val submit: (ParamMap?) -> Unit
     protected abstract val load: (ParamMap) -> Unit
     protected abstract val save: (ParamMap) -> Unit
-    protected abstract suspend fun import(target: BasePluginPresetTarget)
-    protected abstract suspend fun export(params: ParamMap, target: BasePluginPresetTarget)
-    protected abstract val showSnackbar: suspend (String) -> Unit
+    abstract suspend fun import(target: BasePluginPresetTarget)
+    abstract suspend fun export(target: BasePluginPresetTarget)
+
+    abstract val snackbarHostState: SnackbarHostState
+    protected suspend fun showSnackbar(message: String) {
+        snackbarHostState.showSnackbar(message, actionLabel = stringStatic(Strings.CommonOkay))
+    }
 
     val paramDefs: List<Parameter<*>> get() = basePlugin.parameterDefs
     val params = mutableStateListOf(*paramMap.map { it.value }.toTypedArray())
@@ -31,7 +36,7 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
     val hasParams get() = paramDefs.isNotEmpty()
     val needJsClient get() = paramDefs.any { it is Parameter.EntrySelectorParam }
 
-    private fun getCurrentParamMap() = params.mapIndexed { index, value ->
+    fun getCurrentParamMap() = params.mapIndexed { index, value ->
         paramDefs[index].name to value
     }.toMap().toParamMap()
 
@@ -120,11 +125,7 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
 
     protected fun getDefaultPresetTargets(): List<BasePluginPresetItem> = listOf(
         BasePluginPresetItem.Memory(
-            preset = BasePluginPreset(
-                pluginName = basePlugin.name,
-                pluginVersion = basePlugin.version,
-                params = ParamTypedMap.from(savedParamMap, basePlugin.parameterDefs),
-            ),
+            pluginName = basePlugin.name,
             slot = null,
             isCurrent = true,
             available = true,

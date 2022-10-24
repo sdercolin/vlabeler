@@ -21,6 +21,7 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -114,10 +115,6 @@ class QuickLaunchManagerDialogState(private val appState: AppState) {
 
     fun openKeymap() {
         appState.openPreferencesDialog(PreferencesEditorState.LaunchArgs.Keymap("Launch Plugin Slot"))
-    }
-
-    suspend fun showSnackbar(message: String) {
-        appState.showSnackbar(message)
     }
 }
 
@@ -270,9 +267,11 @@ private fun Item(index: Int, state: QuickLaunchManagerDialogState) {
     }
     if (isPluginDialogShown) {
         if (plugin != null) {
+            val snackbarHostState = remember { SnackbarHostState() }
             MacroPluginDialog(
                 appConf = state.appConf,
                 appRecordStore = state.appRecordStore,
+                snackbarHostState = snackbarHostState,
                 args = MacroPluginDialogArgs(
                     plugin = plugin,
                     paramMap = requireNotNull(quickLaunch).getMergedParams(plugin),
@@ -293,7 +292,6 @@ private fun Item(index: Int, state: QuickLaunchManagerDialogState) {
                     }
                     isPluginDialogShown = false
                 },
-                showSnackbar = { state.showSnackbar(it) },
                 executable = false,
             )
         } else {

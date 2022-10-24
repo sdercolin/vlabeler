@@ -1,7 +1,7 @@
 package com.sdercolin.vlabeler.ui.dialog.plugin
 
+import androidx.compose.material.SnackbarHostState
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.io.getSavedParamsFile
 import com.sdercolin.vlabeler.model.BasePlugin
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
@@ -15,12 +15,12 @@ import com.sdercolin.vlabeler.util.stringifyJson
 
 class LabelerDialogState(
     val labeler: LabelerConf,
+    override val snackbarHostState: SnackbarHostState,
     paramMap: ParamMap,
     override val savedParamMap: ParamMap?,
     override val submit: (ParamMap?) -> Unit,
     override val save: (ParamMap) -> Unit,
     override val load: (ParamMap) -> Unit,
-    override val showSnackbar: suspend (String) -> Unit,
 ) : BasePluginDialogState(paramMap) {
 
     override val project: Project? = null
@@ -37,7 +37,13 @@ class LabelerDialogState(
                 }
                 load(preset.params.resolve(labeler))
             }
-            is BasePluginPresetTarget.Memory -> load(requireNotNull(target.item.preset).params.resolve(labeler))
+            is BasePluginPresetTarget.Memory -> {
+                val params = ParamTypedMap.from(
+                    basePlugin.loadSavedParams(basePlugin.getSavedParamsFile()),
+                    basePlugin.parameterDefs,
+                )
+                load(params.resolve(labeler))
+            }
         }
     }
         .onSuccess { showSnackbar(stringStatic(Strings.PluginDialogImportSuccess)) }
@@ -46,7 +52,8 @@ class LabelerDialogState(
             showSnackbar(stringStatic(Strings.PluginDialogImportFailure))
         }
 
-    override suspend fun export(params: ParamMap, target: BasePluginPresetTarget) = runCatching {
+    override suspend fun export(target: BasePluginPresetTarget) = runCatching {
+        val params = getCurrentParamMap()
         when (target) {
             is BasePluginPresetTarget.File -> {
                 val preset = BasePluginPreset(
@@ -61,9 +68,9 @@ class LabelerDialogState(
             }
         }
     }
-        .onSuccess { showSnackbar(stringStatic(Strings.PluginDialogImportSuccess)) }
+        .onSuccess { showSnackbar(stringStatic(Strings.PluginDialogExportSuccess)) }
         .getOrElse {
             Log.error(it)
-            showSnackbar(stringStatic(Strings.PluginDialogImportFailure))
+            showSnackbar(stringStatic(Strings.PluginDialogExportFailure))
         }
 }

@@ -4,10 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.sdercolin.vlabeler.io.getSavedParamsFile
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
@@ -109,9 +110,11 @@ fun App(
             )
         }
         appState.macroPluginShownInDialog?.let { args ->
+            val snackbarHostState = remember { SnackbarHostState() }
             MacroPluginDialog(
                 appConf = appState.appConf,
                 appRecordStore = appState.appRecordStore,
+                snackbarHostState = snackbarHostState,
                 args = args,
                 project = appState.requireProject(),
                 submit = {
@@ -144,7 +147,6 @@ fun App(
                     }
                 },
                 load = { appState.updateMacroPluginDialogInputParams(it) },
-                showSnackbar = { appState.showSnackbar(it) },
             )
         }
         appState.macroPluginReport?.let { report ->

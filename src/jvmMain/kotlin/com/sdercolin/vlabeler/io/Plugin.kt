@@ -7,10 +7,8 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.util.CustomPluginDir
 import com.sdercolin.vlabeler.util.DefaultPluginDir
-import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.parseJson
-import java.io.File
 
 fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
     listOf(CustomPluginDir, DefaultPluginDir)
@@ -63,7 +61,4 @@ fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
         }
         .sortedBy { it.displayedName.getCertain(language) }
 
-fun Plugin.getSavedParamsFile(): File = RecordDir.resolve(name + PluginSavedParamsFileExtension)
-
 const val PluginInfoFileName = "plugin.json"
-private const val PluginSavedParamsFileExtension = ".plugin.param.json"

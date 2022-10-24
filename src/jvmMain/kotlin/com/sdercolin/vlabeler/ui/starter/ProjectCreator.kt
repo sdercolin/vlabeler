@@ -30,6 +30,7 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -238,9 +239,11 @@ private fun LabelerSelectorRow(
         }
     }
     if (labelerDialogShown) {
+        val snackbarHostState = remember { SnackbarHostState() }
         LabelerPluginDialog(
             appConf = state.appConf,
             appRecordStore = state.appRecordStore,
+            snackbarHostState = snackbarHostState,
             labeler = requireNotNull(state.labeler),
             paramMap = requireNotNull(state.labelerParams),
             savedParamMap = requireNotNull(state.labelerSavedParams),
@@ -250,13 +253,14 @@ private fun LabelerSelectorRow(
             },
             save = { state.saveLabelerParams(it) },
             load = { state.updateLabelerParams(it) },
-            showSnackbar = { state.showSnackBar(it) },
         )
     }
     if (pluginDialogShown) {
+        val snackbarHostState = remember { SnackbarHostState() }
         TemplatePluginDialog(
             appConf = state.appConf,
             appRecordStore = state.appRecordStore,
+            snackbarHostState = snackbarHostState,
             plugin = requireNotNull(state.templatePlugin),
             paramMap = requireNotNull(state.templatePluginParams),
             savedParamMap = requireNotNull(state.templatePluginSavedParams),
@@ -266,7 +270,6 @@ private fun LabelerSelectorRow(
             },
             load = { state.updatePluginParams(it) },
             save = { state.savePluginParams(it) },
-            showSnackbar = { state.showSnackBar(it) },
         )
     }
 }
