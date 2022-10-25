@@ -39,7 +39,7 @@ vLabeler は [Compose Multiplatform](https://github.com/JetBrains/compose-jb) �
 
 ``` 
 // インストーラーをビルドします
-./gradlew package
+./gradlew packageDistributionForCurrentOS
 
 // または、実行可能なアプリをビルドします
 ./gradlew createDistributable

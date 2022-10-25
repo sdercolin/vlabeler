@@ -39,7 +39,7 @@ vLabeler 基于 [Compose Multiplatform](https://github.com/JetBrains/compose-jb)
 
 ```
 // 构建安装包
-./gradlew package
+./gradlew packageDistributionForCurrentOS
 
 // 或者，构建可执行程序
 ./gradlew createDistributable

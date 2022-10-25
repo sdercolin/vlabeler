@@ -31,6 +31,10 @@ if (!isResamplerValid) {
     })
 }
 
+if (!Env.isWindows()) {
+    executeCommand("chmod", "+x", resamplerPath)
+}
+
 let args = []
 args.push(resamplerPath)
 

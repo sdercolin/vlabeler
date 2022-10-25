@@ -23,7 +23,7 @@ sealed class Parameter<T : Any> {
 
     @Serializable
     @SerialName(IntParam.Type)
-    class IntParam(
+    data class IntParam(
         override val name: String,
         override val label: LocalizedJsonString,
         override val description: LocalizedJsonString? = null,
@@ -45,7 +45,7 @@ sealed class Parameter<T : Any> {
 
     @Serializable
     @SerialName(FloatParam.Type)
-    class FloatParam(
+    data class FloatParam(
         override val name: String,
         override val label: LocalizedJsonString,
         override val description: LocalizedJsonString? = null,
@@ -67,7 +67,7 @@ sealed class Parameter<T : Any> {
 
     @Serializable
     @SerialName(BooleanParam.Type)
-    class BooleanParam(
+    data class BooleanParam(
         override val name: String,
         override val label: LocalizedJsonString,
         override val description: LocalizedJsonString? = null,
@@ -87,7 +87,7 @@ sealed class Parameter<T : Any> {
 
     @Serializable
     @SerialName(StringParam.Type)
-    class StringParam(
+    data class StringParam(
         override val name: String,
         override val label: LocalizedJsonString,
         override val description: LocalizedJsonString? = null,
@@ -153,7 +153,7 @@ sealed class Parameter<T : Any> {
 
     @Serializable
     @SerialName(FileParam.Type)
-    class FileParam(
+    data class FileParam(
         override val name: String,
         override val label: LocalizedJsonString,
         override val description: LocalizedJsonString? = null,
@@ -175,7 +175,7 @@ sealed class Parameter<T : Any> {
 
     @Serializable
     @SerialName(RawFileParam.Type)
-    class RawFileParam(
+    data class RawFileParam(
         override val name: String,
         override val label: LocalizedJsonString,
         override val description: LocalizedJsonString? = null,

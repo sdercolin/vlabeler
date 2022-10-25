@@ -1,0 +1,144 @@
+{
+  "name": "resampler-test",
+  "version": 1,
+  "type": "macro",
+  "displayedName": {
+    "en": "Resampler Test",
+    "zh": "Resampler 测试",
+    "ja": "Resampler テスト"
+  },
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": {
+    "en": "Play the resampler output of the current entry.",
+    "zh": "播放当前条目的 resampler 输出。",
+    "ja": "現在のエントリの resampler の出力を再生します。"
+  },
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/resampler-test",
+  "supportedLabelFileExtension": "ini",
+  "parameters": {
+    "list": [
+      {
+        "type": "rawFile",
+        "name": "resamplerPath",
+        "label": {
+          "en": "Synthesis engine",
+          "zh": "合成引擎",
+          "ja": "合成エンジン"
+        },
+        "description": {
+          "en": "UTAU synthesis engine (executable file).`",
+          "zh": "UTAU 合成引擎（可执行文件）。`",
+          "ja": "UTAU 合成エンジン（実行可能ファイル）。`"
+        },
+        "defaultValue": "worldline"
+      },
+      {
+        "type": "enum",
+        "name": "keyName",
+        "label": {
+          "en": "Key",
+          "zh": "音名",
+          "ja": "キー"
+        },
+        "defaultValue": "C",
+        "options": [
+          "C",
+          "C#",
+          "D",
+          "D#",
+          "E",
+          "F",
+          "F#",
+          "G",
+          "G#",
+          "A",
+          "A#",
+          "B"
+        ]
+      },
+      {
+        "type": "enum",
+        "name": "octave",
+        "label": {
+          "en": "Octave",
+          "zh": "八度",
+          "ja": "オクターブ"
+        },
+        "defaultValue": "4",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ]
+      },
+      {
+        "type": "float",
+        "name": "velocity",
+        "label": {
+          "en": "Consonant velocity",
+          "zh": "子音速度",
+          "ja": "子音速度"
+        },
+        "defaultValue": 100,
+        "min": 0,
+        "max": 200
+      },
+      {
+        "type": "float",
+        "name": "length",
+        "label": {
+          "en": "Length (ms)",
+          "zh": "长度（毫秒）",
+          "ja": "長さ（ミリ秒）"
+        },
+        "defaultValue": 1000,
+        "min": 100,
+        "max": 10000
+      },
+      {
+        "type": "integer",
+        "name": "volume",
+        "label": {
+          "en": "Volume",
+          "zh": "音量",
+          "ja": "音量"
+        },
+        "defaultValue": 100,
+        "min": 0,
+        "max": 100
+      },
+      {
+        "type": "string",
+        "name": "flags",
+        "label": {
+          "en": "Flags",
+          "zh": "Flags",
+          "ja": "フラグ"
+        },
+        "defaultValue": "",
+        "optional": true
+      },
+      {
+        "type": "integer",
+        "name": "modulation",
+        "label": {
+          "en": "Modulation",
+          "zh": "Modulation",
+          "ja": "モジュレーション"
+        },
+        "defaultValue": 0,
+        "min": 0,
+        "max": 100
+      }
+    ]
+  },
+  "scriptFiles": [
+    "resampler-test.js"
+  ]
+}

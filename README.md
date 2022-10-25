@@ -39,7 +39,7 @@ Please ensure you have **JDK 15+** for building.
 
 ```
 // Package by an installer
-./gradlew package
+./gradlew packageDistributionForCurrentOS
 
 // Or, build an executable app
 ./gradlew createDistributable

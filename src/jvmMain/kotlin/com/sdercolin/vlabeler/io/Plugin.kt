@@ -9,6 +9,8 @@ import com.sdercolin.vlabeler.util.CustomPluginDir
 import com.sdercolin.vlabeler.util.DefaultPluginDir
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.parseJson
+import io.ktor.http.Parameters
+import java.io.File
 
 fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
     listOf(CustomPluginDir, DefaultPluginDir)
@@ -27,27 +29,32 @@ fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
             }?.let { plugin ->
                 Log.info("Loaded plugin: ${file.parent}")
                 val isBuiltIn = file.absolutePath.contains(DefaultPluginDir.absolutePath)
-                val parametersInjectedWithFileContents = plugin.parameters?.list?.let { list ->
+                val parametersInjected = plugin.parameters?.list?.let { list ->
                     val newList = list.map { param ->
-                        if (param is Parameter.StringParam) {
-                            val fileNameMatched = Parameter.StringParam.DefaultValueFileReferencePattern
-                                .find(param.defaultValue)?.groupValues?.getOrNull(1)
-                            if (fileNameMatched != null) {
-                                val content = file.parentFile.resolve(fileNameMatched).readText().trim()
-                                Parameter.StringParam(
-                                    name = param.name,
-                                    label = param.label,
-                                    description = param.description,
-                                    enableIf = param.enableIf,
-                                    defaultValue = content,
-                                    multiLine = param.multiLine,
-                                    optional = param.optional,
-                                )
-                            } else {
-                                param
+                        when (param) {
+                            is Parameter.StringParam -> {
+                                val fileNameMatched = Parameter.StringParam.DefaultValueFileReferencePattern
+                                    .find(param.defaultValue)?.groupValues?.getOrNull(1)
+                                if (fileNameMatched != null) {
+                                    val content = file.parentFile.resolve(fileNameMatched).readText().trim()
+                                    param.copy(defaultValue = content)
+                                } else {
+                                    param
+                                }
                             }
-                        } else {
-                            param
+                            is Parameter.FileParam -> {
+                                val defaultValue = param.defaultValue.let {
+                                    it.copy(
+                                        file = it.file?.resolveRelativePath(file.parentFile),
+                                    )
+                                }
+                                param.copy(defaultValue = defaultValue)
+                            }
+                            is Parameter.RawFileParam -> {
+                                val defaultValue = param.defaultValue.resolveRelativePath(file.parentFile)
+                                param.copy(defaultValue = defaultValue)
+                            }
+                            else -> param
                         }
                     }
                     Plugin.Parameters(list = newList)
@@ -55,10 +62,14 @@ fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
                 plugin.copy(
                     directory = file.parentFile,
                     builtIn = isBuiltIn,
-                    parameters = parametersInjectedWithFileContents,
+                    parameters = parametersInjected,
                 )
             }
         }
         .sortedBy { it.displayedName.getCertain(language) }
+
+private fun String.resolveRelativePath(parent: File): String {
+    return parent.resolve(this).absolutePath
+}
 
 const val PluginInfoFileName = "plugin.json"
