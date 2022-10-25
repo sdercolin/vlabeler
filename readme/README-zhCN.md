@@ -308,6 +308,11 @@ aaa;name:bbb;sample:ccc;tag:ddd
 
 您可以在 `工具` -> `批量编辑` -> `管理插件...` 中导入/删除/禁用批量编辑插件。
 
+#### 可用的插件（除内建）
+
+- [resampler-test](https://github.com/sdercolin/vlabeler-resampler-test): 播放当前条目的 resampler 输出。与 setParam
+  的合成测试（F10）功能相似。
+
 ### 插件开发
 
 我们欢迎您为 vLabeler 开发插件。
@@ -322,6 +327,7 @@ aaa;name:bbb;sample:ccc;tag:ddd
 当您向我们报告问题时，请附上最近的日志文件。
 
 ## 应用使用数据的统计
+
 请参阅 [应用使用数据的统计](tracking.md)。
 
 ## 已知问题

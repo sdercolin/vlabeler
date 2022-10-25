@@ -333,6 +333,11 @@ it is not supported by the current labeler.
 
 You can import/delete/disable batch edit plugins in `Tools` -> `Batch Edit` -> `Manage plugins...`.
 
+#### More available plugins (except built-in)
+
+- [resampler-test](https://github.com/sdercolin/vlabeler-resampler-test): Play the UTAU resampler output of the current
+  entry, which is similar to setParam's synthesis test (F10).
+
 ### Plugin Development
 
 We welcome plugin development for the application.
@@ -347,6 +352,7 @@ You can find the logs by clicking `Help` -> `Open Log Directory`, for developmen
 When reporting issues to us, please attach the recent log files.
 
 ## App usage tracking
+
 Please check [App Usage Tracking](readme/tracking.md) for details.
 
 ## Known issues
