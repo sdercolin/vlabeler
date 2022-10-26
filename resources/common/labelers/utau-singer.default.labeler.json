@@ -1,6 +1,6 @@
 {
   "name": "utau-singer.default",
-  "version": 9,
+  "version": 10,
   "extension": "ini",
   "displayedName": {
     "en": "UTAU singer labeler",
@@ -116,7 +116,15 @@
         "zh": "左边界",
         "ja": "左ブランク"
       },
-      "value": "{left}"
+      "valueGetter": [
+        "value = entry.points[3]"
+      ],
+      "valueSetter": [
+        "entry.points[3] = value",
+        "if (value < entry.start) {",
+        "  entry.start = value",
+        "}"
+      ]
     },
     {
       "name": "ovl",
@@ -125,7 +133,16 @@
         "zh": "重叠",
         "ja": "Overlap"
       },
-      "value": "{ovl} - {left}"
+      "valueGetter": [
+        "value = entry.points[2] - entry.points[3]"
+      ],
+      "valueSetter": [
+        "newOverlap = value + entry.points[3]",
+        "entry.points[2] = newOverlap",
+        "if (newOverlap < entry.start) {",
+        "  entry.start = newOverlap",
+        "}"
+      ]
     },
     {
       "name": "preu",
@@ -134,7 +151,12 @@
         "zh": "先行发声",
         "ja": "先行発声"
       },
-      "value": "{preu} - {left}"
+      "valueGetter": [
+        "value = entry.points[1] - entry.points[3]"
+      ],
+      "valueSetter": [
+        "entry.points[1] = value + entry.points[3]"
+      ]
     },
     {
       "name": "fixed",
@@ -143,7 +165,12 @@
         "zh": "固定",
         "ja": "固定範囲"
       },
-      "value": "{fixed} - {left}"
+      "valueGetter": [
+        "value = entry.points[0] - entry.points[3]"
+      ],
+      "valueSetter": [
+        "entry.points[0] = value + entry.points[3]"
+      ]
     },
     {
       "name": "right",
@@ -152,7 +179,16 @@
         "zh": "右边界",
         "ja": "右ブランク"
       },
-      "value": "{needSync} ? parseFloat({rawRight}) : {left} - {end}"
+      "valueGetter": [
+        "if(entry.needSync) {",
+        "  value = entry.parseFloat(entry.extras[0])",
+        "} else {",
+        "  value = entry.points[3] - entry.end",
+        "}"
+      ],
+      "valueSetter": [
+        "entry.end = -value + entry.points[3]"
+      ]
     }
   ],
   "parser": {

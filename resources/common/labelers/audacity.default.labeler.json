@@ -1,6 +1,6 @@
 {
   "name": "audacity.default",
-  "version": 6,
+  "version": 7,
   "extension": "txt",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -34,12 +34,22 @@
     {
       "name": "start",
       "displayedName": "Start",
-      "value": "{start}"
+      "valueGetter": [
+        "value = entry.start"
+      ],
+      "valueSetter": [
+        "entry.start = value"
+      ]
     },
     {
       "name": "end",
       "displayedName": "End",
-      "value": "{end}"
+      "valueGetter": [
+        "value = entry.end"
+      ],
+      "valueSetter": [
+        "entry.end = value"
+      ]
     }
   ],
   "parser": {

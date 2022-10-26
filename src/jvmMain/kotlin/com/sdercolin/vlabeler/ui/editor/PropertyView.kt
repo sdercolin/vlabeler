@@ -81,7 +81,7 @@ private fun Project.buildEmptyPropertyText(language: Language) = buildAnnotatedS
 }
 
 private fun Project.buildPropertyText(js: JavaScript, language: Language) = buildAnnotatedString {
-    val propertyMap = labelerConf.getPropertyMap(currentEntry, js)
+    val propertyMap = labelerConf.getPropertyMap(labelerConf, currentEntry, js)
     propertyMap.toList().forEachIndexed { index, (property, value) ->
         if (index != 0) append("\n")
         append(

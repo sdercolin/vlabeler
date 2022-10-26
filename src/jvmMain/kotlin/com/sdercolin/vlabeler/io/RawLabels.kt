@@ -161,7 +161,7 @@ fun Project.singleModuleToRawLabels(moduleIndex: Int): String {
         .map { entry ->
             val fields = labelerConf.getFieldMap(entry)
             val extras = labelerConf.getExtraMap(entry)
-            val properties = labelerConf.getPropertyMap(fields, extras, js)
+            val properties = labelerConf.getPropertyMap(labelerConf, entry, fields, extras, js)
             val variables: Map<String, Any> =
                 fields.mapValues { (it.value as? Float)?.roundToDecimalDigit(labelerConf.decimalDigit) ?: it.value } +
                     // if a name is shared in fields and properties, its value will be overwritten by properties
@@ -214,14 +214,34 @@ private fun LabelerConf.getExtraMap(entry: Entry) = extraFieldNames.mapIndexed {
     name to entry.extras[index]
 }.toMap()
 
-private fun LabelerConf.getPropertyBaseMap(fields: Map<String, Any>, extras: Map<String, String>, js: JavaScript) =
+private fun LabelerConf.getPropertyBaseMap(
+    labelerConf: LabelerConf,
+    entry: Entry,
+    fields: Map<String, Any>,
+    extras: Map<String, String>,
+    js: JavaScript
+) =
     properties.associateWith {
-        val expression = it.value.replaceWithVariables(fields + extras)
-        js.eval(expression)!!.asDouble()
+        if (it.valueGetter != null) {
+            js.setJson("entry", entry)
+            js.eval(it.valueGetter.joinToString("\n"))
+            js.get<Double>("value").roundToDecimalDigit(labelerConf.decimalDigit)
+        } else {
+            requireNotNull(it.value)
+            // for backward compatibility
+            val expression = it.value.replaceWithVariables(fields + extras)
+            js.eval(expression)!!.asDouble()
+        }
     }
 
-private fun LabelerConf.getPropertyMap(fields: Map<String, Any>, extras: Map<String, String>, js: JavaScript) =
-    getPropertyBaseMap(fields, extras, js).mapKeys { it.key.name }
+private fun LabelerConf.getPropertyMap(
+    labelerConf: LabelerConf,
+    entry: Entry,
+    fields: Map<String, Any>,
+    extras: Map<String, String>,
+    js: JavaScript
+) =
+    getPropertyBaseMap(labelerConf, entry, fields, extras, js).mapKeys { it.key.name }
 
-fun LabelerConf.getPropertyMap(entry: Entry, js: JavaScript) =
-    getPropertyBaseMap(getFieldMap(entry), getExtraMap(entry), js)
+fun LabelerConf.getPropertyMap(labelerConf: LabelerConf, entry: Entry, js: JavaScript) =
+    getPropertyBaseMap(labelerConf, entry, getFieldMap(entry), getExtraMap(entry), js)
