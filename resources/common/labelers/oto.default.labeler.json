@@ -123,7 +123,7 @@
       "valueSetter": [
         "entry.points[3] = value",
         "if (value < entry.start) {",
-        "  entry.start = value",
+        "    entry.start = value",
         "}"
       ]
     },
@@ -141,7 +141,7 @@
         "newOverlap = value + entry.points[3]",
         "entry.points[2] = newOverlap",
         "if (newOverlap < entry.start) {",
-        "  entry.start = newOverlap",
+        "    entry.start = newOverlap",
         "}"
       ]
     },
@@ -182,13 +182,19 @@
       },
       "valueGetter": [
         "if(entry.needSync) {",
-        "  value = entry.parseFloat(entry.extras[0])",
+        "    value = parseFloat(entry.extras[0])",
         "} else {",
-        "  value = entry.points[3] - entry.end",
+        "    value = entry.points[3] - entry.end",
         "}"
       ],
       "valueSetter": [
-        "entry.end = -value + entry.points[3]"
+        "if(value < 0) {",
+        "    entry.end = -value + entry.points[3]",
+        "} else {",
+        "    entry.needSync = true",
+        "    entry.end = -value",
+        "    entry.extras[0] = value.toString()",
+        "}"
       ]
     }
   ],

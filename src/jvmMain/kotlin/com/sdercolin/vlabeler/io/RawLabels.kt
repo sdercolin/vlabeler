@@ -219,7 +219,7 @@ private fun LabelerConf.getPropertyBaseMap(
     entry: Entry,
     fields: Map<String, Any>,
     extras: Map<String, String>,
-    js: JavaScript
+    js: JavaScript,
 ) =
     properties.associateWith {
         if (it.valueGetter != null) {
@@ -239,7 +239,7 @@ private fun LabelerConf.getPropertyMap(
     entry: Entry,
     fields: Map<String, Any>,
     extras: Map<String, String>,
-    js: JavaScript
+    js: JavaScript,
 ) =
     getPropertyBaseMap(labelerConf, entry, fields, extras, js).mapKeys { it.key.name }
 

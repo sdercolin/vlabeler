@@ -139,7 +139,8 @@ fun Strings.ja(): String? = when (this) {
     OpenProjectDialogTitle -> "プロジェクトを開く"
     SaveAsProjectDialogTitle -> "プロジェクトを別名で保存"
     ExportDialogTitle -> "プロジェクトをエクスポート"
-    SetResolutionDialogDescription -> "エディタのキャンバスの解像度（データ数/ピクセル）を指定してください。(%d ~ %d)"
+    SetResolutionDialogDescription ->
+        "このエントリの属性 %s の値を入力してください。\n入力値は制限されませんので、入力後はデータの正当性を一度確認してください。"
     AskIfSaveBeforeOpenDialogDescription -> "未保存の変更があります。新しいプロジェクトを開く前に保存しますか？"
     AskIfSaveBeforeExportDialogDescription -> "未保存の変更があります。エクスポートする前に保存しますか？"
     AskIfSaveBeforeCloseDialogDescription -> "未保存の変更があります。プロジェクトを閉じる前に保存しますか？"

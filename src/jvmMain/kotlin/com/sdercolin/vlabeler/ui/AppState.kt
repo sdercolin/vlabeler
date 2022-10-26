@@ -44,6 +44,8 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogResult
+import com.sdercolin.vlabeler.ui.dialog.SetEntryPropertyDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.SetEntryPropertyDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
@@ -299,6 +301,9 @@ class AppState(
     fun handleDialogResult(result: EmbeddedDialogResult<*>) {
         when (result) {
             is SetResolutionDialogResult -> changeResolution(result.newValue)
+            is SetEntryPropertyDialogResult -> mainScope.launch(Dispatchers.IO) {
+                setCurrentEntryProperty(result.propertyIndex, result.newValue)
+            }
             is AskIfSaveDialogResult -> takeAskIfSaveResult(result)
             is JumpToEntryDialogResult -> {
                 jumpToEntry(result.index)
@@ -357,6 +362,17 @@ class AppState(
 
     private fun changeResolution(newValue: Int) {
         editor?.changeResolution(newValue)
+    }
+
+    fun openSetPropertyValueDialog(propertyIndex: Int, currentValue: Float) {
+        val project = requireProject()
+        val property = project.labelerConf.properties[propertyIndex]
+        val args = SetEntryPropertyDialogArgs(
+            propertyIndex = propertyIndex,
+            propertyDisplayedName = property.displayedName,
+            currentValue = currentValue,
+        )
+        openEmbeddedDialog(args)
     }
 
     fun checkAutoSavedProject() {

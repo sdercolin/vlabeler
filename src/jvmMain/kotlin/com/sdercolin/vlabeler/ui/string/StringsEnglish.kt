@@ -138,6 +138,10 @@ fun Strings.en(): String = when (this) {
     SaveAsProjectDialogTitle -> "Save as project"
     ExportDialogTitle -> "Export"
     SetResolutionDialogDescription -> "Input canvas resolution (points per pixel) for the editor (%d ~ %d)"
+    SetEntryPropertyDialogDescription ->
+        "Please enter the value of the property `%s` of this entry. \n" +
+            "Please note that your input value will not be restricted, " +
+            "so please check the data validity by yourself after this process."
     AskIfSaveBeforeOpenDialogDescription ->
         "You have unsaved changes. Do you want to save them before opening a " +
             "new project?"

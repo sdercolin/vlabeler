@@ -51,6 +51,8 @@ private fun <T : EmbeddedDialogArgs> TypedDialog(
     when (args) {
         is SetResolutionDialogArgs ->
             SetResolutionDialog(args, (request as EmbeddedDialogRequest<SetResolutionDialogArgs>).onResult)
+        is SetEntryPropertyDialogArgs ->
+            SetEntryPropertyDialog(args, (request as EmbeddedDialogRequest<SetEntryPropertyDialogArgs>).onResult)
         is AskIfSaveDialogPurpose ->
             AskIfSaveDialog(args, (request as EmbeddedDialogRequest<AskIfSaveDialogPurpose>).onResult)
         is JumpToEntryDialogArgs ->

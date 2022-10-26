@@ -137,6 +137,7 @@ fun Strings.zhHans(): String? = when (this) {
     SaveAsProjectDialogTitle -> "另存为项目"
     ExportDialogTitle -> "导出项目"
     SetResolutionDialogDescription -> "请指定编辑器的画布分辨率（数据点数/像素）(%d ~ %d)"
+    SetEntryPropertyDialogDescription -> "请输入本条目的属性 %s 的值。\n请注意您的输入值将不会受到限制，因此请务必自行确保其合法性。"
     AskIfSaveBeforeOpenDialogDescription -> "有未保存的变更。是否要在打开新项目前保存变更？"
     AskIfSaveBeforeExportDialogDescription -> "有未保存的变更。是否要在导出前保存变更？"
     AskIfSaveBeforeCloseDialogDescription -> "有未保存的变更。是否要在关闭当前项目前保存变更？"

@@ -141,8 +141,8 @@ fun Labeler(
                     Spacer(modifier = Modifier.weight(0.1f * parallelModulesCount))
                 }
                 Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                    if (appState.isPropertyViewDisplayed) {
-                        PropertyView(editorState.project)
+                    if (appState.isPropertyViewDisplayed && editorState.project.labelerConf.properties.isNotEmpty()) {
+                        PropertyView(editorState.project, appState::openSetPropertyValueDialog)
                     }
                     if (appState.isToolboxDisplayed) {
                         ToolboxView(

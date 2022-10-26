@@ -81,8 +81,7 @@ fun ColumnScope.ModuleRow(
     }
     val entriesInPixel = remember(module.currentEntryGroup, canvasParams.lengthInPixel, sampleInfo.lengthMillis) {
         module.currentEntryGroup.map { entry: IndexedEntry ->
-            val next = module.currentEntryGroup.find { it.index == entry.index + 1 }
-            entryConverter.convertToPixel(entry, sampleInfo.lengthMillis, next)
+            entryConverter.convertToPixel(entry, sampleInfo.lengthMillis)
                 .validate(canvasParams.lengthInPixel)
         }
     }

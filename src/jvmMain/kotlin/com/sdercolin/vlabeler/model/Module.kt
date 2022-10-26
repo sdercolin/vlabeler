@@ -110,6 +110,11 @@ data class Module(
         return copy(entries = entries)
     }
 
+    fun updateCurrentEntry(entry: Entry, labelerConf: LabelerConf): Module {
+        val editedEntry = getEntryForEditing(currentIndex)
+        return updateEntry(editedEntry.edit(entry), labelerConf)
+    }
+
     private fun updateEntry(editedEntry: IndexedEntry, labelerConf: LabelerConf) =
         updateEntries(listOf(editedEntry), labelerConf)
 

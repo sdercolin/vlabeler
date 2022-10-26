@@ -18,6 +18,7 @@ import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
+import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.runIf
@@ -98,6 +99,8 @@ interface ProjectStore {
     fun openRootDirectory()
     fun openCurrentModuleDirectory()
     fun openProjectLocation()
+
+    suspend fun setCurrentEntryProperty(propertyIndex: Int, value: Float)
 }
 
 class ProjectStoreImpl(
@@ -500,5 +503,21 @@ class ProjectStoreImpl(
     override fun openProjectLocation() {
         val project = project ?: return
         openDirectory(project.projectFile.parentFile)
+    }
+
+    override suspend fun setCurrentEntryProperty(propertyIndex: Int, value: Float) {
+        runCatching {
+            val project = requireProject()
+            val property = project.labelerConf.properties[propertyIndex]
+            val setter = property.valueSetter ?: return
+            val js = JavaScript()
+            js.setJson("entry", project.currentModule.currentEntry)
+            js.set("value", value)
+            js.eval(setter.joinToString("\n"))
+            val updatedEntry = js.getJson("entry") as? Entry ?: return
+            editCurrentProjectModule { updateCurrentEntry(updatedEntry, project.labelerConf) }
+        }.onFailure {
+            errorState.showError(it)
+        }
     }
 }

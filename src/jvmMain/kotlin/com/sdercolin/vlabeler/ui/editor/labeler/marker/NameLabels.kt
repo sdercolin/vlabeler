@@ -53,8 +53,7 @@ fun NameLabels(
 ) {
     fun convertEntry(entry: IndexedEntry?): EntryInPixel? {
         entry ?: return null
-        val next = state.entriesInCurrentGroup.find { it.index == entry.index + 1 }
-        return entry.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis, next) }
+        return entry.let { state.entryConverter.convertToPixel(it, state.sampleLengthMillis) }
     }
 
     val leftEntry = remember(state.entriesInCurrentGroup, state.entries.first().index) {

@@ -136,6 +136,7 @@ enum class Strings {
     SaveAsProjectDialogTitle,
     ExportDialogTitle,
     SetResolutionDialogDescription,
+    SetEntryPropertyDialogDescription,
     AskIfSaveBeforeOpenDialogDescription,
     AskIfSaveBeforeExportDialogDescription,
     AskIfSaveBeforeCloseDialogDescription,
