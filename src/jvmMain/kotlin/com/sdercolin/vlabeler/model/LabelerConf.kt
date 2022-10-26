@@ -314,6 +314,7 @@ data class LabelerConf(
      *             See src/main/resources/labeler/entry.js for the actual JavaScript class definition.
      *   Output:
      *   "entry" - the updated JavaScript object for [Entry].
+     * @property shortcutIndex Index in the shortcut list of Action `Set Property`. Could be 0~9.
      */
     @Serializable
     @Immutable
@@ -323,6 +324,7 @@ data class LabelerConf(
         val value: String? = null,
         val valueGetter: List<String>? = null,
         val valueSetter: List<String>? = null,
+        val shortcutIndex: Int? = null,
     )
 
     /**

@@ -515,6 +515,7 @@ class ProjectStoreImpl(
             js.set("value", value)
             js.eval(setter.joinToString("\n"))
             val updatedEntry = js.getJson("entry") as? Entry ?: return
+            js.close()
             editCurrentProjectModule { updateCurrentEntry(updatedEntry, project.labelerConf) }
         }.onFailure {
             errorState.showError(it)

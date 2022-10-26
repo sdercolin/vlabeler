@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.MissingSampleDirectoryException
+import com.sdercolin.vlabeler.io.getPropertyValue
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -22,6 +23,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
@@ -319,6 +321,36 @@ class EditorState(
     fun jumpToModule(name: String, targetEntryIndex: Int? = null) {
         val index = project.modules.indexOfFirst { it.name == name }
         appState.jumpToModule(index, targetEntryIndex)
+    }
+
+    fun handleSetPropertyKeyAction(action: KeyAction): Boolean {
+        val propertyShortcutIndex = when (action) {
+            KeyAction.SetProperty1 -> 0
+            KeyAction.SetProperty2 -> 1
+            KeyAction.SetProperty3 -> 2
+            KeyAction.SetProperty4 -> 3
+            KeyAction.SetProperty5 -> 4
+            KeyAction.SetProperty6 -> 5
+            KeyAction.SetProperty7 -> 6
+            KeyAction.SetProperty8 -> 7
+            KeyAction.SetProperty9 -> 8
+            KeyAction.SetProperty10 -> 9
+            else -> return false
+        }
+        val property = project.labelerConf.properties
+            .find { it.shortcutIndex == propertyShortcutIndex }
+            ?: return false
+        val js = JavaScript()
+        val currentValue = project.labelerConf.getPropertyValue(
+            property,
+            project.currentEntry,
+            js,
+        )
+        js.close()
+        if (currentValue == null) return false
+        val propertyIndex = project.labelerConf.properties.indexOf(property)
+        appState.openSetPropertyValueDialog(propertyIndex, currentValue.toFloat())
+        return true
     }
 
     fun clear() {

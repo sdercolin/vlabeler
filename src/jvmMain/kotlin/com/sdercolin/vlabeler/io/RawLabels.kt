@@ -245,3 +245,6 @@ private fun LabelerConf.getPropertyMap(
 
 fun LabelerConf.getPropertyMap(labelerConf: LabelerConf, entry: Entry, js: JavaScript) =
     getPropertyBaseMap(labelerConf, entry, getFieldMap(entry), getExtraMap(entry), js)
+
+fun LabelerConf.getPropertyValue(property: LabelerConf.Property, entry: Entry, js: JavaScript) =
+    getPropertyBaseMap(this, entry, getFieldMap(entry), getExtraMap(entry), js)[property]

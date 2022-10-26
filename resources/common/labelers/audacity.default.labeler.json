@@ -39,7 +39,8 @@
       ],
       "valueSetter": [
         "entry.start = value"
-      ]
+      ],
+      "shortcutIndex": 0
     },
     {
       "name": "end",
@@ -49,7 +50,8 @@
       ],
       "valueSetter": [
         "entry.end = value"
-      ]
+      ],
+      "shortcutIndex": 1
     }
   ],
   "parser": {

@@ -125,7 +125,8 @@
         "if (value < entry.start) {",
         "    entry.start = value",
         "}"
-      ]
+      ],
+      "shortcutIndex": 0
     },
     {
       "name": "ovl",
@@ -143,7 +144,8 @@
         "if (newOverlap < entry.start) {",
         "    entry.start = newOverlap",
         "}"
-      ]
+      ],
+      "shortcutIndex": 1
     },
     {
       "name": "preu",
@@ -157,7 +159,8 @@
       ],
       "valueSetter": [
         "entry.points[1] = value + entry.points[3]"
-      ]
+      ],
+      "shortcutIndex": 2
     },
     {
       "name": "fixed",
@@ -171,7 +174,8 @@
       ],
       "valueSetter": [
         "entry.points[0] = value + entry.points[3]"
-      ]
+      ],
+      "shortcutIndex": 3
     },
     {
       "name": "right",
@@ -195,7 +199,8 @@
         "    entry.end = -value",
         "    entry.extras[0] = value.toString()",
         "}"
-      ]
+      ],
+      "shortcutIndex": 4
     }
   ],
   "parser": {
