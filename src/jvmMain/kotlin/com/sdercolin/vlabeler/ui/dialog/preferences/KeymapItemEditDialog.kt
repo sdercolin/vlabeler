@@ -42,14 +42,15 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.env.released
 import com.sdercolin.vlabeler.env.toVirtualKey
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionType
@@ -92,8 +93,7 @@ class KeymapItemEditDialogState<K : Action>(private val args: PreferencesEditorS
     fun updateKeySet(keyEvent: KeyEvent) {
         val keySet = KeySet.fromKeyEvent(keyEvent)
         pendingSubKeys = keySet.subKeys
-
-        if (keyEvent.released) return
+        if (keyEvent.type != KeyEventType.KeyDown) return
         if (args.keymapItem.actionType != ActionType.Key) return
         if (keySet.isValid()) {
             updateKeySet(keySet)
