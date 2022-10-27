@@ -1,7 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog.customization
 
 import com.sdercolin.vlabeler.exception.CustomizedItemLoadingException
-import com.sdercolin.vlabeler.io.PluginInfoFileName
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
@@ -20,7 +19,7 @@ abstract class PluginManagerDialogState<T : CustomizableItem>(
 ) : CustomizableItemManagerDialogState<T>(
     title = title,
     importDialogTitle = importDialogTitle,
-    definitionFileNameSuffix = PluginInfoFileName,
+    definitionFileExtension = "json",
     directory = getPluginsDirectory(pluginType),
     allowExecution = allowExecution,
     appState = appState,

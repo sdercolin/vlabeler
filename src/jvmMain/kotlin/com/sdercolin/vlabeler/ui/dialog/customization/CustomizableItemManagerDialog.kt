@@ -89,7 +89,7 @@ fun CustomizableItemManagerDialog(
     if (state.isShowingFileSelector) {
         OpenFileDialog(
             title = string(state.importDialogTitle),
-            extensions = listOf(state.definitionFileNameSuffix),
+            extensions = listOf(state.definitionFileExtension),
             onCloseRequest = { parent, name ->
                 val file = if (parent != null && name != null) File(parent, name) else null
                 coroutineScope.launch {

@@ -18,7 +18,7 @@ class LabelerManagerDialogState(
 ) : CustomizableItemManagerDialogState<LabelerItem>(
     title = Strings.LabelerManagerTitle,
     importDialogTitle = Strings.LabelerManagerImportDialogTitle,
-    definitionFileNameSuffix = LabelerConf.LabelerFileExtension,
+    definitionFileExtension = LabelerConf.LabelerFileExtension,
     directory = CustomLabelerDir,
     allowExecution = false,
     appState = appState,

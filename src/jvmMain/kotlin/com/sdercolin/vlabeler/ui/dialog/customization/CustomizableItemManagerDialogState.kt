@@ -14,7 +14,7 @@ import java.io.File
 abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
     val title: Strings,
     val importDialogTitle: Strings,
-    val definitionFileNameSuffix: String,
+    val definitionFileExtension: String,
     val directory: File,
     val allowExecution: Boolean,
     protected val appState: AppState,
