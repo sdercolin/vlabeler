@@ -189,8 +189,11 @@ suspend fun exportProjectModule(
     val inEntryScope = project.labelerConf.writer.scope == LabelerConf.Scope.Entry
     val outputModuleNames = mutableListOf<String>()
     val module = project.modules[moduleIndex]
-    val outputText = runCatching {
-        if (inEntryScope) {
+    runCatching {
+        if (outputFile.parentFile.exists().not()) {
+            outputFile.parentFile.mkdirs()
+        }
+        val outputText = if (inEntryScope) {
             outputModuleNames.add(module.name)
             project.singleModuleToRawLabels(moduleIndex)
         } else {
@@ -200,13 +203,17 @@ suspend fun exportProjectModule(
             outputModuleNames.addAll(relatedModules.map { it.value.name })
             project.modulesToRawLabels(relatedModules.map { it.index })
         }
+
+        val charset = project.encoding?.let { Charset.forName(it) } ?: Charsets.UTF_8
+        outputFile.writeText(outputText, charset)
+        Log.debug(
+            "Project module ${outputModuleNames.joinToString { "\"$it\"" }} " +
+                "exported to ${outputFile.absolutePath}",
+        )
     }.getOrElse {
         Log.error(it)
         return
     }
-    val charset = project.encoding?.let { Charset.forName(it) } ?: Charsets.UTF_8
-    outputFile.writeText(outputText, charset)
-    Log.debug("Project module ${outputModuleNames.joinToString { "\"$it\"" }} exported to ${outputFile.absolutePath}")
 }
 
 private var saveFileJob: Job? = null
