@@ -30,7 +30,7 @@ function splitLine(text) {
 let ustLines = splitLine(inputs[0])
 let sample = samples[0]
 let dictLines = splitLine(resources[0]).map(x => parseLine(x))
-let dict = Object.assign({}, ...dictLines.map((x) => ({ [x[0]]: x[1] })))
+let dict = Object.assign({}, ...dictLines.map((x) => ({[x[0]]: x[1]})))
 
 let pos = 0
 let lyric = null
@@ -68,18 +68,19 @@ for (const note of notes) {
     if (phonemes.length === 1) {
         if (last) {
             entries.push(last)
-            start = note.pos
-            end = note.pos + note.length
-            last = new Entry(sample, phonemes[0], start, end, [], [])
-            log("assign last: " + JSON.stringify(last))
+            log("push last: " + JSON.stringify(last))
         }
+        start = note.pos
+        end = note.pos + note.length
+        last = new Entry(sample, phonemes[0], start, end, [], [])
+        log("assign last: " + JSON.stringify(last))
     } else if (phonemes.length > 1) {
         overlap = 0
         if (last) {
             overlap = params["overlap"]
             lastLength = last.end - last.start
             if (lastLength < overlap * 2) {
-                overlap = int(lastLength / 2)
+                overlap = (lastLength / 2).toFixed()
             }
             last.end = last.end - overlap
             entries.push(last)

@@ -1,6 +1,6 @@
 {
   "name": "ust2lab-ja-kana",
-  "version": 6,
+  "version": 7,
   "type": "template",
   "displayedName": {
     "en": "Lab generator with ust (ja-kana)",
