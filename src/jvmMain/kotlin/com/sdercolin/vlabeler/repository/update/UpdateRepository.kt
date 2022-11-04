@@ -8,7 +8,6 @@ import com.sdercolin.vlabeler.util.Url
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.apache.Apache
-import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -24,6 +23,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.core.isEmpty
 import io.ktor.utils.io.core.readBytes
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
 import java.io.File
 
@@ -78,7 +78,7 @@ class UpdateRepository {
         return getResponse("releases")
             .mapCatching<List<Release>, HttpResponse> { it.body() }
             .map { Update.from(it) }
-            .onFailure { if (it !is ClientRequestException) Log.error(it) }
+            .onFailure { if (it !is CancellationException) Log.error(it) }
     }
 
     suspend fun downloadUpdate(file: File, url: String, onProgress: (Float) -> Unit): Result<Unit> = runCatching {
