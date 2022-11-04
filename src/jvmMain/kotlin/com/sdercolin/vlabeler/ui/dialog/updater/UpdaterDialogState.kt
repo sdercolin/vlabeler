@@ -16,6 +16,7 @@ import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.savedMutableStateOf
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CancellationException
@@ -120,7 +121,7 @@ class UpdaterDialogState(
     fun handleChoosingDownloadPositionDialogResult(parent: String?, name: String?) {
         isShowingChoosingDownloadPositionDialog = false
         if (parent == null || name == null) return
-        val file = File(parent, name)
+        val file = File(parent, name).getDirectory()
         if (file.exists() && file.isDirectory) {
             downloadDirectory = file
         }

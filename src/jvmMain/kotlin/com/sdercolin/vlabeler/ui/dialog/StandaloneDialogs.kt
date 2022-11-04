@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
@@ -88,7 +89,7 @@ fun StandaloneDialogs(
             ) { parent, name ->
                 appState.closeSampleDirectoryRedirectDialog()
                 if (parent != null && name != null) {
-                    val newDirectory = File(parent, name)
+                    val newDirectory = File(parent, name).getDirectory()
                     if (newDirectory.exists() && newDirectory.isDirectory) {
                         appState.changeSampleDirectory(newDirectory)
                     }
