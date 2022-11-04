@@ -1,0 +1,93 @@
+{
+  "name": "mark-illegal-entries",
+  "version": 1,
+  "type": "macro",
+  "displayedName": {
+    "en": "Mark illegal entries",
+    "zh": "标出非法条目",
+    "ja": "不正なエントリーをマークする"
+  },
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": {
+    "en": "Given a list of legal labels, mark the entries that have names not in the list.",
+    "zh": "给定一个合法标记列表，标出不在列表中的条目。",
+    "ja": "合法なラベルのリストが与えられたとき、リストにない名前を持つエントリをマークします。"
+  },
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/mark-illegal-entries",
+  "supportedLabelFileExtension": "*",
+  "parameters": {
+    "list": [
+      {
+        "name": "legalLabels",
+        "type": "string",
+        "label": {
+          "en": "Legal label list",
+          "zh": "合法的标记列表",
+          "ja": "合法なラベルのリスト"
+        },
+        "description": {
+          "en": "A list of legal labels of your dataset, separated by the `Separator` given below",
+          "zh": "你的数据集中合法的标记列表，用下面给定的`分隔符`分隔",
+          "ja": "データセットの合法なラベルのリスト。下の`セパレータ`で区切られています"
+        },
+        "defaultValue": "",
+        "multiLine": true
+      },
+      {
+        "name": "separator",
+        "type": "string",
+        "label": {
+          "en": "Separator",
+          "zh": "分隔符",
+          "ja": "セパレータ"
+        },
+        "description": {
+          "en": "The separator used to separate the labels in the `Legal label list`. `\\n` and '\\t' are supported.",
+          "zh": "用来分隔`合法的标记列表`中标记的分隔符。支持`\\n`和`\\t`。",
+          "ja": "`合法なラベルのリスト`のラベルを区切るのに使われるセパレータ。`\\n`と`\\t`は使えます。"
+        },
+        "defaultValue": ","
+      },
+      {
+        "type": "boolean",
+        "name": "markInTag",
+        "label": {
+          "en": "Mark illegal entries in their tags",
+          "zh": "在非法条目的标签中标出",
+          "ja": "不正なエントリのタグにマークをつける"
+        },
+        "defaultValue": true
+      },
+      {
+        "name": "illegalMark",
+        "type": "string",
+        "label": {
+          "en": "Illegal mark",
+          "zh": "非法标签",
+          "ja": "不正マーク"
+        },
+        "description": {
+          "en": "The text to be appended to the tags of illegal entries",
+          "zh": "附加在非法条目的标签后的文本",
+          "ja": "不正なエントリのタグに追加するテキスト"
+        },
+        "enableIf": "markInTag",
+        "defaultValue": "*"
+      },
+      {
+        "type": "boolean",
+        "name": "showReport",
+        "label": {
+          "en": "Show report of the result",
+          "zh": "显示结果报告",
+          "ja": "結果のレポートを表示する"
+        },
+        "defaultValue": true
+      }
+    ]
+  },
+  "scriptFiles": [
+    "mark-illegal-entries.js"
+  ]
+}
