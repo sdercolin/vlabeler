@@ -32,7 +32,12 @@ fun loadProject(
     autoSaved: Boolean = false,
 ) {
     scope.launch(Dispatchers.IO) {
-        awaitLoadProject(file, appState, autoSaved)
+        runCatching {
+            awaitLoadProject(file, appState, autoSaved)
+        }.onFailure {
+            appState.showError(it)
+            appState.hideProgress()
+        }
     }
 }
 
@@ -112,7 +117,7 @@ suspend fun awaitLoadProject(
         else -> project.workingDirectory to project.projectName
     }
 
-    val cacheDirectory = if (project.cacheDirectory.toFile().parentFile.exists().not()) {
+    val cacheDirectory = if (project.cacheDirectory.toFile().parentFile?.exists() != true) {
         Project.getDefaultCacheDirectory(workingDirectory, projectName).also {
             showSnackbar(stringStatic(Strings.LoadProjectWarningCacheDirReset))
             Log.info("Reset cache directory to $it")
