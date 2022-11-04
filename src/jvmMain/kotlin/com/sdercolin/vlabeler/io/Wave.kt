@@ -4,9 +4,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleChunk
 import com.sdercolin.vlabeler.model.SampleInfo
-import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,12 +22,13 @@ class Wave(val channels: List<Channel>) {
 }
 
 suspend fun loadSampleChunk(
+    project: Project,
     sampleInfo: SampleInfo,
     appConf: AppConf,
     chunkIndex: Int,
     chunkSize: Int,
 ): Result<SampleChunk> = withContext(Dispatchers.IO) {
-    val stream = with(AudioSystem.getAudioInputStream(sampleInfo.file.toFile())) {
+    val stream = with(AudioSystem.getAudioInputStream(sampleInfo.getFile(project))) {
         val format = format.normalize(appConf.painter.amplitude.resampleDownToHz)
         AudioSystem.getAudioInputStream(format, this)
     }

@@ -10,7 +10,6 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.lastPathSection
-import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,8 +33,8 @@ fun StandaloneDialogs(
         appState.isShowingSaveAsProjectDialog -> SaveFileDialog(
             title = string(Strings.SaveAsProjectDialogTitle),
             extensions = listOf(Project.ProjectFileExtension),
-            initialDirectory = appState.project!!.workingDirectory,
-            initialFileName = appState.project.projectFile.name,
+            initialDirectory = appState.requireProject().workingDirectory.absolutePath,
+            initialFileName = appState.requireProject().projectFile.name,
         ) { directory, fileName ->
             appState.closeSaveAsProjectDialog()
             if (directory != null && fileName != null) {
@@ -44,17 +43,17 @@ fun StandaloneDialogs(
                     val cacheDirectory = if (isUsingDefaultCacheDirectory) {
                         val newCacheDirectory = Project.getDefaultCacheDirectory(directory, projectName)
                         runCatching {
-                            File(cacheDirectory).copyRecursively(File(newCacheDirectory), overwrite = true)
+                            cacheDirectory.copyRecursively(File(newCacheDirectory), overwrite = true)
                         }.onFailure {
                             Log.error(it)
                         }
                         newCacheDirectory
-                    } else this.cacheDirectory
+                    } else this.cacheDirectoryPath
                     copy(
-                        workingDirectory = directory,
+                        workingDirectoryPath = directory,
                         projectName = projectName,
-                        cacheDirectory = cacheDirectory,
-                    )
+                        cacheDirectoryPath = cacheDirectory,
+                    ).makeRelativePathsIfPossible()
                 }
                 appState.requestSave()
             }
@@ -65,7 +64,8 @@ fun StandaloneDialogs(
             SaveFileDialog(
                 title = string(Strings.ExportDialogTitle),
                 extensions = listOf(project.labelerConf.extension),
-                initialDirectory = project.currentModule.sampleDirectory,
+                initialDirectory = project.currentModule.getSampleDirectory(project)
+                    .takeIf { it.isDirectory }?.absolutePath,
                 initialFileName = project.labelerConf.defaultInputFilePath?.lastPathSection
                     ?: "${project.projectName}$currentModuleNameSection.${project.labelerConf.extension}",
             ) { parent, name ->
@@ -83,7 +83,8 @@ fun StandaloneDialogs(
             val project = appState.requireProject()
             OpenFileDialog(
                 title = string(Strings.ChooseSampleDirectoryDialogTitle),
-                initialDirectory = project.currentModule.sampleDirectory.toFileOrNull()?.absolutePath,
+                initialDirectory = project.currentModule.getSampleDirectory(project)
+                    .takeIf { it.isDirectory }?.absolutePath,
                 extensions = null,
                 directoryMode = true,
             ) { parent, name ->

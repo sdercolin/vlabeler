@@ -80,7 +80,7 @@ fun runMacroPlugin(
                     project.copy(
                         modules = modules,
                         currentModuleIndex = js.getOrNull("currentModuleIndex") ?: project.currentModuleIndex,
-                    ).validate()
+                    ).validate().makeRelativePathsIfPossible()
                 } else {
                     project
                 }
@@ -94,7 +94,7 @@ fun runMacroPlugin(
                             entries = entries,
                             currentIndex = js.getOrNull("currentEntryIndex") ?: currentIndex,
                         )
-                    }.validate()
+                    }.validate().makeRelativePathsIfPossible()
                 } else {
                     project
                 }

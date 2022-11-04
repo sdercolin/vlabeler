@@ -109,34 +109,52 @@ suspend fun awaitLoadProject(
             }
     }
     val (workingDirectory, projectName) = when {
-        autoSaved -> project.workingDirectory to project.projectName
+        autoSaved -> project.workingDirectory.absolutePath to project.projectName
         project.projectFile.absolutePath != file.absolutePath -> {
             Log.info("Redirect project path to ${file.absolutePath}")
             file.absoluteFile.parentFile.absolutePath to file.nameWithoutExtension
         }
-        else -> project.workingDirectory to project.projectName
+        else -> project.workingDirectoryPath to project.projectName
     }
 
-    val cacheDirectory = if (project.cacheDirectory.toFile().parentFile?.exists() != true) {
+    val rootSampleDirectory =
+        if (project.workingDirectoryPath.toFile().isAbsolute.not() &&
+            workingDirectory != project.workingDirectoryPath
+        ) {
+            val originalWorkingDirectory = project.workingDirectory.absoluteFile
+            val relativeRootSampleDirectory = project.rootSampleDirectory?.relativeTo(originalWorkingDirectory)
+            if (relativeRootSampleDirectory == null) {
+                null
+            } else {
+                // keep relative root sample directory
+                val newWorkingDirectory = workingDirectory.toFile()
+                require(newWorkingDirectory.isAbsolute)
+                newWorkingDirectory.resolve(relativeRootSampleDirectory).absolutePath.also {
+                    Log.info("Redirect root sample directory to $it")
+                }
+            }
+        } else {
+            project.rootSampleDirectoryPath
+        }
+
+    val cacheDirectory = if (project.cacheDirectory.parentFile?.exists() != true) {
         Project.getDefaultCacheDirectory(workingDirectory, projectName).also {
             showSnackbar(stringStatic(Strings.LoadProjectWarningCacheDirReset))
             Log.info("Reset cache directory to $it")
         }
     } else {
-        project.cacheDirectory
+        project.cacheDirectoryPath
     }
 
-    Log.info("Project loaded: ${project.projectFile.absolutePath}")
+    Log.info("Project loaded: ${file.absolutePath}, original path is ${project.projectFile.absolutePath}")
     val fixedProject = project.copy(
         labelerConf = labelerConf,
         originalLabelerConf = originalLabelerConf,
-        workingDirectory = workingDirectory,
+        rootSampleDirectoryPath = rootSampleDirectory,
+        workingDirectoryPath = workingDirectory,
         projectName = projectName,
-        cacheDirectory = cacheDirectory,
-    )
-    if (fixedProject != project) {
-        Log.info("Loaded project is modified to: $fixedProject")
-    }
+        cacheDirectoryPath = cacheDirectory,
+    ).makeRelativePathsIfPossible()
     appState.openEditor(fixedProject)
     if (!autoSaved) {
         appState.discardAutoSavedProjects()
@@ -177,11 +195,11 @@ suspend fun awaitOpenCreatedProject(
 
 suspend fun exportProject(project: Project) {
     val allModules = project.modules.withIndex()
-    val groups = allModules.filter { it.value.rawFilePath != null }.groupBy { it.value.rawFilePath }
+    val groups = allModules.filter { it.value.rawFilePath != null }.groupBy { it.value.getRawFile(project) }
         .map { it.value }
 
     for (group in groups) {
-        exportProjectModule(project, group.first().index, requireNotNull(group.first().value.rawFilePath).toFile())
+        exportProjectModule(project, group.first().index, requireNotNull(group.first().value.getRawFile(project)))
     }
 }
 
@@ -226,7 +244,7 @@ private var saveFileJob: Job? = null
 suspend fun saveProjectFile(project: Project, allowAutoExport: Boolean = false): File = withContext(Dispatchers.IO) {
     saveFileJob?.join()
     saveFileJob = launch {
-        val workingDirectory = project.workingDirectory.toFile()
+        val workingDirectory = project.workingDirectory
         if (!workingDirectory.exists()) {
             workingDirectory.mkdir()
         }

@@ -37,9 +37,11 @@ data class SampleInfo(
     val algorithmVersion: Int,
 ) {
 
+    fun getFile(project: Project): File = project.rootSampleDirectory?.resolve(file) ?: File(file)
+
     companion object {
 
-        suspend fun load(file: File, appConf: AppConf): Result<SampleInfo> = runCatching {
+        suspend fun load(project: Project, file: File, appConf: AppConf): Result<SampleInfo> = runCatching {
             val stream = AudioSystem.getAudioInputStream(file)
             val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
             val format = stream.format.normalize(maxSampleRate)
@@ -75,9 +77,12 @@ data class SampleInfo(
             }
             stream.close()
 
+            val filePath = (project.rootSampleDirectory?.let { file.relativeTo(it).path } ?: file.absolutePath)
+                .replace(File.separatorChar, '/')
+
             SampleInfo(
                 name = file.name,
-                file = file.absolutePath,
+                file = filePath,
                 sampleRate = sampleRate,
                 maxSampleRate = maxSampleRate,
                 normalize = normalize,

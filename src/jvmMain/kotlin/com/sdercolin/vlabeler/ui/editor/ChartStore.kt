@@ -72,6 +72,7 @@ class ChartStore {
 
     fun load(
         scope: CoroutineScope,
+        project: Project,
         sampleInfo: SampleInfo,
         appConf: AppConf,
         density: Density,
@@ -89,7 +90,7 @@ class ChartStore {
                 val chunk = if (hasCachedChunk(sampleInfo, chunkIndex)) {
                     null
                 } else {
-                    loadSampleChunk(sampleInfo, appConf, chunkIndex, sampleInfo.chunkSize).getOrThrow()
+                    loadSampleChunk(project, sampleInfo, appConf, chunkIndex, sampleInfo.chunkSize).getOrThrow()
                 }
 
                 repeat(sampleInfo.channels) { channelIndex ->

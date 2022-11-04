@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
-import com.sdercolin.vlabeler.util.toFile
 import java.awt.Desktop
 import java.io.File
 
@@ -33,7 +32,9 @@ class SampleListDialogState(
     }
 
     private fun getExistingSampleFileNames() =
-        Sample.listSampleFiles(editorState.project.currentModule.sampleDirectory.toFile())
+        Sample.listSampleFiles(
+            editorState.project.currentModule.getSampleDirectory(editorState.project),
+        )
             .map { it.name }
 
     private fun getProjectSampleFilesWithEntries() = editorState.project.currentModule.entries
@@ -82,7 +83,8 @@ class SampleListDialogState(
         editorState.jumpToEntry(index)
     }
 
-    val sampleDirectory: File get() = editorState.project.currentModule.sampleDirectory.toFile()
+    val sampleDirectory: File
+        get() = editorState.project.currentModule.getSampleDirectory(editorState.project)
 
     fun isSampleDirectoryExisting() = sampleDirectory.let {
         it.exists() && it.isDirectory

@@ -23,7 +23,6 @@ import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.savedMutableStateOf
-import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -326,7 +325,12 @@ class ProjectStoreImpl(
 
     override fun changeSampleDirectory(directory: File) {
         editCurrentProjectModule {
-            copy(sampleDirectory = directory.absolutePath)
+            val root = project?.rootSampleDirectory
+            if (root != null) {
+                copy(sampleDirectoryPath = directory.relativeTo(root).path)
+            } else {
+                copy(sampleDirectoryPath = directory.absolutePath)
+            }
         }
     }
 
@@ -462,7 +466,7 @@ class ProjectStoreImpl(
         scope.launch(Dispatchers.IO) {
             progressState.showProgress()
             val project = requireProject()
-            val targetFile = requireNotNull(project.currentModule.rawFilePath).toFile()
+            val targetFile = requireNotNull(project.currentModule.getRawFile(project))
             exportProjectModule(project, project.currentModuleIndex, targetFile)
             progressState.hideProgress()
         }
@@ -485,19 +489,13 @@ class ProjectStoreImpl(
 
     override fun openRootDirectory() {
         val project = project ?: return
-        val rootDir = if (project.rootSampleDirectory != null) {
-            project.rootSampleDirectory.toFile()
-        } else if (project.modules.size == 1) {
-            project.modules.first().sampleDirectory.toFile()
-        } else {
-            project.projectFile.parentFile
-        }
+        val rootDir = project.rootSampleDirectory ?: return
         openDirectory(rootDir)
     }
 
     override fun openCurrentModuleDirectory() {
         val project = project ?: return
-        openDirectory(project.currentModule.sampleDirectory.toFile())
+        openDirectory(project.currentModule.getSampleDirectory(project))
     }
 
     override fun openProjectLocation() {

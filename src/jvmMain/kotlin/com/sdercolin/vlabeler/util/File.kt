@@ -37,3 +37,13 @@ fun File.findUnusedFile(base: String, existingAbsolutePaths: Set<String>): File 
     }
     return resolve(result)
 }
+
+fun File.containsFileRecursively(file: File): Boolean {
+    if (file.absolutePath == absolutePath) return true
+    if (isDirectory) {
+        listFiles()?.forEach {
+            if (it.containsFileRecursively(file)) return true
+        }
+    }
+    return false
+}

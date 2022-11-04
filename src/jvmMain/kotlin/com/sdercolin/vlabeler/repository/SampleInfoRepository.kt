@@ -11,7 +11,6 @@ import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
-import com.sdercolin.vlabeler.util.toFileOrNull
 import java.io.File
 
 @Stable
@@ -32,55 +31,67 @@ object SampleInfoRepository {
         }.getOrNull() ?: mutableMapOf()
     }
 
-    suspend fun load(file: File, moduleName: String, appConf: AppConf): Result<SampleInfo> {
+    suspend fun load(project: Project, sampleFile: File, moduleName: String, appConf: AppConf): Result<SampleInfo> {
         val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
         val normalize = appConf.painter.amplitude.normalize
-        infoMap[moduleName to file.name]?.let {
+        infoMap[moduleName to sampleFile.name]?.let {
             if (it.maxSampleRate == maxSampleRate &&
                 it.normalize == normalize &&
-                it.file.toFile().exists() &&
-                it.lastModified == file.lastModified()
+                it.getFile(project).exists() &&
+                it.lastModified == sampleFile.lastModified()
             ) {
                 // Return memory cached sample info
-                Log.info("Returning cached sample info for ${file.name} in module $moduleName")
+                Log.info("Returning cached sample info for ${sampleFile.name} in module $moduleName")
                 return Result.success(it)
             }
         }
         val existingInfo = runCatching {
-            getSampleInfoFile(file).takeIf { it.exists() }?.readText()?.parseJson<SampleInfo>()
+            getSampleInfoFile(project, sampleFile).takeIf { it.exists() }?.readText()?.parseJson<SampleInfo>()
         }.getOrNull()
         if (existingInfo != null &&
             existingInfo.algorithmVersion == WaveLoadingAlgorithmVersion &&
             existingInfo.normalize == normalize &&
             existingInfo.maxSampleRate == maxSampleRate &&
-            existingInfo.file.toFile().exists() &&
-            existingInfo.lastModified == file.lastModified()
+            existingInfo.getFile(project).exists() &&
+            existingInfo.lastModified == sampleFile.lastModified()
         ) {
             // Return file cached sample info
-            Log.info("Returning cached sample info for ${file.name} in module $moduleName")
+            Log.info("Returning cached sample info for ${sampleFile.name} in module $moduleName")
             infoMap[moduleName to existingInfo.name] = existingInfo
             return Result.success(existingInfo)
         }
-        return loadSampleInfo(file, moduleName, appConf)
+        return loadSampleInfo(project, sampleFile, moduleName, appConf)
     }
 
-    private suspend fun loadSampleInfo(file: File, moduleName: String, appConf: AppConf): Result<SampleInfo> {
-        Log.debug("Loading sample ${file.absolutePath}")
+    private suspend fun loadSampleInfo(
+        project: Project,
+        sampleFile: File,
+        moduleName: String,
+        appConf: AppConf,
+    ): Result<SampleInfo> {
+        Log.debug("Loading sample ${sampleFile.absolutePath}")
 
-        val info = SampleInfo.load(file, appConf).getOrElse {
+        val info = SampleInfo.load(project, sampleFile, appConf).getOrElse {
             return Result.failure(it)
         }
         infoMap[moduleName to info.name] = info
-        val infoFile = getSampleInfoFile(file)
+        val infoFile = getSampleInfoFile(project, sampleFile)
         infoFile.writeText(info.stringifyJson())
-        cacheMap[file.absolutePath] = infoFile.absolutePath
+        cacheMap[project.getSampleFilePath(sampleFile)] =
+            infoFile.toRelativeString(cacheDirectory).replace(File.separatorChar, '/')
         cacheMapFile.writeText(cacheMap.stringifyJson())
         return Result.success(info)
     }
 
-    private fun getSampleInfoFile(wavFile: File) =
-        cacheMap[wavFile.absolutePath]?.toFileOrNull(ensureIsFile = true)
-            ?: cacheDirectory.findUnusedFile("${wavFile.name}.info.json", cacheMap.values.toSet())
+    private fun Project.getSampleFilePath(sampleFile: File): String = rootSampleDirectoryPath?.let {
+        sampleFile.toRelativeString(it.toFile()).replace(File.separatorChar, '/')
+    } ?: sampleFile.absolutePath
+
+    private fun getSampleInfoFile(project: Project, sampleFile: File) =
+        cacheMap[project.getSampleFilePath(sampleFile)]
+            ?.let { cacheDirectory.resolve(it) }
+            ?.takeIf { it.isFile }
+            ?: cacheDirectory.findUnusedFile("${sampleFile.name}.info.json", cacheMap.values.toSet())
 
     fun clearMemory() {
         infoMap.clear()

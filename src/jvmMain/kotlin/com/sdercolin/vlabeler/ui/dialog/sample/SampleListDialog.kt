@@ -55,7 +55,11 @@ import com.sdercolin.vlabeler.util.runIfHave
 import java.io.File
 
 @Composable
-private fun rememberState(editorState: EditorState) = remember(editorState) {
+private fun rememberState(editorState: EditorState) = remember(
+    editorState,
+    editorState.project.rootSampleDirectory,
+    editorState.project.currentModule.getSampleDirectory(editorState.project),
+) {
     SampleListDialogState(editorState)
 }
 

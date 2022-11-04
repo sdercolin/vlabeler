@@ -13,8 +13,8 @@ import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.containsFileRecursively
 import com.sdercolin.vlabeler.util.execResource
-import com.sdercolin.vlabeler.util.orEmpty
 import com.sdercolin.vlabeler.util.readTextByEncoding
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
@@ -27,12 +27,34 @@ import java.io.File
 @Immutable
 data class Project(
     val version: Int = 0,
-    val rootSampleDirectory: String? = null,
-    val workingDirectory: String,
+    /**
+     * The directory where all sample files are stored.
+     * Should always be an absolute path.
+     * Null case is only for compatibility with old projects and should be discarded in the future.
+     */
+    @SerialName("rootSampleDirectory")
+    val rootSampleDirectoryPath: String? = null,
+    /**
+     * The directory where the project file is stored.
+     * Can be relative to [rootSampleDirectory]
+     */
+    @SerialName("workingDirectory")
+    val workingDirectoryPath: String,
     val projectName: String,
-    val cacheDirectory: String,
+    /**
+     * The directory where all cache files are stored.
+     * Can be relative to [rootSampleDirectory]
+     */
+    @SerialName("cacheDirectory")
+    val cacheDirectoryPath: String,
+    /**
+     * The original [LabelerConf] instance stored in the project file.
+     */
     @SerialName("labelerConf")
     val originalLabelerConf: LabelerConf,
+    /**
+     * The injected [LabelerConf] instance with [labelerParams].
+     */
     @Transient
     val labelerConf: LabelerConf = originalLabelerConf,
     val labelerParams: ParamTypedMap? = null,
@@ -42,11 +64,23 @@ data class Project(
     val currentModuleIndex: Int,
     val autoExport: Boolean,
 ) {
+    val rootSampleDirectory: File?
+        get() = rootSampleDirectoryPath?.toFile()
+
+    val workingDirectory: File
+        get() = rootSampleDirectory?.resolve(workingDirectoryPath) ?: workingDirectoryPath.toFile()
 
     val projectFile: File
-        get() = File(workingDirectory).resolve("$projectName.$ProjectFileExtension")
+        get() = workingDirectory.resolve("$projectName.$ProjectFileExtension")
 
-    val isUsingDefaultCacheDirectory get() = cacheDirectory == getDefaultCacheDirectory(workingDirectory, projectName)
+    val cacheDirectory: File
+        get() = rootSampleDirectory?.resolve(cacheDirectoryPath) ?: cacheDirectoryPath.toFile()
+
+    val isUsingDefaultCacheDirectory: Boolean
+        get() = cacheDirectory.absolutePath == getDefaultCacheDirectory(
+            workingDirectory.absolutePath,
+            projectName,
+        )
 
     val currentModule: Module
         get() = modules[currentModuleIndex]
@@ -58,7 +92,7 @@ data class Project(
         get() = currentEntry.sample
 
     val currentSampleFile: File
-        get() = currentModule.currentSampleFile
+        get() = currentModule.getCurrentSampleFile(this)
 
     val isMultiModule: Boolean
         get() = modules.size > 1
@@ -88,10 +122,31 @@ data class Project(
     }
 
     fun validate() = this.apply {
+        require(rootSampleDirectoryPath?.toFile()?.isAbsolute == true) { "rootSampleDirectoryPath must be absolute" }
         require(modules.isNotEmpty()) { "No module found." }
         require(currentModuleIndex in modules.indices) { "Invalid current module index." }
         require(modules.distinctBy { it.name }.size == modules.size) { "Module names cannot be duplicated." }
         modules.forEach { it.validate(multipleEditMode, labelerConf) }
+    }
+
+    fun makeRelativePathsIfPossible(): Project {
+        val rootSampleDirectory = rootSampleDirectory ?: return this
+        val fixedWorkingDirectory = if (rootSampleDirectory.containsFileRecursively(workingDirectory)) {
+            workingDirectory.relativeTo(rootSampleDirectory).path
+        } else {
+            workingDirectory.path
+        }
+
+        val fixedCacheDirectory = if (rootSampleDirectory.containsFileRecursively(cacheDirectory)) {
+            cacheDirectory.relativeTo(rootSampleDirectory).path
+        } else {
+            cacheDirectory.path
+        }
+
+        return copy(
+            workingDirectoryPath = fixedWorkingDirectory,
+            cacheDirectoryPath = fixedCacheDirectory,
+        )
     }
 
     companion object {
@@ -292,10 +347,10 @@ suspend fun projectOf(
         }
         Project(
             version = ProjectVersion,
-            rootSampleDirectory = sampleDirectory,
-            workingDirectory = workingDirectory,
+            rootSampleDirectoryPath = sampleDirectory,
+            workingDirectoryPath = workingDirectory,
             projectName = projectName,
-            cacheDirectory = cacheDirectory,
+            cacheDirectoryPath = cacheDirectory,
             labelerConf = injectedLabelerConf,
             originalLabelerConf = labelerConf,
             labelerParams = labelerTypedParams,
@@ -303,7 +358,7 @@ suspend fun projectOf(
             modules = modules,
             currentModuleIndex = 0,
             autoExport = autoExport,
-        ).validate()
+        ).validate().makeRelativePathsIfPossible()
     }.onFailure {
         return Result.failure(InvalidCreatedProjectException(it))
     }
@@ -333,7 +388,7 @@ private fun parseModule(
     val moduleGroups = moduleDefinitions.groupBy { it.copy(name = "") }.map { it.value }
 
     return moduleGroups.flatMap { group ->
-        parseModuleGroup(group, labelerConf, labelerParams, encoding)
+        parseModuleGroup(sampleDirectory, group, labelerConf, labelerParams, encoding)
     }
 }
 
@@ -384,14 +439,15 @@ private fun parseSingleModule(
     }
     Module(
         name = def.name,
-        sampleDirectory = def.sampleDirectory.absolutePath,
+        sampleDirectoryPath = def.sampleDirectory.relativeTo(sampleDirectory.toFile()).path,
         entries = entries,
         currentIndex = 0,
-        rawFilePath = def.labelFile?.absolutePath,
+        rawFilePath = def.labelFile?.relativeTo(sampleDirectory.toFile())?.path,
     )
 }
 
 private fun parseModuleGroup(
+    rootSampleDirectory: String,
     moduleDefinitionGroup: List<ModuleDefinition>,
     // TODO: plugin: Plugin?,
     labelerConf: LabelerConf,
@@ -406,10 +462,10 @@ private fun parseModuleGroup(
     return moduleDefinitionGroup.zip(result).map { (def, entries) ->
         Module(
             name = def.name,
-            sampleDirectory = def.sampleDirectory.absolutePath,
+            sampleDirectoryPath = def.sampleDirectory.relativeTo(rootSampleDirectory.toFile()).path,
             entries = entries,
             currentIndex = 0,
-            rawFilePath = def.labelFile?.absolutePath,
+            rawFilePath = def.labelFile?.relativeTo(rootSampleDirectory.toFile())?.path,
         )
     }
 }

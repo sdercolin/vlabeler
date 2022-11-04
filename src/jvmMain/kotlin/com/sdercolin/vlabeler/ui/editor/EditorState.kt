@@ -25,13 +25,11 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.runIf
-import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class EditorState(
     project: Project,
@@ -150,7 +148,7 @@ class EditorState(
     suspend fun loadSample(appConf: AppConf) {
         withContext(Dispatchers.IO) {
             val moduleName = project.currentModule.name
-            val sampleDirectory = project.currentModule.sampleDirectory.toFile()
+            val sampleDirectory = project.currentModule.getSampleDirectory(project)
             if (!sampleDirectory.exists()) {
                 sampleInfoState.value = Result.failure(MissingSampleDirectoryException())
                 appState.confirmIfRedirectSampleDirectory(sampleDirectory)
@@ -158,10 +156,10 @@ class EditorState(
             }
 
             val previousSampleInfo = sampleInfoState.value?.getOrNull()
-            if (previousSampleInfo?.file != project.currentSampleFile.absolutePath) {
+            if (previousSampleInfo?.getFile(project)?.absolutePath != project.currentSampleFile.absolutePath) {
                 sampleInfoState.value = null
             }
-            val sampleInfo = SampleInfoRepository.load(project.currentSampleFile, moduleName, appConf)
+            val sampleInfo = SampleInfoRepository.load(project, project.currentSampleFile, moduleName, appConf)
             sampleInfoState.value = sampleInfo
             sampleInfo.getOrElse {
                 Log.error(it)
@@ -173,7 +171,7 @@ class EditorState(
                     val renderProgressTotal = it.chunkCount * (it.channels + if (it.hasSpectrogram) 1 else 0)
                     _renderProgress = 0 to renderProgressTotal
                 }
-                player.load(File(it.file))
+                player.load(it.getFile(project))
             }
         }
     }
@@ -203,6 +201,7 @@ class EditorState(
         }
         chartStore.load(
             scope,
+            project,
             sampleInfo,
             appConf,
             density,

@@ -12,7 +12,6 @@ import com.sdercolin.vlabeler.util.findUnusedFile
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
-import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import org.jetbrains.skiko.toBufferedImage
@@ -95,7 +94,7 @@ object ChartRepository {
         ImageIO.write(image.asSkiaBitmap().toBufferedImage(), "png", outputStream)
         outputStream.flush()
         outputStream.close()
-        cacheMap[cacheKey] = file.absolutePath
+        cacheMap[cacheKey] = file.relativeTo(cacheDirectory).path.replace(File.separatorChar, '/')
         cacheMapFile.writeText(cacheMap.stringifyJson())
         Log.debug("Written to $file")
     }
@@ -104,7 +103,9 @@ object ChartRepository {
         sampleInfo: SampleInfo,
         channelIndex: Int,
         chunkIndex: Int,
-    ) = cacheMap[sampleInfo.getCacheKey(KeyWaveform, channelIndex, chunkIndex)]?.toFileOrNull(ensureIsFile = true)
+    ) = cacheMap[sampleInfo.getCacheKey(KeyWaveform, channelIndex, chunkIndex)]
+        ?.let { cacheDirectory.resolve(it) }
+        ?.takeIf { it.isFile }
         ?: run {
             val baseFileName = "${sampleInfo.name}_${KeyWaveform}_${channelIndex}_$chunkIndex.$Extension"
             cacheDirectory.findUnusedFile(baseFileName, cacheMap.values.toSet())
@@ -113,7 +114,9 @@ object ChartRepository {
     fun getSpectrogramImageFile(
         sampleInfo: SampleInfo,
         chunkIndex: Int,
-    ) = cacheMap[sampleInfo.getCacheKey(KeySpectrogram, chunkIndex)]?.toFileOrNull(ensureIsFile = true)
+    ) = cacheMap[sampleInfo.getCacheKey(KeySpectrogram, chunkIndex)]
+        ?.let { cacheDirectory.resolve(it) }
+        ?.takeIf { it.isFile }
         ?: run {
             val baseFileName = "${sampleInfo.name}_${KeySpectrogram}_$chunkIndex.$Extension"
             cacheDirectory.findUnusedFile(baseFileName, cacheMap.values.toSet())

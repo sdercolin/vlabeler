@@ -8,7 +8,6 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.ui.editor.ChartStore
-import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,21 +45,22 @@ class ChartPrerenderer(
         val totalModules = project.modules.size
         var progress = Progress(0, totalModules, 0, 0, 0, 0)
         for (moduleIndex in project.modules.indices) {
-            val sampleDirectory = project.modules[moduleIndex].sampleDirectory.toFile()
+            val sampleDirectory = project.modules[moduleIndex].getSampleDirectory(project)
             if (!sampleDirectory.exists()) {
                 onError(MissingSampleDirectoryException())
                 return@launch
             }
             progress = progress.copy(finishedModules = moduleIndex)
             val module = project.modules[moduleIndex]
-            val allSamples = module.entries.map { it.sample }.distinct().map { module.getSampleFile(it) }
+            val allSamples = module.entries.map { it.sample }.distinct()
+                .map { module.getSampleFile(project, it) }
             val totalFiles = allSamples.size
             progress = progress.copy(totalFiles = totalFiles)
             for (sampleIndex in allSamples.indices) {
                 val sample = allSamples[sampleIndex]
 
                 progress = progress.copy(finishedFiles = sampleIndex)
-                val sampleInfo = SampleInfoRepository.load(sample, module.name, appConf).getOrElse {
+                val sampleInfo = SampleInfoRepository.load(project, sample, module.name, appConf).getOrElse {
                     Log.error(it)
                     onError(it)
                     return@launch
@@ -91,6 +91,7 @@ class ChartPrerenderer(
 
                 chartStore.load(
                     scope = scope,
+                    project = project,
                     sampleInfo = sampleInfo,
                     appConf = appConf,
                     density = density,

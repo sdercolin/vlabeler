@@ -49,13 +49,13 @@ fun getDefaultLabelers() = DefaultLabelerDir.getChildren(labelerFileFilter)
 fun getCustomLabelers() = CustomLabelerDir.getChildren(labelerFileFilter)
 
 // Project files
-fun Project.getCacheDir() = File(cacheDirectory)
+fun Project.getCacheDir() = cacheDirectory
 fun Project.clearCache() {
     ChartRepository.clear(this)
     SampleInfoRepository.clear(this)
 }
 
-private val invalidCharsForFileName = arrayOf('"', '*', ':', '<', '>', '?', '\\', '|', Char(0x7F), '\u0000')
+private val invalidCharsForFileName = arrayOf('"', '*', ':', '<', '>', '?', '\\', '/', '|', Char(0x7F), '\u0000')
 
 fun String.isValidFileName(): Boolean {
     return invalidCharsForFileName.none { contains(it) } && isNotBlank()

@@ -3,6 +3,8 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
+import com.sdercolin.vlabeler.util.toFile
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.io.File
@@ -11,12 +13,22 @@ import java.io.File
 @Immutable
 data class Module(
     val name: String,
-    val sampleDirectory: String,
+    /**
+     * Should always be under [Project.rootSampleDirectory].
+     * Basically, it's stored as a relative path to [Project.rootSampleDirectory].
+     */
+    @SerialName("sampleDirectory")
+    val sampleDirectoryPath: String,
     val entries: List<Entry>,
     val currentIndex: Int,
+    /**
+     * Should always be under [Project.rootSampleDirectory].
+     * Basically, it's stored as a relative path to [Project.rootSampleDirectory].
+     */
     val rawFilePath: String? = null,
     val entryFilter: EntryFilter? = null,
 ) {
+
     @Transient
     private val filteredEntryIndexes: List<Int> =
         entries.indices.filter { entryFilter?.matches(entries[it]) ?: true }
@@ -43,15 +55,19 @@ data class Module(
     private val currentGroupIndex: Int
         get() = getGroupIndex(currentIndex)
 
-    val currentSampleName: String
+    private val currentSampleName: String
         get() = currentEntry.sample
 
-    val currentSampleFile: File
-        get() = getSampleFile(currentSampleName)
+    fun getCurrentSampleFile(project: Project): File = getSampleFile(project, currentSampleName)
 
-    fun getSampleFile(sampleName: String): File {
-        return File(sampleDirectory, sampleName)
+    fun getSampleDirectory(project: Project) =
+        project.rootSampleDirectory?.resolve(sampleDirectoryPath) ?: sampleDirectoryPath.toFile()
+
+    fun getSampleFile(project: Project, sampleName: String): File {
+        return getSampleDirectory(project).resolve(sampleName)
     }
+
+    fun getRawFile(project: Project) = rawFilePath?.let { project.rootSampleDirectory?.resolve(it) ?: it.toFile() }
 
     @Transient
     val entryCount: Int = entries.size
