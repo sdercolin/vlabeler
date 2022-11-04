@@ -416,10 +416,6 @@ class ProjectCreatorState(
         }
     }
 
-    suspend fun showSnackBar(message: String) {
-        appState.showSnackbar(message)
-    }
-
     @Composable
     fun getSupportedPlugins(plugins: List<Plugin>) = plugins
         .filter { it.type == Plugin.Type.Template }
