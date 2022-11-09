@@ -91,7 +91,10 @@ object SampleInfoRepository {
         cacheMap[project.getSampleFilePath(sampleFile)]
             ?.let { cacheDirectory.resolve(it) }
             ?.takeIf { it.isFile }
-            ?: cacheDirectory.findUnusedFile("${sampleFile.name}.info.json", cacheMap.values.toSet())
+            ?: cacheDirectory.findUnusedFile(
+                base = "${sampleFile.name}.info.json",
+                existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
+            )
 
     fun clearMemory() {
         infoMap.clear()

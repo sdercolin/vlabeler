@@ -108,7 +108,10 @@ object ChartRepository {
         ?.takeIf { it.isFile }
         ?: run {
             val baseFileName = "${sampleInfo.name}_${KeyWaveform}_${channelIndex}_$chunkIndex.$Extension"
-            cacheDirectory.findUnusedFile(baseFileName, cacheMap.values.toSet())
+            cacheDirectory.findUnusedFile(
+                base = baseFileName,
+                existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
+            )
         }
 
     fun getSpectrogramImageFile(
@@ -119,7 +122,10 @@ object ChartRepository {
         ?.takeIf { it.isFile }
         ?: run {
             val baseFileName = "${sampleInfo.name}_${KeySpectrogram}_$chunkIndex.$Extension"
-            cacheDirectory.findUnusedFile(baseFileName, cacheMap.values.toSet())
+            cacheDirectory.findUnusedFile(
+                base = baseFileName,
+                existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
+            )
         }
 
     private fun SampleInfo.getCacheKey(vararg keys: Any): String {
