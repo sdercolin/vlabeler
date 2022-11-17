@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -101,6 +102,21 @@ fun ColumnScope.ModuleRow(
     Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
         if (screenRange != null) {
             Row(modifier = Modifier.fillMaxSize()) {
+                @Composable
+                fun RowScope.paddingBox(weight: Float) {
+                    if (weight > 0) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(weight),
+                        )
+                    }
+                }
+
+                val paddingStartWeight = (visibleEntries.firstOrNull()?.start?.minus(screenRange.start) ?: 0f) /
+                    (screenRange.endInclusive - screenRange.start)
+                paddingBox(paddingStartWeight)
+
                 visibleEntries.forEach { entry ->
                     val weight = remember(entry, screenRange) {
                         (
@@ -126,16 +142,23 @@ fun ColumnScope.ModuleRow(
                         }
                     }
                 }
+
+                val paddingEndWeight = (visibleEntries.lastOrNull()?.end?.minus(screenRange.endInclusive) ?: 0f) /
+                    -(screenRange.endInclusive - screenRange.start)
+                paddingBox(paddingEndWeight)
             }
             Canvas(
                 modifier = Modifier.fillMaxSize(),
                 onDraw = {
-                    visibleEntries.drop(1).forEach { entry ->
-                        val position = entry.start - screenRange.start
+                    val borders = (
+                        visibleEntries.map { it.start - screenRange.start } +
+                            visibleEntries.lastOrNull()?.end?.let { it - screenRange.start }
+                        ).filterNotNull()
+                    borders.forEach { border ->
                         drawLine(
                             color = LightGray.copy(alpha = 0.8f),
-                            start = Offset(position, 0f),
-                            end = Offset(position, size.height),
+                            start = Offset(border, 0f),
+                            end = Offset(border, size.height),
                             strokeWidth = 2f,
                         )
                     }
