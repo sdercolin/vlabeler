@@ -58,7 +58,7 @@ fun BoxScope.PropertyView(project: Project, requestInputProperty: (index: Int, v
         }
     }
     DisposableEffect(Unit) {
-        onDispose { js?.close() }
+        onDispose { runCatching { js?.close() } }
     }
     Column(
         Modifier
