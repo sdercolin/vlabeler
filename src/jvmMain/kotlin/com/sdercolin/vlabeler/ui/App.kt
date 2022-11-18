@@ -34,6 +34,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.sdercolin.vlabeler.video.VideoMain
 
 @Composable
 fun App(
@@ -174,6 +175,15 @@ fun App(
                     appState.closeTrackingSettingsDialog()
                     appState.trackingState.finishSettings()
                 },
+            )
+        }
+        if (appState.isShowingVideo && appState.project?.currentSampleFile != null) {
+            remember {
+                appState.videoState.locateVideoPath(appState.project.currentSampleFile.absolutePath)
+            }
+            VideoMain(
+                appState.videoState,
+                appState.playerState,
             )
         }
         appState.error?.let { error ->

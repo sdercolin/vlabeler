@@ -55,10 +55,13 @@ import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFrame
+import com.sdercolin.vlabeler.util.toMillisecond
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.sdercolin.vlabeler.video.MiniVideo
+import com.sdercolin.vlabeler.video.VideoState
 import java.io.File
 
 class AppState(
@@ -116,6 +119,7 @@ class AppState(
         mainScope,
         playerState,
     )
+    val videoState = VideoState()
 
     private val ipcState: IpcState = IpcState(this)
     val trackingState = TrackingState(appRecordStore, mainScope)

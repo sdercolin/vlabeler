@@ -145,7 +145,7 @@ class Player(
             awaitLoad()
             val startFrame = startFramePosition.roundToInt()
             val endFrame = endFramePosition.roundToInt()
-            state.startPlaying()
+            state.startPlaying(startFrame.toLong()) // video playback need the information of startFrame
             startCounting(startFrame, endFrame)
             startWriting(startFrame, endFrame)
         }

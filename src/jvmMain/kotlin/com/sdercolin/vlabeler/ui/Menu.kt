@@ -249,6 +249,39 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.OpenSampleList.getKeyShortCut(),
                         enabled = appState.isEditorActive,
                     )
+                    Separator()
+                    Menu(string(Strings.MenuViewVideo)) {
+                        CheckboxItem(
+                            string(Strings.MenuViewVideoOff),
+                            checked = !appState.isShowingVideo,
+                            onCheckedChange = { if (it) appState.toggleVideoPopup(false) },
+                            enabled = appState.isEditorActive,
+                        )
+                        CheckboxItem(
+                            string(Strings.MenuViewVideoEmbedded),
+                            checked = appState.isShowingVideo && appState.videoState.embeddedMode,
+                            onCheckedChange = {
+                                if (it) {
+                                    appState.toggleVideoPopup(true)
+                                    appState.videoState.embeddedMode = true
+                                }
+                            },
+                            shortcut = KeyAction.ToggleVideoPopupEmbedded.getKeyShortCut(),
+                            enabled = appState.isEditorActive,
+                        )
+                        CheckboxItem(
+                            string(Strings.MenuViewVideoNewWindow),
+                            checked = appState.isShowingVideo && !appState.videoState.embeddedMode,
+                            onCheckedChange = {
+                                if (it) {
+                                    appState.toggleVideoPopup(true)
+                                    appState.videoState.embeddedMode = false
+                                }
+                            },
+                            shortcut = KeyAction.ToggleVideoPopupNewWindow.getKeyShortCut(),
+                            enabled = appState.isEditorActive,
+                        )
+                    }
                 }
             }
             Menu(string(Strings.MenuNavigate), mnemonic = 'N') {

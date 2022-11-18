@@ -50,6 +50,7 @@ kotlin {
                 implementation("ch.qos.logback:logback-classic:1.2.6")
                 implementation("org.zeromq:jeromq:0.5.2")
                 implementation("com.segment.analytics.kotlin:core:1.9.1")
+                implementation("uk.co.caprica:vlcj:4.7.0")
 
                 val lwjglVersion = "3.3.1"
                 listOf("lwjgl", "lwjgl-nfd").forEach { lwjglDep ->
