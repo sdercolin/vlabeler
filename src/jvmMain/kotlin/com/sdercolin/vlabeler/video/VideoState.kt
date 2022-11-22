@@ -7,45 +7,42 @@ import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
-import com.sdercolin.vlabeler.util.or
 import com.sdercolin.vlabeler.util.toMillisecond
+import java.awt.Container
 
 class VideoState(val debug: Boolean = true) {
     var width: Dp by mutableStateOf(RememberWidth)
     var height: Dp = RememberHeight
-    var window: ComposeWindow? = null
-    var embeddedMode: Boolean by mutableStateOf(true)
-    val miniVideo = MiniVideo()
-    var currentSampleRate = 0f
-    var videoPath: String = ""
-    var playerState: PlayerState? = null
 
-    fun log(message: String, attribute: Any = "", unit: String = ""): VideoState {
+    var window: ComposeWindow? = null
+    lateinit var container: Container
+
+    var playerState: PlayerState? = null
+    var videoPath: String = ""
+    var currentSampleRate = 0f
+    var embeddedMode: Boolean by mutableStateOf(true)
+
+    val miniVideo = MiniVideo()
+    var afterPopup: Boolean = false
+    val currentTime: Long
+        get() = miniVideo.mediaPlayer.status().time()
+    lateinit var syncOp: (time: Long?) -> Unit
+
+    fun log(message: String): VideoState {
         if (debug)
-            println("##video## $message $attribute$unit")
+            println("##video## $message")
         return this
     }
 
-    fun setPlayerState(playerState: PlayerState): VideoState {
+    fun setPlayerReference(playerState: PlayerState): VideoState {
         this.playerState = playerState
         return this
     }
 
-    fun getSyncTime(fallbackFrame: Float = -1f): Long? {
-        return playerState?.framePosition.or(fallbackFrame).let {
-            if (it == -1f) return null
-            return toMillisecond(it, currentSampleRate).toLong()
+    fun newestTime(): Long? {
+        return playerState?.framePosition?.let {
+            toMillisecond(it, currentSampleRate).toLong()
         }
-    }
-
-    fun syncTime(fallbackFrame: Float = -1f): VideoState {
-        val time = getSyncTime(fallbackFrame)
-        time?.let{
-            miniVideo.mediaPlayer.controls().setPause(false)
-            miniVideo.mediaPlayer.controls().setTime(it)
-            log("sync time to", it, "ms")
-        }
-        return this
     }
 
     fun rememberSize(): VideoState {
@@ -56,13 +53,20 @@ class VideoState(val debug: Boolean = true) {
 
     fun locateVideoPath(samplePath: String): VideoState {
         videoPath = samplePath.substringBeforeLast('.') + ".mp4"
-        log("using video of", videoPath)
         return this
+    }
+
+    fun setEmbedded(embeddedMode: Boolean) {
+        if (this.embeddedMode != embeddedMode) {
+            log("Video ${ if (embeddedMode) "embedded" else "new window" } mode")
+            afterPopup = false // should re-popup after changing embeddedMode
+            this.embeddedMode = embeddedMode
+        }
     }
 
     companion object {
         val MinWidth = 200.dp
-        val MaxWidth = 500.dp
+        val MaxWidth = 600.dp
         var RememberWidth = 360.dp
         var RememberHeight = RememberWidth * 3 / 4
     }

@@ -179,7 +179,9 @@ fun App(
         }
         if (appState.isShowingVideo && appState.project?.currentSampleFile != null) {
             remember {
-                appState.videoState.locateVideoPath(appState.project.currentSampleFile.absolutePath)
+                appState.videoState
+                    .locateVideoPath(appState.project.currentSampleFile.absolutePath)
+                    .setPlayerReference(appState.playerState)
             }
             VideoMain(
                 appState.videoState,

@@ -263,7 +263,7 @@ fun FrameWindowScope.Menu(
                             onCheckedChange = {
                                 if (it) {
                                     appState.toggleVideoPopup(true)
-                                    appState.videoState.embeddedMode = true
+                                    appState.videoState.setEmbedded(true)
                                 }
                             },
                             shortcut = KeyAction.ToggleVideoPopupEmbedded.getKeyShortCut(),
@@ -275,7 +275,7 @@ fun FrameWindowScope.Menu(
                             onCheckedChange = {
                                 if (it) {
                                     appState.toggleVideoPopup(true)
-                                    appState.videoState.embeddedMode = false
+                                    appState.videoState.setEmbedded(false)
                                 }
                             },
                             shortcut = KeyAction.ToggleVideoPopupNewWindow.getKeyShortCut(),
