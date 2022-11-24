@@ -122,7 +122,7 @@ data class Project(
     }
 
     fun validate() = this.apply {
-        require(rootSampleDirectoryPath?.toFile()?.isAbsolute == true) { "rootSampleDirectoryPath must be absolute" }
+        require(rootSampleDirectoryPath?.toFile()?.isAbsolute != false) { "rootSampleDirectoryPath must not be relative" }
         require(modules.isNotEmpty()) { "No module found." }
         require(currentModuleIndex in modules.indices) { "Invalid current module index." }
         require(modules.distinctBy { it.name }.size == modules.size) { "Module names cannot be duplicated." }

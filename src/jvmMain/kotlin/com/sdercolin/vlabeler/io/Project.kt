@@ -122,7 +122,7 @@ suspend fun awaitLoadProject(
             workingDirectory != project.workingDirectoryPath
         ) {
             val originalWorkingDirectory = project.workingDirectory.absoluteFile
-            val relativeRootSampleDirectory = project.rootSampleDirectory?.relativeTo(originalWorkingDirectory)
+            val relativeRootSampleDirectory = project.rootSampleDirectory?.relativeToOrNull(originalWorkingDirectory)
             if (relativeRootSampleDirectory == null) {
                 null
             } else {
