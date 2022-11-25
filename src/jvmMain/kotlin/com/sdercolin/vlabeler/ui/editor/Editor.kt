@@ -54,7 +54,7 @@ fun Editor(state: EditorState, appState: AppState) {
             state.cancelLoading()
         } else {
             state.loadSample(appState.appConf)
-            appState.videoState.currentSampleRate = state.sampleInfoResult!!.getOrNull()!!.sampleRate
+            appState.videoState.currentSampleRate = state.sampleInfoResult?.getOrNull()?.sampleRate ?: 0f
         }
     }
     LaunchedEffect(state) {

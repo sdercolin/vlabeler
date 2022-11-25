@@ -10,48 +10,44 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.type
 import com.sdercolin.vlabeler.model.action.KeyAction
 import java.awt.Dimension
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import javax.swing.JFrame
+
+private var window: ComposeWindow? = null
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun newWindowMode(videoState: VideoState) {
+fun NewWindowVideo(videoState: VideoState) {
     DisposableEffect(Unit) {
-        videoState
-            .closeWindow()
-            .newWindow {
-                size = Dimension(videoState.width.value.toInt(), videoState.height.value.toInt())
-                defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
-                setContent(
-                    onKeyEvent = {
-                        if (
-                            it.type == KeyEventType.KeyDown &&
-                            KeyAction.ToggleVideoPopupEmbedded.defaultKeySet?.shouldCatch(
-                                it, false,
-                            ) == true
-                        ) {
-                            videoState.setEmbedded(true)
-                        }
-                        true
-                    },
-                ) {
-                    videoState.Core(Modifier.fillMaxSize())
-                }
-                isVisible = true
+        window = ComposeWindow().apply {
+            size = Dimension(videoState.width.value.toInt(), videoState.height.value.toInt())
+            defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+            addWindowListener(
+                object : WindowAdapter() {
+                    override fun windowClosing(e: WindowEvent?) {
+                        videoState.closeManually()
+                    }
+                },
+            )
+            setContent(
+                onKeyEvent = {
+                    if (
+                        it.type == KeyEventType.KeyDown &&
+                        KeyAction.ToggleVideoPopupEmbedded.defaultKeySet?.shouldCatch(
+                            it,
+                            false,
+                        ) == true
+                    ) {
+                        videoState.mode = VideoState.Mode.Embedded
+                    }
+                    true
+                },
+            ) {
+                VideoCore(videoState, Modifier.fillMaxSize())
             }
-        onDispose { videoState.closeWindow() }
+            isVisible = true
+        }
+        onDispose { window?.apply { dispose() } }
     }
-}
-
-fun VideoState.newWindow(block: ComposeWindow.() -> Unit): VideoState {
-    log("window open")
-    window = ComposeWindow().apply(block)
-    return this
-}
-
-fun VideoState.closeWindow(): VideoState {
-    window?.run{
-        log("window close")
-        dispose()
-    }
-    return this
 }

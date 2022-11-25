@@ -12,18 +12,17 @@ class PlayerState {
     var framePosition: Float? by mutableStateOf(null)
         private set
 
-    var startFrameToken: Long? = null
-        get() = field.also { field = null } // used only once
+    var lastStartedFrame: Long? = null
         private set
 
     fun startPlaying(startFrame: Long = 0) {
-        startFrameToken = startFrame
+        lastStartedFrame = startFrame
         isPlaying = true
         framePosition = null
     }
 
     fun stopPlaying() {
-        startFrameToken = null
+        lastStartedFrame = null
         isPlaying = false
         framePosition = null
     }

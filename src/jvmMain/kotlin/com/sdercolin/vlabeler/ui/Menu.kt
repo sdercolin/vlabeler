@@ -29,6 +29,7 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toUri
+import com.sdercolin.vlabeler.video.VideoState
 import kotlinx.coroutines.CoroutineScope
 import java.awt.Desktop
 import java.io.File
@@ -259,11 +260,12 @@ fun FrameWindowScope.Menu(
                         )
                         CheckboxItem(
                             string(Strings.MenuViewVideoEmbedded),
-                            checked = appState.isShowingVideo && appState.videoState.embeddedMode,
+                            checked = appState.isShowingVideo &&
+                                (appState.videoState.mode == VideoState.Mode.Embedded),
                             onCheckedChange = {
                                 if (it) {
+                                    appState.videoState.mode = VideoState.Mode.Embedded
                                     appState.toggleVideoPopup(true)
-                                    appState.videoState.setEmbedded(true)
                                 }
                             },
                             shortcut = KeyAction.ToggleVideoPopupEmbedded.getKeyShortCut(),
@@ -271,11 +273,12 @@ fun FrameWindowScope.Menu(
                         )
                         CheckboxItem(
                             string(Strings.MenuViewVideoNewWindow),
-                            checked = appState.isShowingVideo && !appState.videoState.embeddedMode,
+                            checked = appState.isShowingVideo &&
+                                (appState.videoState.mode == VideoState.Mode.NewWindow),
                             onCheckedChange = {
                                 if (it) {
+                                    appState.videoState.mode = VideoState.Mode.NewWindow
                                     appState.toggleVideoPopup(true)
-                                    appState.videoState.setEmbedded(false)
                                 }
                             },
                             shortcut = KeyAction.ToggleVideoPopupNewWindow.getKeyShortCut(),

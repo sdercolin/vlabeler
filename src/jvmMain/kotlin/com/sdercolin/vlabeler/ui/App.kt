@@ -29,12 +29,13 @@ import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.util.getLocalizedMessage
+import com.sdercolin.vlabeler.video.FindVideoStrategy
+import com.sdercolin.vlabeler.video.Video
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sdercolin.vlabeler.video.VideoMain
 
 @Composable
 fun App(
@@ -177,16 +178,18 @@ fun App(
                 },
             )
         }
-        if (appState.isShowingVideo && appState.project?.currentSampleFile != null) {
-            remember {
-                appState.videoState
-                    .locateVideoPath(appState.project.currentSampleFile.absolutePath)
-                    .setPlayerReference(appState.playerState)
+
+        if (appState.project?.currentSampleFile != null) {
+            LaunchedEffect(Unit) {
+                appState.videoState.videoPath =
+                    FindVideoStrategy.SamePlaceOfReferenceAudio.find(
+                        appState.project.currentSampleFile.absolutePath,
+                        listOf(".mp4"),
+                    )
             }
-            VideoMain(
-                appState.videoState,
-                appState.playerState,
-            )
+            if (appState.isShowingVideo) {
+                Video(appState.videoState, appState.playerState)
+            }
         }
         appState.error?.let { error ->
             WarningDialog(

@@ -255,12 +255,12 @@ enum class KeyAction(
     ToggleVideoPopupEmbedded(
         listOf(Strings.ActionToggleVideoPopupEmbedded),
         KeySet(Key.V),
-        true
+        true,
     ),
     ToggleVideoPopupNewWindow(
         listOf(Strings.ActionToggleVideoPopupNewWindow),
         KeySet(Key.V, setOf(Key.Shift)),
-        true
+        true,
     ),
     IncreaseResolution(
         listOf(Strings.ActionIncreaseResolution),

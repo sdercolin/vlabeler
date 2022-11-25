@@ -5,7 +5,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +21,7 @@ import androidx.compose.ui.window.Popup
 import java.awt.Cursor
 
 @Composable
-fun embeddedMode(videoState: VideoState) {
+fun EmbeddedVideo(videoState: VideoState) {
     val density = LocalDensity.current
     Popup(
         alignment = Alignment.BottomStart,
@@ -34,34 +33,24 @@ fun embeddedMode(videoState: VideoState) {
                 .draggable(
                     state = rememberDraggableState {},
                     orientation = Orientation.Horizontal,
-                    onDragStopped = {
-                        videoState.onResizeWidth(it, density)
-                    },
+                    onDragStopped = { videoState.onResizeWidth(it, density) },
                 ).pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
                 .background(Color.Transparent),
         ) {
-            videoState.Core(Modifier.size(videoState.width, videoState.height))
+            VideoCore(videoState, Modifier.size(videoState.width, videoState.height))
         }
     }
 }
 
-fun VideoState.onResizeWidth(delta: Float, density: Density) {
-        runCatching {
-            with(density) {
-                setWidthProportional(width + delta.toDp())
-                rememberSize()
-                sync(SyncCause.ResizeWindow)
-            }
-        }.onFailure {
-            log("error during resize: $it")
-        }
+private fun VideoState.onResizeWidth(delta: Float, density: Density) {
+    with(density) {
+        setWidthProportional(width + delta.toDp())
+    }
 }
 
-fun VideoState.setWidthProportional(newWidth: Dp): VideoState {
+private fun VideoState.setWidthProportional(newWidth: Dp) {
     width = newWidth
         .coerceAtLeast(VideoState.MinWidth)
         .coerceAtMost(VideoState.MaxWidth)
     height = width * 3 / 4
-    log("resize width to $width")
-    return this
 }

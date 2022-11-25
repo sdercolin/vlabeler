@@ -428,18 +428,16 @@ class AppDialogStateImpl(
     }
 
     override fun toggleVideoPopup() {
-        if (state.videoState.miniVideo.mediaPlayerComponent == null && !isShowingVideo) {
-            state.videoState.miniVideo.init{
-                 on -> toggleVideoPopup(on)
+        if (!isShowingVideo) {
+            if (state.videoState.videoPlayer.mediaPlayerComponent == null) {
+                state.videoState.videoPlayer.init()
             }
         }
         isShowingVideo = !isShowingVideo
     }
 
     override fun toggleVideoPopup(on: Boolean) {
-        if (on && !isShowingVideo ||
-            !on && isShowingVideo
-        ) {
+        if ((on && !isShowingVideo) || (!on && isShowingVideo)) {
             toggleVideoPopup()
         }
     }
