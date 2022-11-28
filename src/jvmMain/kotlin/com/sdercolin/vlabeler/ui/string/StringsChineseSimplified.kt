@@ -197,7 +197,9 @@ fun Strings.zhHans(): String? = when (this) {
     FailedToLoadSampleFileError -> "无法读取该采样文件。它可能不存在，或是不支持的格式。"
     EmptySampleDirectoryException -> "无法创建项目。采样目录中不存在任何采样文件。"
     PluginRuntimeUnexpectedException -> "插件执行过程中发生了意外的错误。请联系插件作者以获取更多信息。"
-    InvalidCreatedProjectException -> "新建的项目为无效项目。请联系标注器或插件的作者以获取更多信息。"
+    InvalidCreatedProjectException ->
+        "新建的项目为无效项目。请检查您正在使用的标注器或插件的文档，确保您的设置正确。" +
+            "如果问题仍然无法解决，请联系标注器或插件的作者以获取更多信息。"
     InvalidOpenedProjectException -> "无法打开该项目，因为其中包含无效的数据。详情请查看错误日志。"
     ProjectParseException -> "无法打开该项目。它可能已损坏，或者是由一个与当前版本不兼容的 vLabeler 版本创建的。"
     ProjectUpdateOnSampleException -> "无法将项目中的数据与当前读取到的采样进行匹配。详情请查看错误日志。"

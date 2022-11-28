@@ -205,7 +205,9 @@ fun Strings.ja(): String? = when (this) {
         "サンプルファイルを読み込めませんでした。存在しないか、サポートされていないフォーマットの可能性があります。"
     EmptySampleDirectoryException -> "プロジェクトを作成できませんでした。サンプルディレクトリにサンプルファイルがありません。"
     PluginRuntimeUnexpectedException -> "プラグインの実行中に予期しないエラーが発生しました。プラグインの作者に連絡してください。"
-    InvalidCreatedProjectException -> "作成したプロジェクトは無効です。ラベラーまたはプラグインの作者に連絡してください。"
+    InvalidCreatedProjectException ->
+        "作成したプロジェクトは無効です。お使いのラベラーまたはプラグインのドキュメントに確認し、" +
+            "設定してください。問題が解決できない場合は、ラベラーまたはプラグインの作者に連絡してください。"
     InvalidOpenedProjectException -> "プロジェクトを開けませんでした。無効なデータが含まれています。詳細はエラーログを確認してください。"
     ProjectParseException ->
         "プロジェクトを開けませんでした。破損しているか、互換性のないのバージョンの vLabeler によって作られています。"
