@@ -24,14 +24,9 @@ enum class SyncOperation {
 
     fun invoke(videoState: VideoState) {
         videoState.apply {
-            log("performed ${ SyncOperation::class.simpleName } ${ this@SyncOperation }")
             when (this@SyncOperation) {
                 Initialize -> {
-                    videoPath.let {
-                        require(it != null) {
-                            "Video path not located, use one of options in " +
-                                "${ FindVideoStrategy::class.qualifiedName } to locate video path"
-                        }
+                    videoPath?.let {
                         videoPlayer.load(it).mute()
                     }
                 }
@@ -49,6 +44,7 @@ enum class SyncOperation {
                     val fallbackTime = lastStartedTime()
                     require(fallbackTime != null) { "no time to play at" }
                     videoPlayer.startAt(audioPlayerCurrentTime().or(fallbackTime)).play()
+                    saveTime()
                 }
                 PlayerPause -> {
                     videoPlayer.pause()

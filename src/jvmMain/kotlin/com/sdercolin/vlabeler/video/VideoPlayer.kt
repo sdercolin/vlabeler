@@ -9,9 +9,9 @@ import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent
 import uk.co.caprica.vlcj.player.component.InputEvents
 import java.awt.Component
 
-data class MediaPlayerComponent<T : Component>(val component: T)
+class MediaPlayerComponent<T : Component>(val component: T)
 
-class MiniVideo {
+class VideoPlayer {
     var mediaPlayerComponent: MediaPlayerComponent<*>? = null
         private set
     private lateinit var mediaPlayer: MediaPlayer
@@ -23,41 +23,39 @@ class MiniVideo {
 
         NativeDiscovery().discover()
         if (isMacOS) {
-            with(CallbackMediaPlayerComponent(null, null, InputEvents.NONE, true, null)) {
-                mediaPlayerComponent = MediaPlayerComponent(this)
-                mediaPlayer = mediaPlayer()
-            }
+            val component = CallbackMediaPlayerComponent(null, null, InputEvents.NONE, true, null)
+            mediaPlayerComponent = MediaPlayerComponent(component)
+            mediaPlayer = component.mediaPlayer()
         } else {
-            with(EmbeddedMediaPlayerComponent(null, null, null, InputEvents.NONE, null)) {
-                mediaPlayerComponent = MediaPlayerComponent(this)
-                mediaPlayer = mediaPlayer()
-            }
+            val component = EmbeddedMediaPlayerComponent(null, null, null, InputEvents.NONE, null)
+            mediaPlayerComponent = MediaPlayerComponent(component)
+            mediaPlayer = component.mediaPlayer()
         }
     }
 
-    fun load(url: String): MiniVideo {
+    fun load(url: String): VideoPlayer {
         mediaPlayer.media().startPaused(url)
         Log.info("VideoPlayer loaded file \"$url\"")
         return this
     }
 
-    fun startAt(time: Long): MiniVideo {
+    fun startAt(time: Long): VideoPlayer {
         mediaPlayer.controls().setTime(time)
         Log.info("VideoPlayer play at ${time}ms")
         return this
     }
 
-    fun pause(): MiniVideo {
+    fun pause(): VideoPlayer {
         mediaPlayer.controls().setPause(true)
         return this
     }
 
-    fun play(): MiniVideo {
+    fun play(): VideoPlayer {
         mediaPlayer.controls().setPause(false)
         return this
     }
 
-    fun mute(): MiniVideo {
+    fun mute(): VideoPlayer {
         mediaPlayer.audio().isMute = true
         return this
     }

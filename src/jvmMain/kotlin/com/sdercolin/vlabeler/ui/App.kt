@@ -29,7 +29,6 @@ import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.util.getLocalizedMessage
-import com.sdercolin.vlabeler.video.FindVideoStrategy
 import com.sdercolin.vlabeler.video.Video
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -178,18 +177,8 @@ fun App(
                 },
             )
         }
-
-        if (appState.project?.currentSampleFile != null) {
-            LaunchedEffect(Unit) {
-                appState.videoState.videoPath =
-                    FindVideoStrategy.SamePlaceOfReferenceAudio.find(
-                        appState.project.currentSampleFile.absolutePath,
-                        listOf(".mp4"),
-                    )
-            }
-            if (appState.isShowingVideo) {
-                Video(appState.videoState, appState.playerState)
-            }
+        if (appState.isShowingVideo) {
+            Video(appState.videoState, appState.playerState, appState)
         }
         appState.error?.let { error ->
             WarningDialog(

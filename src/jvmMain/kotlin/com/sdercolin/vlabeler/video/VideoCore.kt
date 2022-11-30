@@ -5,6 +5,7 @@ package com.sdercolin.vlabeler.video
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.LocalLayerContainer
 import androidx.compose.ui.geometry.Offset
@@ -15,7 +16,9 @@ import java.awt.BorderLayout
 import java.awt.Container
 import javax.swing.JPanel
 
-private lateinit var container: Container
+private class ComponentInfo {
+    lateinit var container: Container
+}
 
 /**
  * A lightweight version of androidx.compose.ui.awt.SwingPanel
@@ -23,38 +26,35 @@ private lateinit var container: Container
  */
 @Composable
 fun VideoCore(videoState: VideoState, modifier: Modifier) {
+    val componentInfo = remember { ComponentInfo() }
     val density = LocalDensity.current.density
     Box(
         modifier = modifier
             .onGloballyPositioned { childCoordinates ->
-                videoState.log("applying resize...")
-
                 val coordinates = childCoordinates.parentCoordinates!!
                 val location = coordinates.localToWindow(Offset.Zero).round()
                 val size = coordinates.size
-                container.setBounds(
+                componentInfo.container.setBounds(
                     (location.x / density).toInt(),
                     (location.y / density).toInt(),
                     (size.width / density).toInt(),
                     (size.height / density).toInt(),
                 )
-                container.validate()
+                componentInfo.container.validate()
             },
     )
 
     val root = LocalLayerContainer.current
     DisposableEffect(Unit) {
-        container = JPanel().apply {
+        componentInfo.container = JPanel().apply {
             layout = BorderLayout()
-            add(
-                videoState.videoPlayer.mediaPlayerComponent?.component,
-            )
+            videoState.videoPlayer.mediaPlayerComponent?.component?.let { add(it) }
             isVisible = true
         }
-        root.add(container)
+        root.add(componentInfo.container)
 
         onDispose {
-            runCatching { root.remove(container) }
+            runCatching { root.remove(componentInfo.container) }
         }
     }
 }

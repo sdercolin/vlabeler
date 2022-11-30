@@ -117,7 +117,7 @@ class AppState(
         mainScope,
         playerState,
     )
-    val videoState = VideoState(playerState, { toggleVideoPopup(false) })
+    val videoState = VideoState(playerState, snackbarState, { toggleVideoPopup(false) })
 
     private val ipcState: IpcState = IpcState(this)
     val trackingState = TrackingState(appRecordStore, mainScope)

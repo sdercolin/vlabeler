@@ -208,6 +208,7 @@ fun Strings.zhHans(): String? = when (this) {
     InvalidEditedProjectException -> "此次编辑将导致项目数据无效。详情请查看错误日志。"
     CustomizableItemLoadingException -> "无法读取该自定义组件。"
     PluginRuntimeExceptionTemplate -> "插件运行时错误：%s"
+    VideoFileNotFoundExceptionTemplate -> "未找到 %s 的同名视频文件（%s）"
     LabelerManagerTitle -> "标注器"
     LabelerManagerImportDialogTitle -> "导入标注器"
     TemplatePluginManagerTitle -> "模板生成器"

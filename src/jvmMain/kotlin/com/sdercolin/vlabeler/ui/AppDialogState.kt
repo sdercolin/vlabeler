@@ -429,9 +429,8 @@ class AppDialogStateImpl(
 
     override fun toggleVideoPopup() {
         if (!isShowingVideo) {
-            if (state.videoState.videoPlayer.mediaPlayerComponent == null) {
-                state.videoState.videoPlayer.init()
-            }
+            state.videoState.initIfFirstTime()
+            state.videoState.videoPath = null
         }
         isShowingVideo = !isShowingVideo
     }

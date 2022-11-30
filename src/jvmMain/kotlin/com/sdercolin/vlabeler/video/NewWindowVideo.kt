@@ -26,7 +26,7 @@ fun NewWindowVideo(videoState: VideoState) {
             addWindowListener(
                 object : WindowAdapter() {
                     override fun windowClosing(e: WindowEvent?) {
-                        videoState.closeManually()
+                        videoState.onExit()
                     }
                 },
             )

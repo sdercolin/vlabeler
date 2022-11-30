@@ -233,6 +233,9 @@ fun Strings.en(): String = when (this) {
     InvalidEditedProjectException -> "Invalid edited project.\nPlease check error log for more information."
     CustomizableItemLoadingException -> "Could not load the selected customized item."
     PluginRuntimeExceptionTemplate -> "Plugin runtime error: %s"
+    VideoFileNotFoundExceptionTemplate ->
+        "Video not found by the same name of \"%s\" " +
+            "and extension among %s."
     LabelerManagerTitle -> "Labelers"
     LabelerManagerImportDialogTitle -> "Import labeler"
     TemplatePluginManagerTitle -> "Template generators"
