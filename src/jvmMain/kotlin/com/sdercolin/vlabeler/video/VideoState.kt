@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.video
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Dp
@@ -27,6 +28,7 @@ class VideoState(
     var currentSampleRate: Float? = null
     var mode: Mode? by mutableStateOf(null)
 
+    var syncOperations = mutableStateListOf<SyncOperation>()
     var lastSavedTime: Long? = null
         private set
 
@@ -80,7 +82,7 @@ class VideoState(
         val MaxWidth = 600.dp
         val DefaultWidth = 360.dp
         const val AspectRatio = 3f / 4f
-        val SupportedExtensionList = listOf(".mp4", ".avi")
+        val SupportedExtensionList = listOf(".mp4", ".webm")
     }
     enum class Mode {
         Embedded,

@@ -3,11 +3,8 @@ package com.sdercolin.vlabeler.video
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.ui.ProjectStore
-
-private var syncOperations = mutableStateListOf<SyncOperation>()
 
 @Composable
 fun Video(
@@ -24,20 +21,21 @@ fun Video(
     }
 
     if (videoState.videoPath != null) {
-        LaunchedEffect(videoState.mode) {
-            syncOperations += arrayOf(
+        LaunchedEffect(videoState.mode, currentAudioPath) {
+            // reload when changing mode or sample file
+            videoState.syncOperations += arrayOf(
                 SyncOperation.Initialize,
                 if (playerState.isPlaying) SyncOperation.OpenDuringPlay
                 else SyncOperation.RecoverFromLastExit,
             )
         }
         LaunchedEffect(playerState.isPlaying) {
-            syncOperations +=
+            videoState.syncOperations +=
                 if (playerState.isPlaying) SyncOperation.PlayerStartPlay
                 else SyncOperation.PlayerPause
         }
         LaunchedEffect(Unit) {
-            syncOperations.removeLast() // HACK: do not trigger play/pause event at initialization
+            videoState.syncOperations.removeLast() // HACK: do not trigger play/pause event at initialization
         }
 
         when (videoState.mode) {
@@ -48,11 +46,11 @@ fun Video(
             )
         }
 
-        LaunchedEffect(syncOperations.toTypedArray()) {
-            for (syncOperation in syncOperations) {
+        LaunchedEffect(videoState.syncOperations.toTypedArray()) {
+            for (syncOperation in videoState.syncOperations) {
                 syncOperation.invoke(videoState)
             }
-            syncOperations.clear()
+            videoState.syncOperations.clear()
         }
 
         DisposableEffect(Unit) {
