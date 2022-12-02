@@ -256,7 +256,6 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.OpenSampleList.getKeyShortCut(),
                         enabled = appState.isEditorActive,
                     )
-                    Separator()
                     Menu(string(Strings.MenuViewVideo)) {
                         CheckboxItem(
                             string(Strings.MenuViewVideoOff),
