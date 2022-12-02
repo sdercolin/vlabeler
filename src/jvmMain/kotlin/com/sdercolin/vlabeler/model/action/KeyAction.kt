@@ -103,6 +103,11 @@ enum class KeyAction(
         KeySet(Key.Delete),
         true,
     ),
+    MoveCurrentEntry(
+        listOf(Strings.MenuEdit, Strings.MenuEditMoveEntry),
+        null,
+        true,
+    ),
     EditTag(
         listOf(Strings.MenuEdit, Strings.MenuEditEditTag),
         KeySet(Key.J),

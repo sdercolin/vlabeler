@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -65,6 +64,8 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.common.DoneIcon
+import com.sdercolin.vlabeler.ui.common.EntryItemNumber
+import com.sdercolin.vlabeler.ui.common.EntryItemSummary
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.StarIcon
@@ -384,30 +385,8 @@ private fun ColumnScope.List(editorConf: AppConf.Editor, viewConf: AppConf.View,
 private fun ItemContent(editorConf: AppConf.Editor, viewConf: AppConf.View, item: IndexedValue<Entry>) {
     Layout(
         content = {
-            BasicText(
-                text = "${item.index + 1}",
-                modifier = Modifier.padding(start = 20.dp, end = 15.dp, top = 3.dp).widthIn(20.dp),
-                maxLines = 1,
-                style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f)),
-            )
-            Row {
-                BasicText(
-                    text = item.value.name,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
-                )
-                BasicText(
-                    text = item.value.sample.runIf(viewConf.hideSampleExtension) {
-                        substringBeforeLast('.')
-                    },
-                    modifier = Modifier.padding(start = 10.dp, top = 3.dp),
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.caption.copy(color = LightGray.copy(alpha = 0.5f)),
-                )
-            }
-
+            EntryItemNumber(item.index)
+            EntryItemSummary(item.value.name, item.value.sample, viewConf)
             Row {
                 if (item.value.notes.tag.isNotEmpty() && editorConf.showTag) {
                     Spacer(modifier = Modifier.width(12.dp))

@@ -26,6 +26,7 @@ fun Strings.en(): String = when (this) {
     MenuEditRenameEntry -> "Rename Current Entry..."
     MenuEditDuplicateEntry -> "Duplicate Current Entry..."
     MenuEditRemoveEntry -> "Remove Current Entry"
+    MenuEditMoveEntry -> "Move Current Entry to..."
     MenuEditToggleDone -> "Toggle Done for Current Entry"
     MenuEditToggleStar -> "Toggle Starred for Current Entry"
     MenuEditEditTag -> "Edit Tag of Current Entry"
@@ -155,6 +156,7 @@ fun Strings.en(): String = when (this) {
     InputEntryNameCutFormerDialogDescription -> "Input name for the former entry after cutting"
     InputEntryNameCutLatterDialogDescription -> "Input name for the latter entry after cutting"
     EditEntryNameDialogExistingError -> "The name you input already exists."
+    MoveEntryDialogDescription -> "Input new index for entry \"%1\$s\" (%2\$d ~ %3\$d)"
     AskIfRemoveEntryDialogDescription -> "Removing current entry..."
     AskIfRemoveEntryLastDialogDescription ->
         "Removing current entry...\n" +

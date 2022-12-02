@@ -28,6 +28,7 @@ fun Strings.ja(): String? = when (this) {
     MenuEditRenameEntry -> "このエントリの名前を編集..."
     MenuEditDuplicateEntry -> "このエントリを複製..."
     MenuEditRemoveEntry -> "このエントリを削除..."
+    MenuEditMoveEntry -> "このエントリを移動..."
     MenuEditToggleDone -> "このエントリの完了状態を切り替える"
     MenuEditToggleStar -> "このエントリのスターマーク状態を切り替える"
     MenuEditEditTag -> "このエントリのタグを編集..."
@@ -150,6 +151,7 @@ fun Strings.ja(): String? = when (this) {
     InputEntryNameCutFormerDialogDescription -> "カットで生成する前のエントリの名前を入力してください"
     InputEntryNameCutLatterDialogDescription -> "カットで生成する後のエントリの名前を入力してください"
     EditEntryNameDialogExistingError -> "既に存在するエントリ名です。"
+    MoveEntryDialogDescription -> "エントリ「%1\$s」の新しいインデックスを入力してください (%2\$d ~ %3\$d)"
     AskIfRemoveEntryDialogDescription -> "このエントリを削除します。"
     AskIfRemoveEntryLastDialogDescription ->
         "このエントリを削除します。\n" +

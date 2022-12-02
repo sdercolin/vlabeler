@@ -28,6 +28,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuEditRenameEntry -> "编辑当前条目名..."
     MenuEditDuplicateEntry -> "创建当前条目的副本..."
     MenuEditRemoveEntry -> "删除当前条目"
+    MenuEditMoveEntry -> "移动当前条目至..."
     MenuEditToggleDone -> "对当前条目切换完成状态"
     MenuEditToggleStar -> "对当前条目切换星标状态"
     MenuEditEditTag -> "编辑当前条目的标签..."
@@ -147,6 +148,7 @@ fun Strings.zhHans(): String? = when (this) {
     InputEntryNameCutFormerDialogDescription -> "请输入切割后的前一个条目名"
     InputEntryNameCutLatterDialogDescription -> "请输入切割后的后一个条目名"
     EditEntryNameDialogExistingError -> "该条目名已存在。"
+    MoveEntryDialogDescription -> "请输入条目 \"%1\$s\" 的新索引（%2\$d ~ %3\$d）"
     AskIfRemoveEntryDialogDescription -> "将要删除当前条目..."
     AskIfRemoveEntryLastDialogDescription ->
         "将要删除当前条目...\n" +

@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.loadProject
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
@@ -19,6 +20,7 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.MoveEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
@@ -75,6 +77,7 @@ interface AppDialogState {
     suspend fun <T : EmbeddedDialogArgs> awaitEmbeddedDialog(args: T): EmbeddedDialogResult<T>?
     fun openJumpToEntryDialog()
     fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose)
+    fun openMoveCurrentEntryDialog(appConf: AppConf)
     fun askIfSaveBeforeExit()
     fun confirmIfRemoveCurrentEntry(isLastEntry: Boolean)
     fun confirmIfLoadAutoSavedProject(file: File)
@@ -277,6 +280,17 @@ class AppDialogStateImpl(
                 purpose = purpose,
             ),
         )
+    }
+
+    override fun openMoveCurrentEntryDialog(appConf: AppConf) {
+        val project = projectStore.requireProject()
+        val module = project.currentModule
+        val args = MoveEntryDialogArgs(
+            entries = module.entries,
+            currentIndex = module.currentIndex,
+            viewConf = appConf.view,
+        )
+        openEmbeddedDialog(args)
     }
 
     override fun askIfSaveBeforeExit() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExiting)
