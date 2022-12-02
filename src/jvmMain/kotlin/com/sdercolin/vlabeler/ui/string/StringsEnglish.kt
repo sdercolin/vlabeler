@@ -237,8 +237,7 @@ fun Strings.en(): String = when (this) {
     CustomizableItemLoadingException -> "Could not load the selected customized item."
     PluginRuntimeExceptionTemplate -> "Plugin runtime error: %s"
     VideoFileNotFoundExceptionTemplate ->
-        "Video not found by the same name of \"%s\" " +
-            "and extension among %s."
+        "Video not found by the same name of \"%s\"　and extension among %s."
     LabelerManagerTitle -> "Labelers"
     LabelerManagerImportDialogTitle -> "Import labeler"
     TemplatePluginManagerTitle -> "Template generators"
