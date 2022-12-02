@@ -257,6 +257,16 @@ enum class KeyAction(
         KeySet(Key.Space),
         false,
     ),
+    ToggleVideoPopupEmbedded(
+        listOf(Strings.ActionToggleVideoPopupEmbedded),
+        KeySet(Key.V),
+        true,
+    ),
+    ToggleVideoPopupNewWindow(
+        listOf(Strings.ActionToggleVideoPopupNewWindow),
+        KeySet(Key.V, setOf(Key.Shift)),
+        true,
+    ),
     IncreaseResolution(
         listOf(Strings.ActionIncreaseResolution),
         KeySet(Key.Minus),

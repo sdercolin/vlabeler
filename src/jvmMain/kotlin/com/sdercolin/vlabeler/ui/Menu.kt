@@ -29,6 +29,7 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toUri
+import com.sdercolin.vlabeler.video.VideoState
 import kotlinx.coroutines.CoroutineScope
 import java.awt.Desktop
 import java.io.File
@@ -255,6 +256,41 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.OpenSampleList.getKeyShortCut(),
                         enabled = appState.isEditorActive,
                     )
+                    Separator()
+                    Menu(string(Strings.MenuViewVideo)) {
+                        CheckboxItem(
+                            string(Strings.MenuViewVideoOff),
+                            checked = !appState.isShowingVideo,
+                            onCheckedChange = { if (it) appState.toggleVideoPopup(false) },
+                            enabled = appState.isEditorActive,
+                        )
+                        CheckboxItem(
+                            string(Strings.MenuViewVideoEmbedded),
+                            checked = appState.isShowingVideo &&
+                                (appState.videoState.mode == VideoState.Mode.Embedded),
+                            onCheckedChange = {
+                                if (it) {
+                                    appState.videoState.mode = VideoState.Mode.Embedded
+                                    appState.toggleVideoPopup(true)
+                                }
+                            },
+                            shortcut = KeyAction.ToggleVideoPopupEmbedded.getKeyShortCut(),
+                            enabled = appState.isEditorActive,
+                        )
+                        CheckboxItem(
+                            string(Strings.MenuViewVideoNewWindow),
+                            checked = appState.isShowingVideo &&
+                                (appState.videoState.mode == VideoState.Mode.NewWindow),
+                            onCheckedChange = {
+                                if (it) {
+                                    appState.videoState.mode = VideoState.Mode.NewWindow
+                                    appState.toggleVideoPopup(true)
+                                }
+                            },
+                            shortcut = KeyAction.ToggleVideoPopupNewWindow.getKeyShortCut(),
+                            enabled = appState.isEditorActive,
+                        )
+                    }
                 }
             }
             Menu(string(Strings.MenuNavigate), mnemonic = 'N') {

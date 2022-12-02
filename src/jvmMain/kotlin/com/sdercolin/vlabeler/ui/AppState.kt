@@ -56,6 +56,7 @@ import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFrame
+import com.sdercolin.vlabeler.video.VideoState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -117,6 +118,7 @@ class AppState(
         mainScope,
         playerState,
     )
+    val videoState = VideoState(playerState, snackbarState, { toggleVideoPopup(false) })
 
     private val ipcState: IpcState = IpcState(this)
     val trackingState = TrackingState(appRecordStore, mainScope)

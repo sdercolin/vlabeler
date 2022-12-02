@@ -55,6 +55,7 @@ interface AppDialogState {
     val isShowingLicenseDialog: Boolean
     val isShowingQuickLaunchManagerDialog: Boolean
     val isShowingTrackingSettingsDialog: Boolean
+    val isShowingVideo: Boolean // strictly speaking not a dialog but whatever
     val updaterDialogContent: Update?
     val macroPluginShownInDialog: MacroPluginDialogArgs?
     val macroPluginReport: LocalizedJsonString?
@@ -113,6 +114,10 @@ interface AppDialogState {
     fun clearCachesAndReopen(scope: CoroutineScope)
     fun askForTrackingPermission()
 
+    fun toggleVideoPopup()
+
+    fun toggleVideoPopup(on: Boolean)
+
     fun closeEmbeddedDialog()
     fun closeAllDialogs()
 
@@ -158,6 +163,7 @@ class AppDialogStateImpl(
     override var isShowingLicenseDialog: Boolean by mutableStateOf(false)
     override var isShowingQuickLaunchManagerDialog: Boolean by mutableStateOf(false)
     override var isShowingTrackingSettingsDialog: Boolean by mutableStateOf(false)
+    override var isShowingVideo: Boolean by mutableStateOf(false)
     override var updaterDialogContent: Update? by mutableStateOf(null)
     override var macroPluginShownInDialog: MacroPluginDialogArgs? by mutableStateOf(null)
     override var macroPluginReport: LocalizedJsonString? by mutableStateOf(null)
@@ -435,6 +441,20 @@ class AppDialogStateImpl(
     override fun askForTrackingPermission() {
     }
 
+    override fun toggleVideoPopup() {
+        if (!isShowingVideo) {
+            state.videoState.initIfFirstTime()
+            state.videoState.videoPath = null
+        }
+        isShowingVideo = !isShowingVideo
+    }
+
+    override fun toggleVideoPopup(on: Boolean) {
+        if ((on && !isShowingVideo) || (!on && isShowingVideo)) {
+            toggleVideoPopup()
+        }
+    }
+
     override fun closeEmbeddedDialog() {
         awaitEmbeddedDialogContinuation?.cancel()
         awaitEmbeddedDialogContinuation = null
@@ -453,6 +473,7 @@ class AppDialogStateImpl(
         macroPluginReport = null
         customizableItemManagerTypeShownInDialog = null
         isShowingQuickLaunchManagerDialog = false
+        isShowingVideo = false
         closeEmbeddedDialog()
     }
 }

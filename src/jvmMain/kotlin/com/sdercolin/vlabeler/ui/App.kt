@@ -29,6 +29,7 @@ import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.util.getLocalizedMessage
+import com.sdercolin.vlabeler.video.Video
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -175,6 +176,9 @@ fun App(
                     appState.trackingState.finishSettings()
                 },
             )
+        }
+        if (appState.isShowingVideo) {
+            Video(appState.videoState, appState.playerState, appState)
         }
         appState.error?.let { error ->
             WarningDialog(
