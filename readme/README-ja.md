@@ -196,6 +196,7 @@ macOS を使用している場合、下記の `Ctrl` は `Command` を意味し�
 サンプルファイルと同じファイル名（拡張子を除く）と長さのビデオファイルがある場合、編集時に再生できます。
 You can attach a video to the sample file with the same name and duration, and watch the video while you're editing.
 例：
+
 ```
 (サンプルディレクトリ)
     - 1.wav
@@ -203,6 +204,12 @@ You can attach a video to the sample file with the same name and duration, and w
     - 2.wav
     - 2.webm
 ```
+
+**この機能を使用するには、VLC をインストールする必要があります。**
+[ここ](https://www.videolan.org/vlc/index.html)からダウンロードできます。
+
+Apple Silicon mac でも、このリポジトリの `Release` ページからダウンロードしたアプリケーションを使用している場合は、
+`macOS (AppleSilicon)` ではなく `macOS` のバージョンをインストールしてください。
 
 ショートカット `V` と `Shift` + `V` で、ビデオを画面の左下か新しいウィンドウで表示できます。
 ビデオは、サンプル音声と同期し、無音で再生されます。

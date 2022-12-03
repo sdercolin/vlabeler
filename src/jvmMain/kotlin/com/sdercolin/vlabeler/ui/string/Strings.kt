@@ -206,6 +206,7 @@ enum class Strings {
     ProjectUpdateOnSampleException,
     InvalidEditedProjectException,
     CustomizableItemLoadingException,
+    VideoComponentInitializationException,
     VideoFileNotFoundExceptionTemplate,
     PluginRuntimeExceptionTemplate,
     LabelerManagerTitle,

@@ -221,6 +221,9 @@ fun Strings.ja(): String? = when (this) {
         "プロジェクトのデータとサンプルのデータをマッチングできませんでした。詳細はエラーログを確認してください。"
     InvalidEditedProjectException -> "この編集は無効です。詳細はエラーログを確認してください。"
     CustomizableItemLoadingException -> "コンポーネントを読み込めませんでした。"
+    VideoComponentInitializationException ->
+        "ビデオコンポーネントを初期化できませんでした。この機能を使用するには、VLC をインストールする必要があります。" +
+            "詳細については、README の `ビデオ表示` セクションを参照してください。"
     VideoFileNotFoundExceptionTemplate ->
         "ファイル名が「%s」で、拡張子が「%s」の動画は見つかりませんでした。"
     PluginRuntimeExceptionTemplate -> "プラグインの実行中にエラーが発生しました：%s"

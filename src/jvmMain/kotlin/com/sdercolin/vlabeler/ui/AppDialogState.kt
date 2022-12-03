@@ -442,16 +442,17 @@ class AppDialogStateImpl(
     }
 
     override fun toggleVideoPopup() {
-        if (!isShowingVideo) {
-            state.videoState.initIfFirstTime()
-            state.videoState.videoPath = null
-        }
-        isShowingVideo = !isShowingVideo
+        toggleVideoPopup(!isShowingVideo)
     }
 
     override fun toggleVideoPopup(on: Boolean) {
-        if ((on && !isShowingVideo) || (!on && isShowingVideo)) {
-            toggleVideoPopup()
+        if (isShowingVideo == on) return
+
+        state.mainScope.launch {
+            if (on) {
+                if (!state.videoState.init()) return@launch
+            }
+            isShowingVideo = on
         }
     }
 
