@@ -55,7 +55,7 @@ fun NewWindowVideo(videoState: VideoState, appConf: AppConf) {
             }
             isVisible = true
         }
-        onDispose { window?.apply { dispose() } }
+        onDispose { window?.dispose() }
     }
 }
 
