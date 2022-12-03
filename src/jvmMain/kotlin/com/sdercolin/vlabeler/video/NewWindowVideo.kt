@@ -32,12 +32,14 @@ fun NewWindowVideo(videoState: VideoState) {
             )
             setContent(
                 onKeyEvent = {
-                    if (
-                        it.type == KeyEventType.KeyDown &&
-                        KeyAction.ToggleVideoPopupEmbedded.defaultKeySet?.shouldCatch(
-                            it,
-                            false,
-                        ) == true
+                    if (it.type != KeyEventType.KeyDown) return@setContent true
+                    if (KeyAction.ToggleVideoPopupNewWindow.defaultKeySet
+                        ?.shouldCatch(it, false) == true
+                    ) {
+                        videoState.onExit()
+                    }
+                    if (KeyAction.ToggleVideoPopupEmbedded.defaultKeySet
+                        ?.shouldCatch(it, false) == true
                     ) {
                         videoState.mode = VideoState.Mode.Embedded
                     }

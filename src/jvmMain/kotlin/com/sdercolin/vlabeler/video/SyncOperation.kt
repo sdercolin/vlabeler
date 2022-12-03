@@ -36,8 +36,8 @@ enum class SyncOperation {
                     videoPlayer.startAt(audioPlayerCurrentTime() ?: fallbackTime).play()
                 }
                 RecoverFromLastExit -> {
-                    // use play() because pause() causes bug; doesn't affect much
-                    videoPlayer.startAt(lastSavedTime ?: 0).play()
+                    // use play().pause() to start paused
+                    videoPlayer.startAt(lastSavedTime ?: 0).play().pause()
                 }
 
                 PlayerStartPlay -> {
