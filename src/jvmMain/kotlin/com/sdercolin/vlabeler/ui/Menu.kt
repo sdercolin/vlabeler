@@ -263,10 +263,8 @@ fun FrameWindowScope.Menu(
                             checked = appState.isShowingVideo &&
                                 (appState.videoState.mode == VideoState.Mode.Embedded),
                             onCheckedChange = {
-                                if (it) {
-                                    appState.videoState.mode = VideoState.Mode.Embedded
-                                    appState.toggleVideoPopup(true)
-                                }
+                                appState.videoState.mode = VideoState.Mode.Embedded
+                                appState.toggleVideoPopup(it)
                             },
                             shortcut = KeyAction.ToggleVideoPopupEmbedded.getKeyShortCut(),
                             enabled = appState.isEditorActive,
@@ -276,10 +274,8 @@ fun FrameWindowScope.Menu(
                             checked = appState.isShowingVideo &&
                                 (appState.videoState.mode == VideoState.Mode.NewWindow),
                             onCheckedChange = {
-                                if (it) {
-                                    appState.videoState.mode = VideoState.Mode.NewWindow
-                                    appState.toggleVideoPopup(true)
-                                }
+                                appState.videoState.mode = VideoState.Mode.NewWindow
+                                appState.toggleVideoPopup(it)
                             },
                             shortcut = KeyAction.ToggleVideoPopupNewWindow.getKeyShortCut(),
                             enabled = appState.isEditorActive,

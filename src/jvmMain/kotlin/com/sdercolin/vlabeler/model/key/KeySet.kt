@@ -74,10 +74,10 @@ data class KeySet(
         if (mainKey != null) {
             if (event.key !in mainKey.actualKeys) return false
         }
-        if (hasMappedWin && !event.isMetaPressed) return false
-        if (hasMappedCtrl && !event.isCtrlPressed) return false
-        if (hasAlt && !event.isAltPressed) return false
-        if (hasShift && !event.isShiftPressed) return false
+        if (hasMappedWin != event.isMetaPressed) return false
+        if (hasMappedCtrl != event.isCtrlPressed) return false
+        if (hasAlt != event.isAltPressed) return false
+        if (hasShift != event.isShiftPressed) return false
         return true
     }
 
