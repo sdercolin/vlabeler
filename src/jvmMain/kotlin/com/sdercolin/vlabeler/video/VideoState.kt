@@ -18,7 +18,7 @@ import java.io.FileNotFoundException
 class VideoState(
     private val playerState: PlayerState,
     private val snackbarState: AppSnackbarState,
-    val onExit: () -> Unit,
+    val exit: () -> Unit,
 ) {
     var width: Dp by mutableStateOf(DefaultWidth)
     var height: Dp = width * AspectRatio
@@ -28,6 +28,7 @@ class VideoState(
         private set
     var currentSampleRate: Float? = null
     var mode: Mode? by mutableStateOf(null)
+        private set
 
     var syncOperations = mutableStateListOf<SyncOperation>()
     var lastSavedTime: Long? = null
@@ -41,7 +42,7 @@ class VideoState(
         if (videoPlayer.mediaPlayerComponent == null) {
             videoPlayer.init()
                 .onFailure {
-                    onExit()
+                    exit()
                     snackbarState.showSnackbar(stringStatic(Strings.VideoComponentInitializationException))
                     return false
                 }
@@ -57,7 +58,7 @@ class VideoState(
             .onSuccess { videoPath = it }
             .onFailure {
                 videoPath = null
-                onExit()
+                exit()
                 if (it is FileNotFoundException) {
                     snackbarState.showSnackbar(
                         stringStatic(
@@ -74,6 +75,20 @@ class VideoState(
 
     private fun Float.toTime(): Long? {
         return currentSampleRate?.let { toMillisecond(this, it).toLong() }
+    }
+
+    val isEmbeddedMode: Boolean
+        get() = mode == Mode.Embedded
+
+    val isNewWindowMode: Boolean
+        get() = mode == Mode.NewWindow
+
+    fun setEmbeddedMode() {
+        mode = Mode.Embedded
+    }
+
+    fun setNewWindowMode() {
+        mode = Mode.NewWindow
     }
 
     fun audioPlayerCurrentTime(): Long? {

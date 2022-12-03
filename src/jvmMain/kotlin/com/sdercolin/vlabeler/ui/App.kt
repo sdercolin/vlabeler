@@ -178,7 +178,12 @@ fun App(
             )
         }
         if (appState.isShowingVideo) {
-            Video(appState.videoState, appState.playerState, appState)
+            Video(
+                videoState = appState.videoState,
+                playerState = appState.playerState,
+                projectStore = appState,
+                appConf = appState.appConf,
+            )
         }
         appState.error?.let { error ->
             WarningDialog(

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import com.sdercolin.vlabeler.audio.PlayerState
+import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.ui.ProjectStore
 
 @Composable
@@ -11,6 +12,7 @@ fun Video(
     videoState: VideoState,
     playerState: PlayerState,
     projectStore: ProjectStore,
+    appConf: AppConf,
 ) {
     val currentAudioPath = projectStore.project?.currentSampleFile?.absolutePath
     LaunchedEffect(currentAudioPath) {
@@ -40,7 +42,7 @@ fun Video(
 
         when (videoState.mode) {
             VideoState.Mode.Embedded -> EmbeddedVideo(videoState)
-            VideoState.Mode.NewWindow -> NewWindowVideo(videoState)
+            VideoState.Mode.NewWindow -> NewWindowVideo(videoState, appConf)
             null -> throw UninitializedPropertyAccessException(
                 "Video mode not chosen, available ones: ${VideoState.Mode.values().toList()}",
             )

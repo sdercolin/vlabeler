@@ -29,7 +29,6 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toUri
-import com.sdercolin.vlabeler.video.VideoState
 import kotlinx.coroutines.CoroutineScope
 import java.awt.Desktop
 import java.io.File
@@ -265,10 +264,9 @@ fun FrameWindowScope.Menu(
                         )
                         CheckboxItem(
                             string(Strings.MenuViewVideoEmbedded),
-                            checked = appState.isShowingVideo &&
-                                (appState.videoState.mode == VideoState.Mode.Embedded),
+                            checked = appState.isShowingVideo && appState.videoState.isEmbeddedMode,
                             onCheckedChange = {
-                                appState.videoState.mode = VideoState.Mode.Embedded
+                                appState.videoState.setEmbeddedMode()
                                 appState.toggleVideoPopup(it)
                             },
                             shortcut = KeyAction.ToggleVideoPopupEmbedded.getKeyShortCut(),
@@ -276,10 +274,9 @@ fun FrameWindowScope.Menu(
                         )
                         CheckboxItem(
                             string(Strings.MenuViewVideoNewWindow),
-                            checked = appState.isShowingVideo &&
-                                (appState.videoState.mode == VideoState.Mode.NewWindow),
+                            checked = appState.isShowingVideo && appState.videoState.isNewWindowMode,
                             onCheckedChange = {
-                                appState.videoState.mode = VideoState.Mode.NewWindow
+                                appState.videoState.setNewWindowMode()
                                 appState.toggleVideoPopup(it)
                             },
                             shortcut = KeyAction.ToggleVideoPopupNewWindow.getKeyShortCut(),
