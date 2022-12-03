@@ -44,6 +44,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogResult
+import com.sdercolin.vlabeler.ui.dialog.MoveEntryDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetEntryPropertyDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.SetEntryPropertyDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
@@ -321,6 +322,9 @@ class AppState(
                         // handled on caller side
                     }
                 }
+            }
+            is MoveEntryDialogResult -> {
+                moveEntry(result.oldIndex, result.newIndex)
             }
             is CommonConfirmationDialogResult -> when (val action = result.action) {
                 is CommonConfirmationDialogAction.RemoveCurrentEntry -> removeCurrentEntry()

@@ -26,6 +26,7 @@ fun Strings.en(): String = when (this) {
     MenuEditRenameEntry -> "Rename Current Entry..."
     MenuEditDuplicateEntry -> "Duplicate Current Entry..."
     MenuEditRemoveEntry -> "Remove Current Entry"
+    MenuEditMoveEntry -> "Move Current Entry to..."
     MenuEditToggleDone -> "Toggle Done for Current Entry"
     MenuEditToggleStar -> "Toggle Starred for Current Entry"
     MenuEditEditTag -> "Edit Tag of Current Entry"
@@ -159,6 +160,7 @@ fun Strings.en(): String = when (this) {
     InputEntryNameCutFormerDialogDescription -> "Input name for the former entry after cutting"
     InputEntryNameCutLatterDialogDescription -> "Input name for the latter entry after cutting"
     EditEntryNameDialogExistingError -> "The name you input already exists."
+    MoveEntryDialogDescription -> "Input new index for entry \"%1\$s\" (%2\$d ~ %3\$d)"
     AskIfRemoveEntryDialogDescription -> "Removing current entry..."
     AskIfRemoveEntryLastDialogDescription ->
         "Removing current entry...\n" +
@@ -219,8 +221,9 @@ fun Strings.en(): String = when (this) {
         "An unexpected error occurred during the plugin execution.\n" +
             "Please contact the author for more information."
     InvalidCreatedProjectException ->
-        "The created project is not valid.\n" +
-            "Please contact the author of the labeler/plugin for more information."
+        "The created project is not valid." +
+            "Please check the documentations of the labeler/plugin to ensure your settings are correct.\n" +
+            "If the problem still occurs, please contact the author of the labeler/plugin for more information."
     InvalidOpenedProjectException ->
         "Could not open the project because it contains invalid data.\n" +
             "Please check the error log for more information."
@@ -233,9 +236,11 @@ fun Strings.en(): String = when (this) {
     InvalidEditedProjectException -> "Invalid edited project.\nPlease check error log for more information."
     CustomizableItemLoadingException -> "Could not load the selected customized item."
     PluginRuntimeExceptionTemplate -> "Plugin runtime error: %s"
+    VideoComponentInitializationException ->
+        "Could not initialize the video component. You need to install VLC on your device to use this feature. " +
+            "Please read the `Video integration` section in README for details."
     VideoFileNotFoundExceptionTemplate ->
-        "Video not found by the same name of \"%s\" " +
-            "and extension among %s."
+        "Video not found by the same name of \"%s\" and extension among %s."
     LabelerManagerTitle -> "Labelers"
     LabelerManagerImportDialogTitle -> "Import labeler"
     TemplatePluginManagerTitle -> "Template generators"

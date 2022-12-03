@@ -63,6 +63,8 @@ interface ProjectStore {
     val canRemoveCurrentEntry: Boolean
     fun removeCurrentEntry()
     fun createDefaultEntry(sampleName: String)
+    val canMoveEntry: Boolean
+    fun moveEntry(index: Int, targetIndex: Int)
     fun isCurrentEntryTheLast(): Boolean
     fun toggleMultipleEditMode(on: Boolean)
     fun changeSampleDirectory(directory: File)
@@ -314,6 +316,19 @@ class ProjectStoreImpl(
         val project = requireProject()
         val newEntry = Entry.fromDefaultValues(sampleName, sampleName, project.labelerConf)
         editCurrentProjectModule { copy(entries = entries + newEntry) }
+    }
+
+    override val canMoveEntry: Boolean
+        get() = requireProject().labelerConf.continuous.not() && requireProject().currentModule.entries.size > 1
+
+    override fun moveEntry(index: Int, targetIndex: Int) {
+        editCurrentProjectModule {
+            val list = entries.toMutableList()
+            val moved = list.removeAt(index)
+            list.add(targetIndex, moved)
+            val newCurrentIndex = if (currentIndex == index) targetIndex else currentIndex
+            copy(entries = list, currentIndex = newCurrentIndex)
+        }
     }
 
     override fun isCurrentEntryTheLast(): Boolean {

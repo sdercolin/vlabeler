@@ -25,6 +25,7 @@ class VideoState(
 
     val videoPlayer: VideoPlayer = VideoPlayer()
     var videoPath: String? by mutableStateOf(null)
+        private set
     var currentSampleRate: Float? = null
     var mode: Mode? by mutableStateOf(null)
 
@@ -32,10 +33,20 @@ class VideoState(
     var lastSavedTime: Long? = null
         private set
 
-    fun initIfFirstTime() {
+    /**
+     * @return false if initialization failed
+     */
+    suspend fun init(): Boolean {
+        videoPath = null
         if (videoPlayer.mediaPlayerComponent == null) {
             videoPlayer.init()
+                .onFailure {
+                    onExit()
+                    snackbarState.showSnackbar(stringStatic(Strings.VideoComponentInitializationException))
+                    return false
+                }
         }
+        return true
     }
 
     suspend fun locatePath(audioPath: String): Result<String> {
@@ -46,6 +57,7 @@ class VideoState(
             .onSuccess { videoPath = it }
             .onFailure {
                 videoPath = null
+                onExit()
                 if (it is FileNotFoundException) {
                     snackbarState.showSnackbar(
                         stringStatic(
@@ -57,7 +69,6 @@ class VideoState(
                 } else {
                     Log.error(it)
                 }
-                onExit()
             }
     }
 
@@ -84,6 +95,7 @@ class VideoState(
         const val AspectRatio = 3f / 4f
         val SupportedExtensionList = listOf(".mp4", ".webm")
     }
+
     enum class Mode {
         Embedded,
         NewWindow,

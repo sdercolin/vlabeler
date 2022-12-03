@@ -14,11 +14,11 @@ class MediaPlayerComponent<T : Component>(val component: T)
 class VideoPlayer {
     var mediaPlayerComponent: MediaPlayerComponent<*>? = null
         private set
-    private lateinit var mediaPlayer: MediaPlayer
+    private var mediaPlayer: MediaPlayer? = null
     val currentTime
-        get() = mediaPlayer.status().time()
+        get() = mediaPlayer?.status()?.time()
 
-    fun init() {
+    fun init() = runCatching {
         Log.info("VideoPlayer init")
 
         NativeDiscovery().discover()
@@ -31,32 +31,40 @@ class VideoPlayer {
             mediaPlayerComponent = MediaPlayerComponent(component)
             mediaPlayer = component.mediaPlayer()
         }
+    }.onFailure {
+        mediaPlayerComponent = null
+        mediaPlayer = null
+        Log.error(it)
     }
 
     fun load(url: String): VideoPlayer {
-        mediaPlayer.media().startPaused(url)
-        Log.info("VideoPlayer loaded file \"$url\"")
+        mediaPlayer?.let {
+            it.media().startPaused(url)
+            Log.info("VideoPlayer loaded file \"$url\"")
+        }
         return this
     }
 
     fun startAt(time: Long): VideoPlayer {
-        mediaPlayer.controls().setTime(time)
-        Log.info("VideoPlayer play at ${time}ms")
+        mediaPlayer?.let {
+            it.controls().setTime(time)
+            Log.info("VideoPlayer play at ${time}ms")
+        }
         return this
     }
 
     fun pause(): VideoPlayer {
-        mediaPlayer.controls().setPause(true)
+        mediaPlayer?.controls()?.setPause(true)
         return this
     }
 
     fun play(): VideoPlayer {
-        mediaPlayer.controls().setPause(false)
+        mediaPlayer?.controls()?.setPause(false)
         return this
     }
 
     fun mute(): VideoPlayer {
-        mediaPlayer.audio().isMute = true
+        mediaPlayer?.audio()?.isMute = true
         return this
     }
 }

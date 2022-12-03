@@ -181,6 +181,12 @@ fun FrameWindowScope.Menu(
                         enabled = appState.isEditorActive,
                     )
                     Item(
+                        string(Strings.MenuEditMoveEntry),
+                        onClick = { appState.openMoveCurrentEntryDialog(appState.appConf) },
+                        shortcut = KeyAction.MoveCurrentEntry.getKeyShortCut(),
+                        enabled = appState.isEditorActive && appState.canMoveEntry,
+                    )
+                    Item(
                         string(Strings.MenuEditEditTag),
                         onClick = { appState.editor?.isEditingTag = true },
                         shortcut = KeyAction.EditTag.getKeyShortCut(),
@@ -250,7 +256,6 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.OpenSampleList.getKeyShortCut(),
                         enabled = appState.isEditorActive,
                     )
-                    Separator()
                     Menu(string(Strings.MenuViewVideo)) {
                         CheckboxItem(
                             string(Strings.MenuViewVideoOff),

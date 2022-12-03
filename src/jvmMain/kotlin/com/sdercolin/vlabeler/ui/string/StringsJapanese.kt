@@ -28,6 +28,7 @@ fun Strings.ja(): String? = when (this) {
     MenuEditRenameEntry -> "このエントリの名前を編集..."
     MenuEditDuplicateEntry -> "このエントリを複製..."
     MenuEditRemoveEntry -> "このエントリを削除..."
+    MenuEditMoveEntry -> "このエントリを移動..."
     MenuEditToggleDone -> "このエントリの完了状態を切り替える"
     MenuEditToggleStar -> "このエントリのスターマーク状態を切り替える"
     MenuEditEditTag -> "このエントリのタグを編集..."
@@ -39,6 +40,10 @@ fun Strings.ja(): String? = when (this) {
     MenuViewToggleProperties -> "プロパティを表示"
     MenuViewToggleToolbox -> "ツールボックスを表示"
     MenuViewOpenSampleList -> "サンプルリストを開く"
+    MenuViewVideo -> "関連動画を表示"
+    MenuViewVideoOff -> "オフ"
+    MenuViewVideoEmbedded -> "埋め込み"
+    MenuViewVideoNewWindow -> "新しいウィンドウで表示"
     MenuNavigate -> "ナビゲート"
     MenuNavigateOpenLocation -> "ディレクトリを開く"
     MenuNavigateOpenLocationRootDirectory -> "ルートサンプルディレクトリ"
@@ -150,6 +155,7 @@ fun Strings.ja(): String? = when (this) {
     InputEntryNameCutFormerDialogDescription -> "カットで生成する前のエントリの名前を入力してください"
     InputEntryNameCutLatterDialogDescription -> "カットで生成する後のエントリの名前を入力してください"
     EditEntryNameDialogExistingError -> "既に存在するエントリ名です。"
+    MoveEntryDialogDescription -> "エントリ「%1\$s」の新しいインデックスを入力してください (%2\$d ~ %3\$d)"
     AskIfRemoveEntryDialogDescription -> "このエントリを削除します。"
     AskIfRemoveEntryLastDialogDescription ->
         "このエントリを削除します。\n" +
@@ -205,7 +211,9 @@ fun Strings.ja(): String? = when (this) {
         "サンプルファイルを読み込めませんでした。存在しないか、サポートされていないフォーマットの可能性があります。"
     EmptySampleDirectoryException -> "プロジェクトを作成できませんでした。サンプルディレクトリにサンプルファイルがありません。"
     PluginRuntimeUnexpectedException -> "プラグインの実行中に予期しないエラーが発生しました。プラグインの作者に連絡してください。"
-    InvalidCreatedProjectException -> "作成したプロジェクトは無効です。ラベラーまたはプラグインの作者に連絡してください。"
+    InvalidCreatedProjectException ->
+        "作成したプロジェクトは無効です。お使いのラベラーまたはプラグインのドキュメントに確認し、" +
+            "設定してください。問題が解決できない場合は、ラベラーまたはプラグインの作者に連絡してください。"
     InvalidOpenedProjectException -> "プロジェクトを開けませんでした。無効なデータが含まれています。詳細はエラーログを確認してください。"
     ProjectParseException ->
         "プロジェクトを開けませんでした。破損しているか、互換性のないのバージョンの vLabeler によって作られています。"
@@ -213,6 +221,11 @@ fun Strings.ja(): String? = when (this) {
         "プロジェクトのデータとサンプルのデータをマッチングできませんでした。詳細はエラーログを確認してください。"
     InvalidEditedProjectException -> "この編集は無効です。詳細はエラーログを確認してください。"
     CustomizableItemLoadingException -> "コンポーネントを読み込めませんでした。"
+    VideoComponentInitializationException ->
+        "ビデオコンポーネントを初期化できませんでした。この機能を使用するには、VLC をインストールする必要があります。" +
+            "詳細については、README の `ビデオ表示` セクションを参照してください。"
+    VideoFileNotFoundExceptionTemplate ->
+        "ファイル名が「%s」で、拡張子が「%s」の動画は見つかりませんでした。"
     PluginRuntimeExceptionTemplate -> "プラグインの実行中にエラーが発生しました：%s"
     LabelerManagerTitle -> "ラベラー"
     LabelerManagerImportDialogTitle -> "ラベラーをインポート"
@@ -379,6 +392,8 @@ fun Strings.ja(): String? = when (this) {
             "次に内容の変更があるまで、履歴に保存されません。"
     ActionToggleSamplePlayback -> "現在のサンプルの再生/停止"
     ActionToggleEntryPlayback -> "現在のエントリの再生/停止"
+    ActionToggleVideoPopupEmbedded -> "ビデオ表示の切り替え（埋め込み）"
+    ActionToggleVideoPopupNewWindow -> "ビデオ表示の切り替え（新しいウィンドウ）"
     ActionIncreaseResolution -> "ズームアウト"
     ActionDecreaseResolution -> "ズームイン"
     ActionInputResolution -> "キャンパス解像度を入力"
