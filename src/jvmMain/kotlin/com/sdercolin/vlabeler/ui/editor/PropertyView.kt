@@ -31,13 +31,16 @@ import com.sdercolin.vlabeler.ui.theme.Black80
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
 import com.sdercolin.vlabeler.util.runIf
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.withContext
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun BoxScope.PropertyView(project: Project, requestInputProperty: (index: Int, value: Float) -> Unit) {
+    val context = remember { newSingleThreadContext("JavaScript-PropertyView") }
     val js by produceState(null as JavaScript?) {
-        value = withContext(Dispatchers.IO) { JavaScript() }
+        value = withContext(context) { JavaScript() }
     }
     val language = LocalLanguage.current
     val propertyMap by produceState(
@@ -47,7 +50,7 @@ fun BoxScope.PropertyView(project: Project, requestInputProperty: (index: Int, v
         js,
         language,
     ) {
-        value = withContext(Dispatchers.IO) {
+        value = withContext(context) {
             js?.let { nonNullJs ->
                 val labelerConf = project.labelerConf
                 val map = labelerConf.getPropertyMap(labelerConf, project.currentEntry, nonNullJs)
