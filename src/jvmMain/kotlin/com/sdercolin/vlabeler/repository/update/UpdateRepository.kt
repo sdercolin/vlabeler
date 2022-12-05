@@ -88,9 +88,9 @@ class UpdateRepository {
                     if (file.length() == httpResponse.contentLength()) {
                         onProgress(1f)
                         return@execute
+                    } else {
+                        file.delete()
                     }
-                } else {
-                    file.delete()
                 }
                 val channel: ByteReadChannel = httpResponse.body()
                 while (!channel.isClosedForRead) {
