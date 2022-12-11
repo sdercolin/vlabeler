@@ -346,7 +346,7 @@ class AppState(
     fun handleErrorPendingAction(action: AppErrorState.ErrorPendingAction?) {
         action ?: return
         when (action) {
-            AppErrorState.ErrorPendingAction.CloseEditor -> reset()
+            AppErrorState.ErrorPendingAction.Exit -> exit(true)
         }
     }
 
@@ -415,10 +415,10 @@ class AppState(
 
     fun requestExit() = if (hasUnsavedChanges) askIfSaveBeforeExit() else exit()
 
-    fun exit() {
+    fun exit(fromError: Boolean = false) {
         mainScope.launch {
             terminateAutoSaveProject()
-            discardAutoSavedProjects()
+            if (!fromError) discardAutoSavedProjects()
             ipcState.close()
             shouldExit = true
         }

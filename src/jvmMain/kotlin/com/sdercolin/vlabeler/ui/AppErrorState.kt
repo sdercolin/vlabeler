@@ -12,7 +12,7 @@ interface AppErrorState {
     fun clearError()
 
     enum class ErrorPendingAction {
-        CloseEditor
+        Exit
     }
 }
 

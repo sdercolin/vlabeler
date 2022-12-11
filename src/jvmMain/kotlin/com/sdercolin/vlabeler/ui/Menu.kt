@@ -485,6 +485,15 @@ fun FrameWindowScope.Menu(
                             onClick = { errorForDebug = IllegalStateException("Test exception from menu") },
                         )
                         Item(
+                            "Show Caught Error (Pending exit)",
+                            onClick = {
+                                appState.showError(
+                                    IllegalStateException("Test caught exception from menu"),
+                                    pendingAction = AppErrorState.ErrorPendingAction.Exit,
+                                )
+                            },
+                        )
+                        Item(
                             "Export AppConfig",
                             onClick = { CustomAppConfFile.writeText(appState.appConf.stringifyJson()) },
                         )

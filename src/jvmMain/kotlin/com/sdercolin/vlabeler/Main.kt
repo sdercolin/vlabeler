@@ -80,7 +80,7 @@ fun main() = application {
     }
     val onCloseRequest = {
         if (hasUncaughtError) {
-            runCatching { appState?.exit() }
+            runCatching { appState?.exit(fromError = true) }
             exitApplication()
         } else {
             appState?.requestExit() ?: exitApplication()

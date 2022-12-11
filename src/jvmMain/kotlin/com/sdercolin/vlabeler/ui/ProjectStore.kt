@@ -155,7 +155,7 @@ class ProjectStoreImpl(
                 .validate()
         }
             .getOrElse {
-                errorState.showError(ProjectUpdateOnSampleException(it), AppErrorState.ErrorPendingAction.CloseEditor)
+                errorState.showError(ProjectUpdateOnSampleException(it), AppErrorState.ErrorPendingAction.Exit)
                 return
             }
         if (updated == requireProject()) return
