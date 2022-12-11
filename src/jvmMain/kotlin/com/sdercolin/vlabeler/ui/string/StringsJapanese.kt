@@ -233,9 +233,9 @@ fun Strings.ja(): String? = when (this) {
     LabelerManagerImportDialogTitle -> "ラベラーをインポート"
     TemplatePluginManagerTitle -> "テンプレート生成器"
     TemplatePluginManagerImportDialogTitle -> "テンプレート生成器をインポート"
-    MacroPluginManagerTitle -> "バッチ編集プラグイン"
-    MacroPluginManagerImportDialogTitle -> "バッチ編集プラグインをインポート"
-    MacroPluginReportDialogTitle -> "バッチ編集の実行結果"
+    MacroPluginManagerTitle -> "一括編集プラグイン"
+    MacroPluginManagerImportDialogTitle -> "一括編集プラグインをインポート"
+    MacroPluginReportDialogTitle -> "一括編集の実行結果"
     MacroPluginReportDialogCopy -> "コピー"
     CustomizableItemManagerRemoveItemConfirm -> "「%s」を削除しますか？削除されたファイルは元に戻せません。"
     CustomizableItemManagerOpenDirectory -> "ディレクトリを開く"
@@ -472,7 +472,7 @@ fun Strings.ja(): String? = when (this) {
     ColorPickerDialogTitle -> "vLabeler - カラーピッカー"
     QuickLaunchManagerDialogTitle -> "プラグインスロット"
     QuickLaunchManagerDialogDescription ->
-        "よく使うバッチ処理プラグインをプラグインスロットに登録しておくと、簡単に呼び出すことができます。" +
+        "よく使う一括編集プラグインをプラグインスロットに登録しておくと、簡単に呼び出すことができます。" +
             "プラグインスロットに登録されたパラメータは、通常のパラメータとは独立し、各自保存されます。"
     QuickLaunchManagerDialogHeaderTitle -> "スロット"
     QuickLaunchManagerDialogHeaderPlugin -> "プラグイン"
