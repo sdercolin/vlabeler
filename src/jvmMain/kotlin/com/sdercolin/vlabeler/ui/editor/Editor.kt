@@ -93,7 +93,7 @@ fun Editor(state: EditorState, appState: AppState) {
                     labelerFocusRequester.requestFocus()
                 }
             }
-            val onFocusedChanged: (Boolean) -> Unit = remember {
+            val onFocusedChanged: (Boolean) -> Unit = remember(state) {
                 { state.isPinnedEntryListInputFocused = it }
             }
             Card(
