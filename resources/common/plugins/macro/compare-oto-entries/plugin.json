@@ -1,6 +1,6 @@
 {
   "name": "compare-oto-entries",
-  "version": 4,
+  "version": 5,
   "type": "macro",
   "displayedName": {
     "en": "Compare oto entries",
@@ -27,7 +27,7 @@
           "ja": "比較する oto ファイル"
         },
         "defaultValue": {},
-        "extensions": [
+        "acceptExtensions": [
           "ini"
         ]
       },

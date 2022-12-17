@@ -1,6 +1,6 @@
 {
   "name": "mark-illegal-entries",
-  "version": 1,
+  "version": 2,
   "type": "macro",
   "displayedName": {
     "en": "Mark illegal entries",
@@ -64,7 +64,7 @@
         "type": "string",
         "label": {
           "en": "Illegal mark",
-          "zh": "非法标签",
+          "zh": "非法标记符号",
           "ja": "不正マーク"
         },
         "description": {

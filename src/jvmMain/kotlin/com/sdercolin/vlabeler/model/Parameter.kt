@@ -219,7 +219,7 @@ sealed class Parameter<T : Any> {
                 selector.filters.all { if (labelerConf != null) it.isValid(labelerConf) else false }
             } == true
             is FileParam -> (value as? FileWithEncoding)?.let {
-                if (optional && it.file == null) return true
+                if (optional && it.file.isNullOrEmpty()) return true
                 val file = it.file?.toFileOrNull(ensureIsFile = true) ?: return@let false
                 if (acceptExtensions != null && file.extension !in acceptExtensions) return@let false
                 true
