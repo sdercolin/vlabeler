@@ -241,6 +241,7 @@ private fun LabelerSelectorRow(
     if (labelerDialogShown) {
         val snackbarHostState = remember { SnackbarHostState() }
         LabelerPluginDialog(
+            isExistingProject = false,
             appConf = state.appConf,
             appRecordStore = state.appRecordStore,
             snackbarHostState = snackbarHostState,

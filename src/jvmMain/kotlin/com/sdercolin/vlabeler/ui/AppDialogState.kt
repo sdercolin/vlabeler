@@ -48,6 +48,7 @@ interface AppDialogState {
     val isShowingPreferencesDialog: Boolean
     val preferencesDialogArgs: PreferencesEditorState.LaunchArgs?
 
+    val isShowingProjectSettingDialog: Boolean
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
     val isShowingPrerenderDialog: Boolean
@@ -63,6 +64,8 @@ interface AppDialogState {
     val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
     val embeddedDialog: EmbeddedDialogRequest<*>?
 
+    fun openProjectSettingDialog()
+    fun closeProjectSettingDialog()
     fun requestOpenProject()
     fun openOpenProjectDialog()
     fun closeOpenProjectDialog()
@@ -122,13 +125,15 @@ interface AppDialogState {
     fun closeAllDialogs()
 
     fun anyDialogOpening() =
-        isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
+        isShowingProjectSettingDialog || isShowingExportDialog ||
+            isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
             macroPluginShownInDialog != null || macroPluginReport != null || isShowingQuickLaunchManagerDialog ||
             customizableItemManagerTypeShownInDialog != null || embeddedDialog != null
 
     fun anyDialogOpeningExceptMacroPluginManager() =
-        isShowingExportDialog || isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
+        isShowingProjectSettingDialog || isShowingExportDialog ||
+            isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
             macroPluginShownInDialog != null || macroPluginReport != null || isShowingQuickLaunchManagerDialog ||
             (
@@ -151,6 +156,7 @@ class AppDialogStateImpl(
         scope = appState.mainScope
     }
 
+    override var isShowingProjectSettingDialog: Boolean by mutableStateOf(false)
     override var isShowingOpenProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingExportDialog: Boolean by mutableStateOf(false)
@@ -172,6 +178,14 @@ class AppDialogStateImpl(
     override var embeddedDialog: EmbeddedDialogRequest<*>? by mutableStateOf(null)
 
     private val hasUnsavedChanges get() = appUnsavedChangesState.hasUnsavedChanges
+
+    override fun openProjectSettingDialog() {
+        isShowingProjectSettingDialog = true
+    }
+
+    override fun closeProjectSettingDialog() {
+        isShowingProjectSettingDialog = false
+    }
 
     override fun requestOpenProject() = if (hasUnsavedChanges) askIfSaveBeforeOpenProject() else openOpenProjectDialog()
 
@@ -463,6 +477,7 @@ class AppDialogStateImpl(
     }
 
     override fun closeAllDialogs() {
+        isShowingProjectSettingDialog = false
         isShowingOpenProjectDialog = false
         isShowingSaveAsProjectDialog = false
         isShowingExportDialog = false

@@ -11,6 +11,7 @@ fun Strings.en(): String = when (this) {
     MenuFileOpenRecentClear -> "Clear Recently Opened"
     MenuFileSave -> "Save"
     MenuFileSaveAs -> "Save As..."
+    MenuFileProjectSetting -> "Project Settings..."
     MenuFileExport -> "Export..."
     MenuFileExportOverwrite -> "Export Overwriting"
     MenuFileExportOverwriteAll -> "Export Overwriting All"
@@ -526,4 +527,5 @@ fun Strings.en(): String = when (this) {
             "`Setting` -> `Track App Usages...`"
     TrackingSettingsDialogEnabled -> "Enabled"
     TrackingSettingsDialogTrackingIdLabel -> "Tracking ID:"
+    ProjectSettingDialogTitle -> "Project Settings"
 }

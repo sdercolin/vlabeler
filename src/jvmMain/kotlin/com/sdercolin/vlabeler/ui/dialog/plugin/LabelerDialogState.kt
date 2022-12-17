@@ -15,6 +15,7 @@ import com.sdercolin.vlabeler.util.stringifyJson
 
 class LabelerDialogState(
     val labeler: LabelerConf,
+    private val isExistingProject: Boolean,
     override val snackbarHostState: SnackbarHostState,
     paramMap: ParamMap,
     override val savedParamMap: ParamMap?,
@@ -28,6 +29,14 @@ class LabelerDialogState(
     override val basePlugin: BasePlugin
         get() = labeler
 
+    override fun isChangeable(parameterName: String): Boolean {
+        if (isExistingProject.not()) return true
+        labeler.parameters.find { it.parameter.name == parameterName }?.let {
+            return it.changeable
+        }
+        throw IllegalArgumentException("Parameter $parameterName not found")
+    }
+
     override suspend fun import(target: BasePluginPresetTarget) = runCatching {
         when (target) {
             is BasePluginPresetTarget.File -> {
@@ -35,14 +44,14 @@ class LabelerDialogState(
                 if (preset.pluginName != labeler.name) {
                     throw IllegalArgumentException("Labeler name mismatch: ${preset.pluginName} != ${labeler.name}")
                 }
-                load(preset.params.resolve(labeler))
+                load(preset.params.resolve(labeler).retainUnchangeableItems())
             }
             is BasePluginPresetTarget.Memory -> {
                 val params = ParamTypedMap.from(
                     basePlugin.loadSavedParams(basePlugin.getSavedParamsFile()),
                     basePlugin.parameterDefs,
                 )
-                load(params.resolve(labeler))
+                load(params.resolve(labeler).retainUnchangeableItems())
             }
         }
     }

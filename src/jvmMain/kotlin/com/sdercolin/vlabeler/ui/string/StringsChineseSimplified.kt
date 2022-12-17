@@ -13,6 +13,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuFileOpenRecentClear -> "清除最近使用记录"
     MenuFileSave -> "保存"
     MenuFileSaveAs -> "另存为..."
+    MenuFileProjectSetting -> "项目设置..."
     MenuFileExport -> "导出..."
     MenuFileExportOverwrite -> "覆盖导出"
     MenuFileExportOverwriteAll -> "覆盖导出全部"
@@ -473,5 +474,6 @@ fun Strings.zhHans(): String? = when (this) {
             "您可以在菜单 `设置` -> `统计使用数据...` 中随时再次打开本对话框，进行设置的修改。"
     TrackingSettingsDialogEnabled -> "启用"
     TrackingSettingsDialogTrackingIdLabel -> "Tracking ID："
+    ProjectSettingDialogTitle -> "项目设置"
     else -> null
 }

@@ -15,6 +15,8 @@ val AvailableEncodings = listOf(
     "EUC-KR",
 )
 
+val DefaultEncoding = AvailableEncodings[0]
+
 fun encodingNameEquals(first: String, second: String) =
     cleanEncodingName(first).equals(cleanEncodingName(second), ignoreCase = true)
 

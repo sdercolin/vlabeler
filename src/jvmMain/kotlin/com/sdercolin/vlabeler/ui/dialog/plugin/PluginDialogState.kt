@@ -76,7 +76,7 @@ class PluginDialogState(
                 if (preset.pluginName != plugin.name) {
                     throw IllegalArgumentException("Plugin name mismatch: ${preset.pluginName} != ${plugin.name}")
                 }
-                load(preset.params.resolve(plugin))
+                load(preset.params.resolve(plugin).retainUnchangeableItems())
             }
             is BasePluginPresetTarget.Memory -> {
                 val slot = target.item.slot
@@ -85,7 +85,7 @@ class PluginDialogState(
                         basePlugin.loadSavedParams(basePlugin.getSavedParamsFile()),
                         basePlugin.parameterDefs,
                     )
-                    load(params.resolve(plugin))
+                    load(params.resolve(plugin).retainUnchangeableItems())
                 } else {
                     val record = appRecordStore.value
                     val quickLaunch = record.pluginQuickLaunchSlots[slot]
@@ -94,7 +94,7 @@ class PluginDialogState(
                             "Plugin name mismatch: ${quickLaunch?.pluginName} != ${plugin.name}",
                         )
                     }
-                    load(quickLaunch.params.resolve(plugin))
+                    load(quickLaunch.params.resolve(plugin).retainUnchangeableItems())
                 }
             }
         }

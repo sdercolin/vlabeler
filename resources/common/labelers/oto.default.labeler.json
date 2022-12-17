@@ -1,6 +1,6 @@
 {
   "name": "oto-plus.default",
-  "version": 18,
+  "version": 19,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -290,7 +290,8 @@
       },
       "injector": [
         "labeler.fields[2].constraints[0].min = value ? null : 3"
-      ]
+      ],
+      "changeable": true
     },
     {
       "parameter": {
@@ -345,7 +346,8 @@
         "    labeler.lockedDrag.useDragBase = false",
         "    labeler.lockedDrag.useStart = true",
         "}"
-      ]
+      ],
+      "changeable": true
     }
   ]
 }

@@ -24,6 +24,9 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.jsonPrimitive
 import java.io.File
 
 /**
@@ -354,12 +357,14 @@ data class LabelerConf(
      *   - size of [defaultExtras]
      *   - size of [defaultValues]
      *   - [Field.name]s in [fields]
+     * @property changeable Whether the parameter is changeable after the project is created
      */
     @Serializable(with = ParameterHolderSerializer::class)
     @Immutable
     data class ParameterHolder(
         val parameter: Parameter<*>,
         val injector: List<String>? = null,
+        val changeable: Boolean = false,
     )
 
     @Serializer(ParameterHolder::class)
@@ -374,7 +379,8 @@ data class LabelerConf(
             val injector = element["injector"]?.takeUnless { it is JsonNull }?.let {
                 decoder.json.decodeFromJsonElement(ListSerializer(String.serializer()), it)
             }
-            return ParameterHolder(parameter, injector)
+            val changeable = element["changeable"]?.jsonPrimitive?.boolean ?: false
+            return ParameterHolder(parameter, injector, changeable)
         }
 
         override fun serialize(encoder: Encoder, value: ParameterHolder) {
@@ -390,6 +396,7 @@ data class LabelerConf(
                             encoder.json.encodeToJsonElement(ListSerializer(String.serializer()), it)
                         } ?: JsonNull
                         ),
+                    "changeable" to JsonPrimitive(value.changeable),
                 ),
             )
             encoder.encodeJsonElement(element)

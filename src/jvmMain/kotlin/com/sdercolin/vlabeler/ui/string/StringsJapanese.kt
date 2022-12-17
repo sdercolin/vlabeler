@@ -13,6 +13,7 @@ fun Strings.ja(): String? = when (this) {
     MenuFileOpenRecentClear -> "履歴をクリア"
     MenuFileSave -> "保存"
     MenuFileSaveAs -> "名前を付けて保存..."
+    MenuFileProjectSetting -> "プロジェクト設定..."
     MenuFileExport -> "エクスポート..."
     MenuFileExportOverwrite -> "上書きエクスポート..."
     MenuFileExportOverwriteAll -> "すべて上書きエクスポート..."
@@ -491,5 +492,6 @@ fun Strings.ja(): String? = when (this) {
             "このダイアログの中の設定は、メニューの `設定` -> `使用状況のトラッキング...` からいつでも変更することができます。"
     TrackingSettingsDialogEnabled -> "有効"
     TrackingSettingsDialogTrackingIdLabel -> "Tracking ID："
+    ProjectSettingDialogTitle -> "プロジェクトの設定"
     else -> null
 }

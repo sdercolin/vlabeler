@@ -25,6 +25,8 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
     abstract suspend fun import(target: BasePluginPresetTarget)
     abstract suspend fun export(target: BasePluginPresetTarget)
 
+    open fun isChangeable(parameterName: String): Boolean = true
+
     abstract val snackbarHostState: SnackbarHostState
     protected suspend fun showSnackbar(message: String) {
         snackbarHostState.showSnackbar(message, actionLabel = stringStatic(Strings.CommonOkay))
@@ -85,13 +87,18 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
         parseErrors[index] = isError
     }
 
-    fun canReset() = paramDefs.indices.all {
-        params[it] == paramDefs[it].defaultValue
+    private fun getResetParamMap() =
+        paramDefs.associate { it.name to it.defaultValue }.toParamMap().retainUnchangeableItems()
+
+    fun canReset(): Boolean {
+        val reset = getResetParamMap()
+        val current = getCurrentParamMap()
+        return reset != current
     }
 
     fun reset() {
-        paramDefs.indices.forEach {
-            params[it] = paramDefs[it].defaultValue
+        getResetParamMap().map { it.value }.forEachIndexed { index, value ->
+            params[index] = value
         }
     }
 
@@ -136,4 +143,14 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
     open fun getImportablePresets(record: AppRecord): List<BasePluginPresetItem> = getDefaultPresetTargets()
 
     open fun getExportablePresets(record: AppRecord): List<BasePluginPresetItem> = getDefaultPresetTargets()
+
+    fun ParamMap.retainUnchangeableItems(): ParamMap {
+        val result = this.toMutableMap()
+        paramDefs.forEachIndexed { index, parameter ->
+            if (isChangeable(parameter.name).not()) {
+                result[parameter.name] = params[index]
+            }
+        }
+        return result.toParamMap()
+    }
 }

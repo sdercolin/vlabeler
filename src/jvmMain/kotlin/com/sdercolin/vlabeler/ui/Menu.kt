@@ -93,6 +93,12 @@ fun FrameWindowScope.Menu(
                         enabled = appState.hasProject,
                     )
                     Item(
+                        string(Strings.MenuFileProjectSetting),
+                        onClick = { appState.openProjectSettingDialog() },
+                        shortcut = KeyAction.OpenProjectSetting.getKeyShortCut(),
+                        enabled = appState.hasProject,
+                    )
+                    Item(
                         string(Strings.MenuFileExport),
                         onClick = { appState.requestExport(overwrite = false) },
                         shortcut = KeyAction.ExportProject.getKeyShortCut(),

@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.io.moduleFromRawLabels
 import com.sdercolin.vlabeler.io.moduleGroupFromRawLabels
 import com.sdercolin.vlabeler.model.Project.Companion.ProjectVersion
 import com.sdercolin.vlabeler.model.filter.EntryFilter
+import com.sdercolin.vlabeler.util.DefaultEncoding
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
@@ -58,7 +59,7 @@ data class Project(
     @Transient
     val labelerConf: LabelerConf = originalLabelerConf,
     val labelerParams: ParamTypedMap? = null,
-    val encoding: String? = null,
+    val encoding: String = DefaultEncoding,
     val multipleEditMode: Boolean = labelerConf.continuous,
     val modules: List<Module>,
     val currentModuleIndex: Int,

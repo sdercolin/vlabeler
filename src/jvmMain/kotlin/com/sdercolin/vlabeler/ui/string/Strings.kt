@@ -14,6 +14,7 @@ enum class Strings {
     MenuFileOpenRecentClear,
     MenuFileSave,
     MenuFileSaveAs,
+    MenuFileProjectSetting,
     MenuFileExport,
     MenuFileExportOverwrite,
     MenuFileExportOverwriteAll,
@@ -446,6 +447,7 @@ enum class Strings {
     TrackingSettingsDialogFirstTimeAlert,
     TrackingSettingsDialogEnabled,
     TrackingSettingsDialogTrackingIdLabel,
+    ProjectSettingDialogTitle,
     ;
 
     fun get(language: Language): String = when (language) {

@@ -200,6 +200,7 @@ fun MacroPluginDialog(
 @Composable
 private fun rememberLabelerDialogState(
     labeler: LabelerConf,
+    isExistingProject: Boolean,
     snackbarHostState: SnackbarHostState,
     paramMap: ParamMap,
     savedParamMap: ParamMap?,
@@ -209,6 +210,7 @@ private fun rememberLabelerDialogState(
 ) = remember(labeler, paramMap, savedParamMap, submit, save, load) {
     LabelerDialogState(
         labeler = labeler,
+        isExistingProject = isExistingProject,
         snackbarHostState = snackbarHostState,
         paramMap = paramMap,
         savedParamMap = savedParamMap,
@@ -220,6 +222,7 @@ private fun rememberLabelerDialogState(
 
 @Composable
 fun LabelerPluginDialog(
+    isExistingProject: Boolean,
     appConf: AppConf,
     appRecordStore: AppRecordStore,
     snackbarHostState: SnackbarHostState,
@@ -233,6 +236,7 @@ fun LabelerPluginDialog(
     appConf = appConf,
     appRecordStore = appRecordStore,
     state = rememberLabelerDialogState(
+        isExistingProject = isExistingProject,
         labeler = labeler,
         snackbarHostState = snackbarHostState,
         paramMap = paramMap,
@@ -313,7 +317,7 @@ private fun Content(state: BasePluginDialogState, appRecordStore: AppRecordStore
                         IconButton(
                             modifier = Modifier.padding(start = 10.dp),
                             onClick = state::reset,
-                            enabled = !state.canReset(),
+                            enabled = state.canReset(),
                         ) {
                             Icon(Icons.Default.RestartAlt, null)
                         }
@@ -444,6 +448,7 @@ private fun Params(state: BasePluginDialogState, js: JavaScript?) {
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         state.params.indices.map { i ->
+            if (state.isChangeable(state.paramDefs[i].name).not()) return@map i to false
             val dependingParamName = state.paramDefs[i].enableIf ?: return@map i to true
             val dependingParam = state.paramDefs.firstOrNull { it.name == dependingParamName } ?: return@map i to false
             val dependingParamValue = state.params[state.paramDefs.indexOf(dependingParam)]

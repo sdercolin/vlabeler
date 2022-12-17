@@ -91,6 +91,14 @@ class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
             else -> throw IllegalArgumentException("$value is not supported")
         }
     }
+
+    override fun hashCode(): Int {
+        return map.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is ParamMap && map == other.map
+    }
 }
 
 /**
@@ -121,6 +129,14 @@ class ParamTypedMap(private val map: Map<String, TypedValue>) {
     )
 
     fun get(key: String): TypedValue? = map[key]
+
+    override fun hashCode(): Int {
+        return map.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is ParamTypedMap && map == other.map
+    }
 
     companion object {
 

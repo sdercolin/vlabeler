@@ -22,6 +22,7 @@ import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginReportDialog
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesDialog
 import com.sdercolin.vlabeler.ui.dialog.prerender.PrerenderDialog
+import com.sdercolin.vlabeler.ui.dialog.project.ProjectListDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
 import com.sdercolin.vlabeler.ui.dialog.updater.UpdaterDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
@@ -66,6 +67,9 @@ fun App(
                     appRecordStore = appState.appRecordStore,
                 )
             is Screen.Editor -> Editor(screen.state, appState)
+        }
+        if (appState.isShowingProjectSettingDialog) {
+            ProjectListDialog(appState, finish = { appState.closeProjectSettingDialog() })
         }
         if (appState.isShowingPrerenderDialog) {
             appState.editor?.let { editor ->

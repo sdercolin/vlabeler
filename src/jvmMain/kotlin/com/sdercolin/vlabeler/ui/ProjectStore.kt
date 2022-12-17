@@ -41,6 +41,7 @@ interface ProjectStore {
     fun newProject(newProject: Project)
     fun clearProject()
     fun editProject(editor: Project.() -> Project)
+    fun updateProject(project: Project)
     fun updateProjectOnLoadedSample(sampleInfo: SampleInfo, moduleName: String)
     fun editEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>)
     fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?)
@@ -146,6 +147,17 @@ class ProjectStoreImpl(
 
     private fun editCurrentProjectModule(editor: Module.() -> Module) {
         editProject { updateCurrentModule { editor() } }
+    }
+
+    override fun updateProject(project: Project) {
+        val updated = runCatching { project.validate() }
+            .getOrElse {
+                errorState.showError(InvalidEditedProjectException(it))
+                return
+            }
+        if (updated == requireProject()) return
+        this.project = updated
+        history.push(updated)
     }
 
     override fun updateProjectOnLoadedSample(sampleInfo: SampleInfo, moduleName: String) {

@@ -1,6 +1,6 @@
 {
   "name": "utau-singer.default",
-  "version": 10,
+  "version": 11,
   "extension": "ini",
   "displayedName": {
     "en": "UTAU singer labeler",
@@ -289,7 +289,8 @@
       },
       "injector": [
         "labeler.fields[2].constraints[0].min = value ? null : 3"
-      ]
+      ],
+      "changeable": true
     },
     {
       "parameter": {
@@ -344,7 +345,8 @@
         "    labeler.lockedDrag.useDragBase = false",
         "    labeler.lockedDrag.useStart = true",
         "}"
-      ]
+      ],
+      "changeable": true
     },
     {
       "parameter": {

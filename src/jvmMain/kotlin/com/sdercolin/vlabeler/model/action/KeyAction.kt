@@ -38,6 +38,11 @@ enum class KeyAction(
         KeySet(Key.S, setOf(Key.Ctrl, Key.Shift)),
         true,
     ),
+    OpenProjectSetting(
+        listOf(Strings.MenuFile, Strings.MenuFileProjectSetting),
+        null,
+        true,
+    ),
     ExportProject(
         listOf(Strings.MenuFile, Strings.MenuFileExport),
         KeySet(Key.E, setOf(Key.Ctrl)),
