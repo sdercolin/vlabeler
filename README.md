@@ -387,3 +387,6 @@ Please check [App Usage Tracking](readme/tracking.md) for details.
 3. On Linux, sometimes the application may not be able to recycle memory properly.
    You can use `Tools` -> `Recycle Memory` to force it to recycle memory.
 4. Sometimes the window freezes unexpectedly. You can resize the window to refresh it
+
+### Localization help (besides code contributors)
+[時雨ゆん](https://twitter.com/Yun_Shigure)
