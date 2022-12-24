@@ -198,7 +198,7 @@ fun Strings.ja(): String? = when (this) {
     PluginEntrySelectorNumberMatchTypeGreaterThanOrEquals -> ">="
     PluginEntrySelectorNumberMatchTypeLessThan -> "<"
     PluginEntrySelectorNumberMatchTypeLessThanOrEquals -> "<="
-    PluginEntrySelectorPreservedSubjectSample -> "サンプル名"
+    PluginEntrySelectorPreservedSubjectSample -> "サンプル名（拡張子なし）"
     PluginEntrySelectorPreservedSubjectName -> "エントリ名"
     PluginEntrySelectorPreservedSubjectTag -> "タグ"
     PluginEntrySelectorPreservedSubjectDone -> "完了状態"

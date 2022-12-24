@@ -15,7 +15,7 @@ import kotlinx.serialization.json.JsonDecoder
 @Immutable
 data class Entry(
     /**
-     * Sample file name without extension
+     * Sample file name with extension
      */
     val sample: String,
     /**
@@ -49,6 +49,9 @@ data class Entry(
      */
     val needSync: Boolean = false,
 ) {
+
+    val sampleNameWithoutExtension: String
+        get() = sample.substringBeforeLast('.')
 
     fun starToggled() = copy(notes = notes.copy(star = !notes.star))
     fun doneToggled() = copy(notes = notes.copy(done = !notes.done))

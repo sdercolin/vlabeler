@@ -241,9 +241,9 @@ Multiple conditions can be combined with `;`. Only entries that match all the co
 
 The following condition keys (the part left to `:`) are supported:
 
-- no key: search in the entry name, sample name or tag
+- no key: search in the entry name, sample name (without extension) or tag
 - `name`: search in the entry name
-- `sample`: search in the sample name
+- `sample`: search in the sample name (without extension)
 - `tag`: search in the tag
 
 The match type for this search is `contains`.

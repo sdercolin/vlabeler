@@ -52,7 +52,7 @@ data class EntryFilter(
     fun matches(entry: Entry): Boolean {
         searchAny?.let {
             if (!entry.name.contains(it) &&
-                !entry.sample.contains(it) &&
+                !entry.sampleNameWithoutExtension.contains(it) &&
                 !entry.notes.tag.contains(it)
             ) {
                 return false
@@ -64,7 +64,7 @@ data class EntryFilter(
             }
         }
         searchSample?.let {
-            if (!entry.sample.contains(it)) {
+            if (!entry.sampleNameWithoutExtension.contains(it)) {
                 return false
             }
         }

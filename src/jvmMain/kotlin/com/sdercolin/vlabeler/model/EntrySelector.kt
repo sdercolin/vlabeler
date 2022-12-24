@@ -62,7 +62,7 @@ data class EntrySelector(
         override fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean {
             val subjectValue = when (subject) {
                 TextItemSubjectEntryName -> entry.name
-                TextItemSubjectSampleName -> entry.sample
+                TextItemSubjectSampleName -> entry.sampleNameWithoutExtension
                 TextItemSubjectTagName -> entry.notes.tag
                 else -> throw IllegalArgumentException("Unknown subject name as text: $subject")
             }

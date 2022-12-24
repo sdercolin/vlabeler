@@ -202,7 +202,7 @@ fun Strings.en(): String = when (this) {
     PluginEntrySelectorNumberMatchTypeGreaterThanOrEquals -> ">="
     PluginEntrySelectorNumberMatchTypeLessThan -> "<"
     PluginEntrySelectorNumberMatchTypeLessThanOrEquals -> "<="
-    PluginEntrySelectorPreservedSubjectSample -> "Sample name"
+    PluginEntrySelectorPreservedSubjectSample -> "Sample name (no extension)"
     PluginEntrySelectorPreservedSubjectName -> "Entry name"
     PluginEntrySelectorPreservedSubjectTag -> "Tag"
     PluginEntrySelectorPreservedSubjectDone -> "Done"

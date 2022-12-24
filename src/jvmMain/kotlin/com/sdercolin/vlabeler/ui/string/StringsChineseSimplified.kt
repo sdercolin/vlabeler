@@ -189,7 +189,7 @@ fun Strings.zhHans(): String? = when (this) {
     PluginEntrySelectorNumberMatchTypeGreaterThanOrEquals -> ">="
     PluginEntrySelectorNumberMatchTypeLessThan -> "<"
     PluginEntrySelectorNumberMatchTypeLessThanOrEquals -> "<="
-    PluginEntrySelectorPreservedSubjectSample -> "采样名"
+    PluginEntrySelectorPreservedSubjectSample -> "采样名（不含扩展名）"
     PluginEntrySelectorPreservedSubjectName -> "条目名"
     PluginEntrySelectorPreservedSubjectTag -> "标签"
     PluginEntrySelectorPreservedSubjectDone -> "完成状态"

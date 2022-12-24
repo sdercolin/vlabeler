@@ -194,7 +194,6 @@ macOS を使用している場合、下記の `Ctrl` は `Command` を意味し�
 ## ビデオ表示
 
 サンプルファイルと同じファイル名（拡張子を除く）と長さのビデオファイルがある場合、編集時に再生できます。
-You can attach a video to the sample file with the same name and duration, and watch the video while you're editing.
 例：
 
 ```
@@ -235,9 +234,9 @@ aaa;name:bbb;sample:ccc;tag:ddd
 
 次の条件キー (`:` の前の部分) がサポートされています。
 
-- キーなし: エントリ名、サンプル名、またはタグで検索
+- キーなし: エントリ名、サンプル名（拡張子を除く）、またはタグで検索
 - `name`: エントリ名で検索
-- `sample`: サンプル名で検索
+- `sample`: サンプル名（拡張子を除く）で検索
 - `tag`: タグで検索
 
 この検索の一致タイプは `含む` です。
