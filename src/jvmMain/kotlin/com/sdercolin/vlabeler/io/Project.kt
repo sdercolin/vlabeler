@@ -227,7 +227,7 @@ suspend fun exportProjectModule(
             project.modulesToRawLabels(relatedModules.map { it.index })
         }
 
-        val charset = project.encoding?.let { Charset.forName(it) } ?: Charsets.UTF_8
+        val charset = project.encoding.let { Charset.forName(it) } ?: Charsets.UTF_8
         outputFile.writeText(outputText, charset)
         Log.debug(
             "Project module ${outputModuleNames.joinToString { "\"$it\"" }} " +
