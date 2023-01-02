@@ -79,7 +79,7 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "vLabeler"
             packageVersion = (version as String).split("-").first()
-            copyright = "© 2022 sdercolin. All rights reserved."
+            copyright = "© 2022 sdercolin"
             appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
             modules("java.sql", "jdk.charsets", "jdk.unsupported", "jdk.accessibility", "java.naming")
 
