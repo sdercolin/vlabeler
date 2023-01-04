@@ -5,7 +5,6 @@ import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Locale
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
@@ -68,38 +67,16 @@ fun loadAppConf(mainScope: CoroutineScope, appRecord: AppRecordStore): MutableSt
 }
 
 suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatchers.IO) {
-    val defaultLabelers = getDefaultLabelers().associateWith {
+    val defaultLabelers = getDefaultLabelers().map {
         it.asLabelerConf().getOrThrow() // default items should always be parsed
     }.toList()
-    val defaultLabelerNames = defaultLabelers.map { it.first.name }
-    val customLabelers = getCustomLabelers().associateWith {
+    val defaultLabelerNames = defaultLabelers.map { it.name }
+    val customLabelers = getCustomLabelers().mapNotNull {
         it.asLabelerConf().getOrNull()
     }.toList()
-    val validCustomLabelers = customLabelers.mapNotNull { (file, result) -> result?.let { file to it } }
-    val validCustomLabelerNames = validCustomLabelers.map { it.first.name }
+    val validCustomLabelers = customLabelers.filterNot { it.name in defaultLabelerNames }
 
-    val availableLabelers = mutableListOf<LabelerConf>()
-    val (duplicated, new) = defaultLabelers.partition { it.first.name in validCustomLabelerNames }
-    new.forEach {
-        availableLabelers.add(it.second)
-        it.first.copyTo(CustomLabelerDir.resolve(it.first.name), overwrite = true)
-    }
-    duplicated.forEach { default ->
-        val custom = validCustomLabelers.first { it.first.name == default.first.name }
-        if (default.second.version > custom.second.version || isDebug) {
-            // update with default
-            availableLabelers.add(default.second)
-            default.first.copyTo(CustomLabelerDir.resolve(custom.first.name), overwrite = true)
-            if (default.second.version > custom.second.version) {
-                Log.debug("Update ${custom.first.name} to version ${default.second.version}")
-            }
-        } else {
-            availableLabelers.add(custom.second)
-        }
-    }
-    availableLabelers.addAll(
-        validCustomLabelers.filter { it.first.name !in defaultLabelerNames }.map { it.second },
-    )
+    val availableLabelers = defaultLabelers + validCustomLabelers
     if (availableLabelers.isEmpty()) {
         throw IllegalStateException("No labeler configuration files found.")
     }

@@ -10,7 +10,6 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.ui.string.stringStatic
-import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.clearCache
 import com.sdercolin.vlabeler.util.parseJson
@@ -67,7 +66,7 @@ suspend fun awaitLoadProject(
     val existingLabelerConf = appState.availableLabelerConfs.find { it.name == project.labelerConf.name }
     val originalLabelerConf = when {
         existingLabelerConf == null -> {
-            val labelerConfFile = CustomLabelerDir.resolve(project.labelerConf.fileName)
+            val labelerConfFile = project.labelerConf.file
             Log.info("Wrote labeler ${project.labelerConf.name} to ${labelerConfFile.absolutePath}")
             labelerConfFile.writeText(project.labelerConf.stringifyJson())
             showSnackbar(
@@ -82,7 +81,7 @@ suspend fun awaitLoadProject(
             existingLabelerConf
         }
         else -> {
-            val labelerConfFile = CustomLabelerDir.resolve(project.labelerConf.fileName)
+            val labelerConfFile = project.labelerConf.file
             Log.info(
                 "Wrote new version ${project.labelerConf.version} of labeler ${project.labelerConf.name}" +
                     "to ${labelerConfFile.absolutePath}",

@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.model.LabelerConf.ProjectConstructor
 import com.sdercolin.vlabeler.model.LabelerConf.Property
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.toLocalized
+import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.DefaultLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -90,6 +91,7 @@ data class LabelerConf(
 
     val fileName get() = "$name.$LabelerFileExtension"
     val isBuiltIn get() = DefaultLabelerDir.listFiles().orEmpty().any { it.name == fileName }
+    val file get() = if (isBuiltIn) DefaultLabelerDir.resolve(fileName) else CustomLabelerDir.resolve(fileName)
     val isSelfConstructed get() = projectConstructor != null
 
     override val parameterDefs: List<Parameter<*>>

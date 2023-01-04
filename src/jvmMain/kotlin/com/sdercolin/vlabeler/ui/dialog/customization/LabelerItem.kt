@@ -1,7 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog.customization
 
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.util.CustomLabelerDir
 
 class LabelerItem(
     labelerConf: LabelerConf,
@@ -14,7 +13,7 @@ class LabelerItem(
     description = labelerConf.description,
     email = labelerConf.email,
     website = labelerConf.website,
-    rootFile = CustomLabelerDir.resolve(labelerConf.fileName),
+    rootFile = labelerConf.file,
     canRemove = labelerConf.isBuiltIn.not(),
     disabled = disabled,
 )
