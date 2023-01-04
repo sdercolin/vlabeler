@@ -1,6 +1,6 @@
 {
   "name": "oto-plus.default",
-  "version": 19,
+  "version": 20,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -185,7 +185,7 @@
         "ja": "右ブランク"
       },
       "valueGetter": [
-        "if(entry.needSync) {",
+        "if(entry.needSync || entry.end < 0) {",
         "    value = parseFloat(entry.extras[0])",
         "} else {",
         "    value = entry.points[3] - entry.end",

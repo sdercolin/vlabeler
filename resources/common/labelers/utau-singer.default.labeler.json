@@ -1,6 +1,6 @@
 {
   "name": "utau-singer.default",
-  "version": 11,
+  "version": 12,
   "extension": "ini",
   "displayedName": {
     "en": "UTAU singer labeler",
@@ -184,7 +184,7 @@
         "ja": "右ブランク"
       },
       "valueGetter": [
-        "if(entry.needSync) {",
+        "if(entry.needSync || entry.end < 0) {",
         "    value = parseFloat(entry.extras[0])",
         "} else {",
         "    value = entry.points[3] - entry.end",
