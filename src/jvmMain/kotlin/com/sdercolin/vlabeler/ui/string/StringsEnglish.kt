@@ -93,7 +93,7 @@ fun Strings.en(): String = when (this) {
     StarterOpen -> "Open..."
     StarterRecent -> "Recent"
     StarterRecentEmpty -> "You have no recent projects."
-    StarterRecentDeleted -> "This profile has been removed."
+    StarterRecentDeleted -> "This project file has been removed."
     StarterNewSampleDirectory -> "Sample directory"
     StarterNewWorkingDirectory -> "Project location"
     StarterNewProjectTitle -> "New Project"
