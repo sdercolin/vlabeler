@@ -158,7 +158,7 @@ fun MoveEntryDialog(
     }
 }
 
-private const val ResultEntryIndexRadius = 2
+private const val RESULT_ENTRY_INDEX_RADIUS = 2
 
 private data class EntryForResultView(val entry: Entry, val oldIndex: Int, val newIndex: Int)
 
@@ -168,10 +168,10 @@ private fun ResultView(entries: List<Entry>, oldIndex: Int, newIndex: Int, viewC
         val list = entries.withIndex().toMutableList()
         val movedEntry = list.removeAt(oldIndex)
         list.add(newIndex, movedEntry)
-        var startIndex = (newIndex - ResultEntryIndexRadius).coerceAtLeast(0)
-        val endIndex = (startIndex + 2 * ResultEntryIndexRadius + 1).coerceAtMost(entries.size)
-        if (endIndex - startIndex < 2 * ResultEntryIndexRadius + 1) {
-            startIndex = (endIndex - 2 * ResultEntryIndexRadius - 1).coerceAtLeast(0)
+        var startIndex = (newIndex - RESULT_ENTRY_INDEX_RADIUS).coerceAtLeast(0)
+        val endIndex = (startIndex + 2 * RESULT_ENTRY_INDEX_RADIUS + 1).coerceAtMost(entries.size)
+        if (endIndex - startIndex < 2 * RESULT_ENTRY_INDEX_RADIUS + 1) {
+            startIndex = (endIndex - 2 * RESULT_ENTRY_INDEX_RADIUS - 1).coerceAtLeast(0)
         }
         list.map { EntryForResultView(it.value, it.index, list.indexOf(it)) }.subList(startIndex, endIndex)
     }

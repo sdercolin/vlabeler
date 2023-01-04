@@ -59,15 +59,15 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
 
-private const val RegionAlpha = 0.3f
-private val EditableOutsideRegionColor = White
-private const val UneditableRegionAlpha = 0.9f
-private val UneditableRegionColor = Black
+const val RegionAlpha = 0.3f
+val EditableOutsideRegionColor = White
+const val UneditableRegionAlpha = 0.9f
+val UneditableRegionColor = Black
 const val IdleLineAlpha = 0.7f
-private const val StrokeWidth = 2f
+const val StrokeWidth = 2f
 val LabelSize = DpSize(40.dp, 25.dp)
 val LabelShiftUp = 11.dp
-private const val LabelMaxChunkLength = 5000
+const val LabelMaxChunkLength = 5000
 
 @Composable
 fun MarkerPointEventContainer(

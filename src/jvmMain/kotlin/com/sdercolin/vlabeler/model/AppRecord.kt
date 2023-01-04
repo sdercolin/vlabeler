@@ -43,7 +43,7 @@ data class AppRecord(
         )
 
     fun addRecent(path: String) = copy(
-        recentProjects = (listOf(path) + recentProjects).distinct().take(MaxRecentProjectCount),
+        recentProjects = (listOf(path) + recentProjects).distinct().take(MAX_RECENT_PROJECT_COUNT),
     )
 
     fun setLabelerDisabled(name: String, disabled: Boolean) = copy(
@@ -89,4 +89,4 @@ data class AppRecord(
     fun generateTrackingId() = copy(trackingId = UUID.randomUUID().toString())
 }
 
-private const val MaxRecentProjectCount = 10
+private const val MAX_RECENT_PROJECT_COUNT = 10

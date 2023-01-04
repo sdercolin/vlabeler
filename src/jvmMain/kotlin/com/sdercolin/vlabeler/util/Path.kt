@@ -9,32 +9,32 @@ import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import java.io.File
 import java.io.FilenameFilter
 
-private const val AppNamePath = "vLabeler"
-private const val AppConfFileName = "app.conf.json"
-private const val AppRecordFileName = "app.record.json"
-private const val LabelerFolderName = "labelers"
-private const val PluginFolderName = "plugins"
-private const val RecordFolderName = ".record"
+private const val APP_NAME_PATH = "vLabeler"
+private const val APP_CONF_FILE_NAME = "app.conf.json"
+private const val APP_RECORD_FILE_NAME = "app.record.json"
+private const val LABELER_FOLDER_NAME = "labelers"
+private const val PLUGIN_FOLDER_NAME = "plugins"
+private const val RECORD_FOLDER_NAME = ".record"
 
 // Internal files
 val ResourcePath: String? get() = System.getProperty("compose.application.resources.dir")
 val ResourceDir get() = File(requireNotNull(ResourcePath))
-val DefaultAppConfFile get() = ResourceDir.resolve(AppConfFileName)
-val DefaultLabelerDir get() = ResourceDir.resolve(LabelerFolderName)
-val DefaultPluginDir get() = ResourceDir.resolve(PluginFolderName)
+val DefaultAppConfFile get() = ResourceDir.resolve(APP_CONF_FILE_NAME)
+val DefaultLabelerDir get() = ResourceDir.resolve(LABELER_FOLDER_NAME)
+val DefaultPluginDir get() = ResourceDir.resolve(PLUGIN_FOLDER_NAME)
 
 // External files
 val HomeDir get() = File(System.getProperty("user.home"))
 val AppDir
     get() = when {
-        isMacOS -> HomeDir.resolve("Library").resolve(AppNamePath)
-        else -> HomeDir.resolve(AppNamePath)
+        isMacOS -> HomeDir.resolve("Library").resolve(APP_NAME_PATH)
+        else -> HomeDir.resolve(APP_NAME_PATH)
     }
-val CustomAppConfFile get() = AppDir.resolve(AppConfFileName)
-val CustomLabelerDir get() = AppDir.resolve(LabelerFolderName)
-val CustomPluginDir get() = AppDir.resolve(PluginFolderName)
-val RecordDir get() = AppDir.resolve(RecordFolderName)
-val AppRecordFile get() = RecordDir.resolve(AppRecordFileName)
+val CustomAppConfFile get() = AppDir.resolve(APP_CONF_FILE_NAME)
+val CustomLabelerDir get() = AppDir.resolve(LABELER_FOLDER_NAME)
+val CustomPluginDir get() = AppDir.resolve(PLUGIN_FOLDER_NAME)
+val RecordDir get() = AppDir.resolve(RECORD_FOLDER_NAME)
+val AppRecordFile get() = RecordDir.resolve(APP_RECORD_FILE_NAME)
 val DefaultDownloadDir: File
     get() = listOf(
         "Downloads",

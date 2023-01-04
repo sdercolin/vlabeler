@@ -18,7 +18,7 @@ import kotlin.math.roundToInt
 @Immutable
 data class Spectrogram(val data: List<DoubleArray>, val hopSize: Int)
 
-private const val StandardSampleRate = 44100
+private const val STANDARD_SAMPLE_RATE = 44100
 
 fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogram {
     val dataLength = channels.minOf { it.data.size }
@@ -26,8 +26,8 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
         channels.sumOf { it.data[i].toDouble() } / channels.size
     }
     val maxFrequencyRate = conf.maxFrequency / sampleRate * 2
-    val hopSize = (conf.standardHopSize * sampleRate / StandardSampleRate).roundToInt()
-    val windowSize = (conf.standardWindowSize * 2.0.pow(sampleRate.toDouble() / StandardSampleRate)).toInt()
+    val hopSize = (conf.standardHopSize * sampleRate / STANDARD_SAMPLE_RATE).roundToInt()
+    val windowSize = (conf.standardWindowSize * 2.0.pow(sampleRate.toDouble() / STANDARD_SAMPLE_RATE)).toInt()
 
     val window = when (conf.windowType) {
         AppConf.WindowType.Hamming -> Hamming(windowSize).window
