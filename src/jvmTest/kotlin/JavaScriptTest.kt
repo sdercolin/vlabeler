@@ -112,6 +112,7 @@ class JavaScriptTest {
             val list = listOf(File("a"), File("b"))
             it.setArray("list", list)
             assertEquals(list, it.getArray("list"))
+            assertEquals(list, it.getArrayOrNull("list"))
         }
     }
 }

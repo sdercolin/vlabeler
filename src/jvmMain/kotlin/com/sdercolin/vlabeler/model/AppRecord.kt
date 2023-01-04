@@ -87,7 +87,6 @@ data class AppRecord(
 
     fun clearTrackingId() = copy(trackingId = null)
     fun generateTrackingId() = copy(trackingId = UUID.randomUUID().toString())
-    fun generateTackingIdIfNeeded() = if (trackingId == null) generateTrackingId() else this
 }
 
 private const val MaxRecentProjectCount = 10
