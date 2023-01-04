@@ -199,7 +199,6 @@ enum class Strings {
     EditorSubTitleMultiple,
     EditorModuleRootNameTitle,
     FailedToLoadSampleFileError,
-    EmptySampleDirectoryException,
     PluginRuntimeUnexpectedException,
     InvalidCreatedProjectException,
     InvalidOpenedProjectException,

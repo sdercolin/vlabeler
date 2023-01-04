@@ -212,7 +212,6 @@ fun Strings.ja(): String? = when (this) {
     EditorModuleRootNameTitle -> "（ルート）"
     FailedToLoadSampleFileError ->
         "サンプルファイルを読み込めませんでした。存在しないか、サポートされていないフォーマットの可能性があります。"
-    EmptySampleDirectoryException -> "プロジェクトを作成できませんでした。サンプルディレクトリにサンプルファイルがありません。"
     PluginRuntimeUnexpectedException -> "プラグインの実行中に予期しないエラーが発生しました。プラグインの作者に連絡してください。"
     InvalidCreatedProjectException ->
         "作成したプロジェクトは無効です。お使いのラベラーまたはプラグインのドキュメントに確認し、" +

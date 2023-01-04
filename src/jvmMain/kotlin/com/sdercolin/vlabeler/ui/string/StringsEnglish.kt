@@ -215,9 +215,6 @@ fun Strings.en(): String = when (this) {
     EditorSubTitleMultiple -> "editing %1\$d entries in sample %2\$s"
     EditorModuleRootNameTitle -> "(Root)"
     FailedToLoadSampleFileError -> "Could not load the sample file.\nIt may not exist or is not a supported format."
-    EmptySampleDirectoryException ->
-        "Could not create the project because no sample files are found " +
-            "in the given sample directory."
     PluginRuntimeUnexpectedException ->
         "An unexpected error occurred during the plugin execution.\n" +
             "Please contact the author for more information."

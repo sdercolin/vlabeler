@@ -202,7 +202,6 @@ fun Strings.zhHans(): String? = when (this) {
     EditorSubTitleMultiple -> "编辑采样 %2\$s 中的%1\$d个条目"
     EditorModuleRootNameTitle -> "（根）"
     FailedToLoadSampleFileError -> "无法读取该采样文件。它可能不存在，或是不支持的格式。"
-    EmptySampleDirectoryException -> "无法创建项目。采样目录中不存在任何采样文件。"
     PluginRuntimeUnexpectedException -> "插件执行过程中发生了意外的错误。请联系插件作者以获取更多信息。"
     InvalidCreatedProjectException ->
         "新建的项目为无效项目。请检查您正在使用的标注器或插件的文档，确保您的设置正确。" +
