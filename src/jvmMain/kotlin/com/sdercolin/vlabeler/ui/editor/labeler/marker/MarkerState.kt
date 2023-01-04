@@ -495,18 +495,18 @@ fun rememberMarkerState(
             entryConverter.convertToPixel(entry, sampleLengthMillis).validate(canvasParams.lengthInPixel)
         }
     }
-    val entriesInSampleInPixel = remember(entriesInPixel) {
+    val entriesInSampleInPixel = remember(entriesInPixel, canvasParams, sampleLengthMillis) {
         allEntriesInCurrentGroup.map { entry ->
             entryConverter.convertToPixel(entry, sampleLengthMillis).validate(canvasParams.lengthInPixel)
         }
     }
-    val leftBorder = remember(entriesInPixel) {
+    val leftBorder = remember(entriesInPixel, canvasParams) {
         val previousEntry = if (labelerConf.continuous) {
             entriesInSampleInPixel.getPreviousOrNull { it.index == entriesInPixel.first().index }
         } else null
         previousEntry?.start ?: 0f
     }
-    val rightBorder = remember(entriesInPixel) {
+    val rightBorder = remember(entriesInPixel, canvasParams) {
         val nextEntry = if (labelerConf.continuous) {
             entriesInSampleInPixel.getNextOrNull { it.index == entriesInPixel.last().index }
         } else null
