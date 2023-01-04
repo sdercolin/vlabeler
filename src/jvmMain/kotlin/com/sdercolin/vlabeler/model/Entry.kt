@@ -45,7 +45,9 @@ data class Entry(
      */
     val notes: EntryNotes = EntryNotes(),
     /**
-     * Whether the entry need to be updated with the sample file
+     * Whether the entry need to be updated with the sample file.
+     * Especially when `end` is `0`, we don't know if it's the actual start of the sample file
+     * or a relative value to the end, which means we need to sync it with the sample file
      */
     val needSync: Boolean = false,
 ) {
