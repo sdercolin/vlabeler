@@ -72,7 +72,7 @@ let usedLyrics = new Set()
 let lyric = null
 let key = null
 
-input.split("\n").forEach(line => {
+input.split("\n").map(line => line.trim()).filter(line => line !== "").forEach(line => {
     if (line.startsWith("Lyric=")) {
         lyric = line.slice(6)
     } else if (line.startsWith("NoteNum=")) {
@@ -96,7 +96,7 @@ if (debug) {
 
 for (let moduleIndex in modules) {
     let module = modules[moduleIndex]
-    if (allModules || moduleIndex === currentModuleIndex) {
+    if (allModules || moduleIndex == currentModuleIndex) {
         module.entries.forEach(entry => {
             if (usedLyrics.has(entry.name)) {
                 entry.notes.tag += mark
