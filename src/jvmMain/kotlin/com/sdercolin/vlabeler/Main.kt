@@ -96,8 +96,10 @@ fun main() = application {
         }
     }
 
+    val windowTitle = string(Strings.AppName) + appState?.project?.projectName?.let { " - $it" }.orEmpty()
+
     Window(
-        title = string(Strings.AppName),
+        title = windowTitle,
         icon = painterResource(Resources.iconIco),
         state = windowState,
         onCloseRequest = onCloseRequest,
