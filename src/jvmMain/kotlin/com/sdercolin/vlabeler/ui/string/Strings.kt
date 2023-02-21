@@ -365,6 +365,7 @@ enum class Strings {
     ActionDecreaseResolution,
     ActionInputResolution,
     ActionCancelDialog,
+    ActionScissorsCut,
     ActionSetValue1,
     ActionSetValue2,
     ActionSetValue3,

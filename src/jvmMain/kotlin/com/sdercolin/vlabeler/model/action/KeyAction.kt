@@ -292,6 +292,11 @@ enum class KeyAction(
         KeySet(Key.Escape),
         false,
     ),
+    ScissorsCut(
+        listOf(Strings.ActionScissorsCut),
+        null,
+        false,
+    ),
     SetValue1(
         listOf(Strings.ActionSetValue1),
         KeySet(Key.Q),

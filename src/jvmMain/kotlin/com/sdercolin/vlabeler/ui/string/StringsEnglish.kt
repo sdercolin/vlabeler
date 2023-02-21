@@ -430,6 +430,7 @@ fun Strings.en(): String = when (this) {
     ActionDecreaseResolution -> "Zoom In"
     ActionInputResolution -> "Input Canvas Resolution"
     ActionCancelDialog -> "Close Dialog"
+    ActionScissorsCut -> "Cut at Current Cursor Position"
     ActionSetValue1 -> "Set Parameter 1 To Cursor Position"
     ActionSetValue2 -> "Set Parameter 2 To Cursor Position"
     ActionSetValue3 -> "Set Parameter 3 To Cursor Position"

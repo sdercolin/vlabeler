@@ -386,6 +386,7 @@ fun Strings.zhHans(): String? = when (this) {
     ActionDecreaseResolution -> "放大"
     ActionInputResolution -> "输入画布分辨率"
     ActionCancelDialog -> "关闭对话框"
+    ActionScissorsCut -> "在当前光标位置切割"
     ActionSetValue1 -> "将参数1设置到光标位置"
     ActionSetValue2 -> "将参数2设置到光标位置"
     ActionSetValue3 -> "将参数3设置到光标位置"

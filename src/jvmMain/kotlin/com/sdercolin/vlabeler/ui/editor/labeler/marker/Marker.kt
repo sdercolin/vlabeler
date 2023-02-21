@@ -28,6 +28,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.action.MouseClickAction
 import com.sdercolin.vlabeler.model.action.canMoveParameter
 import com.sdercolin.vlabeler.ui.AppState
@@ -165,6 +166,7 @@ fun MarkerCanvas(
         editorState.keyboardViewModel.keyboardActionFlow.collectLatest {
             if (appState.isEditorActive.not()) return@collectLatest
             if (editorState.handleSetPropertyKeyAction(it)) return@collectLatest
+            if (state.mayHandleScissorsKeyAction(it, editorState::cutEntry)) return@collectLatest
             val updated = state.getUpdatedEntriesByKeyAction(it, appState.appConf, editorState.project.labelerConf)
                 ?: return@collectLatest
             state.editEntryIfNeeded(updated, editorState::submitEntries)
@@ -576,17 +578,25 @@ private fun MarkerState.handleScissorsRelease(
     cutEntry: (Int, Float) -> Unit,
 ) {
     val scissorsState = scissorsState
-
-    val position = scissorsState.requireValue().position
-    if (position != null) {
-        val timePosition = entryConverter.convertToMillis(position)
-        val entryIndex = getEntryIndexByCutPosition(position)
-        cutEntry(entryIndex, timePosition)
-    }
+    val position = scissorsState.requireValue().position ?: return
+    handleScissorsCut(position, cutEntry)
 }
 
 private fun MarkerState.handlePanRelease() {
     panState.updateNonNull { copy(isDragging = false) }
+}
+
+private fun MarkerState.mayHandleScissorsKeyAction(action: KeyAction, cutEntry: (Int, Float) -> Unit): Boolean {
+    if (action != KeyAction.ScissorsCut) return false
+    val position = scissorsState.value?.position ?: return false
+    handleScissorsCut(position, cutEntry)
+    return true
+}
+
+private fun MarkerState.handleScissorsCut(position: Float, cutEntry: (Int, Float) -> Unit) {
+    val timePosition = entryConverter.convertToMillis(position)
+    val entryIndex = getEntryIndexByCutPosition(position)
+    cutEntry(entryIndex, timePosition)
 }
 
 private fun MarkerState.editEntryIfNeeded(

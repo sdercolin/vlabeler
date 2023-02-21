@@ -400,6 +400,7 @@ fun Strings.ja(): String? = when (this) {
     ActionDecreaseResolution -> "ズームイン"
     ActionInputResolution -> "キャンパス解像度を入力"
     ActionCancelDialog -> "ダイアログを閉じる"
+    ActionScissorsCut -> "カーソル位置でカット"
     ActionSetValue1 -> "パラメータ1をカーソル位置に設定"
     ActionSetValue2 -> "パラメータ2をカーソル位置に設定"
     ActionSetValue3 -> "パラメータ3をカーソル位置に設定"
