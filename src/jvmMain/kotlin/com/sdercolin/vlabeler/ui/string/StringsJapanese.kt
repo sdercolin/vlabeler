@@ -85,6 +85,7 @@ fun Strings.ja(): String? = when (this) {
     CommonWarning -> "警告"
     CommonError -> "エラー"
     CommonDetails -> "詳細"
+    CommonOthers -> "その他"
     CommonInputErrorPromptNumber -> "数値を入力してください。"
     CommonInputErrorPromptInteger -> "整数を入力してください。"
     CommonInputErrorPromptNumberRange -> "%s から %s の間の数値を入力してください。"
@@ -119,6 +120,12 @@ fun Strings.ja(): String? = when (this) {
         "複数のサブプロジェクトを扱うラベラーとともに、テンプレート生成器を使用しようとしています。" +
             "これは、すべての既存のラベルファイルを生成されたエントリで上書きする可能性があるため、危険です。" +
             "この設定が必要なものであることを再度確認してください。"
+    StarterNewProjectDirectoryPage -> "ディレクトリ"
+    StarterNewProjectLabelerPage -> "ラベラー"
+    StarterNewProjectInputPage -> "入力"
+    StarterNewProjectContentTypeDefault -> "デフォルト"
+    StarterNewProjectContentTypeFile -> "ファイルをインポート"
+    StarterNewProjectContentTypePlugin -> "テンプレート生成器を使用"
     SampleListIncludedHeader -> "使用されているサンプル"
     SampleListIncludedItemEntryCountSingle -> "%d 個のエントリ"
     SampleListIncludedItemEntryCountPlural -> "%d 個のエントリ"

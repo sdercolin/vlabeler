@@ -85,6 +85,7 @@ fun Strings.zhHans(): String? = when (this) {
     CommonWarning -> "警告"
     CommonError -> "错误"
     CommonDetails -> "详情"
+    CommonOthers -> "其他"
     CommonInputErrorPromptNumber -> "请输入一个数字。"
     CommonInputErrorPromptInteger -> "请输入一个整数。"
     CommonInputErrorPromptNumberRange -> "请输入一个介于 %s 与 %s 之间的数字。"
@@ -115,6 +116,12 @@ fun Strings.zhHans(): String? = when (this) {
     StarterNewWarningSelfConstructedLabelerWithTemplatePlugin ->
         "您正在尝试在一个管理多个子项目的标注器上使用模板生成器。" +
             "这是危险的，因为它可能会用生成的条目覆盖所有现有的标注文件。请再次确认设置是否符合您的需求。"
+    StarterNewProjectDirectoryPage -> "目录"
+    StarterNewProjectLabelerPage -> "标注器"
+    StarterNewProjectInputPage -> "输入"
+    StarterNewProjectContentTypeDefault -> "默认"
+    StarterNewProjectContentTypeFile -> "导入文件"
+    StarterNewProjectContentTypePlugin -> "使用模板生成器"
     SampleListIncludedHeader -> "项目中使用到的采样"
     SampleListIncludedItemEntryCountSingle -> "%d 条目"
     SampleListIncludedItemEntryCountPlural -> "%d 条目"

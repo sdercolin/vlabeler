@@ -83,6 +83,7 @@ fun Strings.en(): String = when (this) {
     CommonWarning -> "Warning"
     CommonError -> "Error"
     CommonDetails -> "Details"
+    CommonOthers -> "Others"
     CommonInputErrorPromptNumber -> "Please enter a number."
     CommonInputErrorPromptInteger -> "Please enter an integer number."
     CommonInputErrorPromptNumberRange -> "Please enter a number between %s and %s."
@@ -116,6 +117,12 @@ fun Strings.en(): String = when (this) {
         "You are trying to use a template generator with a labeler that manages multiple sub-projects. " +
             "This is dangerous because it may overwrite all your existing label files with the generated entries. " +
             "Please double confirm that the settings meet your needs."
+    StarterNewProjectDirectoryPage -> "Directories"
+    StarterNewProjectLabelerPage -> "Labeler"
+    StarterNewProjectInputPage -> "Input"
+    StarterNewProjectContentTypeDefault -> "Default"
+    StarterNewProjectContentTypeFile -> "Import from file"
+    StarterNewProjectContentTypePlugin -> "Use template generator"
     SampleListIncludedHeader -> "Project sample files"
     SampleListIncludedItemEntryCountSingle -> "%d entry"
     SampleListIncludedItemEntryCountPlural -> "%d entries"

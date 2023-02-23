@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Version
+import com.sdercolin.vlabeler.ui.starter.PaginatedProjectCreatorState
 import com.sdercolin.vlabeler.util.DefaultDownloadDir
 import com.sdercolin.vlabeler.util.asPathRelativeToHome
 import com.sdercolin.vlabeler.util.asSimplifiedPaths
@@ -26,7 +27,10 @@ data class AppRecord(
     val isToolboxDisplayed: Boolean = false,
     val sampleDirectory: String? = null,
     val workingDirectory: String? = null,
+    val labelerCategory: String? = null,
     val labelerName: String? = null,
+    val projectContentType: PaginatedProjectCreatorState.ContentType? = null,
+    val projectCreatorDetailsExpanded: List<Boolean> = listOf(false, false, false),
     val disabledLabelerNames: Set<String> = setOf(),
     val disabledPluginNames: Set<String> = setOf(),
     val autoExport: Boolean = false,
@@ -87,6 +91,13 @@ data class AppRecord(
 
     fun clearTrackingId() = copy(trackingId = null)
     fun generateTrackingId() = copy(trackingId = UUID.randomUUID().toString())
+
+    fun toggleProjectCreatorDetailsExpanded(index: Int) = copy(
+        projectCreatorDetailsExpanded = projectCreatorDetailsExpanded.toMutableList().apply {
+            val currentValue = this.getOrNull(index) ?: return@apply
+            this[index] = !currentValue
+        },
+    )
 }
 
 private const val MAX_RECENT_PROJECT_COUNT = 10

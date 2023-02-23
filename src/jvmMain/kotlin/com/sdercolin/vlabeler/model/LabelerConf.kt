@@ -42,6 +42,8 @@ import java.io.File
  * @property email Email of the author
  * @property description Description of the labeler (localized)
  * @property website Website url of the labeler
+ * @property categoryTag Category tag of the labeler, "" as `Other`
+ * @property displayOrder Display order of the labeler in the dropdown list
  * @property continuous Whether the labeler use continuous mode, where the end of entry is forced set to the start of
  *   its next entry
  * @property allowSameNameEntry Whether to allow more than one entry with a shared name in the project module
@@ -72,6 +74,8 @@ data class LabelerConf(
     override val email: String = "",
     override val description: LocalizedJsonString = "".toLocalized(),
     override val website: String = "",
+    val categoryTag: String = "",
+    val displayOrder: Int = 0,
     val continuous: Boolean = false,
     val allowSameNameEntry: Boolean = false,
     val defaultValues: List<Float>,
