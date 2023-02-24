@@ -1,6 +1,6 @@
 {
   "name": "sinsy.default",
-  "version": 11,
+  "version": 10,
   "extension": "lab",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -16,8 +16,6 @@
     "ja": "Sinsy の標準の lab ファイルのデフォルトラベラーです。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
-  "categoryTag": "LAB",
-  "displayOrder": 0,
   "continuous": true,
   "allowSameNameEntry": true,
   "defaultValues": [

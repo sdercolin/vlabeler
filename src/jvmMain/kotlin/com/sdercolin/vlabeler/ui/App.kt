@@ -26,6 +26,7 @@ import com.sdercolin.vlabeler.ui.dialog.project.ProjectListDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
 import com.sdercolin.vlabeler.ui.dialog.updater.UpdaterDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
+import com.sdercolin.vlabeler.ui.starter.PaginatedProjectCreator
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
@@ -58,9 +59,8 @@ fun App(
         when (val screen = appState.screen) {
             is Screen.Starter -> Starter(mainScope, appState)
             is Screen.ProjectCreator ->
-                ProjectCreator(
+                PaginatedProjectCreator(
                     appState = appState,
-                    onCreateListener = appState.onCreateProjectListener,
                     cancel = { appState.closeProjectCreator() },
                     activeLabelerConfs = appState.activeLabelerConfs,
                     activeTemplatePlugins = appState.getActivePlugins(Plugin.Type.Template),

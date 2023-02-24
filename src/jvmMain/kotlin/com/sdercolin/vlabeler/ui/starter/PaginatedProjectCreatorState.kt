@@ -5,9 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.Sample
+import com.sdercolin.vlabeler.model.BasePlugin
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
@@ -15,10 +17,10 @@ import com.sdercolin.vlabeler.model.Project.Companion.getDefaultCacheDirectory
 import com.sdercolin.vlabeler.model.projectOf
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.ui.string.stringStatic
 import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.HomeDir
 import com.sdercolin.vlabeler.util.ParamMap
@@ -28,38 +30,57 @@ import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.getLocalizedMessage
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
+import com.sdercolin.vlabeler.util.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.awt.Desktop
 import java.io.File
 
 class PaginatedProjectCreatorState(
     private val appState: AppState,
     private val coroutineScope: CoroutineScope,
     private val labelerConfs: List<LabelerConf>,
+    private val templatePlugins: List<Plugin>,
     val appRecordStore: AppRecordStore,
 ) {
-    enum class Page(val text: Strings) {
-        Directory(Strings.StarterNewProjectDirectoryPage),
-        Labeler(Strings.StarterNewProjectLabelerPage),
-        Input(Strings.StarterNewProjectInputPage),
-        ;
-
-        fun next() = values().getOrNull(ordinal + 1)
-        fun previous() = values().getOrNull(ordinal - 1)
-        fun isLast() = next() == null
-    }
 
     val appConf get() = appState.appConf
     private val appRecord get() = appRecordStore.value
     var isLoading: Boolean by mutableStateOf(false)
 
+    /* region Page */
+    enum class Page(val text: Strings) {
+        Directory(Strings.StarterNewDirectoryPage),
+        Labeler(Strings.StarterNewLabelerPage),
+        DataSource(Strings.StarterNewDataSourcePage),
+        ;
+
+        fun next() = values().getOrNull(ordinal + 1)
+        fun previous() = values().getOrNull(ordinal - 1)
+    }
+
     var page: Page by mutableStateOf(Page.Directory)
-    val detailExpandedOnPages = mutableStateListOf(
+
+    val hasPrevious get() = page.previous() != null
+    val hasNext get() = page.next() != null
+    val hasError get() = isValid(page).not()
+
+    fun goPrevious() {
+        page.previous()?.let { page = it }
+    }
+
+    fun goNext() {
+        page.next()?.let { page = it } ?: create()
+    }
+
+    private val detailExpandedOnPages = mutableStateListOf(
         *Page.values().map {
             appRecord.projectCreatorDetailsExpanded.getOrNull(it.ordinal) ?: false
         }.toTypedArray(),
     )
+
+    val isDetailExpanded get() = detailExpandedOnPages[page.ordinal]
 
     fun toggleDetailExpanded() {
         detailExpandedOnPages[page.ordinal] = detailExpandedOnPages[page.ordinal].not()
@@ -67,6 +88,7 @@ class PaginatedProjectCreatorState(
             toggleProjectCreatorDetailsExpanded(page.ordinal)
         }
     }
+    /* endregion */
 
     /* region Directory Page */
     var sampleDirectory: String by mutableStateOf(appRecord.sampleDirectory ?: HomeDir.absolutePath)
@@ -166,6 +188,12 @@ class PaginatedProjectCreatorState(
         .map { it.categoryTag }
         .distinct()
         .sortedWith { o1, o2 ->
+            if (o1 == "") {
+                return@sortedWith 1
+            }
+            if (o2 == "") {
+                return@sortedWith -1
+            }
             val o1BuiltInIndex = builtInCategoryTags.indexOf(o1)
             val o2BuiltInIndex = builtInCategoryTags.indexOf(o2)
             if (o1BuiltInIndex != -1 && o2BuiltInIndex != -1) {
@@ -178,13 +206,20 @@ class PaginatedProjectCreatorState(
                 o1.compareTo(o2)
             }
         }
-        .plus(stringStatic(Strings.CommonOthers)).toList()
     var labelerCategory: String by mutableStateOf(
         labelerCategories.firstOrNull { it == appRecord.labelerCategory } ?: labelerCategories.first(),
     )
         private set
     val selectableLabelers: List<LabelerConf>
-        get() = labelerConfs.filter { it.categoryTag == labelerCategory }
+        get() = labelerConfs
+            .filter { it.categoryTag == labelerCategory }
+            .sortedWith { o1, o2 ->
+                if (o1.displayOrder != o2.displayOrder) {
+                    o1.displayOrder.compareTo(o2.displayOrder)
+                } else {
+                    o1.name.compareTo(o2.name)
+                }
+            }
     var labeler: LabelerConf by mutableStateOf(
         labelerConfs.firstOrNull { it.name == appRecord.labelerName && it.categoryTag == labelerCategory }
             ?: selectableLabelers.first(),
@@ -194,30 +229,31 @@ class PaginatedProjectCreatorState(
     var labelerSavedParams: ParamMap? by mutableStateOf(null)
     var labelerError: Boolean by mutableStateOf(false)
 
+    private val selectedLabelerByCategory = mutableMapOf<String, LabelerConf>()
+
     fun updateLabelerCategory(category: String) {
         labelerCategory = category
         if (labeler.categoryTag != category) {
-            val labeler = labelerConfs.firstOrNull { it.categoryTag == category }
-            if (labeler != null) {
-                updateLabeler(labeler)
-            }
+            val selectedLabeler = selectedLabelerByCategory[category] ?: selectableLabelers.first()
+            updateLabeler(selectedLabeler)
         }
     }
 
     fun updateLabeler(labeler: LabelerConf) {
         this.labeler = labeler
         if (templatePlugin?.isLabelFileExtensionSupported(labeler.extension) == false) {
-            templatePlugin = null
-            templatePluginError = false
+            updatePlugin(null)
         }
+        selectedLabelerByCategory[labelerCategory] = labeler
         coroutineScope.launch {
             val savedParams = labeler.loadSavedParams(labeler.getSavedParamsFile())
             updateLabelerParams(savedParams)
             labelerSavedParams = savedParams
             if (labeler.isSelfConstructed) {
                 encoding = getEncodingByLabeler()
-                contentType = ContentType.Default
-                updatePlugin(null)
+                if (contentType !in selectableContentTypes) {
+                    contentType = ContentType.Default
+                }
             } else {
                 if (inputFileEdited) return@launch
                 val file = labeler.defaultInputFilePath?.let { File(sampleDirectory).resolve(it) }
@@ -246,9 +282,9 @@ class PaginatedProjectCreatorState(
 
     /* region Input Page */
     enum class ContentType(val text: Strings) {
-        Default(Strings.StarterNewProjectContentTypeDefault),
-        File(Strings.StarterNewProjectContentTypeFile),
-        Plugin(Strings.StarterNewProjectContentTypePlugin)
+        Default(Strings.StarterNewContentTypeDefault),
+        File(Strings.StarterNewContentTypeFile),
+        Plugin(Strings.StarterNewContentTypePlugin)
     }
 
     val selectableContentTypes: List<ContentType>
@@ -257,17 +293,27 @@ class PaginatedProjectCreatorState(
         } else {
             ContentType.values().toList()
         }
-    var contentType: ContentType by mutableStateOf(appRecord.projectContentType ?: ContentType.Default)
+    var contentType: ContentType by mutableStateOf(
+        appRecord.projectContentType?.takeIf { it in selectableContentTypes }
+            ?: ContentType.Default,
+    )
+        private set
 
     var templatePlugin: Plugin? by mutableStateOf(null)
     var templatePluginParams: ParamMap? by mutableStateOf(null)
     var templatePluginSavedParams: ParamMap? by mutableStateOf(null)
     var templatePluginError: Boolean by mutableStateOf(false)
 
-    var templatePluginWarningText: Strings? by mutableStateOf(null)
+    fun selectContentType(contentType: ContentType, language: Language) {
+        this.contentType = contentType
+        if (contentType == ContentType.Plugin && templatePlugin == null) {
+            val plugin = getSupportedPlugins(language).firstOrNull()
+            updatePlugin(plugin)
+        }
+    }
 
     @Composable
-    fun getTemplateName(): String = templatePlugin?.displayedName?.get()
+    fun getTemplatePluginName(): String = templatePlugin?.displayedName?.get()
         ?: string(Strings.StarterNewTemplatePluginNone)
 
     var inputFile: String by mutableStateOf("")
@@ -280,7 +326,7 @@ class PaginatedProjectCreatorState(
     val canAutoExport: Boolean
         get() = when {
             labeler.isSelfConstructed -> true
-            inputFile.isNotEmpty() && templatePlugin == null -> true
+            contentType == ContentType.File -> true
             labeler.defaultInputFilePath != null -> true
             else -> false
         }
@@ -302,7 +348,7 @@ class PaginatedProjectCreatorState(
                 updatePluginParams(savedParams)
                 templatePluginSavedParams = savedParams
                 if (labeler.isSelfConstructed) {
-                    templatePluginWarningText = Strings.StarterNewWarningSelfConstructedLabelerWithTemplatePlugin
+                    warningText = Strings.StarterNewWarningSelfConstructedLabelerWithTemplatePlugin
                 }
             }
         } else {
@@ -310,7 +356,7 @@ class PaginatedProjectCreatorState(
             templatePluginParams = null
             templatePluginSavedParams = null
             templatePluginError = false
-            templatePluginWarningText = null
+            warningText = null
         }
     }
 
@@ -331,13 +377,9 @@ class PaginatedProjectCreatorState(
         }
     }
 
-    fun updateInputFile(path: String?, editedByUser: Boolean, detectEncoding: Boolean = true) {
+    fun updateInputFile(path: String, editedByUser: Boolean, detectEncoding: Boolean = true) {
         if (editedByUser) inputFileEdited = true
         if (path == inputFile) return
-        if (path == null) {
-            contentType = ContentType.Default
-            return
-        }
         coroutineScope.launch(Dispatchers.IO) {
             inputFile = path
             val file = File(path)
@@ -362,14 +404,16 @@ class PaginatedProjectCreatorState(
     }
     /* endregion */
 
+    var warningText: Strings? by mutableStateOf(null)
+
     fun isValid(page: PaginatedProjectCreatorState.Page) = when (page) {
         Page.Directory -> isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid() &&
             isCacheDirectoryValid()
         Page.Labeler -> !labelerError
-        Page.Input -> when (contentType) {
+        Page.DataSource -> when (contentType) {
             ContentType.Default -> true
             ContentType.File -> isInputFileValid()
-            ContentType.Plugin -> !templatePluginError
+            ContentType.Plugin -> templatePlugin != null && !templatePluginError
         }
     }
 
@@ -446,19 +490,19 @@ class PaginatedProjectCreatorState(
         }
     }
 
-    @Composable
-    fun getSupportedPlugins(plugins: List<Plugin>) = plugins
+    fun getSupportedPlugins(language: Language) = templatePlugins
         .filter { it.type == Plugin.Type.Template }
         .filter { it.isLabelFileExtensionSupported(labeler.extension) }
-        .map { it to it.displayedName.get() }
+        .map { it to it.displayedName.getCertain(language) }
         .sortedBy { it.second }
         .map { it.first }
 
-    fun interface OnCreateListener {
-        fun onCreate(project: Project, plugin: Plugin?, pluginParams: ParamMap?)
+    fun openWebsite(plugin: BasePlugin) {
+        val uri = plugin.website.takeIf { it.isNotBlank() }?.toUri() ?: return
+        Desktop.getDesktop().browse(uri)
     }
 
-    fun create(listener: OnCreateListener) {
+    private fun create() {
         coroutineScope.launch(Dispatchers.IO) {
             isLoading = true
             Log.debug(
@@ -500,8 +544,26 @@ class PaginatedProjectCreatorState(
                 appState.showSnackbar(message, duration = SnackbarDuration.Indefinite)
                 return@launch
             }
-            listener.onCreate(project, templatePlugin, templatePluginParams)
+            appState.onCreateProject(project, templatePlugin, templatePluginParams)
             isLoading = false
         }
     }
+}
+
+@Composable
+fun rememberPaginatedProjectCreatorState(
+    appState: AppState,
+    coroutineScope: CoroutineScope,
+    activeLabelerConfs: List<LabelerConf>,
+    activeTemplatePlugins: List<Plugin>,
+    appRecordStore: AppRecordStore,
+) = remember(appRecordStore) {
+    PaginatedProjectCreatorState(appState, coroutineScope, activeLabelerConfs, activeTemplatePlugins, appRecordStore)
+}
+
+enum class PathPicker {
+    SampleDirectory,
+    WorkingDirectory,
+    CacheDirectory,
+    InputFile
 }

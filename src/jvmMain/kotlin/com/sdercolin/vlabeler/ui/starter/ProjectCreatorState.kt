@@ -483,10 +483,3 @@ fun rememberProjectCreatorState(
 ) = remember(appRecordStore) {
     ProjectCreatorState(appState, coroutineScope, activeLabelerConfs, appRecordStore)
 }
-
-enum class PathPicker {
-    SampleDirectory,
-    WorkingDirectory,
-    CacheDirectory,
-    InputFile
-}

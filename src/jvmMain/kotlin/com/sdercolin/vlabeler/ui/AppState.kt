@@ -514,6 +514,14 @@ class AppState(
         openCreatedProject(mainScope, project, this)
     }
 
+    fun onCreateProject(project: Project, plugin: Plugin?, pluginParams: ParamMap?) {
+        trackProjectCreation(project, byIpcRequest = false)
+        if (plugin != null) {
+            trackTemplateGeneration(plugin, pluginParams)
+        }
+        openCreatedProject(mainScope, project, this)
+    }
+
     fun track(event: TrackingEvent) = trackingService.track(event)
 
     sealed class PendingActionAfterSaved {
