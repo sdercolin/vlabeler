@@ -101,11 +101,10 @@ let entriesOnlyInBase = baseEntries.filter(entry => !keysExistingInProject.inclu
 let append = params["append"]
 
 if (append) {
-    output = entries.map((entry, index) => new EditedEntry(index, entry))
     entriesOnlyInBase.forEach(entry => {
         let newEntry = Object.assign({}, entry)
         newEntry.name = newEntry.name.replace(new RegExp(`${suffixBase}$`), suffixProject)
-        output.push(new EditedEntry(null, newEntry))
+        entries.push(newEntry)
     })
 }
 

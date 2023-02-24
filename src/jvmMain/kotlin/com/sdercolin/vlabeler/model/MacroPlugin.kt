@@ -86,8 +86,7 @@ fun runMacroPlugin(
                 }
             }
             Plugin.PluginProcessScope.Module -> {
-                val editedEntries = js.getJsonOrNull<List<PluginEditedEntry>>("output") // Legacy
-                val entries = editedEntries?.map { it.entry } ?: js.getJsonOrNull("entries")
+                val entries = js.getJsonOrNull<List<Entry>>("entries")
                 if (entries != null) {
                     project.updateCurrentModule {
                         copy(
