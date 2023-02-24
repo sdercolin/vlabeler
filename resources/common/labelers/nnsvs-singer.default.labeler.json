@@ -1,6 +1,6 @@
 {
   "name": "nnsvs-singer.default",
-  "version": 4,
+  "version": 5,
   "extension": "lab",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -16,6 +16,8 @@
     "ja": "NNSVS/ENUNU singer のデフォルトラベラーです。複数の lab ファイルと wav　ファイルを処理できます。`lab` フォルダと `wav` フォルダを含むフォルダを用意し、サンプルディレクトリとして設定してください。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
+  "categoryTag": "NNSVS",
+  "displayOrder": 0,
   "continuous": true,
   "allowSameNameEntry": true,
   "defaultValues": [

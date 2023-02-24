@@ -1,6 +1,6 @@
 {
   "name": "utau-singer.default",
-  "version": 12,
+  "version": 13,
   "extension": "ini",
   "displayedName": {
     "en": "UTAU singer labeler",
@@ -15,6 +15,8 @@
     "ja": "UTAU singer（多音階）のデフォルトラベラーです。サンプル音声を含むフォルダーの中に `oto.ini` ファイルを作成/編集します。サンプルディレクトリを歌手のルートディレクトリに設定してください。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
+  "categoryTag": "UTAU",
+  "displayOrder": 0,
   "defaultValues": [
     100,
     400,

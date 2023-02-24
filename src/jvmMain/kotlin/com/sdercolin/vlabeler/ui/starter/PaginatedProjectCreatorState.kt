@@ -161,7 +161,7 @@ class PaginatedProjectCreatorState(
     /* endregion */
 
     /* region Labeler Page */
-    private val builtInCategoryTags = listOf("UTAU", "NNSVS")
+    private val builtInCategoryTags = listOf("UTAU", "NNSVS", "LAB")
     val labelerCategories = labelerConfs.asSequence()
         .map { it.categoryTag }
         .distinct()

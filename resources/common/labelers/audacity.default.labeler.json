@@ -1,6 +1,6 @@
 {
   "name": "audacity.default",
-  "version": 7,
+  "version": 8,
   "extension": "txt",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -16,6 +16,8 @@
     "ja": "Audacity ラベルファイルのデフォルトラベラー。基本的な動作は Sinsy labラベラーと同じです。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
+  "categoryTag": "LAB",
+  "displayOrder": 1,
   "continuous": true,
   "allowSameNameEntry": true,
   "defaultValues": [

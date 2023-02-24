@@ -1,6 +1,6 @@
 {
   "name": "oto-plus.default",
-  "version": 20,
+  "version": 21,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -16,6 +16,8 @@
     "ja": "UTAU oto のデフォルトラベラー。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
+  "categoryTag": "UTAU",
+  "displayOrder": 1,
   "defaultValues": [
     100,
     400,
