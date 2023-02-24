@@ -74,8 +74,8 @@ import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.WarningDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.LabelerPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.TemplatePluginDialog
-import com.sdercolin.vlabeler.ui.starter.PaginatedProjectCreatorState.ContentType
-import com.sdercolin.vlabeler.ui.starter.PaginatedProjectCreatorState.Page
+import com.sdercolin.vlabeler.ui.starter.ProjectCreatorState.ContentType
+import com.sdercolin.vlabeler.ui.starter.ProjectCreatorState.Page
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -86,14 +86,14 @@ import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun PaginatedProjectCreator(
+fun ProjectCreator(
     appState: AppState,
     cancel: () -> Unit,
     activeLabelerConfs: List<LabelerConf>,
     activeTemplatePlugins: List<Plugin>,
     appRecordStore: AppRecordStore,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    state: PaginatedProjectCreatorState = rememberPaginatedProjectCreatorState(
+    state: ProjectCreatorState = rememberProjectCreatorState(
         appState,
         coroutineScope,
         activeLabelerConfs,
@@ -138,7 +138,7 @@ private fun Title(page: Strings) {
 }
 
 @Composable
-private fun ColumnScope.Content(state: PaginatedProjectCreatorState) {
+private fun ColumnScope.Content(state: ProjectCreatorState) {
     val scrollState = rememberScrollState()
     Row(modifier = Modifier.fillMaxWidth().weight(1f).padding(horizontal = 60.dp)) {
         Column(
@@ -163,7 +163,7 @@ private fun ColumnScope.Content(state: PaginatedProjectCreatorState) {
 }
 
 @Composable
-private fun BasicItems(state: PaginatedProjectCreatorState) {
+private fun BasicItems(state: ProjectCreatorState) {
     when (state.page) {
         Page.Directory -> DirectoryPageBasic(state)
         Page.Labeler -> LabelerPageBasic(state)
@@ -172,7 +172,7 @@ private fun BasicItems(state: PaginatedProjectCreatorState) {
 }
 
 @Composable
-private fun DirectoryPageBasic(state: PaginatedProjectCreatorState) {
+private fun DirectoryPageBasic(state: ProjectCreatorState) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = state.sampleDirectory,
@@ -206,9 +206,8 @@ private fun DirectoryPageBasic(state: PaginatedProjectCreatorState) {
     }
 }
 
-
 @Composable
-private fun LabelerPageBasic(state: PaginatedProjectCreatorState) {
+private fun LabelerPageBasic(state: ProjectCreatorState) {
     val scrollState = rememberScrollState()
     Column {
         Text(
@@ -288,7 +287,7 @@ private fun LabelerPageBasic(state: PaginatedProjectCreatorState) {
 }
 
 @Composable
-private fun LabelerSelector(state: PaginatedProjectCreatorState) {
+private fun LabelerSelector(state: ProjectCreatorState) {
     LaunchedEffect(Unit) {
         state.updateLabeler(state.labeler)
     }
@@ -374,7 +373,7 @@ private fun LabelerSummary(labeler: LabelerConf, openWebsite: (LabelerConf) -> U
 }
 
 @Composable
-private fun DataSourcePageBasic(state: PaginatedProjectCreatorState) {
+private fun DataSourcePageBasic(state: ProjectCreatorState) {
     Text(
         style = MaterialTheme.typography.h6,
         text = string(Strings.StarterNewContentType),
@@ -465,7 +464,7 @@ private fun DataSourcePageBasic(state: PaginatedProjectCreatorState) {
 }
 
 @Composable
-private fun TemplatePluginSelector(state: PaginatedProjectCreatorState) {
+private fun TemplatePluginSelector(state: ProjectCreatorState) {
     Box {
         var expanded by remember { mutableStateOf(false) }
         TextField(
@@ -501,7 +500,7 @@ private fun TemplatePluginSelector(state: PaginatedProjectCreatorState) {
 }
 
 @Composable
-private fun AdvancedSwitch(state: PaginatedProjectCreatorState) {
+private fun AdvancedSwitch(state: ProjectCreatorState) {
     Row(
         modifier = Modifier.padding(top = 25.dp, bottom = 5.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -544,7 +543,7 @@ private fun AdvancedSwitch(state: PaginatedProjectCreatorState) {
 }
 
 @Composable
-private fun AdvancedItems(state: PaginatedProjectCreatorState) {
+private fun AdvancedItems(state: ProjectCreatorState) {
     when (state.page) {
         Page.Directory -> DirectoryPageAdvanced(state)
         Page.Labeler -> Unit
@@ -552,9 +551,8 @@ private fun AdvancedItems(state: PaginatedProjectCreatorState) {
     }
 }
 
-
 @Composable
-private fun DirectoryPageAdvanced(state: PaginatedProjectCreatorState) {
+private fun DirectoryPageAdvanced(state: ProjectCreatorState) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = state.workingDirectory,
@@ -584,13 +582,13 @@ private fun DirectoryPageAdvanced(state: PaginatedProjectCreatorState) {
 }
 
 @Composable
-private fun DataSourcePageAdvanced(state: PaginatedProjectCreatorState) {
+private fun DataSourcePageAdvanced(state: ProjectCreatorState) {
     EncodingSelector(state)
     AutoExportSwitch(state)
 }
 
 @Composable
-private fun EncodingSelector(state: PaginatedProjectCreatorState) {
+private fun EncodingSelector(state: ProjectCreatorState) {
     var expanded by remember { mutableStateOf(false) }
     Box {
         TextField(
@@ -626,7 +624,7 @@ private fun EncodingSelector(state: PaginatedProjectCreatorState) {
 }
 
 @Composable
-private fun AutoExportSwitch(state: PaginatedProjectCreatorState) {
+private fun AutoExportSwitch(state: ProjectCreatorState) {
     Column {
         val contentAlpha = if (state.canAutoExport) {
             LocalContentAlpha.current
@@ -688,7 +686,7 @@ private fun ButtonBar(
 
 @Composable
 private fun PickerDialog(
-    state: PaginatedProjectCreatorState,
+    state: ProjectCreatorState,
     picker: PathPicker,
 ) {
     val title = state.getFilePickerTitle(picker)

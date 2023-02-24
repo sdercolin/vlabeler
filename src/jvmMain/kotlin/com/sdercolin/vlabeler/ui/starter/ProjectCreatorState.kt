@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 import java.awt.Desktop
 import java.io.File
 
-class PaginatedProjectCreatorState(
+class ProjectCreatorState(
     private val appState: AppState,
     private val coroutineScope: CoroutineScope,
     private val labelerConfs: List<LabelerConf>,
@@ -519,11 +519,11 @@ class PaginatedProjectCreatorState(
             )
             appRecordStore.update {
                 copy(
-                    sampleDirectory = this@PaginatedProjectCreatorState.sampleDirectory,
-                    workingDirectory = this@PaginatedProjectCreatorState.workingDirectory,
-                    labelerCategory = this@PaginatedProjectCreatorState.labelerCategory,
-                    labelerName = this@PaginatedProjectCreatorState.labeler.name,
-                    projectContentType = this@PaginatedProjectCreatorState.contentType,
+                    sampleDirectory = this@ProjectCreatorState.sampleDirectory,
+                    workingDirectory = this@ProjectCreatorState.workingDirectory,
+                    labelerCategory = this@ProjectCreatorState.labelerCategory,
+                    labelerName = this@ProjectCreatorState.labeler.name,
+                    projectContentType = this@ProjectCreatorState.contentType,
                 )
             }
             val labelerParams = requireNotNull(labelerParams)
@@ -559,14 +559,14 @@ class PaginatedProjectCreatorState(
 }
 
 @Composable
-fun rememberPaginatedProjectCreatorState(
+fun rememberProjectCreatorState(
     appState: AppState,
     coroutineScope: CoroutineScope,
     activeLabelerConfs: List<LabelerConf>,
     activeTemplatePlugins: List<Plugin>,
     appRecordStore: AppRecordStore,
 ) = remember(appRecordStore) {
-    PaginatedProjectCreatorState(appState, coroutineScope, activeLabelerConfs, activeTemplatePlugins, appRecordStore)
+    ProjectCreatorState(appState, coroutineScope, activeLabelerConfs, activeTemplatePlugins, appRecordStore)
 }
 
 enum class PathPicker {
