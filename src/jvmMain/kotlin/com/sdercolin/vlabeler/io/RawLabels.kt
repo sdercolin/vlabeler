@@ -25,7 +25,6 @@ fun moduleFromRawLabels(
     labelerParams: ParamMap,
     sampleFiles: List<File>,
     encoding: String,
-    legacyMode: Boolean,
 ): List<Entry> {
     val parser = labelerConf.parser
     val extractor = Regex(parser.extractionPattern)
@@ -46,37 +45,7 @@ fun moduleFromRawLabels(
             }
             val script = parser.scripts.joinToString("\n")
             js.eval(script)
-
-            if (legacyMode) {
-                // when "sample" is not set, using the first sample's name
-                // because the label file will not contain the sample name if there is only one
-                val sampleName = js.getOrNull<String>("sample")
-                    ?.takeUnless { it.isEmpty() }
-                    ?: sampleFiles.first().name
-
-                // require name, otherwise ignore the entry
-                val name = js.get<String>("name")
-                require(name.isNotEmpty()) { "Cannot get `name` from parser $errorMessageSuffix" }
-
-                // optional start, end, points
-                val start = js.getOrNull<Double>("start")?.toFloat()
-                val end = js.getOrNull<Double>("end")?.toFloat()
-                val points = js.getOrNull<List<Double>>("points")?.map { it.toFloat() } ?: listOf()
-
-                // optional extras
-                val extras = js.getJsonOrNull("extras") ?: labelerConf.defaultExtras
-
-                if (start == null || end == null || points.size != labelerConf.fields.size) {
-                    // use default except name if data size is not enough
-                    Entry.fromDefaultValues(sampleName, name, labelerConf).also {
-                        Log.info("Entry parse failed, fallback to default: $it, $errorMessageSuffix")
-                    }
-                } else {
-                    Entry(sample = sampleName, name = name, start = start, end = end, points = points, extras = extras)
-                }
-            } else {
-                js.getJson("entry")
-            }
+            js.getJson<Entry>("entry")
         }.getOrElse {
             Log.debug(it)
             null

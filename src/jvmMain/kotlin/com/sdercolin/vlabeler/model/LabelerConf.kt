@@ -213,8 +213,7 @@ data class LabelerConf(
 
     /**
      * Definition for parsing the raw label file to local [Entry]
-     * @property scope Scope of the parser. If not set, the parser works in a legacy mode, which is used before [scope]
-     *   is introduced (we do not document the legacy mode anymore)
+     * @property scope Scope of the parser.
      * @property defaultEncoding Default text encoding of the input file
      * @property extractionPattern Regex pattern that extract groups. Only used when [scope] is [Scope.Entry]
      * @property variableNames Definition of how the extracted string groups will be put into variables later in the
@@ -225,7 +224,7 @@ data class LabelerConf(
     @Serializable
     @Immutable
     data class Parser(
-        val scope: Scope? = null,
+        val scope: Scope,
         val defaultEncoding: String = "UTF-8",
         val extractionPattern: String = "",
         val variableNames: List<String> = emptyList(),

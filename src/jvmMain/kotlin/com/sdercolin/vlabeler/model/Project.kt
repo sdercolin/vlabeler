@@ -203,7 +203,6 @@ private fun generateEntriesByPlugin(
             labelerParams = labelerParams,
             sampleFiles = sampleFiles,
             encoding = encoding,
-            legacyMode = labelerConf.parser.scope == null,
         )
     }
 }
@@ -424,7 +423,6 @@ private fun parseSingleModule(
                 labelerParams,
                 def.sampleFiles,
                 encoding = encoding,
-                legacyMode = labelerConf.parser.scope == null,
             )
         }
         else -> {
