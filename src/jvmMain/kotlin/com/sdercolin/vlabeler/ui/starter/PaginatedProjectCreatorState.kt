@@ -278,6 +278,11 @@ class PaginatedProjectCreatorState(
             updateLabelerParams(params)
         }
     }
+
+    fun openWebsite(plugin: BasePlugin) {
+        val uri = plugin.website.takeIf { it.isNotBlank() }?.toUri() ?: return
+        Desktop.getDesktop().browse(uri)
+    }
     /* endregion */
 
     /* region Input Page */
@@ -377,6 +382,13 @@ class PaginatedProjectCreatorState(
         }
     }
 
+    fun getSupportedPlugins(language: Language) = templatePlugins
+        .filter { it.type == Plugin.Type.Template }
+        .filter { it.isLabelFileExtensionSupported(labeler.extension) }
+        .map { it to it.displayedName.getCertain(language) }
+        .sortedBy { it.second }
+        .map { it.first }
+
     fun updateInputFile(path: String, editedByUser: Boolean, detectEncoding: Boolean = true) {
         if (editedByUser) inputFileEdited = true
         if (path == inputFile) return
@@ -404,19 +416,7 @@ class PaginatedProjectCreatorState(
     }
     /* endregion */
 
-    var warningText: Strings? by mutableStateOf(null)
-
-    fun isValid(page: PaginatedProjectCreatorState.Page) = when (page) {
-        Page.Directory -> isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid() &&
-            isCacheDirectoryValid()
-        Page.Labeler -> !labelerError
-        Page.DataSource -> when (contentType) {
-            ContentType.Default -> true
-            ContentType.File -> isInputFileValid()
-            ContentType.Plugin -> templatePlugin != null && !templatePluginError
-        }
-    }
-
+    /* region File Pickers */
     fun pickSampleDirectory() {
         currentPathPicker = PathPicker.SampleDirectory
     }
@@ -489,17 +489,19 @@ class PaginatedProjectCreatorState(
             }
         }
     }
+    /* endregion */
 
-    fun getSupportedPlugins(language: Language) = templatePlugins
-        .filter { it.type == Plugin.Type.Template }
-        .filter { it.isLabelFileExtensionSupported(labeler.extension) }
-        .map { it to it.displayedName.getCertain(language) }
-        .sortedBy { it.second }
-        .map { it.first }
+    var warningText: Strings? by mutableStateOf(null)
 
-    fun openWebsite(plugin: BasePlugin) {
-        val uri = plugin.website.takeIf { it.isNotBlank() }?.toUri() ?: return
-        Desktop.getDesktop().browse(uri)
+    fun isValid(page: Page) = when (page) {
+        Page.Directory -> isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid() &&
+            isCacheDirectoryValid()
+        Page.Labeler -> !labelerError
+        Page.DataSource -> when (contentType) {
+            ContentType.Default -> true
+            ContentType.File -> isInputFileValid()
+            ContentType.Plugin -> templatePlugin != null && !templatePluginError
+        }
     }
 
     private fun create() {
@@ -510,7 +512,9 @@ class PaginatedProjectCreatorState(
                     "workingDir=$workingDirectory, " +
                     "projectName=$projectName, " +
                     "labeler=${labeler.name}, " +
-                    "input=$inputFile, " +
+                    "contentType=$contentType, " +
+                    "plugin=${templatePlugin?.name?.takeIf { contentType == ContentType.Plugin }}, " +
+                    "input=${inputFile.takeIf { contentType == ContentType.File }}, " +
                     "encoding=$encoding",
             )
             appRecordStore.update {
@@ -525,6 +529,10 @@ class PaginatedProjectCreatorState(
             val labelerParams = requireNotNull(labelerParams)
             saveLabelerParams(labelerParams)
             templatePluginParams?.let { savePluginParams(it) }
+
+            val useFile = contentType == ContentType.File
+            val usePlugin = contentType == ContentType.Plugin
+
             val project = projectOf(
                 sampleDirectory = sampleDirectory,
                 workingDirectory = workingDirectory,
@@ -532,9 +540,9 @@ class PaginatedProjectCreatorState(
                 cacheDirectory = cacheDirectory,
                 labelerConf = labeler,
                 labelerParams = labelerParams,
-                plugin = templatePlugin,
-                pluginParams = templatePluginParams,
-                inputFilePath = inputFile,
+                plugin = templatePlugin?.takeIf { usePlugin },
+                pluginParams = templatePluginParams?.takeIf { usePlugin },
+                inputFilePath = inputFile.takeIf { useFile },
                 encoding = encoding,
                 autoExport = autoExport,
             ).getOrElse {

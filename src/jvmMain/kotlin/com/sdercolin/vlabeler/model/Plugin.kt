@@ -39,9 +39,6 @@ data class Plugin(
     override val description: LocalizedJsonString = "".toLocalized(),
     override val website: String = "",
     val supportedLabelFileExtension: String,
-    val inputFileExtension: String? = null, // TODO: move input to parameters
-    val requireInputFile: Boolean = false,
-    val allowMultipleInputFiles: Boolean = false,
     val outputRawEntry: Boolean = false,
     val parameters: Parameters? = null,
     val scriptFiles: List<String>,

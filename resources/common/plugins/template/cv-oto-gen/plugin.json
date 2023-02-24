@@ -1,6 +1,6 @@
 {
   "name": "cv-oto-gen",
-  "version": 4,
+  "version": 5,
   "type": "template",
   "displayedName": {
     "en": "CV oto generator",
@@ -16,7 +16,6 @@
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/cv-oto-gen",
   "supportedLabelFileExtension": "ini",
-  "inputFileExtension": null,
   "parameters": {
     "list": [
       {

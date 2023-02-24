@@ -1,6 +1,6 @@
 {
   "name": "vcv-oto-gen",
-  "version": 3,
+  "version": 4,
   "type": "template",
   "displayedName": {
     "en": "VCV oto generator",
@@ -16,7 +16,6 @@
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/vcv-oto-gen",
   "supportedLabelFileExtension": "ini",
-  "inputFileExtension": null,
   "parameters": {
     "list": [
       {

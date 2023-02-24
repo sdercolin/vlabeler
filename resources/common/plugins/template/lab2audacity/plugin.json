@@ -16,8 +16,6 @@
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/lab2audacity",
   "supportedLabelFileExtension": "txt",
-  "inputFileExtension": "lab",
-  "requireInputFile": true,
   "outputRawEntry": true,
   "parameters": {
     "list": [
@@ -31,6 +29,21 @@
         },
         "defaultValue": 0.0000001,
         "min": 0
+      },
+      {
+        "type": "rawFile",
+        "name": "inputFile",
+        "label": "Input file (.lab)",
+        "description": {
+          "en": "The input file. Only needed when the labeler creates single sub-project.",
+          "zh": "输入文件。仅在标注器将创建单个子项目时需要。",
+          "ja": "入力ファイル。ラベラーが単一のサブプロジェクトを対応している場合にのみ必要になります。"
+        },
+        "defaultValue": "",
+        "optional": true,
+        "acceptExtensions": [
+          "lab"
+        ]
       },
       {
         "type": "string",

@@ -27,14 +27,12 @@ A plugin for `vLabeler` is a folder containing:
 | description                 | String (Localized)     | ""             | all                   |                                                                                                                                                                                    |
 | website                     | String                 | ""             | all                   |                                                                                                                                                                                    |
 | supportedLabelFileExtension | String                 | (Required)     | all                   | Extension(s) of your label file (e.g. `ini` for UTAU oto). "*" and "&#124;" are supported.                                                                                         |
-| inputFileExtension          | String &#124; null     | null           | template              | Extension of your input file if any.                                                                                                                                               |
-| requireInputFile            | Boolean                | false          | template              | Set to `true` if you always require an input file.                                                                                                                                 |
 | outputRawEntry              | Boolean                | false          | template              | Set to `true` if you want to output the raw entry instead of parsed object.                                                                                                        |
 | scope                       | String                 | "Module"       | all                   | `Module` or `Project`. The scope that the plugin can access and edit.                                                                                                              |
 | parameters                  | Parameters &#124; null | null           | all                   | See the `Defining Parameters` section for detail.                                                                                                                                  |
 | scriptFiles                 | String[]               | (Required)     | all                   | File names of all your scripts files. The files will be executed in the same order as declared.                                                                                    |
 | resourceFiles               | String[]               | []             | all                   | List of String. File names of all the files that you use as resources in your scripts. The contents will be passed to your scripts as string values in the same order as declared. |
-| inputFinderScriptFile       | String &#124; null     | null           | template              | File name of the script file to help find the input files dynamically if the labeler creates multiple sub-projects.                                                                |
+| inputFinderScriptFile       | String &#124; null     | null           | template              | File name of the script file to help find the input files dynamically.                                                                                                             |
 
 ### Defining Parameters
 
@@ -53,22 +51,23 @@ A plugin for `vLabeler` is a folder containing:
 Every object in `list` defines a parameter that is shown in the plugin config dialog and passed to your scripts.
 The object has the following properties:
 
-| Property             | Type                       | Default value | Supported parameter type | Description                                                                                       |
-|----------------------|----------------------------|---------------|--------------------------|---------------------------------------------------------------------------------------------------|
-| type                 | String                     | (Required)    | all                      | Can be any one of `integer`, `float`, `boolean`, `string`, `enum` and ,`entrySelector`.           |
-| name                 | String                     | (Required)    | all                      | Parameter name for reference in your scripts.                                                     |
-| label                | String (Localized)         | (Required)    | all                      | Displayed in the config dialog.                                                                   |
-| description          | String (Localized)         | ""            | all                      | Displayed in the config dialog.                                                                   |
-| enableIf             | String                     | null          | all                      | If set, this parameter is enabled only when the parameter with the set name is truthy.            |
-| defaultValue         | (Actual type of the value) | (Required)    | all                      | Value type is according to the parameter's `type`.                                                |
-| min                  | (Actual type of the value) | null          | integer, float           |                                                                                                   |
-| max                  | (Actual type of the value) | null          | integer, float           |                                                                                                   |
-| multiLine            | Boolean                    | false         | string                   | Set to `true` if you want to allow multi-line string values.                                      |
-| optional             | Boolean                    | false         | string, file             | Set to `true` if you want to allow empty string values or `null` file                             |
-| options              | String[]                   | (Required)    | enum                     | Items of the enumerable.                                                                          |
-| optionDisplayedNames | String[] (Localized)       | null          | enum                     | Displayed names of the corresponding items in `options`. If set `null`, `options` itself is used. |
+| Property             | Type                             | Default value | Supported parameter type | Description                                                                                       |
+|----------------------|----------------------------------|---------------|--------------------------|---------------------------------------------------------------------------------------------------|
+| type                 | String                           | (Required)    | all                      | Can be any one of `integer`, `float`, `boolean`, `string`, `enum` and ,`entrySelector`.           |
+| name                 | String                           | (Required)    | all                      | Parameter name for reference in your scripts.                                                     |
+| label                | String (Localized)               | (Required)    | all                      | Displayed in the config dialog.                                                                   |
+| description          | String (Localized)               | ""            | all                      | Displayed in the config dialog.                                                                   |
+| enableIf             | String &#124; null               | null          | all                      | If set, this parameter is enabled only when the parameter with the set name is truthy.            |
+| defaultValue         | (Actual type of the value)       | (Required)    | all                      | Value type is according to the parameter's `type`.                                                |
+| min                  | (Actual type of the value)       | null          | integer, float           |                                                                                                   |
+| max                  | (Actual type of the value)       | null          | integer, float           |                                                                                                   |
+| multiLine            | Boolean                          | false         | string                   | Set to `true` if you want to allow multi-line string values.                                      |
+| optional             | Boolean                          | false         | string, file, rawFile    | Set to `true` if you want to allow empty string values or `null` file                             |
+| options              | String[]                         | (Required)    | enum                     | Items of the enumerable.                                                                          |
+| optionDisplayedNames | String[] (Localized) &#124; null | null          | enum                     | Displayed names of the corresponding items in `options`. If set `null`, `options` itself is used. |
+| acceptExtensions     | String[] &#124; null             | null          | file, rawFile            | Extensions of the files that can be selected. If set `null`, any file can be selected.            |
 
-### Parameters types
+### Parameter types
 
 - `integer`: Integer value. Should be between `min` and `max` if defined.
 - `float`: Float value. Should be between `min` and `max` if defined.
@@ -132,23 +131,22 @@ It should create a list of entries for subsequent editions.
 
 The following variables are provided before your scripts are executed.
 
-| name            | type                | description                                                                                                        |
-|-----------------|---------------------|--------------------------------------------------------------------------------------------------------------------|
-| inputs          | String[]            | List of texts read from the input files. Check the list size if your input file is optional.                       |
-| samples         | String[]            | List of file names of the sample files.                                                                            |
-| params          | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                               |
-| resources       | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                   |
-| labeler         | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object. |
-| labelerParams   | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.            |
-| debug           | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).              |
-| pluginDirectory | [File](file-api.md) | Directory of this plugin                                                                                           |
+| name            | type                | description                                                                                                            |
+|-----------------|---------------------|------------------------------------------------------------------------------------------------------------------------|
+| inputs          | String[]            | List of texts read from the input files. They are provided by the [input finder script](#find-input-files-dynamically) |
+| samples         | String[]            | List of file names of the sample files.                                                                                |
+| params          | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                   |
+| resources       | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                       |
+| labeler         | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.     |
+| labelerParams   | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                |
+| debug           | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                  |
+| pluginDirectory | [File](file-api.md) | Directory of this plugin                                                                                               |
 
-### Find input files dynamically when constructing a project with sub-projects
+### Find input files dynamically
 
-When you use a labeler which constructs a project with sub-projects, you may want to find input files dynamically for
-every sub-project. The `Input file` field in the `New Project` page is not suitable for this purpose because it only
-accepts a single file (thus it's disabled in this case). Instead, you can provide a script file via the plugin's
-`inputFinderScriptFile` property in the `plugin.json`.
+To support your template plugin with labelers that construct a project with sub-projects, you may want to find input
+files dynamically for every sub-project. To do this, you can provide a script file via the
+plugin's `inputFinderScriptFile` property in the `plugin.json`.
 
 The script file should be a JavaScript file which:
 
@@ -167,11 +165,14 @@ The `File` type is a JavaScript wrapper of Java's `java.io.File` class. See the 
 details.
 
 Check the [audacity2lab plugin](../resources/common/plugins/template/audacity2lab) for an example.
+In this example, for consistency, even if the project has only one sub-project, the input files are still found by the
+input finder script, so that we don't have to care about where the input comes from in the main script.
 
 ### Use an input file parameter
 
-A parameter with `file` type is passed in `params` as a string containing all the text in the input file, decoded in the
-given encoding.
+If your input file does not belong to a sub-project (such as a dictionary file), you can use a parameter of type `file`
+or `rawFile` to get the content.
+See [Parameter Type](#parameter-types) for details.
 
 ### Output
 
@@ -236,8 +237,7 @@ Check the following built-in `template` plugins as examples:
   lines. Supports all types of labelers.
 - [audacity2lab](../resources/common/plugins/template/audacity2lab): Generate lab entries from an audacity label file.
   It also supports the `NNSVS singer labeler` which constructs a project with sub-projects.
-  See [Find input files dynamically when constructing a project with sub-projects](#find-input-files-dynamically-when-constructing-a-project-with-sub-projects)
-  for details.
+  See [Find input files dynamically](#find-input-files-dynamically) for details.
 
 ## Batch Edit (Macro) Scripts
 

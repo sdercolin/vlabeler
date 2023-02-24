@@ -22,7 +22,6 @@ sealed class TemplatePluginResult {
 fun runTemplatePlugin(
     plugin: Plugin,
     params: ParamMap,
-    inputFiles: List<File>,
     encoding: String,
     sampleFiles: List<File>,
     labelerConf: LabelerConf,
@@ -49,7 +48,7 @@ fun runTemplatePlugin(
         ).forEach { js.execResource(it) }
 
         val inputFinderScriptFile = plugin.inputFinderScriptFile
-        val inputTexts = if (labelerConf.isSelfConstructed && inputFinderScriptFile != null) {
+        val inputTexts = if (inputFinderScriptFile != null) {
             val inputFinderScriptTexts = plugin.directory.resolve(inputFinderScriptFile).readText()
             js.set("root", rootSampleDirectory)
             js.set("moduleName", moduleDefinition.name)
@@ -60,7 +59,7 @@ fun runTemplatePlugin(
                 it.toFile().readTextByEncoding(encodingByScript ?: encoding)
             }
         } else {
-            inputFiles.map { it.readTextByEncoding(encoding) }
+            emptyList()
         }
         js.setJson("inputs", inputTexts)
         val resourceTexts = plugin.readResourceFiles()

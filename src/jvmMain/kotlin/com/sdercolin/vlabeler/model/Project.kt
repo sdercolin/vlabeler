@@ -172,14 +172,12 @@ private fun generateEntriesByPlugin(
     sampleFiles: List<File>,
     plugin: Plugin,
     params: ParamMap,
-    inputFiles: List<File>,
     encoding: String,
 ): Result<List<Entry>> = runCatching {
     when (
         val result = runTemplatePlugin(
             plugin = plugin,
             params = params,
-            inputFiles = inputFiles,
             encoding = encoding,
             sampleFiles = sampleFiles,
             labelerConf = labelerConf,
@@ -200,7 +198,7 @@ private fun generateEntriesByPlugin(
         }
         is TemplatePluginResult.Raw -> moduleFromRawLabels(
             sources = result.lines,
-            inputFile = inputFiles.firstOrNull(),
+            inputFile = null,
             labelerConf = labelerConf,
             labelerParams = labelerParams,
             sampleFiles = sampleFiles,
@@ -415,7 +413,6 @@ private fun parseSingleModule(
                 sampleFiles = def.sampleFiles,
                 plugin = plugin,
                 params = requireNotNull(pluginParams),
-                inputFiles = def.inputFiles.orEmpty().filter { it.exists() },
                 encoding = encoding,
             ).getOrThrow()
         }

@@ -1,6 +1,6 @@
 {
   "name": "ust2lab-any",
-  "version": 1,
+  "version": 2,
   "type": "template",
   "displayedName": {
     "en": "Lab generator with ust and custom dictionary",
@@ -16,8 +16,6 @@
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/ust2lab-any",
   "supportedLabelFileExtension": "lab",
-  "inputFileExtension": "ust",
-  "requireInputFile": true,
   "parameters": {
     "list": [
       {
@@ -41,6 +39,21 @@
         },
         "defaultValue": 30,
         "min": 10
+      },
+      {
+        "type": "rawFile",
+        "name": "inputFile",
+        "label": "Input file (.ust)",
+        "description": {
+          "en": "The input file. Only needed when the labeler creates single sub-project.",
+          "zh": "输入文件。仅在标注器将创建单个子项目时需要。",
+          "ja": "入力ファイル。ラベラーが単一のサブプロジェクトを対応している場合にのみ必要になります。"
+        },
+        "defaultValue": "",
+        "optional": true,
+        "acceptExtensions": [
+          "ust"
+        ]
       },
       {
         "type": "string",

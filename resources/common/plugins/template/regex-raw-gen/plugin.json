@@ -1,6 +1,6 @@
 {
   "name": "regex-raw-gen",
-  "version": 3,
+  "version": 4,
   "type": "template",
   "displayedName": {
     "en": "Regex raw label generator",
@@ -16,7 +16,6 @@
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/regex-raw-gen",
   "supportedLabelFileExtension": "*",
-  "inputFileExtension": null,
   "outputRawEntry": true,
   "parameters": {
     "list": [

@@ -219,10 +219,10 @@
       "ovl"
     ],
     "scripts": [
-      "if (!sample) {",
+      "if (typeof sample === 'undefined' || !sample) {",
       "    error('Sample name is empty.')",
       "}",
-      "if (!name) {",
+      "if (typeof sample === 'name' || !name) {",
       "    name = getNameWithoutExtension(sample)",
       "}",
       "offset = 0",

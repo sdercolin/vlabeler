@@ -1,6 +1,6 @@
 {
   "name": "audacity.default",
-  "version": 7,
+  "version": 8,
   "extension": "txt",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -74,7 +74,7 @@
       "        }",
       "    }",
       "}",
-      "if (!sample) {",
+      "if (typeof sample === 'undefined' || !sample) {",
       "    sample = sampleFileNames[0]",
       "}",
       "start = parseFloat(left) * 1000",

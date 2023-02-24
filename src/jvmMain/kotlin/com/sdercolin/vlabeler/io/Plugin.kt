@@ -9,7 +9,6 @@ import com.sdercolin.vlabeler.util.CustomPluginDir
 import com.sdercolin.vlabeler.util.DefaultPluginDir
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.parseJson
-import io.ktor.http.Parameters
 import java.io.File
 
 fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
@@ -43,16 +42,24 @@ fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
                                 }
                             }
                             is Parameter.FileParam -> {
-                                val defaultValue = param.defaultValue.let {
-                                    it.copy(
-                                        file = it.file?.resolveRelativePath(file.parentFile),
-                                    )
+                                if (param.optional.not()) {
+                                    val defaultValue = param.defaultValue.let {
+                                        it.copy(
+                                            file = it.file?.resolveRelativePath(file.parentFile),
+                                        )
+                                    }
+                                    param.copy(defaultValue = defaultValue)
+                                } else {
+                                    param
                                 }
-                                param.copy(defaultValue = defaultValue)
                             }
                             is Parameter.RawFileParam -> {
-                                val defaultValue = param.defaultValue.resolveRelativePath(file.parentFile)
-                                param.copy(defaultValue = defaultValue)
+                                if (param.optional.not()) {
+                                    val defaultValue = param.defaultValue.resolveRelativePath(file.parentFile)
+                                    param.copy(defaultValue = defaultValue)
+                                } else {
+                                    param
+                                }
                             }
                             else -> param
                         }
