@@ -517,7 +517,7 @@ private fun MarkerState.handleCursorPress(
         val cursorStateValue = cursorState.value
         if (cursorStateValue.mouse == MarkerCursorState.Mouse.Hovering) {
             val invertLockedDrag = action == MouseClickAction.MoveParameterInvertingPrimary
-            val lockedDrag = when (appConf.editor.lockedDrag.convertLegacy()) {
+            val lockedDrag = when (appConf.editor.lockedDrag) {
                 AppConf.Editor.LockedDrag.UseLabeler -> {
                     val lockedDragByBaseField =
                         labelerConf.lockedDrag.useDragBase &&

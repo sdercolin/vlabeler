@@ -364,9 +364,9 @@ abstract class PreferencesPage(
                     description = Strings.PreferencesEditorPlayerLockedDragDescription,
                     columnStyle = true,
                     defaultValue = AppConf.Editor.DefaultLockedDrag,
-                    select = { it.lockedDrag.convertLegacy() },
+                    select = { it.lockedDrag },
                     update = { copy(lockedDrag = it) },
-                    options = AppConf.Editor.LockedDrag.valuesV2(),
+                    options = AppConf.Editor.LockedDrag.values(),
                 )
                 switch(
                     title = Strings.PreferencesEditorPlayerLockedSettingParameterWithCursor,
@@ -410,23 +410,23 @@ abstract class PreferencesPage(
                 selection(
                     title = Strings.PreferencesEditorScissorsActionGoTo,
                     defaultValue = AppConf.ScissorsActions.DefaultGoTo,
-                    select = { it.goTo.convertLegacy() },
+                    select = { it.goTo },
                     update = { copy(goTo = it) },
-                    options = AppConf.ScissorsActions.Target.valuesV2(),
+                    options = AppConf.ScissorsActions.Target.values(),
                 )
                 selection(
                     title = Strings.PreferencesEditorScissorsActionAskForName,
                     defaultValue = AppConf.ScissorsActions.DefaultAskForName,
-                    select = { it.askForName.convertLegacy() },
+                    select = { it.askForName },
                     update = { copy(askForName = it) },
-                    options = AppConf.ScissorsActions.Target.valuesV2(),
+                    options = AppConf.ScissorsActions.Target.values(),
                 )
                 selection(
                     title = Strings.PreferencesEditorScissorsActionPlay,
                     defaultValue = AppConf.ScissorsActions.DefaultPlay,
-                    select = { it.play.convertLegacy() },
+                    select = { it.play },
                     update = { copy(play = it) },
-                    options = AppConf.ScissorsActions.Target.valuesV2(),
+                    options = AppConf.ScissorsActions.Target.values(),
                 )
             }
         }

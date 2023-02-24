@@ -232,32 +232,6 @@ data class AppConf(
 
             @SerialName("Never")
             Never(Strings.PreferencesEditorPlayerLockedDragNever),
-
-            @SerialName("labeler")
-            UseLabelerLegacy(Strings.PreferencesEditorPlayerLockedDragUseLabeler),
-
-            @SerialName("start")
-            UseStartLegacy(Strings.PreferencesEditorPlayerLockedDragUseStart),
-
-            @SerialName("never")
-            NeverLegacy(Strings.PreferencesEditorPlayerLockedDragNever),
-            ;
-
-            fun convertLegacy(): LockedDrag {
-                return when (this) {
-                    UseLabelerLegacy -> UseLabeler
-                    UseStartLegacy -> UseStart
-                    NeverLegacy -> Never
-                    else -> this
-                }
-            }
-
-            companion object {
-
-                fun valuesV2(): Array<LockedDrag> {
-                    return arrayOf(UseLabeler, UseStart, Never)
-                }
-            }
         }
 
         companion object {
@@ -301,32 +275,6 @@ data class AppConf(
 
             @SerialName("Latter")
             Latter(Strings.PreferencesEditorScissorsActionTargetLatter),
-
-            @SerialName("none")
-            NoneLegacy(Strings.PreferencesEditorScissorsActionTargetNone),
-
-            @SerialName("former")
-            FormerLegacy(Strings.PreferencesEditorScissorsActionTargetFormer),
-
-            @SerialName("latter")
-            LatterLegacy(Strings.PreferencesEditorScissorsActionTargetLatter),
-            ;
-
-            fun convertLegacy(): Target {
-                return when (this) {
-                    NoneLegacy -> None
-                    FormerLegacy -> Former
-                    LatterLegacy -> Latter
-                    else -> this
-                }
-            }
-
-            companion object {
-
-                fun valuesV2(): Array<Target> {
-                    return arrayOf(None, Former, Latter)
-                }
-            }
         }
 
         companion object {

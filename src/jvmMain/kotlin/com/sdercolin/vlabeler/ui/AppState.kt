@@ -219,11 +219,11 @@ class AppState(
             }
 
             val actions = appConf.editor.scissorsActions
-            if (actions.play.convertLegacy() != AppConf.ScissorsActions.Target.None) {
+            if (actions.play != AppConf.ScissorsActions.Target.None) {
                 val startFrame = toFrame(sourceEntry.start, sampleInfo.sampleRate)
                 val endFrame = toFrame(sourceEntry.end, sampleInfo.sampleRate)
                 val cutFrame = toFrame(position, sampleInfo.sampleRate)
-                when (actions.play.convertLegacy()) {
+                when (actions.play) {
                     AppConf.ScissorsActions.Target.Former -> {
                         player.playSection(startFrame, cutFrame)
                     }
@@ -234,7 +234,7 @@ class AppState(
                 }
             }
 
-            val rename = if (actions.askForName.convertLegacy() == AppConf.ScissorsActions.Target.Former) {
+            val rename = if (actions.askForName == AppConf.ScissorsActions.Target.Former) {
                 val invalidOptions = if (requireProject().labelerConf.allowSameNameEntry) {
                     listOf()
                 } else {
@@ -251,7 +251,7 @@ class AppState(
                 )
                 (result as InputEntryNameDialogResult?)?.name ?: return@launch
             } else null
-            val newName = if (actions.askForName.convertLegacy() == AppConf.ScissorsActions.Target.Latter) {
+            val newName = if (actions.askForName == AppConf.ScissorsActions.Target.Latter) {
                 val invalidOptions = if (requireProject().labelerConf.allowSameNameEntry) {
                     listOf()
                 } else {
@@ -273,7 +273,7 @@ class AppState(
                 requireProject().currentModule.entries.map { it.name },
                 requireProject().labelerConf.allowSameNameEntry,
             )
-            val targetIndex = when (actions.goTo.convertLegacy()) {
+            val targetIndex = when (actions.goTo) {
                 AppConf.ScissorsActions.Target.Former -> index
                 AppConf.ScissorsActions.Target.Latter -> index + 1
                 else -> null
