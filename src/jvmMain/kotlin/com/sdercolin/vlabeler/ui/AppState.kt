@@ -50,7 +50,6 @@ import com.sdercolin.vlabeler.ui.dialog.SetEntryPropertyDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
-import com.sdercolin.vlabeler.ui.starter.ProjectCreatorState
 import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
@@ -504,14 +503,6 @@ class AppState(
         request.gotoEntryByName?.let {
             jumpToModuleByNameAndEntryName(it.parentFolderName, it.entryName)
         }
-    }
-
-    val onCreateProjectListener = ProjectCreatorState.OnCreateListener { project, plugin, pluginParams ->
-        trackProjectCreation(project, byIpcRequest = false)
-        if (plugin != null) {
-            trackTemplateGeneration(plugin, pluginParams)
-        }
-        openCreatedProject(mainScope, project, this)
     }
 
     fun onCreateProject(project: Project, plugin: Plugin?, pluginParams: ParamMap?) {
