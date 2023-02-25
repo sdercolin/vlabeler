@@ -112,9 +112,6 @@ fun Strings.ja(): String? = when (this) {
     StarterNewTemplatePlugin -> "テンプレート生成器"
     StarterNewTemplatePluginNone -> "なし"
     StarterNewInputFile -> "入力ファイル (.%s)"
-    StarterNewInputFilePlaceholder -> "（空白の場合、ラベラーによってデフォルトのテンプレートが作成されます）"
-    StarterNewInputFileDisabledByLabeler -> "現在選択されているラベラーは入力ファイルを必要としません"
-    StarterNewInputFileDisabledByPlugin -> "現在選択されているテンプレート生成器は入力ファイルを必要としません"
     StarterNewEncoding -> "エンコード"
     StarterNewAutoExport -> "自動エクスポート"
     StarterNewAutoExportHelp ->
