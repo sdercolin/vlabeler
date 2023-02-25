@@ -111,15 +111,17 @@ For label files used in NNSVS/ENUNU and similar systems, the following options a
 
 1. Click `New project...`
 2. Select a folder containing your sample files as `Sample Directory`
-3. Change `Project location` and `Project name` if you would like
-4. Change `Cache directory` if you would like to save the cache files (rendered images, processed wav files, etc.)
-   somewhere else
-5. Select a labeler, see [Scenarios](#scenarios) for which labeler to use
-6. Select a template generator if you don't have an existing label file
-7. If you want to edit an existing label file, choose an input file and its encoding
-8. Check the settings of the labeler and the template generator you selected
-9. Click `OK` and start editing
-10. Click `Export` in the menu to get the edited label file
+3. Change `Project name` if you would like
+4. Select a labeler, see [Scenarios](#scenarios) for which labeler to use
+5. Select a way that your project is created. `Default` is suitable for most cases
+6. If you want to import a single file as input, select `File` and set the file path. This option is not allowed with
+   some labelers
+7. If you want to generate templates with a plugin, select `Template generator` and setup the plugin
+8. Click `Finish` and start editing
+9. Click `Export` in the menu to get the edited label file
+
+There are more settings folded as `Advanced settings`, or provided by the labelers/plugins, please check them out if you
+need more customization.
 
 ## Available keyboard/mouse actions
 
@@ -389,4 +391,5 @@ Please check [App Usage Tracking](readme/tracking.md) for details.
 4. Sometimes the window freezes unexpectedly. You can resize the window to refresh it
 
 ### Localization help (besides code contributors)
+
 [時雨ゆん](https://twitter.com/Yun_Shigure)
