@@ -109,9 +109,6 @@ fun Strings.en(): String = when (this) {
     StarterNewTemplatePlugin -> "Template generator"
     StarterNewTemplatePluginNone -> "None"
     StarterNewInputFile -> "Input file (.%s)"
-    StarterNewInputFilePlaceholder -> "(One would be created if left blank)"
-    StarterNewInputFileDisabledByLabeler -> "No input file is required by the selected labeler"
-    StarterNewInputFileDisabledByPlugin -> "No input file is required by the selected template generator"
     StarterNewEncoding -> "Encoding"
     StarterNewAutoExport -> "Auto-export"
     StarterNewAutoExportHelp ->
