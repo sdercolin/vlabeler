@@ -135,6 +135,7 @@ enum class Strings {
     SampleListEntriesPlaceholderNoEntryButton,
     SampleListJumpToSelectedEntryButton,
     SampleListOpenSampleDirectoryButton,
+    SampleListCurrentModuleLabel,
     SampleListSampleDirectoryLabel,
     SampleListSampleDirectoryRedirectButton,
     PrerendererModuleText,

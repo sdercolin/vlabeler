@@ -136,6 +136,7 @@ fun Strings.zhHans(): String? = when (this) {
     SampleListEntriesPlaceholderNoEntryButton -> "创建默认条目"
     SampleListJumpToSelectedEntryButton -> "跳转到选中的条目"
     SampleListOpenSampleDirectoryButton -> "打开采样目录"
+    SampleListCurrentModuleLabel -> "子项目："
     SampleListSampleDirectoryLabel -> "采样目录："
     SampleListSampleDirectoryRedirectButton -> "切换采样目录"
     PrerendererModuleText -> "渲染子项目 %d/%d..."

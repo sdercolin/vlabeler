@@ -137,6 +137,7 @@ fun Strings.en(): String = when (this) {
     SampleListEntriesPlaceholderNoEntryButton -> "Create Default"
     SampleListJumpToSelectedEntryButton -> "Go to selected entry"
     SampleListOpenSampleDirectoryButton -> "Open sample directory"
+    SampleListCurrentModuleLabel -> "Sub-project: "
     SampleListSampleDirectoryLabel -> "Sample directory: "
     SampleListSampleDirectoryRedirectButton -> "Change sample directory"
     PrerendererModuleText -> "Rendering sub-projects %d/%d..."

@@ -35,7 +35,7 @@ fun <T> SelectionBox(
     value: T,
     onSelect: (T) -> Unit,
     options: Collection<T>,
-    getText: @Composable (T) -> String,
+    getText: @Composable (T) -> String = { it.toString() },
     modifier: Modifier = Modifier,
     fixedWidth: Boolean = false,
     customPadding: Boolean = false,

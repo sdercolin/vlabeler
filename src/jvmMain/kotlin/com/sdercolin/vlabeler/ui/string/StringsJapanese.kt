@@ -139,6 +139,7 @@ fun Strings.ja(): String? = when (this) {
     SampleListEntriesPlaceholderNoEntry -> "このサンプルにはエントリが紐付けられていません。"
     SampleListEntriesPlaceholderNoEntryButton -> "エントリを追加"
     SampleListJumpToSelectedEntryButton -> "選択中のエントリに移動"
+    SampleListCurrentModuleLabel -> "サブプロジェクト："
     SampleListOpenSampleDirectoryButton -> "サンプルディレクトリを開く"
     SampleListSampleDirectoryLabel -> "サンプルディレクトリ："
     SampleListSampleDirectoryRedirectButton -> "サンプルディレクトリを変更"
