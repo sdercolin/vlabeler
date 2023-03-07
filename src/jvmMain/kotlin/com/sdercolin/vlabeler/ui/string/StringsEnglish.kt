@@ -137,6 +137,7 @@ fun Strings.en(): String = when (this) {
     SampleListEntriesPlaceholderNoEntryButton -> "Create Default"
     SampleListJumpToSelectedEntryButton -> "Go to selected entry"
     SampleListOpenSampleDirectoryButton -> "Open sample directory"
+    SampleListCurrentModuleLabel -> "Sub-project: "
     SampleListSampleDirectoryLabel -> "Sample directory: "
     SampleListSampleDirectoryRedirectButton -> "Change sample directory"
     PrerendererModuleText -> "Rendering sub-projects %d/%d..."
@@ -536,4 +537,15 @@ fun Strings.en(): String = when (this) {
     TrackingSettingsDialogEnabled -> "Enabled"
     TrackingSettingsDialogTrackingIdLabel -> "Tracking ID:"
     ProjectSettingDialogTitle -> "Project Settings"
+    ProjectSettingOutputFileLabel -> "Output file"
+    ProjectSettingOutputFileHelperText ->
+        "Export target file for project with single sub-project.\nIf it's not set, " +
+            "`Export Overwriting` is disabled."
+    ProjectSettingOutputFileDisabledPlaceholder -> "Disabled because there are multiple sub-projects"
+    ProjectSettingOutputFileSelectorDialogTitle -> "Choose output file"
+    ProjectSettingAutoExportHelperText ->
+        "Automatically export all sub-projects to their output files when saving the project.\n" +
+            "This option is only effective when the `Output file` is set,\n" +
+            "or when there are multiple sub-projects in the project\n" +
+            "(in which case, the output files of each sub-project are fixed by the labeler)."
 }

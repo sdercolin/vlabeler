@@ -39,8 +39,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
+import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.Entry
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.IncludedSample
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.Sample
@@ -79,6 +81,9 @@ fun SampleListDialog(
             Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 30.dp)) {
                 Spacer(Modifier.height(5.dp))
                 SampleDirectoryBar(
+                    currentModuleName = state.currentModuleName,
+                    allModuleNames = state.allModuleNames,
+                    onSelectModuleName = { state.selectModule(it) },
                     directory = state.sampleDirectory,
                     valid = state.isSampleDirectoryExisting(),
                     requestRedirectSampleDirectory = {
@@ -99,6 +104,17 @@ fun SampleListDialog(
                     openSampleDirectory = { state.openSampleDirectory() },
                 )
             }
+        }
+    }
+
+    if (state.isShowingSampleDirectoryRedirectDialog) {
+        OpenFileDialog(
+            title = string(Strings.ChooseSampleDirectoryDialogTitle),
+            initialDirectory = state.getInitialSampleDirectoryForRedirection(),
+            extensions = null,
+            directoryMode = true,
+        ) { parent, name ->
+            state.handleRedirectionDialogResult(parent, name)
         }
     }
 }
@@ -163,7 +179,7 @@ private fun ColumnScope.Entries(state: SampleListDialogState) {
     GroupLazyColumn(
         weight = 1f,
         placeholder = {
-            if (state.selectedSampleName == null) {
+            if (state.selectedSampleName == null || state.entryItems.isNotEmpty()) {
                 PlaceholderText(Strings.SampleListEntriesPlaceholderUnselected)
             } else {
                 Column(
@@ -322,41 +338,68 @@ private fun ColumnScope.GroupLazyColumn(
 
 @Composable
 private fun SampleDirectoryBar(
+    currentModuleName: String,
+    allModuleNames: List<String>,
+    onSelectModuleName: (String) -> Unit,
     directory: File,
     valid: Boolean,
     requestRedirectSampleDirectory: () -> Unit,
 ) {
-    Row(Modifier.fillMaxWidth()) {
-        BasicText(
-            modifier = Modifier.padding(vertical = 5.dp, horizontal = 2.dp).alignByBaseline(),
-            text = string(Strings.SampleListSampleDirectoryLabel),
-            style = MaterialTheme.typography.body2.copy(
-                color = MaterialTheme.colors.onBackground,
-                fontWeight = FontWeight.Bold,
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Spacer(Modifier.width(5.dp))
-        BasicTextField(
-            modifier = Modifier.alignByBaseline()
-                .weight(1f)
-                .background(color = White20, shape = RoundedCornerShape(2.dp))
-                .padding(horizontal = 10.dp, vertical = 5.dp),
-            value = directory.absolutePath,
-            onValueChange = {},
-            textStyle = MaterialTheme.typography.caption.copy(
-                color = if (valid) MaterialTheme.colors.onBackground else MaterialTheme.colors.error,
-            ),
-            readOnly = true,
-        )
-        Spacer(Modifier.width(20.dp))
-        SingleClickableText(
-            modifier = Modifier.alignByBaseline(),
-            text = string(Strings.SampleListSampleDirectoryRedirectButton),
-            style = MaterialTheme.typography.caption,
-            onClick = { requestRedirectSampleDirectory() },
-        )
+    Column(Modifier.fillMaxWidth()) {
+        if (allModuleNames.size > 1) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                BasicText(
+                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 2.dp),
+                    text = string(Strings.SampleListCurrentModuleLabel),
+                    style = MaterialTheme.typography.body2.copy(
+                        color = MaterialTheme.colors.onBackground,
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.width(5.dp))
+                SelectionBox(
+                    value = currentModuleName,
+                    onSelect = { onSelectModuleName(it) },
+                    options = allModuleNames,
+                    getText = { it.ifEmpty { string(Strings.EditorModuleRootNameTitle) } },
+                )
+            }
+            Spacer(Modifier.height(5.dp))
+        }
+        Row(Modifier.fillMaxWidth()) {
+            BasicText(
+                modifier = Modifier.padding(vertical = 5.dp, horizontal = 2.dp).alignByBaseline(),
+                text = string(Strings.SampleListSampleDirectoryLabel),
+                style = MaterialTheme.typography.body2.copy(
+                    color = MaterialTheme.colors.onBackground,
+                    fontWeight = FontWeight.Bold,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Spacer(Modifier.width(5.dp))
+            BasicTextField(
+                modifier = Modifier.alignByBaseline()
+                    .weight(1f)
+                    .background(color = White20, shape = RoundedCornerShape(2.dp))
+                    .padding(horizontal = 10.dp, vertical = 5.dp),
+                value = directory.absolutePath,
+                onValueChange = {},
+                textStyle = MaterialTheme.typography.caption.copy(
+                    color = if (valid) MaterialTheme.colors.onBackground else MaterialTheme.colors.error,
+                ),
+                readOnly = true,
+            )
+            Spacer(Modifier.width(20.dp))
+            SingleClickableText(
+                modifier = Modifier.alignByBaseline(),
+                text = string(Strings.SampleListSampleDirectoryRedirectButton),
+                style = MaterialTheme.typography.caption,
+                onClick = { requestRedirectSampleDirectory() },
+            )
+        }
     }
 }
 

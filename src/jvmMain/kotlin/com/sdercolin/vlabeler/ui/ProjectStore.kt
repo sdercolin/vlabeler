@@ -59,16 +59,18 @@ interface ProjectStore {
     fun jumpToModuleByNameAndEntry(moduleName: String, entryIndex: Int)
     fun jumpToModuleByNameAndEntryName(moduleName: String, entryName: String)
     fun jumpToEntry(index: Int)
+    fun jumpToEntry(moduleName: String, index: Int)
     fun renameEntry(index: Int, newName: String)
     fun duplicateEntry(index: Int, newName: String)
     val canRemoveCurrentEntry: Boolean
     fun removeCurrentEntry()
-    fun createDefaultEntry(sampleName: String)
+    fun createDefaultEntry(moduleName: String, sampleName: String)
     val canMoveEntry: Boolean
     fun moveEntry(index: Int, targetIndex: Int)
     fun isCurrentEntryTheLast(): Boolean
     fun toggleMultipleEditMode(on: Boolean)
     fun changeSampleDirectory(directory: File)
+    fun changeSampleDirectory(moduleName: String, directory: File)
     fun getAutoSavedProjectFile(): File?
     fun discardAutoSavedProjects()
     fun enableAutoSaveProject(
@@ -147,6 +149,10 @@ class ProjectStoreImpl(
 
     private fun editCurrentProjectModule(editor: Module.() -> Module) {
         editProject { updateCurrentModule { editor() } }
+    }
+
+    private fun editProjectModule(moduleName: String, editor: Module.() -> Module) {
+        editProject { updateModule(moduleName) { editor() } }
     }
 
     override fun updateProject(project: Project) {
@@ -289,7 +295,11 @@ class ProjectStoreImpl(
     }
 
     override fun jumpToEntry(index: Int) {
-        editCurrentProjectModule {
+        jumpToEntry(requireProject().currentModule.name, index)
+    }
+
+    override fun jumpToEntry(moduleName: String, index: Int) {
+        editProjectModule(moduleName) {
             copy(currentIndex = index)
         }
         if (appConf.value.editor.autoScroll.let { it.onJumpedToEntry || it.onSwitched }) {
@@ -324,10 +334,10 @@ class ProjectStoreImpl(
         }
     }
 
-    override fun createDefaultEntry(sampleName: String) {
+    override fun createDefaultEntry(moduleName: String, sampleName: String) {
         val project = requireProject()
         val newEntry = Entry.fromDefaultValues(sampleName, sampleName, project.labelerConf)
-        editCurrentProjectModule { copy(entries = entries + newEntry) }
+        editProjectModule(moduleName) { copy(entries = entries + newEntry) }
     }
 
     override val canMoveEntry: Boolean
@@ -351,7 +361,11 @@ class ProjectStoreImpl(
     override fun toggleMultipleEditMode(on: Boolean) = editProject { copy(multipleEditMode = on) }
 
     override fun changeSampleDirectory(directory: File) {
-        editCurrentProjectModule {
+        changeSampleDirectory(requireProject().currentModule.name, directory)
+    }
+
+    override fun changeSampleDirectory(moduleName: String, directory: File) {
+        editProjectModule(moduleName) {
             val root = project?.rootSampleDirectory
             if (root != null) {
                 copy(sampleDirectoryPath = directory.relativeTo(root).path)

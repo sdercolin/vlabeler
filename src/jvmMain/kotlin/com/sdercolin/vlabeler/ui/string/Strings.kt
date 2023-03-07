@@ -135,6 +135,7 @@ enum class Strings {
     SampleListEntriesPlaceholderNoEntryButton,
     SampleListJumpToSelectedEntryButton,
     SampleListOpenSampleDirectoryButton,
+    SampleListCurrentModuleLabel,
     SampleListSampleDirectoryLabel,
     SampleListSampleDirectoryRedirectButton,
     PrerendererModuleText,
@@ -458,6 +459,11 @@ enum class Strings {
     TrackingSettingsDialogEnabled,
     TrackingSettingsDialogTrackingIdLabel,
     ProjectSettingDialogTitle,
+    ProjectSettingOutputFileLabel,
+    ProjectSettingOutputFileHelperText,
+    ProjectSettingOutputFileDisabledPlaceholder,
+    ProjectSettingOutputFileSelectorDialogTitle,
+    ProjectSettingAutoExportHelperText,
     ;
 
     fun get(language: Language): String = when (language) {

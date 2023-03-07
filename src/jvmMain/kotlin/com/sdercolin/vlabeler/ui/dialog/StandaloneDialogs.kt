@@ -10,6 +10,8 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.lastPathSection
+import com.sdercolin.vlabeler.util.toFile
+import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,9 +66,15 @@ fun StandaloneDialogs(
             SaveFileDialog(
                 title = string(Strings.ExportDialogTitle),
                 extensions = listOf(project.labelerConf.extension),
-                initialDirectory = project.currentModule.getSampleDirectory(project)
-                    .takeIf { it.isDirectory }?.absolutePath,
-                initialFileName = project.labelerConf.defaultInputFilePath?.lastPathSection
+                initialDirectory = project.currentModule.rawFilePath?.toFile()
+                    ?.parent?.toFileOrNull(
+                        ensureExists = true,
+                        ensureIsDirectory = true,
+                    )?.absolutePath
+                    ?: project.currentModule.getSampleDirectory(project)
+                        .takeIf { it.isDirectory }?.absolutePath,
+                initialFileName = project.currentModule.rawFilePath?.lastPathSection
+                    ?: project.labelerConf.defaultInputFilePath?.lastPathSection
                     ?: "${project.projectName}$currentModuleNameSection.${project.labelerConf.extension}",
             ) { parent, name ->
                 appState.closeExportDialog()

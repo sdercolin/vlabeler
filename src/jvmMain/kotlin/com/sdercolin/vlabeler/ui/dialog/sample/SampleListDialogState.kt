@@ -6,12 +6,19 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
+import com.sdercolin.vlabeler.util.getDirectory
 import java.awt.Desktop
 import java.io.File
 
 class SampleListDialogState(
     private val editorState: EditorState,
 ) {
+    val allModuleNames get() = editorState.project.modules.map { it.name }
+    var currentModuleName: String by mutableStateOf(editorState.project.currentModule.name)
+        private set
+
+    private val currentModule get() = editorState.project.modules.first { it.name == currentModuleName }
+
     var selectedSampleName: String? by mutableStateOf(null)
         private set
 
@@ -27,17 +34,26 @@ class SampleListDialogState(
     var entryItems: List<SampleListDialogItem.Entry> by mutableStateOf(listOf())
         private set
 
+    var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
+        private set
+
     init {
         fetch()
     }
 
+    fun selectModule(name: String) {
+        currentModuleName = name
+        fetch()
+        cleanSelections()
+    }
+
     private fun getExistingSampleFileNames() =
         Sample.listSampleFiles(
-            editorState.project.currentModule.getSampleDirectory(editorState.project),
+            currentModule.getSampleDirectory(editorState.project),
         )
             .map { it.name }
 
-    private fun getProjectSampleFilesWithEntries() = editorState.project.currentModule.entries
+    private fun getProjectSampleFilesWithEntries() = currentModule.entries
         .groupBy { it.sample }
 
     private fun fetch() {
@@ -56,13 +72,19 @@ class SampleListDialogState(
         selectedSampleName?.let { selectSample(it) }
     }
 
+    private fun cleanSelections() {
+        selectedSampleName = null
+        selectedEntryIndex = null
+        entryItems = listOf()
+    }
+
     fun selectSample(name: String) {
-        selectedSampleName = name
-        val entries = editorState.project.currentModule.entries
+        val entries = currentModule.entries
         entryItems = entries.indices.filter { entries[it].sample == name }.map {
             val indexedEntry = IndexedEntry(entries[it], it)
             SampleListDialogItem.Entry(name = indexedEntry.name, entry = indexedEntry)
         }
+        selectedSampleName = name
         if (selectedEntryIndex !in entryItems.map { it.entry.index }) {
             selectedEntryIndex = null
         }
@@ -74,17 +96,17 @@ class SampleListDialogState(
 
     fun createDefaultEntry() {
         val sampleName = requireNotNull(selectedSampleName)
-        editorState.createDefaultEntry(sampleName)
+        editorState.createDefaultEntry(currentModuleName, sampleName)
         fetch()
     }
 
     fun jumpToSelectedEntry() {
         val index = requireNotNull(selectedEntryIndex)
-        editorState.jumpToEntry(index)
+        editorState.jumpToEntry(currentModuleName, index)
     }
 
     val sampleDirectory: File
-        get() = editorState.project.currentModule.getSampleDirectory(editorState.project)
+        get() = currentModule.getSampleDirectory(editorState.project)
 
     fun isSampleDirectoryExisting() = sampleDirectory.let {
         it.exists() && it.isDirectory
@@ -95,6 +117,21 @@ class SampleListDialogState(
     }
 
     fun requestRedirectSampleDirectory() {
-        editorState.requestRedirectSampleDirectory()
+        isShowingSampleDirectoryRedirectDialog = true
+    }
+
+    fun getInitialSampleDirectoryForRedirection() = sampleDirectory
+        .takeIf { it.isDirectory }?.absolutePath
+
+    fun handleRedirectionDialogResult(parent: String?, name: String?) {
+        isShowingSampleDirectoryRedirectDialog = false
+        if (parent != null && name != null) {
+            val newDirectory = File(parent, name).getDirectory()
+            if (newDirectory.exists() && newDirectory.isDirectory) {
+                editorState.changeSampleDirectory(currentModuleName, newDirectory)
+                fetch()
+                cleanSelections()
+            }
+        }
     }
 }

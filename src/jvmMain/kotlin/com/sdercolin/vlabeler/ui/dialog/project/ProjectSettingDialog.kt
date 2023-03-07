@@ -1,5 +1,9 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.sdercolin.vlabeler.ui.dialog.project
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -25,8 +30,11 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,13 +44,17 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.SelectionBox
+import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.LabelerPluginDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.AvailableEncodings
+import com.sdercolin.vlabeler.util.toFile
+import java.io.File
 
 @Composable
 fun rememberProjectSettingDialogState(appState: AppState, finish: () -> Unit) =
@@ -94,6 +106,21 @@ fun ProjectListDialog(
             load = { state.updateLabelerParams(it) },
         )
     }
+    if (state.isShowingOutputFileDialog) {
+        val current = state.outputFile?.toFile()?.takeIf { state.isOutputFileValid }
+        SaveFileDialog(
+            title = string(Strings.ProjectSettingOutputFileSelectorDialogTitle),
+            initialDirectory = current?.parentFile?.absolutePath
+                ?: state.project.currentModule.getSampleDirectory(state.project).absolutePath,
+            initialFileName = current?.name?.ifEmpty { null }
+                ?: (state.project.projectName + "." + state.project.labelerConf.extension),
+            extensions = listOf(state.project.labelerConf.extension),
+        ) { parent, name ->
+            state.isShowingOutputFileDialog = false
+            if (parent == null || name == null) return@SaveFileDialog
+            state.updateOutputFile(File(parent, name).absolutePath)
+        }
+    }
 }
 
 @Composable
@@ -101,7 +128,28 @@ private fun ColumnScope.Content(state: ProjectSettingDialogState) {
     Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
         val scrollState = rememberScrollState()
         Column(modifier = Modifier.weight(1f).verticalScroll(scrollState)) {
-            ItemRow(title = Strings.StarterNewEncoding) {
+            ItemRow(
+                title = Strings.ProjectSettingOutputFileLabel,
+                helperText = Strings.ProjectSettingOutputFileHelperText,
+            ) {
+                TextField(
+                    modifier = Modifier.weight(1f),
+                    value = state.outputFile ?: string(Strings.ProjectSettingOutputFileDisabledPlaceholder),
+                    onValueChange = { state.updateOutputFile(it) },
+                    singleLine = true,
+                    isError = state.isOutputFileValid.not(),
+                    enabled = state.isOutputFileEditable,
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { state.isShowingOutputFileDialog = true },
+                            enabled = state.isOutputFileEditable,
+                        ) {
+                            Icon(Icons.Default.FolderOpen, null)
+                        }
+                    },
+                )
+            }
+            ItemRow(title = Strings.StarterNewEncoding, helperText = null) {
                 SelectionBox(
                     value = state.encoding,
                     onSelect = { state.encoding = it },
@@ -109,7 +157,7 @@ private fun ColumnScope.Content(state: ProjectSettingDialogState) {
                     getText = { it },
                 )
             }
-            ItemRow(title = Strings.StarterNewAutoExport) {
+            ItemRow(title = Strings.StarterNewAutoExport, helperText = Strings.ProjectSettingAutoExportHelperText) {
                 Switch(
                     enabled = state.canChangeAutoExport,
                     checked = state.autoExport,
@@ -117,13 +165,14 @@ private fun ColumnScope.Content(state: ProjectSettingDialogState) {
                     colors = getSwitchColors(),
                 )
             }
-            ItemRow(title = Strings.StarterNewLabeler) {
+            ItemRow(title = Strings.StarterNewLabeler, helperText = null) {
                 SelectionBox(
                     value = state.project.labelerConf,
                     onSelect = { },
                     options = listOf(state.project.labelerConf),
                     getText = { it.displayedName.get() },
                     enabled = false,
+                    showIcon = false,
                 )
                 Spacer(Modifier.width(10.dp))
                 IconButton(onClick = { state.isShowingLabelerDialog = true }) {
@@ -140,15 +189,28 @@ private fun ColumnScope.Content(state: ProjectSettingDialogState) {
 }
 
 @Composable
-private fun ItemRow(title: Strings, item: @Composable () -> Unit) {
-    Row(Modifier.padding(vertical = 10.dp)) {
-        Text(
-            modifier = Modifier.padding(top = 14.dp).widthIn(min = 200.dp, max = 400.dp),
-            text = string(title),
-            style = MaterialTheme.typography.body2,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+private fun ItemRow(title: Strings, helperText: Strings?, item: @Composable () -> Unit) {
+    Row(Modifier.padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.widthIn(min = 200.dp, max = 400.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = string(title),
+                style = MaterialTheme.typography.body2,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            if (helperText != null) {
+                Spacer(Modifier.width(10.dp))
+                TooltipArea(
+                    tooltip = { Tooltip(string(helperText)) },
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.HelpOutline,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
+            }
+        }
         Spacer(Modifier.width(25.dp))
         item()
     }
@@ -161,6 +223,6 @@ private fun ButtonBar(state: ProjectSettingDialogState) {
             Text(text = string(Strings.CommonCancel))
         }
         Spacer(Modifier.width(25.dp))
-        ConfirmButton(onClick = state::submit, enabled = state.labelerError.not())
+        ConfirmButton(onClick = state::submit, enabled = state.isError.not())
     }
 }

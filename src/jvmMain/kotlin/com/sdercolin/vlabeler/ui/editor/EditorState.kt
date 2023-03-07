@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class EditorState(
     project: Project,
@@ -289,16 +290,12 @@ class EditorState(
         appState.openEditEntryNameDialog(index, purpose)
     }
 
-    fun createDefaultEntry(sampleName: String) {
-        appState.createDefaultEntry(sampleName)
+    fun createDefaultEntry(moduleName: String, sampleName: String) {
+        appState.createDefaultEntry(moduleName, sampleName)
     }
 
-    fun jumpToEntry(index: Int) {
-        appState.jumpToEntry(index)
-    }
-
-    fun requestRedirectSampleDirectory() {
-        appState.openSampleDirectoryRedirectDialog()
+    fun jumpToEntry(moduleName: String, index: Int) {
+        appState.jumpToEntry(moduleName, index)
     }
 
     fun toggleEntryDone(index: Int) {
@@ -320,6 +317,10 @@ class EditorState(
     fun jumpToModule(name: String, targetEntryIndex: Int? = null) {
         val index = project.modules.indexOfFirst { it.name == name }
         appState.jumpToModule(index, targetEntryIndex)
+    }
+
+    fun changeSampleDirectory(moduleName: String, directory: File) {
+        appState.changeSampleDirectory(moduleName, directory)
     }
 
     fun handleSetPropertyKeyAction(action: KeyAction): Boolean {

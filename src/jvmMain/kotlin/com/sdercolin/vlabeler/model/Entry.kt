@@ -95,6 +95,7 @@ data class Entry(
                 end = labelerConf.defaultValues.last(),
                 points = labelerConf.defaultValues.drop(1).dropLast(1),
                 extras = labelerConf.defaultExtras,
+                needSync = true,
             )
 
         @Serializer(Entry::class)
