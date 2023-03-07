@@ -458,6 +458,11 @@ enum class Strings {
     TrackingSettingsDialogEnabled,
     TrackingSettingsDialogTrackingIdLabel,
     ProjectSettingDialogTitle,
+    ProjectSettingOutputFileLabel,
+    ProjectSettingOutputFileHelperText,
+    ProjectSettingOutputFileDisabledPlaceholder,
+    ProjectSettingOutputFileSelectorDialogTitle,
+    ProjectSettingAutoExportHelperText,
     ;
 
     fun get(language: Language): String = when (language) {
