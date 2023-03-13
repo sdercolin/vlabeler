@@ -5,7 +5,6 @@ package com.sdercolin.vlabeler.ui.starter
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.TooltipArea
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
@@ -139,26 +137,25 @@ private fun Title(page: Strings) {
 
 @Composable
 private fun ColumnScope.Content(state: ProjectCreatorState) {
-    val scrollState = rememberScrollState()
-    Row(modifier = Modifier.fillMaxWidth().weight(1f).padding(horizontal = 60.dp)) {
-        Column(
-            modifier = Modifier.weight(1f).verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-        ) {
-            BasicItems(state)
-            val hasAdvancedSettings = when (state.page) {
-                Page.Directory -> true
-                Page.Labeler -> false
-                Page.DataSource -> true
-            }
-            if (hasAdvancedSettings) {
-                AdvancedSwitch(state)
-                if (state.isDetailExpanded) {
-                    AdvancedItems(state)
-                }
+    // TODO: Add scroll bar in a stable version of compose in the future. currently it causes crashing:
+    //  `LayoutCoordinates androidx.compose.ui.node.InnerPlaceable is not attached`
+    //  https://issuetracker.google.com/issues/244824895
+    Column(
+        modifier = Modifier.fillMaxWidth().weight(1f).padding(horizontal = 60.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
+        BasicItems(state)
+        val hasAdvancedSettings = when (state.page) {
+            Page.Directory -> true
+            Page.Labeler -> false
+            Page.DataSource -> true
+        }
+        if (hasAdvancedSettings) {
+            AdvancedSwitch(state)
+            if (state.isDetailExpanded) {
+                AdvancedItems(state)
             }
         }
-        VerticalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.width(15.dp))
     }
 }
 
