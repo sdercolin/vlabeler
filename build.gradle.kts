@@ -82,6 +82,7 @@ compose.desktop {
             copyright = "© 2022 sdercolin"
             appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
             modules("java.sql", "jdk.charsets", "jdk.unsupported", "jdk.accessibility", "java.naming")
+            includeAllModules = true
 
             macOS {
                 iconFile.set(project.file("src/jvmMain/resources/icon.icns"))
