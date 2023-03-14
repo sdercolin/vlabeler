@@ -1,6 +1,6 @@
 {
   "name": "cv-oto-gen",
-  "version": 5,
+  "version": 6,
   "type": "template",
   "displayedName": {
     "en": "CV oto generator",
@@ -35,7 +35,7 @@
         "label": {
           "en": "Overlap (ms)",
           "zh": "重叠（毫秒）",
-          "ja": "Overlap（ミリ秒）"
+          "ja": "オーバーラップ（ミリ秒）"
         },
         "defaultValue": 30
       },

@@ -1,6 +1,6 @@
 {
   "name": "mark-illegal-entries",
-  "version": 2,
+  "version": 3,
   "type": "macro",
   "displayedName": {
     "en": "Mark illegal entries",
@@ -12,7 +12,7 @@
   "description": {
     "en": "Given a list of legal labels, mark the entries that have names not in the list.",
     "zh": "给定一个合法标记列表，标出不在列表中的条目。",
-    "ja": "合法なラベルのリストが与えられたとき、リストにない名前を持つエントリをマークします。"
+    "ja": "合法なラベルのリストが与えられたとき、リストにない名前のエントリをマークします。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/mark-illegal-entries",
   "supportedLabelFileExtension": "*",
