@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Locale
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
@@ -67,8 +68,14 @@ fun loadAppConf(mainScope: CoroutineScope, appRecord: AppRecordStore): MutableSt
 }
 
 suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatchers.IO) {
-    val defaultLabelers = getDefaultLabelers().map {
-        it.asLabelerConf().getOrThrow() // default items should always be parsed
+    val defaultLabelers = getDefaultLabelers().mapNotNull {
+        it.asLabelerConf().getOrElse { t ->
+            if (isDebug) {
+                throw t
+            } else {
+                null
+            }
+        }
     }.toList()
     val defaultLabelerNames = defaultLabelers.map { it.name }
     val customLabelers = getCustomLabelers().mapNotNull {
