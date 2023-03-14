@@ -505,14 +505,11 @@ fun Strings.ja(): String? = when (this) {
     TrackingSettingsDialogTrackingIdLabel -> "Tracking ID："
     ProjectSettingDialogTitle -> "プロジェクトの設定"
     ProjectSettingOutputFileLabel -> "出力先ファイル"
-    ProjectSettingOutputFileHelperText ->
-        "エクスポートの出力先。サブプロジェクトが1つのみの場合のみ有効。" +
-            "未設定の場合、`上書きエクスポート`は無効になります。"
-    ProjectSettingOutputFileDisabledPlaceholder -> "複数のサブプロジェクトを使用しているため、出力先ファイルは指定できません。"
+    ProjectSettingOutputFileHelperText -> "エクスポートの出力先。未設定の場合、`上書きエクスポート`は無効になります。"
+    ProjectSettingOutputFileDisabledPlaceholder -> "このラベラーでは、出力先ファイルは変更できません。"
     ProjectSettingOutputFileSelectorDialogTitle -> "出力先ファイルの選択"
     ProjectSettingAutoExportHelperText ->
         "保存時、自動的にすべてのサブプロジェクトを出力先ファイルに上書きエクスポートします。\n" +
-            "この設定は、`出力先ファイル`が設定されている場合、またはプロジェクトに複数のサブプロジェクトがある場合\n" +
-            "（この場合は、サブプロジェクトごとの出力先ファイルはラベラーによって固定されています）にのみ有効です。"
+            "この設定は、`出力先ファイル`が正しく設定されている場合、またはラベラーによって固定されている場合のみ有効です。"
     else -> null
 }

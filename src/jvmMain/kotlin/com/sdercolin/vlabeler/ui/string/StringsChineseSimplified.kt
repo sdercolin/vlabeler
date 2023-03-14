@@ -487,11 +487,11 @@ fun Strings.zhHans(): String? = when (this) {
     TrackingSettingsDialogTrackingIdLabel -> "Tracking ID："
     ProjectSettingDialogTitle -> "项目设置"
     ProjectSettingOutputFileLabel -> "输出文件"
-    ProjectSettingOutputFileHelperText -> "工程导出的对象路径。\n仅当项目包含单个子项目时才有效。如果该项未设置，`覆盖导出`将被禁用。"
-    ProjectSettingOutputFileDisabledPlaceholder -> "由于项目包含复数个子项目，输出文件的设置已被禁用。"
+    ProjectSettingOutputFileHelperText -> "工程导出的对象路径。如果该项未设置，`覆盖导出`将被禁用。"
+    ProjectSettingOutputFileDisabledPlaceholder -> "当前使用的标注器禁止更改该项。"
     ProjectSettingOutputFileSelectorDialogTitle -> "选择输出文件"
     ProjectSettingAutoExportHelperText ->
         "保存时，自动将项目中所有的子项目覆盖导出到对应的输出文件。\n" +
-            "此项仅在本设置中的`输出文件`有效，或者项目中有复数个子项目时（此时，各个子项目的输出文件已通过标注器固定）才有效。"
+            "此项仅在本设置中的`输出文件`被正确设置，或者已被标注器固定时才有效。"
     else -> null
 }

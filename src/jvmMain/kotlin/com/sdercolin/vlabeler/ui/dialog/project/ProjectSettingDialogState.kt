@@ -21,10 +21,10 @@ class ProjectSettingDialogState(
     var encoding: String by mutableStateOf(project.encoding)
 
     val isOutputFileEditable: Boolean
-        get() = project.modules.size == 1
+        get() = project.modules.size == 1 && project.labelerConf.isSelfConstructed.not()
 
     var outputFile: String? by mutableStateOf(
-        project.currentModule.rawFilePath.orEmpty().takeIf { isOutputFileEditable },
+        project.currentModule.getRawFile(project)?.absolutePath.orEmpty().takeIf { isOutputFileEditable },
     )
         private set
 

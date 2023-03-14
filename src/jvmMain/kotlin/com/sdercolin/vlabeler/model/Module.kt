@@ -16,6 +16,7 @@ data class Module(
     /**
      * Should always be under [Project.rootSampleDirectory].
      * Basically, it's stored as a relative path to [Project.rootSampleDirectory].
+     * Use [getSampleDirectory] to get the actual directory.
      */
     @SerialName("sampleDirectory")
     val sampleDirectoryPath: String,
@@ -24,6 +25,7 @@ data class Module(
     /**
      * Should always be under [Project.rootSampleDirectory].
      * Basically, it's stored as a relative path to [Project.rootSampleDirectory].
+     * Use [getRawFile] to get the actual file.
      */
     val rawFilePath: String? = null,
     val entryFilter: EntryFilter? = null,
