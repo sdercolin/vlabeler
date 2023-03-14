@@ -84,9 +84,6 @@ suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatc
     val validCustomLabelers = customLabelers.filterNot { it.name in defaultLabelerNames }
 
     val availableLabelers = defaultLabelers + validCustomLabelers
-    if (availableLabelers.isEmpty()) {
-        throw IllegalStateException("No labeler configuration files found.")
-    }
     availableLabelers.forEach {
         Log.info("Loaded labeler: ${it.name}")
     }
