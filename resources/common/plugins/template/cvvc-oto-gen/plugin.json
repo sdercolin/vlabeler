@@ -1,6 +1,6 @@
 {
   "name": "cvvc-oto-gen",
-  "version": 6,
+  "version": 7,
   "type": "template",
   "displayedName": {
     "en": "CVVC oto generator",
@@ -159,7 +159,7 @@
         "label": {
           "en": "CV Overlap (ms)",
           "zh": "CV 的重叠（毫秒）",
-          "ja": "CV の Overlap（ミリ秒）"
+          "ja": "CV の オーバーラップ（ミリ秒）"
         },
         "defaultValue": 50,
         "min": 0
@@ -219,7 +219,7 @@
         "label": {
           "en": "VC Overlap (ms)",
           "zh": "VC 的重叠（毫秒）",
-          "ja": "VC の Overlap（ミリ秒）"
+          "ja": "VC の オーバーラップ（ミリ秒）"
         },
         "defaultValue": 70,
         "min": 0

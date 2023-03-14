@@ -1,11 +1,11 @@
 {
   "name": "compare-oto-entries",
-  "version": 6,
+  "version": 7,
   "type": "macro",
   "displayedName": {
     "en": "Compare oto entries",
     "zh": "比较 oto 条目",
-    "ja": "oto エントリーを比較する"
+    "ja": "oto エントリを比較する"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
@@ -42,7 +42,7 @@
         "description": {
           "en": "Suffix of alias in the input oto file. Aliases are compared with the suffix removed.",
           "zh": "输入 oto 文件中别名的后缀。别名将在去除后缀后进行比较。",
-          "ja": "入力 oto ファイルのエイリアスの接尾辞。エイリアスは接尾辞を削除してから比較されます。"
+          "ja": "比較用の oto ファイルのエイリアスの接尾辞。エイリアスは接尾辞を削除してから比較されます。"
         },
         "defaultValue": "",
         "optional": true
@@ -74,7 +74,7 @@
         "description": {
           "en": "If the input oto file contains entries that are not included in the current project, append them to project.",
           "zh": "如果输入 oto 文件包含当前项目中未包含的条目，则将它们追加到项目中。",
-          "ja": "入力 oto ファイルに現在のプロジェクトに含まれていないエントリがある場合は、それらをプロジェクトに追加します。"
+          "ja": "現在のプロジェクトに含まれていないエントリが比較用の oto ファイルにある場合は、それらをプロジェクトに追加します。"
         },
         "defaultValue": false
       }

@@ -113,6 +113,7 @@ fun main() = application {
         }
 
         appState?.let { state ->
+            LaunchValidate(state)
             LaunchKeyboardEvent(state.keyboardViewModel, state, state.player)
             LaunchExit(state, ::exitApplication)
             LaunchTrackingLaunch(state)
@@ -161,6 +162,13 @@ private fun AppRecordStore.saveWindowSize(dpSize: DpSize) {
     val size = dpSize.width.value to dpSize.height.value
     Log.info("Window size changed: $size")
     update { copy(windowSizeDp = size) }
+}
+
+@Composable
+private fun LaunchValidate(state: AppState) {
+    LaunchedEffect(state) {
+        state.validate()
+    }
 }
 
 @Composable

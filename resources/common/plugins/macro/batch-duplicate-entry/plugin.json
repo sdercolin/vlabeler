@@ -1,11 +1,11 @@
 {
   "name": "batch-duplicate-entry",
-  "version": 3,
+  "version": 4,
   "type": "macro",
   "displayedName": {
     "en": "Batch Duplicate Entry",
     "zh": "批量创建条目副本",
-    "ja": "エントリを一括複製"
+    "ja": "エントリの一括複製"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",

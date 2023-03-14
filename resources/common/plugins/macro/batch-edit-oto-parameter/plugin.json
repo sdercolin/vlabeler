@@ -1,6 +1,6 @@
 {
   "name": "batch-edit-oto-parameter",
-  "version": 5,
+  "version": 6,
   "type": "macro",
   "displayedName": {
     "en": "Batch edit oto parameter",
@@ -60,7 +60,7 @@
           {
             "en": "Overlap",
             "zh": "重叠",
-            "ja": "Overlap"
+            "ja": "オーバーラップ"
           },
           {
             "en": "Preutterance",

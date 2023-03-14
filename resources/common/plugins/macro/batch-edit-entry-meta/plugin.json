@@ -1,6 +1,6 @@
 {
   "name": "batch-edit-entry-meta",
-  "version": 6,
+  "version": 7,
   "type": "macro",
   "displayedName": {
     "en": "Batch edit entry notes",
@@ -41,7 +41,7 @@
         "label": {
           "en": "Set Starred",
           "zh": "设置星标状态",
-          "ja": "スターマーク状態を設定"
+          "ja": "スターマーク付与の設定"
         },
         "defaultValue": "keep",
         "options": [
@@ -73,7 +73,7 @@
         "label": {
           "en": "Set Done",
           "zh": "设置完成状态",
-          "ja": "完了状態を設定"
+          "ja": "完了状態の設定"
         },
         "defaultValue": "keep",
         "options": [
@@ -105,7 +105,7 @@
         "label": {
           "en": "Set Tag",
           "zh": "设置标签",
-          "ja": "タグを設定"
+          "ja": "タグの設定"
         },
         "defaultValue": false
       },

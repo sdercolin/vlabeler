@@ -117,10 +117,23 @@ class AppState(
         mainScope,
         playerState,
     )
-    val videoState = VideoState(playerState, snackbarState, { toggleVideoPopup(false) })
+    val videoState = VideoState(
+        playerState,
+        snackbarState,
+        exit = { toggleVideoPopup(false) },
+    )
 
     private val ipcState: IpcState = IpcState(this)
     val trackingState = TrackingState(appRecordStore, mainScope)
+
+    fun validate() {
+        require(availableLabelerConfs.isNotEmpty()) {
+            "No labeler found."
+        }
+        require(activeLabelerConfs.isNotEmpty()) {
+            "No active labeler found."
+        }
+    }
 
     private fun reset() {
         clearProject()

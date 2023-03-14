@@ -1,6 +1,6 @@
 {
   "name": "vcv-oto-gen",
-  "version": 4,
+  "version": 5,
   "type": "template",
   "displayedName": {
     "en": "VCV oto generator",
@@ -159,7 +159,7 @@
         "label": {
           "en": "Overlap (ms)",
           "zh": "重叠（毫秒）",
-          "ja": "Overlap（ミリ秒）"
+          "ja": "オーバーラップ（ミリ秒）"
         },
         "defaultValue": 100,
         "min": 0
