@@ -110,13 +110,9 @@ class AppState(
     var shouldExit: Boolean by mutableStateOf(false)
         private set
 
-    val playerState: PlayerState = PlayerState()
-    val player: Player = Player(
-        appConf.value.playback,
-        appConf.value.painter.amplitude.resampleDownToHz,
-        mainScope,
-        playerState,
-    )
+    val playerState: PlayerState = PlayerState(appConf.value, mainScope)
+    val player: Player get() = playerState.player
+
     val videoState = VideoState(
         playerState,
         snackbarState,

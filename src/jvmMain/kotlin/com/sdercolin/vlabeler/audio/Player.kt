@@ -22,13 +22,52 @@ import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.SourceDataLine
 import kotlin.math.roundToInt
 
+/**
+ * Handle business logic of audio playback.
+ *
+ * This class handles the actual playback of audio files, and notify the UI of the playback progress.
+ *
+ * @property playbackConfig The playback configuration.
+ * @property maxSampleRate The maximum sample rate of the audio. Audio files with higher sample rate will be
+ *     downsampled.
+ * @property coroutineScope The coroutine scope to run the player.
+ * @property state The [PlayerState] containing all the state of the player.
+ * @property listener The listener to notify the UI of the playback progress.
+ */
 @Stable
 class Player(
     private var playbackConfig: AppConf.Playback,
     private var maxSampleRate: Int,
     private val coroutineScope: CoroutineScope,
     private val state: PlayerState,
+    private val listener: Listener,
 ) {
+    /**
+     * The listener to notify the UI of the playback progress.
+     */
+    interface Listener {
+
+        /**
+         * Called when the player starts playing.
+         *
+         * @param fromFrame The frame position to start playing from. Called with `null` if the player plays from the
+         *     beginning.
+         */
+        fun onStartPlaying(fromFrame: Long? = null)
+
+        /**
+         * Called when the player stops playing.
+         */
+        fun onStopPlaying()
+
+        /**
+         * Called when the player detects a change in the frame position.
+         *
+         * @param position The updated frame position.
+         */
+        fun onFramePositionChanged(position: Float)
+    }
+
     private var file: File? = null
     private var format: AudioFormat? = null
     private var line: SourceDataLine? = null
@@ -83,7 +122,7 @@ class Player(
         coroutineScope.launch {
             Log.info("Player.play()")
             awaitLoad()
-            state.startPlaying()
+            listener.onStartPlaying()
             startCounting()
             startWriting()
         }
@@ -121,13 +160,13 @@ class Player(
             val firstFrame = startFrame.toFloat()
             var frame = firstFrame
             val sampleRate = format?.sampleRate ?: return@launch
-            state.setFramePosition(frame)
+            listener.onFramePositionChanged(frame)
             while (true) {
                 delay(PlayingTimeInterval)
                 if (!state.isPlaying) break
                 frame = firstFrame + (System.currentTimeMillis() - firstTime) * sampleRate / 1000
                 if (endFrame != null && frame > endFrame) break
-                state.setFramePosition(frame)
+                listener.onFramePositionChanged(frame)
             }
         }
     }
@@ -145,7 +184,7 @@ class Player(
             awaitLoad()
             val startFrame = startFramePosition.roundToInt()
             val endFrame = endFramePosition.roundToInt()
-            state.startPlaying(startFrame.toLong()) // video playback need the information of startFrame
+            listener.onStartPlaying(startFrame.toLong())
             startCounting(startFrame, endFrame)
             startWriting(startFrame, endFrame)
         }
@@ -182,7 +221,7 @@ class Player(
 
     private suspend fun stop() {
         Log.info("Player.stop()")
-        state.stopPlaying()
+        listener.onStopPlaying()
         countingJob?.cancelAndJoin()
         countingJob = null
         line?.run {
@@ -193,6 +232,7 @@ class Player(
             stop()
             flush()
         }
+        extraLine = null
         writingJob?.cancelAndJoin()
         writingJob = null
     }
@@ -211,6 +251,7 @@ class Player(
             flush()
             close()
         }
+        extraLine = null
     }
 
     fun loadNewConfIfNeeded(appConf: AppConf) {
@@ -222,6 +263,10 @@ class Player(
         }
     }
 
+    /**
+     * An extra line to play audio data from [AudioPlaybackRequest]s. It's created by each request and should be cleaned
+     * up after the request is finished.
+     */
     private var extraLine: SourceDataLine? = null
 
     fun handleRequest(request: AudioPlaybackRequest) {
@@ -244,7 +289,7 @@ class Player(
                 this@Player.extraLine = line
                 line.open()
                 line.start()
-                state.startPlaying()
+                listener.onStartPlaying()
                 writingJob = coroutineScope.launch(Dispatchers.IO) {
                     val offset = (toFrame(request.offset.toFloat(), format.sampleRate) * format.frameSize).toInt()
                     val length = request.duration?.let { toFrame(it.toFloat(), format.sampleRate) * format.frameSize }
