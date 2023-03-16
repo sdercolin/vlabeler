@@ -40,10 +40,11 @@ fun File.findUnusedFile(base: String, existingAbsolutePaths: Set<String>): File 
 
 fun File.containsFileRecursively(file: File): Boolean {
     if (file.absolutePath == absolutePath) return true
-    if (isDirectory) {
-        listFiles()?.forEach {
-            if (it.containsFileRecursively(file)) return true
-        }
+    val sections = absolutePath.split(File.separator)
+    val childSections = file.absolutePath.split(File.separator)
+    if (childSections.size <= sections.size) return false
+    for (i in sections.indices) {
+        if (sections[i] != childSections[i]) return false
     }
-    return false
+    return true
 }
