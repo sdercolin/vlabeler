@@ -180,7 +180,8 @@ fun Strings.ja(): String? = when (this) {
         "自動保存されたプロジェクトファイルが見つかりました。読み込みますか？" +
             "このファイルは、他のプロジェクトを開く・新規作成するときに削除されます。"
     AskIfRedirectSampleDirectoryDialogDescription ->
-        "プロジェクトのサンプルディレクトリ(%s)が見つかりません。他のディレクトリに変更しますか？"
+        "現在のサブプロジェクトのサンプルディレクトリ(%s)が見つかりません。あるいは、その中にサンプルファイルがありません。" +
+            "他のディレクトリに変更しますか？"
     PluginDialogTitle -> "vLabeler - プラグイン"
     PluginDialogInfoAuthor -> "作者：%s"
     PluginDialogInfoVersion -> "バージョン：%d"

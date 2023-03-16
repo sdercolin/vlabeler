@@ -148,9 +148,26 @@ class EditorState(
 
     suspend fun loadSample(appConf: AppConf) {
         withContext(Dispatchers.IO) {
-            val moduleName = project.currentModule.name
-            val sampleDirectory = project.currentModule.getSampleDirectory(project)
+            val module = project.currentModule
+            val moduleName = module.name
+            val sampleDirectory = module.getSampleDirectory(project)
+            var needRedirect = false
             if (!sampleDirectory.exists()) {
+                needRedirect = true
+            }
+
+            if (project.currentSampleFile.exists().not()) {
+                // check if all the sample files are not existing,
+                // if so, we can consider that the sample directory is not correct.
+                val allSampleFiles = module.entries.map {
+                    module.getSampleFile(project, it.sample)
+                }
+                if (allSampleFiles.all { it.exists().not() }) {
+                    needRedirect = true
+                }
+            }
+
+            if (needRedirect) {
                 sampleInfoState.value = Result.failure(MissingSampleDirectoryException())
                 appState.confirmIfRedirectSampleDirectory(sampleDirectory)
                 return@withContext

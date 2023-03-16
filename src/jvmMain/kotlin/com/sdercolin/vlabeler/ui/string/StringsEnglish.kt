@@ -183,7 +183,8 @@ fun Strings.en(): String = when (this) {
         "Auto-saved project file found. Do you want to load it? " +
             "The file will be discarded if you opened or created another one."
     AskIfRedirectSampleDirectoryDialogDescription ->
-        "The sample directory of this project (%s) is not found. " +
+        "The sample directory of the current sub-project (%s) is not found, " +
+            "or doesn't contain any required sample files." +
             "Do you want to redirect it to a new directory?"
     PluginDialogTitle -> "vLabeler - Plugin"
     PluginDialogInfoAuthor -> "author: %s"

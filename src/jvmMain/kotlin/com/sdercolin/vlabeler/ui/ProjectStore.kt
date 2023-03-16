@@ -365,9 +365,27 @@ class ProjectStoreImpl(
     }
 
     override fun changeSampleDirectory(moduleName: String, directory: File) {
-        editProjectModule(moduleName) {
-            val root = requireProject().rootSampleDirectory
-            copy(sampleDirectoryPath = directory.relativeTo(root).path)
+        val project = requireProject()
+        if (project.modules.size == 1 &&
+            project.modules.first().getSampleDirectory(project).absolutePath == project.rootSampleDirectory.absolutePath
+        ) {
+            // If the project has only one module and the module is the root directory,
+            // change the root directory.
+            editProject {
+                val currentWorkingDirectory = workingDirectory.absolutePath
+                val currentCacheDirectory = cacheDirectory.absolutePath
+                copy(
+                    rootSampleDirectoryPath = directory.absolutePath,
+                    workingDirectoryPath = currentWorkingDirectory,
+                    cacheDirectoryPath = currentCacheDirectory,
+                    modules = modules.map { it.copy(sampleDirectoryPath = "") },
+                ).makeRelativePathsIfPossible()
+            }
+        } else {
+            editProjectModule(moduleName) {
+                val root = requireProject().rootSampleDirectory
+                copy(sampleDirectoryPath = directory.relativeTo(root).path)
+            }
         }
     }
 

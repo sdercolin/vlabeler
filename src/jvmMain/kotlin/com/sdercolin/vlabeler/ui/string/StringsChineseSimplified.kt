@@ -171,7 +171,8 @@ fun Strings.zhHans(): String? = when (this) {
         "将要删除当前条目...\n" +
             "该条目是当前采样文件关联到的唯一条目。如果您想重新关联这个采样文件，请前往菜单 `视图` -> `采样列表`"
     AskIfLoadAutoSavedProjectDialogDescription -> "发现自动保存的项目文件。是否读取？该文件将会在您打开或创建别的项目时被删除。"
-    AskIfRedirectSampleDirectoryDialogDescription -> "未找到该项目的采样目录(%s)。 是否要重定向到其他目录？"
+    AskIfRedirectSampleDirectoryDialogDescription ->
+        "未找到当前子项目的采样目录(%s)，或该目录中不含有任何所需的采样文件。是否要重定向到其他目录？"
     PluginDialogTitle -> "vLabeler - 插件"
     PluginDialogInfoAuthor -> "作者：%s"
     PluginDialogInfoVersion -> "版本：%d"

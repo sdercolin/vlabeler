@@ -47,6 +47,7 @@ fun Editor(state: EditorState, appState: AppState) {
         state.project.currentModuleIndex,
         state.project.currentSampleName,
         state.project.currentModule.sampleDirectoryPath,
+        state.project.rootSampleDirectory,
         appState.isShowingPrerenderDialog,
         state,
     ) {
