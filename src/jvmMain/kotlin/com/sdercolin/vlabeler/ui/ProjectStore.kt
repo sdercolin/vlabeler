@@ -366,12 +366,8 @@ class ProjectStoreImpl(
 
     override fun changeSampleDirectory(moduleName: String, directory: File) {
         editProjectModule(moduleName) {
-            val root = project?.rootSampleDirectory
-            if (root != null) {
-                copy(sampleDirectoryPath = directory.relativeTo(root).path)
-            } else {
-                copy(sampleDirectoryPath = directory.absolutePath)
-            }
+            val root = requireProject().rootSampleDirectory
+            copy(sampleDirectoryPath = directory.relativeTo(root).path)
         }
     }
 
@@ -530,8 +526,7 @@ class ProjectStoreImpl(
 
     override fun openRootDirectory() {
         val project = project ?: return
-        val rootDir = project.rootSampleDirectory ?: return
-        openDirectory(rootDir)
+        openDirectory(project.rootSampleDirectory)
     }
 
     override fun openCurrentModuleDirectory() {

@@ -108,7 +108,9 @@ suspend fun awaitLoadProject(
             }
     }
     val (workingDirectory, projectName) = when {
-        autoSaved -> project.workingDirectory.absolutePath to project.projectName
+        autoSaved -> {
+            project.workingDirectory.absolutePath to project.projectName
+        }
         project.projectFile.absolutePath != file.absolutePath -> {
             Log.info("Redirect project path to ${file.absolutePath}")
             file.absoluteFile.parentFile.absolutePath to file.nameWithoutExtension
@@ -120,17 +122,13 @@ suspend fun awaitLoadProject(
         if (project.workingDirectoryPath.toFile().isAbsolute.not() &&
             workingDirectory != project.workingDirectoryPath
         ) {
+            // redirect root sample directory when the project file is moved together with the sample directory
             val originalWorkingDirectory = project.workingDirectory.absoluteFile
-            val relativeRootSampleDirectory = project.rootSampleDirectory?.relativeToOrNull(originalWorkingDirectory)
-            if (relativeRootSampleDirectory == null) {
-                null
-            } else {
-                // keep relative root sample directory
-                val newWorkingDirectory = workingDirectory.toFile()
-                require(newWorkingDirectory.isAbsolute)
-                newWorkingDirectory.resolve(relativeRootSampleDirectory).absolutePath.also {
-                    Log.info("Redirect root sample directory to $it")
-                }
+            val relativeRootSampleDirectory = project.rootSampleDirectory.relativeTo(originalWorkingDirectory)
+            val newWorkingDirectory = workingDirectory.toFile()
+            require(newWorkingDirectory.isAbsolute)
+            newWorkingDirectory.resolve(relativeRootSampleDirectory).absolutePath.also {
+                Log.info("Redirect root sample directory to $it")
             }
         } else {
             project.rootSampleDirectoryPath
@@ -247,7 +245,7 @@ suspend fun saveProjectFile(project: Project, allowAutoExport: Boolean = false):
         if (!workingDirectory.exists()) {
             workingDirectory.mkdir()
         }
-        val projectContent = project.stringifyJson()
+        val projectContent = project.copy(version = Project.ProjectVersion).stringifyJson()
         project.projectFile.writeText(projectContent)
         Log.debug("Project saved to ${project.projectFile}")
 

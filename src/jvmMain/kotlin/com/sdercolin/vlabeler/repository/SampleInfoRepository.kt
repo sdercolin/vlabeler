@@ -10,7 +10,6 @@ import com.sdercolin.vlabeler.util.findUnusedFile
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
-import com.sdercolin.vlabeler.util.toFile
 import java.io.File
 
 @Stable
@@ -83,9 +82,8 @@ object SampleInfoRepository {
         return Result.success(info)
     }
 
-    private fun Project.getSampleFilePath(sampleFile: File): String = rootSampleDirectoryPath?.let {
-        sampleFile.toRelativeString(it.toFile()).replace(File.separatorChar, '/')
-    } ?: sampleFile.absolutePath
+    private fun Project.getSampleFilePath(sampleFile: File): String =
+        sampleFile.toRelativeString(rootSampleDirectory).replace(File.separatorChar, '/')
 
     private fun getSampleInfoFile(project: Project, sampleFile: File) =
         cacheMap[project.getSampleFilePath(sampleFile)]

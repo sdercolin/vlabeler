@@ -29,11 +29,10 @@ import java.io.File
 data class Project(
     val version: Int = 0,
     /**
-     * The directory where all sample files are stored. Should always be an absolute path. Null case is only for
-     * compatibility with old projects and should be discarded in the future.
+     * The directory where all sample files are stored. Should always be an absolute path.
      */
     @SerialName("rootSampleDirectory")
-    val rootSampleDirectoryPath: String? = null,
+    val rootSampleDirectoryPath: String,
     /**
      * The directory where the project file is stored. Can be relative to [rootSampleDirectory]
      */
@@ -62,17 +61,17 @@ data class Project(
     val currentModuleIndex: Int,
     val autoExport: Boolean,
 ) {
-    val rootSampleDirectory: File?
-        get() = rootSampleDirectoryPath?.toFile()
+    val rootSampleDirectory: File
+        get() = rootSampleDirectoryPath.toFile()
 
     val workingDirectory: File
-        get() = rootSampleDirectory?.resolve(workingDirectoryPath) ?: workingDirectoryPath.toFile()
+        get() = rootSampleDirectory.resolve(workingDirectoryPath)
 
     val projectFile: File
         get() = workingDirectory.resolve("$projectName.$ProjectFileExtension")
 
     val cacheDirectory: File
-        get() = rootSampleDirectory?.resolve(cacheDirectoryPath) ?: cacheDirectoryPath.toFile()
+        get() = rootSampleDirectory.resolve(cacheDirectoryPath)
 
     val isUsingDefaultCacheDirectory: Boolean
         get() = cacheDirectory.absolutePath == getDefaultCacheDirectory(
@@ -120,37 +119,55 @@ data class Project(
     }
 
     fun validate() = this.apply {
-        require(rootSampleDirectoryPath?.toFile()?.isAbsolute != false) {
-            "rootSampleDirectoryPath must not be relative"
+        require(rootSampleDirectory.isAbsolute) {
+            "rootSampleDirectory must not be relative."
         }
         require(modules.isNotEmpty()) { "No module found." }
         require(currentModuleIndex in modules.indices) { "Invalid current module index." }
         require(modules.distinctBy { it.name }.size == modules.size) { "Module names cannot be duplicated." }
+
+        modules.forEach { module ->
+            require(rootSampleDirectory.containsFileRecursively(module.getSampleDirectory(this))) {
+                "Module[${module.name}]: sampleDirectory must be under the root sample directory."
+            }
+            val rawFile = module.getRawFile(this)
+            if (rawFile != null) {
+                require(rootSampleDirectory.containsFileRecursively(rawFile)) {
+                    "Module[${module.name}]: rawFilePath must be under the root sample directory."
+                }
+            }
+        }
         modules.forEach { it.validate(multipleEditMode, labelerConf) }
     }
 
     fun makeRelativePathsIfPossible(): Project {
-        val rootSampleDirectory = rootSampleDirectory ?: return this
-        val fixedWorkingDirectory = if (rootSampleDirectory.containsFileRecursively(workingDirectory)) {
-            workingDirectory.relativeTo(rootSampleDirectory).path
+        fun File.makeRelativeIfPossible(base: File): File = if (base.containsFileRecursively(this)) {
+            relativeTo(base)
         } else {
-            workingDirectory.path
+            this
         }
 
-        val fixedCacheDirectory = if (rootSampleDirectory.containsFileRecursively(cacheDirectory)) {
-            cacheDirectory.relativeTo(rootSampleDirectory).path
-        } else {
-            cacheDirectory.path
+        val fixedWorkingDirectory = workingDirectory.makeRelativeIfPossible(rootSampleDirectory).path
+        val fixedCacheDirectory = cacheDirectory.makeRelativeIfPossible(rootSampleDirectory).path
+
+        val fixedModules = modules.map { module ->
+            module.copy(
+                sampleDirectoryPath = module.sampleDirectoryPath.toFile()
+                    .makeRelativeIfPossible(rootSampleDirectory).path,
+                rawFilePath = module.rawFilePath?.toFile()
+                    ?.makeRelativeIfPossible(rootSampleDirectory)?.path,
+            )
         }
 
         return copy(
             workingDirectoryPath = fixedWorkingDirectory,
             cacheDirectoryPath = fixedCacheDirectory,
+            modules = fixedModules,
         )
     }
 
     companion object {
-        const val ProjectVersion = 2
+        const val ProjectVersion = 3
 
         const val ProjectFileExtension = "lbp"
         private const val DefaultCacheDirectorySuffix = ".$ProjectFileExtension.caches"
@@ -189,7 +206,7 @@ private fun generateEntriesByPlugin(
                     points = it.points.take(labelerConf.fields.count()),
                     extras = it.extras.take(labelerConf.extraFieldNames.count()),
                 )
-            }.map { it.toEntry(fallbackSample = sampleFiles.first().name) }
+            }
 
             entries.postApplyLabelerConf(labelerConf)
         }
@@ -433,11 +450,12 @@ private fun parseSingleModule(
         return@mapNotNull null
     }
     Module(
+        rootDirectory = sampleDirectory.toFile(),
         name = def.name,
-        sampleDirectoryPath = def.sampleDirectory.relativeTo(sampleDirectory.toFile()).path,
+        sampleDirectory = def.sampleDirectory,
         entries = entries,
         currentIndex = 0,
-        rawFilePath = def.labelFile?.relativeTo(sampleDirectory.toFile())?.path,
+        rawFilePath = def.labelFile,
     )
 }
 
@@ -456,11 +474,12 @@ private fun parseModuleGroup(
     }
     return moduleDefinitionGroup.zip(result).map { (def, entries) ->
         Module(
+            rootDirectory = rootSampleDirectory.toFile(),
             name = def.name,
-            sampleDirectoryPath = def.sampleDirectory.relativeTo(rootSampleDirectory.toFile()).path,
+            sampleDirectory = def.sampleDirectory,
             entries = entries,
             currentIndex = 0,
-            rawFilePath = def.labelFile?.relativeTo(rootSampleDirectory.toFile())?.path,
+            rawFilePath = def.labelFile,
         )
     }
 }

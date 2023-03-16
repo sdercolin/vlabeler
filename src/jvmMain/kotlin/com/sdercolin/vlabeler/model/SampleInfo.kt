@@ -37,7 +37,7 @@ data class SampleInfo(
     val algorithmVersion: Int,
 ) {
 
-    fun getFile(project: Project): File = project.rootSampleDirectory?.resolve(file) ?: File(file)
+    fun getFile(project: Project): File = project.rootSampleDirectory.resolve(file)
 
     companion object {
 
@@ -77,8 +77,7 @@ data class SampleInfo(
             }
             stream.close()
 
-            val filePath = (project.rootSampleDirectory?.let { file.relativeTo(it).path } ?: file.absolutePath)
-                .replace(File.separatorChar, '/')
+            val filePath = file.relativeTo(project.rootSampleDirectory).path.replace(File.separatorChar, '/')
 
             SampleInfo(
                 name = file.name,
