@@ -29,22 +29,19 @@ import java.io.File
 data class Project(
     val version: Int = 0,
     /**
-     * The directory where all sample files are stored.
-     * Should always be an absolute path.
-     * Null case is only for compatibility with old projects and should be discarded in the future.
+     * The directory where all sample files are stored. Should always be an absolute path. Null case is only for
+     * compatibility with old projects and should be discarded in the future.
      */
     @SerialName("rootSampleDirectory")
     val rootSampleDirectoryPath: String? = null,
     /**
-     * The directory where the project file is stored.
-     * Can be relative to [rootSampleDirectory]
+     * The directory where the project file is stored. Can be relative to [rootSampleDirectory]
      */
     @SerialName("workingDirectory")
     val workingDirectoryPath: String,
     val projectName: String,
     /**
-     * The directory where all cache files are stored.
-     * Can be relative to [rootSampleDirectory]
+     * The directory where all cache files are stored. Can be relative to [rootSampleDirectory]
      */
     @SerialName("cacheDirectory")
     val cacheDirectoryPath: String,

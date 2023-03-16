@@ -32,9 +32,10 @@ import java.io.File
 
 /**
  * Configuration of the labeler's appearances and behaviors
+ *
  * @property name Unique name of the labeler
  * @property version Version code in integer. Configurations with same [name] and [version] should always have same
- *   contents if distributed in public
+ *     contents if distributed in public
  * @property extension File extension of the raw label file
  * @property defaultInputFilePath Default name of the input file relative to the sample directory
  * @property displayedName Name displayed in the UI (localized)
@@ -45,12 +46,12 @@ import java.io.File
  * @property categoryTag Category tag of the labeler, "" as `Other`
  * @property displayOrder Display order of the labeler in the dropdown list
  * @property continuous Whether the labeler use continuous mode, where the end of entry is forced set to the start of
- *   its next entry
+ *     its next entry
  * @property allowSameNameEntry Whether to allow more than one entry with a shared name in the project module
  * @property defaultValues Default value listed as [start, *fields, end] in millisecond
  * @property defaultExtras Default [extraFieldNames] values
  * @property fields Objects in [Field] type containing data used in the label files, except for built-in "start" and
- *   "end". Corresponds to [Entry.points]
+ *     "end". Corresponds to [Entry.points]
  * @property extraFieldNames Extra field names for some data only for calculation. These fields are saved as String
  * @property lockedDrag Defines when to use locked dragging (all parameters will move with dragged one)
  * @property overflowBeforeStart Action taken when there are points before "start"
@@ -102,8 +103,7 @@ data class LabelerConf(
         get() = parameters.map { it.parameter }
 
     /**
-     * Get constraints for canvas usage
-     * Pair<a, b> represents "a <= b"
+     * Get constraints for canvas usage Pair<a, b> represents "a <= b"
      */
     val connectedConstraints: List<Pair<Int, Int>>
         get() = fields.withIndex()
@@ -118,21 +118,22 @@ data class LabelerConf(
 
     /**
      * Custom field of the labeler
+     *
      * @property name Unique name of the field
      * @property label Label displayed in the UI (localized)
      * @property color Color code in format of "#ffffff"
      * @property height Label height ratio to the height of waveforms part (0~1)
      * @property dragBase True if all the other parameter line move together with this one
      * @property filling Name of the target field to which a filled area is drawn from this field. "start" and "end" are
-     *   also available
+     *     also available
      * @property constraints Define value constraints between the fields. See [Constraint]
      * @property shortcutIndex Index in the shortcut list. Could be 1~8 (0 is reserved for "start")
-     * @property replaceStart Set to true if this field should replace "start" when displayed. In this case, other fields
-     *   can be set smaller than the replaced "start", and the original [Entry.start] will be automatically set to the
-     *   minimum value of all the fields. Cannot be used when [continuous] is true
+     * @property replaceStart Set to true if this field should replace "start" when displayed. In this case, other
+     *     fields can be set smaller than the replaced "start", and the original [Entry.start] will be automatically set
+     *     to the minimum value of all the fields. Cannot be used when [continuous] is true
      * @property replaceEnd Set to true if this field should replace "end" when displayed. In this case, other fields
-     *   can be set larger than the replaced "end", and the original [Entry.end] will be automatically set to the
-     *   maximum value of all the fields. Cannot be used when [continuous] is true
+     *     can be set larger than the replaced "end", and the original [Entry.end] will be automatically set to the
+     *     maximum value of all the fields. Cannot be used when [continuous] is true
      */
     @Serializable
     @Immutable
@@ -150,8 +151,9 @@ data class LabelerConf(
     )
 
     /**
-     * Except for "start" and "end" (all fields should be between "start" and "end").
-     * You don't have to declare the same constraint in both two fields
+     * Except for "start" and "end" (all fields should be between "start" and "end"). You don't have to declare the same
+     * constraint in both two fields
+     *
      * @property min Index of the field that should be smaller or equal to this field
      * @property max Index of the field that should be greater or equal to this field
      */
@@ -164,6 +166,7 @@ data class LabelerConf(
 
     /**
      * Definition of when should all parameter lines move together when dragging
+     *
      * @property useDragBase True if locked drag is enabled when field with [Field.dragBase] == true is dragged
      * @property useStart True if locked drag is enabled when the start line is dragged
      */
@@ -213,12 +216,13 @@ data class LabelerConf(
 
     /**
      * Definition for parsing the raw label file to local [Entry]
+     *
      * @property scope Scope of the parser.
      * @property defaultEncoding Default text encoding of the input file
      * @property extractionPattern Regex pattern that extract groups. Only used when [scope] is [Scope.Entry]
      * @property variableNames Definition of how the extracted string groups will be put into variables later in the
-     *   parser JavaScript code. Should be in the same order as the extracted groups. Only used when [scope] is
-     *   [Scope.Entry]
+     *     parser JavaScript code. Should be in the same order as the extracted groups. Only used when [scope] is
+     *     [Scope.Entry]
      * @property scripts JavaScript code in lines that sets properties of [Entry] using the variables extracted
      */
     @Serializable
@@ -232,45 +236,42 @@ data class LabelerConf(
          * Available input variables:
          * - String array "inputFileNames": Name of the input files
          * - String array "sampleFileNames": Name of the samples files in the folder
-         * - String "<item in [variableNames]>": Values extracted by [extractionPattern].
-         *  Only available when [scope] is [Scope.Entry]
-         * - String "moduleNames": Name of the modules that the scripts need to build.
-         *  Only available when [scope] is [Scope.Modules]
-         * - String[] array "inputs": Input file contents in lines that belong to this module set.
-         *  Only available when [scope] is [Scope.Modules]
+         * - String "<item in [variableNames]>": Values extracted by [extractionPattern]. Only available when [scope] is
+         *   [Scope.Entry]
+         * - String "moduleNames": Name of the modules that the scripts need to build. Only available when [scope] is
+         *   [Scope.Modules]
+         * - String[] array "inputs": Input file contents in lines that belong to this module set. Only available when
+         *   [scope] is [Scope.Modules]
          * - Map "params", created according to [parameters], see [ParameterHolder] for details
          * - String "encoding": the encoding selected in the project creation page
          *
          * Output variables that the scripts should set:
-         * - entry: the JavaScript object for [Entry]. This is only required when [scope] is [Scope.Entry].
-         *  See src/main/resources/labeler/entry.js for the actual JavaScript class definition
+         * - entry: the JavaScript object for [Entry]. This is only required when [scope] is [Scope.Entry]. See
+         *   src/main/resources/labeler/entry.js for the actual JavaScript class definition
          * - modules: an array of entry (described above) arrays. This is only required when [scope] is [Scope.Modules].
-         *  The array should have the same order as 'moduleNames' given as input.
-         *  Every item in the array should be an array of [Entry] objects in this module
+         *   The array should have the same order as 'moduleNames' given as input. Every item in the array should be an
+         *   array of [Entry] objects in this module
          */
         val scripts: List<String>,
     )
 
     /**
      * Definition for line format in the raw label file
+     *
      * @property scope Scope of the writer
      * @property format String format to generate the output line
-     * @property scripts JavaScript code in lines that generate the output line
-     * Either [format] or [scripts] should be given. If both of them are given, [scripts] is used
+     * @property scripts JavaScript code in lines that generate the output line Either [format] or [scripts] should be
+     *     given. If both of them are given, [scripts] is used
      */
     @Serializable
     @Immutable
     data class Writer(
         val scope: Scope = Scope.Entry,
         /**
-         * String format using the following variables written as "{<var_name>}", only used by [Scope.Entry]:
-         * {sample} - sample file name without extension
-         * {name} - entry name
-         * {start} - [Entry.start]
-         * {end} - [Entry.end]
-         * {[Property.name]} - Evaluated value of a [Property]
-         * {[Field.name]} - value in [Entry.points] with the same index of the corresponding [Field]
-         * {<item in [extraFieldNames]>} - value saved in [Parser]
+         * String format using the following variables written as "{<var_name>}", only used by [Scope.Entry]: {sample} -
+         * sample file name without extension {name} - entry name {start} - [Entry.start] {end} - [Entry.end]
+         * {[Property.name]} - Evaluated value of a [Property] {[Field.name]} - value in [Entry.points] with
+         * the same index of the corresponding [Field] {<item in [extraFieldNames]>} - value saved in [Parser]
          *
          * If a name is shared by a [Property] and [Field], it's considered as [Property].
          *
@@ -301,27 +302,20 @@ data class LabelerConf(
 
     /**
      * Definition of properties that will be written to the raw label file
+     *
      * @property name Unique name of the property
      * @property displayedName Name displayed in property view UI (localized)
      * @property value Mathematical expression text including fields written as "{[Field.name]}" and "{start}", "{end}".
-     *   Extra fields of number type defined in [extraFieldNames] are also available. The expression is evaluated in
-     *   JavaScript.
-     *   Deprecated: User `valueGetter` instead.
-     * @property valueGetter JavaScript code lines that calculates the value from {entry} object
-     *   and set {value} variable. Either this or [value] should be given.
-     *   Input:
-     *   "entry" - the JavaScript object for [Entry].
-     *             See src/main/resources/labeler/entry.js for the actual JavaScript class definition.
-     *   Output:
-     *   "value" - the value of the property as number.
+     *     Extra fields of number type defined in [extraFieldNames] are also available. The expression is evaluated in
+     *     JavaScript. Deprecated: User `valueGetter` instead.
+     * @property valueGetter JavaScript code lines that calculates the value from {entry} object and set {value}
+     *     variable. Either this or [value] should be given. Input: "entry" - the JavaScript object for [Entry]. See
+     *     src/main/resources/labeler/entry.js for the actual JavaScript class definition. Output: "value" - the value
+     *     of the property as number.
      * @property valueSetter JavaScript code lines that takes the value of input the property and update {entry} object
-     *   accordingly. If null, the value input feature is disabled for this property.
-     *   Input:
-     *   "value" - the value of the property as number.
-     *   "entry" - the JavaScript object for [Entry].
-     *             See src/main/resources/labeler/entry.js for the actual JavaScript class definition.
-     *   Output:
-     *   "entry" - the updated JavaScript object for [Entry].
+     *     accordingly. If null, the value input feature is disabled for this property. Input: "value" - the value of
+     *     the property as number. "entry" - the JavaScript object for [Entry]. See src/main/resources/labeler/entry.js
+     *     for the actual JavaScript class definition. Output: "entry" - the updated JavaScript object for [Entry].
      * @property shortcutIndex Index in the shortcut list of Action `Set Property`. Could be 0~9.
      */
     @Serializable
@@ -336,32 +330,32 @@ data class LabelerConf(
     )
 
     /**
-     * Definition of a configurable parameter used in this labeler.
-     * The parameters are accessible
+     * Definition of a configurable parameter used in this labeler. The parameters are accessible
      * 1. in the JavaScript code of [Parser.scripts] and [Writer.scripts]
-     *  - keys are defined in as `parameters[].parameter.name`
-     *  - value could be undefined, which means the parameter is not set
+     *    - keys are defined in as `parameters[].parameter.name`
+     *    - value could be undefined, which means the parameter is not set
      * 2. via injected (updated) [LabelerConf] by [injector], if it is not null
+     *
      * @property parameter Definition of the parameter. They are the same with the parameters used by a plugin, so you
-     *   can also see [readme/plugin-development.md] for details
-     * @property injector JavaScript code that injects the parameter value into the labeler.
-     *   `labeler` and `value` are available as variables.
-     *   Note the injector cannot change the following info of the labeler:
-     *   - [name]
-     *   - [version]
-     *   - [extension]
-     *   - [displayedName]
-     *   - [description]
-     *   - [author]
-     *   - [website]
-     *   - [email]
-     *   - [continuous]
-     *   - [parameters]
-     *   - size of [fields]
-     *   - size of [extraFieldNames]
-     *   - size of [defaultExtras]
-     *   - size of [defaultValues]
-     *   - [Field.name]s in [fields]
+     *     can also see [readme/plugin-development.md] for details
+     * @property injector JavaScript code that injects the parameter value into the labeler. `labeler` and `value` are
+     *     available as variables. Note the injector cannot change the following info of the labeler:
+     *       - [name]
+     *       - [version]
+     *       - [extension]
+     *       - [displayedName]
+     *       - [description]
+     *       - [author]
+     *       - [website]
+     *       - [email]
+     *       - [continuous]
+     *       - [parameters]
+     *       - size of [fields]
+     *       - size of [extraFieldNames]
+     *       - size of [defaultExtras]
+     *       - size of [defaultValues]
+     *       - [Field.name]s in [fields]
+     *
      * @property changeable Whether the parameter is changeable after the project is created
      */
     @Serializable(with = ParameterHolderSerializer::class)
@@ -410,28 +404,25 @@ data class LabelerConf(
 
     /**
      * In order to edit multiple label files in a single project, the labeler should be able to construct sub-projects
-     * when creating the project.
-     * This property defines the sub-project structure and building procedure.
-     * In the source code, we call the sub-project as "Module".
-     * The [scripts] is JavaScript code lines that creates [RawModuleDefinition] objects.
+     * when creating the project. This property defines the sub-project structure and building procedure. In the
+     * source code, we call the sub-project as "Module". The [scripts] is JavaScript code lines that creates
+     * [RawModuleDefinition] objects.
      *
      * Available input variables:
      * - File "root": the root directory of the project (the `Sample Directory` choosed in the project creation page)
-     *   the `File` type is a wrapper of Java's `java.io.File` class.
-     *   Please check the documentation in [readme/file-api.md],
-     *   or the source code in [src/main/jvmMain/resources/js/file.js]
+     *   the `File` type is a wrapper of Java's `java.io.File` class. Please check the documentation in
+     *   [readme/file-api.md], or the source code in [src/main/jvmMain/resources/js/file.js]
      * - Map "params", created according to [parameters], see [ParameterHolder] for details
      * - String "encoding": the encoding selected in the project creation page
      * - String array "acceptedSampleExtensions": the array of accepted sample extensions in the current application.
      *   Defined in [com.sdercolin.vlabeler.io.Sample.acceptableSampleFileExtensions]
      *
      * Output variables that the scripts should set:
-     * - Array "modules": an array of [RawModuleDefinition] objects.
-     *   Use `new ModuleDefinition()` to create a new object.
-     *   Please check the JavaScript source code with documentations in
-     *   [src/main/jvmMain/resources/js/module_definition.js] for details.
-     *   Specifically, if there are multiple modules that only differ in `name`, they will be processed together in
-     *   [Parser] and [Writer] if the [Scope] is set to [Scope.Modules]
+     * - Array "modules": an array of [RawModuleDefinition] objects. Use `new ModuleDefinition()` to create a new
+     *   object. Please check the JavaScript source code with documentations in
+     *   [src/main/jvmMain/resources/js/module_definition.js] for details. Specifically, if there are multiple modules
+     *   that only differ in `name`, they will be processed together in [Parser] and [Writer] if the [Scope] is set to
+     *   [Scope.Modules]
      */
     @Serializable
     @Immutable

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException
 
 sealed interface FindVideoStrategy {
     fun find(path: String, acceptableExtensions: List<String>): Result<String>
+
     object SamePlaceOfReferenceAudio : FindVideoStrategy {
         override fun find(path: String, acceptableExtensions: List<String>): Result<String> {
             val fileName = path.substringBeforeLast('.')

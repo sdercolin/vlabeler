@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * Model for an entry selector used in a [Plugin.Type.Macro] plugin.
+ *
  * @param filters the filters to apply to the entry selector
  */
 @Serializable

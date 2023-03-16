@@ -3,8 +3,7 @@ package com.sdercolin.vlabeler.video
 import com.sdercolin.vlabeler.util.or
 
 /**
- * Represents the logic to sync video playback with audio playback
- * and with itself
+ * Represents the logic to sync video playback with audio playback and with itself
  */
 enum class SyncOperation {
     Initialize,
@@ -50,7 +49,7 @@ enum class SyncOperation {
                     videoPlayer.pause()
                 }
                 ChangeEmbeddingMode -> coveredBy(Initialize, OpenDuringPlay, RecoverFromLastExit)
-                ResizeWindow -> { }
+                ResizeWindow -> {}
 
                 Close -> {
                     saveTime()

@@ -8,9 +8,10 @@ import kotlin.math.roundToInt
 
 /**
  * Helper class to convert intensity values to color
+ *
  * @param keyColors List of colors to use for as the key frames in the interpolation except for the darkest one.
- * @param stepWeights List of weights between key frames in the interpolation.
- *                    The size of the list must be equal to the size of the keyColors list.
+ * @param stepWeights List of weights between key frames in the interpolation. The size of the list must be equal to the
+ *     size of the keyColors list.
  */
 class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) {
 
@@ -52,6 +53,7 @@ class SpectrogramColorPalette(keyColors: List<Color>, stepWeights: List<Float>) 
 
     /**
      * Returns the color at the given intensity
+     *
      * @param intensity the intensity of the color. Should be in the range [0, 1]
      */
     fun get(intensity: Float): Color {

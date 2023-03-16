@@ -18,13 +18,11 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
- * A localized string that stored in JSON, used by labelers and plugins.
- * Two types of values are supported:
+ * A localized string that stored in JSON, used by labelers and plugins. Two types of values are supported:
  * 1. A string value, which is a string that is used by [Language.default].
- * 2. A map of language code to string value, e.g. {"en": "Hello", "zh": "你好"}.
- *   An entry is used when the current language code starts with the language code in the entry.
- *   e.g. If the current language code is "en-US", the entry with key "en" is used.
- *   Note that a map without an entry for [Language.default] is not allowed.
+ * 2. A map of language code to string value, e.g. {"en": "Hello", "zh": "你好"}. An entry is used when the current
+ *    language code starts with the language code in the entry. e.g. If the current language code is "en-US", the entry
+ *    with key "en" is used. Note that a map without an entry for [Language.default] is not allowed.
  */
 @Serializable(with = LocalizedJsonStringSerializer::class)
 data class LocalizedJsonString(

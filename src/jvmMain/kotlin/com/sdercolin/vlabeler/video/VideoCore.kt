@@ -2,6 +2,7 @@
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 
 package com.sdercolin.vlabeler.video
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -21,8 +22,8 @@ private class ComponentInfo {
 }
 
 /**
- * A lightweight version of androidx.compose.ui.awt.SwingPanel
- * used to display the video player. Slightly faster and fewer bugs
+ * A lightweight version of androidx.compose.ui.awt.SwingPanel used to display the video player. Slightly faster and
+ * fewer bugs
  */
 @Composable
 fun VideoCore(videoState: VideoState, modifier: Modifier) {

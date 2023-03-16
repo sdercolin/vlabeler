@@ -14,18 +14,16 @@ import java.io.File
 data class Module(
     val name: String,
     /**
-     * Should always be under [Project.rootSampleDirectory].
-     * Basically, it's stored as a relative path to [Project.rootSampleDirectory].
-     * Use [getSampleDirectory] to get the actual directory.
+     * Should always be under [Project.rootSampleDirectory]. Basically, it's stored as a relative path to
+     * [Project.rootSampleDirectory]. Use [getSampleDirectory] to get the actual directory.
      */
     @SerialName("sampleDirectory")
     val sampleDirectoryPath: String,
     val entries: List<Entry>,
     val currentIndex: Int,
     /**
-     * Should always be under [Project.rootSampleDirectory].
-     * Basically, it's stored as a relative path to [Project.rootSampleDirectory].
-     * Use [getRawFile] to get the actual file.
+     * Should always be under [Project.rootSampleDirectory]. Basically, it's stored as a relative path to
+     * [Project.rootSampleDirectory]. Use [getRawFile] to get the actual file.
      */
     val rawFilePath: String? = null,
     val entryFilter: EntryFilter? = null,

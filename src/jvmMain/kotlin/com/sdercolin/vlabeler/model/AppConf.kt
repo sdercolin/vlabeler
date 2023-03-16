@@ -14,6 +14,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * Basic configurations of app
+ *
  * @param painter Configurations about chart painting
  * @param editor Configurations about editor
  * @param view Configurations about views
@@ -35,6 +36,7 @@ data class AppConf(
 ) {
     /**
      * Configurations about chart painting
+     *
      * @param canvasResolution Configurations about the canvas's resolution
      * @param maxDataChunkSize Max number of sample points in one chunk drawn in the painter
      * @param amplitude Configurations about amplitude (waveforms) painting
@@ -59,8 +61,9 @@ data class AppConf(
     }
 
     /**
-     * Configurations about the canvas's resolution.
-     * This resolution is defined as number of sample points included in 1 pixel.
+     * Configurations about the canvas's resolution. This resolution is defined as number of sample points included in 1
+     * pixel.
+     *
      * @param default Default value used when editor is launched
      * @param step Linear step length when resolution is changed by "+" "-" buttons
      */
@@ -83,12 +86,13 @@ data class AppConf(
 
     /**
      * Configurations about amplitude (waveforms) painting
+     *
      * @param resampleDownToHz Maximum sample rate for loading. If the audio has a higher sample rate, it will be
-     * resampled down to this value. If set to 0, the original sample rate is used
+     *     resampled down to this value. If set to 0, the original sample rate is used
      * @param unitSize Frames of one pixel used when drawing the waveform
      * @param intensityAccuracy Height of the container bitmap in pixel
-     * @param yAxisBlankRate Height rate of the extra blank region displayed in both top and bottom to
-     * the height of the waveform
+     * @param yAxisBlankRate Height rate of the extra blank region displayed in both top and bottom to the height of the
+     *     waveform
      * @param color Color of the waveform
      * @param backgroundColor Background color of the waveform
      */
@@ -123,14 +127,15 @@ data class AppConf(
 
     /**
      * Configurations about spectrogram painting
+     *
      * @param enabled True if spectrogram is calculated and shown
      * @param heightWeight Height weight of the spectrogram to the amplitude form (whose weight is 1)
      * @param pointDensity Points drawn into one pixel
      * @param standardHopSize Distance as the number of samples for which the window is slided when move to the next
-     * frame. This value is used for cases with sample rate 48000 Hz. For other sample rates it is calculated
-     * linear-proportionally.
+     *     frame. This value is used for cases with sample rate 48000 Hz. For other sample rates it is calculated
+     *     linear-proportionally.
      * @param standardWindowSize Number of samples in the window. This value is used for cases with sample rate 48000
-     * Hz. For other sample rates it is calculated exponential-proportionally (base is 2).
+     *     Hz. For other sample rates it is calculated exponential-proportionally (base is 2).
      * @param windowType Window type used in the Short-Time FT. See [WindowType] for options
      * @param melScaleStep Step of the mel scale for interpolation on the frequency axis
      * @param maxFrequency Max frequency (Hz) displayed
@@ -193,6 +198,7 @@ data class AppConf(
 
     /**
      * Configurations about editor behaviors
+     *
      * @param scissorsColor Color hex string of the scissors' cursor position
      * @param scissorsActions Actions taken with a successful scissors click
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted
@@ -248,6 +254,7 @@ data class AppConf(
 
     /**
      * Actions taken with a successful scissors click
+     *
      * @param goTo True if the editor goes to the given target entry
      * @param askForName True if a renaming dialog is opened for the target entry
      * @param play True if the target entry's audio is played
@@ -260,8 +267,7 @@ data class AppConf(
         val play: Target = DefaultPlay,
     ) {
         /**
-         * Targets of the actions.
-         * Either of the two entries created by the scissors' cut
+         * Targets of the actions. Either of the two entries created by the scissors' cut
          */
         @Serializable
         @Immutable
@@ -286,6 +292,7 @@ data class AppConf(
 
     /**
      * Configurations about the appearance of the label names in the editor for continuous labelers
+     *
      * @param color Color hex string of the label names
      * @param size Font size of the label names
      * @param position Position of the label names at corners. `Bottom` here means the bottom of waveforms
@@ -307,6 +314,7 @@ data class AppConf(
 
     /**
      * Configurations about views
+     *
      * @param language Language of the app
      * @param hideSampleExtension When true, the extension of sample file names is hidden in the editor and entry lists
      * @param accentColor Color hex string of the accent color
@@ -379,10 +387,11 @@ data class AppConf(
 
     /**
      * Define when should `scroll to editable area` automatically fire
+     *
      * @param onLoadedNewSample True if the action is conducted when a new sample file is loaded
      * @param onJumpedToEntry True if the action is conducted when jumped to an entry via entry list
-     * @param onSwitchedInMultipleEditMode True if action is conducted in multiple edit mode when
-     * switch to another entry
+     * @param onSwitchedInMultipleEditMode True if action is conducted in multiple edit mode when switch to another
+     *     entry
      * @param onSwitched True if action is conducted when switched to another entry
      */
     @Serializable
@@ -404,6 +413,7 @@ data class AppConf(
 
     /**
      * Define when and how to conduct auto-save
+     *
      * @param target whether to conduct auto-save, and where to save
      * @param intervalSec interval between auto-save (in seconds)
      */
@@ -433,8 +443,7 @@ data class AppConf(
             Project(Strings.PreferencesAutoSaveTargetProject),
 
             /**
-             * Save to application record directory.
-             * Will be discarded when the application is normally closed.
+             * Save to application record directory. Will be discarded when the application is normally closed.
              */
             @SerialName("record")
             Record(Strings.PreferencesAutoSaveTargetRecord)
@@ -449,6 +458,7 @@ data class AppConf(
 
     /**
      * Configurations about playback
+     *
      * @param playOnDragging Configurations about playback preview on dragging
      */
     @Serializable
@@ -459,6 +469,7 @@ data class AppConf(
 
     /**
      * Configurations about playback preview on dragging
+     *
      * @param enabled True if the preview is enabled
      * @param rangeRadiusMillis Radius of the preview half-range (in milliseconds)
      * @param eventQueueSize Max size of retained drag events
@@ -483,6 +494,7 @@ data class AppConf(
 
     /**
      * Custom keymaps
+     *
      * @param keyActionMap Custom keymap for [KeyAction]s
      * @param mouseClickActionMap Custom keymap for [MouseClickAction]s
      * @param mouseScrollActionMap Custom keymap for [MouseScrollAction]s
@@ -497,6 +509,7 @@ data class AppConf(
 
     /**
      * Configurations about edit history (undo/redo)
+     *
      * @param maxSize Max size of the edit history
      * @param squashIndex Ignore changes that contain a different [Project.currentIndex]
      */

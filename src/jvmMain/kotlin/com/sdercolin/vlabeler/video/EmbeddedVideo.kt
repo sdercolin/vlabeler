@@ -27,7 +27,8 @@ fun EmbeddedVideo(videoState: VideoState) {
         alignment = Alignment.BottomStart,
         offset = IntOffset(13, -75),
     ) {
-        Box( // slightly larger area for resizing
+        Box(
+            // slightly larger area for resizing
             modifier = Modifier
                 .size(videoState.width + 5.dp, videoState.height)
                 .draggable(

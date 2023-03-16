@@ -27,9 +27,8 @@ data class Entry(
      */
     val start: Float,
     /**
-     * Label end time (milliseconds)
-     * Minus or zero value represents a relative value to the sample file's end.
-     * Will be converted to positive value when edited
+     * Label end time (milliseconds) Minus or zero value represents a relative value to the sample file's end. Will be
+     * converted to positive value when edited
      */
     val end: Float,
     /**
@@ -45,9 +44,9 @@ data class Entry(
      */
     val notes: EntryNotes = EntryNotes(),
     /**
-     * Whether the entry need to be updated with the sample file.
-     * Especially when `end` is `0`, we don't know if it's the actual start of the sample file
-     * or a relative value to the end, which means we need to sync it with the sample file
+     * Whether the entry need to be updated with the sample file. Especially when `end` is `0`, we don't know if it's
+     * the actual start of the sample file or a relative value to the end, which means we need to sync it with the
+     * sample file
      */
     val needSync: Boolean = false,
 ) {

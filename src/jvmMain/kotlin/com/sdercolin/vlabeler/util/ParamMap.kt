@@ -30,8 +30,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
- * Serializable dynamic type map.
- * Basically it should contain all the parameters of a [BasePlugin].
+ * Serializable dynamic type map. Basically it should contain all the parameters of a [BasePlugin].
  */
 class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
 
@@ -102,9 +101,9 @@ class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
 }
 
 /**
- * Serializable dynamic type map with [TypedValue].
- * We don't expect it to contain all the parameters of a [BasePlugin], instead, when it's actually used,
- * it will be converted to a [ParamMap] with [resolve], which will fill all the missing parameters with default values.
+ * Serializable dynamic type map with [TypedValue]. We don't expect it to contain all the parameters of a [BasePlugin],
+ * instead, when it's actually used, it will be converted to a [ParamMap] with [resolve], which will fill all the
+ * missing parameters with default values.
  */
 @Serializable
 class ParamTypedMap(private val map: Map<String, TypedValue>) {
