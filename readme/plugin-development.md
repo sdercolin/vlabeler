@@ -257,19 +257,19 @@ You can modify these variables directly to conduct batch edit on the whole proje
 
 The following variables are provided before your scripts are executed.
 
-| name               | type                | description                                                                                                                                                                    |
-|--------------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| entries            | Entry[]             | Only available when the plugin's `macroScope` is `Module`. List of current [Entry](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Entry.kt) objects in the current module. |
-| currentEntryIndex  | Entry[]             | Only available when the plugin's `macroScope` is `Module`. The index of current shown entry.                                                                                   |
-| module             | Module              | Only available when the plugin's `macroScope` is `Module`. The current [Module](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Module.kt) object.                          |
-| modules            | Module[]            | Only available when the plugin's `macroScope` is `Project`. List of current [Module](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Module.kt) objects in the project.     |
-| currentModuleIndex | Integer             | Only available when the plugin's `macroScope` is `Project`. The index of current shown module.                                                                                 |
-| params             | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                                                                           |
-| resources          | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                                               |
-| labeler            | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                                             |
-| labelerParams      | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                                        |
-| debug              | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                                          |
-| pluginDirectory    | [File](file-api.md) | Directory of this plugin                                                                                                                                                       |
+| name               | type                | description                                                                                                                                                   |
+|--------------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| entries            | Entry[]             | Only available when the plugin's `macroScope` is `Module`. List of current [Entry](../src/jvmMain/resources/js/class_entry.js) objects in the current module. |
+| currentEntryIndex  | Entry[]             | Only available when the plugin's `macroScope` is `Module`. The index of current shown entry.                                                                  |
+| module             | Module              | Only available when the plugin's `macroScope` is `Module`. The current [Module](../src/jvmMain/resources/js/class_module.js) object.                          |
+| modules            | Module[]            | Only available when the plugin's `macroScope` is `Project`. List of current [Module](../src/jvmMain/resources/js/class_module.js) objects in the project.     |
+| currentModuleIndex | Integer             | Only available when the plugin's `macroScope` is `Project`. The index of current shown module.                                                                |
+| params             | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                                                          |
+| resources          | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                              |
+| labeler            | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                            |
+| labelerParams      | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                       |
+| debug              | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                         |
+| pluginDirectory    | [File](file-api.md) | Directory of this plugin                                                                                                                                      |
 
 ### Use an entry selector
 
@@ -288,6 +288,8 @@ for (let index of selectedIndexes) {
 ### Output
 
 Change the content of the given `entries` or `modules` list to change the project's content.
+
+Note that you can access to `module` if the scope is `Module`, but the changes to it will not be reflected.
 
 The following code is an example of adding a suffix to every entry's name in the current module:
 

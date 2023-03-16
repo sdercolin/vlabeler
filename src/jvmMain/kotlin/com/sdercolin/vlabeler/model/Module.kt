@@ -11,7 +11,7 @@ import java.io.File
 
 @Serializable
 @Immutable
-data class Module(
+data class Module constructor(
     val name: String,
     /**
      * Should always be under [Project.rootSampleDirectory]. Basically, it's stored as a relative path to
@@ -28,6 +28,23 @@ data class Module(
     val rawFilePath: String? = null,
     val entryFilter: EntryFilter? = null,
 ) {
+
+    constructor(
+        rootDirectory: File,
+        name: String,
+        sampleDirectory: File,
+        entries: List<Entry>,
+        currentIndex: Int,
+        rawFilePath: File? = null,
+        entryFilter: EntryFilter? = null,
+    ) : this(
+        name = name,
+        sampleDirectoryPath = sampleDirectory.relativeTo(rootDirectory).path,
+        entries = entries,
+        currentIndex = currentIndex,
+        rawFilePath = rawFilePath?.relativeTo(rootDirectory)?.path,
+        entryFilter = entryFilter,
+    )
 
     @Transient
     private val filteredEntryIndexes: List<Int> =
@@ -61,13 +78,13 @@ data class Module(
     fun getCurrentSampleFile(project: Project): File = getSampleFile(project, currentSampleName)
 
     fun getSampleDirectory(project: Project) =
-        project.rootSampleDirectory?.resolve(sampleDirectoryPath) ?: sampleDirectoryPath.toFile()
+        project.rootSampleDirectory.resolve(sampleDirectoryPath)
 
     fun getSampleFile(project: Project, sampleName: String): File {
         return getSampleDirectory(project).resolve(sampleName)
     }
 
-    fun getRawFile(project: Project) = rawFilePath?.let { project.rootSampleDirectory?.resolve(it) ?: it.toFile() }
+    fun getRawFile(project: Project) = rawFilePath?.let { project.rootSampleDirectory.resolve(it) }
 
     @Transient
     val entryCount: Int = entries.size
@@ -377,3 +394,36 @@ private fun List<Entry>.distinct(allowDuplicated: Boolean): List<Entry> {
     if (allowDuplicated) return this
     return distinctBy { it.name }
 }
+
+/**
+ * A data class for serializing and deserializing [Module] to and from the JavaScript environment. Should be consistent
+ * with the JavaScript class defined in `class_module.js`.
+ */
+@Serializable
+data class JsModule(
+    val name: String,
+    val sampleDirectory: String,
+    val entries: List<Entry>,
+    val currentIndex: Int,
+    val rawFilePath: String?,
+    val entryFilter: EntryFilter?,
+) {
+    fun toModule(rootDirectory: File) = Module(
+        rootDirectory = rootDirectory,
+        name = name,
+        sampleDirectory = sampleDirectory.toFile(),
+        entries = entries,
+        currentIndex = currentIndex,
+        rawFilePath = rawFilePath?.toFile(),
+        entryFilter = entryFilter,
+    )
+}
+
+fun Module.toJs(project: Project) = JsModule(
+    name = name,
+    sampleDirectory = getSampleDirectory(project).absolutePath,
+    entries = entries,
+    currentIndex = currentIndex,
+    rawFilePath = getRawFile(project)?.absolutePath,
+    entryFilter = entryFilter,
+)

@@ -11,12 +11,11 @@ import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.readTextByEncoding
 import com.sdercolin.vlabeler.util.toFile
-import kotlinx.serialization.Serializable
 import java.io.File
 
 sealed class TemplatePluginResult {
     data class Raw(val lines: List<String>) : TemplatePluginResult()
-    data class Parsed(val entries: List<FlatEntry>) : TemplatePluginResult()
+    data class Parsed(val entries: List<Entry>) : TemplatePluginResult()
 }
 
 fun runTemplatePlugin(
@@ -79,7 +78,7 @@ fun runTemplatePlugin(
             Log.info("Plugin execution got raw lines:\n" + lines.joinToString("\n"))
             TemplatePluginResult.Raw(lines)
         } else {
-            val entries = js.getJson<List<FlatEntry>>("output")
+            val entries = js.getJson<List<Entry>>("output")
             Log.info("Plugin execution got entries:\n" + entries.joinToString("\n"))
             TemplatePluginResult.Parsed(entries)
         }
@@ -94,17 +93,4 @@ fun runTemplatePlugin(
     }
     js.close()
     return result
-}
-
-@Serializable
-data class FlatEntry(
-    val sample: String? = null,
-    val name: String,
-    val start: Float,
-    val end: Float,
-    val points: List<Float> = listOf(),
-    val extras: List<String> = listOf(),
-    val notes: EntryNotes = EntryNotes(),
-) {
-    fun toEntry(fallbackSample: String) = Entry(sample ?: fallbackSample, name, start, end, points, extras, notes)
 }

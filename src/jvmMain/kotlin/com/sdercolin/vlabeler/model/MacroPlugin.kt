@@ -43,7 +43,7 @@ fun runMacroPlugin(
         listOfNotNull(
             Resources.classEntryJs,
             Resources.classEditedEntryJs,
-            if (plugin.scope == Plugin.PluginProcessScope.Project) Resources.classModuleJs else null,
+            Resources.classModuleJs,
             Resources.expectedErrorJs,
             Resources.reportJs,
             Resources.envJs,
@@ -57,13 +57,13 @@ fun runMacroPlugin(
 
         when (plugin.scope) {
             Plugin.PluginProcessScope.Project -> {
-                js.setJson("modules", project.modules)
+                js.setJson("modules", project.modules.map { it.toJs(project) })
                 js.set("currentModuleIndex", project.currentModuleIndex)
             }
             Plugin.PluginProcessScope.Module -> {
                 js.setJson("entries", project.currentModule.entries)
                 js.set("currentEntryIndex", project.currentModule.currentIndex)
-                js.setJson("module", project.currentModule)
+                js.setJson("module", project.currentModule.toJs(project))
             }
         }
 
@@ -75,7 +75,8 @@ fun runMacroPlugin(
 
         val newProject = when (plugin.scope) {
             Plugin.PluginProcessScope.Project -> {
-                val modules = js.getJsonOrNull<List<Module>>("modules")
+                val modules = js.getJsonOrNull<List<JsModule>>("modules")
+                    ?.map { it.toModule(project.rootSampleDirectory) }
                 if (modules != null) {
                     project.copy(
                         modules = modules,
