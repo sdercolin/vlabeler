@@ -62,6 +62,7 @@ fun Strings.ja(): String? = when (this) {
     MenuToolsBatchEdit -> "一括編集"
     MenuToolsBatchEditQuickLaunchManager -> "スロットの設定..."
     MenuToolsBatchEditQuickLaunch -> "スロット %d：%s"
+    MenuToolsBatchEditShowDisabledItems -> "すべてのプラグインを表示"
     MenuToolsBatchEditManagePlugins -> "プラグインマネージャー..."
     MenuToolsPrerender -> "すべてのグラフをプリレンダリング"
     MenuToolsRecycleMemory -> "メモリを解放"

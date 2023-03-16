@@ -63,6 +63,7 @@ enum class Strings {
     MenuToolsBatchEdit,
     MenuToolsBatchEditQuickLaunchManager,
     MenuToolsBatchEditQuickLaunch,
+    MenuToolsBatchEditShowDisabledItems,
     MenuToolsBatchEditManagePlugins,
     MenuToolsPrerender,
     MenuToolsRecycleMemory,

@@ -62,6 +62,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuToolsBatchEdit -> "批量编辑"
     MenuToolsBatchEditQuickLaunchManager -> "槽位设置"
     MenuToolsBatchEditQuickLaunch -> "槽位 %d：%s"
+    MenuToolsBatchEditShowDisabledItems -> "显示全部插件"
     MenuToolsBatchEditManagePlugins -> "管理插件..."
     MenuToolsPrerender -> "预渲染所有图表..."
     MenuToolsRecycleMemory -> "回收内存"

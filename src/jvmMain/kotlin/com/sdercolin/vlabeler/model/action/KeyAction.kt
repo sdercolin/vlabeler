@@ -223,6 +223,11 @@ enum class KeyAction(
         null,
         true,
     ),
+    ToggleShowDisabledMacroPlugins(
+        listOf(Strings.MenuTools, Strings.MenuToolsBatchEdit, Strings.MenuToolsBatchEditShowDisabledItems),
+        null,
+        true,
+    ),
     ManageMacroPlugins(
         listOf(Strings.MenuTools, Strings.MenuToolsBatchEdit, Strings.MenuToolsBatchEditManagePlugins),
         KeySet(Key.Semicolon, setOf(Key.Ctrl)),

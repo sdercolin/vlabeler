@@ -26,6 +26,7 @@ import com.sdercolin.vlabeler.util.Clipboard
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.getNullableOrElse
+import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toUri
@@ -375,13 +376,18 @@ fun FrameWindowScope.Menu(
                 if (appState != null) {
                     val appRecord by appState.appRecordFlow.collectAsState()
                     Menu(string(Strings.MenuToolsBatchEdit)) {
-                        appState.getActivePlugins(Plugin.Type.Macro).forEach {
-                            Item(
-                                it.displayedName.get(),
-                                onClick = { appState.openMacroPluginDialog(it) },
-                                enabled = it.isMacroExecutable(appState),
-                            )
-                        }
+                        appState.getActivePlugins(Plugin.Type.Macro)
+                            .map { it to it.isMacroExecutable(appState) }
+                            .runIf(appRecord.showDisabledMacroPluginItems.not()) {
+                                filter { it.second }
+                            }
+                            .forEach {
+                                Item(
+                                    it.first.displayedName.get(),
+                                    onClick = { appState.openMacroPluginDialog(it.first) },
+                                    enabled = it.second,
+                                )
+                            }
                         Separator()
                         Item(
                             string(Strings.MenuToolsBatchEditQuickLaunchManager),
@@ -408,6 +414,14 @@ fun FrameWindowScope.Menu(
                             }
                         }
                         Separator()
+                        CheckboxItem(
+                            string(Strings.MenuToolsBatchEditShowDisabledItems),
+                            checked = appRecord.showDisabledMacroPluginItems,
+                            onCheckedChange = {
+                                appState.appRecordStore.update { copy(showDisabledMacroPluginItems = it) }
+                            },
+                            shortcut = KeyAction.ToggleShowDisabledMacroPlugins.getKeyShortCut(),
+                        )
                         Item(
                             string(Strings.MenuToolsBatchEditManagePlugins),
                             onClick = { appState.openCustomizableItemManagerDialog(CustomizableItem.Type.MacroPlugin) },

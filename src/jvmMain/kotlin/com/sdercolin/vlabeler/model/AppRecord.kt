@@ -40,6 +40,7 @@ data class AppRecord(
     val pluginQuickLaunchSlots: Map<Int, PluginQuickLaunch> = mapOf(),
     val hasAskedForTrackingPermission: Boolean = false,
     val trackingId: String? = null,
+    val showDisabledMacroPluginItems: Boolean = false,
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(
