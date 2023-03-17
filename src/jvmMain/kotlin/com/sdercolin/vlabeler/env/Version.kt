@@ -2,12 +2,23 @@ package com.sdercolin.vlabeler.env
 
 import java.util.Properties
 
+/**
+ * The version of the application.
+ */
 val appVersion: Version by lazy {
     val stream = Thread.currentThread().contextClassLoader.getResource("app.properties")?.openStream()
     val properties = Properties().apply { load(requireNotNull(stream)) }
     requireNotNull(Version.from(properties.getProperty("app.version")))
 }
 
+/**
+ * A data class representing a version.
+ * @property major The major version number.
+ * @property minor The minor version number.
+ * @property patch The patch version number.
+ * @property stage The [VersionStage] of the version. If null, the version is a stable version.
+ * @property stageVersion The version number of the stage. The nullability is the same as [stage].
+ */
 data class Version(
     val major: Int,
     val minor: Int,

@@ -15,11 +15,20 @@ import kotlin.math.log10
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
+/**
+ * Data class to represent a spectrogram.
+ *
+ * @param data A list of frequency data. Each element is a frequency data of a time frame.
+ * @param hopSize The hop size of the spectrogram.
+ */
 @Immutable
 data class Spectrogram(val data: List<DoubleArray>, val hopSize: Int)
 
 private const val STANDARD_SAMPLE_RATE = 44100
 
+/**
+ * Convert a wave to a spectrogram.
+ */
 fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogram {
     val dataLength = channels.minOf { it.data.size }
     val data = DoubleArray(dataLength) { i ->
@@ -71,6 +80,9 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
     return Spectrogram(output, hopSize)
 }
 
+/**
+ * Convert a frequency to a mel scale.
+ */
 object MelScale {
     fun toMel(frequency: Double): Double {
         return 2595 * log10(1 + frequency / 700)

@@ -11,6 +11,12 @@ import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.parseJson
 import java.io.File
 
+/**
+ * Load plugins from the plugin directory.
+ *
+ * @param type The type of the plugin.
+ * @param language The current language. It's only used for sorting the plugins.
+ */
 fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
     listOf(CustomPluginDir, DefaultPluginDir)
         .let { if (isDebug) it.reversed() else it }

@@ -103,7 +103,7 @@ data class EntrySelector(
         }
 
         override fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean {
-            val propertyMap = labelerConf.getPropertyMap(labelerConf, entry, js)
+            val propertyMap = labelerConf.getPropertyMap(entry, js)
             val subjectProperty = labelerConf.properties.find { it.name == subject }
                 ?: throw IllegalArgumentException("Unknown subject name as number: $subject")
             val subjectValue = propertyMap.getValue(subjectProperty)

@@ -8,6 +8,9 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import com.sdercolin.vlabeler.model.key.Key
 
+/**
+ * Converts a [PointerEvent] to a [Key] if it is a mouse click or scroll event.
+ */
 fun PointerEvent.toVirtualKey(): Key? {
     return when (type) {
         PointerEventType.Press, PointerEventType.Release -> when (button) {

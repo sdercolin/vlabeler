@@ -60,7 +60,7 @@ fun Strings.en(): String = when (this) {
     MenuToolsBatchEdit -> "Batch Edit"
     MenuToolsBatchEditQuickLaunchManager -> "Slot Settings..."
     MenuToolsBatchEditQuickLaunch -> "Slot %d: %s"
-    MenuToolsBatchEditShowDisabledItems -> "Always Show All Items"
+    MenuToolsBatchEditShowDisabledItems -> "Show plugins that could not be used under the current project"
     MenuToolsBatchEditManagePlugins -> "Manage Plugins..."
     MenuToolsPrerender -> "Prerender All Charts..."
     MenuToolsRecycleMemory -> "Recycle Memory"

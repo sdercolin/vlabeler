@@ -18,12 +18,17 @@ import com.sdercolin.vlabeler.model.key.ActualKey
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * This class handles the overall keyboard inputs and expose flows of [KeyboardState] and [KeyAction] to the UI.
+ */
 @Stable
 class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: AppConf.Keymaps) {
 
@@ -32,11 +37,22 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
     private var mouseScrollActions: Map<KeySet, MouseScrollAction> = MouseScrollAction.getKeySets(keymaps).toMap()
 
     private val _keyboardActionFlow = MutableSharedFlow<KeyAction>(replay = 0)
-    val keyboardActionFlow = _keyboardActionFlow.asSharedFlow()
+
+    /**
+     * A flow of [KeyAction]s that are triggered by keyboard inputs.
+     */
+    val keyboardActionFlow: Flow<KeyAction> = _keyboardActionFlow.asSharedFlow()
 
     private val _keyboardStateFlow = MutableStateFlow(getIdleState())
-    val keyboardStateFlow = _keyboardStateFlow.asStateFlow()
 
+    /**
+     * A flow of [KeyboardState]s that containing information about the current pressed keys.
+     */
+    val keyboardStateFlow: StateFlow<KeyboardState> = _keyboardStateFlow.asStateFlow()
+
+    /**
+     * Should be called when the keymaps are updated.
+     */
     suspend fun updateKeymaps(keymaps: AppConf.Keymaps) {
         keyActions = KeyAction.getNonMenuKeySets(keymaps)
         mouseClickActions = MouseClickAction.getKeySets(keymaps).toMap()
@@ -54,6 +70,9 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
         _keyboardStateFlow.emit(state)
     }
 
+    /**
+     * Should be called when a [KeyEvent] is received at the app's top layer.
+     */
     fun onKeyEvent(event: KeyEvent): Boolean {
         val keySet = KeySet.fromKeyEvent(event)
         val caughtKeyAction = keyActions.firstOrNull { it.first == keySet }?.second
@@ -69,6 +88,13 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
     }
 }
 
+/**
+ * A data class that contains information about the current pressed keys.
+ *
+ * @property keySet The current pressed keys.
+ * @property availableMouseClickActions A map of [KeySet]s to [MouseClickAction]s that are available to be triggered.
+ * @property availableMouseScrollActions A map of [KeySet]s to [MouseScrollAction]s that are available to be triggered.
+ */
 @Immutable
 data class KeyboardState(
     val keySet: KeySet?,
@@ -76,12 +102,18 @@ data class KeyboardState(
     val availableMouseScrollActions: Map<KeySet, MouseScrollAction>,
 ) {
 
+    /**
+     * Get the [MouseClickAction] that is enabled by the current pressed keys and the given [PointerEvent].
+     */
     fun getEnabledMouseClickAction(pointerEvent: PointerEvent): MouseClickAction? {
         val mainKey = pointerEvent.toVirtualKey() ?: return null
         return availableMouseClickActions[KeySet(mainKey, keySet?.subKeys.orEmpty())]
             ?.takeIf { it.pointerEventType == pointerEvent.type }
     }
 
+    /**
+     * Get the [MouseScrollAction] that is enabled by the current pressed keys and the given [PointerEvent].
+     */
     fun getEnabledMouseScrollAction(pointerEvent: PointerEvent): MouseScrollAction? {
         if (pointerEvent.type != PointerEventType.Scroll) return null
         val mainKey = pointerEvent.toVirtualKey() ?: return null
@@ -89,7 +121,24 @@ data class KeyboardState(
     }
 }
 
+/**
+ * Returns whether the given [KeyEvent] is a key release event of the given [ActualKey].
+ */
 fun KeyEvent.isReleased(key: ActualKey) = released && this.key == key
+
+/**
+ * Returns whether the given [KeyEvent] has the native Ctrl key pressed. By "native Ctrl", it means `Ctrl` on
+ * Windows/Linux and `Meta` on macOS.
+ */
 val KeyEvent.isNativeCtrlPressed get() = if (isMacOS) isMetaPressed else isCtrlPressed
+
+/**
+ * Returns whether the given [KeyEvent] has the native Meta key pressed. By "native Meta", it means `Meta` on
+ * Windows/Linux and `Ctrl` on macOS.
+ */
 val KeyEvent.isNativeMetaPressed get() = if (isMacOS) isCtrlPressed else isMetaPressed
+
+/**
+ * Whether the given [KeyEvent] is a key release event.
+ */
 val KeyEvent.released get() = type == KeyEventType.KeyUp

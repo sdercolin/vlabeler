@@ -53,7 +53,7 @@ fun BoxScope.PropertyView(project: Project, requestInputProperty: (index: Int, v
         value = withContext(context) {
             js?.let { nonNullJs ->
                 val labelerConf = project.labelerConf
-                val map = labelerConf.getPropertyMap(labelerConf, project.currentEntry, nonNullJs)
+                val map = labelerConf.getPropertyMap(project.currentEntry, nonNullJs)
                 project.labelerConf.properties.map {
                     it to (map[it]?.roundToDecimalDigit(labelerConf.decimalDigit)?.toString() ?: "")
                 }

@@ -13,6 +13,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import javax.sound.sampled.AudioSystem
 
+/**
+ * Data class to represent a wave.
+ *
+ * @property channels A list of channels. Each channel is a list of amplitude data.
+ */
 @Immutable
 class Wave(val channels: List<Channel>) {
     @Stable
@@ -21,6 +26,16 @@ class Wave(val channels: List<Channel>) {
     val length get() = channels[0].data.size
 }
 
+/**
+ * Load a sample chunk from a sample file.
+ *
+ * @param project The project.
+ * @param sampleInfo The sample info.
+ * @param appConf The app configuration.
+ * @param chunkIndex The index of the chunk to load.
+ * @param chunkSize The number of frames in each chunk. The last chunk may have fewer frames, but it doesn't matter
+ *     because the chunkSize is used for calculating the offset of the current chunk.
+ */
 suspend fun loadSampleChunk(
     project: Project,
     sampleInfo: SampleInfo,
@@ -40,7 +55,6 @@ suspend fun loadSampleChunk(
         val isBigEndian = stream.format.isBigEndian
         val channels = List(channelCount) { mutableListOf<Float>() }
         var readFrameCount = 0
-        var pos = offset
         val buffer = ByteArray(frameSize)
         stream.skipNBytes(offset * frameSize)
         Log.debug("Loading chunk $chunkIndex: offset=$offset")
@@ -50,10 +64,10 @@ suspend fun loadSampleChunk(
             if (readSize == 0) break
             for (channelIndex in channels.indices) {
                 val sample = getSampleValueFromFrame(
+                    frame = buffer,
                     frameSize = frameSize,
-                    channelCount = channelCount,
-                    buffer = buffer,
                     channelIndex = channelIndex,
+                    channelCount = channelCount,
                     isBigEndian = isBigEndian,
                 )
                 val normalizedSample = if (sampleInfo.normalizeRatio != null) {
@@ -63,7 +77,6 @@ suspend fun loadSampleChunk(
                 }
                 channels[channelIndex].add(normalizedSample)
             }
-            pos += frameSize
             readFrameCount++
         }
         val wave = Wave(channels = channels.map { Wave.Channel(it.toFloatArray()) })
@@ -89,15 +102,25 @@ suspend fun loadSampleChunk(
     }
 }
 
+/**
+ * Get the amplitude value of a sample from the given frame. By "sample", we mean the value of a single channel in a
+ * frame.
+ *
+ * @param frame The data of the frame.
+ * @param frameSize The size of a frame in bytes. This should be equal to [frame].size.
+ * @param channelIndex The index of the channel.
+ * @param channelCount The number of channels.
+ * @param isBigEndian Whether the data is big endian.
+ */
 fun getSampleValueFromFrame(
+    frame: ByteArray,
     frameSize: Int,
-    channelCount: Int,
-    buffer: ByteArray,
     channelIndex: Int,
+    channelCount: Int,
     isBigEndian: Boolean,
 ): Float {
     val sampleSize = frameSize / channelCount
-    val channelBytes = buffer.slice(
+    val channelBytes = frame.slice(
         channelIndex * sampleSize until (channelIndex + 1) * sampleSize,
     ).let { if (isBigEndian) it.reversed() else it.toList() }
 

@@ -24,6 +24,14 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.charset.Charset
 
+/**
+ * Load project from file asynchronously.
+ *
+ * @param scope The scope to launch the coroutine.
+ * @param file The file to load.
+ * @param appState The app state.
+ * @param autoSaved Whether the project is a temporary auto-saved project.
+ */
 fun loadProject(
     scope: CoroutineScope,
     file: File,
@@ -40,6 +48,13 @@ fun loadProject(
     }
 }
 
+/**
+ * Load project from file synchronously.
+ *
+ * @param file The file to load.
+ * @param appState The app state.
+ * @param autoSaved Whether the project is a temporary auto-saved project.
+ */
 suspend fun awaitLoadProject(
     file: File,
     appState: AppState,
@@ -166,6 +181,13 @@ suspend fun awaitLoadProject(
     appState.hideProgress()
 }
 
+/**
+ * Open a project that has just been created asynchronously.
+ *
+ * @param mainScope The main coroutine scope.
+ * @param project The project that has just been created.
+ * @param appState The app state.
+ */
 fun openCreatedProject(
     mainScope: CoroutineScope,
     project: Project,
@@ -176,6 +198,12 @@ fun openCreatedProject(
     }
 }
 
+/**
+ * Open a project that has just been created synchronously.
+ *
+ * @param project The project that has just been created.
+ * @param appState The app state.
+ */
 suspend fun awaitOpenCreatedProject(
     project: Project,
     appState: AppState,
@@ -190,6 +218,12 @@ suspend fun awaitOpenCreatedProject(
     }
 }
 
+/**
+ * Export the all the modules of a project to the pre-defined output files. If the output file of a module is not
+ * defined, it will be skipped.
+ *
+ * @param project The project to export.
+ */
 suspend fun exportProject(project: Project) {
     val allModules = project.modules.withIndex()
     val groups = allModules.filter { it.value.rawFilePath != null }.groupBy { it.value.getRawFile(project) }
@@ -200,6 +234,13 @@ suspend fun exportProject(project: Project) {
     }
 }
 
+/**
+ * Export a module of a project to the given output file.
+ *
+ * @param project The project to export.
+ * @param moduleIndex The index of the module to export.
+ * @param outputFile The output file to export to.
+ */
 @Suppress("RedundantSuspendModifier")
 suspend fun exportProjectModule(
     project: Project,
@@ -238,6 +279,13 @@ suspend fun exportProjectModule(
 
 private var saveFileJob: Job? = null
 
+/**
+ * Save a project to its project file.
+ *
+ * @param project The project to save.
+ * @param allowAutoExport Whether to allow auto export.
+ * @return The saved project file.
+ */
 suspend fun saveProjectFile(project: Project, allowAutoExport: Boolean = false): File = withContext(Dispatchers.IO) {
     saveFileJob?.join()
     saveFileJob = launch {
@@ -258,6 +306,12 @@ suspend fun saveProjectFile(project: Project, allowAutoExport: Boolean = false):
     project.projectFile
 }
 
+/**
+ * Save a project to a temporary file.
+ *
+ * @param project The project to save.
+ * @return The saved temporary file.
+ */
 suspend fun autoSaveTemporaryProjectFile(project: Project): File = withContext(Dispatchers.IO) {
     val file = RecordDir.resolve("_" + project.projectFile.name)
     val projectContent = project.stringifyJson()

@@ -13,6 +13,9 @@ import java.util.logging.LogRecord
 import java.util.logging.Logger
 import java.util.logging.StreamHandler
 
+/**
+ * The logger for the application.
+ */
 object Log {
 
     val LoggingPath: String = AppDir.resolve(".logs").absolutePath

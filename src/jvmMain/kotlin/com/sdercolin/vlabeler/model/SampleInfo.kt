@@ -112,7 +112,7 @@ data class SampleInfo(
                     val readSize = stream.readNBytes(buffer, 0, frameSize)
                     if (readSize == 0) break
                     for (channelIndex in 0 until format.channels) {
-                        val sample = getSampleValueFromFrame(frameSize, channelCount, buffer, channelIndex, isBigEndian)
+                        val sample = getSampleValueFromFrame(buffer, frameSize, channelIndex, channelCount, isBigEndian)
                         maxAbsolute = max(maxAbsolute, sample.absoluteValue)
                     }
                     pos += frameSize

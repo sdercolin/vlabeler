@@ -3,6 +3,10 @@ package com.sdercolin.vlabeler.env
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 
+/**
+ * Information about the current operating system.
+ */
+
 val osName by lazy { System.getProperty("os.name") }
 val osNameWithVersion by lazy { osName + " " + System.getProperty("os.version") }
 val osInfo by lazy { osNameWithVersion + " " + System.getProperty("os.arch") }
