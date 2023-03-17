@@ -9,6 +9,9 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * Tests for [LocalizedJsonString].
+ */
 class LocalizedJsonStringTest {
 
     @Test

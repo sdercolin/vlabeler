@@ -10,6 +10,9 @@ import kotlinx.serialization.encodeToString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * Tests for serialization of [IpcRequest] and [IpcResponse].
+ */
 class IpcMessageTest {
 
     @Test

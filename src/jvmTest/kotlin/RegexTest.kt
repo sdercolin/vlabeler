@@ -3,6 +3,9 @@ import com.sdercolin.vlabeler.util.replaceWithVariables
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * Tests for [matchGroups] and [replaceWithVariables].
+ */
 class RegexTest {
 
     @Test

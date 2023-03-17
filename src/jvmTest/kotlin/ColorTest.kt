@@ -8,6 +8,9 @@ import com.sdercolin.vlabeler.util.toRgbColor
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
+/**
+ * Tests for src/jvmMain/kotlin/com/sdercolin/vlabeler/util/Color.kt.
+ */
 class ColorTest {
 
     @Test

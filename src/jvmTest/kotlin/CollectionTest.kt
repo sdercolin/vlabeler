@@ -2,6 +2,9 @@ import com.sdercolin.vlabeler.util.splitAveragely
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * Tests for [splitAveragely].
+ */
 class CollectionTest {
 
     @Test

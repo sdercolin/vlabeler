@@ -4,6 +4,9 @@ import com.sdercolin.vlabeler.ui.string.Language
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * Tests for [Language.find].
+ */
 class LanguageDetectTest {
 
     @Test

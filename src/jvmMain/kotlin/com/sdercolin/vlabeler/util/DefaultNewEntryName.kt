@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.util
 /**
  * Get a new entry name to meet the requirement of duplication.
  *
- * @param sourceEntryName The basic name of the entry to be added.
+ * @param sourceEntryName The name of the entry as the source for duplication.
  * @param allEntryNames The list of all existing entry names.
  * @param allowDuplicate Whether to allow duplicate entry names.
  */

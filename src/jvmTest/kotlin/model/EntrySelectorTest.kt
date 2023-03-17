@@ -6,6 +6,9 @@ import com.sdercolin.vlabeler.util.stringifyJson
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
+/**
+ * Tests for serialization of [EntrySelector].
+ */
 class EntrySelectorTest {
 
     @Test

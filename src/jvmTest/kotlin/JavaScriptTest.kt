@@ -3,6 +3,9 @@ import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * Tests for [JavaScript].
+ */
 class JavaScriptTest {
 
     @Test

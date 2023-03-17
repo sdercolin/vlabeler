@@ -5,6 +5,9 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.stringCertain
 import kotlin.test.Test
 
+/**
+ * Tests for [stringCertain].
+ */
 class StringFormatTest {
 
     private val maxParamCount = 5
