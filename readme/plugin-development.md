@@ -368,7 +368,7 @@ For example, if you want to provide a localized description, you can do it like 
 }
 ```
 
-It's totally optional so you can still provide only the default language `en`:
+It's totally optional, so you can still provide only the default language `en`:
 
 ```
 {
@@ -382,7 +382,7 @@ An option in the map is used when the current language code starts with its lang
 e.g. If the current language code is "en-US", the entry with key "en" is used. So it's recommended to use common
 language codes like `en` and `zh` instead of `en-US` and `zh-CN`.
 
-Please note that you have to provide a default language `en` in your localization map, otherwise the plugin gets an
+Please note that you have to provide a default language `en` in your localization map, otherwise the plugin gets a
 parse error when being loaded.
 
 Specially, the `enum` type parameter also supports localized option names by setting the optional property

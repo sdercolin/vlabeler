@@ -53,7 +53,7 @@ for (let index of selectedEntryIndexes) {
         newValue = eval(expression)
     } catch (e) {
         error({
-            en: "Falied to calculate the new value, cause: " + e.message,
+            en: "Failed to calculate the new value, cause: " + e.message,
             zh: "计算新值失败，原因：" + e.message,
             ja: "新しい値の計算に失敗しました。原因：" + e.message
         })

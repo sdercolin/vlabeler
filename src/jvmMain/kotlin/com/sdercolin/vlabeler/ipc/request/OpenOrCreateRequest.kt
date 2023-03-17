@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.sdercolin.vlabeler.ipc.request
 
 import com.sdercolin.vlabeler.ipc.IpcMessageType

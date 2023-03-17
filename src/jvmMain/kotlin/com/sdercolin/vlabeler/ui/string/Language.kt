@@ -6,7 +6,7 @@ var currentLanguage: Language = Language.default
 
 val LocalLanguage = compositionLocalOf { Language.default }
 
-enum class Language(val code: String, val displayName: String) : Text {
+enum class Language(val code: String, private val displayName: String) : Text {
     English("en", "English"),
     ChineseSimplified("zh-Hans", "简体中文"),
     Japanese("ja", "日本語"),

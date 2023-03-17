@@ -14,7 +14,7 @@ This is the documentation for the custom `Env` API provided in `vLabeler`'s scri
 
 `Env.isWindows(): boolean` : check if the operating system is Windows.
 
-`Env.isMac(): boolean` : check if the operating system is Mac OS.
+`Env.isMac(): boolean` : check if the operating system is macOS.
 
 `Env.isLinux(): boolean` : check if the operating system is Linux.
 

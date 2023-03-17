@@ -116,7 +116,7 @@ For label files used in NNSVS/ENUNU and similar systems, the following options a
 5. Select a way that your project is created. `Default` is suitable for most cases
 6. If you want to import a single file as input, select `File` and set the file path. This option is not allowed with
    some labelers
-7. If you want to generate templates with a plugin, select `Template generator` and setup the plugin
+7. If you want to generate templates with a plugin, select `Template generator` and set up the plugin
 8. Click `Finish` and start editing
 9. Click `Export` in the menu to get the edited label file
 
@@ -177,7 +177,7 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`.
 You can change settings in `Settings` -> `Prefereneces` -> `Editor` -> `Notes` to hide the items that
 you don't need.
 
-The `Done` status is by default automatically set when you edit any values in a entry. You can disable this behavior in
+The `Done` status is by default automatically set when you edit any values in an entry. You can disable this behavior in
 the settings too.
 
 ### Quickly launch batch edit plugins

@@ -95,7 +95,6 @@ class ProjectCreatorState(
         private set
     var projectName: String by mutableStateOf("")
     private var projectNameEdited: Boolean by mutableStateOf(false)
-        private set
 
     var workingDirectory: String by mutableStateOf(appRecord.workingDirectory ?: HomeDir.absolutePath)
         private set
@@ -493,7 +492,7 @@ class ProjectCreatorState(
 
     var warningText: Strings? by mutableStateOf(null)
 
-    fun isValid(page: Page) = when (page) {
+    private fun isValid(page: Page) = when (page) {
         Page.Directory -> isProjectNameValid() && isSampleDirectoryValid() && isWorkingDirectoryValid() &&
             isCacheDirectoryValid()
         Page.Labeler -> !labelerError

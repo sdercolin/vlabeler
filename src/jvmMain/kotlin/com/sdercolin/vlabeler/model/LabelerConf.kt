@@ -94,7 +94,7 @@ data class LabelerConf(
     val projectConstructor: ProjectConstructor? = null,
 ) : BasePlugin {
 
-    val fileName get() = "$name.$LabelerFileExtension"
+    private val fileName get() = "$name.$LabelerFileExtension"
     val isBuiltIn get() = DefaultLabelerDir.listFiles().orEmpty().any { it.name == fileName }
     val file get() = if (isBuiltIn) DefaultLabelerDir.resolve(fileName) else CustomLabelerDir.resolve(fileName)
     val isSelfConstructed get() = projectConstructor != null

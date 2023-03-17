@@ -285,12 +285,11 @@ class EditorState(
     private fun switchEntryByPointerEvent(
         shouldSwitchSample: Boolean,
         positive: Boolean,
-    ): Boolean {
+    ) {
         when {
             positive -> if (shouldSwitchSample) appState.nextSample() else appState.nextEntry()
             else -> if (shouldSwitchSample) appState.previousSample() else appState.previousEntry()
         }
-        return true
     }
 
     private fun changeResolutionByPointerEvent(positive: Boolean) {

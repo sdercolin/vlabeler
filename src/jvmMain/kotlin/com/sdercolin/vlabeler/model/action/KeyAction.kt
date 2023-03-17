@@ -12,7 +12,7 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
  * Action that is triggered by a key combination.
  */
 enum class KeyAction(
-    val displayedNameSections: List<Strings>,
+    private val displayedNameSections: List<Strings>,
     val defaultKeySet: KeySet?,
     val isInMenu: Boolean,
 ) : Action {

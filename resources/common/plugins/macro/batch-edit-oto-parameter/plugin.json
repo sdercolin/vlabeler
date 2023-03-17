@@ -1,6 +1,6 @@
 {
   "name": "batch-edit-oto-parameter",
-  "version": 6,
+  "version": 7,
   "type": "macro",
   "displayedName": {
     "en": "Batch edit oto parameter",
