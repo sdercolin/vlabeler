@@ -305,17 +305,18 @@ data class LabelerConf(
      *
      * @property name Unique name of the property
      * @property displayedName Name displayed in property view UI (localized)
-     * @property value Mathematical expression text including fields written as "{[Field.name]}" and "{start}", "{end}".
-     *     Extra fields of number type defined in [extraFieldNames] are also available. The expression is evaluated in
-     *     JavaScript. Deprecated: User `valueGetter` instead.
      * @property valueGetter JavaScript code lines that calculates the value from {entry} object and set {value}
-     *     variable. Either this or [value] should be given. Input: "entry" - the JavaScript object for [Entry]. See
-     *     src/main/resources/labeler/entry.js for the actual JavaScript class definition. Output: "value" - the value
-     *     of the property as number.
+     *     variable.
+     *    - Input: "entry" - the JavaScript object for [Entry]. See src/main/resources/labeler/entry.js for the actual
+     *      JavaScript class definition.
+     *    - Output: "value" - the value of the property as number.
+     *
      * @property valueSetter JavaScript code lines that takes the value of input the property and update {entry} object
-     *     accordingly. If null, the value input feature is disabled for this property. Input: "value" - the value of
-     *     the property as number. "entry" - the JavaScript object for [Entry]. See src/main/resources/labeler/entry.js
-     *     for the actual JavaScript class definition. Output: "entry" - the updated JavaScript object for [Entry].
+     *     accordingly. Could be null if you want to disable the value setting feature in the UI.
+     *    - Input: "value" - the value of the property as number. "entry" - the JavaScript object for [Entry]. See
+     *      src/main/resources/labeler/entry.js for the actual JavaScript class definition.
+     *    - Output:"entry" - the updated JavaScript object for [Entry].
+     *
      * @property shortcutIndex Index in the shortcut list of Action `Set Property`. Could be 0~9.
      */
     @Serializable
@@ -323,8 +324,7 @@ data class LabelerConf(
     data class Property(
         val name: String,
         val displayedName: LocalizedJsonString,
-        val value: String? = null,
-        val valueGetter: List<String>? = null,
+        val valueGetter: List<String>,
         val valueSetter: List<String>? = null,
         val shortcutIndex: Int? = null,
     )
@@ -447,11 +447,6 @@ data class LabelerConf(
                 require(Parameter.StringParam.DefaultValueFileReferencePattern.matches(it.defaultValue).not()) {
                     "Default value of string parameter in a labeler cannot be a file reference"
                 }
-            }
-        }
-        properties.forEach {
-            require(it.value != null || it.valueGetter != null) {
-                "Property ${it.name} must have either a value or a valueGetter"
             }
         }
     }

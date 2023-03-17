@@ -161,7 +161,7 @@ fun Project.singleModuleToRawLabels(moduleIndex: Int): String {
         .map { entry ->
             val fields = labelerConf.getFieldMap(entry)
             val extras = labelerConf.getExtraMap(entry)
-            val properties = labelerConf.getPropertyMap(entry, fields, extras, js)
+            val properties = labelerConf.getPropertyMap(entry, js).mapKeys { it.key.name }
             val variables: Map<String, Any> =
                 fields.mapValues { (it.value as? Float)?.roundToDecimalDigit(labelerConf.decimalDigit) ?: it.value } +
                     // if a name is shared in fields and properties, its value will be overwritten by properties
@@ -216,29 +216,14 @@ private fun LabelerConf.getExtraMap(entry: Entry) = extraFieldNames.mapIndexed {
 
 private fun LabelerConf.getPropertyBaseMap(
     entry: Entry,
-    fields: Map<String, Any>,
-    extras: Map<String, String>,
     js: JavaScript,
-) =
-    properties.associateWith {
-        if (it.valueGetter != null) {
-            js.setJson("entry", entry)
-            js.eval(it.valueGetter.joinToString("\n"))
-            js.get<Double>("value").roundToDecimalDigit(decimalDigit)
-        } else {
-            requireNotNull(it.value)
-            // for backward compatibility
-            val expression = it.value.replaceWithVariables(fields + extras)
-            js.eval(expression)!!.asDouble()
-        }
+) = properties.associateWith {
+    run {
+        js.setJson("entry", entry)
+        js.eval(it.valueGetter.joinToString("\n"))
+        js.get<Double>("value").roundToDecimalDigit(decimalDigit)
     }
-
-private fun LabelerConf.getPropertyMap(
-    entry: Entry,
-    fields: Map<String, Any>,
-    extras: Map<String, String>,
-    js: JavaScript,
-) = getPropertyBaseMap(entry, fields, extras, js).mapKeys { it.key.name }
+}
 
 /**
  * Get a map of property names and values for a given entry.
@@ -246,11 +231,10 @@ private fun LabelerConf.getPropertyMap(
 fun LabelerConf.getPropertyMap(
     entry: Entry,
     js: JavaScript,
-): Map<LabelerConf.Property, Double> =
-    getPropertyBaseMap(entry, getFieldMap(entry), getExtraMap(entry), js)
+): Map<LabelerConf.Property, Double> = getPropertyBaseMap(entry, js)
 
 /**
  * Get a property value for a given entry.
  */
 fun LabelerConf.getPropertyValue(property: LabelerConf.Property, entry: Entry, js: JavaScript): Double? =
-    getPropertyBaseMap(entry, getFieldMap(entry), getExtraMap(entry), js)[property]
+    getPropertyBaseMap(entry, js)[property]

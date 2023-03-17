@@ -561,7 +561,7 @@ class ProjectStoreImpl(
         runCatching {
             val project = requireProject()
             val property = project.labelerConf.properties[propertyIndex]
-            val setter = property.valueSetter ?: return
+            val setter = requireNotNull(property.valueSetter)
             val js = JavaScript()
             js.setJson("entry", project.currentModule.currentEntry)
             js.set("value", value)
