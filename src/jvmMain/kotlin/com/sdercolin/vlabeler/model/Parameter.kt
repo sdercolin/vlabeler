@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 /**
- * Parameters used by a [LabelerConf] or a [Plugin]
+ * Parameters used by a [LabelerConf] or a [Plugin].
  */
 @Serializable
 @Immutable

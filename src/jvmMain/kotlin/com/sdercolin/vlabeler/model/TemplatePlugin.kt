@@ -13,8 +13,19 @@ import com.sdercolin.vlabeler.util.readTextByEncoding
 import com.sdercolin.vlabeler.util.toFile
 import java.io.File
 
+/**
+ * Data classes to receive the result from a template plugin execution.
+ */
 sealed class TemplatePluginResult {
+
+    /**
+     * Result as raw label lines. It will be then parsed by [LabelerConf.parser].
+     */
     data class Raw(val lines: List<String>) : TemplatePluginResult()
+
+    /**
+     * Result as parsed [Entry]s.
+     */
     data class Parsed(val entries: List<Entry>) : TemplatePluginResult()
 }
 

@@ -24,34 +24,38 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.io.File
 
+/**
+ * The project object.
+ *
+ * @property version The version of the project file. Should be [ProjectVersion] when created.
+ * @property rootSampleDirectoryPath The directory where all sample files are stored. Should always be an absolute path.
+ * @property workingDirectoryPath The directory where the project file is stored. Can be relative to
+ *     [rootSampleDirectory].
+ * @property projectName The name of the project. Should be the same as the project file name without extension.
+ * @property cacheDirectoryPath The directory where all cache files are stored. Can be relative to
+ *     [rootSampleDirectory].
+ * @property originalLabelerConf The original [LabelerConf] instance stored in the project file.
+ * @property labelerConf The injected [LabelerConf] instance with [labelerParams].
+ * @property labelerParams The parameters of the labeler.
+ * @property encoding The encoding of the project file.
+ * @property multipleEditMode Whether the multiple edit mode is enabled.
+ * @property modules The modules in the project, which contains all actual content.
+ * @property currentModuleIndex The index of the current module.
+ * @property autoExport Whether to export the project automatically when the project is saved.
+ */
 @Serializable
 @Immutable
 data class Project(
     val version: Int = 0,
-    /**
-     * The directory where all sample files are stored. Should always be an absolute path.
-     */
     @SerialName("rootSampleDirectory")
     val rootSampleDirectoryPath: String,
-    /**
-     * The directory where the project file is stored. Can be relative to [rootSampleDirectory]
-     */
     @SerialName("workingDirectory")
     val workingDirectoryPath: String,
     val projectName: String,
-    /**
-     * The directory where all cache files are stored. Can be relative to [rootSampleDirectory]
-     */
     @SerialName("cacheDirectory")
     val cacheDirectoryPath: String,
-    /**
-     * The original [LabelerConf] instance stored in the project file.
-     */
     @SerialName("labelerConf")
     val originalLabelerConf: LabelerConf,
-    /**
-     * The injected [LabelerConf] instance with [labelerParams].
-     */
     @Transient
     val labelerConf: LabelerConf = originalLabelerConf,
     val labelerParams: ParamTypedMap? = null,
@@ -294,7 +298,7 @@ fun LabelerConf.injectLabelerParams(paramMap: ParamMap): LabelerConf {
 }
 
 /**
- * Should be called from IO threads, because this function runs scripting and may take time
+ * Should be called from IO threads, because this function runs scripting and may take time.
  */
 @Suppress("RedundantSuspendModifier")
 suspend fun projectOf(

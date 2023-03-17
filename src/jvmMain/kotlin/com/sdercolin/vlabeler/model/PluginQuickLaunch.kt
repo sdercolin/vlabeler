@@ -9,6 +9,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
+/**
+ * A data class representing a quick launch command of a plugin.
+ *
+ * @property pluginName The name of the plugin.
+ * @property params The parameters of the plugin.
+ * @property skipDialog Whether to skip the dialog and execute the plugin directly.
+ */
 @Serializable
 @Immutable
 data class PluginQuickLaunch(

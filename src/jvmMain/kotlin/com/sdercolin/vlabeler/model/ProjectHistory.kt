@@ -6,6 +6,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
+/**
+ * A state object that stores the history of [Project]s.
+ */
 class ProjectHistory(private val appConfState: State<AppConf>) {
 
     private val list = mutableStateListOf<Project>()

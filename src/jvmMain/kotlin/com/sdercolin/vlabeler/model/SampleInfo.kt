@@ -18,6 +18,25 @@ import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.pow
 
+/**
+ * Information of a sample file read at the first time and stored for later use.
+ *
+ * @property name The name with extension of the sample file.
+ * @property file The path of the sample file relative to the project root directory.
+ * @property sampleRate The sample rate of the sample file.
+ * @property maxSampleRate The maximum sample rate according to the current configuration.
+ * @property normalize Whether to normalize the sample file.
+ * @property normalizeRatio The ratio of the normalization.
+ * @property channels The number of channels in the sample file.
+ * @property length The number of frames in the sample file.
+ * @property lengthMillis The length of the sample file in milliseconds.
+ * @property chunkSize The number of frames in each chunk. The last chunk may have fewer frames, but it doesn't matter
+ *    because the chunkSize is used for calculating the offset of the current chunk.
+ * @property chunkCount The number of chunks.
+ * @property hasSpectrogram Whether spectrogram is loaded for the sample file.
+ * @property lastModified The last modified time of the sample file.
+ * @property algorithmVersion The version of the algorithm used to load the sample file.
+ */
 @Serializable
 @Immutable
 data class SampleInfo(
