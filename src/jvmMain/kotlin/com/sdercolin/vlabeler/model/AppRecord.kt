@@ -9,6 +9,10 @@ import com.sdercolin.vlabeler.util.asSimplifiedPaths
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
+/**
+ * A serializable data class containing implicit user environment settings. Compared to [AppConf], this class contains
+ * settings that may frequently change.
+ */
 @Immutable
 @Serializable
 data class AppRecord(

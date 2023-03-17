@@ -8,6 +8,14 @@ import com.sdercolin.vlabeler.model.action.ActionType
 
 typealias ActualKey = androidx.compose.ui.input.key.Key
 
+/**
+ * Customized virtual key that is used in the keymaps. One [Key] can be mapped to multiple [ActualKey]s.
+ *
+ * @property displayedName The name of the key that is displayed in the keymap list.
+ * @property actualKeys The actual keys that are mapped to this virtual key.
+ * @property mainKeyActionType The type of action that is triggered by this key as the main key. If this is null, the
+ *     key is not a main key for any action.
+ */
 enum class Key(
     val displayedName: String,
     val actualKeys: List<ActualKey>,

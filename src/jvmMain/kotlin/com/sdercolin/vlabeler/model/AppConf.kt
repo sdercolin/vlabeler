@@ -13,15 +13,15 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Basic configurations of app
+ * Basic configurations of this app.
  *
- * @param painter Configurations about chart painting
- * @param editor Configurations about editor
- * @param view Configurations about views
- * @param autoSave Configurations about auto-save
- * @param playback Configurations about audio playback
- * @param keymaps Custom keymap
- * @param history Configurations about edit history (undo/redo)
+ * @param painter Configurations about chart painting.
+ * @param editor Configurations about editor.
+ * @param view Configurations about views.
+ * @param autoSave Configurations about auto-save.
+ * @param playback Configurations about audio playback.
+ * @param keymaps Custom keymap.
+ * @param history Configurations about edit history (undo/redo).
  */
 @Serializable
 @Immutable
@@ -35,12 +35,12 @@ data class AppConf(
     val history: History = History(),
 ) {
     /**
-     * Configurations about chart painting
+     * Configurations about chart painting.
      *
-     * @param canvasResolution Configurations about the canvas's resolution
-     * @param maxDataChunkSize Max number of sample points in one chunk drawn in the painter
-     * @param amplitude Configurations about amplitude (waveforms) painting
-     * @param spectrogram Configurations about spectrogram painting
+     * @param canvasResolution Configurations about the canvas's resolution.
+     * @param maxDataChunkSize Max number of sample points in one chunk drawn in the painter.
+     * @param amplitude Configurations about amplitude (waveforms) painting.
+     * @param spectrogram Configurations about spectrogram painting.
      */
     @Serializable
     @Immutable
@@ -64,8 +64,8 @@ data class AppConf(
      * Configurations about the canvas's resolution. This resolution is defined as number of sample points included in 1
      * pixel.
      *
-     * @param default Default value used when editor is launched
-     * @param step Linear step length when resolution is changed by "+" "-" buttons
+     * @param default Default value used when editor is launched.
+     * @param step Linear step length when resolution is changed by "+" "-" buttons.
      */
     @Serializable
     @Immutable
@@ -85,16 +85,16 @@ data class AppConf(
     }
 
     /**
-     * Configurations about amplitude (waveforms) painting
+     * Configurations about amplitude (waveforms) painting.
      *
      * @param resampleDownToHz Maximum sample rate for loading. If the audio has a higher sample rate, it will be
-     *     resampled down to this value. If set to 0, the original sample rate is used
-     * @param unitSize Frames of one pixel used when drawing the waveform
-     * @param intensityAccuracy Height of the container bitmap in pixel
+     *     resampled down to this value. If set to 0, the original sample rate is used.
+     * @param unitSize Frames of one pixel used when drawing the waveform.
+     * @param intensityAccuracy Height of the container bitmap in pixel.
      * @param yAxisBlankRate Height rate of the extra blank region displayed in both top and bottom to the height of the
-     *     waveform
-     * @param color Color of the waveform
-     * @param backgroundColor Background color of the waveform
+     *     waveform.
+     * @param color Color of the waveform.
+     * @param backgroundColor Background color of the waveform.
      */
     @Serializable
     @Immutable
@@ -126,21 +126,21 @@ data class AppConf(
     }
 
     /**
-     * Configurations about spectrogram painting
+     * Configurations about spectrogram painting.
      *
-     * @param enabled True if spectrogram is calculated and shown
-     * @param heightWeight Height weight of the spectrogram to the amplitude form (whose weight is 1)
-     * @param pointDensity Points drawn into one pixel
+     * @param enabled True if spectrogram is calculated and shown.
+     * @param heightWeight Height weight of the spectrogram to the amplitude form (whose weight is 1).
+     * @param pointDensity Points drawn into one pixel.
      * @param standardHopSize Distance as the number of samples for which the window is slided when move to the next
      *     frame. This value is used for cases with sample rate 48000 Hz. For other sample rates it is calculated
      *     linear-proportionally.
      * @param standardWindowSize Number of samples in the window. This value is used for cases with sample rate 48000
      *     Hz. For other sample rates it is calculated exponential-proportionally (base is 2).
-     * @param windowType Window type used in the Short-Time FT. See [WindowType] for options
-     * @param melScaleStep Step of the mel scale for interpolation on the frequency axis
-     * @param maxFrequency Max frequency (Hz) displayed
-     * @param minIntensity Min intensity (dB) displayed in the heatmap
-     * @param maxIntensity Max intensity (dB) displayed in the heatmap
+     * @param windowType Window type used in the Short-Time FT. See [WindowType] for options.
+     * @param melScaleStep Step of the mel scale for interpolation on the frequency axis.
+     * @param maxFrequency Max frequency (Hz) displayed.
+     * @param minIntensity Min intensity (dB) displayed in the heatmap.
+     * @param maxIntensity Max intensity (dB) displayed in the heatmap.
      */
     @Serializable
     @Immutable
@@ -197,16 +197,16 @@ data class AppConf(
     }
 
     /**
-     * Configurations about editor behaviors
+     * Configurations about editor behaviors.
      *
-     * @param scissorsColor Color hex string of the scissors' cursor position
-     * @param scissorsActions Actions taken with a successful scissors click
-     * @param autoScroll Timings when `scroll to editable area` is automatically conducted
-     * @param showDone When true, the done button/icon is shown in the editor and entry lists
-     * @param autoDone When true, the editor is automatically setting "done" status of entries
-     * @param showStar When true, the star button/icon is shown in the editor and entry lists
-     * @param showTag When true, the tag or "New tag" button is shown in the editor and entry lists
-     * @param continuousLabelNames Appearance of the label names in the editor for continuous labelers
+     * @param scissorsColor Color hex string of the scissors' cursor position.
+     * @param scissorsActions Actions taken with a successful scissors click.
+     * @param autoScroll Timings when `scroll to editable area` is automatically conducted.
+     * @param showDone When true, the done button/icon is shown in the editor and entry lists.
+     * @param autoDone When true, the editor is automatically setting "done" status of entries.
+     * @param showStar When true, the star button/icon is shown in the editor and entry lists.
+     * @param showTag When true, the tag or "New tag" button is shown in the editor and entry lists.
+     * @param continuousLabelNames Appearance of the label names in the editor for continuous labelers.
      */
     @Serializable
     @Immutable
@@ -253,11 +253,11 @@ data class AppConf(
     }
 
     /**
-     * Actions taken with a successful scissors click
+     * Actions taken with a successful scissors click.
      *
-     * @param goTo True if the editor goes to the given target entry
-     * @param askForName True if a renaming dialog is opened for the target entry
-     * @param play True if the target entry's audio is played
+     * @param goTo True if the editor goes to the given target entry.
+     * @param askForName True if a renaming dialog is opened for the target entry.
+     * @param play True if the target entry's audio is played.
      */
     @Serializable
     @Immutable
@@ -267,7 +267,7 @@ data class AppConf(
         val play: Target = DefaultPlay,
     ) {
         /**
-         * Targets of the actions. Either of the two entries created by the scissors' cut
+         * Targets of the actions. Either of the two entries created by the scissors' cut.
          */
         @Serializable
         @Immutable
@@ -291,11 +291,11 @@ data class AppConf(
     }
 
     /**
-     * Configurations about the appearance of the label names in the editor for continuous labelers
+     * Configurations about the appearance of the label names in the editor for continuous labelers.
      *
-     * @param color Color hex string of the label names
-     * @param size Font size of the label names
-     * @param position Position of the label names at corners. `Bottom` here means the bottom of waveforms
+     * @param color Color hex string of the label names.
+     * @param size Font size of the label names.
+     * @param position Position of the label names at corners. `Bottom` here means the bottom of waveforms.
      */
     @Serializable
     @Immutable
@@ -313,13 +313,13 @@ data class AppConf(
     }
 
     /**
-     * Configurations about views
+     * Configurations about views.
      *
-     * @param language Language of the app
-     * @param hideSampleExtension When true, the extension of sample file names is hidden in the editor and entry lists
-     * @param accentColor Color hex string of the accent color
-     * @param accentColorVariant Color hex string of the accent color variant
-     * @param pinnedEntryListPosition Position of the pinned entry list in the window
+     * @param language Language of the app.
+     * @param hideSampleExtension When true, the extension of sample file names is hidden in the editor and entry lists.
+     * @param accentColor Color hex string of the accent color.
+     * @param accentColorVariant Color hex string of the accent color variant.
+     * @param pinnedEntryListPosition Position of the pinned entry list in the window.
      */
     @Serializable
     @Immutable
@@ -350,7 +350,7 @@ data class AppConf(
     }
 
     /**
-     * Position options of views
+     * Position options of views.
      */
     @Immutable
     enum class ViewPosition(override val stringKey: Strings) : LocalizedText {
@@ -361,7 +361,7 @@ data class AppConf(
     }
 
     /**
-     * Position options of views at corners
+     * Position options of views at corners.
      */
     @Immutable
     enum class ViewCornerPosition(
@@ -376,7 +376,7 @@ data class AppConf(
     }
 
     /**
-     * Font size options
+     * Font size options.
      */
     @Immutable
     enum class FontSize(override val stringKey: Strings) : LocalizedText {
@@ -386,13 +386,13 @@ data class AppConf(
     }
 
     /**
-     * Define when should `scroll to editable area` automatically fire
+     * Define when should `scroll to editable area` automatically fire.
      *
-     * @param onLoadedNewSample True if the action is conducted when a new sample file is loaded
-     * @param onJumpedToEntry True if the action is conducted when jumped to an entry via entry list
-     * @param onSwitchedInMultipleEditMode True if action is conducted in multiple edit mode when switch to another
-     *     entry
-     * @param onSwitched True if action is conducted when switched to another entry
+     * @param onLoadedNewSample True if the action is conducted when a new sample file is loaded.
+     * @param onJumpedToEntry True if the action is conducted when jumped to an entry via entry list.
+     * @param onSwitchedInMultipleEditMode True if action is conducted in multiple edit mode when switch to another.
+     *     entry.
+     * @param onSwitched True if action is conducted when switched to another entry.
      */
     @Serializable
     @Immutable
@@ -412,10 +412,10 @@ data class AppConf(
     }
 
     /**
-     * Define when and how to conduct auto-save
+     * Define when and how to conduct auto-save.
      *
-     * @param target whether to conduct auto-save, and where to save
-     * @param intervalSec interval between auto-save (in seconds)
+     * @param target whether to conduct auto-save, and where to save.
+     * @param intervalSec interval between auto-save (in seconds).
      */
     @Serializable
     @Immutable
@@ -424,20 +424,20 @@ data class AppConf(
         val intervalSec: Int = DefaultIntervalSec,
     ) {
         /**
-         * Targets of the auto-save
+         * Targets of the auto-save.
          */
         @Serializable
         @Immutable
         enum class Target(override val stringKey: Strings) : LocalizedText {
 
             /**
-             * Do not conduct auto-save
+             * Do not conduct auto-save.
              */
             @SerialName("none")
             None(Strings.PreferencesAutoSaveTargetNone),
 
             /**
-             * Save to the current project file
+             * Save to the current project file.
              */
             @SerialName("project")
             Project(Strings.PreferencesAutoSaveTargetProject),
@@ -457,9 +457,9 @@ data class AppConf(
     }
 
     /**
-     * Configurations about playback
+     * Configurations about playback.
      *
-     * @param playOnDragging Configurations about playback preview on dragging
+     * @param playOnDragging Configurations about playback preview on dragging.
      */
     @Serializable
     @Immutable
@@ -468,11 +468,11 @@ data class AppConf(
     )
 
     /**
-     * Configurations about playback preview on dragging
+     * Configurations about playback preview on dragging.
      *
-     * @param enabled True if the preview is enabled
-     * @param rangeRadiusMillis Radius of the preview half-range (in milliseconds)
-     * @param eventQueueSize Max size of retained drag events
+     * @param enabled True if the preview is enabled.
+     * @param rangeRadiusMillis Radius of the preview half-range (in milliseconds).
+     * @param eventQueueSize Max size of retained drag events.
      */
     @Serializable
     @Immutable
@@ -493,11 +493,11 @@ data class AppConf(
     }
 
     /**
-     * Custom keymaps
+     * Custom keymaps.
      *
-     * @param keyActionMap Custom keymap for [KeyAction]s
-     * @param mouseClickActionMap Custom keymap for [MouseClickAction]s
-     * @param mouseScrollActionMap Custom keymap for [MouseScrollAction]s
+     * @param keyActionMap Custom keymap for [KeyAction]s.
+     * @param mouseClickActionMap Custom keymap for [MouseClickAction]s.
+     * @param mouseScrollActionMap Custom keymap for [MouseScrollAction]s.
      */
     @Serializable
     @Immutable
@@ -508,10 +508,11 @@ data class AppConf(
     )
 
     /**
-     * Configurations about edit history (undo/redo)
+     * Configurations about edit history (undo/redo).
      *
-     * @param maxSize Max size of the edit history
-     * @param squashIndex Ignore changes that contain a different [Project.currentIndex]
+     * @param maxSize Max size of the edit history.
+     * @param squashIndex Ignore changes that only contain different [Project.currentModuleIndex]s or
+     *     [Module.currentIndex]s.
      */
     @Serializable
     @Immutable

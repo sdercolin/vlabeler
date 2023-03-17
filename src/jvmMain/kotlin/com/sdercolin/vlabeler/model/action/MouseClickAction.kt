@@ -9,6 +9,9 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.stringCertain
 import com.sdercolin.vlabeler.util.getNullableOrElse
 
+/**
+ * Action that is triggered by mouse click.
+ */
 enum class MouseClickAction(
     val displayedName: Strings,
     val defaultKeySet: KeySet?,

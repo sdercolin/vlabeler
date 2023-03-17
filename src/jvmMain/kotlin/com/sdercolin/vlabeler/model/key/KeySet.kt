@@ -10,6 +10,7 @@ import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.window.MenuBarScope
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.env.isNativeCtrlPressed
 import com.sdercolin.vlabeler.env.isNativeMetaPressed
@@ -24,6 +25,12 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * A serializable set of [Key]s.
+ *
+ * @property mainKey The main key of the set. If this is null, the set is incomplete.
+ * @property subKeys The sub keys of the set.
+ */
 @Serializable(KeySet.KeySetSerializer::class)
 @Immutable
 data class KeySet(
@@ -56,6 +63,9 @@ data class KeySet(
     private val hasMappedCtrl = if (isMacOS) hasWin else hasCtrl
     private val hasMappedWin = if (isMacOS) hasCtrl else hasWin
 
+    /**
+     * Convert this [KeySet] to a [KeyShortcut] used by Compose [MenuBarScope].
+     */
     fun toShortCut(): KeyShortcut? {
         if (isValid().not()) return null
         val mainKey = mainKey?.actualKeys?.firstOrNull() ?: return null
@@ -69,8 +79,10 @@ data class KeySet(
         )
     }
 
-    fun shouldCatch(event: KeyEvent, onlyForRelease: Boolean): Boolean {
-        if (onlyForRelease && event.released.not()) return false
+    /**
+     * Check if this [KeySet] should catch the given [KeyEvent].
+     */
+    fun shouldCatch(event: KeyEvent): Boolean {
         if (mainKey != null) {
             if (event.key !in mainKey.actualKeys) return false
         }
@@ -107,6 +119,9 @@ data class KeySet(
 
     companion object {
 
+        /**
+         * Create a [KeySet] from a [KeyEvent].
+         */
         fun fromKeyEvent(keyEvent: KeyEvent): KeySet {
             val mainKey = Key.fromActualKey(keyEvent.key).takeUnless { keyEvent.released }
             val subKeys = mutableSetOf<Key>()

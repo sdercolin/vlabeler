@@ -19,6 +19,9 @@ import org.zeromq.ZMQ
 import org.zeromq.ZMQException
 import zmq.ZError
 
+/**
+ * IPC server implemented with ZeroMQ.
+ */
 class IpcServer(val coroutineScope: CoroutineScope) {
 
     private val zContext = ZContext()

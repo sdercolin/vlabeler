@@ -8,6 +8,9 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.stringCertain
 import com.sdercolin.vlabeler.util.getNullableOrElse
 
+/**
+ * Action that is triggered by a key combination.
+ */
 enum class KeyAction(
     val displayedNameSections: List<Strings>,
     val defaultKeySet: KeySet?,

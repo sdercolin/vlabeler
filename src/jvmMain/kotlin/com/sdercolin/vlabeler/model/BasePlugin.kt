@@ -18,6 +18,9 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.io.File
 
+/**
+ * An interface for all "plugins", including [Plugin]s and [LabelerConf]s.
+ */
 interface BasePlugin {
     val name: String
     val version: Int
@@ -30,6 +33,9 @@ interface BasePlugin {
     val isSelfExecutable: Boolean
         get() = false
 
+    /**
+     * Save the given [paramMap] to the given [file].
+     */
     suspend fun saveParams(paramMap: ParamMap, file: File) = withContext(Dispatchers.IO) {
         val content = paramMap.mapValues { (_, value) ->
             when (value) {
@@ -46,10 +52,16 @@ interface BasePlugin {
         file.writeText(contentText)
     }
 
+    /**
+     * Get the default parameters.
+     */
     fun getDefaultParams() = parameterDefs.associate { parameter ->
         parameter.name to requireNotNull(parameter.defaultValue)
     }.toParamMap()
 
+    /**
+     * Load the saved parameters from the given [file].
+     */
     suspend fun loadSavedParams(file: File): ParamMap = withContext(Dispatchers.IO) {
         runCatching {
             file.takeIf { it.exists() }
@@ -83,11 +95,17 @@ interface BasePlugin {
             .getOrElse { getDefaultParams() }
     }
 
+    /**
+     * Check if the given [params] are valid.
+     */
     fun checkParams(params: ParamMap, labelerConf: LabelerConf?): Boolean =
         parameterDefs.all { param ->
             val value = params[param.name] ?: return@all false
             param.check(value, labelerConf)
         }
 
+    /**
+     * Get the [File] to save the parameters.
+     */
     fun getSavedParamsFile(): File
 }

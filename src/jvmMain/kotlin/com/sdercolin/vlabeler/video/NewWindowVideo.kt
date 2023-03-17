@@ -61,5 +61,5 @@ fun NewWindowVideo(videoState: VideoState, appConf: AppConf) {
 
 private fun KeyAction.shouldCatch(keymap: Map<KeyAction, KeySet?>, keyEvent: KeyEvent): Boolean {
     val keySet = keymap[this] ?: defaultKeySet ?: return false
-    return keySet.shouldCatch(keyEvent, false)
+    return keySet.shouldCatch(keyEvent)
 }

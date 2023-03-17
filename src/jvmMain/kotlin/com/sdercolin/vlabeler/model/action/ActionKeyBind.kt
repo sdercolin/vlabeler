@@ -3,6 +3,9 @@ package com.sdercolin.vlabeler.model.action
 import com.sdercolin.vlabeler.model.key.KeySet
 import com.sdercolin.vlabeler.ui.string.Language
 
+/**
+ * A data class that contains an action and the key set that triggers the action.
+ */
 sealed class ActionKeyBind<T : Action> {
     abstract val action: T
     abstract val keySet: KeySet?

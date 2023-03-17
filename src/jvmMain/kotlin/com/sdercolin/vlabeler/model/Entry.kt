@@ -3,6 +3,21 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
+/**
+ * A serializable data to represent a label entry.
+ *
+ * @property sample Sample file name with extension.
+ * @property name Name or alias of the entry.
+ * @property start Label start time in milliseconds.
+ * @property end Label end time in milliseconds. Minus or zero value represents a relative value to the sample file's
+ *     end, which will be converted to positive value the sample is firstly loaded.
+ * @property points Times in milliseconds for other points defined by [LabelerConf.fields].
+ * @property extras Extra data as [String] defined by [LabelerConf.extraFieldNames].
+ * @property notes Other properties of an entry which are only used in vLabeler.
+ * @property needSync Whether the entry need to be updated with the sample file. Especially when `end` is `0`, we don't
+ *     know if it's the actual start of the sample file or a relative value to the end, which needs to be converted to
+ *     an absolute value with the sample file's length.
+ */
 @Serializable
 @Immutable
 data class Entry(

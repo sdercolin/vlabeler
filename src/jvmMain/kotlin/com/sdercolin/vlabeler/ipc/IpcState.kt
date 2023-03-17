@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+/**
+ * State for Inter-Process Communication.
+ */
 class IpcState(private val appState: AppState) {
 
     private val server = IpcServer(appState.mainScope)

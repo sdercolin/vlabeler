@@ -4,6 +4,13 @@ import com.sdercolin.vlabeler.model.Entry
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
+/**
+ * A serializable data class to represent a filter for [Entry].
+ *
+ * @property searchText The combined text prompt for searching. e.g. `"any";name:"name";sample:"sample";tag:"tag"`
+ * @property star The star filter. If null, no filter is applied.
+ * @property done The done filter. If null, no filter is applied.
+ */
 @Serializable
 data class EntryFilter(
     val searchText: String = "",

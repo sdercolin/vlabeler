@@ -9,22 +9,30 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.io.File
 
+/**
+ * A sub-project of a [Project] containing a list of [Entry]s. All basic operations on entries are done inside a
+ * single module.
+ *
+ * @property name The unique name of the module. If "" (empty string), the module is displayed as `(Root)`. For labelers
+ *     that do not support multiple modules, this should always be "".
+ * @property sampleDirectoryPath The path of the sample directory. Should always be under [Project.rootSampleDirectory].
+ *     Basically, it's stored as a relative path to [Project.rootSampleDirectory]. Use [getSampleDirectory] to get the
+ *     actual directory.
+ * @property entries The list of entries in the module.
+ * @property currentIndex The index of the current entry in [entries].
+ * @property rawFilePath The path of the target raw label file. Should always be under [Project.rootSampleDirectory].
+ *     Basically, it's stored as a relative path to [Project.rootSampleDirectory]. Use [getRawFile] to get the actual
+ *     file.
+ * @property entryFilter The filter that is applied to the entries.
+ */
 @Serializable
 @Immutable
 data class Module constructor(
     val name: String,
-    /**
-     * Should always be under [Project.rootSampleDirectory]. Basically, it's stored as a relative path to
-     * [Project.rootSampleDirectory]. Use [getSampleDirectory] to get the actual directory.
-     */
     @SerialName("sampleDirectory")
     val sampleDirectoryPath: String,
     val entries: List<Entry>,
     val currentIndex: Int,
-    /**
-     * Should always be under [Project.rootSampleDirectory]. Basically, it's stored as a relative path to
-     * [Project.rootSampleDirectory]. Use [getRawFile] to get the actual file.
-     */
     val rawFilePath: String? = null,
     val entryFilter: EntryFilter? = null,
 ) {

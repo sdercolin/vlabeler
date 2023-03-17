@@ -6,6 +6,11 @@ import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.parseJson
 import kotlinx.serialization.Serializable
 
+/**
+ * A serializable report of Open Source Licenses used in this project.
+ *
+ * @property dependencies The list of dependencies.
+ */
 @Serializable
 @Immutable
 data class LicenseReport(

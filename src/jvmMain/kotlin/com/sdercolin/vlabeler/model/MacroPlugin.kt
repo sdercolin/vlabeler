@@ -1,6 +1,5 @@
 package com.sdercolin.vlabeler.model
 
-import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.PluginRuntimeException
@@ -13,7 +12,6 @@ import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.resolve
 import com.sdercolin.vlabeler.util.toFile
-import kotlinx.serialization.Serializable
 
 class MacroPluginExecutionListener(
     val onAudioPlaybackRequest: (AudioPlaybackRequest) -> Unit,
@@ -121,10 +119,3 @@ fun runMacroPlugin(
     js.close()
     return result
 }
-
-@Serializable
-@Immutable
-data class PluginEditedEntry(
-    val originalIndex: Int?,
-    val entry: Entry,
-)
