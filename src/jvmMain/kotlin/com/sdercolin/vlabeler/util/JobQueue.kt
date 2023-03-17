@@ -6,6 +6,13 @@ import kotlinx.coroutines.launch
 
 private typealias JobFactory = (CoroutineScope) -> Job
 
+/**
+ * A queue of suspendable jobs to ensure they run sequentially.
+ *
+ * @param coroutineScope The scope of the jobs.
+ * @param size The maximum size of the queue. If during the execution of a job, the queue is full, the oldest job except
+ *     the current one will be removed.
+ */
 class JobQueue(
     private val coroutineScope: CoroutineScope,
     private val size: Int,

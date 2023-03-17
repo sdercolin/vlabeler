@@ -27,6 +27,9 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
 import java.io.File
 
+/**
+ * Repository for application update.
+ */
 class UpdateRepository {
 
     private suspend fun <T> useClient(

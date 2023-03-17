@@ -1,5 +1,12 @@
 package com.sdercolin.vlabeler.util
 
+/**
+ * Get a new entry name to meet the requirement of duplication.
+ *
+ * @param sourceEntryName The basic name of the entry to be added.
+ * @param allEntryNames The list of all existing entry names.
+ * @param allowDuplicate Whether to allow duplicate entry names.
+ */
 fun getDefaultNewEntryName(sourceEntryName: String, allEntryNames: List<String>, allowDuplicate: Boolean): String {
     if (allowDuplicate) return sourceEntryName
 

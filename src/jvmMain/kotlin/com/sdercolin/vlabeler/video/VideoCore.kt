@@ -23,7 +23,7 @@ private class ComponentInfo {
 
 /**
  * A lightweight version of androidx.compose.ui.awt.SwingPanel used to display the video player. Slightly faster and
- * fewer bugs
+ * fewer bugs.
  */
 @Composable
 fun VideoCore(videoState: VideoState, modifier: Modifier) {

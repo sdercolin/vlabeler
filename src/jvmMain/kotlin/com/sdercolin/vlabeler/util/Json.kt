@@ -8,6 +8,9 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
+/**
+ * A global [Json] instance for readable JSON contents.
+ */
 val json = Json {
     isLenient = true
     ignoreUnknownKeys = true
@@ -16,6 +19,9 @@ val json = Json {
     serializersModule = getSerializersModule()
 }
 
+/**
+ * A global [Json] instance for minified JSON contents.
+ */
 val jsonMinified = Json {
     isLenient = true
     ignoreUnknownKeys = true
@@ -37,10 +43,16 @@ private fun getSerializersModule() = SerializersModule {
     }
 }
 
+/**
+ * Parse a JSON string to an object.
+ */
 inline fun <reified T> String.parseJson(): T {
     return json.decodeFromString(this)
 }
 
+/**
+ * Serialize an object to a JSON string.
+ */
 inline fun <reified T> T.stringifyJson(): String {
     return json.encodeToString(this)
 }

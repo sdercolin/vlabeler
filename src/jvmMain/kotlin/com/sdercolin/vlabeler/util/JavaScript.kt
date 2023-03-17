@@ -9,6 +9,9 @@ import java.io.Closeable
 import java.io.File
 import java.util.logging.Handler
 
+/**
+ * A wrapper of JavaScript engine powered by GraalVM.
+ */
 class JavaScript(logHandler: Handler? = null, currentWorkingDirectory: File? = null) : Closeable {
 
     private val context = Context.newBuilder()

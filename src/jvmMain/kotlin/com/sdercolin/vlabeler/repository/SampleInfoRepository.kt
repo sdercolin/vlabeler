@@ -12,6 +12,9 @@ import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
 import java.io.File
 
+/**
+ * Repository for sample information.
+ */
 @Stable
 object SampleInfoRepository {
 
@@ -22,6 +25,11 @@ object SampleInfoRepository {
     private val cacheMapFile get() = cacheDirectory.resolve("map.json")
     private var cacheMap: MutableMap<String, String> = mutableMapOf()
 
+    /**
+     * Initialize the repository.
+     *
+     * @param project Current project.
+     */
     fun init(project: Project) {
         cacheDirectory = project.getCacheDir().resolve(SampleInfoCacheFolderName)
         cacheDirectory.mkdirs()
@@ -30,6 +38,9 @@ object SampleInfoRepository {
         }.getOrNull() ?: mutableMapOf()
     }
 
+    /**
+     * Get sample information from cache or file.
+     */
     suspend fun load(project: Project, sampleFile: File, moduleName: String, appConf: AppConf): Result<SampleInfo> {
         val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
         val normalize = appConf.painter.amplitude.normalize
@@ -94,11 +105,17 @@ object SampleInfoRepository {
                 existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
             )
 
+    /**
+     * Clear cached sample information in memory.
+     */
     fun clearMemory() {
         infoMap.clear()
         cacheMap.clear()
     }
 
+    /**
+     * Clear cached sample information files.
+     */
     fun clear(project: Project) {
         project.getCacheDir().resolve(SampleInfoCacheFolderName).deleteRecursively()
     }

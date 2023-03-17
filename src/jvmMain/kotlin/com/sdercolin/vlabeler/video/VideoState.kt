@@ -15,6 +15,9 @@ import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.toMillisecond
 import java.io.FileNotFoundException
 
+/**
+ * State object for [Video].
+ */
 class VideoState(
     private val playerState: PlayerState,
     private val snackbarState: AppSnackbarState,

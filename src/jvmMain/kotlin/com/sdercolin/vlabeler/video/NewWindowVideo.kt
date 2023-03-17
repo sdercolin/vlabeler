@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.sdercolin.vlabeler.video
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +20,9 @@ import javax.swing.JFrame
 
 private var window: ComposeWindow? = null
 
-@OptIn(ExperimentalComposeUiApi::class)
+/**
+ * Composable for displaying the video player in a new window.
+ */
 @Composable
 fun NewWindowVideo(videoState: VideoState, appConf: AppConf) {
     val keymap = appConf.keymaps.keyActionMap

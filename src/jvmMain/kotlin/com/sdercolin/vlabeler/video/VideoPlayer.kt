@@ -11,6 +11,9 @@ import java.awt.Component
 
 class MediaPlayerComponent<T : Component>(val component: T)
 
+/**
+ * A wrapper of vlcj MediaPlayer.
+ */
 class VideoPlayer {
     var mediaPlayerComponent: MediaPlayerComponent<*>? = null
         private set

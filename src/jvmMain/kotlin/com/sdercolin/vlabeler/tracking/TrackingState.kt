@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import java.awt.Desktop
 
+/**
+ * State object for tracking.
+ */
 class TrackingState(
     private val appRecordStore: AppRecordStore,
     private val scope: CoroutineScope,

@@ -7,6 +7,9 @@ import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.ui.ProjectStore
 
+/**
+ * Composable for video player.
+ */
 @Composable
 fun Video(
     videoState: VideoState,

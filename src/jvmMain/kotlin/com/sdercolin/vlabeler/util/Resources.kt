@@ -3,6 +3,9 @@ package com.sdercolin.vlabeler.util
 import androidx.compose.ui.res.useResource
 import java.io.File
 
+/**
+ * A collection of resource paths used in the project.
+ */
 object Resources {
     val iconIco get() = "icon.ico"
     val iconPng get() = "icon.png"
@@ -21,6 +24,11 @@ object Resources {
     val transparencyGridPng get() = "img/transparency_grid.png"
 }
 
+/**
+ * Execute a JavaScript code in a file.
+ *
+ * @param path the path of the file.
+ */
 fun JavaScript.execResource(path: String) {
     val code = useResource(path) { it.bufferedReader().readText() }
     File("", "")

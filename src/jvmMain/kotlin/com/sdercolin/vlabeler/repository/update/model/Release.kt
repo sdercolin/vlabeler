@@ -3,6 +3,9 @@ package com.sdercolin.vlabeler.repository.update.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * GitHub response for a release.
+ */
 @Serializable
 class Release(
     @SerialName("html_url") val htmlUrl: String,

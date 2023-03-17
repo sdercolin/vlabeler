@@ -18,6 +18,9 @@ import org.jetbrains.skiko.toBufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 
+/**
+ * Repository for charts.
+ */
 @Stable
 object ChartRepository {
 
@@ -27,11 +30,23 @@ object ChartRepository {
     private val cacheMapFile get() = cacheDirectory.resolve("map.json")
     private var cacheMap: MutableMap<String, String> = mutableMapOf()
 
+    /**
+     * @return true if previous cache is not consistent with current app configuration.
+     * @param appConf Current app configuration.
+     * @param version Version of the painting algorithm.
+     */
     fun needReset(appConf: AppConf, version: Int): Boolean {
         val params = ChartCacheParams(version, appConf.painter)
         return params != cacheParams
     }
 
+    /**
+     * Initialize the repository.
+     *
+     * @param project Current project.
+     * @param appConf Current app configuration.
+     * @param version Version of the painting algorithm.
+     */
     fun init(project: Project, appConf: AppConf, version: Int) {
         cacheDirectory = project.getCacheDir().resolve(ChartsCacheFolderName)
         cacheDirectory.mkdirs()
@@ -52,12 +67,18 @@ object ChartRepository {
         }.getOrNull() ?: mutableMapOf()
     }
 
+    /**
+     * Get the waveform image of a chunk.
+     */
     suspend fun getWaveform(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int): ImageBitmap {
         val file = getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
         waitingFile(file)
         return file.inputStream().buffered().use(::loadImageBitmap)
     }
 
+    /**
+     * Get the spectrogram image of a chunk.
+     */
     suspend fun getSpectrogram(sampleInfo: SampleInfo, chunkIndex: Int): ImageBitmap {
         val file = getSpectrogramImageFile(sampleInfo, chunkIndex)
         waitingFile(file)
@@ -71,6 +92,9 @@ object ChartRepository {
         }
     }
 
+    /**
+     * Put the waveform image of a chunk.
+     */
     fun putWaveform(
         sampleInfo: SampleInfo,
         channelIndex: Int,
@@ -81,6 +105,9 @@ object ChartRepository {
         saveImage(waveform, file, sampleInfo.getCacheKey(KeyWaveform, channelIndex, chunkIndex))
     }
 
+    /**
+     * Put the spectrogram image of a chunk.
+     */
     fun putSpectrogram(sampleInfo: SampleInfo, chunkIndex: Int, spectrogram: ImageBitmap) {
         val file = getSpectrogramImageFile(sampleInfo, chunkIndex)
         saveImage(spectrogram, file, sampleInfo.getCacheKey(KeySpectrogram, chunkIndex))
@@ -99,6 +126,9 @@ object ChartRepository {
         Log.debug("Written to $file")
     }
 
+    /**
+     * Get the target [File] for the waveform image of a chunk.
+     */
     fun getWaveformImageFile(
         sampleInfo: SampleInfo,
         channelIndex: Int,
@@ -114,6 +144,9 @@ object ChartRepository {
             )
         }
 
+    /**
+     * Get the target [File] for the spectrogram image of a chunk.
+     */
     fun getSpectrogramImageFile(
         sampleInfo: SampleInfo,
         chunkIndex: Int,
@@ -132,10 +165,16 @@ object ChartRepository {
         return (listOf(file) + keys).joinToString(separator = "//")
     }
 
+    /**
+     * Clear the cache in memory.
+     */
     fun clearMemory() {
         cacheMap.clear()
     }
 
+    /**
+     * Clear the cached chart files in the disk.
+     */
     fun clear(project: Project) {
         project.getCacheDir().resolve(ChartsCacheFolderName).deleteRecursively()
     }

@@ -8,9 +8,15 @@ import java.awt.Point
 import java.awt.Toolkit
 import javax.imageio.ImageIO
 
+/**
+ * Repository for tool cursors.
+ */
 object ToolCursorRepository {
     private val map: MutableMap<Tool, Image> = mutableMapOf()
 
+    /**
+     * Get cursor for the given tool.
+     */
     fun get(tool: Tool): Cursor {
         val path = tool.iconPath ?: return Cursor.getDefaultCursor()
         val image = map.getOrPut(tool) {
@@ -22,5 +28,5 @@ object ToolCursorRepository {
         return Toolkit.getDefaultToolkit().createCustomCursor(image, point, tool.name)
     }
 
-    const val ImageSizePixel = 24
+    private const val ImageSizePixel = 24
 }

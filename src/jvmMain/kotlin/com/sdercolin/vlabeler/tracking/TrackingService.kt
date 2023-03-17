@@ -15,6 +15,9 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 
+/**
+ * Service for tracking implemented by Segment.
+ */
 class TrackingService(appRecordStore: AppRecordStore, mainScope: CoroutineScope) {
 
     private var enabled: Boolean? = null

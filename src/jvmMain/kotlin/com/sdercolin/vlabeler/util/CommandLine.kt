@@ -1,4 +1,5 @@
 @file:OptIn(DelicateCoroutinesApi::class)
+@file:Suppress("unused")
 
 package com.sdercolin.vlabeler.util
 
@@ -9,7 +10,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-@Suppress("unused")
+/**
+ * Command line utility, especially to be called from a JavaScript engine during plugin execution.
+ * See resources/js/command_line.js for usages.
+ */
 object CommandLine {
 
     @JvmStatic

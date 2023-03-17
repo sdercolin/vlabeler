@@ -3,6 +3,9 @@ package com.sdercolin.vlabeler.video
 import java.io.File
 import java.io.FileNotFoundException
 
+/**
+ * Represents the logic to find video file from audio file.
+ */
 sealed interface FindVideoStrategy {
     fun find(path: String, acceptableExtensions: List<String>): Result<String>
 

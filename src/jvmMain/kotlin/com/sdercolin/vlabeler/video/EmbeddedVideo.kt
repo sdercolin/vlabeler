@@ -20,6 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import java.awt.Cursor
 
+/**
+ * Composable for displaying the video player embedded in the main window.
+ */
 @Composable
 fun EmbeddedVideo(videoState: VideoState) {
     val density = LocalDensity.current

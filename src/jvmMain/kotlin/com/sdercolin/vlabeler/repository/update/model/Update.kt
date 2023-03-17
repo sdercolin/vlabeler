@@ -11,6 +11,14 @@ import com.sdercolin.vlabeler.util.getLocalDate
 import com.sdercolin.vlabeler.util.parseIsoTime
 import com.sdercolin.vlabeler.util.runIf
 
+/**
+ * The update information of the app.
+ *
+ * @property version The version of the latest update.
+ * @property date The date of the update.
+ * @property assetUrl The URL of the asset of the update.
+ * @property diff The list of the versions that are newer than the current version.
+ */
 @Immutable
 data class Update(
     val version: Version,
@@ -19,6 +27,13 @@ data class Update(
     val diff: List<Summary>,
 ) {
 
+    /**
+     * The summary of an update among [Update.diff].
+     *
+     * @property version The version of the update.
+     * @property pageUrl The URL of the page of the update.
+     * @property date The date of the update.
+     */
     @Immutable
     data class Summary(
         val version: Version,

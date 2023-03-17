@@ -4,6 +4,10 @@ import androidx.compose.foundation.ScrollState
 
 typealias FloatRange = ClosedFloatingPointRange<Float>
 
+/**
+ * Returns [ScrollState.value] range of the current displayed screen range. If the scroll state is not initialized,
+ * returns null.
+ */
 fun ScrollState.getScreenRange(canvasLength: Float): FloatRange? {
     if (maxValue == Int.MAX_VALUE) return null
     val screenLength = canvasLength - maxValue

@@ -2,6 +2,9 @@ package com.sdercolin.vlabeler.util
 
 import kotlinx.coroutines.delay
 
+/**
+ * A debug utility to monitor memory usage.
+ */
 class MemoryUsageMonitor {
 
     private fun convertBytesToMegaBytes(bytes: Long): Double {
