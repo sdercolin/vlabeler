@@ -144,15 +144,15 @@ The following variables are provided before your scripts are executed.
 
 ### Find input files dynamically
 
-To support your template plugin with labelers that construct a project with sub-projects, you may want to find input
-files dynamically for every sub-project. To do this, you can provide a script file via the
+To support your template plugin with labelers that construct a project with subprojects, you may want to find input
+files dynamically for every subproject. To do this, you can provide a script file via the
 plugin's `inputFinderScriptFile` property in the `plugin.json`.
 
 The script file should be a JavaScript file which:
 
 - takes a variable `root` of `File` type as input, which indicates the root directory of the project, i.e.
   the `Sample Directory` set in the project creation page.
-- takes a variable `moduleName` of `String` type as input, which indicates the name of the sub-project.
+- takes a variable `moduleName` of `String` type as input, which indicates the name of the subproject.
 - takes variables `debug`, `labeler`, `params` as input, which are the same as the ones provided in the template
   generation
   scripts.
@@ -165,12 +165,12 @@ The `File` type is a JavaScript wrapper of Java's `java.io.File` class. See the 
 details.
 
 Check the [audacity2lab plugin](../resources/common/plugins/template/audacity2lab) for an example.
-In this example, for consistency, even if the project has only one sub-project, the input files are still found by the
+In this example, for consistency, even if the project has only one subproject, the input files are still found by the
 input finder script, so that we don't have to care about where the input comes from in the main script.
 
 ### Use an input file parameter
 
-If your input file does not belong to a sub-project (such as a dictionary file), you can use a parameter of type `file`
+If your input file does not belong to a subproject (such as a dictionary file), you can use a parameter of type `file`
 or `rawFile` to get the content.
 See [Parameter Type](#parameter-types) for details.
 
@@ -236,7 +236,7 @@ Check the following built-in `template` plugins as examples:
 - [regex-raw-gen](../resources/common/plugins/template/regex-raw-gen): Use a regular expression to generate raw entry
   lines. Supports all types of labelers.
 - [audacity2lab](../resources/common/plugins/template/audacity2lab): Generate lab entries from an audacity label file.
-  It also supports the `NNSVS singer labeler` which constructs a project with sub-projects.
+  It also supports the `NNSVS singer labeler` which constructs a project with subprojects.
   See [Find input files dynamically](#find-input-files-dynamically) for details.
 
 ## Batch Edit (Macro) Scripts
@@ -245,7 +245,7 @@ A plugin with `macro` type is executed by an item in the menu `Tools` -> `Batch 
 a project.
 
 According to the `macroScope` property in the `plugin.json`, the plugin can be executed on the whole project or on the
-current module (sub-project).
+current module (subproject).
 If `macroScope` is set to `Module`, the input includes a list of `Entry` object in the current module named `entries`
 along with an integer named `currentEntryIndex`.
 If `macroScope` is set to `Project`, the input includes a list of `Module` object named `modules` along with an integer

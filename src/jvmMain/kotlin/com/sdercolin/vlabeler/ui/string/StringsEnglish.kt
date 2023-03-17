@@ -46,14 +46,14 @@ fun Strings.en(): String = when (this) {
     MenuNavigate -> "Navigate"
     MenuNavigateOpenLocation -> "Open Locations"
     MenuNavigateOpenLocationRootDirectory -> "Root Sample Directory"
-    MenuNavigateOpenLocationModuleDirectory -> "Sample Directory of Current Sub-project"
+    MenuNavigateOpenLocationModuleDirectory -> "Sample Directory of Current Subproject"
     MenuNavigateOpenLocationProjectLocation -> "Project File Location"
     MenuNavigateNextEntry -> "Go to Next Entry"
     MenuNavigatePreviousEntry -> "Go to Previous Entry"
     MenuNavigateNextSample -> "Go to Next Sample"
     MenuNavigatePreviousSample -> "Go to Previous Sample"
-    MenuNavigateNextModule -> "Go to Next Sub-project"
-    MenuNavigatePreviousModule -> "Go to Previous Sub-project"
+    MenuNavigateNextModule -> "Go to Next Subproject"
+    MenuNavigatePreviousModule -> "Go to Previous Subproject"
     MenuNavigateJumpToEntry -> "Go to Entry..."
     MenuNavigateScrollFit -> "Scroll to Show the Current Entry"
     MenuTools -> "Tools"
@@ -116,7 +116,7 @@ fun Strings.en(): String = when (this) {
         "Automatically export the project to overwrite the given input file (if not given, " +
             "the default file position defined by labeler) when the project is saved."
     StarterNewWarningSelfConstructedLabelerWithTemplatePlugin ->
-        "You are trying to use a template generator with a labeler that manages multiple sub-projects. " +
+        "You are trying to use a template generator with a labeler that manages multiple subprojects. " +
             "This is dangerous because it may overwrite all your existing label files with the generated entries. " +
             "Please double confirm that the settings meet your needs."
     StarterNewDirectoryPage -> "Directory Settings"
@@ -138,11 +138,11 @@ fun Strings.en(): String = when (this) {
     SampleListEntriesPlaceholderNoEntryButton -> "Create Default"
     SampleListJumpToSelectedEntryButton -> "Go to selected entry"
     SampleListOpenSampleDirectoryButton -> "Open sample directory"
-    SampleListCurrentModuleLabel -> "Sub-project: "
+    SampleListCurrentModuleLabel -> "Subproject: "
     SampleListSampleDirectoryLabel -> "Sample directory: "
     SampleListSampleDirectoryRedirectButton -> "Change sample directory"
-    PrerendererModuleText -> "Rendering sub-projects %d/%d..."
-    PrerendererModuleTextFinished -> "Rendering sub-projects %d/%d... Done"
+    PrerendererModuleText -> "Rendering subprojects %d/%d..."
+    PrerendererModuleTextFinished -> "Rendering subprojects %d/%d... Done"
     PrerendererSampleText -> "Rendering sample files %d/%d..."
     PrerendererSampleTextFinished -> "Rendering sample files %d/%d... Done"
     PrerendererChartText -> "Rendering charts %d/%d..."
@@ -183,7 +183,7 @@ fun Strings.en(): String = when (this) {
         "Auto-saved project file found. Do you want to load it? " +
             "The file will be discarded if you opened or created another one."
     AskIfRedirectSampleDirectoryDialogDescription ->
-        "The sample directory of the current sub-project (%s) is not found, " +
+        "The sample directory of the current subproject (%s) is not found, " +
             "or doesn't contain any required sample files." +
             "Do you want to redirect it to a new directory?"
     PluginDialogTitle -> "vLabeler - Plugin"
@@ -545,7 +545,7 @@ fun Strings.en(): String = when (this) {
     ProjectSettingOutputFileDisabledPlaceholder -> "Disabled by current labeler"
     ProjectSettingOutputFileSelectorDialogTitle -> "Choose output file"
     ProjectSettingAutoExportHelperText ->
-        "Automatically export all sub-projects to their output files when saving the project.\n" +
+        "Automatically export all subprojects to their output files when saving the project.\n" +
             "This option is only effective when the `Output file` is set properly,\n" +
             "or has been fixed by the labeler."
 }

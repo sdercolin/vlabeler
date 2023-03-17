@@ -23,7 +23,7 @@
         "type": "boolean",
         "name": "allModules",
         "label": {
-          "en": "Apply to all sub-projects",
+          "en": "Apply to all subprojects",
           "zh": "应用于所有子项目",
           "ja": "すべてのサブプロジェクトに適用"
         },

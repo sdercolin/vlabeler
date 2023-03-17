@@ -317,7 +317,7 @@ A labeler defines:
 - whether entries should be connected (every entry's start should be the same as the previous entry's end)
 - how to parse a label file to a `vLabeler` project
 - how to generate a label file from a `vLabeler` project
-- how to build sub-projects under a `vLabeler` project
+- how to build subprojects under a `vLabeler` project
 - and more behaviors when editing the certain type of label files
 
 A labeler may also support some configurable fields via GUI, without changing the labeler's file itself.

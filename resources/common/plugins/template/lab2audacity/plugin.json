@@ -35,7 +35,7 @@
         "name": "inputFile",
         "label": "Input file (.lab)",
         "description": {
-          "en": "The input file. Only needed when the labeler creates single sub-project.",
+          "en": "The input file. Only needed when the labeler creates single subproject.",
           "zh": "输入文件。仅在标注器将创建单个子项目时需要。",
           "ja": "入力ファイル。ラベラーが単一のサブプロジェクトを対応している場合にのみ必要になります。"
         },
@@ -54,7 +54,7 @@
           "ja": "入力フォルダ名"
         },
         "description": {
-          "en": "The folder name of the input files. Only needed when the labeler multiplies sub-projects. Please put the input files in the folder with the same name as their corresponding wav files.",
+          "en": "The folder name of the input files. Only needed when the labeler multiplies subprojects. Please put the input files in the folder with the same name as their corresponding wav files.",
           "zh": "输入文件的文件夹名称。仅在标注器将创建多个子项目时需要。请将输入文件的文件名设为与其对应的 wav 文件相同，并放在该文件夹中。",
           "ja": "入力ファイルのフォルダ名。ラベラーが複数のサブプロジェクトを対応している場合にのみ必要になります。入力ファイルのファイル名を対応する wav ファイルと同じ名前にして、指定したフォルダに入れてください。"
         },

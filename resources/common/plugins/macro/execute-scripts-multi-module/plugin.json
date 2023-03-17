@@ -3,14 +3,14 @@
   "version": 1,
   "type": "macro",
   "displayedName": {
-    "en": "Execute Scripts (Multi-sub-project)",
+    "en": "Execute Scripts (Multi-subproject)",
     "zh": "执行脚本（多子项目）",
     "ja": "スクリプトを実行（マルチサブプロジェクト）"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
-    "en": "Execute scripts from input to edit modules (sub-projects).",
+    "en": "Execute scripts from input to edit modules (subprojects).",
     "zh": "执行输入的脚本来编辑 module（子项目）。",
     "ja": "入力されたスクリプトを実行して modules（サブプロジェクト）を編集します。"
   },

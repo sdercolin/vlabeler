@@ -10,7 +10,7 @@ import kotlinx.serialization.Transient
 import java.io.File
 
 /**
- * A sub-project of a [Project] containing a list of [Entry]s. All basic operations on entries are done inside a
+ * A subproject of a [Project] containing a list of [Entry]s. All basic operations on entries are done inside a
  * single module.
  *
  * @property name The unique name of the module. If "" (empty string), the module is displayed as `(Root)`. For labelers

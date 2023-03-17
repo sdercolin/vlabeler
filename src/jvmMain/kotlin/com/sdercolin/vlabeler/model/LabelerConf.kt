@@ -61,7 +61,7 @@ import java.io.File
  * @property parser Defines how data from the original label format are parsed.
  * @property writer Defines how to write content in the original label format.
  * @property parameters Configurable parameters of the labeler. See [ParameterHolder].
- * @property projectConstructor Scripts to construct a project with sub-projects. See [ProjectConstructor].
+ * @property projectConstructor Scripts to construct a project with subprojects. See [ProjectConstructor].
  */
 @Serializable
 @Immutable
@@ -407,9 +407,9 @@ data class LabelerConf(
     }
 
     /**
-     * In order to edit multiple label files in a single project, the labeler should be able to construct sub-projects
-     * when creating the project. This property defines the sub-project structure and building procedure. In the
-     * source code, we call the sub-project as "Module". The [scripts] is JavaScript code lines that creates
+     * In order to edit multiple label files in a single project, the labeler should be able to construct subprojects
+     * when creating the project. This property defines the subproject structure and building procedure. In the
+     * source code, we call the subproject as "Module". The [scripts] is JavaScript code lines that creates
      * [RawModuleDefinition] objects.
      *
      * Available input variables:
