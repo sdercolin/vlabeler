@@ -131,7 +131,7 @@ class ImportProjectTest {
 
         val actual = importModulesFromProject(json)
 
-        assertEquals(expected, actual.getOrThrow())
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -195,7 +195,7 @@ class ImportProjectTest {
 
         val actual = importModulesFromProject(json)
 
-        assertEquals(expected, actual.getOrThrow())
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -288,6 +288,6 @@ class ImportProjectTest {
 
         val actual = importModulesFromProject(json)
 
-        assertEquals(expected, actual.getOrThrow())
+        assertEquals(expected, actual)
     }
 }
