@@ -43,6 +43,15 @@ data class Version(
         return 0
     }
 
+    val isStable: Boolean
+        get() = stage == null
+
+    val isBeta: Boolean
+        get() = stage == VersionStage.Beta
+
+    val isAlpha: Boolean
+        get() = stage == VersionStage.Alpha
+
     companion object {
 
         fun from(versionText: String): Version? = runCatching {
