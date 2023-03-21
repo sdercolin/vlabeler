@@ -81,3 +81,18 @@ fun File.containsFileRecursively(file: File): Boolean {
     }
     return true
 }
+
+/**
+ * Remove the directory if it is empty. (.DS_Store is ignored)
+ */
+fun File.removeDirectoryIfEmpty() {
+    val children = listFiles().orEmpty()
+    if (children.isEmpty()) {
+        delete()
+    } else {
+        if (children.size == 1 && children.first().name == ".DS_Store") {
+            children.first().deleteRecursively()
+            delete()
+        }
+    }
+}

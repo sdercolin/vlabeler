@@ -50,9 +50,16 @@ fun getCustomLabelers() = CustomLabelerDir.getChildren(labelerFileFilter)
 
 // Project files
 fun Project.getCacheDir() = cacheDirectory
+fun Project.moveCacheDirTo(newDirectory: File, clearOld: Boolean = true) {
+    ChartRepository.moveTo(cacheDirectory, newDirectory, clearOld)
+    SampleInfoRepository.moveTo(cacheDirectory, newDirectory, clearOld)
+    if (clearOld) cacheDirectory.removeDirectoryIfEmpty()
+}
+
 fun Project.clearCache() {
     ChartRepository.clear(this)
     SampleInfoRepository.clear(this)
+    cacheDirectory.removeDirectoryIfEmpty()
 }
 
 private val invalidCharsForFileName = arrayOf('"', '*', ':', '<', '>', '?', '\\', '/', '|', Char(0x7F), '\u0000')

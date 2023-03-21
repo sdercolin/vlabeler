@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.sdercolin.vlabeler.ui.dialog.project
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -46,6 +44,7 @@ import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.LabelerPluginDialog
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -53,6 +52,7 @@ import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.AvailableEncodings
+import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.toFile
 import java.io.File
 
@@ -106,6 +106,33 @@ fun ProjectListDialog(
             load = { state.updateLabelerParams(it) },
         )
     }
+
+    if (state.isShowingRootDirectoryDialog) {
+        val current = state.rootDirectory.toFile().takeIf { state.isRootDirectoryValid }
+        OpenFileDialog(
+            title = string(Strings.ChooseSampleDirectoryDialogTitle),
+            initialDirectory = current?.absolutePath,
+            directoryMode = true,
+        ) { parent, name ->
+            state.isShowingRootDirectoryDialog = false
+            if (parent == null || name == null) return@OpenFileDialog
+            state.updateRootDirectory(File(parent, name).getDirectory().absolutePath)
+        }
+    }
+
+    if (state.isShowingCacheDirectoryDialog) {
+        val current = state.cacheDirectory.toFile().takeIf { state.isCacheDirectoryValid }
+        OpenFileDialog(
+            title = string(Strings.ChooseCacheDirectoryDialogTitle),
+            initialDirectory = current?.absolutePath,
+            directoryMode = true,
+        ) { parent, name ->
+            state.isShowingCacheDirectoryDialog = false
+            if (parent == null || name == null) return@OpenFileDialog
+            state.updateCacheDirectory(File(parent, name).getDirectory().absolutePath)
+        }
+    }
+
     if (state.isShowingOutputFileDialog) {
         val current = state.outputFile?.toFile()?.takeIf { state.isOutputFileValid }
         SaveFileDialog(
@@ -128,6 +155,44 @@ private fun ColumnScope.Content(state: ProjectSettingDialogState) {
     Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
         val scrollState = rememberScrollState()
         Column(modifier = Modifier.weight(1f).verticalScroll(scrollState)) {
+            ItemRow(
+                title = Strings.StarterNewSampleDirectory,
+                helperText = null,
+            ) {
+                TextField(
+                    modifier = Modifier.weight(1f),
+                    value = state.rootDirectory,
+                    onValueChange = { state.updateRootDirectory(it) },
+                    singleLine = true,
+                    isError = state.isRootDirectoryValid.not(),
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { state.isShowingRootDirectoryDialog = true },
+                        ) {
+                            Icon(Icons.Default.FolderOpen, null)
+                        }
+                    },
+                )
+            }
+            ItemRow(
+                title = Strings.StarterNewCacheDirectory,
+                helperText = null,
+            ) {
+                TextField(
+                    modifier = Modifier.weight(1f),
+                    value = state.cacheDirectory,
+                    onValueChange = { state.updateCacheDirectory(it) },
+                    singleLine = true,
+                    isError = state.isCacheDirectoryValid.not(),
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { state.isShowingCacheDirectoryDialog = true },
+                        ) {
+                            Icon(Icons.Default.FolderOpen, null)
+                        }
+                    },
+                )
+            }
             ItemRow(
                 title = Strings.ProjectSettingOutputFileLabel,
                 helperText = Strings.ProjectSettingOutputFileHelperText,
@@ -188,6 +253,7 @@ private fun ColumnScope.Content(state: ProjectSettingDialogState) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ItemRow(title: Strings, helperText: Strings?, item: @Composable () -> Unit) {
     Row(Modifier.padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {

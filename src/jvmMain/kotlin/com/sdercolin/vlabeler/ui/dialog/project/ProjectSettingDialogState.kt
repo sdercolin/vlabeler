@@ -8,7 +8,9 @@ import com.sdercolin.vlabeler.model.injectLabelerParams
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
+import com.sdercolin.vlabeler.util.moveCacheDirTo
 import com.sdercolin.vlabeler.util.resolve
+import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.launch
 import java.nio.file.Files
 import kotlin.io.path.Path
@@ -19,6 +21,37 @@ class ProjectSettingDialogState(
 ) {
     val project get() = requireNotNull(appState.project)
     var encoding: String by mutableStateOf(project.encoding)
+
+    var rootDirectory: String by mutableStateOf(project.rootSampleDirectoryPath)
+        private set
+
+    var isShowingRootDirectoryDialog by mutableStateOf(false)
+
+    fun updateRootDirectory(newRootDirectory: String) {
+        rootDirectory = newRootDirectory
+    }
+
+    val isRootDirectoryValid: Boolean
+        get() {
+            val rootDirectory = rootDirectory.toFile()
+            return rootDirectory.isDirectory && Files.isReadable(rootDirectory.toPath())
+        }
+
+    var cacheDirectory: String by mutableStateOf(project.cacheDirectory.absolutePath)
+        private set
+
+    var isShowingCacheDirectoryDialog by mutableStateOf(false)
+
+    fun updateCacheDirectory(newCacheDirectory: String) {
+        cacheDirectory = newCacheDirectory
+    }
+
+    val isCacheDirectoryValid: Boolean
+        get() {
+            val cacheDirectory = cacheDirectory.toFile()
+            val parent = cacheDirectory.parentFile ?: return false
+            return parent.isDirectory && Files.isWritable(parent.toPath()) && cacheDirectory.isFile.not()
+        }
 
     val isOutputFileEditable: Boolean
         get() = project.modules.size == 1 && project.labelerConf.isSelfConstructed.not()
@@ -80,6 +113,7 @@ class ProjectSettingDialogState(
         } else {
             project.originalLabelerConf.injectLabelerParams(labelerParams)
         }
+        val workingDirectory = project.workingDirectory.absolutePath
         val modulesUpdated = if (outputFile == null) {
             project.modules
         } else {
@@ -89,13 +123,19 @@ class ProjectSettingDialogState(
                 )
             }
         }
+        if (cacheDirectory != project.cacheDirectory.absolutePath) {
+            project.moveCacheDirTo(cacheDirectory.toFile())
+        }
         return project.copy(
+            rootSampleDirectoryPath = rootDirectory,
+            workingDirectoryPath = workingDirectory,
+            cacheDirectoryPath = cacheDirectory,
             encoding = encoding,
             autoExport = autoExport,
             labelerConf = newLabelerConf,
             labelerParams = ParamTypedMap.from(labelerParams, newLabelerConf.parameterDefs),
             modules = modulesUpdated,
-        )
+        ).makeRelativePathsIfPossible()
     }
 
     fun cancel() {

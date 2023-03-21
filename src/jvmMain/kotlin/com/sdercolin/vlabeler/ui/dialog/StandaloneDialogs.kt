@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.lastPathSection
+import com.sdercolin.vlabeler.util.moveCacheDirTo
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
@@ -45,7 +46,7 @@ fun StandaloneDialogs(
                     val cacheDirectory = if (isUsingDefaultCacheDirectory) {
                         val newCacheDirectory = Project.getDefaultCacheDirectory(directory, projectName)
                         runCatching {
-                            cacheDirectory.copyRecursively(File(newCacheDirectory), overwrite = true)
+                            moveCacheDirTo(newCacheDirectory.toFile(), clearOld = false)
                         }.onFailure {
                             Log.error(it)
                         }
@@ -55,7 +56,11 @@ fun StandaloneDialogs(
                         workingDirectoryPath = directory,
                         projectName = projectName,
                         cacheDirectoryPath = cacheDirectory,
-                    ).makeRelativePathsIfPossible()
+                    )
+                        .makeRelativePathsIfPossible()
+                        .also {
+                            appState.addRecentProject(it.projectFile)
+                        }
                 }
                 appState.requestSave()
             }

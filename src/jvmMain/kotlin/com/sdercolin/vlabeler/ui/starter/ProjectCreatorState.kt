@@ -30,12 +30,14 @@ import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.getLocalizedMessage
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
+import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.awt.Desktop
 import java.io.File
+import java.nio.file.Files
 
 class ProjectCreatorState(
     private val appState: AppState,
@@ -154,7 +156,7 @@ class ProjectCreatorState(
     fun isSampleDirectoryValid(): Boolean {
         val file = File(sampleDirectory)
         if (!file.isDirectory) return false
-        return file.exists()
+        return file.exists() && Files.isReadable(file.toPath())
     }
 
     fun isProjectNameValid(): Boolean {
@@ -164,7 +166,7 @@ class ProjectCreatorState(
     fun isWorkingDirectoryValid(): Boolean {
         val file = File(workingDirectory)
         if (file.parentFile?.exists() == false) return false
-        return file.name.isValidFileName()
+        return file.name.isValidFileName() && file.isDirectory && Files.isWritable(file.toPath())
     }
 
     fun isProjectFileExisting(): Boolean {
@@ -176,7 +178,9 @@ class ProjectCreatorState(
     fun isCacheDirectoryValid(): Boolean {
         val file = File(cacheDirectory)
         val parent = file.parent.orEmpty()
-        if (parent != workingDirectory && File(parent).exists().not()) return false
+        if (parent != workingDirectory && parent.toFile().exists().not()) return false
+        if (Files.isWritable(parent.toFile().toPath()).not()) return false
+        if (file.isFile) return false
         return file.name.isValidFileName()
     }
     /* endregion */

@@ -31,9 +31,9 @@ object ChartRepository {
     private var cacheMap: MutableMap<String, String> = mutableMapOf()
 
     /**
-     * @return true if previous cache is not consistent with current app configuration.
      * @param appConf Current app configuration.
      * @param version Version of the painting algorithm.
+     * @return true if previous cache is not consistent with current app configuration.
      */
     fun needReset(appConf: AppConf, version: Int): Boolean {
         val params = ChartCacheParams(version, appConf.painter)
@@ -122,6 +122,7 @@ object ChartRepository {
         outputStream.flush()
         outputStream.close()
         cacheMap[cacheKey] = file.relativeTo(cacheDirectory).path.replace(File.separatorChar, '/')
+        cacheDirectory.mkdirs()
         cacheMapFile.writeText(cacheMap.stringifyJson())
         Log.debug("Written to $file")
     }
@@ -177,6 +178,16 @@ object ChartRepository {
      */
     fun clear(project: Project) {
         project.getCacheDir().resolve(ChartsCacheFolderName).deleteRecursively()
+    }
+
+    /**
+     * Move the cache from the old cache directory to the new cache directory.
+     */
+    fun moveTo(oldCacheDirectory: File, newCacheDirectory: File, clearOld: Boolean) {
+        val oldDirectory = oldCacheDirectory.resolve(ChartsCacheFolderName)
+        if (oldDirectory.isDirectory.not()) return
+        oldDirectory.copyRecursively(newCacheDirectory.resolve(ChartsCacheFolderName), overwrite = true)
+        if (clearOld) oldDirectory.deleteRecursively()
     }
 
     private const val ChartsCacheFolderName = "charts"

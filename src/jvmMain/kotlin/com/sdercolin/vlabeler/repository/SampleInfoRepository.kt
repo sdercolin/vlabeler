@@ -86,9 +86,11 @@ object SampleInfoRepository {
         }
         infoMap[moduleName to info.name] = info
         val infoFile = getSampleInfoFile(project, sampleFile)
+        infoFile.parentFile.mkdirs()
         infoFile.writeText(info.stringifyJson())
         cacheMap[project.getSampleFilePath(sampleFile)] =
             infoFile.toRelativeString(cacheDirectory).replace(File.separatorChar, '/')
+        cacheDirectory.mkdirs()
         cacheMapFile.writeText(cacheMap.stringifyJson())
         return Result.success(info)
     }
@@ -118,6 +120,16 @@ object SampleInfoRepository {
      */
     fun clear(project: Project) {
         project.getCacheDir().resolve(SampleInfoCacheFolderName).deleteRecursively()
+    }
+
+    /**
+     * Move the cache from the old cache directory to the new cache directory.
+     */
+    fun moveTo(oldCacheDirectory: File, newCacheDirectory: File, clearOld: Boolean) {
+        val oldDirectory = oldCacheDirectory.resolve(SampleInfoCacheFolderName)
+        if (oldDirectory.isDirectory.not()) return
+        oldDirectory.copyRecursively(newCacheDirectory.resolve(SampleInfoCacheFolderName), overwrite = true)
+        if (clearOld) oldDirectory.deleteRecursively()
     }
 
     private const val SampleInfoCacheFolderName = "sample-info"
