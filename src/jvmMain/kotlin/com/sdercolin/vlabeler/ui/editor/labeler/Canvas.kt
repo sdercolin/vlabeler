@@ -81,7 +81,7 @@ fun Canvas(
                     editorState.renderCharts(this, sampleInfo, appState.appConf, density, layoutDirection)
                 }
             }
-            val canvasParams = CanvasParams(sampleInfo.length, resolution, currentDensity)
+            val canvasParams = CanvasParams(sampleInfo.length, sampleInfo.chunkCount, resolution, currentDensity)
             editorState.scrollOnResolutionChangeViewModel.updateCanvasParams(canvasParams, sampleInfo)
             val markerState = rememberMarkerState(sampleInfo, canvasParams, editorState, appState)
             val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
@@ -137,7 +137,6 @@ fun Canvas(
                             items(chunkCount) { chunkIndex ->
                                 Chunk(
                                     chunkIndex,
-                                    chunkCount,
                                     canvasParams,
                                     sampleInfo,
                                     appState,
@@ -189,7 +188,6 @@ fun Canvas(
 @Composable
 private fun Chunk(
     chunkIndex: Int,
-    chunkCount: Int,
     canvasParams: CanvasParams,
     sampleInfo: SampleInfo,
     appState: AppState,
@@ -197,7 +195,7 @@ private fun Chunk(
 ) {
     Box(
         Modifier.fillMaxHeight()
-            .requiredWidth(canvasParams.canvasWidthInDp / chunkCount)
+            .requiredWidth(canvasParams.getChunkWidthInDp(chunkIndex))
             .runIf(DebugState.isShowingChunkBorder) { border(1.dp, DarkYellow) },
     ) {
         Column(Modifier.fillMaxSize()) {

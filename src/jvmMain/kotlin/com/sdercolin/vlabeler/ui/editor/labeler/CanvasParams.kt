@@ -4,15 +4,22 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Density
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.util.roundPixels
 
 @Stable
 data class CanvasParams(
     val dataLength: Int,
+    val chunkCount: Int,
     val resolution: Int,
     val density: Density,
 ) {
     val lengthInPixel = dataLength.toFloat() / resolution
-    val canvasWidthInDp = with(density) { lengthInPixel.toDp() }
+
+    private val chunkWidths = List(chunkCount) { lengthInPixel / chunkCount }.roundPixels()
+
+    fun getChunkWidthInDp(index: Int) = with(density) {
+        chunkWidths[index].toDp()
+    }
 
     @Immutable
     class ResolutionRange(
