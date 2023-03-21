@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 
 /**
- * Copied and edited base on [androidx.compose.material.IconButton] The minimum size restriction is removed
+ * Copied and edited base on [androidx.compose.material.IconButton]. The minimum size restriction is removed.
  */
 @Composable
 fun FreeSizedIconButton(
