@@ -105,6 +105,8 @@ interface ProjectStore {
     fun openProjectLocation()
 
     suspend fun setCurrentEntryProperty(propertyIndex: Int, value: Float)
+
+    fun importEntries(moduleNameToEntries: List<Pair<String, List<Entry>>>, replace: Boolean)
 }
 
 class ProjectStoreImpl(
@@ -571,6 +573,22 @@ class ProjectStoreImpl(
             editCurrentProjectModule { updateCurrentEntry(updatedEntry, project.labelerConf) }
         }.onFailure {
             errorState.showError(it)
+        }
+    }
+
+    override fun importEntries(moduleNameToEntries: List<Pair<String, List<Entry>>>, replace: Boolean) {
+        editProject {
+            moduleNameToEntries.fold(this) { acc, (moduleName, entries) ->
+                acc.updateModule(moduleName) {
+                    val newEntries = if (replace) {
+                        entries
+                    } else {
+                        this.entries + entries
+                    }
+                    val currentEntryIndex = this.currentIndex.coerceAtMost(newEntries.lastIndex)
+                    copy(entries = newEntries, currentIndex = currentEntryIndex)
+                }
+            }
         }
     }
 }

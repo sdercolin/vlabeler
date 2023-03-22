@@ -2,11 +2,13 @@ package com.sdercolin.vlabeler.io
 
 import androidx.compose.material.SnackbarDuration
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.exception.ProjectImportException
 import com.sdercolin.vlabeler.exception.ProjectParseException
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.injectLabelerParams
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.dialog.importentries.ImportEntriesDialogArgs
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.ui.string.stringStatic
@@ -318,4 +320,32 @@ suspend fun autoSaveTemporaryProjectFile(project: Project): File = withContext(D
     file.writeText(projectContent)
     Log.debug("Project auto-saved temporarily: $file")
     file
+}
+
+/**
+ * Import content from a project file to the current project.
+ *
+ * @param scope The coroutine scope.
+ * @param file The project file to import.
+ * @param appState The app state.
+ */
+fun importProjectFile(
+    scope: CoroutineScope,
+    file: File,
+    appState: AppState,
+) {
+    scope.launch(Dispatchers.IO) {
+        runCatching {
+            appState.showProgress()
+
+            val text = file.readText()
+            val modules = importModulesFromProject(text)
+
+            appState.hideProgress()
+            appState.openImportEntriesDialog(ImportEntriesDialogArgs(modules))
+        }.onFailure {
+            appState.showError(ProjectImportException(it))
+            appState.hideProgress()
+        }
+    }
 }

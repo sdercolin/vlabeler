@@ -18,6 +18,7 @@ import com.sdercolin.vlabeler.ui.dialog.LicenseDialog
 import com.sdercolin.vlabeler.ui.dialog.TrackingSettingsDialog
 import com.sdercolin.vlabeler.ui.dialog.WarningDialog
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialog
+import com.sdercolin.vlabeler.ui.dialog.importentries.ImportEntriesDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginReportDialog
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesDialog
@@ -186,6 +187,13 @@ fun App(
                 playerState = appState.playerState,
                 projectStore = appState,
                 appConf = appState.appConf,
+            )
+        }
+        appState.importEntriesDialogArgs?.let {
+            ImportEntriesDialog(
+                finish = { appState.closeImportEntriesDialog() },
+                projectStore = appState,
+                args = it,
             )
         }
         appState.error?.let { error ->

@@ -100,6 +100,12 @@ fun FrameWindowScope.Menu(
                         enabled = appState.hasProject,
                     )
                     Item(
+                        string(Strings.MenuFileImport),
+                        onClick = { appState.openImportDialog() },
+                        shortcut = KeyAction.ImportProject.getKeyShortCut(),
+                        enabled = appState.hasProject,
+                    )
+                    Item(
                         string(Strings.MenuFileExport),
                         onClick = { appState.requestExport(overwrite = false) },
                         shortcut = KeyAction.ExportProject.getKeyShortCut(),

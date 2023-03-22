@@ -14,6 +14,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuFileSave -> "保存"
     MenuFileSaveAs -> "另存为..."
     MenuFileProjectSetting -> "项目设置..."
+    MenuFileImport -> "导入..."
     MenuFileExport -> "导出..."
     MenuFileExportOverwrite -> "覆盖导出"
     MenuFileExportOverwriteAll -> "覆盖导出全部"
@@ -95,6 +96,7 @@ fun Strings.zhHans(): String? = when (this) {
     CommonInputErrorPromptNumberRange -> "请输入一个介于 %s 与 %s 之间的数字。"
     CommonInputErrorPromptNumberMin -> "请输入一个不小于 %s 的数字。"
     CommonInputErrorPromptNumberMax -> "请输入一个不大于 %s 的数字。"
+    CommonRootModuleName -> "（根）"
     StarterStart -> "开始"
     StarterNewProject -> "新建项目..."
     StarterOpen -> "打开..."
@@ -153,6 +155,7 @@ fun Strings.zhHans(): String? = when (this) {
     ChooseInputFileDialogTitle -> "选择输入文件"
     OpenProjectDialogTitle -> "打开项目"
     SaveAsProjectDialogTitle -> "另存为项目"
+    ImportDialogTitle -> "导入项目"
     ExportDialogTitle -> "导出项目"
     SetResolutionDialogDescription -> "请指定编辑器的画布分辨率（数据点数/像素）(%d ~ %d)"
     SetEntryPropertyDialogDescription -> "请输入本条目的属性 %s 的值。\n请注意您的输入值将不会受到限制，因此请务必自行确保其合法性。"
@@ -213,14 +216,16 @@ fun Strings.zhHans(): String? = when (this) {
     PluginEntrySelectorPreviewSummary -> "已选中 %d/%d"
     PluginEntrySelectorPlaceholder -> "无筛选条件，将选中所有条目"
     EditorSubTitleMultiple -> "编辑采样 %2\$s 中的%1\$d个条目"
-    EditorModuleRootNameTitle -> "（根）"
     FailedToLoadSampleFileError -> "无法读取该采样文件。它可能不存在，或是不支持的格式。"
     PluginRuntimeUnexpectedException -> "插件执行过程中发生了意外的错误。请联系插件作者以获取更多信息。"
     InvalidCreatedProjectException ->
         "新建的项目为无效项目。请检查您正在使用的标注器或插件的文档，确保您的设置正确。" +
             "如果问题仍然无法解决，请联系标注器或插件的作者以获取更多信息。"
     InvalidOpenedProjectException -> "无法打开该项目，因为其中包含无效的数据。详情请查看错误日志。"
-    ProjectParseException -> "无法打开该项目。它可能已损坏，或者是由一个与当前版本不兼容的 vLabeler 版本创建的。"
+    ProjectParseException ->
+        "无法打开该项目。它可能已损坏，或者是由一个与当前版本不兼容的 vLabeler 版本创建的。" +
+            "请尝试新建一个项目，并使用菜单 `文件` -> `导入...` 来导入该项目文件。"
+    ProjectImportException -> "无法导入该文件。它可能不是有效的 vLabeler 项目文件。详情请查看错误日志。"
     ProjectUpdateOnSampleException -> "无法将项目中的数据与当前读取到的采样进行匹配。详情请查看错误日志。"
     InvalidEditedProjectException -> "此次编辑将导致项目数据无效。详情请查看错误日志。"
     CustomizableItemLoadingException -> "无法读取该自定义组件。"
@@ -495,5 +500,11 @@ fun Strings.zhHans(): String? = when (this) {
     ProjectSettingAutoExportHelperText ->
         "保存时，自动将项目中所有的子项目覆盖导出到对应的输出文件。\n" +
             "此项仅在本设置中的`输出文件`被正确设置，或者已被标注器固定时才有效。"
+    ImportEntriesDialogTitle -> "导入项目"
+    ImportEntriesDialogItemSummaryTitle -> "%d 个条目"
+    ImportEntriesDialogItemTargetLabel -> "导入到"
+    ImportEntriesDialogItemIncompatible -> "与当前项目不兼容"
+    ImportEntriesDialogReplaceContent -> "替换现有内容"
+    ImportEntriesDialogReplaceContentDisabledDescription -> "当前项目不支持追加条目，因此所有现有条目将被导入的条目替换。"
     else -> null
 }

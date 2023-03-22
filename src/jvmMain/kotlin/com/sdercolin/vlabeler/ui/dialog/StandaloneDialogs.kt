@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui.dialog
 import androidx.compose.runtime.Composable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.exportProjectModule
+import com.sdercolin.vlabeler.io.importProjectFile
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
@@ -107,6 +108,17 @@ fun StandaloneDialogs(
                     if (newDirectory.exists() && newDirectory.isDirectory) {
                         appState.changeSampleDirectory(newDirectory)
                     }
+                }
+            }
+        }
+        appState.isShowingImportDialog -> {
+            OpenFileDialog(
+                title = string(Strings.ImportDialogTitle),
+                extensions = listOf(Project.ProjectFileExtension),
+            ) { parent, name ->
+                appState.closeImportDialog()
+                if (parent != null && name != null) {
+                    importProjectFile(mainScope, File(parent, name), appState)
                 }
             }
         }

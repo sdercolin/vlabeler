@@ -12,6 +12,7 @@ fun Strings.en(): String = when (this) {
     MenuFileSave -> "Save"
     MenuFileSaveAs -> "Save As..."
     MenuFileProjectSetting -> "Project Settings..."
+    MenuFileImport -> "Import..."
     MenuFileExport -> "Export..."
     MenuFileExportOverwrite -> "Export Overwriting"
     MenuFileExportOverwriteAll -> "Export Overwriting All"
@@ -93,6 +94,7 @@ fun Strings.en(): String = when (this) {
     CommonInputErrorPromptNumberRange -> "Please enter a number between %s and %s."
     CommonInputErrorPromptNumberMin -> "Please enter a number greater than or equal to %s."
     CommonInputErrorPromptNumberMax -> "Please enter a number less than or equal to %s."
+    CommonRootModuleName -> "(Root)"
     StarterStart -> "Start"
     StarterNewProject -> "New Project..."
     StarterOpen -> "Open..."
@@ -154,6 +156,7 @@ fun Strings.en(): String = when (this) {
     ChooseInputFileDialogTitle -> "Choose input file"
     OpenProjectDialogTitle -> "Open project"
     SaveAsProjectDialogTitle -> "Save as project"
+    ImportDialogTitle -> "Import"
     ExportDialogTitle -> "Export"
     SetResolutionDialogDescription -> "Input canvas resolution (points per pixel) for the editor (%d ~ %d)"
     SetEntryPropertyDialogDescription ->
@@ -226,7 +229,6 @@ fun Strings.en(): String = when (this) {
     PluginEntrySelectorPreviewSummary -> "Selecting %d/%d"
     PluginEntrySelectorPlaceholder -> "No filters, selecting all entries."
     EditorSubTitleMultiple -> "editing %1\$d entries in sample %2\$s"
-    EditorModuleRootNameTitle -> "(Root)"
     FailedToLoadSampleFileError -> "Could not load the sample file.\nIt may not exist or is not a supported format."
     PluginRuntimeUnexpectedException ->
         "An unexpected error occurred during the plugin execution.\n" +
@@ -240,7 +242,11 @@ fun Strings.en(): String = when (this) {
             "Please check the error log for more information."
     ProjectParseException ->
         "Could not open the project.\n" +
-            "It may be corrupted or created by an incompatible version of vLabeler."
+            "It may be corrupted or created by an incompatible version of vLabeler.\n" +
+            "Please try to create a new project and import the project file using menu `File` -> `Import...`."
+    ProjectImportException ->
+        "Could not import the file.\n" +
+            "It may he an invalid vLabeler project file. Please check the error log for more information."
     ProjectUpdateOnSampleException ->
         "Could not update the project with the loaded sample file." +
             "\nPlease check the error log for more information."
@@ -548,4 +554,12 @@ fun Strings.en(): String = when (this) {
         "Automatically export all subprojects to their output files when saving the project.\n" +
             "This option is only effective when the `Output file` is set properly,\n" +
             "or has been fixed by the labeler."
+    ImportEntriesDialogTitle -> "Import Project"
+    ImportEntriesDialogItemSummaryTitle -> "%d Entries"
+    ImportEntriesDialogItemTargetLabel -> "Target"
+    ImportEntriesDialogItemIncompatible -> "Incompatible with current project"
+    ImportEntriesDialogReplaceContent -> "Replace current content"
+    ImportEntriesDialogReplaceContentDisabledDescription ->
+        "The current project doesn't support appending entries, " +
+            "so all the current entries will be replaced by imported ones."
 }

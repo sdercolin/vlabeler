@@ -16,6 +16,10 @@ class ImportProjectTest {
     fun testNormal() {
         val json = """
             {
+                "labelerConf": {
+                    "continuous": false,
+                    "extension": "ini"
+                },
                 "modules": [
                     {
                         "name": "module1",
@@ -99,6 +103,8 @@ class ImportProjectTest {
                 ),
                 pointSize = 2,
                 extraSize = 2,
+                continuous = false,
+                extension = "ini",
             ),
             ImportedModule(
                 name = "module2",
@@ -126,6 +132,8 @@ class ImportProjectTest {
                 ),
                 pointSize = 2,
                 extraSize = 2,
+                continuous = false,
+                extension = "ini",
             ),
         )
 
@@ -137,7 +145,11 @@ class ImportProjectTest {
     @Test
     fun testEntriesDirectlyUnderProject() {
         val json = """
-            {
+            {               
+                "labelerConf": {
+                    "continuous": false,
+                    "extension": "ini"
+                },
                 "entries": [
                     {
                         "sample": "sample1",
@@ -190,6 +202,8 @@ class ImportProjectTest {
                 ),
                 pointSize = 2,
                 extraSize = 2,
+                continuous = false,
+                extension = "ini",
             ),
         )
 
@@ -201,7 +215,11 @@ class ImportProjectTest {
     @Test
     fun testBroken() {
         val json = """
-            {
+            {                
+                "labelerConf": {
+                    "continuous": false,
+                    "extension": "ini"
+                },
                 "modules": [
                     {
                         "entries": []
@@ -283,6 +301,8 @@ class ImportProjectTest {
                 ),
                 pointSize = 2,
                 extraSize = 2,
+                continuous = false,
+                extension = "ini",
             ),
         )
 

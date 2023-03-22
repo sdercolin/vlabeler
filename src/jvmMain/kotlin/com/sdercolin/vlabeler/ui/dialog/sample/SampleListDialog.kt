@@ -363,7 +363,7 @@ private fun SampleDirectoryBar(
                     value = currentModuleName,
                     onSelect = { onSelectModuleName(it) },
                     options = allModuleNames,
-                    getText = { it.ifEmpty { string(Strings.EditorModuleRootNameTitle) } },
+                    getText = { it.ifEmpty { string(Strings.CommonRootModuleName) } },
                 )
             }
             Spacer(Modifier.height(5.dp))

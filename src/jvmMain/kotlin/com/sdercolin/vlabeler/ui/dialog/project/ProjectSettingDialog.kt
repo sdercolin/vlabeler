@@ -2,9 +2,8 @@ package com.sdercolin.vlabeler.ui.dialog.project
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.TooltipArea
-import androidx.compose.foundation.background
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -24,7 +24,6 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -41,15 +40,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
+import com.sdercolin.vlabeler.ui.common.DialogContainer
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.Tooltip
-import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.LabelerPluginDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.getDirectory
@@ -68,24 +66,17 @@ fun ProjectListDialog(
     finish: () -> Unit,
     state: ProjectSettingDialogState = rememberProjectSettingDialogState(appState, finish),
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize().background(color = Black50),
-        contentAlignment = Alignment.Center,
-    ) {
-        Surface {
-            Box(Modifier.fillMaxSize(0.8f).plainClickable()) {
-                Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 45.dp)) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        text = string(Strings.ProjectSettingDialogTitle),
-                        style = MaterialTheme.typography.h4,
-                    )
-                    Spacer(modifier = Modifier.height(25.dp))
-                    Content(state)
-                    Spacer(modifier = Modifier.height(25.dp))
-                    ButtonBar(state)
-                }
-            }
+    DialogContainer(widthFraction = 0.8f, heightFraction = 0.8f) {
+        Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 45.dp)) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = string(Strings.ProjectSettingDialogTitle),
+                style = MaterialTheme.typography.h5,
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            Content(state)
+            Spacer(modifier = Modifier.height(25.dp))
+            ButtonBar(state)
         }
     }
     if (state.isShowingLabelerDialog) {
@@ -250,6 +241,11 @@ private fun ColumnScope.Content(state: ProjectSettingDialogState) {
                 }
             }
         }
+
+        VerticalScrollbar(
+            adapter = rememberScrollbarAdapter(scrollState),
+            modifier = Modifier.align(Alignment.CenterVertically).width(15.dp),
+        )
     }
 }
 

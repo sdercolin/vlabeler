@@ -23,6 +23,7 @@ import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.MoveEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
+import com.sdercolin.vlabeler.ui.dialog.importentries.ImportEntriesDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesEditorState
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
@@ -45,6 +46,7 @@ interface AppDialogState {
     val isShowingOpenProjectDialog: Boolean
     val isShowingSaveAsProjectDialog: Boolean
     val isShowingExportDialog: Boolean
+    val isShowingImportDialog: Boolean
     val isShowingPreferencesDialog: Boolean
     val preferencesDialogArgs: PreferencesEditorState.LaunchArgs?
 
@@ -58,6 +60,7 @@ interface AppDialogState {
     val isShowingTrackingSettingsDialog: Boolean
     val isShowingVideo: Boolean // strictly speaking not a dialog but whatever
     val updaterDialogContent: Update?
+    val importEntriesDialogArgs: ImportEntriesDialogArgs?
     val macroPluginShownInDialog: MacroPluginDialogArgs?
     val macroPluginReport: LocalizedJsonString?
     val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
@@ -75,6 +78,8 @@ interface AppDialogState {
     fun requestExport(overwrite: Boolean, all: Boolean = false)
     fun openExportDialog()
     fun closeExportDialog()
+    fun openImportDialog()
+    fun closeImportDialog()
     fun putPendingActionAfterSaved(action: AppState.PendingActionAfterSaved?)
     fun clearPendingActionAfterSaved()
     fun <T : EmbeddedDialogArgs> openEmbeddedDialog(args: T)
@@ -116,23 +121,22 @@ interface AppDialogState {
     fun requestClearCaches(scope: CoroutineScope)
     fun clearCachesAndReopen(scope: CoroutineScope)
     fun askForTrackingPermission()
-
     fun toggleVideoPopup()
-
     fun toggleVideoPopup(on: Boolean)
-
+    fun openImportEntriesDialog(args: ImportEntriesDialogArgs)
+    fun closeImportEntriesDialog()
     fun closeEmbeddedDialog()
     fun closeAllDialogs()
 
     fun anyDialogOpening() =
-        isShowingProjectSettingDialog || isShowingExportDialog ||
+        isShowingProjectSettingDialog || isShowingExportDialog || isShowingImportDialog ||
             isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
             macroPluginShownInDialog != null || macroPluginReport != null || isShowingQuickLaunchManagerDialog ||
             customizableItemManagerTypeShownInDialog != null || embeddedDialog != null
 
     fun anyDialogOpeningExceptMacroPluginManager() =
-        isShowingProjectSettingDialog || isShowingExportDialog ||
+        isShowingProjectSettingDialog || isShowingExportDialog || isShowingImportDialog ||
             isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
             macroPluginShownInDialog != null || macroPluginReport != null || isShowingQuickLaunchManagerDialog ||
@@ -160,6 +164,7 @@ class AppDialogStateImpl(
     override var isShowingOpenProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingSaveAsProjectDialog: Boolean by mutableStateOf(false)
     override var isShowingExportDialog: Boolean by mutableStateOf(false)
+    override var isShowingImportDialog: Boolean by mutableStateOf(false)
     override var isShowingPreferencesDialog: Boolean by mutableStateOf(false)
     override var preferencesDialogArgs: PreferencesEditorState.LaunchArgs? by mutableStateOf(null)
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
@@ -171,6 +176,7 @@ class AppDialogStateImpl(
     override var isShowingTrackingSettingsDialog: Boolean by mutableStateOf(false)
     override var isShowingVideo: Boolean by mutableStateOf(false)
     override var updaterDialogContent: Update? by mutableStateOf(null)
+    override var importEntriesDialogArgs: ImportEntriesDialogArgs? by mutableStateOf(null)
     override var macroPluginShownInDialog: MacroPluginDialogArgs? by mutableStateOf(null)
     override var macroPluginReport: LocalizedJsonString? by mutableStateOf(null)
     override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
@@ -247,6 +253,15 @@ class AppDialogStateImpl(
 
     override fun closeExportDialog() {
         isShowingExportDialog = false
+    }
+
+    override fun openImportDialog() {
+        closeAllDialogs()
+        isShowingImportDialog = true
+    }
+
+    override fun closeImportDialog() {
+        isShowingImportDialog = false
     }
 
     override fun putPendingActionAfterSaved(action: AppState.PendingActionAfterSaved?) {
@@ -468,6 +483,14 @@ class AppDialogStateImpl(
             }
             isShowingVideo = on
         }
+    }
+
+    override fun openImportEntriesDialog(args: ImportEntriesDialogArgs) {
+        importEntriesDialogArgs = args
+    }
+
+    override fun closeImportEntriesDialog() {
+        importEntriesDialogArgs = null
     }
 
     override fun closeEmbeddedDialog() {

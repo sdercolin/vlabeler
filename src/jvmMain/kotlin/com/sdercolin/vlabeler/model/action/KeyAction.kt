@@ -46,6 +46,11 @@ enum class KeyAction(
         null,
         true,
     ),
+    ImportProject(
+        listOf(Strings.MenuFile, Strings.MenuFileImport),
+        null,
+        true,
+    ),
     ExportProject(
         listOf(Strings.MenuFile, Strings.MenuFileExport),
         KeySet(Key.E, setOf(Key.Ctrl)),

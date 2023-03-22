@@ -96,7 +96,7 @@ fun Labeler(
     Column(Modifier.fillMaxSize()) {
         if (project.isMultiModule) {
             ModuleSelectorBar(
-                moduleNames = project.modules.map { it.name.ifEmpty { string(Strings.EditorModuleRootNameTitle) } },
+                moduleNames = project.modules.map { it.name.ifEmpty { string(Strings.CommonRootModuleName) } },
                 currentModuleIndex = project.currentModuleIndex,
                 selectModule = { editorState.jumpToModule(it) },
             )

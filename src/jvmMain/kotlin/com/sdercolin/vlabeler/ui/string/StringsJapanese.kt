@@ -14,6 +14,7 @@ fun Strings.ja(): String? = when (this) {
     MenuFileSave -> "保存"
     MenuFileSaveAs -> "名前を付けて保存..."
     MenuFileProjectSetting -> "プロジェクト設定..."
+    MenuFileImport -> "インポート..."
     MenuFileExport -> "エクスポート..."
     MenuFileExportOverwrite -> "上書きエクスポート..."
     MenuFileExportOverwriteAll -> "すべて上書きエクスポート..."
@@ -95,6 +96,7 @@ fun Strings.ja(): String? = when (this) {
     CommonInputErrorPromptNumberRange -> "%s から %s の間の数値を入力してください。"
     CommonInputErrorPromptNumberMin -> "%s 以上の数値を入力してください。"
     CommonInputErrorPromptNumberMax -> "%s 以下の数値を入力してください。"
+    CommonRootModuleName -> "（ルート）"
     StarterStart -> "はじめる"
     StarterNewProject -> "新規プロジェクト..."
     StarterOpen -> "開く..."
@@ -157,6 +159,7 @@ fun Strings.ja(): String? = when (this) {
     ChooseInputFileDialogTitle -> "入力ファイルを選択"
     OpenProjectDialogTitle -> "プロジェクトを開く"
     SaveAsProjectDialogTitle -> "プロジェクトを別名で保存"
+    ImportDialogTitle -> "プロジェクトをインポート"
     ExportDialogTitle -> "プロジェクトをエクスポート"
     SetResolutionDialogDescription -> "エディタのキャンバスの解像度(データポイント/ピクセル)を入力 (%d ~ %d)"
     SetEntryPropertyDialogDescription ->
@@ -222,7 +225,6 @@ fun Strings.ja(): String? = when (this) {
     PluginEntrySelectorPreviewSummary -> "選択中 %d/%d"
     PluginEntrySelectorPlaceholder -> "フィルターがないため、全てのエントリが選択されます"
     EditorSubTitleMultiple -> "サンプル %2\$s の中の%1\$dエントリを編集"
-    EditorModuleRootNameTitle -> "（ルート）"
     FailedToLoadSampleFileError ->
         "サンプルファイルを読み込めませんでした。存在しないか、サポートされていないフォーマットの可能性があります。"
     PluginRuntimeUnexpectedException -> "プラグインの実行中に予期しないエラーが発生しました。プラグインの作者に連絡してください。"
@@ -231,7 +233,12 @@ fun Strings.ja(): String? = when (this) {
             "設定してください。問題が解決できない場合は、ラベラーまたはプラグインの作者に連絡してください。"
     InvalidOpenedProjectException -> "プロジェクトを開けませんでした。無効なデータが含まれています。詳細はエラーログを確認してください。"
     ProjectParseException ->
-        "プロジェクトを開けませんでした。破損しているか、互換性のないのバージョンの vLabeler によって作られています。"
+        "プロジェクトを開けませんでした。破損しているか、互換性のないのバージョンの vLabeler によって作られています。" +
+            "新規プロジェクトを作成し、メニューの `ファイル` -> `インポート...` " +
+            "を使用してプロジェクトファイルをインポートしてください。"
+    ProjectImportException ->
+        "ファイルをインポートできませんでした。\n" +
+            "無効な vLabeler プロジェクトファイルである可能性があります。詳細はエラーログを確認してください。"
     ProjectUpdateOnSampleException ->
         "プロジェクトのデータとサンプルのデータをマッチングできませんでした。詳細はエラーログを確認してください。"
     InvalidEditedProjectException -> "この編集は無効です。詳細はエラーログを確認してください。"
@@ -513,5 +520,12 @@ fun Strings.ja(): String? = when (this) {
     ProjectSettingAutoExportHelperText ->
         "保存時、自動的にすべてのサブプロジェクトを出力先ファイルに上書きエクスポートします。\n" +
             "この設定は、`出力先ファイル`が正しく設定されている場合、またはラベラーによって固定されている場合のみ有効です。"
+    ImportEntriesDialogTitle -> "プロジェクトのインポート"
+    ImportEntriesDialogItemSummaryTitle -> "%d 個のエントリ"
+    ImportEntriesDialogItemTargetLabel -> "インポート先："
+    ImportEntriesDialogItemIncompatible -> "互換性がありません"
+    ImportEntriesDialogReplaceContent -> "すべてのエントリを上書きする"
+    ImportEntriesDialogReplaceContentDisabledDescription ->
+        "このプロジェクトは、エントリの追加をサポートしていないため、すべてのエントリがインポートされたエントリで上書きされます。"
     else -> null
 }
