@@ -40,7 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
-import com.sdercolin.vlabeler.ui.common.DialogContainer
+import com.sdercolin.vlabeler.ui.common.MediumDialogContainer
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
@@ -66,7 +66,7 @@ fun ProjectListDialog(
     finish: () -> Unit,
     state: ProjectSettingDialogState = rememberProjectSettingDialogState(appState, finish),
 ) {
-    DialogContainer(widthFraction = 0.8f, heightFraction = 0.8f) {
+    MediumDialogContainer {
         Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 45.dp)) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(

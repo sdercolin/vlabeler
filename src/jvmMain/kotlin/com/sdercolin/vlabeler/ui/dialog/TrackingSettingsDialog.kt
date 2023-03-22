@@ -1,18 +1,14 @@
 package com.sdercolin.vlabeler.ui.dialog
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -25,10 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.tracking.TrackingState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
-import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.common.SmallDialogContainer
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 
 @Composable
@@ -36,35 +31,29 @@ fun TrackingSettingsDialog(
     trackingState: TrackingState,
     finish: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-            .background(color = Black50)
-            .plainClickable(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Surface(modifier = Modifier.fillMaxWidth(0.5f)) {
-            Column(modifier = Modifier.fillMaxWidth().padding(vertical = 30.dp, horizontal = 40.dp)) {
-                Text(
-                    text = string(Strings.TrackingSettingsDialogTitle),
-                    style = MaterialTheme.typography.h4,
-                )
+    SmallDialogContainer(wrapHeight = true) {
+        Column(modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp, horizontal = 40.dp)) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = string(Strings.TrackingSettingsDialogTitle),
+                style = MaterialTheme.typography.h5,
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = string(Strings.TrackingSettingsDialogDescription),
+                style = MaterialTheme.typography.body2,
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Content(trackingState)
+            if (trackingState.hasNotAskedForTrackingPermission()) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = string(Strings.TrackingSettingsDialogDescription),
-                    style = MaterialTheme.typography.body2,
+                    text = string(Strings.TrackingSettingsDialogFirstTimeAlert),
+                    style = MaterialTheme.typography.caption,
                 )
-                Spacer(modifier = Modifier.height(20.dp))
-                Content(trackingState)
-                if (trackingState.hasNotAskedForTrackingPermission()) {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        text = string(Strings.TrackingSettingsDialogFirstTimeAlert),
-                        style = MaterialTheme.typography.caption,
-                    )
-                }
-                Spacer(Modifier.height(30.dp))
-                ButtonBar(openDetails = trackingState::openDetailsWebPage, finish = finish)
             }
+            Spacer(Modifier.height(30.dp))
+            ButtonBar(openDetails = trackingState::openDetailsWebPage, finish = finish)
         }
     }
 }

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
@@ -39,6 +37,7 @@ data class SetResolutionDialogArgs(val current: Int, val min: Int, val max: Int)
 
 data class SetResolutionDialogResult(val newValue: Int) : EmbeddedDialogResult<SetResolutionDialogArgs>
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SetResolutionDialog(
     args: SetResolutionDialogArgs,

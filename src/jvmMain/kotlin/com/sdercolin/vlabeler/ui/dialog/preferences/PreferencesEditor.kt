@@ -118,27 +118,25 @@ fun PreferencesEditor(
         launchArgs,
     ),
 ) {
-    Box(Modifier.fillMaxSize(0.8f).plainClickable()) {
-        Column(Modifier.fillMaxSize()) {
-            Content(state)
-            Divider(Modifier.height(1.dp), color = Black50)
-            ButtonBar(
-                requestImport = { state.currentFilePicker = PreferencesEditorState.FilePicker.Import },
-                requestExport = { state.currentFilePicker = PreferencesEditorState.FilePicker.Export },
-                resetPage = { state.resetPage() },
-                resetAll = { state.resetAll() },
-                cancel = { state.finish(false) },
-                canApply = state.needSave,
-                apply = { state.save() },
-                finish = { state.finish(true) },
-            )
-        }
-        state.keymapItemEditDialogArgs?.let {
-            KeymapItemEditDialog(it)
-        }
-        state.keymapItemEditConflictDialogArgs?.let {
-            KeymapItemEditConflictDialog(it)
-        }
+    Column(Modifier.fillMaxSize()) {
+        Content(state)
+        Divider(Modifier.height(1.dp), color = Black50)
+        ButtonBar(
+            requestImport = { state.currentFilePicker = PreferencesEditorState.FilePicker.Import },
+            requestExport = { state.currentFilePicker = PreferencesEditorState.FilePicker.Export },
+            resetPage = { state.resetPage() },
+            resetAll = { state.resetAll() },
+            cancel = { state.finish(false) },
+            canApply = state.needSave,
+            apply = { state.save() },
+            finish = { state.finish(true) },
+        )
+    }
+    state.keymapItemEditDialogArgs?.let {
+        KeymapItemEditDialog(it)
+    }
+    state.keymapItemEditConflictDialogArgs?.let {
+        KeymapItemEditConflictDialog(it)
     }
     FilePicker(state)
 }

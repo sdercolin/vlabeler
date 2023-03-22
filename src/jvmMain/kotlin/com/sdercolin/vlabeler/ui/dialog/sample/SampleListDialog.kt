@@ -26,7 +26,6 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
+import com.sdercolin.vlabeler.ui.common.LargeDialogContainer
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.common.plainClickable
@@ -49,7 +49,6 @@ import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialogItem.Sample
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
@@ -71,39 +70,32 @@ fun SampleListDialog(
     finish: () -> Unit,
     state: SampleListDialogState = rememberState(editorState),
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-            .background(color = Black50)
-            .plainClickable(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Surface(modifier = Modifier.fillMaxSize(0.8f)) {
-            Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 30.dp)) {
-                Spacer(Modifier.height(5.dp))
-                SampleDirectoryBar(
-                    currentModuleName = state.currentModuleName,
-                    allModuleNames = state.allModuleNames,
-                    onSelectModuleName = { state.selectModule(it) },
-                    directory = state.sampleDirectory,
-                    valid = state.isSampleDirectoryExisting(),
-                    requestRedirectSampleDirectory = {
-                        state.requestRedirectSampleDirectory()
-                    },
-                )
-                Spacer(Modifier.height(15.dp))
-                Content(state)
-                Spacer(Modifier.height(20.dp))
-                ButtonBar(
-                    finish = finish,
-                    hasSelectedEntry = state.selectedEntryIndex != null,
-                    jumpToSelectedEntry = {
-                        state.jumpToSelectedEntry()
-                        finish()
-                    },
-                    canOpenSampleDirectory = state.isSampleDirectoryExisting(),
-                    openSampleDirectory = { state.openSampleDirectory() },
-                )
-            }
+    LargeDialogContainer {
+        Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 30.dp)) {
+            Spacer(Modifier.height(5.dp))
+            SampleDirectoryBar(
+                currentModuleName = state.currentModuleName,
+                allModuleNames = state.allModuleNames,
+                onSelectModuleName = { state.selectModule(it) },
+                directory = state.sampleDirectory,
+                valid = state.isSampleDirectoryExisting(),
+                requestRedirectSampleDirectory = {
+                    state.requestRedirectSampleDirectory()
+                },
+            )
+            Spacer(Modifier.height(15.dp))
+            Content(state)
+            Spacer(Modifier.height(20.dp))
+            ButtonBar(
+                finish = finish,
+                hasSelectedEntry = state.selectedEntryIndex != null,
+                jumpToSelectedEntry = {
+                    state.jumpToSelectedEntry()
+                    finish()
+                },
+                canOpenSampleDirectory = state.isSampleDirectoryExisting(),
+                openSampleDirectory = { state.openSampleDirectory() },
+            )
         }
     }
 

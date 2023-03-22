@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.io.ImportedModule
 import com.sdercolin.vlabeler.ui.ProjectStore
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
-import com.sdercolin.vlabeler.ui.common.DialogContainer
+import com.sdercolin.vlabeler.ui.common.LargeDialogContainer
 import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -66,9 +66,9 @@ fun ImportEntriesDialog(
     args: ImportEntriesDialogArgs,
     state: ImportEntriesDialogState = rememberImportEntriesDialogState(finish, projectStore, args.importedModules),
 ) {
-    DialogContainer(widthFraction = 0.8f, heightFraction = 0.8f) {
+    LargeDialogContainer {
         Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 45.dp)) {
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = string(Strings.ImportEntriesDialogTitle),
                 style = MaterialTheme.typography.h5,

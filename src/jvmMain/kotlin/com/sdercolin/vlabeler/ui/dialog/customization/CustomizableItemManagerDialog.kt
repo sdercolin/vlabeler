@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -46,12 +45,12 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
+import com.sdercolin.vlabeler.ui.common.LargeDialogContainer
 import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.launch
@@ -64,26 +63,21 @@ fun CustomizableItemManagerDialog(
     state: CustomizableItemManagerDialogState<*> = rememberCustomizableItemManagerDialogState(type, appState),
 ) {
     val coroutineScope = rememberCoroutineScope()
-    Box(
-        modifier = Modifier.fillMaxSize()
-            .background(color = Black50)
-            .plainClickable { state.cancelSelection() },
-        contentAlignment = Alignment.Center,
+    LargeDialogContainer(
+        onClickOutside = { state.cancelSelection() },
     ) {
-        Surface(modifier = Modifier.fillMaxSize(0.8f)) {
-            Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 30.dp)) {
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = string(state.title),
-                    style = MaterialTheme.typography.h6,
-                )
-                Spacer(modifier = Modifier.height(25.dp))
-                MiddleButtonBar(state)
-                Spacer(modifier = Modifier.height(15.dp))
-                Content(state)
-                Spacer(modifier = Modifier.height(25.dp))
-                BottomButtonBar(state)
-            }
+        Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 30.dp)) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = string(state.title),
+                style = MaterialTheme.typography.h5,
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            MiddleButtonBar(state)
+            Spacer(modifier = Modifier.height(15.dp))
+            Content(state)
+            Spacer(modifier = Modifier.height(25.dp))
+            BottomButtonBar(state)
         }
     }
     if (state.isShowingFileSelector) {
