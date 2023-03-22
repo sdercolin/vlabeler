@@ -1,6 +1,6 @@
 {
   "name": "mark-oto-entries-in-ust",
-  "version": 2,
+  "version": 3,
   "type": "macro",
   "displayedName": {
     "en": "Mark oto entries used in ust",

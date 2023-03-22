@@ -1,6 +1,6 @@
 {
   "name": "ust2lab-any",
-  "version": 3,
+  "version": 4,
   "type": "template",
   "displayedName": {
     "en": "Lab generator with ust and custom dictionary",

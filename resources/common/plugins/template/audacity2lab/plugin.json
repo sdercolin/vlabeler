@@ -1,6 +1,6 @@
 {
   "name": "audacity2lab",
-  "version": 6,
+  "version": 7,
   "type": "template",
   "displayedName": {
     "en": "Audacity labels to Sinsy lab format",

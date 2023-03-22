@@ -1,6 +1,6 @@
 {
   "name": "execute-scripts",
-  "version": 3,
+  "version": 4,
   "type": "macro",
   "displayedName": {
     "en": "Execute Scripts",

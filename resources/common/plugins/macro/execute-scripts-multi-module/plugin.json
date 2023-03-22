@@ -1,6 +1,6 @@
 {
   "name": "execute-scripts-multi-module",
-  "version": 1,
+  "version": 2,
   "type": "macro",
   "displayedName": {
     "en": "Execute Scripts (Multi-subproject)",
