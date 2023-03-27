@@ -23,7 +23,7 @@
 Releases では、次のプラットフォーム用のアプリケーションパッケージが提供されます。
 
 - Windows (.zip/.exe)
-- Mac (Apple Silicon または Intel) (.dmg)
+- Mac (Intel）（Apple Silicon互換性あり) (.dmg)
 - Ubuntu (.deb)
 
 その他の種類の Linux OS の場合は、自分でビルドする必要がある場合があります。
