@@ -351,6 +351,6 @@ class ChartStore {
     }
 
     companion object {
-        private const val PaintingAlgorithmVersion = 5
+        private const val PaintingAlgorithmVersion = 6
     }
 }
