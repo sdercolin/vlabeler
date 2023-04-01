@@ -311,51 +311,33 @@ class ChartStore {
         // preprocess data
         val maxLengthIndex = data.indices.maxBy { data[it].size }
         val maxYLength = data[maxLengthIndex].size
-        val frequencyList = data[maxLengthIndex].indices.map { it.toFloat() * maxFrequency / (maxYLength - 1) }
         val step = appConf.painter.spectrogram.melScaleStep
-        val mels = frequencyList.map { MelScale.toMel(it.toDouble()) }
-            .let { mels ->
-                val firstOverIndex = mels.indexOfFirst { it > maxMel }
-                if (firstOverIndex >= 0) {
-                    mels.subList(0, firstOverIndex)
-                } else {
-                    val lastMel = mels.last()
-                    if (lastMel + step < maxMel) {
-                        mels + listOf(lastMel + step, maxMel.toDouble())
-                    } else {
-                        mels + listOf(maxMel.toDouble())
-                    }
-                }
-            }
+        val displayMel = IntArray((maxMel / step) + 1) { it * step } + listOf(maxMel)
+        val displayFreq = displayMel.map { MelScale.toFreq(it.toDouble()) }
+        val displayIndex = displayFreq.map { it * (maxYLength - 1) / maxFrequency }
         // image size
         val width = data.size.toFloat()
-        val height = maxMel.toFloat()
+        val height = displayIndex.size.toFloat()
         val size = Size(width, height)
         val newBitmap = ImageBitmap(width.toInt(), height.toInt())
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
             data.forEachIndexed { xIndex, yArray ->
                 if (yArray.isEmpty()) return@forEachIndexed
-                val interpolated = mels.foldIndexed(listOf<Pair<Int, Double>>()) { index, acc, keyMel ->
-                    if (acc.isEmpty()) {
-                        listOf(keyMel.toInt() to yArray.getOrElse(index) { 0.0 })
-                    } else {
-                        val thisIntensity = yArray.getOrElse(index) { 0.0 }
-                        val (lastMel, lastIntensity) = acc.last()
-                        acc + (lastMel + step..keyMel.toInt() step step).map { mel ->
-                            val intensity = lastIntensity +
-                                (thisIntensity - lastIntensity) * (mel - lastMel) / (keyMel - lastMel)
-                            mel to intensity
-                        }
-                    }
+                val interpolated = displayIndex.map {
+                    val leftIndex = it.toInt()
+                    val rightWeight = it - leftIndex.toDouble()
+                    val left = yArray.getOrElse(leftIndex) { 0.0 }
+                    val right = yArray.getOrElse(leftIndex + 1) { 0.0 }
+                    left * (1.0 - rightWeight) + right * rightWeight
                 }
-                interpolated.forEach { (mel, intensity) ->
+                interpolated.forEachIndexed { index, intensity ->
                     val color = colorPalette.get(intensity.toFloat())
                     val left = xIndex.toFloat()
-                    val top = height - mel
+                    val top = height - index
                     drawRect(
                         color = color,
                         topLeft = Offset(left, top),
-                        size = Size(1f, step.toFloat()),
+                        size = Size(1f, 1f),
                     )
                 }
             }
