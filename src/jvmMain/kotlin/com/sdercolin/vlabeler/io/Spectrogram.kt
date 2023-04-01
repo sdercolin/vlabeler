@@ -81,10 +81,14 @@ fun Wave.toSpectrogram(conf: AppConf.Spectrogram, sampleRate: Float): Spectrogra
 }
 
 /**
- * Convert a frequency to a mel scale.
+ * Convert a frequency to a mel scale or a mel to a frequency
  */
 object MelScale {
     fun toMel(frequency: Double): Double {
         return 2595 * log10(1 + frequency / 700)
+    }
+
+    fun toFreq(mel: Double): Double {
+        return (10.0.pow(mel / 2595) - 1) * 700
     }
 }
