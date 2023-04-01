@@ -219,6 +219,7 @@ class ChartStore {
         requireNotNull(chunk) {
             "Chunk $chunkIndex is required. However it's not loaded."
         }
+        Log.info("Waveforms chunk $chunkIndex in channel $channelIndex: draw bitmap start")
         val data = chunk.wave.channels[channelIndex].data
         val dataDensity = appConf.painter.amplitude.unitSize
         val width = data.size / dataDensity
@@ -228,7 +229,6 @@ class ChartStore {
         val newBitmap = ImageBitmap(width, height)
         val color = appConf.painter.amplitude.color.toColorOrNull() ?: AppConf.Amplitude.DefaultColor.toColor()
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
-            Log.info("Waveforms chunk $chunkIndex in channel $channelIndex: draw bitmap")
             val yScale = maxRawY / height * 2 * (1 + appConf.painter.amplitude.yAxisBlankRate)
             data.toList()
                 .map { height / 2 - it / yScale }
@@ -242,6 +242,7 @@ class ChartStore {
                     )
                 }
         }
+        Log.info("Waveforms chunk $chunkIndex in channel $channelIndex: draw bitmap end")
         yield()
         ChartRepository.putWaveform(sampleInfo, channelIndex, chunkIndex, newBitmap)
         yield()
@@ -292,6 +293,7 @@ class ChartStore {
         requireNotNull(chunk) {
             "Chunk $chunkIndex is required. However it's not loaded."
         }
+        Log.info("Spectrogram chunk $chunkIndex: draw bitmap start")
         val rawData = requireNotNull(chunk.spectrogram).data
         val pointDensity = appConf.painter.spectrogram.pointDensity
         val data = rawData.chunked(pointDensity).map { group ->
@@ -306,31 +308,33 @@ class ChartStore {
         val maxFrequency = sampleInfo.sampleRate / 2
         val maxFrequencyToDisplay = appConf.painter.spectrogram.maxFrequency
         val maxMel = MelScale.toMel(maxFrequencyToDisplay.toDouble()).toInt()
+        // preprocess data
+        val maxLengthIndex = data.indices.maxBy { data[it].size }
+        val maxYLength = data[maxLengthIndex].size
+        val frequencyList = data[maxLengthIndex].indices.map { it.toFloat() * maxFrequency / (maxYLength - 1) }
+        val step = appConf.painter.spectrogram.melScaleStep
+        val mels = frequencyList.map { MelScale.toMel(it.toDouble()) }
+            .let { mels ->
+                val firstOverIndex = mels.indexOfFirst { it > maxMel }
+                if (firstOverIndex >= 0) {
+                    mels.subList(0, firstOverIndex)
+                } else {
+                    val lastMel = mels.last()
+                    if (lastMel + step < maxMel) {
+                        mels + listOf(lastMel + step, maxMel.toDouble())
+                    } else {
+                        mels + listOf(maxMel.toDouble())
+                    }
+                }
+            }
+        // image size
         val width = data.size.toFloat()
         val height = maxMel.toFloat()
         val size = Size(width, height)
         val newBitmap = ImageBitmap(width.toInt(), height.toInt())
-        Log.info("Spectrogram chunk $chunkIndex: draw bitmap")
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
             data.forEachIndexed { xIndex, yArray ->
                 if (yArray.isEmpty()) return@forEachIndexed
-                val frequencyList = yArray.indices.map { it.toFloat() * maxFrequency / (yArray.size - 1) }
-
-                val step = appConf.painter.spectrogram.melScaleStep
-                val mels = frequencyList.map { MelScale.toMel(it.toDouble()) }
-                    .let { mels ->
-                        val firstOverIndex = mels.indexOfFirst { it > maxMel }
-                        if (firstOverIndex >= 0) {
-                            mels.subList(0, firstOverIndex)
-                        } else {
-                            val lastMel = mels.last()
-                            if (lastMel + step < maxMel) {
-                                mels + listOf(lastMel + step, maxMel.toDouble())
-                            } else {
-                                mels + listOf(maxMel.toDouble())
-                            }
-                        }
-                    }
                 val interpolated = mels.foldIndexed(listOf<Pair<Int, Double>>()) { index, acc, keyMel ->
                     if (acc.isEmpty()) {
                         listOf(keyMel.toInt() to yArray.getOrElse(index) { 0.0 })
@@ -356,6 +360,7 @@ class ChartStore {
                 }
             }
         }
+        Log.info("Spectrogram chunk $chunkIndex: draw bitmap end")
         yield()
         ChartRepository.putSpectrogram(sampleInfo, chunkIndex, newBitmap)
         yield()
