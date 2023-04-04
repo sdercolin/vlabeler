@@ -374,6 +374,7 @@ enum class Strings {
     PreferencesHistorySquashIndexDescription,
     ActionToggleSamplePlayback,
     ActionToggleEntryPlayback,
+    ActionToggleScreenRangePlayback,
     ActionToggleVideoPopupEmbedded,
     ActionToggleVideoPopupNewWindow,
     ActionIncreaseResolution,

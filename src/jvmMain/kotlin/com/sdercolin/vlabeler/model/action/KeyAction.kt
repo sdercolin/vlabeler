@@ -275,6 +275,11 @@ enum class KeyAction(
         KeySet(Key.Space),
         false,
     ),
+    ToggleScreenRangePlayback(
+        listOf(Strings.ActionToggleScreenRangePlayback),
+        KeySet(Key.Space, setOf(Key.Ctrl, Key.Shift)),
+        false,
+    ),
     ToggleVideoPopupEmbedded(
         listOf(Strings.ActionToggleVideoPopupEmbedded),
         KeySet(Key.V),

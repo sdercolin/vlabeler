@@ -191,11 +191,6 @@ private fun LaunchKeyboardEvent(
 ) {
     LaunchedEffect(appState, keyboardViewModel, player) {
         keyboardViewModel.keyboardActionFlow.collect { action ->
-            if (appState.isEditorActive) {
-                if (action == KeyAction.ToggleEntryPlayback || action == KeyAction.ToggleSamplePlayback) {
-                    appState.handleTogglePlayerAction(action, player)
-                }
-            }
             if (action == KeyAction.CancelDialog) {
                 appState.closeAllDialogs()
             }

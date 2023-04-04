@@ -398,6 +398,7 @@ fun Strings.zhHans(): String? = when (this) {
             "将不会被保存在历史中。"
     ActionToggleSamplePlayback -> "播放/暂停当前采样"
     ActionToggleEntryPlayback -> "播放/暂停当前条目"
+    ActionToggleScreenRangePlayback -> "播放/暂停当前屏幕范围"
     ActionToggleVideoPopupEmbedded -> "显示/关闭内嵌式视频"
     ActionToggleVideoPopupNewWindow -> "显示/关闭新窗口视频"
     ActionIncreaseResolution -> "缩小"

@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -50,9 +51,11 @@ import com.sdercolin.vlabeler.ui.dialog.SetEntryPropertyDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState
 import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
+import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFrame
 import com.sdercolin.vlabeler.video.VideoState
@@ -358,19 +361,30 @@ class AppState(
         }
     }
 
-    fun handleTogglePlayerAction(
-        action: KeyAction,
-        player: Player,
-    ) {
+    fun handleTogglePlayerAction(action: KeyAction, scrollState: ScrollState, markerState: MarkerState) {
+        if (isEditorActive.not()) return
         val sampleInfo = editor?.sampleInfoResult?.getOrNull() ?: return
-        if (action == KeyAction.ToggleEntryPlayback) {
-            val sampleRate = sampleInfo.sampleRate
-            val range = requireProject().currentEntry.run {
-                toFrame(start, sampleRate)..toFrame(end, sampleRate)
+        when (action) {
+            KeyAction.ToggleEntryPlayback -> {
+                val sampleRate = sampleInfo.sampleRate
+                val range = requireProject().currentEntry.run {
+                    toFrame(start, sampleRate)..toFrame(end, sampleRate)
+                }
+                player.toggle(range)
             }
-            player.toggle(range)
-        } else {
-            player.toggle()
+            KeyAction.ToggleScreenRangePlayback -> {
+                val range = scrollState.getScreenRange(markerState.canvasParams.lengthInPixel)?.let {
+                    val converter = markerState.entryConverter
+                    val start = converter.convertToFrame(it.start).coerceAtLeast(0f)
+                    val end =
+                        converter.convertToFrame(it.endInclusive).coerceAtMost(sampleInfo.length.toFloat())
+                            .coerceAtLeast(start)
+                    start..end
+                }
+                player.toggle(range)
+            }
+            KeyAction.ToggleSamplePlayback -> player.toggle()
+            else -> Unit
         }
     }
 

@@ -141,6 +141,7 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`.
 
 - `Space`: play the current entry, or stop playing if already playing
 - `Shift` + `Space`: play the current sample file or stop playing if already playing
+- `Ctrl` + `Shift` + `Space`: play the audio with current screen range or stop playing if already playing
 - Mouse right click: play the clicked section
 - `Alt` + mouse drag on parameters: play the audio near the cursor's position while moving
 

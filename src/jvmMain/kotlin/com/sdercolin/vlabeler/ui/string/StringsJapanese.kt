@@ -414,6 +414,7 @@ fun Strings.ja(): String? = when (this) {
             "次に内容の変更があるまで、履歴に保存されません。"
     ActionToggleSamplePlayback -> "現在のサンプルの再生/停止"
     ActionToggleEntryPlayback -> "現在のエントリの再生/停止"
+    ActionToggleScreenRangePlayback -> "現在の画面範囲の再生/停止"
     ActionToggleVideoPopupEmbedded -> "ビデオ表示の切り替え（埋め込み）"
     ActionToggleVideoPopupNewWindow -> "ビデオ表示の切り替え（新しいウィンドウ）"
     ActionIncreaseResolution -> "ズームアウト"

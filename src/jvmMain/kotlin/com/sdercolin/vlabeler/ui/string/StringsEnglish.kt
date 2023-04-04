@@ -443,6 +443,7 @@ fun Strings.en(): String = when (this) {
             "until the next content change."
     ActionToggleSamplePlayback -> "Toggle Playback of Current Sample"
     ActionToggleEntryPlayback -> "Toggle Playback of Current Entry"
+    ActionToggleScreenRangePlayback -> "Toggle Playback of Current Screen Range"
     ActionToggleVideoPopupEmbedded -> "Toggle Video Display (Embedded)"
     ActionToggleVideoPopupNewWindow -> "Toggle Video Display (In New Window)"
     ActionIncreaseResolution -> "Zoom Out"
