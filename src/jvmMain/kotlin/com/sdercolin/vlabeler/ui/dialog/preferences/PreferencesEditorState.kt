@@ -31,7 +31,7 @@ class PreferencesEditorState(
     val conf get() = _conf
     private val pageChildrenMap = mutableMapOf<PreferencesPageListItem, List<PreferencesPageListItem>>()
     val pages = mutableStateListOf<PreferencesPageListItem>().apply {
-        val rootPages = PreferencesPage.getRootPages().toTypedArray().map { PreferencesPageListItem(it, 0) }
+        val rootPages = PreferencesPages.rootPages.map { PreferencesPageListItem(it, 0) }
         addAll(rootPages)
 
         val pageToOpen = launchArgs?.page ?: initialPage
@@ -304,6 +304,6 @@ class PreferencesEditorState(
              * Use English
              */
             val searchText: String,
-        ) : LaunchArgs(PreferencesPage.KeymapKeyAction)
+        ) : LaunchArgs(PreferencesPages.KeymapKeyAction)
     }
 }

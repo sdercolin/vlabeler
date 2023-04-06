@@ -15,7 +15,7 @@ object ColorPaletteRepository {
     private const val FOLDER_NAME = "color_palettes"
     private val directory = AppDir.resolve(FOLDER_NAME)
 
-    private val items = mutableListOf<ColorPaletteDefinition>()
+    private val items = mutableMapOf<String, ColorPaletteDefinition>()
 
     fun initialize() {
         if (directory.isFile) {
@@ -33,19 +33,23 @@ object ColorPaletteRepository {
 
     fun load() {
         if (directory.isDirectory.not()) return
-        items.clear()
-        items.addAll(ColorPaletteDefinition.presets)
+        val namesInThisLoad = mutableListOf<String>()
+        ColorPaletteDefinition.presets.forEach {
+            items[it.name] = it
+            namesInThisLoad.add(it.name)
+        }
         directory.getChildren().forEach { file ->
             if (file.name.endsWith(".json") && file.name.endsWith(".example.json").not()) {
                 runCatching { file.readText().parseJson<ColorPaletteDefinition>().validate() }
                     .onSuccess { definition ->
-                        if (definition.name in items.map { it.name }) {
+                        if (definition.name in namesInThisLoad) {
                             Log.error(
                                 "Cannot read {${file.absolutePath}} " +
                                     "because color palette ${definition.name} already exists.",
                             )
                         } else {
-                            items.add(definition)
+                            namesInThisLoad.add(definition.name)
+                            items[definition.name] = definition
                         }
                     }
                     .onFailure {
@@ -56,10 +60,12 @@ object ColorPaletteRepository {
         }
     }
 
-    fun getAll() = items.toList()
+    fun getAll() = items.values.toList()
+
+    fun has(name: String) = items.containsKey(name)
 
     fun get(name: String): ColorPaletteDefinition {
-        val found = items.find { it.name == name }
+        val found = items[name]
         if (found == null) {
             Log.error("Cannot find color palette $name.")
             return ColorPaletteDefinition.presets.first()
