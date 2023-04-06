@@ -284,6 +284,7 @@ enum class Strings {
     PreferencesChartsSpectrogramMaxIntensity,
     PreferencesChartsSpectrogramWindowType,
     PreferencesChartsSpectrogramColorPalette,
+    PreferencesChartsSpectrogramColorPaletteDescription,
     PreferencesKeymap,
     PreferencesKeymapDescription,
     PreferencesKeymapKeyAction,

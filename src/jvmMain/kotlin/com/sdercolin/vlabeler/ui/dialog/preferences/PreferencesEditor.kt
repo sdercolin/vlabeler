@@ -56,6 +56,7 @@ import com.sdercolin.vlabeler.ui.common.ColorHexInputBox
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
 import com.sdercolin.vlabeler.ui.common.IntegerInputBox
+import com.sdercolin.vlabeler.ui.common.PartialClickableText
 import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
@@ -69,6 +70,7 @@ import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.Text
+import com.sdercolin.vlabeler.ui.string.extractClickables
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
@@ -307,10 +309,13 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
                     )
                     if (item.description != null) {
                         Spacer(Modifier.height(10.dp))
-                        Text(
-                            text = string(item.description),
+                        val annotatedText = string(item.description)
+                        val clickableText = extractClickables(annotatedText, item.clickableTags)
+
+                        PartialClickableText(
+                            text = clickableText.text,
+                            clickables = clickableText.clickables,
                             style = MaterialTheme.typography.caption,
-                            softWrap = true,
                         )
                     }
                     if (item.columnStyle) {

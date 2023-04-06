@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
+import com.sdercolin.vlabeler.repository.ColorPaletteRepository
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.stringStatic
 import com.sdercolin.vlabeler.util.parseJson
@@ -25,6 +26,10 @@ class PreferencesEditorState(
     private val showSnackbar: (String) -> Unit,
     val launchArgs: LaunchArgs?,
 ) {
+    init {
+        ColorPaletteRepository.load()
+    }
+
     var savedConf: AppConf by mutableStateOf(initConf)
         private set
     private var _conf: AppConf by mutableStateOf(initConf)
@@ -88,6 +93,20 @@ class PreferencesEditorState(
     var isLaunchArgsHandled: Boolean by mutableStateOf(false)
 
     val needSave get() = savedConf != _conf
+
+    init {
+        // Fix outdated items
+        if (ColorPaletteRepository.has(_conf.painter.spectrogram.colorPalette).not()) {
+            Log.debug("Missing color palette ${_conf.painter.spectrogram.colorPalette}, fix to default.")
+            _conf = _conf.copy(
+                painter = _conf.painter.copy(
+                    spectrogram = _conf.painter.spectrogram.copy(
+                        colorPalette = AppConf.Spectrogram.DefaultColorPalette,
+                    ),
+                ),
+            )
+        }
+    }
 
     fun save() {
         apply(_conf)

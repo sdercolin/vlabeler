@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui.common
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -54,4 +55,51 @@ fun SingleClickableText(
             )
         }
     }
+}
+
+@Composable
+fun PartialClickableText(
+    text: String,
+    clickables: List<Pair<String, () -> Unit>>,
+    modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
+    clickableColor: Color = MaterialTheme.colors.primary,
+    style: TextStyle = MaterialTheme.typography.body2,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+) {
+    val annotatedText = buildAnnotatedString {
+        var lastEnd = 0
+        clickables.forEach { (clickableText, _) ->
+            withStyle(SpanStyle(color = color)) {
+                append(text.substring(lastEnd, text.indexOf(clickableText, lastEnd)))
+            }
+            pushStringAnnotation(clickableText, clickableText)
+            withStyle(
+                SpanStyle(
+                    color = clickableColor,
+                    textDecoration = TextDecoration.Underline,
+                ),
+            ) {
+                append(clickableText)
+            }
+            pop()
+            lastEnd = text.indexOf(clickableText, lastEnd) + clickableText.length
+        }
+        withStyle(SpanStyle(color = color)) {
+            append(text.substring(lastEnd))
+        }
+    }
+    ClickableText(
+        modifier = modifier,
+        text = annotatedText,
+        onClick = { offset ->
+            annotatedText.getStringAnnotations(offset, offset).firstOrNull()?.let { annotation ->
+                clickables.firstOrNull { it.first == annotation.item }?.second?.invoke()
+            }
+        },
+        style = style,
+        maxLines = maxLines,
+        overflow = overflow,
+    )
 }

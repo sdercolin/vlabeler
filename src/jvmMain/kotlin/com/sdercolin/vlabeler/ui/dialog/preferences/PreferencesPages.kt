@@ -8,10 +8,12 @@ import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseClickActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseScrollActionKeyBind
 import com.sdercolin.vlabeler.repository.ColorPaletteRepository
+import com.sdercolin.vlabeler.ui.string.ClickableTag
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.util.divideWithBigDecimal
 import com.sdercolin.vlabeler.util.multiplyWithBigDecimal
+import java.awt.Desktop
 
 object PreferencesPages {
 
@@ -221,6 +223,13 @@ object PreferencesPages {
                 selection(
                     title = Strings.PreferencesChartsSpectrogramColorPalette,
                     defaultValue = AppConf.Spectrogram.DefaultColorPalette,
+                    description = Strings.PreferencesChartsSpectrogramColorPaletteDescription,
+                    clickableTags = listOf(
+                        ClickableTag(
+                            tag = "edit",
+                            onClick = { Desktop.getDesktop().open(ColorPaletteRepository.directory) },
+                        ),
+                    ),
                     select = { it.colorPalette },
                     update = { copy(colorPalette = it) },
                     options = ColorPaletteRepository.getAll().map { it.name }.toTypedArray(),
@@ -650,6 +659,7 @@ private class PreferencesItemContext<P>(
     fun switch(
         title: Strings,
         description: Strings? = null,
+        clickableTags: List<ClickableTag> = listOf(),
         columnStyle: Boolean = false,
         defaultValue: Boolean,
         select: (P) -> Boolean,
@@ -659,6 +669,7 @@ private class PreferencesItemContext<P>(
         PreferencesItem.Switch(
             title = title,
             description = description,
+            clickableTags = clickableTags,
             columnStyle = columnStyle,
             defaultValue = defaultValue,
             select = selectWithContext(select),
@@ -670,6 +681,7 @@ private class PreferencesItemContext<P>(
     fun integer(
         title: Strings,
         description: Strings? = null,
+        clickableTags: List<ClickableTag> = listOf(),
         columnStyle: Boolean = false,
         defaultValue: Int,
         min: Int? = null,
@@ -681,6 +693,7 @@ private class PreferencesItemContext<P>(
         PreferencesItem.IntegerInput(
             title = title,
             description = description,
+            clickableTags = clickableTags,
             columnStyle = columnStyle,
             defaultValue = defaultValue,
             min = min,
@@ -694,6 +707,7 @@ private class PreferencesItemContext<P>(
     fun floatPercentage(
         title: Strings,
         description: Strings? = null,
+        clickableTags: List<ClickableTag> = listOf(),
         columnStyle: Boolean = false,
         defaultValue: Float,
         min: Float? = null,
@@ -704,6 +718,7 @@ private class PreferencesItemContext<P>(
     ) = float(
         title = title,
         description = description,
+        clickableTags = clickableTags,
         columnStyle = columnStyle,
         defaultValue = defaultValue.multiplyWithBigDecimal(100f),
         min = min?.multiplyWithBigDecimal(100f),
@@ -716,6 +731,7 @@ private class PreferencesItemContext<P>(
     fun float(
         title: Strings,
         description: Strings? = null,
+        clickableTags: List<ClickableTag> = listOf(),
         columnStyle: Boolean = false,
         defaultValue: Float,
         min: Float? = null,
@@ -727,6 +743,7 @@ private class PreferencesItemContext<P>(
         PreferencesItem.FloatInput(
             title = title,
             description = description,
+            clickableTags = clickableTags,
             columnStyle = columnStyle,
             defaultValue = defaultValue,
             min = min,
@@ -740,6 +757,7 @@ private class PreferencesItemContext<P>(
     fun color(
         title: Strings,
         description: Strings? = null,
+        clickableTags: List<ClickableTag> = listOf(),
         columnStyle: Boolean = false,
         defaultValue: String,
         select: (P) -> String,
@@ -750,6 +768,7 @@ private class PreferencesItemContext<P>(
         PreferencesItem.ColorStringInput(
             title = title,
             description = description,
+            clickableTags = clickableTags,
             columnStyle = columnStyle,
             defaultValue = defaultValue,
             select = selectWithContext(select),
@@ -762,6 +781,7 @@ private class PreferencesItemContext<P>(
     fun <T> selection(
         title: Strings?,
         description: Strings? = null,
+        clickableTags: List<ClickableTag> = listOf(),
         columnStyle: Boolean = false,
         defaultValue: T,
         select: (P) -> T,
@@ -772,6 +792,7 @@ private class PreferencesItemContext<P>(
         PreferencesItem.Selection(
             title = title,
             description = description,
+            clickableTags = clickableTags,
             columnStyle = columnStyle,
             defaultValue = defaultValue,
             select = selectWithContext(select),

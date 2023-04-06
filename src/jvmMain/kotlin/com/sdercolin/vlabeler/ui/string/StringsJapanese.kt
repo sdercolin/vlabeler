@@ -315,6 +315,10 @@ fun Strings.ja(): String? = when (this) {
     PreferencesChartsSpectrogramMaxIntensity -> "最大強度（dB）"
     PreferencesChartsSpectrogramWindowType -> "ウィンドウ関数"
     PreferencesChartsSpectrogramColorPalette -> "配色"
+    PreferencesChartsSpectrogramColorPaletteDescription ->
+        "スペクトログラムの配色の設定です。" +
+            "カスタマイズの配色を追加するには、@edit{ここ}に設定ファイルを追加してください。" +
+            "変更を反映するには、このダイアログを再度開く必要があります。"
     PreferencesKeymap -> "ショートカットキー設定"
     PreferencesKeymapDescription -> "キーボード/マウスのショートカットキーをカスタマイズします。"
     PreferencesKeymapKeyAction -> "キーボード"
