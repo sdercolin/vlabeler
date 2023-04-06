@@ -54,17 +54,19 @@ suspend fun loadSampleChunk(
         val frameSize = sampleByteSize * channelCount
         val isBigEndian = stream.format.isBigEndian
         val channels = List(channelCount) { mutableListOf<Float>() }
-        var readFrameCount = 0
-        val buffer = ByteArray(frameSize)
+        val buffer = ByteArray(chunkSize * frameSize)
         stream.skipNBytes(offset * frameSize)
         Log.debug("Loading chunk $chunkIndex: offset=$offset")
-        while (readFrameCount < chunkSize) {
-            yield()
-            val readSize = stream.readNBytes(buffer, 0, frameSize)
-            if (readSize == 0) break
+        val readSize = stream.readNBytes(buffer, 0, chunkSize * frameSize)
+        yield()
+        val readFrameCount = (readSize / frameSize).toInt()
+        for (frameIndex in 0 until readFrameCount) {
+            val frameStart = frameIndex * frameSize
+            val frameEnd = frameStart + frameSize
+            val frame = buffer.sliceArray(frameStart until frameEnd)
             for (channelIndex in channels.indices) {
                 val sample = getSampleValueFromFrame(
-                    frame = buffer,
+                    frame = frame,
                     frameSize = frameSize,
                     channelIndex = channelIndex,
                     channelCount = channelCount,
@@ -77,7 +79,6 @@ suspend fun loadSampleChunk(
                 }
                 channels[channelIndex].add(normalizedSample)
             }
-            readFrameCount++
         }
         val wave = Wave(channels = channels.map { Wave.Channel(it.toFloatArray()) })
         val spectrogram = if (appConf.painter.spectrogram.enabled) {

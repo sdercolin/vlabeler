@@ -39,7 +39,6 @@ import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.SampleInfo
-import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.AsyncImage
