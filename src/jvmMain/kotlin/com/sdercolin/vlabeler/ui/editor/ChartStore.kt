@@ -6,6 +6,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asComposeImageBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -26,6 +27,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import org.jetbrains.skia.Bitmap
+import org.jetbrains.skia.ColorAlphaType
+import org.jetbrains.skia.ColorType
+import org.jetbrains.skia.Image
+import org.jetbrains.skia.ImageInfo
 import kotlin.math.pow
 
 class ChartStore {
@@ -112,9 +118,7 @@ class ChartStore {
                         sampleInfo,
                         chunk,
                         chunkIndex,
-                        density,
                         appConf,
-                        layoutDirection,
                         colorPalette,
                         onRenderProgress,
                     )
@@ -277,9 +281,7 @@ class ChartStore {
         sampleInfo: SampleInfo,
         chunk: SampleChunk?,
         chunkIndex: Int,
-        density: Density,
         appConf: AppConf,
-        layoutDirection: LayoutDirection,
         colorPalette: SpectrogramColorPalette,
         onRenderProgress: suspend () -> Unit,
     ) {
@@ -316,35 +318,34 @@ class ChartStore {
         val displayFreq = displayMel.map { MelScale.toFreq(it.toDouble()) }
         val displayIndex = displayFreq.map { it * (maxYLength - 1) / maxFrequency }
         // image size
-        val width = data.size.toFloat()
-        val height = displayIndex.size.toFloat()
-        val size = Size(width, height)
-        val newBitmap = ImageBitmap(width.toInt(), height.toInt())
-        CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
-            data.forEachIndexed { xIndex, yArray ->
-                if (yArray.isEmpty()) return@forEachIndexed
-                val interpolated = displayIndex.map {
-                    val leftIndex = it.toInt()
-                    val rightWeight = it - leftIndex.toDouble()
-                    val left = yArray.getOrElse(leftIndex) { 0.0 }
-                    val right = yArray.getOrElse(leftIndex + 1) { 0.0 }
-                    left * (1.0 - rightWeight) + right * rightWeight
-                }
-                interpolated.forEachIndexed { index, intensity ->
-                    val color = colorPalette.get(intensity.toFloat())
-                    val left = xIndex.toFloat()
-                    val top = height - index
-                    drawRect(
-                        color = color,
-                        topLeft = Offset(left, top),
-                        size = Size(1f, 1f),
-                    )
-                }
+        val width = data.size
+        val height = displayIndex.size
+        val imageData = ByteArray(width * height * 4)
+        data.forEachIndexed { xIndex, yArray ->
+            if (yArray.isEmpty()) return@forEachIndexed
+            val interpolated = displayIndex.map {
+                val leftIndex = it.toInt()
+                val rightWeight = it - leftIndex.toDouble()
+                val left = yArray.getOrElse(leftIndex) { 0.0 }
+                val right = yArray.getOrElse(leftIndex + 1) { 0.0 }
+                left * (1.0 - rightWeight) + right * rightWeight
+            }
+            interpolated.forEachIndexed { index, intensity ->
+                val color = colorPalette.get(intensity.toFloat())
+                val top = height - 1 - index
+                val offset = (top * width + xIndex) * 4
+                imageData[offset] = (color.blue * color.alpha * 255).toInt().toByte()
+                imageData[offset + 1] = (color.green * color.alpha * 255).toInt().toByte()
+                imageData[offset + 2] = (color.red * color.alpha * 255).toInt().toByte()
+                imageData[offset + 3] = (color.alpha * 255).toInt().toByte()
             }
         }
+        val imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
+        val image = Image.Companion.makeRaster(imageInfo, imageData, width * 4)
+        val bitmap = Bitmap.makeFromImage(image).asComposeImageBitmap()
         Log.info("Spectrogram chunk $chunkIndex: draw bitmap end")
         yield()
-        ChartRepository.putSpectrogram(sampleInfo, chunkIndex, newBitmap)
+        ChartRepository.putSpectrogram(sampleInfo, chunkIndex, bitmap)
         yield()
         spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loaded
         onRenderProgress()
