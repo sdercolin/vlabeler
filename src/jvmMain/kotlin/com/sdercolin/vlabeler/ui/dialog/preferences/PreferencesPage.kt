@@ -7,7 +7,7 @@ import com.sdercolin.vlabeler.model.action.ActionType
 import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseClickActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseScrollActionKeyBind
-import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
+import com.sdercolin.vlabeler.repository.ColorPaletteRepository
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.util.divideWithBigDecimal
@@ -231,7 +231,7 @@ abstract class PreferencesPage(
                     defaultValue = AppConf.Spectrogram.DefaultColorPalette,
                     select = { it.colorPalette },
                     update = { copy(colorPalette = it) },
-                    options = SpectrogramColorPalette.Presets.values(),
+                    options = ColorPaletteRepository.getAll().map { it.name }.toTypedArray(),
                 )
             }
         }

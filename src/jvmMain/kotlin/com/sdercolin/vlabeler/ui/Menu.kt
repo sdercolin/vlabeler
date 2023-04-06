@@ -22,6 +22,7 @@ import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.Clipboard
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.Url
@@ -540,6 +541,10 @@ fun FrameWindowScope.Menu(
                             "Print memory usage",
                             checked = DebugState.printMemoryUsage,
                             onCheckedChange = { DebugState.printMemoryUsage = it },
+                        )
+                        Item(
+                            "Open App Directory",
+                            onClick = { Desktop.getDesktop().open(AppDir) },
                         )
                     }
                 }

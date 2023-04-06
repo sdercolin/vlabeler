@@ -18,7 +18,10 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleChunk
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.model.palette.ColorPalette
+import com.sdercolin.vlabeler.model.palette.create
 import com.sdercolin.vlabeler.repository.ChartRepository
+import com.sdercolin.vlabeler.repository.ColorPaletteRepository
 import com.sdercolin.vlabeler.util.launchGcDelayed
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.toColorOrNull
@@ -89,7 +92,7 @@ class ChartStore {
         Log.info("ChartStore load(${sampleInfo.name})")
         job = scope.launch(Dispatchers.IO) {
             val reorderedChunkIndexes = reorderChunks(startingChunkIndex, sampleInfo.chunkCount)
-            val colorPalette = appConf.painter.spectrogram.colorPalette.create()
+            val colorPalette = ColorPaletteRepository.get(appConf.painter.spectrogram.colorPalette).create()
             reorderedChunkIndexes.forEach { chunkIndex ->
                 yield()
 
@@ -282,7 +285,7 @@ class ChartStore {
         chunk: SampleChunk?,
         chunkIndex: Int,
         appConf: AppConf,
-        colorPalette: SpectrogramColorPalette,
+        colorPalette: ColorPalette,
         onRenderProgress: suspend () -> Unit,
     ) {
         if (hasCachedSpectrogram(sampleInfo, chunkIndex)) {

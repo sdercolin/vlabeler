@@ -35,6 +35,7 @@ import com.sdercolin.vlabeler.env.osInfo
 import com.sdercolin.vlabeler.env.osName
 import com.sdercolin.vlabeler.env.runtimeVersion
 import com.sdercolin.vlabeler.io.ensureDirectories
+import com.sdercolin.vlabeler.io.initializeGlobalRepositories
 import com.sdercolin.vlabeler.io.loadAppConf
 import com.sdercolin.vlabeler.io.produceAppState
 import com.sdercolin.vlabeler.model.AppRecord
@@ -65,6 +66,7 @@ var hasUncaughtError = false
 fun main() = application {
     remember { Log.init() }
     remember { ensureDirectories() }
+    remember { initializeGlobalRepositories() }
 
     val mainScope = rememberCoroutineScope()
     val appRecordStore = rememberAppRecordStore(mainScope)

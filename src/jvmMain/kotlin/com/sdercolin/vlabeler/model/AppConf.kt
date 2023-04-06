@@ -5,7 +5,7 @@ import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.action.MouseClickAction
 import com.sdercolin.vlabeler.model.action.MouseScrollAction
 import com.sdercolin.vlabeler.model.key.KeySet
-import com.sdercolin.vlabeler.ui.editor.SpectrogramColorPalette
+import com.sdercolin.vlabeler.model.palette.ColorPaletteDefinition
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.LocalizedText
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -155,7 +155,7 @@ data class AppConf(
         val maxFrequency: Int = DefaultMaxFrequency,
         val minIntensity: Int = DefaultMinIntensity,
         val maxIntensity: Int = DefaultMaxIntensity,
-        val colorPalette: SpectrogramColorPalette.Presets = DefaultColorPalette,
+        val colorPalette: String = DefaultColorPalette,
     ) {
         companion object {
             const val DefaultEnabled = true
@@ -180,7 +180,7 @@ data class AppConf(
             const val DefaultMinIntensity = -20
             const val DefaultMaxIntensity = 55
             val DefaultWindowType = WindowType.BlackmanHarris
-            val DefaultColorPalette = SpectrogramColorPalette.Presets.Plain
+            val DefaultColorPalette = ColorPaletteDefinition.presets.first().name
         }
     }
 
