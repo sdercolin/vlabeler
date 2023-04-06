@@ -237,6 +237,13 @@ object PreferencesPages {
                         update = { copy(colorPalette = it) },
                         options = ColorPaletteRepository.getAll().map { it.name }.toTypedArray(),
                     )
+                    switch(
+                        title = Strings.PreferencesChartsSpectrogramUseHighAlphaContrast,
+                        defaultValue = AppConf.Spectrogram.DefaultUseHighAlphaContrast,
+                        description = Strings.PreferencesChartsSpectrogramUseHighAlphaContrastDescription,
+                        select = { it.useHighAlphaContrast },
+                        update = { copy(useHighAlphaContrast = it) },
+                    )
                 }
             }
     }

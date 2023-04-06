@@ -301,6 +301,8 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesChartsSpectrogramColorPalette -> "配色方案"
     PreferencesChartsSpectrogramColorPaletteDescription ->
         "频谱图的配色方案。您可以通过在@edit{这里}增加设定文件来添加自定义配色方案。您需要重新打开偏好设置对话框才能使更改生效。"
+    PreferencesChartsSpectrogramUseHighAlphaContrast -> "提高透明度的对比度"
+    PreferencesChartsSpectrogramUseHighAlphaContrastDescription -> "该选项只对使用了透明度的配色方案有效。"
     PreferencesKeymap -> "键位映射"
     PreferencesKeymapDescription -> "编辑键盘/鼠标操作的键位映射。"
     PreferencesKeymapKeyAction -> "键盘操作"

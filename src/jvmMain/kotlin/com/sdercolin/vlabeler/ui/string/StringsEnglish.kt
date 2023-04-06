@@ -331,6 +331,9 @@ fun Strings.en(): String = when (this) {
     PreferencesChartsSpectrogramColorPaletteDescription ->
         "Color palette for the spectrogram. You can add your own color palettes settings in @edit{this folder}. " +
             "You need to reopen the preferences dialog to reload the changes."
+    PreferencesChartsSpectrogramUseHighAlphaContrast -> "Use high alpha contrast"
+    PreferencesChartsSpectrogramUseHighAlphaContrastDescription ->
+        "This option only affects color palettes that have alpha values."
     PreferencesKeymap -> "Keymap"
     PreferencesKeymapDescription -> "Customize key bindings for key/mouse actions."
     PreferencesKeymapKeyAction -> "Key actions"

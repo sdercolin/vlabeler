@@ -141,6 +141,9 @@ data class AppConf(
      * @param maxFrequency Max frequency (Hz) displayed.
      * @param minIntensity Min intensity (dB) displayed in the heatmap.
      * @param maxIntensity Max intensity (dB) displayed in the heatmap.
+     * @param colorPalette Color palette name used in the heatmap. See [ColorPaletteDefinition] for details.
+     * @param useHighAlphaContrast True if the alpha value of the color is used repeatedly in the heatmap, so that the
+     *     heatmap looks more contrasted. Only color palettes with alpha values are affected.
      */
     @Serializable
     @Immutable
@@ -156,6 +159,7 @@ data class AppConf(
         val minIntensity: Int = DefaultMinIntensity,
         val maxIntensity: Int = DefaultMaxIntensity,
         val colorPalette: String = DefaultColorPalette,
+        val useHighAlphaContrast: Boolean = DefaultUseHighAlphaContrast,
     ) {
         companion object {
             const val DefaultEnabled = true
@@ -181,6 +185,7 @@ data class AppConf(
             const val DefaultMaxIntensity = 55
             val DefaultWindowType = WindowType.BlackmanHarris
             val DefaultColorPalette = ColorPaletteDefinition.presets.first().name
+            const val DefaultUseHighAlphaContrast = true
         }
     }
 

@@ -319,6 +319,8 @@ fun Strings.ja(): String? = when (this) {
         "スペクトログラムの配色の設定です。" +
             "カスタマイズの配色を追加するには、@edit{ここ}に設定ファイルを追加してください。" +
             "変更を反映するには、このダイアログを再度開く必要があります。"
+    PreferencesChartsSpectrogramUseHighAlphaContrast -> "透明度のコントラストを高める"
+    PreferencesChartsSpectrogramUseHighAlphaContrastDescription -> "透明度のある色を含むス配色のみに適用されます。"
     PreferencesKeymap -> "ショートカットキー設定"
     PreferencesKeymapDescription -> "キーボード/マウスのショートカットキーをカスタマイズします。"
     PreferencesKeymapKeyAction -> "キーボード"

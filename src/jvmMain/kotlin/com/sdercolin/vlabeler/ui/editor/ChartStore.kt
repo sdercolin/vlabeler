@@ -324,6 +324,7 @@ class ChartStore {
         val width = data.size
         val height = displayIndex.size
         val imageData = ByteArray(width * height * 4)
+        val useAlphaPremultiply = appConf.painter.spectrogram.useHighAlphaContrast
         data.forEachIndexed { xIndex, yArray ->
             if (yArray.isEmpty()) return@forEachIndexed
             val interpolated = displayIndex.map {
@@ -337,9 +338,10 @@ class ChartStore {
                 val color = colorPalette.get(intensity.toFloat())
                 val top = height - 1 - index
                 val offset = (top * width + xIndex) * 4
-                imageData[offset] = (color.blue * color.alpha * 255).toInt().toByte()
-                imageData[offset + 1] = (color.green * color.alpha * 255).toInt().toByte()
-                imageData[offset + 2] = (color.red * color.alpha * 255).toInt().toByte()
+                val alphaPremultiply = if (useAlphaPremultiply) color.alpha else 1f
+                imageData[offset] = (color.blue * alphaPremultiply * 255).toInt().toByte()
+                imageData[offset + 1] = (color.green * alphaPremultiply * 255).toInt().toByte()
+                imageData[offset + 2] = (color.red * alphaPremultiply * 255).toInt().toByte()
                 imageData[offset + 3] = (color.alpha * 255).toInt().toByte()
             }
         }
