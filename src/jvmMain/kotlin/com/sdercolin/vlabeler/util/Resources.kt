@@ -22,6 +22,7 @@ object Resources {
     val requestAudioPlaybackJs get() = "js/request_audio_playback.js"
     val reportJs get() = "js/report.js"
     val transparencyGridPng get() = "img/transparency_grid.png"
+    val colorPaletteReadme get() = "readme/color_palette.txt"
 }
 
 /**

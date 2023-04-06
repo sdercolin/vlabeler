@@ -1,8 +1,10 @@
 package com.sdercolin.vlabeler.repository
 
+import androidx.compose.ui.res.useResource
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.palette.ColorPaletteDefinition
 import com.sdercolin.vlabeler.util.AppDir
+import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
@@ -13,7 +15,8 @@ import com.sdercolin.vlabeler.util.stringifyJson
 object ColorPaletteRepository {
 
     private const val FOLDER_NAME = "color_palettes"
-    private val directory = AppDir.resolve(FOLDER_NAME)
+    private const val README_FILE_NAME = "readme.txt"
+    val directory = AppDir.resolve(FOLDER_NAME)
 
     private val items = mutableMapOf<String, ColorPaletteDefinition>()
 
@@ -22,10 +25,16 @@ object ColorPaletteRepository {
             directory.delete()
         }
         directory.mkdirs()
+        if (directory.isDirectory.not()) return
 
         ColorPaletteDefinition.presets.forEach { definition ->
             val file = directory.resolve("${definition.name}.example.json")
             file.writeText(definition.stringifyJson())
+        }
+
+        useResource(Resources.colorPaletteReadme) {
+            val readme = it.bufferedReader().readText()
+            directory.resolve(README_FILE_NAME).writeText(readme)
         }
 
         load()
