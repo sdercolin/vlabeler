@@ -329,7 +329,7 @@ fun Strings.en(): String = when (this) {
     PreferencesChartsSpectrogramWindowType -> "Window function"
     PreferencesChartsSpectrogramColorPalette -> "Colors"
     PreferencesChartsSpectrogramColorPaletteDescription ->
-        "Color palette for the spectrogram. You can add your own color palettes settings in @edit{this folder}. " +
+        "Color palette for the spectrogram. You can add your own color palettes in @edit{this folder}. " +
             "You need to reopen the preferences dialog to reload the changes."
     PreferencesChartsSpectrogramUseHighAlphaContrast -> "Use high alpha contrast"
     PreferencesChartsSpectrogramUseHighAlphaContrastDescription ->
