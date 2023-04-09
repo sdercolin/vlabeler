@@ -1,11 +1,11 @@
 {
   "name": "batch-edit-prefix-suffix",
-  "version": 3,
+  "version": 4,
   "type": "macro",
   "displayedName": {
     "en": "Batch edit entry prefix/suffix",
     "zh": "批量编辑条目前缀/后缀",
-    "ja": "エントリーの接頭辞/接尾辞を一括編集"
+    "ja": "エントリの接頭辞/接尾辞を一括編集"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",

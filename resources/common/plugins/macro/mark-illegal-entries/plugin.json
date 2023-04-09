@@ -1,11 +1,11 @@
 {
   "name": "mark-illegal-entries",
-  "version": 3,
+  "version": 4,
   "type": "macro",
   "displayedName": {
     "en": "Mark illegal entries",
     "zh": "标出非法条目",
-    "ja": "不正なエントリーをマークする"
+    "ja": "不正なエントリをマークする"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",

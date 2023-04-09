@@ -1,18 +1,18 @@
 {
   "name": "batch-remove-entry",
-  "version": 3,
+  "version": 4,
   "type": "macro",
   "displayedName": {
     "en": "Batch remove entry",
     "zh": "批量删除条目",
-    "ja": "エントリーを一括削除"
+    "ja": "エントリを一括削除"
   },
   "author": "sdercolin",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Remove multiple entries at once.",
     "zh": "一次性删除多个条目。",
-    "ja": "複数のエントリーを一括削除します。"
+    "ja": "複数のエントリを一括削除します。"
   },
   "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-remove-entry",
   "supportedLabelFileExtension": "*",

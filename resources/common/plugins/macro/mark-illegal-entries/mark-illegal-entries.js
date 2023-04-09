@@ -24,7 +24,7 @@ if (params["showReport"]) {
         let reportBody = illegalEntries.map(x => x.name).join("\n")
         let enReport = "Illegal entries:\n" + reportBody
         let zhReport = "非法条目:\n" + reportBody
-        let jaReport = "不正なエントリー:\n" + reportBody
+        let jaReport = "不正なエントリ:\n" + reportBody
         report({
             en: enReport,
             zh: zhReport,
@@ -34,7 +34,7 @@ if (params["showReport"]) {
         report({
             en: "No illegal entries found.",
             zh: "未发现非法条目。",
-            ja: "不正なエントリーは見つかりませんでした。"
+            ja: "不正なエントリは見つかりませんでした。"
         })
     }
 }
