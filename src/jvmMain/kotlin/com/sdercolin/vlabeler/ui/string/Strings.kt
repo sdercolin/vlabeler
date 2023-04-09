@@ -67,6 +67,7 @@ enum class Strings {
     MenuToolsBatchEditShowDisabledItems,
     MenuToolsBatchEditManagePlugins,
     MenuToolsPrerender,
+    MenuToolsSyncSample,
     MenuToolsRecycleMemory,
     MenuSettings,
     MenuSettingsPreferences,
@@ -478,6 +479,10 @@ enum class Strings {
     ImportEntriesDialogItemIncompatible,
     ImportEntriesDialogReplaceContent,
     ImportEntriesDialogReplaceContentDisabledDescription,
+    EntrySampleSyncerModuleText,
+    EntrySampleSyncerModuleTextFinished,
+    EntrySampleSyncerSampleText,
+    EntrySampleSyncerSampleTextFinished,
     ;
 
     fun get(language: Language): String = when (language) {

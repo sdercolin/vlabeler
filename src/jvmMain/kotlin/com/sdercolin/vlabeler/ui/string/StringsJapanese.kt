@@ -65,7 +65,8 @@ fun Strings.ja(): String? = when (this) {
     MenuToolsBatchEditQuickLaunch -> "スロット %d：%s"
     MenuToolsBatchEditShowDisabledItems -> "現在のプロジェクトでは使えないプラグインも表示する"
     MenuToolsBatchEditManagePlugins -> "プラグインマネージャー..."
-    MenuToolsPrerender -> "すべてのグラフをプリレンダリング"
+    MenuToolsPrerender -> "すべてのグラフをプリレンダリング..."
+    MenuToolsSyncSample -> "サンプルの末尾に対する相対値をすべて変換..."
     MenuToolsRecycleMemory -> "メモリを解放"
     MenuSettings -> "設定"
     MenuSettingsPreferences -> "環境設定..."
@@ -534,5 +535,9 @@ fun Strings.ja(): String? = when (this) {
     ImportEntriesDialogReplaceContent -> "すべてのエントリを上書きする"
     ImportEntriesDialogReplaceContentDisabledDescription ->
         "このプロジェクトは、エントリの追加をサポートしていないため、すべてのエントリがインポートされたエントリで上書きされます。"
+    EntrySampleSyncerModuleText -> "サブプロジェクトを処理中 %d/%d..."
+    EntrySampleSyncerModuleTextFinished -> "サブプロジェクトを処理中 %d/%d... 完了"
+    EntrySampleSyncerSampleText -> "サンプルファイルを処理中 %d/%d..."
+    EntrySampleSyncerSampleTextFinished -> "サンプルファイルを処理中 %d/%d... 完了"
     else -> null
 }

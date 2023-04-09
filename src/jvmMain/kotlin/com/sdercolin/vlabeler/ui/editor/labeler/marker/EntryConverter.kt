@@ -14,7 +14,7 @@ class EntryConverter(
         sample = entry.sample,
         name = entry.name,
         start = convertToPixel(entry.start),
-        end = if (entry.end <= 0 && entry.entry.needSync) {
+        end = if (entry.entry.needSyncCompatibly) {
             convertToPixel(sampleFileLengthMillis + entry.end)
         } else {
             convertToPixel(entry.end)

@@ -66,6 +66,11 @@ data class Entry(
     fun done() = copy(notes = notes.copy(done = true))
     fun tagEdited(tag: String) = copy(notes = notes.copy(tag = tag))
 
+    /**
+     * For entries created by older versions of labelers, `needSync` may not be set correctly.
+     */
+    val needSyncCompatibly get() = (needSync && end == 0f) || end < 0
+
     companion object {
         fun fromDefaultValues(sample: String, name: String, labelerConf: LabelerConf) =
             Entry(

@@ -442,6 +442,12 @@ fun FrameWindowScope.Menu(
                         enabled = appState.isEditorActive,
                     )
                     Item(
+                        string(Strings.MenuToolsSyncSample),
+                        onClick = { appState.openEntrySampleSyncDialog() },
+                        shortcut = KeyAction.SyncSample.getKeyShortCut(),
+                        enabled = appState.isEditorActive,
+                    )
+                    Item(
                         string(Strings.MenuToolsRecycleMemory),
                         onClick = { System.gc() },
                         shortcut = KeyAction.RecycleMemory.getKeyShortCut(),

@@ -54,6 +54,7 @@ interface AppDialogState {
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
     val isShowingPrerenderDialog: Boolean
+    val isShowingEntrySampleSyncDialog: Boolean
     val isShowingAboutDialog: Boolean
     val isShowingLicenseDialog: Boolean
     val isShowingQuickLaunchManagerDialog: Boolean
@@ -98,6 +99,8 @@ interface AppDialogState {
     fun closeSampleDirectoryRedirectDialog()
     fun openPrerenderDialog()
     fun closePrerenderDialog()
+    fun openEntrySampleSyncDialog()
+    fun closeEntrySampleSyncDialog()
     fun openPreferencesDialog(args: PreferencesEditorState.LaunchArgs? = null)
     fun closePreferencesDialog()
     fun openAboutDialog()
@@ -132,19 +135,19 @@ interface AppDialogState {
         isShowingProjectSettingDialog || isShowingExportDialog || isShowingImportDialog ||
             isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
-            macroPluginShownInDialog != null || macroPluginReport != null || isShowingQuickLaunchManagerDialog ||
-            customizableItemManagerTypeShownInDialog != null || embeddedDialog != null
+            isShowingEntrySampleSyncDialog || macroPluginShownInDialog != null || macroPluginReport != null ||
+            isShowingQuickLaunchManagerDialog || customizableItemManagerTypeShownInDialog != null ||
+            embeddedDialog != null
 
     fun anyDialogOpeningExceptMacroPluginManager() =
         isShowingProjectSettingDialog || isShowingExportDialog || isShowingImportDialog ||
             isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
             isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
-            macroPluginShownInDialog != null || macroPluginReport != null || isShowingQuickLaunchManagerDialog ||
-            (
-                customizableItemManagerTypeShownInDialog != null &&
-                    customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
-                ) ||
-            embeddedDialog != null
+            isShowingEntrySampleSyncDialog || macroPluginShownInDialog != null || macroPluginReport != null ||
+            isShowingQuickLaunchManagerDialog || (
+            customizableItemManagerTypeShownInDialog != null &&
+                customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
+            ) || embeddedDialog != null
 }
 
 class AppDialogStateImpl(
@@ -170,6 +173,7 @@ class AppDialogStateImpl(
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
     override var isShowingPrerenderDialog: Boolean by mutableStateOf(false)
+    override var isShowingEntrySampleSyncDialog: Boolean by mutableStateOf(false)
     override var isShowingAboutDialog: Boolean by mutableStateOf(false)
     override var isShowingLicenseDialog: Boolean by mutableStateOf(false)
     override var isShowingQuickLaunchManagerDialog: Boolean by mutableStateOf(false)
@@ -366,6 +370,14 @@ class AppDialogStateImpl(
 
     override fun closePrerenderDialog() {
         isShowingPrerenderDialog = false
+    }
+
+    override fun openEntrySampleSyncDialog() {
+        isShowingEntrySampleSyncDialog = true
+    }
+
+    override fun closeEntrySampleSyncDialog() {
+        isShowingEntrySampleSyncDialog = false
     }
 
     override fun openPreferencesDialog(args: PreferencesEditorState.LaunchArgs?) {

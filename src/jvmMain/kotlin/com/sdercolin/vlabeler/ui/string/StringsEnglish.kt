@@ -64,6 +64,7 @@ fun Strings.en(): String = when (this) {
     MenuToolsBatchEditShowDisabledItems -> "Show plugins that could not be used under the current project"
     MenuToolsBatchEditManagePlugins -> "Manage Plugins..."
     MenuToolsPrerender -> "Prerender All Charts..."
+    MenuToolsSyncSample -> "Convert all values relative to the end of sample..."
     MenuToolsRecycleMemory -> "Recycle Memory"
     MenuSettings -> "Settings"
     MenuSettingsPreferences -> "Preferences..."
@@ -569,4 +570,8 @@ fun Strings.en(): String = when (this) {
     ImportEntriesDialogReplaceContentDisabledDescription ->
         "The current project doesn't support appending entries, " +
             "so all the current entries will be replaced by imported ones."
+    EntrySampleSyncerModuleText -> "Handling subprojects %d/%d..."
+    EntrySampleSyncerModuleTextFinished -> "Handling subprojects %d/%d... Done"
+    EntrySampleSyncerSampleText -> "Handling sample files %d/%d..."
+    EntrySampleSyncerSampleTextFinished -> "Handling sample files %d/%d... Done"
 }

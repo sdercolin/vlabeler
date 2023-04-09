@@ -25,6 +25,7 @@ import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesDialog
 import com.sdercolin.vlabeler.ui.dialog.prerender.PrerenderDialog
 import com.sdercolin.vlabeler.ui.dialog.project.ProjectListDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
+import com.sdercolin.vlabeler.ui.dialog.syncsample.EntrySampleSyncDialog
 import com.sdercolin.vlabeler.ui.dialog.updater.UpdaterDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
@@ -81,6 +82,14 @@ fun App(
                     finish = { appState.closePrerenderDialog() },
                 )
             }
+        }
+        if (appState.isShowingEntrySampleSyncDialog) {
+            EntrySampleSyncDialog(
+                appState.appConf,
+                appState,
+                onError = { if (it !is CancellationException) appState.showError(it) },
+                finish = { appState.closeEntrySampleSyncDialog() },
+            )
         }
         if (appState.isShowingSampleListDialog) {
             appState.editor?.let { SampleListDialog(it, finish = { appState.closeSampleListDialog() }) }

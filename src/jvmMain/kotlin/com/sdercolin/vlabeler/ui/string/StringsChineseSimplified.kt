@@ -66,6 +66,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuToolsBatchEditShowDisabledItems -> "显示当前项目下不可用的插件"
     MenuToolsBatchEditManagePlugins -> "管理插件..."
     MenuToolsPrerender -> "预渲染所有图表..."
+    MenuToolsSyncSample -> "转换所有相对于采样文件尾的数值..."
     MenuToolsRecycleMemory -> "回收内存"
     MenuSettings -> "设置"
     MenuSettingsPreferences -> "偏好设置..."
@@ -511,5 +512,9 @@ fun Strings.zhHans(): String? = when (this) {
     ImportEntriesDialogItemIncompatible -> "与当前项目不兼容"
     ImportEntriesDialogReplaceContent -> "替换现有内容"
     ImportEntriesDialogReplaceContentDisabledDescription -> "当前项目不支持追加条目，因此所有现有条目将被导入的条目替换。"
+    EntrySampleSyncerModuleText -> "处理子项目 %d/%d..."
+    EntrySampleSyncerModuleTextFinished -> "处理子项目 %d/%d... 完成"
+    EntrySampleSyncerSampleText -> "处理采样文件 %d/%d..."
+    EntrySampleSyncerSampleTextFinished -> "处理采样文件 %d/%d... 完成"
     else -> null
 }
