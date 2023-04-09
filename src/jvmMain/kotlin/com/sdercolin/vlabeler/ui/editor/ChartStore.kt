@@ -311,23 +311,23 @@ class ChartStore {
             result.map { it / group.size }
         }
         val maxFrequency = sampleInfo.sampleRate / 2
-        val maxFrequencyToDisplay = appConf.painter.spectrogram.maxFrequency
-        val maxMel = MelScale.toMel(maxFrequencyToDisplay.toDouble()).toInt()
+        val maxDisplayFrequency = appConf.painter.spectrogram.maxFrequency
+        val maxMel = MelScale.toMel(maxDisplayFrequency.toDouble()).toInt()
         // preprocess data
         val maxLengthIndex = data.indices.maxBy { data[it].size }
         val maxYLength = data[maxLengthIndex].size
         val step = appConf.painter.spectrogram.melScaleStep
-        val displayMel = IntArray((maxMel / step) + 1) { it * step } + listOf(maxMel)
-        val displayFreq = displayMel.map { MelScale.toFreq(it.toDouble()) }
-        val displayIndex = displayFreq.map { it * (maxYLength - 1) / maxFrequency }
+        val displayMels = IntArray((maxMel / step) + 1) { it * step } + listOf(maxMel)
+        val displayFreqs = displayMels.map { MelScale.toFreq(it.toDouble()) }
+        val displayIndexes = displayFreqs.map { it * (maxYLength - 1) / maxFrequency }
         // image size
         val width = data.size
-        val height = displayIndex.size
+        val height = displayIndexes.size
         val imageData = ByteArray(width * height * 4)
         val useAlphaPremultiply = appConf.painter.spectrogram.useHighAlphaContrast
         data.forEachIndexed { xIndex, yArray ->
             if (yArray.isEmpty()) return@forEachIndexed
-            val interpolated = displayIndex.map {
+            val interpolated = displayIndexes.map {
                 val leftIndex = it.toInt()
                 val rightWeight = it - leftIndex.toDouble()
                 val left = yArray.getOrElse(leftIndex) { 0.0 }
