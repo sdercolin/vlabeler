@@ -1,6 +1,6 @@
 {
   "name": "lab2audacity",
-  "version": 6,
+  "version": 7,
   "type": "template",
   "displayedName": {
     "en": "Sinsy lab format to Audacity Labels",
@@ -33,7 +33,11 @@
       {
         "type": "rawFile",
         "name": "inputFile",
-        "label": "Input file (.lab)",
+        "label": {
+          "en": "Input file (.lab)",
+          "zh": "输入文件（.lab）",
+          "ja": "入力ファイル（.lab）"
+        },
         "description": {
           "en": "The input file. Only needed when the labeler creates single subproject.",
           "zh": "输入文件。仅在标注器将创建单个子项目时需要。",
