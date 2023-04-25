@@ -11,8 +11,6 @@ fun <T> MutableState<T>.update(updater: T.() -> T) {
     value = updater(value)
 }
 
-fun <T> State<T?>.requireValue() = requireNotNull(value)
-
 fun <T> MutableState<T?>.clear() {
     value = null
 }

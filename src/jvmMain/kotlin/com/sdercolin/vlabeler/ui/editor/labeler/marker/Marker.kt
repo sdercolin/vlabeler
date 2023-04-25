@@ -49,7 +49,6 @@ import com.sdercolin.vlabeler.util.getNextOrNull
 import com.sdercolin.vlabeler.util.getPreviousOrNull
 import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.length
-import com.sdercolin.vlabeler.util.requireValue
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.update
 import com.sdercolin.vlabeler.util.updateNonNull
@@ -578,7 +577,7 @@ private fun MarkerState.handleScissorsRelease(
     cutEntry: (Int, Float) -> Unit,
 ) {
     val scissorsState = scissorsState
-    val position = scissorsState.requireValue().position ?: return
+    val position = scissorsState.value?.position ?: return
     handleScissorsCut(position, cutEntry)
 }
 
