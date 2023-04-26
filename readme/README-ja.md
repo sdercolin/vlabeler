@@ -346,7 +346,9 @@ vLabeler に対応していない音声合成ソフトのラベルを編集し�
 #### 使用可能なプラグイン（ビルトインを除く）
 
 - [resampler-test](https://github.com/sdercolin/vlabeler-resampler-test): 現在のエントリの resampler の出力を再生します。
-  setParam の合成テスト(F10)と似ています。
+  setParam の合成テスト（F10）のような機能です。
+- [oto-timing-test](https://github.com/chexq09/vlabeler-oto-timing-check): 現在のエントリをメトロノーム音声と合成し、先行発声の設
+  定をチェックします。setParam の発声タイミングのチェック（F8）のような機能です。
 
 ### プラグイン開発
 
@@ -375,4 +377,5 @@ vLabeler に対応していない音声合成ソフトのラベルを編集し�
 4. ウィンドウが予期せずフリーズすることがあります。ウィンドウのサイズを変更して更新できます。
 
 ### ローカライズのヘルプ (コード貢献者以外)
+
 [時雨ゆん](https://twitter.com/Yun_Shigure)

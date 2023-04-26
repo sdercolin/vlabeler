@@ -334,6 +334,8 @@ aaa;name:bbb;sample:ccc;tag:ddd
 
 - [resampler-test](https://github.com/sdercolin/vlabeler-resampler-test): 播放当前条目的 resampler 输出。与 setParam
   的合成测试（F10）功能相似。
+- [oto-timing-test](https://github.com/chexq09/vlabeler-oto-timing-check): 将当前条目的音频与节拍器结合输出，用于检查先行发声的位
+  置。与 setParam 的发声位置检查（F8）功能相似。
 
 ### 插件开发
 
@@ -362,4 +364,5 @@ aaa;name:bbb;sample:ccc;tag:ddd
 4. 有时窗口会意外冻结。您可以通过调整窗口大小来刷新它。
 
 ### 本地化帮助（代码贡献者以外）
+
 [時雨ゆん](https://twitter.com/Yun_Shigure)

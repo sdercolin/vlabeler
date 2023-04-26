@@ -362,6 +362,8 @@ You can import/delete/disable batch edit plugins in `Tools` -> `Batch Edit` -> `
 
 - [resampler-test](https://github.com/sdercolin/vlabeler-resampler-test): Play the UTAU resampler output of the current
   entry, which is similar to setParam's synthesis test (F10).
+- [oto-timing-test](https://github.com/chexq09/vlabeler-oto-timing-check): Play the entry aligned with metronome clicks
+  for checking the utterance setting, which is similar to setParam's utterance timing (F8).
 
 ### Plugin Development
 
