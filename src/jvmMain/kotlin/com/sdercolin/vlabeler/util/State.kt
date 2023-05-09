@@ -1,7 +1,6 @@
 package com.sdercolin.vlabeler.util
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 
 fun <T> MutableState<T?>.updateNonNull(updater: T.() -> T) {
     value?.let(updater)?.let { value = it }

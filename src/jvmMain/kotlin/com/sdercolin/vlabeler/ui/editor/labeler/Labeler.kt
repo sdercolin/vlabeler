@@ -66,6 +66,7 @@ import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.editor.RenderStatusLabel
 import com.sdercolin.vlabeler.ui.editor.ToolboxView
+import com.sdercolin.vlabeler.ui.editor.labeler.timescale.TimescaleBar
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.Black50
@@ -117,6 +118,10 @@ fun Labeler(
             setEditingTag = { editorState.isEditingTag = it },
             tagOptions = editorState.tagOptions,
             openEditEntryNameDialog = openEditEntryNameDialog,
+        )
+        TimescaleBar(
+            editorState = editorState,
+            horizontalScrollState = horizontalScrollState,
         )
         val cursor = remember(editorState.tool) {
             ToolCursorRepository.get(editorState.tool)
