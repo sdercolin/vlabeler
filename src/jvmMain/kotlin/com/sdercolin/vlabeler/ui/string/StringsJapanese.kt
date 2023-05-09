@@ -41,6 +41,7 @@ fun Strings.ja(): String? = when (this) {
     MenuViewPinEntryListLocked -> "エントリリストのボーダーをロックする"
     MenuViewToggleProperties -> "プロパティを表示"
     MenuViewToggleToolbox -> "ツールボックスを表示"
+    MenuViewToggleTimescaleBar -> "タイムラインを表示"
     MenuViewOpenSampleList -> "サンプルリストを開く"
     MenuViewVideo -> "関連動画を表示"
     MenuViewVideoOff -> "オフ"

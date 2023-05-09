@@ -12,6 +12,7 @@ interface AppViewState {
     var isEntryListPinned: Boolean
     var pinnedEntryListSplitPanePositionLocked: Boolean
     var isToolboxDisplayed: Boolean
+    var isTimescaleBarDisplayed: Boolean
     var lastViewedPreferencesPage: PreferencesPage?
 }
 
@@ -36,6 +37,11 @@ class AppViewStateImpl(appRecord: AppRecordStore) : AppViewState {
     override var isToolboxDisplayed: Boolean
         by savedMutableStateOf(appRecord.value.isToolboxDisplayed) {
             appRecord.update { copy(isToolboxDisplayed = it) }
+        }
+
+    override var isTimescaleBarDisplayed: Boolean
+        by savedMutableStateOf(appRecord.value.isTimescaleBarDisplayed) {
+            appRecord.update { copy(isTimescaleBarDisplayed = it) }
         }
 
     override var lastViewedPreferencesPage: PreferencesPage? by mutableStateOf(null)

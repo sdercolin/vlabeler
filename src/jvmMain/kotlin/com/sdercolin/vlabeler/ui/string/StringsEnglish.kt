@@ -39,6 +39,7 @@ fun Strings.en(): String = when (this) {
     MenuViewPinEntryListLocked -> "Lock Splitter for Pinned Entry List"
     MenuViewToggleProperties -> "Show Properties"
     MenuViewToggleToolbox -> "Show Toolbox"
+    MenuViewToggleTimescaleBar -> "Show the Timeline Ruler"
     MenuViewOpenSampleList -> "Sample List"
     MenuViewVideo -> "Display Related Video"
     MenuViewVideoOff -> "Off"

@@ -41,6 +41,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuViewPinEntryListLocked -> "禁止拖拽固定条目列表的边界"
     MenuViewToggleProperties -> "显示属性"
     MenuViewToggleToolbox -> "显示工具箱"
+    MenuViewToggleTimescaleBar -> "显示时间标尺"
     MenuViewOpenSampleList -> "打开采样列表"
     MenuViewVideo -> "显示相关视频"
     MenuViewVideoOff -> "关闭"

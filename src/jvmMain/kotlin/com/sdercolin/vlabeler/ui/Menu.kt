@@ -263,6 +263,13 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.ToggleToolbox.getKeyShortCut(),
                         enabled = appState.isEditorActive,
                     )
+                    CheckboxItem(
+                        string(Strings.MenuViewToggleTimescaleBar),
+                        checked = appState.isTimescaleBarDisplayed,
+                        onCheckedChange = { appState.isTimescaleBarDisplayed = it },
+                        shortcut = KeyAction.ToggleTimescaleBar.getKeyShortCut(),
+                        enabled = appState.isEditorActive,
+                    )
                     Item(
                         string(Strings.MenuViewOpenSampleList),
                         onClick = { appState.openSampleListDialog() },

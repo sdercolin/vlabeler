@@ -42,6 +42,7 @@ enum class Strings {
     MenuViewPinEntryListLocked,
     MenuViewToggleProperties,
     MenuViewToggleToolbox,
+    MenuViewToggleTimescaleBar,
     MenuViewOpenSampleList,
     MenuViewVideo,
     MenuViewVideoOff,

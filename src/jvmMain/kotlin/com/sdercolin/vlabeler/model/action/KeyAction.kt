@@ -166,6 +166,11 @@ enum class KeyAction(
         KeySet(Key.Three, setOf(Key.Ctrl)),
         true,
     ),
+    ToggleTimescaleBar(
+        listOf(Strings.MenuView, Strings.MenuViewToggleTimescaleBar),
+        KeySet(Key.Four, setOf(Key.Ctrl)),
+        true,
+    ),
     OpenSampleList(
         listOf(Strings.MenuView, Strings.MenuViewOpenSampleList),
         KeySet(Key.Nine, setOf(Key.Ctrl)),

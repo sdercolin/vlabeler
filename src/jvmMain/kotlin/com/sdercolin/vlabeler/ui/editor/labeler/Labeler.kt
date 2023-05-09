@@ -119,10 +119,12 @@ fun Labeler(
             tagOptions = editorState.tagOptions,
             openEditEntryNameDialog = openEditEntryNameDialog,
         )
-        TimescaleBar(
-            editorState = editorState,
-            horizontalScrollState = horizontalScrollState,
-        )
+        if (appState.isTimescaleBarDisplayed) {
+            TimescaleBar(
+                editorState = editorState,
+                horizontalScrollState = horizontalScrollState,
+            )
+        }
         val cursor = remember(editorState.tool) {
             ToolCursorRepository.get(editorState.tool)
         }
