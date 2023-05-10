@@ -129,7 +129,7 @@ private fun ColumnScope.Samples(state: SampleListDialogState) {
     val items = state.includedSampleItems
     val selectedIndex = items.indexOfFirst { it.isSelected(state.selectedSampleName) }.takeIf { it >= 0 }
     GroupLazyColumn(weight = 0.65f, selectedIndex = selectedIndex) {
-        items(state.includedSampleItems) { item ->
+        items(state.includedSampleItems, key = { it.name }) { item ->
             val isSelected = item.isSelected(state.selectedSampleName)
             val textColor = if (item.valid) {
                 MaterialTheme.colors.onBackground
@@ -153,7 +153,7 @@ private fun ColumnScope.Samples(state: SampleListDialogState) {
             PlaceholderText(Strings.SampleListExcludedPlaceholder)
         },
     ) {
-        items(state.excludedSampleItems) { item ->
+        items(state.excludedSampleItems, key = { it.name }) { item ->
             val isSelected = item.isSelected(state.selectedSampleName)
             val textColor = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
             ItemRow(
@@ -191,7 +191,7 @@ private fun ColumnScope.Entries(state: SampleListDialogState) {
             }
         },
     ) {
-        items(state.entryItems) { item ->
+        items(state.entryItems, key = { it.entry.index }) { item ->
             val isSelected = item.isSelected(state.selectedEntryIndex)
             val textColor = MaterialTheme.colors.onBackground
             ItemRow(
