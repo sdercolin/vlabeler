@@ -6,7 +6,7 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization") version "1.7.20"
+    kotlin("plugin.serialization") version "1.8.10"
     id("org.jetbrains.compose")
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     id("com.github.jk1.dependency-license-report") version "2.0"
@@ -34,11 +34,11 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(kotlin("reflect"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
                 implementation(compose.desktop.currentOs)
                 implementation(compose.materialIconsExtended)
                 implementation(compose("org.jetbrains.compose.components:components-splitpane-desktop"))
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
                 implementation("com.github.psambit9791:jdsp:1.0.0")
                 implementation("org.graalvm.js:js:22.1.0")
                 implementation("org.apache.tika:tika-parser-text-module:2.4.1")
