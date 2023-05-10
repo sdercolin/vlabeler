@@ -138,6 +138,7 @@ enum class Strings {
     SampleListEntriesPlaceholderUnselected,
     SampleListEntriesPlaceholderNoEntry,
     SampleListEntriesPlaceholderNoEntryButton,
+    SampleListCreateDefaultForAllButton,
     SampleListJumpToSelectedEntryButton,
     SampleListOpenSampleDirectoryButton,
     SampleListCurrentModuleLabel,

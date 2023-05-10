@@ -140,6 +140,7 @@ fun Strings.en(): String = when (this) {
     SampleListEntriesPlaceholderUnselected -> "Select a sample file on the left to show entries bound to it."
     SampleListEntriesPlaceholderNoEntry -> "There are no entries bound to the selected sample file."
     SampleListEntriesPlaceholderNoEntryButton -> "Create Default"
+    SampleListCreateDefaultForAllButton -> "Create Default for All Unreferenced"
     SampleListJumpToSelectedEntryButton -> "Go to selected entry"
     SampleListOpenSampleDirectoryButton -> "Open sample directory"
     SampleListCurrentModuleLabel -> "Subproject: "

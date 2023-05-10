@@ -95,6 +95,8 @@ fun SampleListDialog(
                 },
                 canOpenSampleDirectory = state.isSampleDirectoryExisting(),
                 openSampleDirectory = { state.openSampleDirectory() },
+                canCreateDefault = state.excludedSampleItems.isNotEmpty(),
+                createDefault = { state.createDefaultEntriesForAllExcludedSamples() },
             )
         }
     }
@@ -402,6 +404,8 @@ private fun ButtonBar(
     jumpToSelectedEntry: () -> Unit,
     canOpenSampleDirectory: Boolean,
     openSampleDirectory: () -> Unit,
+    canCreateDefault: Boolean,
+    createDefault: () -> Unit,
 ) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
         TextButton(
@@ -409,6 +413,13 @@ private fun ButtonBar(
             onClick = { openSampleDirectory() },
         ) {
             Text(string(Strings.SampleListOpenSampleDirectoryButton))
+        }
+        Spacer(Modifier.width(25.dp))
+        TextButton(
+            enabled = canCreateDefault,
+            onClick = { createDefault() },
+        ) {
+            Text(string(Strings.SampleListCreateDefaultForAllButton))
         }
         Spacer(Modifier.weight(1f))
         TextButton(

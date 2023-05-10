@@ -65,6 +65,7 @@ interface ProjectStore {
     val canRemoveCurrentEntry: Boolean
     fun removeCurrentEntry()
     fun createDefaultEntry(moduleName: String, sampleName: String)
+    fun createDefaultEntries(moduleName: String, sampleNames: List<String>)
     val canMoveEntry: Boolean
     fun moveEntry(index: Int, targetIndex: Int)
     fun isCurrentEntryTheLast(): Boolean
@@ -337,9 +338,15 @@ class ProjectStoreImpl(
     }
 
     override fun createDefaultEntry(moduleName: String, sampleName: String) {
+        createDefaultEntries(moduleName, listOf(sampleName))
+    }
+
+    override fun createDefaultEntries(moduleName: String, sampleNames: List<String>) {
         val project = requireProject()
-        val newEntry = Entry.fromDefaultValues(sampleName, sampleName, project.labelerConf)
-        editProjectModule(moduleName) { copy(entries = entries + newEntry) }
+        val newEntries = sampleNames.map {
+            Entry.fromDefaultValues(it, it, project.labelerConf)
+        }
+        editProjectModule(moduleName) { copy(entries = entries + newEntries) }
     }
 
     override val canMoveEntry: Boolean

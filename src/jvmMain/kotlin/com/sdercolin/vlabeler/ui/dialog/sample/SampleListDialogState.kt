@@ -100,6 +100,12 @@ class SampleListDialogState(
         fetch()
     }
 
+    fun createDefaultEntriesForAllExcludedSamples() {
+        val excludedSamples = excludedSampleItems.map { it.name }
+        editorState.createDefaultEntries(currentModuleName, excludedSamples)
+        fetch()
+    }
+
     fun jumpToSelectedEntry() {
         val index = requireNotNull(selectedEntryIndex)
         editorState.jumpToEntry(currentModuleName, index)

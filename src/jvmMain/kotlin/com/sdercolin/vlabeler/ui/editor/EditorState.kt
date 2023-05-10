@@ -310,6 +310,10 @@ class EditorState(
         appState.createDefaultEntry(moduleName, sampleName)
     }
 
+    fun createDefaultEntries(moduleName: String, sampleNames: List<String>) {
+        appState.createDefaultEntries(moduleName, sampleNames)
+    }
+
     fun jumpToEntry(moduleName: String, index: Int) {
         appState.jumpToEntry(moduleName, index)
     }

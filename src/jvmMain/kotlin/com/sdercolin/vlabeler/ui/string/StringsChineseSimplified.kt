@@ -139,6 +139,7 @@ fun Strings.zhHans(): String? = when (this) {
     SampleListEntriesPlaceholderUnselected -> "在左边选择一个采样以查看其关联到的条目。"
     SampleListEntriesPlaceholderNoEntry -> "该采样没有关联到任何条目。"
     SampleListEntriesPlaceholderNoEntryButton -> "创建默认条目"
+    SampleListCreateDefaultForAllButton -> "为所有未使用到的采样创建默认条目"
     SampleListJumpToSelectedEntryButton -> "跳转到选中的条目"
     SampleListOpenSampleDirectoryButton -> "打开采样目录"
     SampleListCurrentModuleLabel -> "子项目："
