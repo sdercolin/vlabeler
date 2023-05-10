@@ -67,7 +67,7 @@ fun BoxScope.PropertyView(project: Project, requestInputProperty: (index: Int, v
         Modifier
             .padding(10.dp)
             .width(IntrinsicSize.Min)
-            .widthIn(min = 160.dp, max = 250.dp)
+            .widthIn(min = 180.dp, max = 250.dp)
             .background(color = Black80, shape = RoundedCornerShape(5.dp))
             .padding(vertical = 10.dp, horizontal = 15.dp)
             .align(Alignment.TopEnd),
