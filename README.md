@@ -35,7 +35,7 @@ application. [See more](https://github.com/JetBrains/compose-jb/tree/master/tuto
 
 Currently, cross-platform building is not supported. Only packages for your OS are built.
 
-Please ensure you have **JDK 15+** for building.
+Please ensure you have **JDK 17+** for building.
 
 ```
 // Package by an installer

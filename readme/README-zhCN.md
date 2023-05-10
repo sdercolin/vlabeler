@@ -35,7 +35,7 @@ vLabeler 基于 [Compose Multiplatform](https://github.com/JetBrains/compose-jb)
 
 目前不支持跨平台构建。您只能构建适用于您的操作系统的应用程序包。
 
-请确保您有 **JDK 15+** 用于构建。
+请确保您有 **JDK 17+** 用于构建。
 
 ```
 // 构建安装包

@@ -35,7 +35,7 @@ vLabeler は [Compose Multiplatform](https://github.com/JetBrains/compose-jb) �
 
 現在、クロスプラットフォームのビルドはサポートされていません。ビルドで使われた OS で実行可能なパッケージのみがビルドされます。
 
-ビルドには **JDK 15+** が必要になります。
+ビルドには **JDK 17+** が必要になります。
 
 ``` 
 // インストーラーをビルドします
