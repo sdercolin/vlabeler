@@ -1,15 +1,19 @@
 package com.sdercolin.vlabeler.util
 
+import java.math.BigDecimal
+
 /**
  * Converts a [Float] to a [String] and trims the trailing zeros and the decimal point.
  */
-fun Float.toStringTrimmed(): String = this.toDouble().toStringTrimmed()
+fun Float.toStringTrimmed(): String = this.toBigDecimal().toStringTrimmed()
 
 /**
  * Converts a [Double] to a [String] and trims the trailing zeros and the decimal point.
  */
-fun Double.toStringTrimmed(): String {
-    var str = this.toBigDecimal().toPlainString()
+fun Double.toStringTrimmed(): String = this.toBigDecimal().toStringTrimmed()
+
+private fun BigDecimal.toStringTrimmed(): String {
+    var str = this.toPlainString()
     if (str.contains(".")) {
         str = str.trimEnd('0')
     }
