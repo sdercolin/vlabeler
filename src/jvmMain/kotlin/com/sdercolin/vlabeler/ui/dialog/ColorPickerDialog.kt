@@ -241,7 +241,7 @@ fun ColorPickerDialog(
         title = string(Strings.ColorPickerDialogTitle),
         icon = painterResource(Resources.iconIco),
         onCloseRequest = state::cancel,
-        state = rememberDialogState(width = 400.dp, height = 580.dp.runIf(!useAlpha) { minus(45.dp) }),
+        state = rememberDialogState(width = 400.dp, height = 600.dp.runIf(!useAlpha) { minus(45.dp) }),
         resizable = false,
     ) {
         AppTheme(appConf.view) {
