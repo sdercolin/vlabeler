@@ -1,9 +1,12 @@
 package io
 
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.ImportedModule
 import com.sdercolin.vlabeler.io.importModulesFromProject
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.EntryNotes
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -11,6 +14,16 @@ import kotlin.test.assertEquals
  * Tests for [importModulesFromProject].
  */
 class ImportProjectTest {
+
+    @BeforeTest
+    fun setup() {
+        Log.muted = true
+    }
+
+    @AfterTest
+    fun teardown() {
+        Log.muted = false
+    }
 
     @Test
     fun testNormal() {

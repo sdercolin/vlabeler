@@ -109,6 +109,13 @@ object Log {
 
     var fatalErrorTracker: FatalErrorTracker? = null
 
+    var muted: Boolean = false
+        set(value) {
+            field = value
+            infoLogger.level = if (value) Level.OFF else Level.INFO
+            errorLogger.level = if (value) Level.OFF else Level.SEVERE
+        }
+
     fun interface FatalErrorTracker {
         fun track(fatalErrorEvent: FatalErrorEvent)
     }
