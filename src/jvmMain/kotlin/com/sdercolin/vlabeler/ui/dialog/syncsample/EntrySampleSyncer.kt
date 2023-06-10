@@ -9,7 +9,6 @@ import com.sdercolin.vlabeler.ui.ProjectStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
 
 class EntrySampleSyncer(
     private val scope: CoroutineScope,
