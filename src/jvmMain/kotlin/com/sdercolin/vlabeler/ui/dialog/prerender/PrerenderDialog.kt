@@ -85,23 +85,24 @@ private fun Content(progress: ChartPrerenderer.Progress) {
         string(Strings.PrerendererChartText, progress.finishedCharts, progress.totalCharts)
     }
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        println(progress)
         if (progress.totalModules > 1) {
             Text(text = moduleProgressText, maxLines = 1, style = MaterialTheme.typography.body2)
             LinearProgressIndicator(
-                progress = progress.finishedModules.toFloat() / progress.totalModules,
+                progress = progress.moduleProgress,
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(10.dp))
         }
         Text(text = sampleProgressText, maxLines = 1, style = MaterialTheme.typography.body2)
         LinearProgressIndicator(
-            progress = progress.finishedFiles.toFloat() / progress.totalFiles,
+            progress = progress.fileProgress,
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(text = chartProgressText, maxLines = 1, style = MaterialTheme.typography.body2)
         LinearProgressIndicator(
-            progress = progress.finishedCharts.toFloat() / progress.totalCharts,
+            progress = progress.chartProgress,
             modifier = Modifier.fillMaxWidth(),
         )
     }

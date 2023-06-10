@@ -85,14 +85,14 @@ private fun Content(progress: EntrySampleSyncer.Progress) {
         if (progress.totalModules > 1) {
             Text(text = moduleProgressText, maxLines = 1, style = MaterialTheme.typography.body2)
             LinearProgressIndicator(
-                progress = progress.finishedModules.toFloat() / progress.totalModules,
+                progress = progress.moduleProgress,
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(10.dp))
         }
         Text(text = sampleProgressText, maxLines = 1, style = MaterialTheme.typography.body2)
         LinearProgressIndicator(
-            progress = progress.finishedFiles.toFloat() / progress.totalFiles,
+            progress = progress.fileProgress,
             modifier = Modifier.fillMaxWidth(),
         )
     }

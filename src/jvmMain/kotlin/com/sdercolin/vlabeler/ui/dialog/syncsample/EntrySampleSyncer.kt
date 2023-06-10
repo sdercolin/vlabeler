@@ -18,14 +18,14 @@ class EntrySampleSyncer(
     private val onProgress: (Progress) -> Unit,
 ) {
 
-    private val renderProgressMutex = Mutex()
-
     data class Progress(
         val finishedModules: Int,
         val totalModules: Int,
         val finishedFiles: Int,
         val totalFiles: Int,
     ) {
+        val moduleProgress = if (totalModules == 0) 0f else finishedModules.toFloat() / totalModules
+        val fileProgress = if (totalFiles == 0) 0f else finishedFiles.toFloat() / totalFiles
         val finishedInModule = finishedFiles == totalFiles
         val finished = finishedModules == totalModules
     }

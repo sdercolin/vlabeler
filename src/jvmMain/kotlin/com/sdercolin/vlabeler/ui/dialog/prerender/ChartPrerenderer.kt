@@ -31,6 +31,9 @@ class ChartPrerenderer(
         val finishedCharts: Int,
         val totalCharts: Int,
     ) {
+        val moduleProgress = if (totalModules == 0) 0f else finishedModules.toFloat() / totalModules
+        val fileProgress = if (totalFiles == 0) 0f else finishedFiles.toFloat() / totalFiles
+        val chartProgress = if (totalCharts == 0) 0f else finishedCharts.toFloat() / totalCharts
         val finishedInFile = finishedCharts == totalCharts
         val finishedInModule = finishedFiles == totalFiles && finishedCharts == totalCharts
         val finished = finishedModules == totalModules
