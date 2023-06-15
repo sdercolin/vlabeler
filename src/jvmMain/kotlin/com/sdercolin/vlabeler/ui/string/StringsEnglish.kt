@@ -25,6 +25,7 @@ fun Strings.en(): String = when (this) {
     MenuEditToolsCursor -> "Cursor"
     MenuEditToolsScissors -> "Scissors"
     MenuEditToolsPan -> "Pan"
+    MenuEditToolsPlayback -> "Playback"
     MenuEditRenameEntry -> "Rename Current Entry..."
     MenuEditDuplicateEntry -> "Duplicate Current Entry..."
     MenuEditRemoveEntry -> "Remove Current Entry"

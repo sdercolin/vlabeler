@@ -40,6 +40,7 @@ class MarkerState(
     val cursorState: MutableState<MarkerCursorState>,
     val scissorsState: MutableState<MarkerScissorsState?>,
     val panState: MutableState<MarkerPanState?>,
+    val playbackState: MutableState<MarkerPlaybackState?>,
     val canvasHeightState: MutableState<Float>,
     val waveformsHeightRatio: Float,
     private val snapDrag: SnapDrag,
@@ -207,7 +208,7 @@ class MarkerState(
             val (leftEntryIndex, currentEntryIndex, rightEntryIndex) = when {
                 pointIndex == MarkerCursorState.NonePointIndex -> return entries
                 pointIndex == MarkerCursorState.StartPointIndex ->
-                    Triple(null, null, 0.takeIf { it <= lastEntryIndex })
+                    Triple(null, null, if (lastEntryIndex >= 0) 0 else null)
                 pointIndex == MarkerCursorState.EndPointIndex ->
                     Triple((lastEntryIndex).takeIf { it >= 0 }, null, null)
                 isBorderIndex(pointIndex) -> {
@@ -380,6 +381,8 @@ class MarkerState(
 
     fun isValidCutPosition(position: Float) = entriesInPixel.any { it.isValidCutPosition(position) }
 
+    fun isValidPlaybackPosition(position: Float) = position < entryConverter.convertToPixel(sampleLengthMillis)
+
     fun getEntryIndexByCutPosition(position: Float) = entriesInPixel.first {
         it.isValidCutPosition(position)
     }.index
@@ -458,12 +461,14 @@ class MarkerState(
         Tool.Cursor -> Unit
         Tool.Scissors -> scissorsState.update { MarkerScissorsState() }
         Tool.Pan -> panState.update { MarkerPanState() }
+        Tool.Playback -> playbackState.update { MarkerPlaybackState() }
     }
 
     private fun clearToolState(tool: Tool) = when (tool) {
         Tool.Cursor -> cursorState.update { MarkerCursorState() }
         Tool.Scissors -> scissorsState.clear()
         Tool.Pan -> panState.clear()
+        Tool.Playback -> playbackState.clear()
     }
 
     companion object {
@@ -515,6 +520,7 @@ fun rememberMarkerState(
     val cursorState = remember { mutableStateOf(MarkerCursorState()) }
     val scissorsState = remember { mutableStateOf<MarkerScissorsState?>(null) }
     val panState = remember { mutableStateOf<MarkerPanState?>(null) }
+    val playbackState = remember { mutableStateOf<MarkerPlaybackState?>(null) }
     val canvasHeightState = remember { mutableStateOf(0f) }
     val waveformsHeightRatio = remember(appState.appConf.painter.spectrogram) {
         val spectrogram = appState.appConf.painter.spectrogram
@@ -561,6 +567,7 @@ fun rememberMarkerState(
             cursorState,
             scissorsState,
             panState,
+            playbackState,
             canvasHeightState,
             waveformsHeightRatio,
             snapDrag,

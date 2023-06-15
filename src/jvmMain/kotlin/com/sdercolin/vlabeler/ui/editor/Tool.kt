@@ -15,4 +15,7 @@ enum class Tool(val stringKey: Strings, val keyAction: KeyAction, val iconPath: 
 
     @SerialName("pan")
     Pan(Strings.MenuEditToolsPan, KeyAction.UseToolPan, "img/pan_tool.png"),
+
+    @SerialName("play")
+    Playback(Strings.MenuEditToolsPlayback, KeyAction.UseToolPlayback, "img/playback_tool.png"),
 }

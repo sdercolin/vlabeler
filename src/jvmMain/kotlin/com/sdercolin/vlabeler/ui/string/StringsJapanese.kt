@@ -27,6 +27,7 @@ fun Strings.ja(): String? = when (this) {
     MenuEditToolsCursor -> "カーソル"
     MenuEditToolsScissors -> "はさみツール"
     MenuEditToolsPan -> "ハンドツール"
+    MenuEditToolsPlayback -> "再生ツール"
     MenuEditRenameEntry -> "このエントリの名前を編集..."
     MenuEditDuplicateEntry -> "このエントリを複製..."
     MenuEditRemoveEntry -> "このエントリを削除..."

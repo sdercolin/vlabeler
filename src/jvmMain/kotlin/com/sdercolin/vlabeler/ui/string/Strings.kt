@@ -28,6 +28,7 @@ enum class Strings {
     MenuEditToolsCursor,
     MenuEditToolsScissors,
     MenuEditToolsPan,
+    MenuEditToolsPlayback,
     MenuEditRenameEntry,
     MenuEditDuplicateEntry,
     MenuEditRemoveEntry,

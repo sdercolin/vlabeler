@@ -101,6 +101,11 @@ enum class KeyAction(
         KeySet(Key.Three),
         true,
     ),
+    UseToolPlayback(
+        listOf(Strings.MenuEdit, Strings.MenuEditTools, Strings.MenuEditToolsPlayback),
+        KeySet(Key.Four),
+        true,
+    ),
     RenameCurrentEntry(
         listOf(Strings.MenuEdit, Strings.MenuEditRenameEntry),
         KeySet(Key.R, setOf(Key.Ctrl)),

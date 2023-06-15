@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.Black80
 import com.sdercolin.vlabeler.ui.theme.White20
+import com.sdercolin.vlabeler.ui.theme.icon.ToolPlaybackArrowRight
 import java.awt.Cursor
 
 @Composable
@@ -49,11 +50,13 @@ fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
                     Tool.Cursor -> Icons.Default.Height
                     Tool.Scissors -> Icons.Default.ContentCut
                     Tool.Pan -> Icons.Default.PanTool
+                    Tool.Playback -> ToolPlaybackArrowRight
                 }
                 val rotate = when (tool) {
                     Tool.Cursor -> 90f
                     Tool.Scissors -> 270f
                     Tool.Pan -> 0f
+                    Tool.Playback -> 0f
                 }
                 Icon(
                     imageVector = icon,

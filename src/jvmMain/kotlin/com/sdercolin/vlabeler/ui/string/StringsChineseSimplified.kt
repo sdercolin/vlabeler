@@ -27,6 +27,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuEditToolsCursor -> "光标"
     MenuEditToolsScissors -> "剪刀"
     MenuEditToolsPan -> "平移"
+    MenuEditToolsPlayback -> "播放"
     MenuEditRenameEntry -> "编辑当前条目名..."
     MenuEditDuplicateEntry -> "创建当前条目的副本..."
     MenuEditRemoveEntry -> "删除当前条目"

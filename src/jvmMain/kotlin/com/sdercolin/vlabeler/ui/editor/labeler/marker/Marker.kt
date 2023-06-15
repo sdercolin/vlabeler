@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package com.sdercolin.vlabeler.ui.editor.labeler.marker
 
 import androidx.compose.foundation.Canvas
@@ -69,6 +67,7 @@ val LabelSize = DpSize(40.dp, 25.dp)
 val LabelShiftUp = 11.dp
 const val LabelMaxChunkLength = 5000
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MarkerPointEventContainer(
     screenRange: FloatRange?,
@@ -88,7 +87,7 @@ fun MarkerPointEventContainer(
         }
     }
     val playSection = remember(appState.player) {
-        { start: Float, end: Float -> appState.player.playSection(start, end) }
+        { start: Float, end: Float? -> appState.player.playSection(start, end) }
     }
     val coroutineScope = rememberCoroutineScope()
     Box(
@@ -404,6 +403,22 @@ private fun FieldBorderCanvas(
                     }
                 }
             }
+
+            // Draw playback cursor
+            state.playbackState.value?.let { playbackState ->
+                val position = playbackState.position
+                if (position != null && state.isValidPlaybackPosition(position)) {
+                    if (position in screenRange) {
+                        val relativePosition = position - screenRange.start
+                        drawLine(
+                            color = editorConf.playerCursorColor.toColor(),
+                            start = Offset(relativePosition, 0f),
+                            end = Offset(relativePosition, canvasHeight),
+                            strokeWidth = StrokeWidth,
+                        )
+                    }
+                }
+            }
         } catch (t: Throwable) {
             if (isDebug) throw t
             Log.debug(t)
@@ -425,6 +440,7 @@ private fun MarkerState.handleMouseMove(
         Tool.Cursor -> handleCursorMove(event, editEntries, screenRange, playByCursor)
         Tool.Scissors -> handleScissorsMove(event, screenRange)
         Tool.Pan -> handlePanMove(event, scrollState, scope)
+        Tool.Playback -> handlePlaybackMove(event, screenRange)
     }
 }
 
@@ -491,6 +507,16 @@ private fun MarkerState.handlePanMove(
     }
 }
 
+private fun MarkerState.handlePlaybackMove(
+    event: PointerEvent,
+    screenRange: FloatRange,
+) {
+    val playbackState = playbackState
+    val x = event.changes.first().position.x + screenRange.start
+    val position = x.takeIf { isValidPlaybackPosition(it) }
+    playbackState.updateNonNull { copy(position = position) }
+}
+
 private fun MarkerState.handleMousePress(
     tool: Tool,
     keyboardState: KeyboardState,
@@ -502,6 +528,7 @@ private fun MarkerState.handleMousePress(
         Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf)
         Tool.Scissors -> Unit
         Tool.Pan -> handlePanPress()
+        Tool.Playback -> Unit
     }
 }
 
@@ -543,7 +570,7 @@ private fun MarkerState.handleMouseRelease(
     tool: Tool,
     event: PointerEvent,
     submitEntry: () -> Unit,
-    playSampleSection: (Float, Float) -> Unit,
+    playSampleSection: (startFrame: Float, endFrame: Float?) -> Unit,
     cutEntry: (Int, Float) -> Unit,
     keyboardState: KeyboardState,
     screenRange: FloatRange?,
@@ -564,6 +591,7 @@ private fun MarkerState.handleMouseRelease(
             Tool.Cursor -> handleCursorRelease(submitEntry)
             Tool.Scissors -> handleScissorsRelease(cutEntry)
             Tool.Pan -> handlePanRelease()
+            Tool.Playback -> handlePlaybackRelease(playSampleSection)
         }
     }
 }
@@ -583,6 +611,15 @@ private fun MarkerState.handleScissorsRelease(
 
 private fun MarkerState.handlePanRelease() {
     panState.updateNonNull { copy(isDragging = false) }
+}
+
+private fun MarkerState.handlePlaybackRelease(
+    playSampleSection: (startFrame: Float, endFrame: Float?) -> Unit,
+) {
+    val playbackState = playbackState
+    val position = playbackState.value?.position ?: return
+    val frame = entryConverter.convertToFrame(position)
+    playSampleSection(frame, null)
 }
 
 private fun MarkerState.mayHandleScissorsKeyAction(action: KeyAction, cutEntry: (Int, Float) -> Unit): Boolean {

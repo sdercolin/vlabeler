@@ -175,7 +175,7 @@ class Player(
         playSection(frameRange.start, frameRange.endInclusive)
     }
 
-    fun playSection(startFramePosition: Float, endFramePosition: Float) {
+    fun playSection(startFramePosition: Float, endFramePosition: Float?) {
         coroutineScope.launch {
             if (state.isPlaying) {
                 stop()
@@ -183,7 +183,7 @@ class Player(
             Log.info("Player.playSection($startFramePosition, $endFramePosition)")
             awaitLoad()
             val startFrame = startFramePosition.roundToInt()
-            val endFrame = endFramePosition.roundToInt()
+            val endFrame = endFramePosition?.roundToInt()
             listener.onStartPlaying(startFrame.toLong())
             startCounting(startFrame, endFrame)
             startWriting(startFrame, endFrame)
