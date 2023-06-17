@@ -19,7 +19,7 @@ object PreferencesPages {
 
     object Charts : PreferencesPage(Strings.PreferencesCharts, Strings.PreferencesChartsDescription) {
 
-        override val children get() = listOf(ChartsCanvas, ChartsWaveform, ChartsSpectrogram)
+        override val children get() = listOf(ChartsCanvas, ChartsWaveform, ChartsSpectrogram, ChartsPower)
     }
 
     object ChartsCanvas : PreferencesPage(Strings.PreferencesChartsCanvas, Strings.PreferencesChartsCanvasDescription) {
@@ -243,6 +243,43 @@ object PreferencesPages {
                         description = Strings.PreferencesChartsSpectrogramUseHighAlphaContrastDescription,
                         select = { it.useHighAlphaContrast },
                         update = { copy(useHighAlphaContrast = it) },
+                    )
+                }
+            }
+    }
+
+    object ChartsPower : PreferencesPage(
+        Strings.PreferencesChartsPower,
+        Strings.PreferencesChartsPowerDescription,
+    ) {
+        override val content: List<PreferencesGroup>
+            get() = buildPageContent {
+                withContext(
+                    selector = { it.painter.power },
+                    updater = { copy(painter = painter.copy(power = it)) },
+                ) {
+                    switch(
+                        title = Strings.PreferencesChartsPowerEnabled,
+                        defaultValue = AppConf.Power.DefaultEnabled,
+                        select = { it.enabled },
+                        update = { copy(enabled = it) },
+                    )
+                    floatPercentage(
+                        title = Strings.PreferencesChartsPowerHeight,
+                        defaultValue = AppConf.Power.DefaultHeightWeight,
+                        min = AppConf.Power.MinHeightWeight,
+                        max = AppConf.Power.MaxHeightWeight,
+                        select = { it.heightWeight },
+                        update = { copy(heightWeight = it) },
+                    )
+                    integer(
+                        title = Strings.PreferencesChartsPowerUnitSize,
+                        description = Strings.PreferencesChartsPowerUnitSizeDescription,
+                        defaultValue = AppConf.Power.DefaultUnitSize,
+                        min = AppConf.Power.MinUnitSize,
+                        max = AppConf.Power.MaxUnitSize,
+                        select = { it.unitSize },
+                        update = { copy(unitSize = it) },
                     )
                 }
             }

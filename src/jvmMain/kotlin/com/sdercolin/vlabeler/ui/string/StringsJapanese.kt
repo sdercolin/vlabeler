@@ -325,6 +325,14 @@ fun Strings.ja(): String? = when (this) {
             "変更を反映するには、このダイアログを再度開く必要があります。"
     PreferencesChartsSpectrogramUseHighAlphaContrast -> "透明度のコントラストを高める"
     PreferencesChartsSpectrogramUseHighAlphaContrastDescription -> "透明度のある色を含むス配色のみに適用されます。"
+    // TODO, from here
+    PreferencesChartsPower -> "TODO"
+    PreferencesChartsPowerDescription -> "TODO"
+    PreferencesChartsPowerEnabled -> "TODO"
+    PreferencesChartsPowerHeight -> "TODO"
+    PreferencesChartsPowerUnitSize -> "TODO"
+    PreferencesChartsPowerUnitSizeDescription -> "TODO"
+    // TODO, to here
     PreferencesKeymap -> "ショートカットキー設定"
     PreferencesKeymapDescription -> "キーボード/マウスのショートカットキーをカスタマイズします。"
     PreferencesKeymapKeyAction -> "キーボード"

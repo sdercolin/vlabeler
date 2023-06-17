@@ -338,6 +338,14 @@ fun Strings.en(): String = when (this) {
     PreferencesChartsSpectrogramUseHighAlphaContrast -> "Use high alpha contrast"
     PreferencesChartsSpectrogramUseHighAlphaContrastDescription ->
         "This option only affects color palettes that have alpha values."
+    // TODO, from here
+    PreferencesChartsPower -> "TODO"
+    PreferencesChartsPowerDescription -> "TODO"
+    PreferencesChartsPowerEnabled -> "TODO"
+    PreferencesChartsPowerHeight -> "TODO"
+    PreferencesChartsPowerUnitSize -> "TODO"
+    PreferencesChartsPowerUnitSizeDescription -> "TODO"
+    // TODO, to here
     PreferencesKeymap -> "Keymap"
     PreferencesKeymapDescription -> "Customize key bindings for key/mouse actions."
     PreferencesKeymapKeyAction -> "Key actions"

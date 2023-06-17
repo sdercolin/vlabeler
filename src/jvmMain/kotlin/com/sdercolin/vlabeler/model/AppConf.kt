@@ -49,6 +49,7 @@ data class AppConf(
         val maxDataChunkSize: Int = DefaultMaxDataChunkSize,
         val amplitude: Amplitude = Amplitude(),
         val spectrogram: Spectrogram = Spectrogram(),
+        val power: Power = Power(),
     ) {
         val amplitudeHeightRatio: Float
             get() = 1f / (1f + spectrogram.heightWeight)
@@ -186,6 +187,24 @@ data class AppConf(
             val DefaultWindowType = WindowType.BlackmanHarris
             val DefaultColorPalette = ColorPaletteDefinition.presets.first().name
             const val DefaultUseHighAlphaContrast = true
+        }
+    }
+
+    @Serializable
+    @Immutable
+    data class Power(
+        val enabled: Boolean = DefaultEnabled,
+        val heightWeight: Float = DefaultHeightWeight,
+        val unitSize: Int = DefaultUnitSize,
+    ) {
+        companion object {
+            const val DefaultEnabled = false
+            const val DefaultHeightWeight = 0.5f
+            const val MaxHeightWeight = 5f
+            const val MinHeightWeight = 0.1f
+            const val DefaultUnitSize = 60
+            const val MaxUnitSize = DefaultUnitSize * 10
+            const val MinUnitSize = 1
         }
     }
 
