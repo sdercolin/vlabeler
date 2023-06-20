@@ -603,12 +603,13 @@ private fun MarkerState.handleMouseRelease(
 
 private fun MarkerState.handleCursorRelease(
     submitEntry: () -> Unit,
-    action: MouseClickAction?
+    action: MouseClickAction?,
 ): Boolean = when (action) {
     MouseClickAction.MoveParameter,
     MouseClickAction.MoveParameterIgnoringConstraints,
     MouseClickAction.MoveParameterInvertingPrimary,
-    MouseClickAction.MoveParameterWithPlaybackPreview -> {
+    MouseClickAction.MoveParameterWithPlaybackPreview,
+    -> {
         cursorState.update { finishDragging() }
         submitEntry()
         true
