@@ -17,6 +17,7 @@ import com.sdercolin.vlabeler.model.action.MouseScrollAction
 import com.sdercolin.vlabeler.model.key.ActualKey
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
+import com.sdercolin.vlabeler.ui.editor.Tool
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,7 +34,8 @@ import kotlinx.coroutines.launch
 class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: AppConf.Keymaps) {
 
     private var keyActions: List<Pair<KeySet, KeyAction>> = KeyAction.getNonMenuKeySets(keymaps)
-    private var mouseClickActions: Map<KeySet, MouseClickAction> = MouseClickAction.getKeySets(keymaps).toMap()
+    private var mouseClickActions: Map<Pair<KeySet, Tool>, MouseClickAction> = MouseClickAction.getKeySets(keymaps)
+        .associateWithTool()
     private var mouseScrollActions: Map<KeySet, MouseScrollAction> = MouseScrollAction.getKeySets(keymaps).toMap()
 
     private val _keyboardActionFlow = MutableSharedFlow<KeyAction>(replay = 0)
@@ -55,7 +57,7 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
      */
     suspend fun updateKeymaps(keymaps: AppConf.Keymaps) {
         keyActions = KeyAction.getNonMenuKeySets(keymaps)
-        mouseClickActions = MouseClickAction.getKeySets(keymaps).toMap()
+        mouseClickActions = MouseClickAction.getKeySets(keymaps).associateWithTool()
         mouseScrollActions = MouseScrollAction.getKeySets(keymaps).toMap()
         _keyboardStateFlow.emit(getIdleState())
     }
@@ -86,6 +88,10 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
         val shouldBlockEvent = keySet.mainKey == null && keySet.subKeys == setOf(Key.Alt)
         return caughtKeyAction != null && shouldBlockEvent
     }
+
+    private fun List<Pair<KeySet, MouseClickAction>>.associateWithTool(): Map<Pair<KeySet, Tool>, MouseClickAction> {
+        return associate { (keySet, action) -> (keySet to action.tool) to action }
+    }
 }
 
 /**
@@ -98,16 +104,16 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
 @Immutable
 data class KeyboardState(
     val keySet: KeySet?,
-    val availableMouseClickActions: Map<KeySet, MouseClickAction>,
+    val availableMouseClickActions: Map<Pair<KeySet, Tool>, MouseClickAction>,
     val availableMouseScrollActions: Map<KeySet, MouseScrollAction>,
 ) {
 
     /**
      * Get the [MouseClickAction] that is enabled by the current pressed keys and the given [PointerEvent].
      */
-    fun getEnabledMouseClickAction(pointerEvent: PointerEvent): MouseClickAction? {
+    fun getEnabledMouseClickAction(pointerEvent: PointerEvent, tool: Tool = Tool.Cursor): MouseClickAction? {
         val mainKey = pointerEvent.toVirtualKey() ?: return null
-        return availableMouseClickActions[KeySet(mainKey, keySet?.subKeys.orEmpty())]
+        return availableMouseClickActions[KeySet(mainKey, keySet?.subKeys.orEmpty()) to tool]
             ?.takeIf { it.pointerEventType == pointerEvent.type }
     }
 

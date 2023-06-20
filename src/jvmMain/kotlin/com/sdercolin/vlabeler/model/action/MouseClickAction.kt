@@ -4,6 +4,7 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
+import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.stringCertain
@@ -16,6 +17,7 @@ enum class MouseClickAction(
     val displayedName: Strings,
     val defaultKeySet: KeySet?,
     val pointerEventType: PointerEventType,
+    val tool: Tool = Tool.Cursor,
 ) : Action {
     MoveParameter(Strings.ActionMoveParameter, KeySet(Key.MouseLeftClick), PointerEventType.Press),
     MoveParameterWithPlaybackPreview(
@@ -34,12 +36,38 @@ enum class MouseClickAction(
         PointerEventType.Press,
     ),
     PlayAudioSection(Strings.ActionPlayAudioSection, KeySet(Key.MouseRightClick), PointerEventType.Release),
+    PlayAudioUntilEnd(
+        Strings.ActionPlayAudioUntilEnd,
+        KeySet(Key.MouseLeftClick),
+        PointerEventType.Release,
+        Tool.Playback,
+    ),
+    PlayAudioUntilScreenEnd(
+        Strings.ActionPlayAudioUntilScreenEnd,
+        KeySet(Key.MouseRightClick),
+        PointerEventType.Release,
+        Tool.Playback,
+    ),
+    PlayAudioFromStart(
+        Strings.ActionPlayAudioFromStart,
+        KeySet(Key.MouseLeftClick, setOf(Key.Shift)),
+        PointerEventType.Release,
+        Tool.Playback,
+    ),
+    PlayAudioFromScreenStart(
+        Strings.ActionPlayAudioFromScreenStart,
+        KeySet(Key.MouseRightClick, setOf(Key.Shift)),
+        PointerEventType.Release,
+        Tool.Playback,
+    ),
     ;
 
     override val displayOrder: Int
         get() = values().indexOf(this)
 
     override fun getTitle(language: Language): String = stringCertain(displayedName, language)
+
+    override val conflictGroupHash: Int = tool.hashCode()
 
     companion object {
 

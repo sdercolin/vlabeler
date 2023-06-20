@@ -570,7 +570,6 @@ private fun MarkerState.handlePanPress(event: PointerEvent) {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 private fun MarkerState.handleMouseRelease(
     tool: Tool,
     event: PointerEvent,
@@ -586,7 +585,10 @@ private fun MarkerState.handleMouseRelease(
         Tool.Cursor -> handleCursorRelease(submitEntry, caughtAction)
         Tool.Scissors -> handleScissorsRelease(cutEntry, event)
         Tool.Pan -> handlePanRelease()
-        Tool.Playback -> handlePlaybackRelease(playSampleSection, screenRange, event)
+        Tool.Playback -> {
+            val playbackAction = keyboardState.getEnabledMouseClickAction(event, Tool.Playback)
+            handlePlaybackRelease(playSampleSection, screenRange, playbackAction)
+        }
     }
     if (!handled && caughtAction == MouseClickAction.PlayAudioSection) {
         val x = event.changes.first().position.x
@@ -604,17 +606,12 @@ private fun MarkerState.handleMouseRelease(
 private fun MarkerState.handleCursorRelease(
     submitEntry: () -> Unit,
     action: MouseClickAction?,
-): Boolean = when (action) {
-    MouseClickAction.MoveParameter,
-    MouseClickAction.MoveParameterIgnoringConstraints,
-    MouseClickAction.MoveParameterInvertingPrimary,
-    MouseClickAction.MoveParameterWithPlaybackPreview,
-    -> {
-        cursorState.update { finishDragging() }
-        submitEntry()
-        true
-    }
-    else -> false
+): Boolean = if (action.canMoveParameter()) {
+    cursorState.update { finishDragging() }
+    submitEntry()
+    true
+} else {
+    false
 }
 
 private fun MarkerState.handleScissorsRelease(
@@ -637,15 +634,26 @@ private fun MarkerState.handlePanRelease(): Boolean {
 private fun MarkerState.handlePlaybackRelease(
     playSampleSection: (startFrame: Float, endFrame: Float?) -> Unit,
     screenRange: FloatRange,
-    event: PointerEvent,
+    action: MouseClickAction?,
 ): Boolean {
     val playbackState = playbackState
     val position = playbackState.value?.position ?: return false
-    val startFrame = entryConverter.convertToFrame(position)
-    val endFrame = if (event.isRightClick) {
-        entryConverter.convertToFrame(screenRange.endInclusive)
-    } else {
-        null
+    action ?: return true
+    val startFrame = when (action) {
+        MouseClickAction.PlayAudioFromStart -> 0f
+        MouseClickAction.PlayAudioFromScreenStart -> entryConverter.convertToFrame(screenRange.start)
+        MouseClickAction.PlayAudioUntilEnd,
+        MouseClickAction.PlayAudioUntilScreenEnd,
+        -> entryConverter.convertToFrame(position)
+        else -> return true
+    }
+    val endFrame = when (action) {
+        MouseClickAction.PlayAudioUntilEnd -> null
+        MouseClickAction.PlayAudioUntilScreenEnd -> entryConverter.convertToFrame(screenRange.endInclusive)
+        MouseClickAction.PlayAudioFromStart,
+        MouseClickAction.PlayAudioFromScreenStart,
+        -> entryConverter.convertToFrame(position)
+        else -> return true
     }
     playSampleSection(startFrame, endFrame)
     return true

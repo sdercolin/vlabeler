@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCut
-import androidx.compose.material.icons.filled.Height
-import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.theme.Black80
 import com.sdercolin.vlabeler.ui.theme.White20
-import com.sdercolin.vlabeler.ui.theme.icon.ToolPlaybackArrowRight
 import java.awt.Cursor
 
 @Composable
@@ -46,22 +41,10 @@ fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
                     .padding(5.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                val icon = when (tool) {
-                    Tool.Cursor -> Icons.Default.Height
-                    Tool.Scissors -> Icons.Default.ContentCut
-                    Tool.Pan -> Icons.Default.PanTool
-                    Tool.Playback -> ToolPlaybackArrowRight
-                }
-                val rotate = when (tool) {
-                    Tool.Cursor -> 90f
-                    Tool.Scissors -> 270f
-                    Tool.Pan -> 0f
-                    Tool.Playback -> 0f
-                }
                 Icon(
-                    imageVector = icon,
+                    imageVector = tool.icon,
                     contentDescription = null,
-                    modifier = Modifier.rotate(rotate),
+                    modifier = Modifier.rotate(tool.iconRotate),
                     tint = MaterialTheme.colors.onBackground,
                 )
             }

@@ -16,4 +16,10 @@ sealed interface Action {
      * The localized title of the action.
      */
     fun getTitle(language: Language): String
+
+    /**
+     * A hash code to determine if key binds are in the same conflict group.
+     */
+    val conflictGroupHash: Int
+        get() = 0
 }

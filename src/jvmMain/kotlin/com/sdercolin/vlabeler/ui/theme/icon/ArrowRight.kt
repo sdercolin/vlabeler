@@ -11,10 +11,10 @@ val ToolPlaybackArrowRight: ImageVector
         }
         arrowRightVector = materialIcon(name = "Filled.ArrowRight") {
             materialPath {
-                moveTo(8.0f, 20.0f)
-                lineToRelative(10.0f, -10.0f)
-                lineToRelative(-10.0f, -10.0f)
-                verticalLineToRelative(20.0f)
+                moveTo(9f, 20f)
+                lineToRelative(9f, -9f)
+                lineToRelative(-9f, -9f)
+                verticalLineToRelative(18f)
                 close()
             }
         }
