@@ -10,6 +10,10 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
 
 /**
  * Action that is triggered by mouse scroll.
+ *
+ * @property displayedName The name that is displayed in the UI.
+ * @property defaultKeySet The default key set that triggers this action.
+ * @property editable Whether the key set is editable.
  */
 enum class MouseScrollAction(
     val displayedName: Strings,

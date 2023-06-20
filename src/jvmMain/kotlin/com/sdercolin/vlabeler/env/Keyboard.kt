@@ -114,7 +114,7 @@ data class KeyboardState(
     fun getEnabledMouseClickAction(pointerEvent: PointerEvent, tool: Tool = Tool.Cursor): MouseClickAction? {
         val mainKey = pointerEvent.toVirtualKey() ?: return null
         return availableMouseClickActions[KeySet(mainKey, keySet?.subKeys.orEmpty()) to tool]
-            ?.takeIf { it.pointerEventType == pointerEvent.type }
+            ?.takeIf { it.pointerEventType == null || it.pointerEventType == pointerEvent.type }
     }
 
     /**

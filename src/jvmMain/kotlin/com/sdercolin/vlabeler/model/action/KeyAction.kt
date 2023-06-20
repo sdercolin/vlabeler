@@ -10,6 +10,10 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
 
 /**
  * Action that is triggered by a key combination.
+ *
+ * @property displayedNameSections The name that is displayed in the UI. The name is split into sections.
+ * @property defaultKeySet The default key set that triggers this action.
+ * @property isInMenu Whether this action is in the menu.
  */
 enum class KeyAction(
     private val displayedNameSections: List<Strings>,

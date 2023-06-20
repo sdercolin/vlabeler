@@ -12,11 +12,17 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
 
 /**
  * Action that is triggered by mouse click.
+ *
+ * @property displayedName The name that is displayed in the UI.
+ * @property defaultKeySet The default key set that triggers this action.
+ * @property pointerEventType The pointer event type that triggers this action. If null, the action is triggered by any
+ *     pointer event.
+ * @property tool The tool that is used when this action is triggered.
  */
 enum class MouseClickAction(
     val displayedName: Strings,
     val defaultKeySet: KeySet?,
-    val pointerEventType: PointerEventType,
+    val pointerEventType: PointerEventType?,
     val tool: Tool = Tool.Cursor,
 ) : Action {
     MoveParameter(Strings.ActionMoveParameter, KeySet(Key.MouseLeftClick), PointerEventType.Press),
@@ -58,6 +64,18 @@ enum class MouseClickAction(
         Strings.ActionPlayAudioFromScreenStart,
         KeySet(Key.MouseRightClick, setOf(Key.Shift)),
         PointerEventType.Release,
+        Tool.Playback,
+    ),
+    PlayAudioRange(
+        Strings.ActionPlayAudioRange,
+        KeySet(Key.MouseLeftClick, setOf(Key.Ctrl)),
+        null,
+        Tool.Playback,
+    ),
+    PlayAudioRangeRepeat(
+        Strings.ActionPlayAudioRangeRepeat,
+        KeySet(Key.MouseLeftClick, setOf(Key.Ctrl, Key.Shift)),
+        null,
         Tool.Playback,
     ),
     ;

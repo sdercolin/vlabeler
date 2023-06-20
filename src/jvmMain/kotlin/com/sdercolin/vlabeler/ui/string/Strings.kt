@@ -426,6 +426,8 @@ enum class Strings {
     ActionPlayAudioUntilScreenEnd,
     ActionPlayAudioFromStart,
     ActionPlayAudioFromScreenStart,
+    ActionPlayAudioRange,
+    ActionPlayAudioRangeRepeat,
     ActionScrollCanvasLeft,
     ActionScrollCanvasRight,
     ActionZoomInCanvas,

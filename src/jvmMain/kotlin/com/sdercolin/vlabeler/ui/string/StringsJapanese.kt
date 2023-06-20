@@ -469,6 +469,8 @@ fun Strings.ja(): String? = when (this) {
     ActionPlayAudioUntilScreenEnd -> "クリック位置から画面の最後までの音声を再生"
     ActionPlayAudioFromStart -> "最初からクリック位置までの音声を再生"
     ActionPlayAudioFromScreenStart -> "画面の最初からクリック位置までの音声を再生"
+    ActionPlayAudioRange -> "クリックの範囲の音声を再生"
+    ActionPlayAudioRangeRepeat -> "クリックの範囲の音声を繰り返し再生"
     ActionScrollCanvasLeft -> "キャンパスを左にスクロール"
     ActionScrollCanvasRight -> "キャンパスを右にスクロール"
     ActionZoomInCanvas -> "ズームイン"

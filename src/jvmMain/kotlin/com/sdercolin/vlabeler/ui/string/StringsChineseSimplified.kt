@@ -451,6 +451,8 @@ fun Strings.zhHans(): String? = when (this) {
     ActionPlayAudioUntilScreenEnd -> "播放点击位置到屏幕右端位置的音频"
     ActionPlayAudioFromStart -> "播放直到点击位置的音频"
     ActionPlayAudioFromScreenStart -> "播放屏幕左端位置到点击位置的音频"
+    ActionPlayAudioRange -> "播放拖动范围内的音频"
+    ActionPlayAudioRangeRepeat -> "循环播放拖动范围内的音频"
     ActionScrollCanvasLeft -> "向左滚动画布"
     ActionScrollCanvasRight -> "向右滚动画布"
     ActionZoomInCanvas -> "放大"
