@@ -11,9 +11,8 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.string.stringStatic
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.toParamMap
-import com.sdercolin.vlabeler.util.toUri
-import java.awt.Desktop
 
 abstract class BasePluginDialogState(paramMap: ParamMap) {
     abstract val basePlugin: BasePlugin
@@ -28,7 +27,7 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
     open fun isChangeable(parameterName: String): Boolean = true
 
     abstract val snackbarHostState: SnackbarHostState
-    protected suspend fun showSnackbar(message: String) {
+    suspend fun showSnackbar(message: String) {
         snackbarHostState.showSnackbar(message, actionLabel = stringStatic(Strings.CommonOkay))
     }
 
@@ -103,12 +102,12 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
     }
 
     fun openEmail() {
-        Desktop.getDesktop().browse("mailto:${basePlugin.email}".toUri())
+        Url.open("mailto:${basePlugin.email}")
     }
 
     fun openWebsite() {
-        val uri = basePlugin.website.takeIf { it.isNotBlank() }?.toUri() ?: return
-        Desktop.getDesktop().browse(uri)
+        val url = basePlugin.website.takeIf { it.isNotBlank() } ?: return
+        Url.open(url)
     }
 
     fun canSave(): Boolean {

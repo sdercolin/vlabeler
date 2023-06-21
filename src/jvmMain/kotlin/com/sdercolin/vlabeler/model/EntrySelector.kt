@@ -39,7 +39,7 @@ data class EntrySelector(
         abstract fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean
 
         /**
-         * The name of the property being filtered. `sample`, `name`, `tag`, `star` and `done` are preserved.
+         * The name of the property being filtered. `sample`, `name`, `tag`, `star`, `done` and `script` are preserved.
          */
         abstract val subject: String
     }
@@ -153,6 +153,32 @@ data class EntrySelector(
         }
     }
 
+    @Serializable
+    @SerialName("script")
+    data class ScriptFilterItem(
+        val script: String, // a JavaScript expression of a function (entry, labeler) => boolean
+    ) : FilterItem() {
+
+        override val subject: String = ScriptItemSubject
+
+        override fun isValid(labelerConf: LabelerConf) = true
+
+        override fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean {
+            if (script.isBlank()) return true
+            js.setJson("entry", entry)
+            js.setJson("labeler", labelerConf)
+            val propertyMap = labelerConf.getPropertyMap(entry, js)
+            for ((property, value) in propertyMap) {
+                js.eval("entry.${property.name} = $value")
+            }
+            val result = js.eval(script) ?: throw IllegalStateException("Evaluated script is null: $script")
+            if (result.isBoolean.not()) {
+                throw IllegalStateException("Evaluated script is not boolean: $script -> $result")
+            }
+            return result.asBoolean()
+        }
+    }
+
     companion object {
         val textItemSubjects
             get() = listOf(
@@ -167,10 +193,16 @@ data class EntrySelector(
                 BooleanItemSubjectStar to Strings.PluginEntrySelectorPreservedSubjectStar,
             )
 
+        val scriptItemSubjects
+            get() = listOf(
+                ScriptItemSubject to Strings.PluginEntrySelectorPreservedSubjectScript,
+            )
+
         private const val TextItemSubjectEntryName = "name"
         private const val TextItemSubjectSampleName = "sample"
         private const val TextItemSubjectTagName = "tag"
         private const val BooleanItemSubjectDone = "done"
         private const val BooleanItemSubjectStar = "star"
+        private const val ScriptItemSubject = "script"
     }
 }

@@ -210,6 +210,7 @@ enum class Strings {
     PluginEntrySelectorPreservedSubjectTag,
     PluginEntrySelectorPreservedSubjectDone,
     PluginEntrySelectorPreservedSubjectStar,
+    PluginEntrySelectorPreservedSubjectScript,
     PluginEntrySelectorComparerValue,
     PluginEntrySelectorPreviewSummaryError,
     PluginEntrySelectorPreviewSummaryInitializing,

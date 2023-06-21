@@ -215,6 +215,7 @@ fun Strings.zhHans(): String? = when (this) {
     PluginEntrySelectorPreservedSubjectDone -> "完成状态"
     PluginEntrySelectorPreservedSubjectStar -> "星标状态"
     PluginEntrySelectorComparerValue -> "输入值"
+    PluginEntrySelectorPreservedSubjectScript -> "表达式"
     PluginEntrySelectorPreviewSummaryError -> "输入值无效"
     PluginEntrySelectorPreviewSummaryInitializing -> "正在初始化..."
     PluginEntrySelectorPreviewSummary -> "已选中 %d/%d"

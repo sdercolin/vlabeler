@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.material.Button
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
@@ -27,11 +28,13 @@ import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,12 +45,15 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.InputBox
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.theme.White50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.JavaScript
+import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.runIf
 
 @Composable
@@ -60,7 +66,9 @@ fun ParamEntrySelector(
     entries: List<Entry>?,
     js: JavaScript?,
     enabled: Boolean,
+    onError: (Throwable) -> Unit,
 ) {
+    val hasClickedApply = remember { mutableStateOf(false) }
     val filters = remember(value) { mutableStateListOf(*value.filters.toTypedArray()) }
     val parseErrors = remember(value) { mutableStateListOf(*Array(value.filters.size) { false }) }
     val verticalScrollState = rememberLazyListState()
@@ -84,6 +92,7 @@ fun ParamEntrySelector(
                                 parseErrors[index] = isError
                                 onParseErrorChange(parseErrors.any { it })
                             },
+                            onClickApplyButton = { hasClickedApply.value = true },
                             enabled = enabled,
                         )
                     }
@@ -134,19 +143,36 @@ fun ParamEntrySelector(
                     color = MaterialTheme.colors.error,
                 )
             } else {
-                val text = if (js == null) {
-                    string(Strings.PluginEntrySelectorPreviewSummaryInitializing)
-                } else if (entries != null && labelerConf != null) {
-                    val selectedCount = EntrySelector(filters.toList()).select(entries, labelerConf, js).size
-                    string(Strings.PluginEntrySelectorPreviewSummary, selectedCount, entries.size)
-                } else {
-                    ""
+                key(filters) {
+                    var filterError = false
+                    val text = if (js == null) {
+                        string(Strings.PluginEntrySelectorPreviewSummaryInitializing)
+                    } else if (entries != null && labelerConf != null) {
+                        val selectedCount = runCatching {
+                            EntrySelector(filters.toList()).select(entries, labelerConf, js).size
+                        }
+                            .onFailure {
+                                if (hasClickedApply.value) {
+                                    onError(it)
+                                }
+                                filterError = true
+                            }
+                            .getOrNull()
+                        if (selectedCount != null) {
+                            string(Strings.PluginEntrySelectorPreviewSummary, selectedCount, entries.size)
+                        } else {
+                            string(Strings.PluginEntrySelectorPreviewSummaryError)
+                        }
+                    } else {
+                        ""
+                    }
+                    onParseErrorChange(filterError)
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.caption,
+                        color = if (filterError) MaterialTheme.colors.error else MaterialTheme.colors.onSurface,
+                    )
                 }
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onSurface,
-                )
             }
         }
     }
@@ -159,6 +185,7 @@ private fun FilterRow(
     value: EntrySelector.FilterItem,
     onValueChange: (EntrySelector.FilterItem) -> Unit,
     onParseErrorChange: (Boolean) -> Unit,
+    onClickApplyButton: () -> Unit,
     enabled: Boolean,
 ) {
     var type by remember(value) { mutableStateOf(value::class) }
@@ -170,7 +197,9 @@ private fun FilterRow(
         labelerConf?.properties?.map { it.name to it.displayedName.get() }.orEmpty()
     val booleanSubjects = EntrySelector.booleanItemSubjects.map { it.first to string(it.second) }
     val booleanSubjectNames = booleanSubjects.map { it.first }
-    val subjects = textSubjects + numberSubjects + booleanSubjects
+    val scriptSubjects = EntrySelector.scriptItemSubjects.map { it.first to string(it.second) }
+    val scriptSubjectNames = scriptSubjects.map { it.first }
+    val subjects = textSubjects + numberSubjects + booleanSubjects + scriptSubjects
     var textMatchType by remember(value) {
         mutableStateOf(
             (value as? EntrySelector.TextFilterItem)?.matchType
@@ -196,6 +225,16 @@ private fun FilterRow(
     var booleanMatchValue by remember(value) {
         mutableStateOf(
             (value as? EntrySelector.BooleanFilterItem)?.matcherBoolean ?: false,
+        )
+    }
+    var scriptContent by remember(type) {
+        mutableStateOf(
+            (value as? EntrySelector.ScriptFilterItem)?.script ?: "",
+        )
+    }
+    var savedScriptContent by remember(type) {
+        mutableStateOf(
+            (value as? EntrySelector.ScriptFilterItem)?.script ?: "",
         )
     }
     LaunchedEffect(value) {
@@ -232,10 +271,16 @@ private fun FilterRow(
                 subject,
                 booleanMatchValue,
             )
+            EntrySelector.ScriptFilterItem::class -> EntrySelector.ScriptFilterItem(
+                savedScriptContent,
+            )
             else -> return
         }
         onValueChange(newValue)
-        onParseErrorChange(false)
+        if (type != EntrySelector.ScriptFilterItem::class) {
+            // script type posts the parsing check to the script runtime
+            onParseErrorChange(false)
+        }
     }
 
     Row(
@@ -257,6 +302,7 @@ private fun FilterRow(
                 type = when (it.first) {
                     in textSubjectNames -> EntrySelector.TextFilterItem::class
                     in booleanSubjectNames -> EntrySelector.BooleanFilterItem::class
+                    in scriptSubjectNames -> EntrySelector.ScriptFilterItem::class
                     else -> EntrySelector.NumberFilterItem::class
                 }
                 trySubmit()
@@ -343,6 +389,31 @@ private fun FilterRow(
                     colors = getSwitchColors(),
                     enabled = enabled,
                 )
+            }
+            EntrySelector.ScriptFilterItem::class -> {
+                InputBox(
+                    value = scriptContent,
+                    onValueChange = { scriptContent = it },
+                    modifier = Modifier.width(350.dp),
+                    enabled = enabled,
+                )
+                Button(
+                    onClick = {
+                        onClickApplyButton()
+                        savedScriptContent = scriptContent
+                        trySubmit()
+                    },
+                    enabled = savedScriptContent != scriptContent,
+                ) {
+                    Text(string(Strings.CommonApply))
+                }
+                FreeSizedIconButton(
+                    onClick = {
+                        Url.open(Url.EntrySelectorScriptDocument)
+                    },
+                ) {
+                    Icon(Icons.Default.HelpOutline, contentDescription = null, tint = White50)
+                }
             }
         }
     }

@@ -223,6 +223,7 @@ fun Strings.ja(): String? = when (this) {
     PluginEntrySelectorPreservedSubjectTag -> "タグ"
     PluginEntrySelectorPreservedSubjectDone -> "完了状態"
     PluginEntrySelectorPreservedSubjectStar -> "スターマーク状態"
+    PluginEntrySelectorPreservedSubjectScript -> "計算式"
     PluginEntrySelectorComparerValue -> "入力値"
     PluginEntrySelectorPreviewSummaryError -> "無効な入力値"
     PluginEntrySelectorPreviewSummaryInitializing -> "初期化中..."

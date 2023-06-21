@@ -248,6 +248,7 @@ import com.sdercolin.vlabeler.ui.string.Strings.PluginEntrySelectorPlaceholder
 import com.sdercolin.vlabeler.ui.string.Strings.PluginEntrySelectorPreservedSubjectDone
 import com.sdercolin.vlabeler.ui.string.Strings.PluginEntrySelectorPreservedSubjectName
 import com.sdercolin.vlabeler.ui.string.Strings.PluginEntrySelectorPreservedSubjectSample
+import com.sdercolin.vlabeler.ui.string.Strings.PluginEntrySelectorPreservedSubjectScript
 import com.sdercolin.vlabeler.ui.string.Strings.PluginEntrySelectorPreservedSubjectStar
 import com.sdercolin.vlabeler.ui.string.Strings.PluginEntrySelectorPreservedSubjectTag
 import com.sdercolin.vlabeler.ui.string.Strings.PluginEntrySelectorPreviewSummary
@@ -712,6 +713,7 @@ fun Strings.en(): String = when (this) {
     PluginEntrySelectorPreservedSubjectTag -> "Tag"
     PluginEntrySelectorPreservedSubjectDone -> "Done"
     PluginEntrySelectorPreservedSubjectStar -> "Starred"
+    PluginEntrySelectorPreservedSubjectScript -> "Expression"
     PluginEntrySelectorComparerValue -> "Input"
     PluginEntrySelectorPreviewSummaryError -> "Invalid input"
     PluginEntrySelectorPreviewSummaryInitializing -> "Initializing..."
