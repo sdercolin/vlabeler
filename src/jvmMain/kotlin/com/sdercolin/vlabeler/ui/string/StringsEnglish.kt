@@ -345,6 +345,11 @@ fun Strings.en(): String = when (this) {
     PreferencesChartsPowerHeight -> "TODO"
     PreferencesChartsPowerUnitSize -> "TODO"
     PreferencesChartsPowerUnitSizeDescription -> "TODO"
+    PreferencesChartsPowerMinPower -> "TODO"
+    PreferencesChartsPowerMaxPower -> "TODO"
+    PreferencesChartsPowerIntensityAccuracy -> "TODO"
+    PreferencesChartsPowerColor -> "TODO"
+    PreferencesChartsPowerBackgroundColor -> "TODO"
     // TODO, to here
     PreferencesKeymap -> "Keymap"
     PreferencesKeymapDescription -> "Customize key bindings for key/mouse actions."

@@ -52,7 +52,9 @@ data class AppConf(
         val power: Power = Power(),
     ) {
         val amplitudeHeightRatio: Float
-            get() = 1f / (1f + spectrogram.heightWeight)
+            get() = 1f /
+                (1f + (if (spectrogram.enabled) spectrogram.heightWeight else 0f)
+                    + (if (power.enabled) power.heightWeight else 0f))
 
         companion object {
             const val DefaultMaxDataChunkSize = 441000
@@ -196,6 +198,11 @@ data class AppConf(
         val enabled: Boolean = DefaultEnabled,
         val heightWeight: Float = DefaultHeightWeight,
         val unitSize: Int = DefaultUnitSize,
+        val minPower: Float = DefaultMinPower,
+        val maxPower: Float = DefaultMaxPower,
+        val intensityAccuracy: Int = DefaultIntensityAccuracy,
+        val color: String = DefaultColor,
+        val backgroundColor: String = DefaultBackgroundColor,
     ) {
         companion object {
             const val DefaultEnabled = false
@@ -205,6 +212,15 @@ data class AppConf(
             const val DefaultUnitSize = 60
             const val MaxUnitSize = DefaultUnitSize * 10
             const val MinUnitSize = 1
+            const val DefaultMinPower = -96.33f
+            const val DefaultMaxPower = 0.0f
+            const val MinMinPower = -192.66f
+            const val MaxMaxPower = 0.0f
+            const val DefaultIntensityAccuracy = 300
+            const val MaxIntensityAccuracy = DefaultIntensityAccuracy * 5
+            const val MinIntensityAccuracy = DefaultIntensityAccuracy / 5
+            const val DefaultColor = "#FFF2F2F2"
+            const val DefaultBackgroundColor = "#00000000"
         }
     }
 

@@ -522,11 +522,7 @@ fun rememberMarkerState(
     val panState = remember { mutableStateOf<MarkerPanState?>(null) }
     val playbackState = remember { mutableStateOf<MarkerPlaybackState?>(null) }
     val canvasHeightState = remember { mutableStateOf(0f) }
-    val waveformsHeightRatio = remember(appState.appConf.painter.spectrogram) {
-        val spectrogram = appState.appConf.painter.spectrogram
-        val totalWeight = 1f + if (spectrogram.enabled) spectrogram.heightWeight else 0f
-        1f / totalWeight
-    }
+    val waveformsHeightRatio = appState.appConf.painter.amplitudeHeightRatio
     val snapDrag = remember(project, canvasParams) {
         SnapDrag(
             project,

@@ -85,6 +85,15 @@ object ChartRepository {
         return file.inputStream().buffered().use(::loadImageBitmap)
     }
 
+    /**
+     * Get the power graph image of a chunk.
+     */
+    suspend fun getPowerGraph(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int): ImageBitmap {
+        val file = getPowerGraphImageFile(sampleInfo, channelIndex, chunkIndex)
+        waitingFile(file)
+        return file.inputStream().buffered().use(::loadImageBitmap)
+    }
+
     private suspend fun waitingFile(file: File) {
         while (file.exists().not()) {
             Log.info("Waiting for $file to be created")
@@ -111,6 +120,19 @@ object ChartRepository {
     fun putSpectrogram(sampleInfo: SampleInfo, chunkIndex: Int, spectrogram: ImageBitmap) {
         val file = getSpectrogramImageFile(sampleInfo, chunkIndex)
         saveImage(spectrogram, file, sampleInfo.getCacheKey(KeySpectrogram, chunkIndex))
+    }
+
+    /**
+     * Put the power graph image of a chunk.
+     */
+    fun putPowerGraph(
+        sampleInfo: SampleInfo,
+        channelIndex: Int,
+        chunkIndex: Int,
+        powerGraph: ImageBitmap,
+    ) {
+        val file = getPowerGraphImageFile(sampleInfo, channelIndex, chunkIndex)
+        saveImage(powerGraph, file, sampleInfo.getCacheKey(KeyPowerGraph, channelIndex, chunkIndex))
     }
 
     private fun saveImage(image: ImageBitmap, file: File, cacheKey: String) {
@@ -162,6 +184,24 @@ object ChartRepository {
             )
         }
 
+    /**
+     * Get the target [File] for the power graph image of a chunk.
+     */
+    fun getPowerGraphImageFile(
+        sampleInfo: SampleInfo,
+        channelIndex: Int,
+        chunkIndex: Int,
+    ) = cacheMap[sampleInfo.getCacheKey(KeyPowerGraph, channelIndex, chunkIndex)]
+        ?.let { cacheDirectory.resolve(it) }
+        ?.takeIf { it.isFile }
+        ?: run {
+            val baseFileName = "${sampleInfo.name}_${KeyPowerGraph}_${channelIndex}_$chunkIndex.$Extension"
+            cacheDirectory.findUnusedFile(
+                base = baseFileName,
+                existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
+            )
+        }
+
     private fun SampleInfo.getCacheKey(vararg keys: Any): String {
         return (listOf(file) + keys).joinToString(separator = "//")
     }
@@ -193,6 +233,7 @@ object ChartRepository {
     private const val ChartsCacheFolderName = "charts"
     private const val KeyWaveform = "waveform"
     private const val KeySpectrogram = "spectrogram"
+    private const val KeyPowerGraph = "power_graph"
     private const val Extension = "png"
 }
 

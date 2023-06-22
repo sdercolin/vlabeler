@@ -281,6 +281,44 @@ object PreferencesPages {
                         select = { it.unitSize },
                         update = { copy(unitSize = it) },
                     )
+                    float(
+                        title = Strings.PreferencesChartsPowerMinPower,
+                        defaultValue = AppConf.Power.DefaultMinPower,
+                        min = AppConf.Power.MinMinPower,
+                        max = AppConf.Power.MaxMaxPower,
+                        select = { it.minPower },
+                        update = { copy(minPower = it) },
+                    )
+                    float(
+                        title = Strings.PreferencesChartsPowerMaxPower,
+                        defaultValue = AppConf.Power.DefaultMaxPower,
+                        min = AppConf.Power.MinMinPower,
+                        max = AppConf.Power.MaxMaxPower,
+                        select = { it.maxPower },
+                        update = { copy(maxPower = it) },
+                    )
+                    integer(
+                        title = Strings.PreferencesChartsPowerIntensityAccuracy,
+                        defaultValue = AppConf.Power.DefaultIntensityAccuracy,
+                        min = AppConf.Power.MinIntensityAccuracy,
+                        max = AppConf.Power.MaxIntensityAccuracy,
+                        select = { it.intensityAccuracy },
+                        update = { copy(intensityAccuracy = it) },
+                    )
+                    color(
+                        title = Strings.PreferencesChartsPowerColor,
+                        defaultValue = AppConf.Power.DefaultColor,
+                        select = { it.color },
+                        update = { copy(color = it) },
+                        useAlpha = true,
+                    )
+                    color(
+                        title = Strings.PreferencesChartsPowerBackgroundColor,
+                        defaultValue = AppConf.Power.DefaultBackgroundColor,
+                        select = { it.backgroundColor },
+                        update = { copy(backgroundColor = it) },
+                        useAlpha = true,
+                    )
                 }
             }
     }

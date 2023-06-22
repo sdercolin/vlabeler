@@ -34,6 +34,7 @@ import kotlin.math.pow
  *    because the chunkSize is used for calculating the offset of the current chunk.
  * @property chunkCount The number of chunks.
  * @property hasSpectrogram Whether spectrogram is loaded for the sample file.
+ * @property hasPower Whether power is loaded for the sample file.
  * @property lastModified The last modified time of the sample file.
  * @property algorithmVersion The version of the algorithm used to load the sample file.
  */
@@ -52,6 +53,7 @@ data class SampleInfo(
     val chunkSize: Int,
     val chunkCount: Int,
     val hasSpectrogram: Boolean,
+    val hasPower: Boolean,
     val lastModified: Long,
     val algorithmVersion: Int,
 ) {
@@ -111,6 +113,7 @@ data class SampleInfo(
                 chunkSize = chunkSize,
                 chunkCount = chunkCount,
                 hasSpectrogram = appConf.painter.spectrogram.enabled,
+                hasPower = appConf.painter.power.enabled,
                 lastModified = file.lastModified(),
                 algorithmVersion = WaveLoadingAlgorithmVersion,
             )
