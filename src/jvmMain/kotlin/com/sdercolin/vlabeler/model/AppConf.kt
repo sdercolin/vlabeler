@@ -198,6 +198,7 @@ data class AppConf(
         val enabled: Boolean = DefaultEnabled,
         val heightWeight: Float = DefaultHeightWeight,
         val unitSize: Int = DefaultUnitSize,
+        val windowSize: Int = DefaultWindowSize,
         val minPower: Float = DefaultMinPower,
         val maxPower: Float = DefaultMaxPower,
         val intensityAccuracy: Int = DefaultIntensityAccuracy,
@@ -212,11 +213,14 @@ data class AppConf(
             const val DefaultUnitSize = 60
             const val MaxUnitSize = DefaultUnitSize * 10
             const val MinUnitSize = 1
+            const val DefaultWindowSize = 300
+            const val MaxWindowSize = DefaultWindowSize * 10
+            const val MinWindowSize = 1
             const val DefaultMinPower = -96.33f
             const val DefaultMaxPower = 0.0f
             const val MinMinPower = -192.66f
             const val MaxMaxPower = 0.0f
-            const val DefaultIntensityAccuracy = 300
+            const val DefaultIntensityAccuracy = 200
             const val MaxIntensityAccuracy = DefaultIntensityAccuracy * 5
             const val MinIntensityAccuracy = DefaultIntensityAccuracy / 5
             const val DefaultColor = "#FFF2F2F2"

@@ -313,6 +313,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesChartsPowerHeight -> "相对于波形图的高度（%%）"
     PreferencesChartsPowerUnitSize -> "点数/像素"
     PreferencesChartsPowerUnitSizeDescription -> "该数值与图像质量成反比。"
+    PreferencesChartsPowerWindowSize -> "窗长"
     PreferencesChartsPowerMinPower -> "最小显示音量（dB）"
     PreferencesChartsPowerMaxPower -> "最大显示音量（dB）"
     PreferencesChartsPowerIntensityAccuracy -> "图像高度（像素）"

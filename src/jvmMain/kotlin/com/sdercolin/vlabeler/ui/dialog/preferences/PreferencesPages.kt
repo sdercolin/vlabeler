@@ -281,6 +281,14 @@ object PreferencesPages {
                         select = { it.unitSize },
                         update = { copy(unitSize = it) },
                     )
+                    integer(
+                        title = Strings.PreferencesChartsPowerWindowSize,
+                        defaultValue = AppConf.Power.DefaultWindowSize,
+                        min = AppConf.Power.MinWindowSize,
+                        max = AppConf.Power.MaxWindowSize,
+                        select = { it.windowSize },
+                        update = { copy(windowSize = it) },
+                    )
                     float(
                         title = Strings.PreferencesChartsPowerMinPower,
                         defaultValue = AppConf.Power.DefaultMinPower,

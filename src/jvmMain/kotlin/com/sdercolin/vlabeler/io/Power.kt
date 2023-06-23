@@ -22,8 +22,9 @@ data class Power(val data: List<FloatArray>)
 fun Wave.toPower(conf: AppConf.Power): Power {
     val ref = 2.0.pow(NormalizedSampleSizeInBits - 1).toFloat()
     val power = channels.map { channel ->
-        channel.data.toList()
-            .chunked(conf.unitSize)
+        val padding = (conf.windowSize - conf.unitSize) / 2
+        val wave = if (padding > 0) List(padding) { 0.0f } + channel.data.toList() else channel.data.toList()
+        wave.windowed(conf.windowSize, conf.unitSize, partialWindows = true)
             .map {
                 // RMS
                 sqrt(it.sumOf { value -> (value * value).toDouble() } / it.size)

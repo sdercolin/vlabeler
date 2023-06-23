@@ -297,6 +297,7 @@ enum class Strings {
     PreferencesChartsPowerHeight,
     PreferencesChartsPowerUnitSize,
     PreferencesChartsPowerUnitSizeDescription,
+    PreferencesChartsPowerWindowSize,
     PreferencesChartsPowerMinPower,
     PreferencesChartsPowerMaxPower,
     PreferencesChartsPowerIntensityAccuracy,

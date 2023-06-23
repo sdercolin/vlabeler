@@ -332,6 +332,7 @@ fun Strings.ja(): String? = when (this) {
     PreferencesChartsPowerHeight -> "TODO"
     PreferencesChartsPowerUnitSize -> "TODO"
     PreferencesChartsPowerUnitSizeDescription -> "TODO"
+    PreferencesChartsPowerWindowSize -> "TODO"
     PreferencesChartsPowerMinPower -> "TODO"
     PreferencesChartsPowerMaxPower -> "TODO"
     PreferencesChartsPowerIntensityAccuracy -> "TODO"
