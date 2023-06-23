@@ -301,7 +301,9 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesChartsSpectrogramMelScaleStep -> "频率分辨率（mel）"
     PreferencesChartsSpectrogramMaxFrequency -> "最大显示频率（Hz）"
     PreferencesChartsSpectrogramMinIntensity -> "最小显示强度（dB）"
+    PreferencesChartsSpectrogramMinIntensityInvalid -> "最小显示强度必须小于最大显示强度。"
     PreferencesChartsSpectrogramMaxIntensity -> "最大显示强度（dB）"
+    PreferencesChartsSpectrogramMaxIntensityInvalid -> "最大显示强度必须大于最小显示强度。"
     PreferencesChartsSpectrogramWindowType -> "窗函数"
     PreferencesChartsSpectrogramColorPalette -> "配色方案"
     PreferencesChartsSpectrogramColorPaletteDescription ->

@@ -317,7 +317,9 @@ fun Strings.ja(): String? = when (this) {
     PreferencesChartsSpectrogramMelScaleStep -> "周波数ステップ（mel）"
     PreferencesChartsSpectrogramMaxFrequency -> "最高周波数（Hz）"
     PreferencesChartsSpectrogramMinIntensity -> "最小強度（dB）"
+    PreferencesChartsSpectrogramMinIntensityInvalid -> "最小強度は最大強度より小さくなければなりません。"
     PreferencesChartsSpectrogramMaxIntensity -> "最大強度（dB）"
+    PreferencesChartsSpectrogramMaxIntensityInvalid -> "最大強度は最小強度より大きくなければなりません。"
     PreferencesChartsSpectrogramWindowType -> "ウィンドウ関数"
     PreferencesChartsSpectrogramColorPalette -> "配色"
     PreferencesChartsSpectrogramColorPaletteDescription ->

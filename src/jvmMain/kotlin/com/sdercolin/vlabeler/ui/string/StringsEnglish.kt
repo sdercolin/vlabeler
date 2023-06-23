@@ -288,8 +288,10 @@ import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramHopS
 import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramHopSizeDescription
 import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramMaxFrequency
 import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramMaxIntensity
+import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramMaxIntensityInvalid
 import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramMelScaleStep
 import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramMinIntensity
+import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramMinIntensityInvalid
 import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramPointDensity
 import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramPointDensityDescription
 import com.sdercolin.vlabeler.ui.string.Strings.PreferencesChartsSpectrogramUseHighAlphaContrast
@@ -816,7 +818,9 @@ fun Strings.en(): String = when (this) {
     PreferencesChartsSpectrogramMelScaleStep -> "Frequency resolution (mel)"
     PreferencesChartsSpectrogramMaxFrequency -> "Max frequency displayed (Hz)"
     PreferencesChartsSpectrogramMinIntensity -> "Min intensity displayed (dB)"
+    PreferencesChartsSpectrogramMinIntensityInvalid -> "Min intensity must be less than max intensity."
     PreferencesChartsSpectrogramMaxIntensity -> "Max intensity displayed (dB)"
+    PreferencesChartsSpectrogramMaxIntensityInvalid -> "Max intensity must be greater than min intensity."
     PreferencesChartsSpectrogramWindowType -> "Window function"
     PreferencesChartsSpectrogramColorPalette -> "Colors"
     PreferencesChartsSpectrogramColorPaletteDescription ->
