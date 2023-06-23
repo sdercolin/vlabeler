@@ -53,8 +53,10 @@ data class AppConf(
     ) {
         val amplitudeHeightRatio: Float
             get() = 1f /
-                (1f + (if (spectrogram.enabled) spectrogram.heightWeight else 0f)
-                    + (if (power.enabled) power.heightWeight else 0f))
+                (
+                    1f + (if (spectrogram.enabled) spectrogram.heightWeight else 0f) +
+                        (if (power.enabled) power.heightWeight else 0f)
+                    )
 
         companion object {
             const val DefaultMaxDataChunkSize = 441000
