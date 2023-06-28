@@ -613,7 +613,7 @@ private fun MarkerState.handleMouseRelease(
     screenRange ?: return
     val caughtAction = keyboardState.getEnabledMouseClickAction(event)
     val handled = when (tool) {
-        Tool.Cursor -> handleCursorRelease(submitEntry, caughtAction)
+        Tool.Cursor -> handleCursorRelease(submitEntry)
         Tool.Scissors -> handleScissorsRelease(cutEntry, event)
         Tool.Pan -> handlePanRelease()
         Tool.Playback -> {
@@ -636,8 +636,7 @@ private fun MarkerState.handleMouseRelease(
 
 private fun MarkerState.handleCursorRelease(
     submitEntry: () -> Unit,
-    action: MouseClickAction?,
-): Boolean = if (action.canMoveParameter()) {
+): Boolean = if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
     cursorState.update { finishDragging() }
     submitEntry()
     true
