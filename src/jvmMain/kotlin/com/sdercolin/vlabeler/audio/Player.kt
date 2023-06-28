@@ -128,11 +128,22 @@ class Player(
         }
     }
 
+    /**
+     * Write the audio data to the output line.
+     *
+     * @param startFrame The frame position to start writing from.
+     * @param endFrame The frame position to end writing at.
+     * @param repeat Whether to repeat the audio data.
+     * @param cancelFormer Whether to cancel the former writing job.
+     * @param backgroundPlay Whether the playing is not showing in UI. If true, [state.isPlaying] is not set to true so
+     *     we should not check it in the loop.
+     */
     private suspend fun startWriting(
         startFrame: Int = 0,
         endFrame: Int? = null,
         repeat: Boolean = false,
         cancelFormer: Boolean = true,
+        backgroundPlay: Boolean = false,
     ) {
         if (cancelFormer) writingJob?.cancelAndJoin() else writingJob?.join()
         val line = line ?: return
@@ -145,12 +156,14 @@ class Player(
                 val length = endFrame?.let { (it - startFrame) * format.frameSize }
                     ?.coerceAtMost(data.size - offset)
                     ?: (data.size - offset)
-                while (state.isPlaying) {
+                var first = true
+                while (state.isPlaying || (backgroundPlay && first)) {
                     line.write(data, offset, length)
                     line.drain()
                     if (state.isPlaying && !repeat) {
                         stop()
                     }
+                    first = false
                 }
             }.onFailure {
                 if (it !is CancellationException) {
@@ -225,8 +238,7 @@ class Player(
                 val endFrame = (centerFrame + radiusFrame)
                     .roundToInt()
                     .coerceAtMost(totalFrameCount)
-
-                startWriting(startFrame, endFrame, cancelFormer = false)
+                startWriting(startFrame, endFrame, cancelFormer = false, backgroundPlay = true)
                 writingJob?.join()
                 line?.flush()
             }
