@@ -10,8 +10,8 @@ import kotlinx.serialization.Transient
 import java.io.File
 
 /**
- * A subproject of a [Project] containing a list of [Entry]s. All basic operations on entries are done inside a
- * single module.
+ * A subproject of a [Project] containing a list of [Entry]s. All basic operations on entries are done inside a single
+ * module.
  *
  * @property name The unique name of the module. If "" (empty string), the module is displayed as `(Root)`. For labelers
  *     that do not support multiple modules, this should always be "".
@@ -27,7 +27,7 @@ import java.io.File
  */
 @Serializable
 @Immutable
-data class Module constructor(
+data class Module(
     val name: String,
     @SerialName("sampleDirectory")
     val sampleDirectoryPath: String,
@@ -47,10 +47,18 @@ data class Module constructor(
         entryFilter: EntryFilter? = null,
     ) : this(
         name = name,
-        sampleDirectoryPath = sampleDirectory.relativeTo(rootDirectory).path,
+        sampleDirectoryPath = if (sampleDirectory.isAbsolute) {
+            sampleDirectory.relativeTo(rootDirectory).path
+        } else {
+            sampleDirectory.path
+        },
         entries = entries,
         currentIndex = currentIndex,
-        rawFilePath = rawFilePath?.relativeTo(rootDirectory)?.path,
+        rawFilePath = if (rawFilePath?.isAbsolute == true) {
+            rawFilePath.relativeTo(rootDirectory).path
+        } else {
+            rawFilePath?.path
+        },
         entryFilter = entryFilter,
     )
 

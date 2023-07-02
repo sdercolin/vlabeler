@@ -93,6 +93,7 @@ import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.detectEncoding
 import com.sdercolin.vlabeler.util.encodingNameEquals
+import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
@@ -810,15 +811,22 @@ private fun ParamRawFileTextField(
     }
     if (isShowingFilePicker) {
         val file = path.toFileOrNull(ensureExists = true, ensureIsFile = true)
+        val directoryMode = param.isFolder
         OpenFileDialog(
             title = param.label.get(),
             initialDirectory = file?.parent,
             initialFileName = file?.name,
             extensions = param.acceptExtensions,
+            directoryMode = directoryMode,
         ) { parent, name ->
             isShowingFilePicker = false
             if (parent == null || name == null) return@OpenFileDialog
-            path = File(parent, name).absolutePath
+            val newFile = File(parent, name)
+            path = if (directoryMode) {
+                newFile.getDirectory().absolutePath
+            } else {
+                newFile.absolutePath
+            }
             submit()
         }
     }

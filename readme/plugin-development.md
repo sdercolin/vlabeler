@@ -66,6 +66,7 @@ The object has the following properties:
 | options              | String[]                         | (Required)    | enum                     | Items of the enumerable.                                                                          |
 | optionDisplayedNames | String[] (Localized) &#124; null | null          | enum                     | Displayed names of the corresponding items in `options`. If set `null`, `options` itself is used. |
 | acceptExtensions     | String[] &#124; null             | null          | file, rawFile            | Extensions of the files that can be selected. If set `null`, any file can be selected.            |
+| isFolder             | Boolean                          | false         | rawFile                  | Set to `true` if you want to choose a folder.                                                     |
 
 ### Parameter types
 
@@ -257,19 +258,20 @@ You can modify these variables directly to conduct batch edit on the whole proje
 
 The following variables are provided before your scripts are executed.
 
-| name               | type                | description                                                                                                                                                   |
-|--------------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| entries            | Entry[]             | Only available when the plugin's `macroScope` is `Module`. List of current [Entry](../src/jvmMain/resources/js/class_entry.js) objects in the current module. |
-| currentEntryIndex  | Entry[]             | Only available when the plugin's `macroScope` is `Module`. The index of current shown entry.                                                                  |
-| module             | Module              | Only available when the plugin's `macroScope` is `Module`. The current [Module](../src/jvmMain/resources/js/class_module.js) object.                          |
-| modules            | Module[]            | Only available when the plugin's `macroScope` is `Project`. List of current [Module](../src/jvmMain/resources/js/class_module.js) objects in the project.     |
-| currentModuleIndex | Integer             | Only available when the plugin's `macroScope` is `Project`. The index of current shown module.                                                                |
-| params             | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                                                          |
-| resources          | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                              |
-| labeler            | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                            |
-| labelerParams      | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                       |
-| debug              | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                         |
-| pluginDirectory    | [File](file-api.md) | Directory of this plugin                                                                                                                                      |
+| name                 | type                | description                                                                                                                                                   |
+|----------------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| entries              | Entry[]             | Only available when the plugin's `macroScope` is `Module`. List of current [Entry](../src/jvmMain/resources/js/class_entry.js) objects in the current module. |
+| currentEntryIndex    | Entry[]             | Only available when the plugin's `macroScope` is `Module`. The index of current shown entry.                                                                  |
+| module               | Module              | Only available when the plugin's `macroScope` is `Module`. The current [Module](../src/jvmMain/resources/js/class_module.js) object.                          |
+| modules              | Module[]            | Only available when the plugin's `macroScope` is `Project`. List of current [Module](../src/jvmMain/resources/js/class_module.js) objects in the project.     |
+| currentModuleIndex   | Integer             | Only available when the plugin's `macroScope` is `Project`. The index of current shown module.                                                                |
+| params               | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                                                          |
+| resources            | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                              |
+| labeler              | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                            |
+| labelerParams        | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                       |
+| debug                | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                         |
+| pluginDirectory      | [File](file-api.md) | Directory of this plugin                                                                                                                                      |
+| projectRootDirectory | [File](file-api.md) | Only available when the plugin's `macroScope` is `Project`.  Root directory of the project.                                                                   |
 
 ### Use an entry selector
 

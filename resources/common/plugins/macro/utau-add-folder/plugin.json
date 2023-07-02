@@ -1,0 +1,39 @@
+{
+  "name": "utau-add-foler",
+  "version": 1,
+  "type": "macro",
+  "displayedName": {
+    "en": "Add folder as sub-project for UTAU singer",
+    "zh": "为 UTAU 歌手添加文件夹作为子项目",
+    "ja": "UTAU 音源のサブプロジェクトとしてフォルダを追加"
+  },
+  "author": "sdercolin",
+  "email": "sder.colin@gmail.com",
+  "description": {
+    "en": "Create a sub-project to refer to a folder under the singer's root directory. This plugin is supposed to be used with the `UTAU singer labeler`.",
+    "zh": "创建一个子项目，以引用歌手根目录下的一个文件夹。该插件应与 `UTAU singer 标注器` 一起使用。",
+    "ja": "音源のルートディレクトリ以下のフォルダを参照しサブプロジェクトを作成する。このプラグインは、`UTAU singer ラベラー` と一緒に使用することを想定しています。"
+  },
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/utau-add-foler",
+  "supportedLabelFileExtension": "ini",
+  "scope": "Project",
+  "parameters": {
+    "list": [
+      {
+        "type": "rawFile",
+        "name": "folder",
+        "label": {
+          "en": "Folder to add",
+          "zh": "要添加的文件夹",
+          "ja": "追加するフォルダ"
+        },
+        "defaultValue": "",
+        "optional": false,
+        "isFolder": true
+      }
+    ]
+  },
+  "scriptFiles": [
+    "utau-add-folder.js"
+  ]
+}
