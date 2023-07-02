@@ -183,6 +183,7 @@ sealed class Parameter<T : Any> {
         override val defaultValue: String,
         val optional: Boolean = false,
         val acceptExtensions: List<String>? = null,
+        val isFolder: Boolean = false,
     ) : Parameter<String>() {
 
         @Transient
@@ -226,7 +227,9 @@ sealed class Parameter<T : Any> {
             } == true
             is RawFileParam -> (value as? String)?.let { stringValue ->
                 if (optional && stringValue.isEmpty()) return true
-                val file = stringValue.toFileOrNull(ensureIsFile = true) ?: return@let false
+                val file = stringValue.toFileOrNull(ensureExists = true) ?: return@let false
+                val isFolder = file.isDirectory
+                if (isFolder != this.isFolder) return@let false
                 if (acceptExtensions != null && file.extension !in acceptExtensions) return@let false
                 true
             } == true

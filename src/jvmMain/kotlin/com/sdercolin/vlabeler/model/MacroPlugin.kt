@@ -56,6 +56,8 @@ fun runMacroPlugin(
         when (plugin.scope) {
             Plugin.PluginProcessScope.Project -> {
                 js.setJson("modules", project.modules.map { it.toJs(project) })
+                js.set("projectRootDirectory", project.rootSampleDirectory)
+                js.eval("projectRootDirectory = new File(projectRootDirectory)")
                 js.set("currentModuleIndex", project.currentModuleIndex)
             }
             Plugin.PluginProcessScope.Module -> {

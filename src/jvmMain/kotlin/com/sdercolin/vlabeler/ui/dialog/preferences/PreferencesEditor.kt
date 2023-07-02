@@ -371,7 +371,7 @@ private fun IntegerInputItem(item: PreferencesItem.IntegerInput, state: Preferen
         onValueChange = { state.update(item, it) },
         min = item.min,
         max = item.max,
-        invalidPrompt = item.getInvalidPrompt(state.conf),
+        getInvalidPrompt = { item.getInvalidPrompt(state.conf, it) },
     )
 }
 
@@ -390,7 +390,7 @@ private fun FloatInputItem(item: PreferencesItem.FloatInput, state: PreferencesE
         onValueChange = { state.update(item, it) },
         min = item.min,
         max = item.max,
-        invalidPrompt = item.getInvalidPrompt(state.conf),
+        getInvalidPrompt = { item.getInvalidPrompt(state.conf, it) },
     )
 }
 
