@@ -60,7 +60,30 @@ data class SampleInfo(
     val algorithmVersion: Int,
 ) {
 
+    val totalChartCount: Int get() = chunkCount *
+        (channels + (if (hasSpectrogram) 1 else 0) + (if (hasPower) powerChannels else 0))
+
     fun getFile(project: Project): File = project.rootSampleDirectory.resolve(file)
+
+    fun shouldReload(project: Project, sampleFile: File, appConf: AppConf): Boolean {
+        val appMaxSampleRate = appConf.painter.amplitude.resampleDownToHz
+        val appNormalize = appConf.painter.amplitude.normalize
+        val appHasSpectrogram = appConf.painter.spectrogram.enabled
+        val appHasPower = appConf.painter.power.enabled
+        val correctPowerChannels = if (appConf.painter.power.mergeChannels) {
+            powerChannels == 1
+        } else {
+            powerChannels == channels
+        }
+        return maxSampleRate != appMaxSampleRate ||
+            normalize != appNormalize ||
+            hasSpectrogram != appHasSpectrogram ||
+            hasPower != appHasPower ||
+            !correctPowerChannels ||
+            algorithmVersion != WaveLoadingAlgorithmVersion ||
+            !getFile(project).exists() ||
+            lastModified != sampleFile.lastModified()
+    }
 
     companion object {
 
