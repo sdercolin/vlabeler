@@ -16,20 +16,32 @@ sealed class PreferencesItem<T>(
     val select: (AppConf) -> T,
     val update: AppConf.(T) -> AppConf,
     val enabled: (AppConf) -> Boolean,
+    val validationRules: List<PreferencesItemValidationRule>,
 ) {
+    fun getInvalidPrompt(conf: AppConf): Strings? = validationRules.firstOrNull { !it.validate(conf) }?.prompt
 
     fun reset(conf: AppConf) = update(conf, defaultValue)
 
     class Switch(
         title: Strings,
         description: Strings?,
-        clickableTags: List<ClickableTag> = listOf(),
+        clickableTags: List<ClickableTag>,
         columnStyle: Boolean,
         defaultValue: Boolean,
         select: (AppConf) -> Boolean,
         update: AppConf.(Boolean) -> AppConf,
         enabled: (AppConf) -> Boolean,
-    ) : PreferencesItem<Boolean>(title, description, clickableTags, columnStyle, defaultValue, select, update, enabled)
+    ) : PreferencesItem<Boolean>(
+        title,
+        description,
+        clickableTags,
+        columnStyle,
+        defaultValue,
+        select,
+        update,
+        enabled,
+        validationRules = listOf(),
+    )
 
     class IntegerInput(
         title: Strings,
@@ -40,9 +52,20 @@ sealed class PreferencesItem<T>(
         select: (AppConf) -> Int,
         update: AppConf.(Int) -> AppConf,
         enabled: (AppConf) -> Boolean,
+        validationRules: List<PreferencesItemValidationRule>,
         val min: Int?,
         val max: Int?,
-    ) : PreferencesItem<Int>(title, description, clickableTags, columnStyle, defaultValue, select, update, enabled)
+    ) : PreferencesItem<Int>(
+        title,
+        description,
+        clickableTags,
+        columnStyle,
+        defaultValue,
+        select,
+        update,
+        enabled,
+        validationRules,
+    )
 
     class FloatInput(
         title: Strings,
@@ -53,9 +76,20 @@ sealed class PreferencesItem<T>(
         select: (AppConf) -> Float,
         update: AppConf.(Float) -> AppConf,
         enabled: (AppConf) -> Boolean,
+        validationRules: List<PreferencesItemValidationRule>,
         val min: Float?,
         val max: Float?,
-    ) : PreferencesItem<Float>(title, description, clickableTags, columnStyle, defaultValue, select, update, enabled)
+    ) : PreferencesItem<Float>(
+        title,
+        description,
+        clickableTags,
+        columnStyle,
+        defaultValue,
+        select,
+        update,
+        enabled,
+        validationRules,
+    )
 
     class ColorStringInput(
         title: Strings,
@@ -67,7 +101,17 @@ sealed class PreferencesItem<T>(
         update: AppConf.(String) -> AppConf,
         enabled: (AppConf) -> Boolean,
         val useAlpha: Boolean,
-    ) : PreferencesItem<String>(title, description, clickableTags, columnStyle, defaultValue, select, update, enabled)
+    ) : PreferencesItem<String>(
+        title,
+        description,
+        clickableTags,
+        columnStyle,
+        defaultValue,
+        select,
+        update,
+        enabled,
+        validationRules = listOf(),
+    )
 
     class Selection<T>(
         title: Strings?,
@@ -79,12 +123,32 @@ sealed class PreferencesItem<T>(
         update: AppConf.(T) -> AppConf,
         enabled: (AppConf) -> Boolean,
         val options: Array<T>,
-    ) : PreferencesItem<T>(title, description, clickableTags, columnStyle, defaultValue, select, update, enabled)
+    ) : PreferencesItem<T>(
+        title,
+        description,
+        clickableTags,
+        columnStyle,
+        defaultValue,
+        select,
+        update,
+        enabled,
+        validationRules = listOf(),
+    )
 
     class Keymap<K : Action>(
         val actionType: ActionType,
         defaultValue: List<ActionKeyBind<K>>,
         select: (AppConf) -> List<ActionKeyBind<K>>,
         update: AppConf.(List<ActionKeyBind<K>>) -> AppConf,
-    ) : PreferencesItem<List<ActionKeyBind<K>>>(null, null, listOf(), false, defaultValue, select, update, { true })
+    ) : PreferencesItem<List<ActionKeyBind<K>>>(
+        title = null,
+        description = null,
+        clickableTags = listOf(),
+        columnStyle = false,
+        defaultValue = defaultValue,
+        select = select,
+        update = update,
+        enabled = { true },
+        validationRules = listOf(),
+    )
 }

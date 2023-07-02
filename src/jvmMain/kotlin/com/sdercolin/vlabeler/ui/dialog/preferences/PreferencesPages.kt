@@ -216,12 +216,28 @@ object PreferencesPages {
                         defaultValue = AppConf.Spectrogram.DefaultMinIntensity,
                         select = { it.minIntensity },
                         update = { copy(minIntensity = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.spectrogram.let { it.minIntensity < it.maxIntensity }
+                                },
+                                prompt = Strings.PreferencesChartsSpectrogramMinIntensityInvalid,
+                            ),
+                        ),
                     )
                     integer(
                         title = Strings.PreferencesChartsSpectrogramMaxIntensity,
                         defaultValue = AppConf.Spectrogram.DefaultMaxIntensity,
                         select = { it.maxIntensity },
                         update = { copy(maxIntensity = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.spectrogram.let { it.minIntensity < it.maxIntensity }
+                                },
+                                prompt = Strings.PreferencesChartsSpectrogramMaxIntensityInvalid,
+                            ),
+                        ),
                     )
                     selection(
                         title = Strings.PreferencesChartsSpectrogramColorPalette,
@@ -807,6 +823,7 @@ private class PreferencesItemContext<P>(
         select: (P) -> Int,
         update: P.(Int) -> P,
         enabled: (P) -> Boolean = { true },
+        validationRules: List<PreferencesItemValidationRule> = listOf(),
     ) = builder.item(
         PreferencesItem.IntegerInput(
             title = title,
@@ -819,6 +836,7 @@ private class PreferencesItemContext<P>(
             select = selectWithContext(select),
             update = updateWithContext(update),
             enabled = selectWithContext(enabled),
+            validationRules = validationRules,
         ),
     )
 
@@ -833,6 +851,7 @@ private class PreferencesItemContext<P>(
         select: (P) -> Float,
         update: P.(Float) -> P,
         enabled: (P) -> Boolean = { true },
+        validationRules: List<PreferencesItemValidationRule> = listOf(),
     ) = float(
         title = title,
         description = description,
@@ -844,6 +863,7 @@ private class PreferencesItemContext<P>(
         select = { select(it).multiplyWithBigDecimal(100f) },
         update = { update(it.divideWithBigDecimal(100f)) },
         enabled = enabled,
+        validationRules = validationRules,
     )
 
     fun float(
@@ -857,6 +877,7 @@ private class PreferencesItemContext<P>(
         select: (P) -> Float,
         update: P.(Float) -> P,
         enabled: (P) -> Boolean = { true },
+        validationRules: List<PreferencesItemValidationRule> = listOf(),
     ) = builder.item(
         PreferencesItem.FloatInput(
             title = title,
@@ -869,6 +890,7 @@ private class PreferencesItemContext<P>(
             select = selectWithContext(select),
             update = updateWithContext(update),
             enabled = selectWithContext(enabled),
+            validationRules = validationRules,
         ),
     )
 

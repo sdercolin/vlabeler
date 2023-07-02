@@ -2,13 +2,11 @@ package com.sdercolin.vlabeler.tracking
 
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.util.Url
-import com.sdercolin.vlabeler.util.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import java.awt.Desktop
 
 /**
  * State object for tracking.
@@ -39,6 +37,6 @@ class TrackingState(
     }
 
     fun openDetailsWebPage() {
-        Desktop.getDesktop().browse(Url.TrackingDocument.toUri())
+        Url.open(Url.TrackingDocument)
     }
 }

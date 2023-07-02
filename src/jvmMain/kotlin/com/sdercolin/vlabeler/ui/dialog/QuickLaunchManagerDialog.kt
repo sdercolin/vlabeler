@@ -55,7 +55,7 @@ private fun rememberState(appState: AppState) = remember(appState) {
     QuickLaunchManagerDialogState(appState)
 }
 
-class QuickLaunchManagerDialogState(private val appState: AppState) {
+class QuickLaunchManagerDialogState(val appState: AppState) {
 
     private var slots by mutableStateOf(
         (0 until PluginQuickLaunch.SlotCount).map { appState.appRecordStore.value.getPluginQuickLaunch(it) },

@@ -30,7 +30,6 @@ import com.sdercolin.vlabeler.util.getNullableOrElse
 import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
-import com.sdercolin.vlabeler.util.toUri
 import kotlinx.coroutines.CoroutineScope
 import java.awt.Desktop
 import java.io.File
@@ -498,17 +497,17 @@ fun FrameWindowScope.Menu(
                 )
                 Item(
                     string(Strings.MenuHelpOpenLatestRelease),
-                    onClick = { Desktop.getDesktop().browse(Url.LatestRelease.toUri()) },
+                    onClick = { Url.open(Url.LatestRelease) },
                     shortcut = KeyAction.OpenLatestRelease.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuHelpOpenGitHub),
-                    onClick = { Desktop.getDesktop().browse(Url.ProjectGitHub.toUri()) },
+                    onClick = { Url.open(Url.ProjectGitHub) },
                     shortcut = KeyAction.OpenGitHub.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuHelpJoinDiscord),
-                    onClick = { Desktop.getDesktop().browse(Url.DiscordInvitation.toUri()) },
+                    onClick = { Url.open(Url.DiscordInvitation) },
                     shortcut = KeyAction.JoinDiscord.getKeyShortCut(),
                 )
                 Item(

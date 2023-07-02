@@ -10,18 +10,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
+import com.sdercolin.vlabeler.model.action.MouseClickAction
 import com.sdercolin.vlabeler.ui.string.LocalLanguage
 import com.sdercolin.vlabeler.ui.theme.Black20
+import com.sdercolin.vlabeler.ui.theme.White20
 
 @Composable
 fun <K : Action> PreferencesKeymapItem(
@@ -35,7 +41,7 @@ fun <K : Action> PreferencesKeymapItem(
             .clickable(enabled = keyBind.editable) { onClickItem(keyBind, keymap) },
         contentAlignment = Alignment.Center,
     ) {
-        Row(Modifier.padding(horizontal = 30.dp)) {
+        Row(Modifier.padding(horizontal = 30.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = keyBind.getTitle(LocalLanguage.current),
                 style = MaterialTheme.typography.body2,
@@ -43,6 +49,20 @@ fun <K : Action> PreferencesKeymapItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+            val action = keyBind.action
+            if (action is MouseClickAction) {
+                Spacer(Modifier.width(10.dp))
+                val tool = action.tool
+                Icon(
+                    imageVector = tool.icon,
+                    contentDescription = null,
+                    modifier = Modifier.rotate(tool.iconRotate)
+                        .background(color = White20, shape = RoundedCornerShape(5.dp))
+                        .padding(3.dp)
+                        .size(16.dp),
+                    tint = MaterialTheme.colors.onBackground,
+                )
+            }
             Spacer(Modifier.weight(1f))
             val keySet = keyBind.keySet
             if (keySet != null) {

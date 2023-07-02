@@ -24,6 +24,7 @@ import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.HomeDir
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.detectEncoding
 import com.sdercolin.vlabeler.util.encodingNameEquals
 import com.sdercolin.vlabeler.util.getDirectory
@@ -31,11 +32,9 @@ import com.sdercolin.vlabeler.util.getLocalizedMessage
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.toFile
-import com.sdercolin.vlabeler.util.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.awt.Desktop
 import java.io.File
 import java.nio.file.Files
 
@@ -283,8 +282,8 @@ class ProjectCreatorState(
     }
 
     fun openWebsite(plugin: BasePlugin) {
-        val uri = plugin.website.takeIf { it.isNotBlank() }?.toUri() ?: return
-        Desktop.getDesktop().browse(uri)
+        val url = plugin.website.takeIf { it.isNotBlank() } ?: return
+        Url.open(url)
     }
     /* endregion */
 

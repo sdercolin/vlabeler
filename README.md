@@ -142,8 +142,10 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`.
 - `Space`: play the current entry, or stop playing if already playing
 - `Shift` + `Space`: play the current sample file or stop playing if already playing
 - `Ctrl` + `Shift` + `Space`: play the audio with current screen range or stop playing if already playing
-- Mouse right click: play the clicked section
-- `Alt` + mouse drag on parameters: play the audio near the cursor's position while moving
+- (with most tools) mouse right click: play the clicked section
+- (with the **Cursor** tool) `Alt` + mouse drag on parameters: play the audio near the cursor's position while moving
+
+Please also see the section of the [Playback tool](#playback) for more actions.
 
 ### Scrolling
 
@@ -283,8 +285,6 @@ The following editing tool is provided.
 You can use shortcuts or menu items under `Edit` -> `Tools` to switch tools, or toggle the toolbox by menu `View`
 -> `Show Toolbox`.
 
-Note that you can use the `Play the clicked section` feature by `Right click` with any tool.
-
 ### Cursor
 
 The normal cursor tool to drag parameter controllers.
@@ -304,6 +304,19 @@ These actions can be customized in `Prefereneces` -> `Editor` -> `Scissors`.
 ### Pan
 
 Or the hand tool. Drag on the editor to scroll the canvas.
+
+### Playback
+
+Use mouse click or drag to play a certain range of the current sample file.
+The following actions are available as default. You can change the key bindings
+in `Settings` -> `Prefereneces` -> `Keymaps` -> `Mouse click actions`.
+
+- Left click: play the audio from the clicked position until the end of the audio
+- Right click: play the audio from the clicked position until the end of the screen
+- `Shift` + left click: play the audio from the start of the file until the clicked position
+- `Shift` + right click: play the audio from the start of the screen until the clicked position
+- `Ctrl` + left click & drag: play the audio in the dragged range
+- `Ctrl` + `Shift` + left click & drag: play the audio in the dragged range repeatedly
 
 ## Labelers
 
@@ -391,7 +404,9 @@ Please check [App Usage Tracking](readme/tracking.md) for details.
    its path
 3. On Linux, sometimes the application may not be able to recycle memory properly.
    You can use `Tools` -> `Recycle Memory` to force it to recycle memory.
-4. Sometimes the window freezes unexpectedly. You can resize the window to refresh it
+4. Sometimes the window freezes unexpectedly. You can resize the window to refresh it.
+5. If all texts besides the menu bar are invisible, please try setting the environment variable `SKIKO_RENDER_API` to
+   `SOFTWARE`.
 
 ### Localization help (besides code contributors)
 

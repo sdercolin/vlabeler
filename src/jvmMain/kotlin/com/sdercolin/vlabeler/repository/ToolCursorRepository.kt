@@ -18,7 +18,7 @@ object ToolCursorRepository {
      * Get cursor for the given tool.
      */
     fun get(tool: Tool): Cursor {
-        val path = tool.iconPath ?: return Cursor.getDefaultCursor()
+        val path = tool.cursorPath ?: return Cursor.getDefaultCursor()
         val image = map.getOrPut(tool) {
             useResource(path) {
                 ImageIO.read(it)

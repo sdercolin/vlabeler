@@ -47,5 +47,5 @@ fun <T : Action> List<ActionKeyBind<T>>.getConflictingKeyBinds(keySet: KeySet?, 
     if (keySet == null) {
         listOf()
     } else {
-        filter { it.keySet == keySet && it.action != action }
+        filter { it.keySet == keySet && it.action.conflictGroupHash == action.conflictGroupHash && it.action != action }
     }

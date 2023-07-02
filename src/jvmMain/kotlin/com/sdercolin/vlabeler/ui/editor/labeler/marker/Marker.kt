@@ -21,6 +21,7 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.audio.AudioSectionPlayer
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
@@ -30,6 +31,8 @@ import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.action.MouseClickAction
 import com.sdercolin.vlabeler.model.action.canMoveParameter
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.common.isLeftClick
+import com.sdercolin.vlabeler.ui.common.isRightClick
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
@@ -86,9 +89,6 @@ fun MarkerPointEventContainer(
             { _: Float -> }
         }
     }
-    val playSection = remember(appState.player) {
-        { start: Float, end: Float? -> appState.player.playSection(start, end) }
-    }
     val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier.fillMaxSize()
@@ -101,7 +101,7 @@ fun MarkerPointEventContainer(
                         tool,
                         event,
                         editorState::submitEntries,
-                        playSection,
+                        appState.player,
                         editorState::cutEntry,
                         keyboardState,
                         screenRange,
@@ -119,14 +119,14 @@ fun MarkerPointEventContainer(
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
-                state.handleMousePress(tool, keyboardState, event, state.labelerConf, appState.appConf)
+                state.handleMousePress(tool, keyboardState, event, state.labelerConf, appState.appConf, screenRange)
             }
             .onPointerEvent(PointerEventType.Release) { event ->
                 state.handleMouseRelease(
                     tool,
                     event,
                     editorState::submitEntries,
-                    appState.player::playSection,
+                    appState.player,
                     editorState::cutEntry,
                     keyboardState,
                     screenRange,
@@ -419,6 +419,24 @@ private fun FieldBorderCanvas(
                     }
                 }
             }
+
+            // Draw playback range
+            state.playbackState.value?.let { playbackState ->
+                val startPosition = playbackState.draggingStartPosition ?: return@let
+                val endPosition = playbackState.position ?: return@let
+                if (startPosition in screenRange && endPosition in screenRange) {
+                    val (relativeStartPosition, relativeEndPosition) = listOf(
+                        startPosition - screenRange.start,
+                        endPosition - screenRange.start,
+                    ).sorted()
+                    drawRect(
+                        color = editorConf.playerCursorColor.toColor(),
+                        alpha = RegionAlpha,
+                        topLeft = Offset(relativeStartPosition, 0f),
+                        size = Size(width = relativeEndPosition - relativeStartPosition, height = canvasHeight),
+                    )
+                }
+            }
         } catch (t: Throwable) {
             if (isDebug) throw t
             Log.debug(t)
@@ -523,12 +541,13 @@ private fun MarkerState.handleMousePress(
     event: PointerEvent,
     labelerConf: LabelerConf,
     appConf: AppConf,
+    screenRange: FloatRange?,
 ) {
     when (tool) {
         Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf)
         Tool.Scissors -> Unit
-        Tool.Pan -> handlePanPress()
-        Tool.Playback -> Unit
+        Tool.Pan -> handlePanPress(event)
+        Tool.Playback -> handlePlaybackPress(keyboardState, screenRange, event)
     }
 }
 
@@ -562,21 +581,47 @@ private fun MarkerState.handleCursorPress(
     }
 }
 
-private fun MarkerState.handlePanPress() {
-    panState.updateNonNull { copy(isDragging = true) }
+private fun MarkerState.handlePanPress(event: PointerEvent) {
+    if (event.isLeftClick) {
+        panState.updateNonNull { copy(isDragging = true) }
+    }
+}
+
+private fun MarkerState.handlePlaybackPress(
+    keyboardState: KeyboardState,
+    screenRange: FloatRange?,
+    event: PointerEvent,
+) {
+    screenRange ?: return
+    val action = keyboardState.getEnabledMouseClickAction(event, Tool.Playback) ?: return
+    if (action in setOf(MouseClickAction.PlayAudioRange, MouseClickAction.PlayAudioRangeRepeat)) {
+        val x = event.changes.first().position.x + screenRange.start
+        val position = x.takeIf { isValidPlaybackPosition(it) } ?: return
+        playbackState.updateNonNull { startDragging(position) }
+    }
 }
 
 private fun MarkerState.handleMouseRelease(
     tool: Tool,
     event: PointerEvent,
     submitEntry: () -> Unit,
-    playSampleSection: (startFrame: Float, endFrame: Float?) -> Unit,
+    audioSectionPlayer: AudioSectionPlayer,
     cutEntry: (Int, Float) -> Unit,
     keyboardState: KeyboardState,
     screenRange: FloatRange?,
 ) {
     screenRange ?: return
-    if (keyboardState.getEnabledMouseClickAction(event) == MouseClickAction.PlayAudioSection) {
+    val caughtAction = keyboardState.getEnabledMouseClickAction(event)
+    val handled = when (tool) {
+        Tool.Cursor -> handleCursorRelease(submitEntry)
+        Tool.Scissors -> handleScissorsRelease(cutEntry, event)
+        Tool.Pan -> handlePanRelease()
+        Tool.Playback -> {
+            val playbackAction = keyboardState.getEnabledMouseClickAction(event, Tool.Playback)
+            handlePlaybackRelease(audioSectionPlayer, screenRange, playbackAction)
+        }
+    }
+    if (!handled && caughtAction == MouseClickAction.PlayAudioSection) {
         val x = event.changes.first().position.x
         val actualX = x + screenRange.start
         val clickedRange = getClickedAudioRange(actualX, leftBorder, rightBorder)
@@ -584,42 +629,76 @@ private fun MarkerState.handleMouseRelease(
             val start = clickedRange.first?.let { entryConverter.convertToFrame(it) } ?: 0f
             val end = clickedRange.second?.let { entryConverter.convertToFrame(it) }
                 ?: canvasParams.dataLength.toFloat()
-            playSampleSection(start, end)
-        }
-    } else {
-        when (tool) {
-            Tool.Cursor -> handleCursorRelease(submitEntry)
-            Tool.Scissors -> handleScissorsRelease(cutEntry)
-            Tool.Pan -> handlePanRelease()
-            Tool.Playback -> handlePlaybackRelease(playSampleSection)
+            audioSectionPlayer.playSection(start, end)
         }
     }
 }
 
-private fun MarkerState.handleCursorRelease(submitEntry: () -> Unit) {
-    submitEntry()
+private fun MarkerState.handleCursorRelease(
+    submitEntry: () -> Unit,
+): Boolean = if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
     cursorState.update { finishDragging() }
+    submitEntry()
+    true
+} else {
+    false
 }
 
 private fun MarkerState.handleScissorsRelease(
     cutEntry: (Int, Float) -> Unit,
-) {
+    event: PointerEvent,
+): Boolean {
     val scissorsState = scissorsState
-    val position = scissorsState.value?.position ?: return
+    val position = scissorsState.value?.position ?: return false
+    if (event.isRightClick) return false
     handleScissorsCut(position, cutEntry)
+    return true
 }
 
-private fun MarkerState.handlePanRelease() {
+private fun MarkerState.handlePanRelease(): Boolean {
+    if (panState.value?.isDragging != true) return false
     panState.updateNonNull { copy(isDragging = false) }
+    return true
 }
 
 private fun MarkerState.handlePlaybackRelease(
-    playSampleSection: (startFrame: Float, endFrame: Float?) -> Unit,
-) {
+    audioSectionPlayer: AudioSectionPlayer,
+    screenRange: FloatRange,
+    action: MouseClickAction?,
+): Boolean {
     val playbackState = playbackState
-    val position = playbackState.value?.position ?: return
-    val frame = entryConverter.convertToFrame(position)
-    playSampleSection(frame, null)
+    val position = playbackState.value?.position ?: return false
+    action ?: return true
+    var startFrame = when (action) {
+        MouseClickAction.PlayAudioFromStart -> 0f
+        MouseClickAction.PlayAudioFromScreenStart -> entryConverter.convertToFrame(screenRange.start)
+        MouseClickAction.PlayAudioUntilEnd,
+        MouseClickAction.PlayAudioUntilScreenEnd,
+        -> entryConverter.convertToFrame(position)
+        MouseClickAction.PlayAudioRange,
+        MouseClickAction.PlayAudioRangeRepeat,
+        -> playbackState.value?.draggingStartPosition?.let { entryConverter.convertToFrame(it) } ?: return true
+        else -> return true
+    }
+    var endFrame = when (action) {
+        MouseClickAction.PlayAudioUntilEnd -> null
+        MouseClickAction.PlayAudioUntilScreenEnd -> entryConverter.convertToFrame(screenRange.endInclusive)
+        MouseClickAction.PlayAudioFromStart,
+        MouseClickAction.PlayAudioFromScreenStart,
+        MouseClickAction.PlayAudioRange,
+        MouseClickAction.PlayAudioRangeRepeat,
+        -> entryConverter.convertToFrame(position)
+        else -> return true
+    }
+    if (endFrame != null && endFrame < startFrame) {
+        val tmp = startFrame
+        startFrame = endFrame
+        endFrame = tmp
+    }
+    val repeat = action == MouseClickAction.PlayAudioRangeRepeat
+    audioSectionPlayer.playSection(startFrame, endFrame, repeat)
+    playbackState.updateNonNull { finishDragging() }
+    return true
 }
 
 private fun MarkerState.mayHandleScissorsKeyAction(action: KeyAction, cutEntry: (Int, Float) -> Unit): Boolean {

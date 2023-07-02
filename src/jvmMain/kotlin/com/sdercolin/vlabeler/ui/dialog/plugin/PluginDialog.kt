@@ -342,7 +342,7 @@ private fun Content(state: BasePluginDialogState, appRecordStore: AppRecordStore
                 }
                 Spacer(Modifier.height(25.dp))
                 if (state.hasParams) {
-                    Params(state, js)
+                    Params(state, js, coroutineScope)
                     Spacer(Modifier.height(25.dp))
                 }
                 Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
@@ -441,7 +441,7 @@ private fun Description(description: String) {
 }
 
 @Composable
-private fun Params(state: BasePluginDialogState, js: JavaScript?) {
+private fun Params(state: BasePluginDialogState, js: JavaScript?, coroutineScope: CoroutineScope) {
     Column(
         modifier = Modifier.background(color = White20, shape = RoundedCornerShape(10.dp))
             .padding(30.dp),
@@ -513,6 +513,13 @@ private fun Params(state: BasePluginDialogState, js: JavaScript?) {
                             entries = state.project?.currentModule?.entries,
                             js = js,
                             enabled = enabled,
+                            onError = {
+                                coroutineScope.launch {
+                                    state.showSnackbar(
+                                        it.message ?: it.toString(),
+                                    )
+                                }
+                            },
                         )
                         is Parameter.FileParam -> ParamFileTextField(
                             value = value as FileWithEncoding,

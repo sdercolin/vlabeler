@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
-import com.sdercolin.vlabeler.util.toUri
+import com.sdercolin.vlabeler.util.Url
 import java.awt.Desktop
 import java.io.File
 
@@ -35,7 +35,7 @@ abstract class CustomizableItem(
     }
 
     fun openEmail() {
-        Desktop.getDesktop().browse("mailto:$email".toUri())
+        Url.open("mailto:$email")
     }
 
     fun hasWebsite(): Boolean {
@@ -43,8 +43,8 @@ abstract class CustomizableItem(
     }
 
     fun openWebsite() {
-        val uri = website.takeIf { it.isNotBlank() }?.toUri() ?: return
-        Desktop.getDesktop().browse(uri)
+        val url = website.takeIf { it.isNotBlank() } ?: return
+        Url.open(url)
     }
 
     var disabled: Boolean by mutableStateOf(disabled)

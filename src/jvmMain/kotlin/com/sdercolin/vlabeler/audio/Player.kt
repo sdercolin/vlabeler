@@ -41,7 +41,7 @@ class Player(
     private val coroutineScope: CoroutineScope,
     private val state: PlayerState,
     private val listener: Listener,
-) {
+) : AudioSectionPlayer {
     /**
      * The listener to notify the UI of the playback progress.
      */
@@ -128,7 +128,23 @@ class Player(
         }
     }
 
-    private suspend fun startWriting(startFrame: Int = 0, endFrame: Int? = null, cancelFormer: Boolean = true) {
+    /**
+     * Write the audio data to the output line.
+     *
+     * @param startFrame The frame position to start writing from.
+     * @param endFrame The frame position to end writing at.
+     * @param repeat Whether to repeat the audio data.
+     * @param cancelFormer Whether to cancel the former writing job.
+     * @param backgroundPlay Whether the playing is not showing in UI. If true, [state.isPlaying] is not set to true so
+     *     we should not check it in the loop.
+     */
+    private suspend fun startWriting(
+        startFrame: Int = 0,
+        endFrame: Int? = null,
+        repeat: Boolean = false,
+        cancelFormer: Boolean = true,
+        backgroundPlay: Boolean = false,
+    ) {
         if (cancelFormer) writingJob?.cancelAndJoin() else writingJob?.join()
         val line = line ?: return
         val format = format ?: return
@@ -140,10 +156,14 @@ class Player(
                 val length = endFrame?.let { (it - startFrame) * format.frameSize }
                     ?.coerceAtMost(data.size - offset)
                     ?: (data.size - offset)
-                line.write(data, offset, length)
-                line.drain()
-                if (state.isPlaying) {
-                    stop()
+                var first = true
+                while (state.isPlaying || (backgroundPlay && first)) {
+                    line.write(data, offset, length)
+                    line.drain()
+                    if (state.isPlaying && !repeat) {
+                        stop()
+                    }
+                    first = false
                 }
             }.onFailure {
                 if (it !is CancellationException) {
@@ -153,10 +173,10 @@ class Player(
         }
     }
 
-    private suspend fun startCounting(startFrame: Int = 0, endFrame: Int? = null) {
+    private suspend fun startCounting(startFrame: Int = 0, endFrame: Int? = null, repeat: Boolean = false) {
         countingJob?.cancelAndJoin()
         countingJob = coroutineScope.launch(Dispatchers.Default) {
-            val firstTime = System.currentTimeMillis()
+            var firstTime = System.currentTimeMillis()
             val firstFrame = startFrame.toFloat()
             var frame = firstFrame
             val sampleRate = format?.sampleRate ?: return@launch
@@ -165,7 +185,14 @@ class Player(
                 delay(PlayingTimeInterval)
                 if (!state.isPlaying) break
                 frame = firstFrame + (System.currentTimeMillis() - firstTime) * sampleRate / 1000
-                if (endFrame != null && frame > endFrame) break
+                if (repeat) {
+                    if (endFrame != null && frame > endFrame) {
+                        frame = startFrame.toFloat() + frame - endFrame
+                        firstTime = System.currentTimeMillis() - ((frame - startFrame) * 1000 / sampleRate).toLong()
+                    }
+                } else {
+                    if (endFrame != null && frame > endFrame) break
+                }
                 listener.onFramePositionChanged(frame)
             }
         }
@@ -175,18 +202,18 @@ class Player(
         playSection(frameRange.start, frameRange.endInclusive)
     }
 
-    fun playSection(startFramePosition: Float, endFramePosition: Float?) {
+    override fun playSection(startFrame: Float, endFrame: Float?, repeat: Boolean) {
         coroutineScope.launch {
             if (state.isPlaying) {
                 stop()
             }
-            Log.info("Player.playSection($startFramePosition, $endFramePosition)")
+            Log.info("Player.playSection($startFrame, $endFrame, repeat=$repeat)")
             awaitLoad()
-            val startFrame = startFramePosition.roundToInt()
-            val endFrame = endFramePosition?.roundToInt()
-            listener.onStartPlaying(startFrame.toLong())
-            startCounting(startFrame, endFrame)
-            startWriting(startFrame, endFrame)
+            val startFrameInt = startFrame.roundToInt()
+            val endFrameInt = endFrame?.roundToInt()
+            listener.onStartPlaying(startFrameInt.toLong())
+            startCounting(startFrameInt, endFrameInt, repeat)
+            startWriting(startFrameInt, endFrameInt, repeat = repeat)
         }
     }
 
@@ -211,8 +238,7 @@ class Player(
                 val endFrame = (centerFrame + radiusFrame)
                     .roundToInt()
                     .coerceAtMost(totalFrameCount)
-
-                startWriting(startFrame, endFrame, cancelFormer = false)
+                startWriting(startFrame, endFrame, cancelFormer = false, backgroundPlay = true)
                 writingJob?.join()
                 line?.flush()
             }

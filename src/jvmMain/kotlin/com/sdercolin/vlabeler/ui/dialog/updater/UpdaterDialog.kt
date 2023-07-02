@@ -48,9 +48,8 @@ import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.asPathRelativeToHome
-import com.sdercolin.vlabeler.util.toUri
-import java.awt.Desktop
 
 @Composable
 private fun rememberUpdaterDialogState(
@@ -159,8 +158,7 @@ private fun ColumnScope.SummaryBox(state: UpdaterDialogState) {
                         start = offset,
                         end = offset,
                     ).firstOrNull()?.let { annotation ->
-                        val url = annotation.item.toUri()
-                        Desktop.getDesktop().browse(url)
+                        Url.open(annotation.item)
                     }
                 },
             )

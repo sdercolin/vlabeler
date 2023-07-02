@@ -96,17 +96,19 @@ fun IntegerInputBox(
     onValueChange: (Int) -> Unit,
     min: Int?,
     max: Int?,
+    invalidPrompt: Strings?,
     leadingContent: @Composable RowScope.() -> Unit = {},
 ) {
     var value by remember(intValue) { mutableStateOf(intValue.toString()) }
 
     val getErrorPrompt = @Composable { newValue: String ->
         val parsed = newValue.toIntOrNull()
-        if (parsed == null) {
+        val error = if (parsed == null) {
             string(Strings.CommonInputErrorPromptInteger)
         } else {
             getPromptWithRange(min, max, parsed)
         }
+        error ?: invalidPrompt?.let { string(it) }
     }
 
     InputBox(
@@ -115,7 +117,7 @@ fun IntegerInputBox(
         onValueChange = { newValue ->
             value = newValue
             newValue.toIntOrNull()?.let {
-                if (it in (min ?: Int.MIN_VALUE)..(max ?: Int.MAX_VALUE)) {
+                if (it in (min ?: Int.MIN_VALUE)..(max ?: Int.MAX_VALUE) && invalidPrompt == null) {
                     onValueChange(it)
                 }
             }
@@ -132,6 +134,7 @@ fun FloatInputBox(
     onValueChange: (Float) -> Unit,
     min: Float?,
     max: Float?,
+    invalidPrompt: Strings?,
     leadingContent: @Composable RowScope.() -> Unit = {},
 ) {
     var value by remember { mutableStateOf(floatValue.toStringTrimmed()) }
@@ -142,11 +145,12 @@ fun FloatInputBox(
     }
     val getErrorPrompt = @Composable { newValue: String ->
         val parsed = newValue.toFloatOrNull()
-        if (parsed == null) {
+        val error = if (parsed == null) {
             string(Strings.CommonInputErrorPromptNumber)
         } else {
             getPromptWithRange(min, max, parsed)
         }
+        error ?: invalidPrompt?.let { string(it) }
     }
 
     InputBox(
@@ -155,7 +159,7 @@ fun FloatInputBox(
         onValueChange = { newValue ->
             value = newValue
             newValue.toFloatOrNull()?.let {
-                if (it in (min ?: Float.MIN_VALUE)..(max ?: Float.MAX_VALUE)) {
+                if (it in (min ?: Float.MIN_VALUE)..(max ?: Float.MAX_VALUE) && invalidPrompt == null) {
                     onValueChange(it)
                 }
             }

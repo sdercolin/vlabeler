@@ -137,8 +137,10 @@ macOS を使用している場合、下記の `Ctrl` は `Command` に置き換�
 - `Space`: 現在のエントリを再生するか、再生を停止します
 - `Shift` + `Space`: 現在のサンプルファイルを再生するか、再生を停止します
 - `Ctrl` + `Shift` + `Space`: 現在の画面範囲で再生するか、再生を停止します
-- マウスの右クリック: クリックした区間を再生
-- `Alt` + パラメータの移動: パラメータ位置の音声を再生
+- （再生ツールを除き、任意のツールで）マウスの右クリック: クリックした区間を再生
+- （カーソルツールで）`Alt` + パラメータの移動: パラメータ位置の音声を再生
+
+上記操作の他にも、[再生ツール](#再生ツール)があるので、ご参照ください。
 
 ### スクロール
 
@@ -271,8 +273,6 @@ aaa;name:bbb;sample:ccc;tag:ddd
 以下の編集ツールを提供しています。
 `編集` -> `ツール` でツールを切り替える他、`表示` -> `ツールボックスを表示` でツールボックスを表示することができます。
 
-なお、 `クリック位置の音声を再生` 機能は、どのツールでも右クリックで使用できます。
-
 ### カーソル
 
 パラメータコントローラをドラッグする通常のカーソルツール。
@@ -292,6 +292,32 @@ aaa;name:bbb;sample:ccc;tag:ddd
 ### ハンドツール
 
 エディタ上でドラッグしてキャンバスをスクロールします。
+
+### Playback
+
+Use mouse click or drag to play a certain range of the current sample file.
+The following actions are available as default. You can change the key bindings
+in `Settings` -> `Prefereneces` -> `Keymaps` -> `Mouse click actions`.
+
+- Left click: play the audio from the clicked position until the end of the audio
+- Right click: play the audio from the clicked position until the end of the screen
+- `Shift` + left click: play the audio from the start of the file until the clicked position
+- `Shift` + right click: play the audio from the start of the screen until the clicked position
+- `Ctrl` + left click & drag: play the audio in the dragged range
+- `Ctrl` + `Shift` + left click & drag: play the audio in the dragged range repeatedly
+
+### 再生ツール
+
+マウスクリックまたはドラッグで、現在のサンプルファイルの特定の範囲を再生します。
+デフォルトでは、以下のアクションが使用できます。
+キーバインドは、 `設定` -> `環境設定` -> `ショートカットキー設定` -> `マウス（クリック）` で変更できます。
+
+- 左クリック: クリック位置からファイルの最後まで再生します
+- 右クリック: クリック位置から画面の最後まで再生します
+- `Shift` + 左クリック: ファイルの先頭からクリック位置まで再生します
+- `Shift` + 右クリック: 画面の先頭からクリック位置まで再生します
+- `Ctrl` + 左クリック & ドラッグ: ドラッグ範囲の音声を再生します
+- `Ctrl` + `Shift` + 左クリック & ドラッグ: ドラッグ範囲の音声を繰り返し再生します
 
 ## ラベラー
 
@@ -375,6 +401,7 @@ vLabeler に対応していない音声合成ソフトのラベルを編集し�
 2. Linux では、ファイル選択ダイアログで空のフォルダを選択できない場合があります。内部に何かを作成するか、パスをコピーして貼り付けてください
 3. Linux では、自動メモリ回収がうまく機能しない場合があります。`ツール` -> `メモリを回収` で手動でメモリを解放できます。
 4. ウィンドウが予期せずフリーズすることがあります。ウィンドウのサイズを変更して更新できます。
+5. メニューバー以外のすべてのテキストが表示されない場合は、環境変数 `SKIKO_RENDER_API` を `SOFTWARE` に設定してください。
 
 ### ローカライズのヘルプ (コード貢献者以外)
 

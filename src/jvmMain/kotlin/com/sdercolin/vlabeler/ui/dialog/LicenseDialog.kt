@@ -43,8 +43,7 @@ import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.util.Resources
-import com.sdercolin.vlabeler.util.toUri
-import java.awt.Desktop
+import com.sdercolin.vlabeler.util.Url
 
 @Composable
 fun LicenseDialog(
@@ -134,10 +133,7 @@ private fun ColumnScope.ReportBox(report: LicenseReport) {
                                 SingleClickableText(
                                     text = license,
                                     style = MaterialTheme.typography.caption,
-                                    onClick = {
-                                        @Suppress("BlockingMethodInNonBlockingContext")
-                                        Desktop.getDesktop().browse(url.toUri())
-                                    },
+                                    onClick = { Url.open(url) },
                                 )
                             }
                         }
@@ -147,7 +143,7 @@ private fun ColumnScope.ReportBox(report: LicenseReport) {
                     if (url != null) {
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
-                            onClick = { Desktop.getDesktop().browse(url.toUri()) },
+                            onClick = { Url.open(url) },
                         ) {
                             Icon(
                                 painter = rememberVectorPainter(Icons.Default.OpenInBrowser),
