@@ -96,19 +96,19 @@ fun IntegerInputBox(
     onValueChange: (Int) -> Unit,
     min: Int?,
     max: Int?,
-    invalidPrompt: Strings?,
+    getInvalidPrompt: (Int) -> Strings?,
     leadingContent: @Composable RowScope.() -> Unit = {},
 ) {
     var value by remember(intValue) { mutableStateOf(intValue.toString()) }
 
     val getErrorPrompt = @Composable { newValue: String ->
         val parsed = newValue.toIntOrNull()
-        val error = if (parsed == null) {
+        if (parsed == null) {
             string(Strings.CommonInputErrorPromptInteger)
         } else {
-            getPromptWithRange(min, max, parsed)
+            getPromptWithRange(min, max, parsed) ?: getInvalidPrompt(parsed)
+                ?.let { string(it) }
         }
-        error ?: invalidPrompt?.let { string(it) }
     }
 
     InputBox(
@@ -117,7 +117,7 @@ fun IntegerInputBox(
         onValueChange = { newValue ->
             value = newValue
             newValue.toIntOrNull()?.let {
-                if (it in (min ?: Int.MIN_VALUE)..(max ?: Int.MAX_VALUE) && invalidPrompt == null) {
+                if (it in (min ?: Int.MIN_VALUE)..(max ?: Int.MAX_VALUE) && getInvalidPrompt(it) == null) {
                     onValueChange(it)
                 }
             }
@@ -134,7 +134,7 @@ fun FloatInputBox(
     onValueChange: (Float) -> Unit,
     min: Float?,
     max: Float?,
-    invalidPrompt: Strings?,
+    getInvalidPrompt: (Float) -> Strings?,
     leadingContent: @Composable RowScope.() -> Unit = {},
 ) {
     var value by remember { mutableStateOf(floatValue.toStringTrimmed()) }
@@ -145,12 +145,12 @@ fun FloatInputBox(
     }
     val getErrorPrompt = @Composable { newValue: String ->
         val parsed = newValue.toFloatOrNull()
-        val error = if (parsed == null) {
+        if (parsed == null) {
             string(Strings.CommonInputErrorPromptNumber)
         } else {
-            getPromptWithRange(min, max, parsed)
+            getPromptWithRange(min, max, parsed) ?: getInvalidPrompt(parsed)
+                ?.let { string(it) }
         }
-        error ?: invalidPrompt?.let { string(it) }
     }
 
     InputBox(
@@ -159,7 +159,7 @@ fun FloatInputBox(
         onValueChange = { newValue ->
             value = newValue
             newValue.toFloatOrNull()?.let {
-                if (it in (min ?: Float.MIN_VALUE)..(max ?: Float.MAX_VALUE) && invalidPrompt == null) {
+                if (it in (min ?: Float.MIN_VALUE)..(max ?: Float.MAX_VALUE) && getInvalidPrompt(it) == null) {
                     onValueChange(it)
                 }
             }

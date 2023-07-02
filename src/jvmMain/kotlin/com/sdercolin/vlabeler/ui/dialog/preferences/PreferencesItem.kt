@@ -18,7 +18,10 @@ sealed class PreferencesItem<T>(
     val enabled: (AppConf) -> Boolean,
     val validationRules: List<PreferencesItemValidationRule>,
 ) {
-    fun getInvalidPrompt(conf: AppConf): Strings? = validationRules.firstOrNull { !it.validate(conf) }?.prompt
+    fun getInvalidPrompt(conf: AppConf, newValue: T): Strings? {
+        val updated = conf.update(newValue)
+        return validationRules.firstOrNull { !it.validate(updated) }?.prompt
+    }
 
     fun reset(conf: AppConf) = update(conf, defaultValue)
 
