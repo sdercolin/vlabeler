@@ -302,6 +302,14 @@ object PreferencesPages {
                         max = AppConf.Power.MaxUnitSize,
                         select = { it.unitSize },
                         update = { copy(unitSize = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.power.let { it.unitSize <= it.windowSize }
+                                },
+                                prompt = Strings.PreferencesChartsPowerUnitSizeInvalid,
+                            ),
+                        ),
                     )
                     integer(
                         title = Strings.PreferencesChartsPowerWindowSize,
@@ -310,6 +318,14 @@ object PreferencesPages {
                         max = AppConf.Power.MaxWindowSize,
                         select = { it.windowSize },
                         update = { copy(windowSize = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.power.let { it.unitSize <= it.windowSize }
+                                },
+                                prompt = Strings.PreferencesChartsPowerWindowSizeInvalid,
+                            ),
+                        ),
                     )
                     float(
                         title = Strings.PreferencesChartsPowerMinPower,
@@ -318,6 +334,14 @@ object PreferencesPages {
                         max = AppConf.Power.MaxMaxPower,
                         select = { it.minPower },
                         update = { copy(minPower = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.power.let { it.minPower < it.maxPower }
+                                },
+                                prompt = Strings.PreferencesChartsPowerMinPowerInvalid,
+                            ),
+                        ),
                     )
                     float(
                         title = Strings.PreferencesChartsPowerMaxPower,
@@ -326,6 +350,14 @@ object PreferencesPages {
                         max = AppConf.Power.MaxMaxPower,
                         select = { it.maxPower },
                         update = { copy(maxPower = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.power.let { it.minPower < it.maxPower }
+                                },
+                                prompt = Strings.PreferencesChartsPowerMaxPowerInvalid,
+                            ),
+                        ),
                     )
                     integer(
                         title = Strings.PreferencesChartsPowerIntensityAccuracy,
