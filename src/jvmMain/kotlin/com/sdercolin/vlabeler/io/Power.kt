@@ -27,7 +27,7 @@ fun Wave.toPower(conf: AppConf.Power): Power {
         val data = Wave.Channel(
             FloatArray(dataLength) { i ->
                 channels.sumOf { it.data[i].toDouble() }.toFloat() / channels.size
-            }
+            },
         )
         listOf(data)
     } else {

@@ -66,8 +66,10 @@ object SampleInfoRepository {
             existingInfo.maxSampleRate == maxSampleRate &&
             existingInfo.getFile(project).exists() &&
             existingInfo.lastModified == sampleFile.lastModified() &&
-            ((mergeChannels && existingInfo.powerChannels == 1)
-                || (!mergeChannels && existingInfo.channels == existingInfo.powerChannels))
+            (
+                (mergeChannels && existingInfo.powerChannels == 1) ||
+                    (!mergeChannels && existingInfo.channels == existingInfo.powerChannels)
+                )
         ) {
             // Return file cached sample info
             Log.info("Returning cached sample info for ${sampleFile.name} in module $moduleName")
