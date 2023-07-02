@@ -19,7 +19,7 @@ object PreferencesPages {
 
     object Charts : PreferencesPage(Strings.PreferencesCharts, Strings.PreferencesChartsDescription) {
 
-        override val children get() = listOf(ChartsCanvas, ChartsWaveform, ChartsSpectrogram)
+        override val children get() = listOf(ChartsCanvas, ChartsWaveform, ChartsSpectrogram, ChartsPower)
     }
 
     object ChartsCanvas : PreferencesPage(Strings.PreferencesChartsCanvas, Strings.PreferencesChartsCanvasDescription) {
@@ -259,6 +259,127 @@ object PreferencesPages {
                         description = Strings.PreferencesChartsSpectrogramUseHighAlphaContrastDescription,
                         select = { it.useHighAlphaContrast },
                         update = { copy(useHighAlphaContrast = it) },
+                    )
+                }
+            }
+    }
+
+    object ChartsPower : PreferencesPage(
+        Strings.PreferencesChartsPower,
+        Strings.PreferencesChartsPowerDescription,
+    ) {
+        override val content: List<PreferencesGroup>
+            get() = buildPageContent {
+                withContext(
+                    selector = { it.painter.power },
+                    updater = { copy(painter = painter.copy(power = it)) },
+                ) {
+                    switch(
+                        title = Strings.PreferencesChartsPowerEnabled,
+                        defaultValue = AppConf.Power.DefaultEnabled,
+                        select = { it.enabled },
+                        update = { copy(enabled = it) },
+                    )
+                    switch(
+                        title = Strings.PreferencesChartsPowerMergeChannels,
+                        defaultValue = AppConf.Power.DefaultMergeChannels,
+                        select = { it.mergeChannels },
+                        update = { copy(mergeChannels = it) },
+                    )
+                    floatPercentage(
+                        title = Strings.PreferencesChartsPowerHeight,
+                        defaultValue = AppConf.Power.DefaultHeightWeight,
+                        min = AppConf.Power.MinHeightWeight,
+                        max = AppConf.Power.MaxHeightWeight,
+                        select = { it.heightWeight },
+                        update = { copy(heightWeight = it) },
+                    )
+                    integer(
+                        title = Strings.PreferencesChartsPowerUnitSize,
+                        description = Strings.PreferencesChartsPowerUnitSizeDescription,
+                        defaultValue = AppConf.Power.DefaultUnitSize,
+                        min = AppConf.Power.MinUnitSize,
+                        max = AppConf.Power.MaxUnitSize,
+                        select = { it.unitSize },
+                        update = { copy(unitSize = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.power.let { it.unitSize <= it.windowSize }
+                                },
+                                prompt = Strings.PreferencesChartsPowerUnitSizeInvalid,
+                            ),
+                        ),
+                    )
+                    integer(
+                        title = Strings.PreferencesChartsPowerWindowSize,
+                        defaultValue = AppConf.Power.DefaultWindowSize,
+                        min = AppConf.Power.MinWindowSize,
+                        max = AppConf.Power.MaxWindowSize,
+                        select = { it.windowSize },
+                        update = { copy(windowSize = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.power.let { it.unitSize <= it.windowSize }
+                                },
+                                prompt = Strings.PreferencesChartsPowerWindowSizeInvalid,
+                            ),
+                        ),
+                    )
+                    float(
+                        title = Strings.PreferencesChartsPowerMinPower,
+                        defaultValue = AppConf.Power.DefaultMinPower,
+                        min = AppConf.Power.MinMinPower,
+                        max = AppConf.Power.MaxMaxPower,
+                        select = { it.minPower },
+                        update = { copy(minPower = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.power.let { it.minPower < it.maxPower }
+                                },
+                                prompt = Strings.PreferencesChartsPowerMinPowerInvalid,
+                            ),
+                        ),
+                    )
+                    float(
+                        title = Strings.PreferencesChartsPowerMaxPower,
+                        defaultValue = AppConf.Power.DefaultMaxPower,
+                        min = AppConf.Power.MinMinPower,
+                        max = AppConf.Power.MaxMaxPower,
+                        select = { it.maxPower },
+                        update = { copy(maxPower = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.power.let { it.minPower < it.maxPower }
+                                },
+                                prompt = Strings.PreferencesChartsPowerMaxPowerInvalid,
+                            ),
+                        ),
+                    )
+                    integer(
+                        title = Strings.PreferencesChartsPowerIntensityAccuracy,
+                        defaultValue = AppConf.Power.DefaultIntensityAccuracy,
+                        min = AppConf.Power.MinIntensityAccuracy,
+                        max = AppConf.Power.MaxIntensityAccuracy,
+                        select = { it.intensityAccuracy },
+                        update = { copy(intensityAccuracy = it) },
+                    )
+                    color(
+                        title = Strings.PreferencesChartsPowerColor,
+                        defaultValue = AppConf.Power.DefaultColor,
+                        select = { it.color },
+                        update = { copy(color = it) },
+                        useAlpha = true,
+                    )
+                    color(
+                        title = Strings.PreferencesChartsPowerBackgroundColor,
+                        defaultValue = AppConf.Power.DefaultBackgroundColor,
+                        select = { it.backgroundColor },
+                        update = { copy(backgroundColor = it) },
+                        useAlpha = true,
                     )
                 }
             }

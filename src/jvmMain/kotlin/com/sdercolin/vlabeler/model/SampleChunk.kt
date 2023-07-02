@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.io.Power
 import com.sdercolin.vlabeler.io.Spectrogram
 import com.sdercolin.vlabeler.io.Wave
 
@@ -19,4 +20,5 @@ class SampleChunk(
     val index: Int,
     val wave: Wave,
     val spectrogram: Spectrogram?,
+    val power: Power?,
 )

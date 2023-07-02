@@ -34,6 +34,8 @@ import kotlin.math.pow
  *    because the chunkSize is used for calculating the offset of the current chunk.
  * @property chunkCount The number of chunks.
  * @property hasSpectrogram Whether spectrogram is loaded for the sample file.
+ * @property hasPower Whether power is loaded for the sample file.
+ * @property powerChannels The number of power channels.
  * @property lastModified The last modified time of the sample file.
  * @property algorithmVersion The version of the algorithm used to load the sample file.
  */
@@ -52,11 +54,36 @@ data class SampleInfo(
     val chunkSize: Int,
     val chunkCount: Int,
     val hasSpectrogram: Boolean,
+    val hasPower: Boolean,
+    val powerChannels: Int,
     val lastModified: Long,
     val algorithmVersion: Int,
 ) {
 
+    val totalChartCount: Int get() = chunkCount *
+        (channels + (if (hasSpectrogram) 1 else 0) + (if (hasPower) powerChannels else 0))
+
     fun getFile(project: Project): File = project.rootSampleDirectory.resolve(file)
+
+    fun shouldReload(project: Project, sampleFile: File, appConf: AppConf): Boolean {
+        val appMaxSampleRate = appConf.painter.amplitude.resampleDownToHz
+        val appNormalize = appConf.painter.amplitude.normalize
+        val appHasSpectrogram = appConf.painter.spectrogram.enabled
+        val appHasPower = appConf.painter.power.enabled
+        val correctPowerChannels = if (appConf.painter.power.mergeChannels) {
+            powerChannels == 1
+        } else {
+            powerChannels == channels
+        }
+        return maxSampleRate != appMaxSampleRate ||
+            normalize != appNormalize ||
+            hasSpectrogram != appHasSpectrogram ||
+            hasPower != appHasPower ||
+            !correctPowerChannels ||
+            algorithmVersion != WaveLoadingAlgorithmVersion ||
+            !getFile(project).exists() ||
+            lastModified != sampleFile.lastModified()
+    }
 
     companion object {
 
@@ -74,6 +101,7 @@ data class SampleInfo(
             }
             val frameLength = frameLengthLong.toInt()
             val channels = (0 until channelNumber).map { mutableListOf<Float>() }
+            val powerChannels = if (appConf.painter.power.mergeChannels) 1 else channels.size
             if (stream.format.encoding !in arrayOf(AudioFormat.Encoding.PCM_SIGNED, AudioFormat.Encoding.PCM_FLOAT)) {
                 throw Exception("Unsupported audio encoding: ${format.encoding}")
             }
@@ -111,6 +139,8 @@ data class SampleInfo(
                 chunkSize = chunkSize,
                 chunkCount = chunkCount,
                 hasSpectrogram = appConf.painter.spectrogram.enabled,
+                hasPower = appConf.painter.power.enabled,
+                powerChannels = powerChannels,
                 lastModified = file.lastModified(),
                 algorithmVersion = WaveLoadingAlgorithmVersion,
             )

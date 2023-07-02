@@ -69,8 +69,7 @@ class ChartPrerenderer(
                     return@launch
                 }
 
-                val totalCharts = sampleInfo.chunkCount *
-                    (sampleInfo.channels + if (sampleInfo.hasSpectrogram) 1 else 0)
+                val totalCharts = sampleInfo.totalChartCount
                 progress = progress.copy(totalCharts = totalCharts)
 
                 if (chartStore.hasCachedSample(sampleInfo)) {

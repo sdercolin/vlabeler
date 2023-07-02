@@ -216,6 +216,19 @@ private fun Chunk(
                     }
                 }
             }
+            if (sampleInfo.hasPower && appState.appConf.painter.power.enabled) {
+                val powerWeightOfEachChannel = appState.appConf.painter.power.heightWeight / sampleInfo.powerChannels
+                val powerBackgroundColor = appState.appConf.painter.power.backgroundColor.toColorOrNull()
+                    ?: AppConf.Power.DefaultBackgroundColor.toColor()
+                repeat(sampleInfo.powerChannels) { channelIndex ->
+                    Box(Modifier.weight(powerWeightOfEachChannel).fillMaxWidth()) {
+                        val imageStatus = editorState.chartStore.getPowerGraphStatus(channelIndex, chunkIndex)
+                        if (imageStatus == ChartStore.ChartLoadingStatus.Loaded) {
+                            PowerGraphChunk(sampleInfo, channelIndex, chunkIndex, powerBackgroundColor)
+                        }
+                    }
+                }
+            }
             if (sampleInfo.hasSpectrogram && appState.appConf.painter.spectrogram.enabled) {
                 Box(
                     Modifier.weight(appState.appConf.painter.spectrogram.heightWeight)
@@ -250,6 +263,18 @@ private fun SpectrogramChunk(sampleInfo: SampleInfo, chunkIndex: Int) {
         ChunkAsyncImage(
             load = { ChartRepository.getSpectrogram(sampleInfo, chunkIndex) },
             sampleInfo,
+            chunkIndex,
+        )
+    }
+}
+
+@Composable
+private fun PowerGraphChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int, backgroundColor: Color) {
+    Box(Modifier.fillMaxSize().background(backgroundColor)) {
+        ChunkAsyncImage(
+            load = { ChartRepository.getPowerGraph(sampleInfo, channelIndex, chunkIndex) },
+            sampleInfo,
+            channelIndex,
             chunkIndex,
         )
     }

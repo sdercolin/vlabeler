@@ -49,9 +49,14 @@ data class AppConf(
         val maxDataChunkSize: Int = DefaultMaxDataChunkSize,
         val amplitude: Amplitude = Amplitude(),
         val spectrogram: Spectrogram = Spectrogram(),
+        val power: Power = Power(),
     ) {
         val amplitudeHeightRatio: Float
-            get() = 1f / (1f + spectrogram.heightWeight)
+            get() = 1f /
+                (
+                    1f + (if (spectrogram.enabled) spectrogram.heightWeight else 0f) +
+                        (if (power.enabled) power.heightWeight else 0f)
+                    )
 
         companion object {
             const val DefaultMaxDataChunkSize = 441000
@@ -186,6 +191,44 @@ data class AppConf(
             val DefaultWindowType = WindowType.BlackmanHarris
             val DefaultColorPalette = ColorPaletteDefinition.presets.first().name
             const val DefaultUseHighAlphaContrast = true
+        }
+    }
+
+    @Serializable
+    @Immutable
+    data class Power(
+        val enabled: Boolean = DefaultEnabled,
+        val mergeChannels: Boolean = DefaultMergeChannels,
+        val heightWeight: Float = DefaultHeightWeight,
+        val unitSize: Int = DefaultUnitSize,
+        val windowSize: Int = DefaultWindowSize,
+        val minPower: Float = DefaultMinPower,
+        val maxPower: Float = DefaultMaxPower,
+        val intensityAccuracy: Int = DefaultIntensityAccuracy,
+        val color: String = DefaultColor,
+        val backgroundColor: String = DefaultBackgroundColor,
+    ) {
+        companion object {
+            const val DefaultEnabled = false
+            const val DefaultMergeChannels = true
+            const val DefaultHeightWeight = 0.5f
+            const val MaxHeightWeight = 5f
+            const val MinHeightWeight = 0.1f
+            const val DefaultUnitSize = 60
+            const val MaxUnitSize = DefaultUnitSize * 10
+            const val MinUnitSize = 1
+            const val DefaultWindowSize = 300
+            const val MaxWindowSize = DefaultWindowSize * 10
+            const val MinWindowSize = 1
+            const val DefaultMinPower = -96.33f
+            const val DefaultMaxPower = 0.0f
+            const val MinMinPower = -192.66f
+            const val MaxMaxPower = 0.0f
+            const val DefaultIntensityAccuracy = 200
+            const val MaxIntensityAccuracy = DefaultIntensityAccuracy * 5
+            const val MinIntensityAccuracy = DefaultIntensityAccuracy / 5
+            const val DefaultColor = "#FFF2F2F2"
+            const val DefaultBackgroundColor = "#00000000"
         }
     }
 

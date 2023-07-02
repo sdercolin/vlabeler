@@ -47,11 +47,13 @@ class ChartStore {
 
     private val waveformStatusList = mutableStateMapOf<Pair<Int, Int>, ChartLoadingStatus>()
     private val spectrogramStatusList = mutableStateMapOf<Int, ChartLoadingStatus>()
+    private val powerGraphStatusList = mutableStateMapOf<Pair<Int, Int>, ChartLoadingStatus>()
 
     private var job: Job? = null
 
     fun getWaveformStatus(channelIndex: Int, chunkIndex: Int) = waveformStatusList[channelIndex to chunkIndex]
     fun getSpectrogramStatus(chunkIndex: Int) = spectrogramStatusList[chunkIndex]
+    fun getPowerGraphStatus(channelIndex: Int, chunkIndex: Int) = powerGraphStatusList[channelIndex to chunkIndex]
 
     fun clear() {
         Log.info("ChartStore clear()")
@@ -59,6 +61,7 @@ class ChartStore {
         job = null
         waveformStatusList.clear()
         spectrogramStatusList.clear()
+        powerGraphStatusList.clear()
         launchGcDelayed()
     }
 
@@ -126,6 +129,19 @@ class ChartStore {
                         onRenderProgress,
                     )
                 }
+                if (sampleInfo.hasPower && appConf.painter.power.enabled) {
+                    repeat(sampleInfo.powerChannels) { channelIndex ->
+                        System.gc()
+                        renderPowerGraph(
+                            sampleInfo,
+                            chunk,
+                            channelIndex,
+                            chunkIndex,
+                            appConf,
+                            onRenderProgress,
+                        )
+                    }
+                }
             }
             launchGcDelayed()
         }
@@ -176,6 +192,12 @@ class ChartStore {
 
         if (sampleInfo.hasSpectrogram) {
             if (!hasCachedSpectrogram(sampleInfo, chunkIndex)) return false
+        }
+
+        if (sampleInfo.hasPower) {
+            repeat(sampleInfo.powerChannels) { channelIndex ->
+                if (!hasCachedPowerGraph(sampleInfo, channelIndex, chunkIndex)) return false
+            }
         }
 
         return true
@@ -353,6 +375,80 @@ class ChartStore {
         ChartRepository.putSpectrogram(sampleInfo, chunkIndex, bitmap)
         yield()
         spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loaded
+        onRenderProgress()
+    }
+
+    private fun hasCachedPowerGraph(
+        sampleInfo: SampleInfo,
+        channelIndex: Int,
+        chunkIndex: Int,
+    ): Boolean {
+        val targetFile = ChartRepository.getPowerGraphImageFile(sampleInfo, channelIndex, chunkIndex)
+        if (targetFile.exists()) {
+            if (targetFile.lastModified() > sampleInfo.lastModified) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun deleteCachedPowerGraph(
+        sampleInfo: SampleInfo,
+        channelIndex: Int,
+        chunkIndex: Int,
+    ) {
+        val targetFile = ChartRepository.getPowerGraphImageFile(sampleInfo, channelIndex, chunkIndex)
+        if (targetFile.exists()) {
+            targetFile.delete()
+        }
+    }
+
+    private suspend fun renderPowerGraph(
+        sampleInfo: SampleInfo,
+        chunk: SampleChunk?,
+        channelIndex: Int,
+        chunkIndex: Int,
+        appConf: AppConf,
+        onRenderProgress: suspend () -> Unit,
+    ) {
+        if (hasCachedPowerGraph(sampleInfo, channelIndex, chunkIndex)) {
+            powerGraphStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
+            onRenderProgress()
+            return
+        } else {
+            deleteCachedPowerGraph(sampleInfo, channelIndex, chunkIndex)
+        }
+        requireNotNull(chunk) {
+            "Chunk $chunkIndex is required. However it's not loaded."
+        }
+        Log.info("Power graph chunk $chunkIndex: draw bitmap start")
+        // get data
+        val data = requireNotNull(chunk.power).data[channelIndex]
+        val minValue = appConf.painter.power.minPower
+        val maxValue = appConf.painter.power.maxPower
+        // image size
+        val width = data.size
+        val height = appConf.painter.power.intensityAccuracy
+        val imageData = ByteArray(width * height * 4)
+        // draw
+        val color = appConf.painter.power.color.toColorOrNull() ?: AppConf.Power.DefaultColor.toColor()
+        data.forEachIndexed { index, value ->
+            val valueInRange = maxOf(minValue, minOf(maxValue, value))
+            val y = (height - 1 - (valueInRange - minValue) / (maxValue - minValue) * (height - 1)).toInt()
+            val offset = (y * width + index) * 4
+            imageData[offset] = (color.blue * 255).toInt().toByte()
+            imageData[offset + 1] = (color.green * 255).toInt().toByte()
+            imageData[offset + 2] = (color.red * 255).toInt().toByte()
+            imageData[offset + 3] = (color.alpha * 255).toInt().toByte()
+        }
+        val imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
+        val image = Image.Companion.makeRaster(imageInfo, imageData, width * 4)
+        val bitmap = Bitmap.makeFromImage(image).asComposeImageBitmap()
+        Log.info("Power graph chunk $chunkIndex: draw bitmap end")
+        yield()
+        ChartRepository.putPowerGraph(sampleInfo, channelIndex, chunkIndex, bitmap)
+        yield()
+        powerGraphStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
         onRenderProgress()
     }
 

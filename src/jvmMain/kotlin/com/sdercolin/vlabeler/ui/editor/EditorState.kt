@@ -186,7 +186,7 @@ class EditorState(
                 val updated = chartStore.prepareForNewLoading(project, appConf, it)
                 appState.updateProjectOnLoadedSample(it, moduleName)
                 if (updated) {
-                    val renderProgressTotal = it.chunkCount * (it.channels + if (it.hasSpectrogram) 1 else 0)
+                    val renderProgressTotal = it.totalChartCount
                     _renderProgress = 0 to renderProgressTotal
                 }
                 player.load(it.getFile(project))

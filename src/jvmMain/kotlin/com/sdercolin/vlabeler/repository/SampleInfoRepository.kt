@@ -2,7 +2,6 @@ package com.sdercolin.vlabeler.repository
 
 import androidx.compose.runtime.Stable
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.io.WaveLoadingAlgorithmVersion
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
@@ -42,14 +41,8 @@ object SampleInfoRepository {
      * Get sample information from cache or file.
      */
     suspend fun load(project: Project, sampleFile: File, moduleName: String, appConf: AppConf): Result<SampleInfo> {
-        val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
-        val normalize = appConf.painter.amplitude.normalize
         infoMap[moduleName to sampleFile.name]?.let {
-            if (it.maxSampleRate == maxSampleRate &&
-                it.normalize == normalize &&
-                it.getFile(project).exists() &&
-                it.lastModified == sampleFile.lastModified()
-            ) {
+            if (!it.shouldReload(project, sampleFile, appConf)) {
                 // Return memory cached sample info
                 Log.info("Returning cached sample info for ${sampleFile.name} in module $moduleName")
                 return Result.success(it)
@@ -58,12 +51,7 @@ object SampleInfoRepository {
         val existingInfo = runCatching {
             getSampleInfoFile(project, sampleFile).takeIf { it.exists() }?.readText()?.parseJson<SampleInfo>()
         }.getOrNull()
-        if (existingInfo != null &&
-            existingInfo.algorithmVersion == WaveLoadingAlgorithmVersion &&
-            existingInfo.normalize == normalize &&
-            existingInfo.maxSampleRate == maxSampleRate &&
-            existingInfo.getFile(project).exists() &&
-            existingInfo.lastModified == sampleFile.lastModified()
+        if (existingInfo != null && !existingInfo.shouldReload(project, sampleFile, appConf)
         ) {
             // Return file cached sample info
             Log.info("Returning cached sample info for ${sampleFile.name} in module $moduleName")

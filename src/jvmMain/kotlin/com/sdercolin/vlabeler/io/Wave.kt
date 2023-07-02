@@ -84,11 +84,15 @@ suspend fun loadSampleChunk(
         val spectrogram = if (appConf.painter.spectrogram.enabled) {
             wave.toSpectrogram(appConf.painter.spectrogram, sampleInfo.sampleRate)
         } else null
+        val power = if (appConf.painter.power.enabled) {
+            wave.toPower(appConf.painter.power)
+        } else null
         SampleChunk(
             info = sampleInfo,
             index = chunkIndex,
             wave = wave,
             spectrogram = spectrogram,
+            power = power,
         )
     }.onFailure {
         if (it is CancellationException) {
