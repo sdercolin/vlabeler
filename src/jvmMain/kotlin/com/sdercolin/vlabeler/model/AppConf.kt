@@ -220,7 +220,7 @@ data class AppConf(
             const val DefaultWindowSize = 300
             const val MaxWindowSize = DefaultWindowSize * 10
             const val MinWindowSize = 1
-            const val DefaultMinPower = -96.33f
+            const val DefaultMinPower = -48f
             const val DefaultMaxPower = 0.0f
             const val MinMinPower = -192.66f
             const val MaxMaxPower = 0.0f
