@@ -294,6 +294,7 @@ enum class Strings {
     PreferencesChartsPower,
     PreferencesChartsPowerDescription,
     PreferencesChartsPowerEnabled,
+    PreferencesChartsPowerMergeChannels,
     PreferencesChartsPowerHeight,
     PreferencesChartsPowerUnitSize,
     PreferencesChartsPowerUnitSizeDescription,

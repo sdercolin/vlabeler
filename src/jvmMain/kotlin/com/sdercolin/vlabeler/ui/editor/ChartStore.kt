@@ -130,7 +130,7 @@ class ChartStore {
                     )
                 }
                 if (sampleInfo.hasPower && appConf.painter.power.enabled) {
-                    repeat(sampleInfo.channels) { channelIndex ->
+                    repeat(sampleInfo.powerChannels) { channelIndex ->
                         System.gc()
                         renderPowerGraph(
                             sampleInfo,
@@ -195,7 +195,7 @@ class ChartStore {
         }
 
         if (sampleInfo.hasPower) {
-            repeat(sampleInfo.channels) { channelIndex ->
+            repeat(sampleInfo.powerChannels) { channelIndex ->
                 if (!hasCachedPowerGraph(sampleInfo, channelIndex, chunkIndex)) return false
             }
         }

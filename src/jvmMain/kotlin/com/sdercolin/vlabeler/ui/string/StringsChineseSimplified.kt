@@ -310,6 +310,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesChartsPower -> "功率图"
     PreferencesChartsPowerDescription -> "编辑功率图的渲染设置"
     PreferencesChartsPowerEnabled -> "启用功率图"
+    PreferencesChartsPowerMergeChannels -> "合并通道"
     PreferencesChartsPowerHeight -> "相对于波形图的高度（%%）"
     PreferencesChartsPowerUnitSize -> "点数/像素"
     PreferencesChartsPowerUnitSizeDescription -> "该数值与图像质量成反比。"

@@ -35,6 +35,7 @@ import kotlin.math.pow
  * @property chunkCount The number of chunks.
  * @property hasSpectrogram Whether spectrogram is loaded for the sample file.
  * @property hasPower Whether power is loaded for the sample file.
+ * @property powerChannels The number of power channels.
  * @property lastModified The last modified time of the sample file.
  * @property algorithmVersion The version of the algorithm used to load the sample file.
  */
@@ -54,6 +55,7 @@ data class SampleInfo(
     val chunkCount: Int,
     val hasSpectrogram: Boolean,
     val hasPower: Boolean,
+    val powerChannels: Int,
     val lastModified: Long,
     val algorithmVersion: Int,
 ) {
@@ -76,6 +78,7 @@ data class SampleInfo(
             }
             val frameLength = frameLengthLong.toInt()
             val channels = (0 until channelNumber).map { mutableListOf<Float>() }
+            val powerChannels = if (appConf.painter.power.mergeChannels) 1 else channels.size
             if (stream.format.encoding !in arrayOf(AudioFormat.Encoding.PCM_SIGNED, AudioFormat.Encoding.PCM_FLOAT)) {
                 throw Exception("Unsupported audio encoding: ${format.encoding}")
             }
@@ -114,6 +117,7 @@ data class SampleInfo(
                 chunkCount = chunkCount,
                 hasSpectrogram = appConf.painter.spectrogram.enabled,
                 hasPower = appConf.painter.power.enabled,
+                powerChannels = powerChannels,
                 lastModified = file.lastModified(),
                 algorithmVersion = WaveLoadingAlgorithmVersion,
             )

@@ -21,7 +21,20 @@ data class Power(val data: List<FloatArray>)
  */
 fun Wave.toPower(conf: AppConf.Power): Power {
     val ref = 2.0.pow(NormalizedSampleSizeInBits - 1).toFloat()
-    val power = channels.map { channel ->
+    // merge channels
+    val merged = if (conf.mergeChannels) {
+        val dataLength = channels.minOf { it.data.size }
+        val data = Wave.Channel(
+            FloatArray(dataLength) { i ->
+                channels.sumOf { it.data[i].toDouble() }.toFloat() / channels.size
+            }
+        )
+        listOf(data)
+    } else {
+        channels
+    }
+    // calculate power
+    val power = merged.map { channel ->
         val padding = (conf.windowSize - conf.unitSize) / 2
         val wave = if (padding > 0) List(padding) { 0.0f } + channel.data.toList() else channel.data.toList()
         wave.windowed(conf.windowSize, conf.unitSize, partialWindows = true)

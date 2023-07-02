@@ -217,10 +217,10 @@ private fun Chunk(
                 }
             }
             if (sampleInfo.hasPower && appState.appConf.painter.power.enabled) {
-                val powerWeightOfEachChannel = appState.appConf.painter.power.heightWeight / sampleInfo.channels
+                val powerWeightOfEachChannel = appState.appConf.painter.power.heightWeight / sampleInfo.powerChannels
                 val powerBackgroundColor = appState.appConf.painter.power.backgroundColor.toColorOrNull()
                     ?: AppConf.Power.DefaultBackgroundColor.toColor()
-                repeat(sampleInfo.channels) { channelIndex ->
+                repeat(sampleInfo.powerChannels) { channelIndex ->
                     Box(Modifier.weight(powerWeightOfEachChannel).fillMaxWidth()) {
                         val imageStatus = editorState.chartStore.getPowerGraphStatus(channelIndex, chunkIndex)
                         if (imageStatus == ChartStore.ChartLoadingStatus.Loaded) {

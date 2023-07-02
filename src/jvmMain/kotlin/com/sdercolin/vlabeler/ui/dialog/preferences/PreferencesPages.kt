@@ -264,6 +264,12 @@ object PreferencesPages {
                         select = { it.enabled },
                         update = { copy(enabled = it) },
                     )
+                    switch(
+                        title = Strings.PreferencesChartsPowerMergeChannels,
+                        defaultValue = AppConf.Power.DefaultMergeChannels,
+                        select = { it.mergeChannels },
+                        update = { copy(mergeChannels = it) },
+                    )
                     floatPercentage(
                         title = Strings.PreferencesChartsPowerHeight,
                         defaultValue = AppConf.Power.DefaultHeightWeight,

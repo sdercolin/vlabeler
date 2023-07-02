@@ -187,7 +187,7 @@ class EditorState(
                 appState.updateProjectOnLoadedSample(it, moduleName)
                 if (updated) {
                     val renderProgressTotal = it.chunkCount *
-                        (it.channels + (if (it.hasSpectrogram) 1 else 0) + (if (it.hasPower) it.channels else 0))
+                        (it.channels + (if (it.hasSpectrogram) 1 else 0) + (if (it.hasPower) it.powerChannels else 0))
                     _renderProgress = 0 to renderProgressTotal
                 }
                 player.load(it.getFile(project))

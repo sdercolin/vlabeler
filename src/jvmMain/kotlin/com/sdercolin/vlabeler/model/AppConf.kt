@@ -198,6 +198,7 @@ data class AppConf(
     @Immutable
     data class Power(
         val enabled: Boolean = DefaultEnabled,
+        val mergeChannels: Boolean = DefaultMergeChannels,
         val heightWeight: Float = DefaultHeightWeight,
         val unitSize: Int = DefaultUnitSize,
         val windowSize: Int = DefaultWindowSize,
@@ -209,6 +210,7 @@ data class AppConf(
     ) {
         companion object {
             const val DefaultEnabled = false
+            const val DefaultMergeChannels = true
             const val DefaultHeightWeight = 0.5f
             const val MaxHeightWeight = 5f
             const val MinHeightWeight = 0.1f

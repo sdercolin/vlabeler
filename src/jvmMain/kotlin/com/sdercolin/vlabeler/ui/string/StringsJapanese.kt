@@ -328,6 +328,7 @@ fun Strings.ja(): String? = when (this) {
     PreferencesChartsPower -> "パワー"
     PreferencesChartsPowerDescription -> "パワーの描画設定をカスタマイズします。"
     PreferencesChartsPowerEnabled -> "パワーを表示"
+    PreferencesChartsPowerMergeChannels -> "チャンネルをマージ"
     PreferencesChartsPowerHeight -> "波形グラフの高さに対する高さの割合（%%）"
     PreferencesChartsPowerUnitSize -> "データポイント/ピクセル"
     PreferencesChartsPowerUnitSizeDescription -> "この値を大きくすると、グラフの描画は高速になりますが、品質は低下します。"

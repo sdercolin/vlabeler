@@ -44,11 +44,13 @@ object SampleInfoRepository {
     suspend fun load(project: Project, sampleFile: File, moduleName: String, appConf: AppConf): Result<SampleInfo> {
         val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
         val normalize = appConf.painter.amplitude.normalize
+        val mergeChannels = appConf.painter.power.mergeChannels
         infoMap[moduleName to sampleFile.name]?.let {
             if (it.maxSampleRate == maxSampleRate &&
                 it.normalize == normalize &&
                 it.getFile(project).exists() &&
-                it.lastModified == sampleFile.lastModified()
+                it.lastModified == sampleFile.lastModified() &&
+                ((mergeChannels && it.powerChannels == 1) || (!mergeChannels && it.channels == it.powerChannels))
             ) {
                 // Return memory cached sample info
                 Log.info("Returning cached sample info for ${sampleFile.name} in module $moduleName")
@@ -63,7 +65,9 @@ object SampleInfoRepository {
             existingInfo.normalize == normalize &&
             existingInfo.maxSampleRate == maxSampleRate &&
             existingInfo.getFile(project).exists() &&
-            existingInfo.lastModified == sampleFile.lastModified()
+            existingInfo.lastModified == sampleFile.lastModified() &&
+            ((mergeChannels && existingInfo.powerChannels == 1)
+                || (!mergeChannels && existingInfo.channels == existingInfo.powerChannels))
         ) {
             // Return file cached sample info
             Log.info("Returning cached sample info for ${sampleFile.name} in module $moduleName")

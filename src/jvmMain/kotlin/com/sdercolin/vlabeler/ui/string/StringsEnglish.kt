@@ -341,6 +341,7 @@ fun Strings.en(): String = when (this) {
     PreferencesChartsPower -> "Power"
     PreferencesChartsPowerDescription -> "Customize the power chart."
     PreferencesChartsPowerEnabled -> "Show power chart"
+    PreferencesChartsPowerMergeChannels -> "Merge channels"
     PreferencesChartsPowerHeight -> "Height relative to waveforms (%%)"
     PreferencesChartsPowerUnitSize -> "Points per pixel"
     PreferencesChartsPowerUnitSizeDescription -> "Increase for lower image quality."
