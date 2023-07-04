@@ -140,7 +140,9 @@ suspend fun awaitLoadProject(
             workingDirectory != project.workingDirectoryPath
         ) {
             // redirect root sample directory when the project file is moved together with the sample directory
-            val originalWorkingDirectory = project.workingDirectory.absoluteFile
+            val originalWorkingDirectory = project.workingDirectoryPath.toFile().let {
+                if (it.isAbsolute) it else project.rootSampleDirectory.resolve(it)
+            }
             val relativeRootSampleDirectory = project.rootSampleDirectory.relativeTo(originalWorkingDirectory)
             val newWorkingDirectory = workingDirectory.toFile()
             require(newWorkingDirectory.isAbsolute)
