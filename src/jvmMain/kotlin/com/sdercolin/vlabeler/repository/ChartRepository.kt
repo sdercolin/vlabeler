@@ -160,7 +160,9 @@ object ChartRepository {
         ?.let { cacheDirectory.resolve(it) }
         ?.takeIf { it.isFile }
         ?: run {
-            val baseFileName = "${sampleInfo.name}_${KeyWaveform}_${channelIndex}_$chunkIndex.$Extension"
+            val modulePrefix = sampleInfo.moduleName.let { "${it}_" }
+            val baseFileName =
+                "${modulePrefix}${sampleInfo.name}_${KeyWaveform}_${channelIndex}_$chunkIndex.$Extension"
             cacheDirectory.findUnusedFile(
                 base = baseFileName,
                 existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
@@ -177,7 +179,8 @@ object ChartRepository {
         ?.let { cacheDirectory.resolve(it) }
         ?.takeIf { it.isFile }
         ?: run {
-            val baseFileName = "${sampleInfo.name}_${KeySpectrogram}_$chunkIndex.$Extension"
+            val modulePrefix = sampleInfo.moduleName.let { "${it}_" }
+            val baseFileName = "${modulePrefix}${sampleInfo.name}_${KeySpectrogram}_$chunkIndex.$Extension"
             cacheDirectory.findUnusedFile(
                 base = baseFileName,
                 existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
@@ -206,17 +209,8 @@ object ChartRepository {
         return (listOf(file) + keys).joinToString(separator = "//")
     }
 
-    /**
-     * Clear the cache in memory.
-     */
-    fun clearMemory() {
-        cacheMap.clear()
-    }
-
-    /**
-     * Clear the cached chart files in the disk.
-     */
     fun clear(project: Project) {
+        cacheMap.clear()
         project.getCacheDir().resolve(ChartsCacheFolderName).deleteRecursively()
     }
 

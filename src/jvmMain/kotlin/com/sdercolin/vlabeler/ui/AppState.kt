@@ -28,6 +28,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.runMacroPlugin
+import com.sdercolin.vlabeler.repository.ConvertedAudioRepository
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.tracking.TrackingService
 import com.sdercolin.vlabeler.tracking.TrackingState
@@ -187,6 +188,7 @@ class AppState(
                 return
             }
         SampleInfoRepository.init(project)
+        ConvertedAudioRepository.init(project)
         val editor = EditorState(
             project = project,
             appState = this,

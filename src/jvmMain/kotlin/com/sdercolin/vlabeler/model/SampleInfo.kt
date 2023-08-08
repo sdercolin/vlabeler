@@ -1,10 +1,12 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.audio.conversion.WaveConverter
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.WaveLoadingAlgorithmVersion
 import com.sdercolin.vlabeler.io.getSampleValueFromFrame
 import com.sdercolin.vlabeler.io.normalize
+import com.sdercolin.vlabeler.repository.ConvertedAudioRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
@@ -23,6 +25,8 @@ import kotlin.math.pow
  *
  * @property name The name with extension of the sample file.
  * @property file The path of the sample file relative to the project root directory.
+ * @property convertedFile The path of the converted sample file relative to the project root directory.
+ * @property moduleName The name of the module that the sample file belongs to.
  * @property sampleRate The sample rate of the sample file.
  * @property maxSampleRate The maximum sample rate according to the current configuration.
  * @property normalize Whether to normalize the sample file.
@@ -44,6 +48,8 @@ import kotlin.math.pow
 data class SampleInfo(
     val name: String,
     val file: String,
+    val convertedFile: String? = null,
+    val moduleName: String,
     val sampleRate: Float,
     val maxSampleRate: Int,
     val normalize: Boolean,
@@ -60,10 +66,11 @@ data class SampleInfo(
     val algorithmVersion: Int,
 ) {
 
-    val totalChartCount: Int get() = chunkCount *
-        (channels + (if (hasSpectrogram) 1 else 0) + (if (hasPower) powerChannels else 0))
+    val totalChartCount: Int
+        get() = chunkCount *
+            (channels + (if (hasSpectrogram) 1 else 0) + (if (hasPower) powerChannels else 0))
 
-    fun getFile(project: Project): File = project.rootSampleDirectory.resolve(file)
+    fun getFile(project: Project): File = project.rootSampleDirectory.resolve(convertedFile ?: file)
 
     fun shouldReload(project: Project, sampleFile: File, appConf: AppConf): Boolean {
         val appMaxSampleRate = appConf.painter.amplitude.resampleDownToHz
@@ -87,64 +94,74 @@ data class SampleInfo(
 
     companion object {
 
-        suspend fun load(project: Project, file: File, appConf: AppConf): Result<SampleInfo> = runCatching {
-            val stream = AudioSystem.getAudioInputStream(file)
-            val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
-            val format = stream.format.normalize(maxSampleRate)
-            Log.debug("Sample info loaded: $format")
-            val channelNumber = format.channels
-            val frameLengthLong = stream.frameLength * format.sampleRate / stream.format.sampleRate
-            if (frameLengthLong > Int.MAX_VALUE) {
-                throw IllegalArgumentException(
-                    "Cannot load sample with frame length ($frameLengthLong) > ${Int.MAX_VALUE}",
+        suspend fun load(project: Project, moduleName: String, file: File, appConf: AppConf): Result<SampleInfo> =
+            runCatching {
+                val convertedFile = createCachedWavFile(project, moduleName, file, appConf)
+                val stream = AudioSystem.getAudioInputStream(convertedFile ?: file)
+                val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
+                val format = stream.format.normalize(maxSampleRate)
+                Log.debug("Sample info loaded: $format")
+                val channelNumber = format.channels
+                val frameLengthLong = stream.frameLength * format.sampleRate / stream.format.sampleRate
+                if (frameLengthLong > Int.MAX_VALUE) {
+                    throw IllegalArgumentException(
+                        "Cannot load sample with frame length ($frameLengthLong) > ${Int.MAX_VALUE}",
+                    )
+                }
+                val frameLength = frameLengthLong.toInt()
+                val channels = (0 until channelNumber).map { mutableListOf<Float>() }
+                val powerChannels = if (appConf.painter.power.mergeChannels) 1 else channels.size
+                if (stream.format.encoding !in arrayOf(
+                        AudioFormat.Encoding.PCM_SIGNED,
+                        AudioFormat.Encoding.PCM_FLOAT,
+                    )
+                ) {
+                    throw Exception("Unsupported audio encoding: ${format.encoding}")
+                }
+                val maxChunkSize = appConf.painter.maxDataChunkSize
+                val sampleRate = format.sampleRate
+                val lengthInMillis = frameLength / sampleRate * 1000
+                val chunkCount = ceil(frameLength.toDouble() / maxChunkSize).toInt()
+                val chunkSize = frameLength / chunkCount
+
+                var normalizeRatio: Float? = null
+                val normalize = appConf.painter.amplitude.normalize
+                if (normalize) {
+                    val convertedStream = AudioSystem.getAudioInputStream(format, stream)
+                    val peakValue = loadPeakValue(convertedStream)
+                    val maxValue = 2.0.pow(format.sampleSizeInBits - 1).toFloat()
+                    if (peakValue > 0) {
+                        normalizeRatio = maxValue / peakValue
+                    }
+                    convertedStream.close()
+                }
+                stream.close()
+
+                val filePath = file.relativeTo(project.rootSampleDirectory).path.replace(File.separatorChar, '/')
+                val convertedFilePath = convertedFile?.relativeTo(project.rootSampleDirectory)
+                    ?.path?.replace(File.separatorChar, '/')
+
+                SampleInfo(
+                    name = file.name,
+                    file = filePath,
+                    convertedFile = convertedFilePath,
+                    moduleName = moduleName,
+                    sampleRate = sampleRate,
+                    maxSampleRate = maxSampleRate,
+                    normalize = normalize,
+                    normalizeRatio = normalizeRatio,
+                    channels = channels.size,
+                    length = frameLength,
+                    lengthMillis = lengthInMillis,
+                    chunkSize = chunkSize,
+                    chunkCount = chunkCount,
+                    hasSpectrogram = appConf.painter.spectrogram.enabled,
+                    hasPower = appConf.painter.power.enabled,
+                    powerChannels = powerChannels,
+                    lastModified = file.lastModified(),
+                    algorithmVersion = WaveLoadingAlgorithmVersion,
                 )
             }
-            val frameLength = frameLengthLong.toInt()
-            val channels = (0 until channelNumber).map { mutableListOf<Float>() }
-            val powerChannels = if (appConf.painter.power.mergeChannels) 1 else channels.size
-            if (stream.format.encoding !in arrayOf(AudioFormat.Encoding.PCM_SIGNED, AudioFormat.Encoding.PCM_FLOAT)) {
-                throw Exception("Unsupported audio encoding: ${format.encoding}")
-            }
-            val maxChunkSize = appConf.painter.maxDataChunkSize
-            val sampleRate = format.sampleRate
-            val lengthInMillis = frameLength / sampleRate * 1000
-            val chunkCount = ceil(frameLength.toDouble() / maxChunkSize).toInt()
-            val chunkSize = frameLength / chunkCount
-
-            var normalizeRatio: Float? = null
-            val normalize = appConf.painter.amplitude.normalize
-            if (normalize) {
-                val convertedStream = AudioSystem.getAudioInputStream(format, stream)
-                val peakValue = loadPeakValue(convertedStream)
-                val maxValue = 2.0.pow(format.sampleSizeInBits - 1).toFloat()
-                if (peakValue > 0) {
-                    normalizeRatio = maxValue / peakValue
-                }
-                convertedStream.close()
-            }
-            stream.close()
-
-            val filePath = file.relativeTo(project.rootSampleDirectory).path.replace(File.separatorChar, '/')
-
-            SampleInfo(
-                name = file.name,
-                file = filePath,
-                sampleRate = sampleRate,
-                maxSampleRate = maxSampleRate,
-                normalize = normalize,
-                normalizeRatio = normalizeRatio,
-                channels = channels.size,
-                length = frameLength,
-                lengthMillis = lengthInMillis,
-                chunkSize = chunkSize,
-                chunkCount = chunkCount,
-                hasSpectrogram = appConf.painter.spectrogram.enabled,
-                hasPower = appConf.painter.power.enabled,
-                powerChannels = powerChannels,
-                lastModified = file.lastModified(),
-                algorithmVersion = WaveLoadingAlgorithmVersion,
-            )
-        }
 
         private suspend fun loadPeakValue(stream: AudioInputStream): Float {
             return withContext(Dispatchers.IO) {
@@ -168,6 +185,17 @@ data class SampleInfo(
                 }
                 maxAbsolute
             }
+        }
+
+        private suspend fun createCachedWavFile(
+            project: Project,
+            moduleName: String,
+            file: File,
+            appConf: AppConf
+        ): File? {
+            val converter = WaveConverter.converters.find { it.accept(file) } ?: return null
+            Log.debug("Converting ${file.name} to wav using ${converter.javaClass.simpleName}")
+            return ConvertedAudioRepository.create(project, file, moduleName, converter, appConf)
         }
     }
 }

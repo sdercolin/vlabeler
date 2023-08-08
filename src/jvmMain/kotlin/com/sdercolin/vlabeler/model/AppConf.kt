@@ -41,6 +41,7 @@ data class AppConf(
      * @param maxDataChunkSize Max number of sample points in one chunk drawn in the painter.
      * @param amplitude Configurations about amplitude (waveforms) painting.
      * @param spectrogram Configurations about spectrogram painting.
+     * @param conversion Configurations about audio file conversion.
      */
     @Serializable
     @Immutable
@@ -50,6 +51,7 @@ data class AppConf(
         val amplitude: Amplitude = Amplitude(),
         val spectrogram: Spectrogram = Spectrogram(),
         val power: Power = Power(),
+        val conversion: Conversion = Conversion(),
     ) {
         val amplitudeHeightRatio: Float
             get() = 1f /
@@ -194,6 +196,20 @@ data class AppConf(
         }
     }
 
+    /**
+     * Configurations about power painting.
+     *
+     * @param enabled True if power is calculated and shown.
+     * @param mergeChannels True if the power of all channels are merged into one.
+     * @param heightWeight Height weight of the power to the amplitude form (whose weight is 1).
+     * @param unitSize Frames of one pixel used when drawing the power.
+     * @param windowSize Number of frames in the window.
+     * @param minPower Min power (dB) displayed in the graph.
+     * @param maxPower Max power (dB) displayed in the graph.
+     * @param intensityAccuracy Height of the container bitmap in pixel.
+     * @param color Color of the power graph.
+     * @param backgroundColor Background color of the power graph.
+     */
     @Serializable
     @Immutable
     data class Power(
@@ -243,6 +259,25 @@ data class AppConf(
         BlackmanHarris,
         Bartlett,
     }
+
+    /**
+     * Configurations about conversion.
+     *
+     * @param ffmpegPath Path to the ffmpeg executable.
+     * @param ffmpegArgs Arguments passed to ffmpeg besides input and output file paths.
+     */
+    @Serializable
+    @Immutable
+    data class Conversion(
+        val ffmpegPath: String = DefaultFFmpegPath,
+        val ffmpegArgs: String = DefaultFFmpegArgs,
+    ) {
+        companion object {
+            const val DefaultFFmpegPath = "ffmpeg"
+            const val DefaultFFmpegArgs = "-acodec pcm_s16le -ac 1 -ar 44100"
+        }
+    }
+
 
     /**
      * Configurations about editor behaviors.

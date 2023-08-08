@@ -473,8 +473,6 @@ class AppDialogStateImpl(
     }
 
     override fun clearCachesAndReopen(scope: CoroutineScope) {
-        ChartRepository.clearMemory()
-        SampleInfoRepository.clearMemory()
         projectStore.requireProject().clearCache()
         loadProject(scope, projectStore.requireProject().projectFile, state)
     }

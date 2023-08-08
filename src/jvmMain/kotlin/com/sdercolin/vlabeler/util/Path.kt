@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.model.LabelerConf.Companion.LabelerFileExtension
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.repository.ChartRepository
+import com.sdercolin.vlabeler.repository.ConvertedAudioRepository
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import java.io.File
 import java.io.FilenameFilter
@@ -53,12 +54,14 @@ fun Project.getCacheDir() = cacheDirectory
 fun Project.moveCacheDirTo(newDirectory: File, clearOld: Boolean = true) {
     ChartRepository.moveTo(cacheDirectory, newDirectory, clearOld)
     SampleInfoRepository.moveTo(cacheDirectory, newDirectory, clearOld)
+    ConvertedAudioRepository.moveTo(cacheDirectory, newDirectory, clearOld)
     if (clearOld) cacheDirectory.removeDirectoryIfEmpty()
 }
 
 fun Project.clearCache() {
     ChartRepository.clear(this)
     SampleInfoRepository.clear(this)
+    ConvertedAudioRepository.clear(this)
     cacheDirectory.removeDirectoryIfEmpty()
 }
 

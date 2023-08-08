@@ -49,7 +49,9 @@ object SampleInfoRepository {
             }
         }
         val existingInfo = runCatching {
-            getSampleInfoFile(project, sampleFile).takeIf { it.exists() }?.readText()?.parseJson<SampleInfo>()
+            getSampleInfoFile(project, moduleName, sampleFile).takeIf { it.exists() }
+                ?.readText()
+                ?.parseJson<SampleInfo>()
         }.getOrNull()
         if (existingInfo != null && !existingInfo.shouldReload(project, sampleFile, appConf)
         ) {
@@ -69,11 +71,11 @@ object SampleInfoRepository {
     ): Result<SampleInfo> {
         Log.debug("Loading sample ${sampleFile.absolutePath}")
 
-        val info = SampleInfo.load(project, sampleFile, appConf).getOrElse {
+        val info = SampleInfo.load(project, moduleName, sampleFile, appConf).getOrElse {
             return Result.failure(it)
         }
         infoMap[moduleName to info.name] = info
-        val infoFile = getSampleInfoFile(project, sampleFile)
+        val infoFile = getSampleInfoFile(project, moduleName, sampleFile)
         infoFile.parentFile.mkdirs()
         infoFile.writeText(info.stringifyJson())
         cacheMap[project.getSampleFilePath(sampleFile)] =
@@ -86,27 +88,18 @@ object SampleInfoRepository {
     private fun Project.getSampleFilePath(sampleFile: File): String =
         sampleFile.toRelativeString(rootSampleDirectory).replace(File.separatorChar, '/')
 
-    private fun getSampleInfoFile(project: Project, sampleFile: File) =
+    private fun getSampleInfoFile(project: Project, moduleName: String, sampleFile: File) =
         cacheMap[project.getSampleFilePath(sampleFile)]
             ?.let { cacheDirectory.resolve(it) }
             ?.takeIf { it.isFile }
             ?: cacheDirectory.findUnusedFile(
-                base = "${sampleFile.name}.info.json",
+                base = "${moduleName}_${sampleFile.name}.info.json",
                 existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
             )
 
-    /**
-     * Clear cached sample information in memory.
-     */
-    fun clearMemory() {
+    fun clear(project: Project) {
         infoMap.clear()
         cacheMap.clear()
-    }
-
-    /**
-     * Clear cached sample information files.
-     */
-    fun clear(project: Project) {
         project.getCacheDir().resolve(SampleInfoCacheFolderName).deleteRecursively()
     }
 
