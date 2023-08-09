@@ -94,6 +94,28 @@ sealed class PreferencesItem<T>(
         validationRules,
     )
 
+    class StringInput(
+        title: Strings,
+        description: Strings?,
+        clickableTags: List<ClickableTag>,
+        columnStyle: Boolean,
+        defaultValue: String,
+        select: (AppConf) -> String,
+        update: AppConf.(String) -> AppConf,
+        enabled: (AppConf) -> Boolean,
+        validationRules: List<PreferencesItemValidationRule>,
+    ) : PreferencesItem<String>(
+        title,
+        description,
+        clickableTags,
+        columnStyle,
+        defaultValue,
+        select,
+        update,
+        enabled,
+        validationRules,
+    )
+
     class ColorStringInput(
         title: Strings,
         description: Strings?,

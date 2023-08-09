@@ -358,6 +358,15 @@ fun Strings.en(): String = when (this) {
     PreferencesChartsPowerIntensityAccuracy -> "Bitmap height (px)"
     PreferencesChartsPowerColor -> "Color"
     PreferencesChartsPowerBackgroundColor -> "Background color"
+    PreferencesChartsConversion -> "Audio Format Support"
+    PreferencesChartsConversionDescription -> "Configure support for audio formats other than wav."
+    PreferencesChartsConversionFFmpegPath -> "FFmpeg executable path"
+    PreferencesChartsConversionFFmpegPathDescription ->
+        "Please install @open{FFmpeg} and set the path to the executable " +
+            "to perform format conversion before loading. " +
+            "You may also need to ensure the executable could be executed by your OS before using it in vLabeler. " +
+            "Possible errors may be related to unsigned executables or access permissions."
+    PreferencesChartsConversionFFmpegArgs -> "FFmpeg arguments besides input and output"
     PreferencesKeymap -> "Keymap"
     PreferencesKeymapDescription -> "Customize key bindings for key/mouse actions."
     PreferencesKeymapKeyAction -> "Key actions"

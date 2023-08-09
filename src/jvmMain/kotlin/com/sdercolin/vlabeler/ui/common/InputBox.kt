@@ -170,6 +170,33 @@ fun FloatInputBox(
 }
 
 @Composable
+fun TextInputBox(
+    enabled: Boolean,
+    text: String,
+    onValueChange: (String) -> Unit,
+    getInvalidPrompt: (String) -> Strings?,
+    leadingContent: @Composable RowScope.() -> Unit = {},
+) {
+    var value by remember { mutableStateOf(text) }
+    val getErrorPrompt = @Composable { newValue: String ->
+        getInvalidPrompt(newValue)?.let { string(it) }
+    }
+
+    InputBox(
+        enabled = enabled,
+        value = value,
+        onValueChange = { newValue ->
+            value = newValue
+            if (getInvalidPrompt(newValue) == null) {
+                onValueChange(newValue)
+            }
+        },
+        leadingContent = leadingContent,
+        errorPrompt = getErrorPrompt,
+    )
+}
+
+@Composable
 private fun <T : Comparable<T>> getPromptWithRange(min: T?, max: T?, parsed: T) = when {
     (min != null && max != null) && (parsed < min || parsed > max) -> {
         string(Strings.CommonInputErrorPromptNumberRange, min.toString(), max.toString())

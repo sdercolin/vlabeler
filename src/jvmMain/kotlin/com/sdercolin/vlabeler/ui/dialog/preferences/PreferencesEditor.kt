@@ -60,6 +60,7 @@ import com.sdercolin.vlabeler.ui.common.PartialClickableText
 import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
+import com.sdercolin.vlabeler.ui.common.TextInputBox
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 import com.sdercolin.vlabeler.ui.dialog.ColorPickerDialog
@@ -338,6 +339,7 @@ private fun Item(item: PreferencesItem<*>, state: PreferencesEditorState) {
         is PreferencesItem.Switch -> SwitchItem(item, state)
         is PreferencesItem.IntegerInput -> IntegerInputItem(item, state)
         is PreferencesItem.FloatInput -> FloatInputItem(item, state)
+        is PreferencesItem.StringInput -> TextInputItem(item, state)
         is PreferencesItem.ColorStringInput -> ColorStringInputItem(item, state)
         is PreferencesItem.Selection -> SelectionItem(item, state)
         is PreferencesItem.Keymap<*> -> Keymap(item, state)
@@ -390,6 +392,18 @@ private fun FloatInputItem(item: PreferencesItem.FloatInput, state: PreferencesE
         onValueChange = { state.update(item, it) },
         min = item.min,
         max = item.max,
+        getInvalidPrompt = { item.getInvalidPrompt(state.conf, it) },
+    )
+}
+
+@Composable
+private fun TextInputItem(item: PreferencesItem.StringInput, state: PreferencesEditorState) {
+    val loadedValue = item.select(state.conf)
+
+    TextInputBox(
+        enabled = item.enabled(state.conf),
+        text = loadedValue,
+        onValueChange = { state.update(item, it) },
         getInvalidPrompt = { item.getInvalidPrompt(state.conf, it) },
     )
 }

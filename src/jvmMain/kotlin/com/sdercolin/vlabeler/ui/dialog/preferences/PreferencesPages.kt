@@ -11,6 +11,7 @@ import com.sdercolin.vlabeler.repository.ColorPaletteRepository
 import com.sdercolin.vlabeler.ui.string.ClickableTag
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.divideWithBigDecimal
 import com.sdercolin.vlabeler.util.multiplyWithBigDecimal
 import java.awt.Desktop
@@ -19,7 +20,14 @@ object PreferencesPages {
 
     object Charts : PreferencesPage(Strings.PreferencesCharts, Strings.PreferencesChartsDescription) {
 
-        override val children get() = listOf(ChartsCanvas, ChartsWaveform, ChartsSpectrogram, ChartsPower)
+        override val children
+            get() = listOf(
+                ChartsCanvas,
+                ChartsWaveform,
+                ChartsSpectrogram,
+                ChartsPower,
+                ChartsConversion,
+            )
     }
 
     object ChartsCanvas : PreferencesPage(Strings.PreferencesChartsCanvas, Strings.PreferencesChartsCanvasDescription) {
@@ -380,6 +388,39 @@ object PreferencesPages {
                         select = { it.backgroundColor },
                         update = { copy(backgroundColor = it) },
                         useAlpha = true,
+                    )
+                }
+            }
+    }
+
+    object ChartsConversion : PreferencesPage(
+        Strings.PreferencesChartsConversion,
+        Strings.PreferencesChartsConversionDescription,
+    ) {
+        override val content: List<PreferencesGroup>
+            get() = buildPageContent {
+                withContext(
+                    selector = { it.painter.conversion },
+                    updater = { copy(painter = painter.copy(conversion = it)) },
+                ) {
+                    text(
+                        title = Strings.PreferencesChartsConversionFFmpegPath,
+                        description = Strings.PreferencesChartsConversionFFmpegPathDescription,
+                        defaultValue = AppConf.Conversion.DefaultFFmpegPath,
+                        clickableTags = listOf(
+                            ClickableTag(
+                                tag = "open",
+                                onClick = { Url.open("https://www.ffmpeg.org/") },
+                            ),
+                        ),
+                        select = { it.ffmpegPath },
+                        update = { copy(ffmpegPath = it) },
+                    )
+                    text(
+                        title = Strings.PreferencesChartsConversionFFmpegArgs,
+                        defaultValue = AppConf.Conversion.DefaultFFmpegArgs,
+                        select = { it.ffmpegArgs },
+                        update = { copy(ffmpegArgs = it) },
                     )
                 }
             }
@@ -919,6 +960,30 @@ private class PreferencesItemContext<P>(
             defaultValue = defaultValue,
             min = min,
             max = max,
+            select = selectWithContext(select),
+            update = updateWithContext(update),
+            enabled = selectWithContext(enabled),
+            validationRules = validationRules,
+        ),
+    )
+
+    fun text(
+        title: Strings,
+        description: Strings? = null,
+        clickableTags: List<ClickableTag> = listOf(),
+        columnStyle: Boolean = false,
+        defaultValue: String,
+        select: (P) -> String,
+        update: P.(String) -> P,
+        enabled: (P) -> Boolean = { true },
+        validationRules: List<PreferencesItemValidationRule> = listOf(),
+    ) = builder.item(
+        PreferencesItem.StringInput(
+            title = title,
+            description = description,
+            clickableTags = clickableTags,
+            columnStyle = columnStyle,
+            defaultValue = defaultValue,
             select = selectWithContext(select),
             update = updateWithContext(update),
             enabled = selectWithContext(enabled),

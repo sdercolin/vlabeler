@@ -327,6 +327,13 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesChartsPowerIntensityAccuracy -> "图像高度（像素）"
     PreferencesChartsPowerColor -> "前景色"
     PreferencesChartsPowerBackgroundColor -> "背景色"
+    PreferencesChartsConversion -> "音频格式支持"
+    PreferencesChartsConversionDescription -> "配置除 wav 以外的音频格式支持。"
+    PreferencesChartsConversionFFmpegPath -> "FFmpeg 可执行文件路径"
+    PreferencesChartsConversionFFmpegPathDescription ->
+        "请安装 @open{FFmpeg} 并设置可执行文件路径，用以进行音频文件格式的转换。" +
+            "您可能还需要确保它在您的操作系统中可以被执行。（可能出现的问题包括：未签名的可执行文件，访问权限不足等）。"
+    PreferencesChartsConversionFFmpegArgs -> "FFmpeg 参数（除输入和输出）"
     PreferencesKeymap -> "键位映射"
     PreferencesKeymapDescription -> "编辑键盘/鼠标操作的键位映射。"
     PreferencesKeymapKeyAction -> "键盘操作"

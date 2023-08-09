@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.util
 
+import com.sdercolin.vlabeler.env.Log
 import java.awt.Desktop
 import java.net.URI
 
@@ -12,5 +13,6 @@ object Url {
     const val EntrySelectorScriptDocument =
         "https://github.com/sdercolin/vlabeler/blob/main/readme/plugin-entry-selector-script.md"
 
-    fun open(url: String) = Desktop.getDesktop().browse(URI(url))
+    fun open(url: String) = runCatching { Desktop.getDesktop().browse(URI(url)) }
+        .onFailure { Log.error(it) }
 }
