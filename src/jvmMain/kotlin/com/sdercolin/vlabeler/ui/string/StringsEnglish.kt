@@ -603,4 +603,8 @@ fun Strings.en(): String = when (this) {
     EntrySampleSyncerModuleTextFinished -> "Handling subprojects %d/%d... Done"
     EntrySampleSyncerSampleText -> "Handling sample files %d/%d..."
     EntrySampleSyncerSampleTextFinished -> "Handling sample files %d/%d... Done"
+    FFmpegConverterException ->
+        "Failed to load the sample file. To load formats other than wav, " +
+            "please install FFmpeg and configure its path in `Preferences` -> `Charts` -> `Audio Format Support`. " +
+            "If you have already installed and configured FFmpeg, please check the log for more details."
 }

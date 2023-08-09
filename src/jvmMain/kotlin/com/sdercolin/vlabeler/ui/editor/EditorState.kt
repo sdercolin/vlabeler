@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import com.sdercolin.vlabeler.audio.conversion.WaveConverterException
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.MissingSampleDirectoryException
@@ -181,6 +182,9 @@ class EditorState(
             sampleInfoState.value = sampleInfo
             sampleInfo.getOrElse {
                 Log.error(it)
+                if (it is WaveConverterException) {
+                    appState.showError(it, null)
+                }
                 null
             }?.let {
                 val updated = chartStore.prepareForNewLoading(project, appConf, it)

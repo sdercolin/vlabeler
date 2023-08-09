@@ -7,6 +7,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.util.findUnusedFile
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.stringifyJson
 import java.io.File
 
 /**
@@ -32,12 +33,14 @@ object ConvertedAudioRepository {
         file: File,
         moduleName: String,
         converter: WaveConverter,
-        appConf: AppConf
+        appConf: AppConf,
     ): File {
         val outputFile = getConvertedWavFile(project, moduleName, file)
+        outputFile.parentFile?.mkdirs()
         converter.convert(file, outputFile, appConf.painter.conversion)
         cacheMap[project.getSampleFilePath(file)] =
             outputFile.toRelativeString(cacheDirectory).replace(File.separatorChar, '/')
+        cacheMapFile.writeText(cacheMap.stringifyJson())
         return outputFile
     }
 

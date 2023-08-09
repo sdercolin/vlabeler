@@ -568,5 +568,9 @@ fun Strings.ja(): String? = when (this) {
     EntrySampleSyncerModuleTextFinished -> "サブプロジェクトを処理中 %d/%d... 完了"
     EntrySampleSyncerSampleText -> "サンプルファイルを処理中 %d/%d..."
     EntrySampleSyncerSampleTextFinished -> "サンプルファイルを処理中 %d/%d... 完了"
+    FFmpegConverterException ->
+        "サンプルファイルの読み込みに失敗しました。wav 以外のフォーマットを使用している場合は、" +
+            "FFmpeg をインストールし、`設定` -> `グラフ` -> `オーディオフォーマットのサポート`でパスを設定してください。" +
+            "すでに FFmpeg をインストールして設定している場合は、ログを確認してください。"
     else -> null
 }

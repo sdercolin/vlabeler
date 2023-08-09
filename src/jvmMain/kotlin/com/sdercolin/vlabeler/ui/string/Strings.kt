@@ -512,6 +512,7 @@ enum class Strings {
     EntrySampleSyncerModuleTextFinished,
     EntrySampleSyncerSampleText,
     EntrySampleSyncerSampleTextFinished,
+    FFmpegConverterException,
     ;
 
     fun get(language: Language): String = when (language) {

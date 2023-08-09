@@ -9,8 +9,6 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Plugin
-import com.sdercolin.vlabeler.repository.ChartRepository
-import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction

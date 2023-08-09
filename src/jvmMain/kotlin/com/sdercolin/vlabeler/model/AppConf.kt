@@ -278,7 +278,6 @@ data class AppConf(
         }
     }
 
-
     /**
      * Configurations about editor behaviors.
      *

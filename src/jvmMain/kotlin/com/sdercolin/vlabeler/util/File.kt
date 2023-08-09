@@ -53,17 +53,19 @@ fun File.readTextByEncoding(encoding: String?): String = readText(
  * @param existingAbsolutePaths The set of existing absolute paths.
  */
 fun File.findUnusedFile(base: String, existingAbsolutePaths: Set<String>): File {
-    var result = base
-    while (existingAbsolutePaths.contains(resolve(result).absolutePath)) {
-        val firstPart = result.substringBeforeLast('.')
-        val lastPart = result.substringAfterLast('.')
+    val extension = base.substringAfterLast('.')
+    var nameResult = base.substringBeforeLast('.')
+    fun getResult() = nameResult + (if (extension.isEmpty()) "" else ".$extension")
+    while (existingAbsolutePaths.contains(resolve(getResult()).absolutePath)) {
+        val firstPart = nameResult.substringBeforeLast('.')
+        val lastPart = nameResult.substringAfterLast('.')
         if (lastPart.toIntOrNull() != null) {
-            result = firstPart + "." + lastPart.toInt().inc().toString()
+            nameResult = firstPart + "." + lastPart.toInt().inc().toString()
         } else {
-            result += ".1"
+            nameResult += ".1"
         }
     }
-    return resolve(result)
+    return resolve(getResult())
 }
 
 /**

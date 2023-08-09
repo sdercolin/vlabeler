@@ -89,7 +89,8 @@ data class SampleInfo(
             !correctPowerChannels ||
             algorithmVersion != WaveLoadingAlgorithmVersion ||
             !getFile(project).exists() ||
-            lastModified != sampleFile.lastModified()
+            lastModified != sampleFile.lastModified() ||
+            (convertedFile != null && !project.rootSampleDirectory.resolve(convertedFile).exists())
     }
 
     companion object {
@@ -191,7 +192,7 @@ data class SampleInfo(
             project: Project,
             moduleName: String,
             file: File,
-            appConf: AppConf
+            appConf: AppConf,
         ): File? {
             val converter = WaveConverter.converters.find { it.accept(file) } ?: return null
             Log.debug("Converting ${file.name} to wav using ${converter.javaClass.simpleName}")

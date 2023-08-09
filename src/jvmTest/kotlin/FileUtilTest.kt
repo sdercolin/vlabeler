@@ -23,25 +23,25 @@ class FileUtilTest {
         val baseName = "base.kt"
         val existingFilePath = "/tmp/base.kt"
         val unusedFilePath = root.findUnusedFile(baseName, setOf(existingFilePath)).absolutePath
-        assertEquals("/tmp/base.kt.1", unusedFilePath)
+        assertEquals("/tmp/base.1.kt", unusedFilePath)
     }
 
     @Test
     fun testFindUnusedFileExistingMultiple() {
         val root = File("/tmp")
         val baseName = "base.kt"
-        val existingFilePaths = setOf("/tmp/base.kt", "/tmp/base.kt.1", "/tmp/base.kt.2")
+        val existingFilePaths = setOf("/tmp/base.kt", "/tmp/base.1.kt", "/tmp/base.2.kt")
         val unusedFilePath = root.findUnusedFile(baseName, existingFilePaths).absolutePath
-        assertEquals("/tmp/base.kt.3", unusedFilePath)
+        assertEquals("/tmp/base.3.kt", unusedFilePath)
     }
 
     @Test
     fun testFindUnusedFileExistingMultipleWithGap() {
         val root = File("/tmp")
         val baseName = "base.kt"
-        val existingFilePaths = setOf("/tmp/base.kt", "/tmp/base.kt.1", "/tmp/base.kt.3")
+        val existingFilePaths = setOf("/tmp/base.kt", "/tmp/base.1.kt", "/tmp/base.3.kt")
         val unusedFilePath = root.findUnusedFile(baseName, existingFilePaths).absolutePath
-        assertEquals("/tmp/base.kt.2", unusedFilePath)
+        assertEquals("/tmp/base.2.kt", unusedFilePath)
     }
 
     @Test

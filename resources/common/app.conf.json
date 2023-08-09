@@ -25,7 +25,24 @@
       "maxFrequency": 20000,
       "minIntensity": -20,
       "maxIntensity": 55,
-      "colorPalette": "Plain"
+      "colorPalette": "Plain",
+      "useHighAlphaContrast": true
+    },
+    "power": {
+      "enabled": false,
+      "mergeChannels": true,
+      "heightWeight": 0.5,
+      "unitSize": 60,
+      "windowSize": 300,
+      "minPower": -48.0,
+      "maxPower": 0.0,
+      "intensityAccuracy": 200,
+      "color": "#FFF2F2F2",
+      "backgroundColor": "#00000000"
+    },
+    "conversion": {
+      "ffmpegPath": "ffmpeg",
+      "ffmpegArgs": "-acodec pcm_s16le -ac 1 -ar 44100"
     }
   },
   "editor": {
