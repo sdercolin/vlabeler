@@ -225,14 +225,14 @@ enum class KeyAction(
         null,
         true,
     ),
-    NavigateJumpToEntry(
-        listOf(Strings.MenuNavigate, Strings.MenuNavigateJumpToEntry),
-        KeySet(Key.G, setOf(Key.Ctrl)),
-        true,
-    ),
     NavigatePreviousModule(
         listOf(Strings.MenuNavigate, Strings.MenuNavigatePreviousModule),
         null,
+        true,
+    ),
+    NavigateJumpToEntry(
+        listOf(Strings.MenuNavigate, Strings.MenuNavigateJumpToEntry),
+        KeySet(Key.G, setOf(Key.Ctrl)),
         true,
     ),
     NavigateScrollFit(
