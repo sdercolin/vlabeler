@@ -48,6 +48,7 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCanvas
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerLabels
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerPointEventContainer
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.rememberMarkerState
+import com.sdercolin.vlabeler.ui.editor.labeler.parallel.ParallelLabelCanvas
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.ui.theme.DarkYellow
