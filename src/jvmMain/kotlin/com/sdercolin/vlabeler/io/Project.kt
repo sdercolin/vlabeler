@@ -74,12 +74,13 @@ suspend fun awaitLoadProject(
         return
     }
     appState.showProgress()
-    val project = runCatching { file.readText().parseJson<Project>() }
+    val originalProject = runCatching { file.readText().parseJson<Project>() }
         .getOrElse {
             appState.showError(ProjectParseException(it))
             appState.hideProgress()
             return
         }
+    val project = originalProject.copy(labelerConf = originalProject.labelerConf.migrate())
     val existingLabelerConf = appState.availableLabelerConfs.find { it.name == project.labelerConf.name }
     val originalLabelerConf = when {
         existingLabelerConf == null -> {

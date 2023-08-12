@@ -501,6 +501,8 @@ data class LabelerConf(
                         isEditable = false,
                     )
                 },
+                extraFieldNames = null,
+                defaultExtras = null,
             )
         } else {
             return this

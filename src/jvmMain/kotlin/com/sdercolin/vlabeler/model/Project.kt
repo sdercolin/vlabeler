@@ -246,7 +246,7 @@ fun LabelerConf.injectLabelerParams(paramMap: ParamMap): LabelerConf {
         js.setJson("value", paramMap.resolveItem(def.parameter.name, project = null, js = js))
         def.injector.orEmpty().joinToString("\n").let { js.eval(it) }
     }
-    val labelerResult = js.getJson<LabelerConf>("labeler")
+    val labelerResult = js.getJson<LabelerConf>("labeler").migrate()
     js.close()
 
     listOf(
