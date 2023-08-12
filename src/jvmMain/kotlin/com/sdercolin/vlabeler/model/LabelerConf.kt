@@ -3,10 +3,12 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.LabelerConf.Field
 import com.sdercolin.vlabeler.model.LabelerConf.ParameterHolder
 import com.sdercolin.vlabeler.model.LabelerConf.ProjectConstructor
 import com.sdercolin.vlabeler.model.LabelerConf.Property
+import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.ui.string.toLocalized
 import com.sdercolin.vlabeler.util.CustomLabelerDir
@@ -80,9 +82,9 @@ data class LabelerConf(
     val continuous: Boolean = false,
     val allowSameNameEntry: Boolean = false,
     val defaultValues: List<Float>,
-    val defaultExtras: List<String>,
+    val defaultExtras: List<String>? = null,
     val fields: List<Field> = listOf(),
-    val extraFieldNames: List<String> = listOf(),
+    val extraFieldNames: List<String>? = null,
     val lockedDrag: LockedDrag = LockedDrag(),
     val overflowBeforeStart: PointOverflow = PointOverflow.Error,
     val overflowAfterEnd: PointOverflow = PointOverflow.Error,
@@ -92,6 +94,7 @@ data class LabelerConf(
     val writer: Writer,
     val parameters: List<ParameterHolder> = listOf(),
     val projectConstructor: ProjectConstructor? = null,
+    val extraProperties: List<ExtraProperty> = listOf(),
 ) : BasePlugin {
 
     private val fileName get() = "$name.$LabelerFileExtension"
@@ -275,7 +278,7 @@ data class LabelerConf(
          * - {end}: [Entry.end]
          * - {[Property.name]}: Evaluated value of a [Property].
          * - {[Field.name]}: value in [Entry.points] with the same index of the corresponding [Field].
-         * - {<item in [extraFieldNames]>}: value saved in [Parser].
+         * - {<item in [extraProperties]>}: value saved in [Parser].
          *
          * If a name is shared by a [Property] and [Field], it's considered as [Property].
          *
@@ -358,6 +361,7 @@ data class LabelerConf(
      *       - size of [extraFieldNames]
      *       - size of [defaultExtras]
      *       - size of [defaultValues]
+     *       - size of [extraProperties]
      *       - [Field.name]s in [fields]
      *
      * @property changeable Whether the parameter is changeable after the project is created.
@@ -460,5 +464,46 @@ data class LabelerConf(
     companion object {
         const val LabelerFileExtension = "labeler.json"
         private const val LabelerSavedParamsFileExtension = ".labeler.param.json"
+    }
+
+    /**
+     * Definition of property of extra items.
+     *
+     * @property name Unique name of the property.
+     * @property default Default value of the property.
+     * @property displayedName Displayed name of the property in the UI (localized).
+     * @property isVisible Whether the property is visible in the UI.
+     * @property isEditable Whether the property is editable in the UI.
+     */
+    @Serializable
+    @Immutable
+    data class ExtraProperty(
+        val name: String,
+        val default: String,
+        val displayedName: LocalizedJsonString,
+        val isVisible: Boolean,
+        val isEditable: Boolean,
+    )
+
+    fun migrate(): LabelerConf {
+        if (extraProperties.isEmpty() && defaultExtras != null && extraFieldNames != null) {
+            // Add the extra properties by defaultExtras and extraFieldNames.
+            Log.info("Migrating extra properties of labeler $name")
+            return this.copy(
+                extraProperties = extraFieldNames.mapIndexed { index, extraFieldName ->
+                    ExtraProperty(
+                        name = extraFieldName,
+                        default = defaultExtras[index],
+                        displayedName = LocalizedJsonString(
+                            mapOf(Language.default.code to extraFieldName),
+                        ),
+                        isVisible = false,
+                        isEditable = false,
+                    )
+                },
+            )
+        } else {
+            return this
+        }
     }
 }

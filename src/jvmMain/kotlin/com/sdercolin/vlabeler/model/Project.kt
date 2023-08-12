@@ -208,7 +208,7 @@ private fun generateEntriesByPlugin(
             val entries = result.entries.map {
                 it.copy(
                     points = it.points.take(labelerConf.fields.count()),
-                    extras = it.extras.take(labelerConf.extraFieldNames.count()),
+                    extras = it.extras.take(labelerConf.extraProperties.count()),
                 )
             }
 
@@ -281,14 +281,18 @@ fun LabelerConf.injectLabelerParams(paramMap: ParamMap): LabelerConf {
         "defaultExtras",
         "fields",
         "extraFieldNames",
+        "extraProperties",
     ).forEach {
         val errorMessage = "Could not inject to change the size of a basic array of LabelerConf: $it"
         when (it) {
+            // TODO: whether check extraFieldNames and defaultExtras?
             "defaultValues" -> require(labelerResult.defaultValues.size == defaultValues.size) { errorMessage }
-            "defaultExtras" -> require(labelerResult.defaultExtras.size == defaultExtras.size) { errorMessage }
+            "defaultExtras" -> require(labelerResult.defaultExtras?.size == defaultExtras?.size) { errorMessage }
             "fields" -> require(labelerResult.fields.size == fields.size) { errorMessage }
             "extraFieldNames" ->
-                require(labelerResult.extraFieldNames.size == extraFieldNames.size) { errorMessage }
+                require(labelerResult.extraFieldNames?.size == extraFieldNames?.size) { errorMessage }
+            "extraProperties" ->
+                require(labelerResult.extraProperties.size == extraProperties.size) { errorMessage }
         }
     }
     require(labelerResult.fields.map { it.name } == fields.map { it.name }) {
