@@ -94,7 +94,7 @@ data class LabelerConf(
     val writer: Writer,
     val parameters: List<ParameterHolder> = listOf(),
     val projectConstructor: ProjectConstructor? = null,
-    val extraProperties: List<ExtraProperty> = listOf(),
+    val extraFields: List<ExtraField> = listOf(),
 ) : BasePlugin {
 
     private val fileName get() = "$name.$LabelerFileExtension"
@@ -278,7 +278,7 @@ data class LabelerConf(
          * - {end}: [Entry.end]
          * - {[Property.name]}: Evaluated value of a [Property].
          * - {[Field.name]}: value in [Entry.points] with the same index of the corresponding [Field].
-         * - {<item in [extraProperties]>}: value saved in [Parser].
+         * - {<item in [extraFields]>}: value saved in [Parser].
          *
          * If a name is shared by a [Property] and [Field], it's considered as [Property].
          *
@@ -358,10 +358,8 @@ data class LabelerConf(
      *       - [continuous]
      *       - [parameters]
      *       - size of [fields]
-     *       - size of [extraFieldNames]
-     *       - size of [defaultExtras]
      *       - size of [defaultValues]
-     *       - size of [extraProperties]
+     *       - size of [extraFields]
      *       - [Field.name]s in [fields]
      *
      * @property changeable Whether the parameter is changeable after the project is created.
@@ -477,7 +475,7 @@ data class LabelerConf(
      */
     @Serializable
     @Immutable
-    data class ExtraProperty(
+    data class ExtraField(
         val name: String,
         val default: String,
         val displayedName: LocalizedJsonString,
@@ -486,12 +484,12 @@ data class LabelerConf(
     )
 
     fun migrate(): LabelerConf {
-        if (extraProperties.isEmpty() && defaultExtras != null && extraFieldNames != null) {
+        if (extraFields.isEmpty() && defaultExtras != null && extraFieldNames != null) {
             // Add the extra properties by defaultExtras and extraFieldNames.
             Log.info("Migrating extra properties of labeler $name")
             return this.copy(
-                extraProperties = extraFieldNames.mapIndexed { index, extraFieldName ->
-                    ExtraProperty(
+                extraFields = extraFieldNames.mapIndexed { index, extraFieldName ->
+                    ExtraField(
                         name = extraFieldName,
                         default = defaultExtras[index],
                         displayedName = LocalizedJsonString(

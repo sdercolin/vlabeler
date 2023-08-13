@@ -308,8 +308,8 @@ data class Module(
             require(it.points.size == labelerConf.fields.size) {
                 "Point size doesn't match in entry: $it. Required point size = ${labelerConf.fields.size}"
             }
-            require(it.extras.size == labelerConf.extraProperties.size) {
-                "Extra size doesn't match in entry: $it. Required extra size = ${labelerConf.extraProperties.size}"
+            require(it.extras.size == labelerConf.extraFields.size) {
+                "Extra size doesn't match in entry: $it. Required extra size = ${labelerConf.extraFields.size}"
             }
 
             var entryResult = it

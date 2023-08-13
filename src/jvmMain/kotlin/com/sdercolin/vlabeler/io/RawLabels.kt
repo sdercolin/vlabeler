@@ -210,7 +210,7 @@ private fun LabelerConf.getFieldMap(entry: Entry) =
         field.name to entry.points[index]
     }.toMap()
 
-private fun LabelerConf.getExtraMap(entry: Entry) = extraProperties.mapIndexed { index, it ->
+private fun LabelerConf.getExtraMap(entry: Entry) = extraFields.mapIndexed { index, it ->
     it.name to entry.extras[index]
 }.toMap()
 
