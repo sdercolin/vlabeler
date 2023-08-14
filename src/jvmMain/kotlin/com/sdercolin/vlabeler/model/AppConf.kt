@@ -304,6 +304,8 @@ data class AppConf(
         val showStar: Boolean = DefaultShowStar,
         val showTag: Boolean = DefaultShowTag,
         val continuousLabelNames: ContinuousLabelNames = ContinuousLabelNames(),
+        val postEditNext: PostEditAction = PostEditAction.DefaultNext,
+        val postEditDone: PostEditAction = PostEditAction.DefaultDone,
     ) {
 
         /**
@@ -313,13 +315,13 @@ data class AppConf(
         @Immutable
         enum class LockedDrag(override val stringKey: Strings) : LocalizedText {
             @SerialName("Labeler")
-            UseLabeler(Strings.PreferencesEditorPlayerLockedDragUseLabeler),
+            UseLabeler(Strings.PreferencesEditorLockedDragUseLabeler),
 
             @SerialName("Start")
-            UseStart(Strings.PreferencesEditorPlayerLockedDragUseStart),
+            UseStart(Strings.PreferencesEditorLockedDragUseStart),
 
             @SerialName("Never")
-            Never(Strings.PreferencesEditorPlayerLockedDragNever),
+            Never(Strings.PreferencesEditorLockedDragNever),
         }
 
         companion object {
@@ -391,6 +393,59 @@ data class AppConf(
             const val DefaultColor = "#E89F17"
             val DefaultSize = FontSize.Small
             val DefaultPosition = ViewCornerPosition.TopRight
+        }
+    }
+
+    /**
+     * Action config after editing.
+     * @param enabled True if the action is enabled.
+     * @param field Trigger field of the action.
+     * @param useDragging True if the action is conducted when dragging.
+     * @param useCursorSet True if the action is conducted when set by cursor.
+     */
+    @Serializable
+    @Immutable
+    data class PostEditAction(
+        val enabled: Boolean,
+        val field: TriggerField,
+        val useDragging: Boolean,
+        val useCursorSet: Boolean,
+    ) {
+
+        /**
+         * Trigger field of the [PostEditAction].
+         */
+        @Serializable
+        @Immutable
+        enum class TriggerField(override val stringKey: Strings) : LocalizedText {
+            @SerialName("Labeler")
+            UseLabeler(Strings.PreferencesEditorPostEditActionTriggerUseLabeler),
+
+            @SerialName("Start")
+            UseStart(Strings.PreferencesEditorPostEditActionTriggerUseStart),
+
+            @SerialName("End")
+            UseEnd(Strings.PreferencesEditorPostEditActionTriggerUseEnd),
+
+            @SerialName("Any")
+            UseAny(Strings.PreferencesEditorPostEditActionTriggerUseAny),
+        }
+
+        companion object {
+
+            val DefaultNext = PostEditAction(
+                enabled = false,
+                field = TriggerField.UseLabeler,
+                useDragging = true,
+                useCursorSet = true,
+            )
+
+            val DefaultDone = PostEditAction(
+                enabled = true,
+                field = TriggerField.UseAny,
+                useDragging = true,
+                useCursorSet = true,
+            )
         }
     }
 

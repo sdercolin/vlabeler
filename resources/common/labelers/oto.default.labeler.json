@@ -1,6 +1,6 @@
 {
   "name": "oto-plus.default",
-  "version": 22,
+  "version": 23,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -47,7 +47,8 @@
           "max": null
         }
       ],
-      "shortcutIndex": 3
+      "shortcutIndex": 3,
+      "triggerPostEditDone": true
     },
     {
       "name": "preu",
@@ -66,7 +67,8 @@
           "max": 0
         }
       ],
-      "shortcutIndex": 2
+      "shortcutIndex": 2,
+      "triggerPostEditDone": true
     },
     {
       "name": "ovl",
@@ -85,7 +87,8 @@
           "max": 0
         }
       ],
-      "shortcutIndex": 1
+      "shortcutIndex": 1,
+      "triggerPostEditDone": true
     },
     {
       "name": "left",
@@ -111,6 +114,10 @@
   },
   "overflowBeforeStart": "AdjustPoint",
   "overflowAfterEnd": "AdjustBorder",
+  "postEditDoneTrigger": {
+    "useStart": true,
+    "useEnd": true
+  },
   "properties": [
     {
       "name": "left",
@@ -347,6 +354,182 @@
         "if (value === 'Left') {",
         "    labeler.lockedDrag.useDragBase = false",
         "    labeler.lockedDrag.useStart = true",
+        "}"
+      ],
+      "changeable": true
+    },
+    {
+      "parameter": {
+        "type": "enum",
+        "name": "postEditNextTrigger",
+        "label": {
+          "en": "Go to next entry after editing",
+          "zh": "编辑后跳转到下一个条目",
+          "ja": "編集後に次のエントリーに移動する"
+        },
+        "defaultValue": "Disable",
+        "options": [
+          "Disable",
+          "Left",
+          "Overlap",
+          "Preutterance",
+          "Fixed",
+          "Cutoff",
+          "Any"
+        ],
+        "optionDisplayedNames": [
+          {
+            "en": "Disable",
+            "zh": "禁用",
+            "ja": "無効"
+          },
+          {
+            "en": "Left",
+            "zh": "左边界",
+            "ja": "左ブランク"
+          },
+          {
+            "en": "Overlap",
+            "zh": "重叠",
+            "ja": "オーバーラップ"
+          },
+          {
+            "en": "Preutterance",
+            "zh": "先行发声",
+            "ja": "先行発声"
+          },
+          {
+            "en": "Fixed",
+            "zh": "固定",
+            "ja": "固定範囲"
+          },
+          {
+            "en": "Cutoff",
+            "zh": "右边界",
+            "ja": "右ブランク"
+          },
+          {
+            "en": "Any",
+            "zh": "任意",
+            "ja": "任意"
+          }
+        ]
+      },
+      "injector": [
+        "if (value === 'Left') {",
+        "    labeler.postEditNextTrigger = { 'useStart': true }",
+        "}",
+        "if (value === 'Fixed') {",
+        "    labeler.fields[0].triggerPostEditNext = true",
+        "}",
+        "if (value === 'Preutterance') {",
+        "    labeler.fields[1].triggerPostEditNext = true",
+        "}",
+        "if (value === 'Overlap') {",
+        "    labeler.fields[2].triggerPostEditNext = true",
+        "}",
+        "if (value === 'Cutoff') {",
+        "    labeler.postEditNextTrigger = { 'useEnd': true }",
+        "}",
+        "if (value === 'Any') {",
+        "    labeler.postEditNextTrigger = { 'useStart': true, 'useEnd': true }",
+        "    labeler.fields[0].triggerPostEditNext = true",
+        "    labeler.fields[1].triggerPostEditNext = true",
+        "    labeler.fields[2].triggerPostEditNext = true",
+        "}"
+      ],
+      "changeable": true
+    },
+    {
+      "parameter": {
+        "type": "enum",
+        "name": "postEditDoneTrigger",
+        "label": {
+          "en": "Mark as done entry after editing",
+          "zh": "编辑后标记为已完成条目",
+          "ja": "編集後にエントリーを\"完了\"にする"
+        },
+        "defaultValue": "Any",
+        "options": [
+          "Disable",
+          "Left",
+          "Overlap",
+          "Preutterance",
+          "Fixed",
+          "Cutoff",
+          "Any"
+        ],
+        "optionDisplayedNames": [
+          {
+            "en": "Disable",
+            "zh": "禁用",
+            "ja": "無効"
+          },
+          {
+            "en": "Left",
+            "zh": "左边界",
+            "ja": "左ブランク"
+          },
+          {
+            "en": "Overlap",
+            "zh": "重叠",
+            "ja": "オーバーラップ"
+          },
+          {
+            "en": "Preutterance",
+            "zh": "先行发声",
+            "ja": "先行発声"
+          },
+          {
+            "en": "Fixed",
+            "zh": "固定",
+            "ja": "固定範囲"
+          },
+          {
+            "en": "Cutoff",
+            "zh": "右边界",
+            "ja": "右ブランク"
+          },
+          {
+            "en": "Any",
+            "zh": "任意",
+            "ja": "任意"
+          }
+        ]
+      },
+      "injector": [
+        "if (value === 'Disable') {",
+        "    labeler.postEditDoneTrigger = {}",
+        "    labeler.fields[0].triggerPostEditDone = false",
+        "    labeler.fields[1].triggerPostEditDone = false",
+        "    labeler.fields[2].triggerPostEditDone = false",
+        "}",
+        "if (value === 'Left') {",
+        "    labeler.postEditDoneTrigger = { 'useStart': true }",
+        "    labeler.fields[0].triggerPostEditDone = false",
+        "    labeler.fields[1].triggerPostEditDone = false",
+        "    labeler.fields[2].triggerPostEditDone = false",
+        "}",
+        "if (value === 'Fixed') {",
+        "    labeler.postEditDoneTrigger = {}",
+        "    labeler.fields[1].triggerPostEditDone = false",
+        "    labeler.fields[2].triggerPostEditDone = false",
+        "}",
+        "if (value === 'Preutterance') {",
+        "    labeler.postEditDoneTrigger = {}",
+        "    labeler.fields[0].triggerPostEditDone = false",
+        "    labeler.fields[2].triggerPostEditDone = false",
+        "}",
+        "if (value === 'Overlap') {",
+        "    labeler.postEditDoneTrigger = {}",
+        "    labeler.fields[0].triggerPostEditDone = false",
+        "    labeler.fields[1].triggerPostEditDone = false",
+        "}",
+        "if (value === 'Cutoff') {",
+        "    labeler.postEditDoneTrigger = { 'useEnd': true }",
+        "    labeler.fields[0].triggerPostEditDone = false",
+        "    labeler.fields[1].triggerPostEditDone = false",
+        "    labeler.fields[2].triggerPostEditDone = false",
         "}"
       ],
       "changeable": true

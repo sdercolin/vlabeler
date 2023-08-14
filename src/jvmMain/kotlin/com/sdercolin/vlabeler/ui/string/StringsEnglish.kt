@@ -413,17 +413,17 @@ fun Strings.en(): String = when (this) {
     PreferencesEditor -> "Editor"
     PreferencesEditorDescription -> "Customize the editor's appearance and behavior."
     PreferencesEditorPlayerCursorColor -> "Player cursor color"
-    PreferencesEditorPlayerLockedDrag -> "Fixed-drag"
-    PreferencesEditorPlayerLockedDragDescription ->
+    PreferencesEditorLockedDrag -> "Fixed-drag"
+    PreferencesEditorLockedDragDescription ->
         "Select a condition to enable fixed-drag while you move " +
             "the parameter lines.\n" +
             "When it is enabled, the other parameter lines will be moved accordingly to " +
             "keep relative positions to the parameter you are moving."
-    PreferencesEditorPlayerLockedDragUseLabeler -> "Use settings defined by the labeler"
-    PreferencesEditorPlayerLockedDragUseStart -> "Fixed-drag at the entry's start"
-    PreferencesEditorPlayerLockedDragNever -> "Never do fixed-drag"
-    PreferencesEditorPlayerLockedSettingParameterWithCursor -> "Apply fixed-drag with cursor setting"
-    PreferencesEditorPlayerLockedSettingParameterWithCursorDescription ->
+    PreferencesEditorLockedDragUseLabeler -> "Use settings defined by the labeler"
+    PreferencesEditorLockedDragUseStart -> "Fixed-drag at the start of entry"
+    PreferencesEditorLockedDragNever -> "Never do fixed-drag"
+    PreferencesEditorLockedSettingParameterWithCursor -> "Apply fixed-drag with cursor setting"
+    PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "Apply the fixed-drag setting above also when " +
             "setting the parameters with \"Set Parameter To Cursor Position\" key actions"
     PreferencesEditorNotes -> "Notes"
@@ -434,6 +434,21 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorAutoDone -> "Automatically set edited entries as \"Done\""
     PreferencesEditorShowStarred -> "Display \"Starred\" status"
     PreferencesEditorShowTag -> "Display tags"
+    PreferencesEditorPostEditAction -> "Post edit actions"
+    PreferencesEditorPostEditActionDescription -> "Define actions to be conducted after editing the entry."
+    PreferencesEditorPostEditActionDone -> "Automatically set edited entries as \"Done\" after editing"
+    PreferencesEditorPostEditActionNext -> "Automatically go to next entry after editing"
+    PreferencesEditorPostEditActionEnabled -> "Enabled"
+    PreferencesEditorPostEditActionTrigger -> "Parameter(s) to trigger the action"
+    PreferencesEditorPostEditActionTriggerUseLabeler -> "Use settings defined by the labeler"
+    PreferencesEditorPostEditActionTriggerUseStart -> "Start of entry"
+    PreferencesEditorPostEditActionTriggerUseEnd -> "End of entry"
+    PreferencesEditorPostEditActionTriggerUseAny -> "Any parameter"
+    PreferencesEditorPostEditActionUseDragging -> "Trigger at dragging"
+    PreferencesEditorPostEditActionUseDraggingDescription -> "Trigger the action after dragging the parameter line(s)."
+    PreferencesEditorPostEditActionUseCursorSet -> "Trigger at \"Set Parameter To Cursor Position\""
+    PreferencesEditorPostEditActionUseCursorSetDescription ->
+        "Trigger the action after setting the parameter(s) with \"Set Parameter To Cursor Position\" key actions."
     PreferencesEditorScissors -> "Scissors"
     PreferencesEditorScissorsDescription -> "Customize appearance and behavior of the scissors tool."
     PreferencesEditorScissorsColor -> "Color"

@@ -552,7 +552,13 @@ object PreferencesPages {
     object Editor : PreferencesPage(Strings.PreferencesEditor, Strings.PreferencesEditorDescription) {
 
         override val children: List<PreferencesPage>
-            get() = listOf(EditorScissors, EditorAutoScroll, EditorNotes, EditorContinuousLabelNames)
+            get() = listOf(
+                EditorScissors,
+                EditorAutoScroll,
+                EditorNotes,
+                EditorContinuousLabelNames,
+                EditorPostEditAction,
+            )
 
         override val content: List<PreferencesGroup>
             get() = buildPageContent {
@@ -561,8 +567,8 @@ object PreferencesPages {
                     updater = { copy(editor = it) },
                 ) {
                     selection(
-                        title = Strings.PreferencesEditorPlayerLockedDrag,
-                        description = Strings.PreferencesEditorPlayerLockedDragDescription,
+                        title = Strings.PreferencesEditorLockedDrag,
+                        description = Strings.PreferencesEditorLockedDragDescription,
                         columnStyle = true,
                         defaultValue = AppConf.Editor.DefaultLockedDrag,
                         select = { it.lockedDrag },
@@ -570,8 +576,8 @@ object PreferencesPages {
                         options = AppConf.Editor.LockedDrag.values(),
                     )
                     switch(
-                        title = Strings.PreferencesEditorPlayerLockedSettingParameterWithCursor,
-                        description = Strings.PreferencesEditorPlayerLockedSettingParameterWithCursorDescription,
+                        title = Strings.PreferencesEditorLockedSettingParameterWithCursor,
+                        description = Strings.PreferencesEditorLockedSettingParameterWithCursorDescription,
                         defaultValue = AppConf.Editor.DefaultLockedSettingParameterWithCursor,
                         select = { it.lockedSettingParameterWithCursor },
                         update = { copy(lockedSettingParameterWithCursor = it) },
@@ -668,6 +674,89 @@ object PreferencesPages {
                         select = { it.showTag },
                         update = { copy(showTag = it) },
                     )
+                }
+            }
+    }
+
+    object EditorPostEditAction : PreferencesPage(
+        Strings.PreferencesEditorPostEditAction,
+        Strings.PreferencesEditorPostEditActionDescription,
+    ) {
+        override val content: List<PreferencesGroup>
+            get() = buildPageContent {
+                group(Strings.PreferencesEditorPostEditActionDone) {
+                    withContext(
+                        selector = { it.editor.postEditDone },
+                        updater = { copy(editor = editor.copy(postEditDone = it)) },
+                    ) {
+                        switch(
+                            title = Strings.PreferencesEditorPostEditActionEnabled,
+                            defaultValue = AppConf.PostEditAction.DefaultDone.enabled,
+                            select = { it.enabled },
+                            update = { copy(enabled = it) },
+                        )
+                        selection(
+                            title = Strings.PreferencesEditorPostEditActionTrigger,
+                            defaultValue = AppConf.PostEditAction.DefaultDone.field,
+                            options = AppConf.PostEditAction.TriggerField.values(),
+                            select = { it.field },
+                            update = { copy(field = it) },
+                            enabled = { it.enabled },
+                        )
+                        switch(
+                            title = Strings.PreferencesEditorPostEditActionUseDragging,
+                            description = Strings.PreferencesEditorPostEditActionUseDraggingDescription,
+                            defaultValue = AppConf.PostEditAction.DefaultDone.useDragging,
+                            select = { it.useDragging },
+                            update = { copy(useDragging = it) },
+                            enabled = { it.enabled },
+                        )
+                        switch(
+                            title = Strings.PreferencesEditorPostEditActionUseCursorSet,
+                            description = Strings.PreferencesEditorPostEditActionUseCursorSetDescription,
+                            defaultValue = AppConf.PostEditAction.DefaultDone.useCursorSet,
+                            select = { it.useCursorSet },
+                            update = { copy(useCursorSet = it) },
+                            enabled = { it.enabled },
+                        )
+                    }
+                }
+                group(Strings.PreferencesEditorPostEditActionNext) {
+                    withContext(
+                        selector = { it.editor.postEditNext },
+                        updater = { copy(editor = editor.copy(postEditNext = it)) },
+                    ) {
+                        switch(
+                            title = Strings.PreferencesEditorPostEditActionEnabled,
+                            defaultValue = AppConf.PostEditAction.DefaultNext.enabled,
+                            select = { it.enabled },
+                            update = { copy(enabled = it) },
+                        )
+                        selection(
+                            title = Strings.PreferencesEditorPostEditActionTrigger,
+                            defaultValue = AppConf.PostEditAction.DefaultNext.field,
+                            options = AppConf.PostEditAction.TriggerField.values(),
+                            select = { it.field },
+                            update = { copy(field = it) },
+                            enabled = { it.enabled },
+                        )
+                        switch(
+                            title = Strings.PreferencesEditorPostEditActionUseDragging,
+                            description = Strings.PreferencesEditorPostEditActionUseDraggingDescription,
+                            defaultValue = AppConf.PostEditAction.DefaultNext.useDragging,
+                            select = { it.useDragging },
+                            update = { copy(useDragging = it) },
+                            enabled = { it.enabled },
+                        )
+                        switch(
+                            title = Strings.PreferencesEditorPostEditActionUseCursorSet,
+                            description = Strings.PreferencesEditorPostEditActionUseCursorSetDescription,
+                            defaultValue = AppConf.PostEditAction.DefaultNext.useCursorSet,
+                            select = { it.useCursorSet },
+                            update = { copy(useCursorSet = it) },
+                            enabled = { it.enabled },
+                        )
+                    }
                 }
             }
     }

@@ -56,6 +56,8 @@ import java.io.File
  * @property lockedDrag Defines when to use locked dragging (all parameters will move with dragged one).
  * @property overflowBeforeStart Action taken when there are points before "start".
  * @property overflowAfterEnd Action taken when there are points after "end".
+ * @property postEditNextTrigger Trigger settings of `Go to next entry after editing` on start and end.
+ * @property postEditDoneTrigger Trigger settings of `Mark as done after editing` on start and end.
  * @property decimalDigit Decimal digit count used in [properties] and [writer].
  * @property properties Properties that are used in the following procedures. See [Property].
  * @property parser Defines how data from the original label format are parsed.
@@ -86,6 +88,8 @@ data class LabelerConf(
     val lockedDrag: LockedDrag = LockedDrag(),
     val overflowBeforeStart: PointOverflow = PointOverflow.Error,
     val overflowAfterEnd: PointOverflow = PointOverflow.Error,
+    val postEditNextTrigger: PostEditTrigger = PostEditTrigger(),
+    val postEditDoneTrigger: PostEditTrigger = PostEditTrigger(),
     val decimalDigit: Int? = 2,
     val properties: List<Property> = listOf(),
     val parser: Parser,
@@ -134,6 +138,8 @@ data class LabelerConf(
      * @property replaceEnd Set to true if this field should replace "end" when displayed. In this case, other fields
      *     can be set larger than the replaced "end", and the original [Entry.end] will be automatically set to the
      *     maximum value of all the fields. Cannot be used when [continuous] is true.
+     * @property triggerPostEditNext True if `Go to next entry` should be triggered when this field is edited.
+     * @property triggerPostEditDone True if `Mark as done` should be triggered when this field is edited.
      */
     @Serializable
     @Immutable
@@ -148,6 +154,8 @@ data class LabelerConf(
         val shortcutIndex: Int? = null,
         val replaceStart: Boolean = false,
         val replaceEnd: Boolean = false,
+        val triggerPostEditNext: Boolean = false,
+        val triggerPostEditDone: Boolean = false,
     )
 
     /**
@@ -175,6 +183,17 @@ data class LabelerConf(
     data class LockedDrag(
         val useDragBase: Boolean = false,
         val useStart: Boolean = false,
+    )
+
+    /**
+     * Trigger settings of post edit actions on start and end.
+     * For triggering with fields, see [Field.triggerPostEditNext] and [Field.triggerPostEditDone].
+     */
+    @Serializable
+    @Immutable
+    data class PostEditTrigger(
+        val useStart: Boolean = false,
+        val userEnd: Boolean = false,
     )
 
     /**
