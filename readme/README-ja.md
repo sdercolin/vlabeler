@@ -194,6 +194,14 @@ macOS を使用している場合、下記の `Ctrl` は `Command` に置き換�
 - クリック: エントリの名前を変更します
 - ロングクリック: エントリに移動
 
+## オーディオフォーマットのサポート
+
+より多くの音声フォーマットをサポートするには、`ffmpeg` をインストールしてください。
+[公式サイト](https://ffmpeg.org/download.html)からダウンロードできます。
+その後、`設定` -> `環境設定` -> `グラフ` -> `オーディオフォーマットのサポート` で `ffmpeg` のパスを設定する必要があります。
+
+macOS/Linux の場合、`ffmpeg` を `bin` またはシステムパスにインストールすることで、デフォルトのパス `ffmpeg` で動作します。
+
 ## ビデオ表示
 
 サンプルファイルと同じファイル名（拡張子を除く）と長さのビデオファイルがある場合、編集時に再生できます。
@@ -292,19 +300,6 @@ aaa;name:bbb;sample:ccc;tag:ddd
 ### ハンドツール
 
 エディタ上でドラッグしてキャンバスをスクロールします。
-
-### Playback
-
-Use mouse click or drag to play a certain range of the current sample file.
-The following actions are available as default. You can change the key bindings
-in `Settings` -> `Prefereneces` -> `Keymaps` -> `Mouse click actions`.
-
-- Left click: play the audio from the clicked position until the end of the audio
-- Right click: play the audio from the clicked position until the end of the screen
-- `Shift` + left click: play the audio from the start of the file until the clicked position
-- `Shift` + right click: play the audio from the start of the screen until the clicked position
-- `Ctrl` + left click & drag: play the audio in the dragged range
-- `Ctrl` + `Shift` + left click & drag: play the audio in the dragged range repeatedly
 
 ### 再生ツール
 

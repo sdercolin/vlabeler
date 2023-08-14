@@ -345,6 +345,7 @@ fun Strings.ja(): String? = when (this) {
     PreferencesChartsPowerIntensityAccuracy -> "パワーの高さ（ピクセル）"
     PreferencesChartsPowerColor -> "パワーの色"
     PreferencesChartsPowerBackgroundColor -> "背景の色"
+    PreferencesChartsConversion -> "オーディオフォーマットのサポート"
     PreferencesChartsConversionDescription -> "wav 以外のオーディオフォーマットのサポートを設定します。"
     PreferencesChartsConversionFFmpegPath -> "FFmpeg 実行可能ファイルのパス"
     PreferencesChartsConversionFFmpegPathDescription ->
