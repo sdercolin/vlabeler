@@ -431,7 +431,6 @@ fun Strings.en(): String = when (this) {
         "Customize the editor's appearance and behavior about entry " +
             "notes (starred, done, tag)."
     PreferencesEditorShowDone -> "Display \"Done\" status"
-    PreferencesEditorAutoDone -> "Automatically set edited entries as \"Done\""
     PreferencesEditorShowStarred -> "Display \"Starred\" status"
     PreferencesEditorShowTag -> "Display tags"
     PreferencesEditorPostEditAction -> "Post edit actions"

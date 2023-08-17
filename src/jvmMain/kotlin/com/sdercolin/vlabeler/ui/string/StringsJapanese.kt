@@ -405,7 +405,6 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorNotes -> "備考"
     PreferencesEditorNotesDescription -> "エントリの備考（スターマーク、完了、タグ）に関する表示と動作をカスタマイズします。"
     PreferencesEditorShowDone -> "\"完了\"状態を表示"
-    PreferencesEditorAutoDone -> "自動的に編集されたエントリを\"完了\"に設定する"
     PreferencesEditorShowStarred -> "\"スターマーク\"状態を表示"
     PreferencesEditorShowTag -> "タグを表示"
     PreferencesEditorPostEditAction -> "編集後の動作"

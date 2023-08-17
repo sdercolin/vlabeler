@@ -387,7 +387,6 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorNotes -> "备注"
     PreferencesEditorNotesDescription -> "编辑与条目备注（星标，完成，标签）相关的外观与行为。 "
     PreferencesEditorShowDone -> "显示\"完成\"状态"
-    PreferencesEditorAutoDone -> "自动将已编辑的条目设置为\"已完成\""
     PreferencesEditorShowStarred -> "显示\"星标\"状态"
     PreferencesEditorShowTag -> "显示标签"
     PreferencesEditorPostEditAction -> "编辑后的行为"

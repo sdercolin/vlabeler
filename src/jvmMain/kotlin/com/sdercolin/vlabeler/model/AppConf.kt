@@ -285,7 +285,6 @@ data class AppConf(
      * @param scissorsActions Actions taken with a successful scissors click.
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted.
      * @param showDone When true, the done button/icon is shown in the editor and entry lists.
-     * @param autoDone When true, the editor is automatically setting "done" status of entries.
      * @param showStar When true, the star button/icon is shown in the editor and entry lists.
      * @param showTag When true, the tag or "New tag" button is shown in the editor and entry lists.
      * @param continuousLabelNames Appearance of the label names in the editor for continuous labelers.
@@ -300,7 +299,6 @@ data class AppConf(
         val lockedDrag: LockedDrag = DefaultLockedDrag,
         val lockedSettingParameterWithCursor: Boolean = DefaultLockedSettingParameterWithCursor,
         val showDone: Boolean = DefaultShowDone,
-        val autoDone: Boolean = DefaultAutoDone,
         val showStar: Boolean = DefaultShowStar,
         val showTag: Boolean = DefaultShowTag,
         val continuousLabelNames: ContinuousLabelNames = ContinuousLabelNames(),
@@ -330,7 +328,6 @@ data class AppConf(
             val DefaultLockedDrag = LockedDrag.UseLabeler
             const val DefaultLockedSettingParameterWithCursor = true
             const val DefaultShowDone = true
-            const val DefaultAutoDone = true
             const val DefaultShowStar = true
             const val DefaultShowTag = true
         }

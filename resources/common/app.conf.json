@@ -62,7 +62,6 @@
     "lockedDrag": "Labeler",
     "lockedSettingParameterWithCursor": true,
     "showDone": true,
-    "autoDone": true,
     "showStar": true,
     "showTag": true,
     "continuousLabelNames": {

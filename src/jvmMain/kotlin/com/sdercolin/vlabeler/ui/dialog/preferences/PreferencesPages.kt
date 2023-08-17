@@ -657,12 +657,6 @@ object PreferencesPages {
                         update = { copy(showDone = it) },
                     )
                     switch(
-                        title = Strings.PreferencesEditorAutoDone,
-                        defaultValue = AppConf.Editor.DefaultAutoDone,
-                        select = { it.autoDone },
-                        update = { copy(autoDone = it) },
-                    )
-                    switch(
                         title = Strings.PreferencesEditorShowStarred,
                         defaultValue = AppConf.Editor.DefaultShowStar,
                         select = { it.showStar },

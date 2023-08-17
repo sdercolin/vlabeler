@@ -362,7 +362,6 @@ enum class Strings {
     PreferencesEditorNotes,
     PreferencesEditorNotesDescription,
     PreferencesEditorShowDone,
-    PreferencesEditorAutoDone,
     PreferencesEditorShowStarred,
     PreferencesEditorShowTag,
     PreferencesEditorPostEditAction,
