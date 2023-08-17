@@ -433,7 +433,7 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorShowDone -> "Display \"Done\" status"
     PreferencesEditorShowStarred -> "Display \"Starred\" status"
     PreferencesEditorShowTag -> "Display tags"
-    PreferencesEditorPostEditAction -> "Post edit actions"
+    PreferencesEditorPostEditAction -> "Post-editing actions"
     PreferencesEditorPostEditActionDescription -> "Define actions to be conducted after editing the entry."
     PreferencesEditorPostEditActionDone -> "Set edited entries as \"Done\" after editing"
     PreferencesEditorPostEditActionNext -> "Go to next entry after editing"

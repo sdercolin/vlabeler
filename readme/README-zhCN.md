@@ -66,7 +66,7 @@ vLabeler 的许多行为都依赖于可定制的 `标注器`。
   如果您想编辑一个歌手声库下的多个 oto.ini 文件，请使用此标注器。
   请在创建项目时将 `采样目录`设置为歌手的根文件夹（通常包含一个 `character.txt` 文件）。
 
-#### 处理音频分割标注（连续编辑模式）
+#### 处理音频分割标注文件
 
 ![](nnsvs-singer.gif)
 
@@ -173,7 +173,12 @@ vLabeler 的许多行为都依赖于可定制的 `标注器`。
 
 您可以在 `设置` -> `偏好设置` -> `编辑器` -> `备注` 中设置隐藏您不需要使用的备注内容。
 
-当您编辑条目中的任何值时，默认情况下，该条目将自动被设为 `已完成` 状态。您可以在上述设置关闭这个功能。
+### 编辑后的操作
+
+您可以更改 `设置` -> `偏好设置` -> `编辑器` -> `编辑后的操作`，以在编辑条目后自动执行以下操作：
+
+- 转到下一个条目
+- 将编辑后的条目设置为 `完成`（默认启用）
 
 ### 快速启动批量编辑插件
 
@@ -182,7 +187,7 @@ vLabeler 的许多行为都依赖于可定制的 `标注器`。
 
 ## 多条目编辑模式
 
-对于采用[连续模式](#处理音频分割标注（连续编辑模式）)的标注器，你可以在单条目编辑模式和多条目编辑模式间切换。
+对于采用连续模式的标注器（[例](#处理音频分割标注文件)），你可以在单条目编辑模式和多条目编辑模式间切换。
 在多条目编辑模式下，同一采样文件中的互相连接的条目将会被全部显示在屏幕上。您不需切换条目就可以编辑它们。
 
 连续模式的编辑器默认启用多条目编辑模式。您可以点击底部栏中央的 `单/多条目编辑` 按钮来切换。
@@ -192,21 +197,12 @@ vLabeler 的许多行为都依赖于可定制的 `标注器`。
 - 点击：重命名条目
 - 长按：转到条目
 
-## Support other audio formats
-
-You can install `ffmpeg` to support more audio formats. You can download it from
-the [official website](https://ffmpeg.org/download.html).
-You need to then configure the path to the `ffmpeg` executable
-in `Settings` -> `Prefereneces` -> `Charts` -> `Audio Format Support`.
-
-For macOS/Linux, you can install `ffmpeg` into `bin` or your system path, so the default path `ffmpeg` works.
-
 ## 音频格式支持
 
 您可以安装 `ffmpeg` 来支持更多的音频格式。您可以从[官方网站](https://ffmpeg.org/download.html)下载它。
 您需要在 `设置` -> `偏好设置` -> `图表` -> `音频格式支持` 中配置 `ffmpeg` 可执行文件的路径。
 
-对于 macOS/Linux，您可以将 `ffmpeg` 安装到 `bin` 或系统 PATH 中，以使默认路径 `ffmpeg` 生效。 
+对于 macOS/Linux，您可以将 `ffmpeg` 安装到 `bin` 或系统 PATH 中，以使默认路径 `ffmpeg` 生效。
 
 ## 集成视频
 

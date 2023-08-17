@@ -67,7 +67,7 @@ For UTAU oto editing, there are two items in the built-in labeler list:
   Please set the singer's root folder (which usually contains a `character.txt` file) as the `Sample Directory` when you
   create the project.
 
-#### Working on audio labels (Continuous mode)
+#### Working on audio labels
 
 ![](readme/nnsvs-singer.gif)
 
@@ -180,8 +180,13 @@ Please also see the section of the [Playback tool](#playback) for more actions.
 You can change settings in `Settings` -> `Prefereneces` -> `Editor` -> `Notes` to hide the items that
 you don't need.
 
-The `Done` status is by default automatically set when you edit any values in an entry. You can disable this behavior in
-the settings too.
+### Post-editing actions
+
+You can change settings in `Settings` -> `Prefereneces` -> `Editor` -> `Post-editing actions` to automatically execute
+the following actions after editing entries:
+
+- Go to next entry
+- Set the edited entry as `Done` (enabled by default)
 
 ### Quickly launch batch edit plugins
 
@@ -190,7 +195,7 @@ the settings too.
 
 ## Multi-entry editing mode
 
-For labelers in [continuous mode](#working-on-audio-labels-continuous-mode), you can switch between the
+For labelers in continuous mode ([example](#working-on-audio-labels)), you can switch between the
 single entry editing mode and a multi-entry editing mode which shows and allows you to edit all the connected entries in
 the same sample file.
 
