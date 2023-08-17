@@ -69,6 +69,18 @@
       "color": "#E89F17",
       "size": "Small",
       "position": "TopRight"
+    },
+    "postEditNext": {
+      "enabled": false,
+      "field": "Labeler",
+      "useDragging": true,
+      "useCursorSet": true
+    },
+    "postEditDone": {
+      "enabled": true,
+      "field": "Any",
+      "useDragging": true,
+      "useCursorSet": true
     }
   },
   "view": {

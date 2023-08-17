@@ -431,6 +431,11 @@ data class AppConf(
             UseAny(Strings.PreferencesEditorPostEditActionTriggerUseAny),
         }
 
+        enum class Type {
+            Next,
+            Done
+        }
+
         companion object {
 
             val DefaultNext = PostEditAction(

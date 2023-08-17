@@ -16,12 +16,12 @@ import com.sdercolin.vlabeler.model.Module
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getChildren
-import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.savedMutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +43,7 @@ interface ProjectStore {
     fun editProject(editor: Project.() -> Project)
     fun updateProject(project: Project)
     fun updateProjectOnLoadedSample(sampleInfo: SampleInfo, moduleName: String)
-    fun editEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>)
+    fun editEntries(editions: List<Edition>)
     fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?)
     val canUndo: Boolean
     fun undo()
@@ -184,12 +184,34 @@ class ProjectStoreImpl(
         history.replaceTop(updated)
     }
 
-    override fun editEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>) = editProject {
-        updateCurrentModule {
-            updateEntries(editedEntries, labelerConf)
-                .runIf(appConf.value.editor.autoDone) {
-                    markEntriesAsDone(editedIndexes)
-                }
+    override fun editEntries(editions: List<Edition>) {
+        val previousProject = requireProject()
+        editProject {
+            val editedEntryMap = mutableMapOf<Int, IndexedEntry>()
+            editions.forEach {
+                editedEntryMap[it.index] = it.toIndexedEntry()
+            }
+            val editedEntries = editedEntryMap.values.toList().sortedBy { it.index }
+            updateCurrentModule {
+                updateEntries(editedEntries, labelerConf)
+                    .takePostEditAction(
+                        editions,
+                        appConf.value.editor,
+                        AppConf.PostEditAction.Type.Done,
+                        labelerConf,
+                    )
+                    .takePostEditAction(
+                        editions,
+                        appConf.value.editor,
+                        AppConf.PostEditAction.Type.Next,
+                        labelerConf,
+                    )
+            }
+        }
+        val entrySwitched = previousProject.currentModuleIndex == project?.currentModuleIndex &&
+            previousProject.currentModule.currentIndex != project?.currentModule?.currentIndex
+        if (entrySwitched) {
+            scrollIfNeededWhenSwitchedEntry(previousProject)
         }
     }
 

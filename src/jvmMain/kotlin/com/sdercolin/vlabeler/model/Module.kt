@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.filter.EntryFilter
+import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.SerialName
@@ -169,12 +170,46 @@ data class Module(
     private fun updateEntry(editedEntry: IndexedEntry, labelerConf: LabelerConf) =
         updateEntries(listOf(editedEntry), labelerConf)
 
-    fun markEntriesAsDone(editedIndexes: Set<Int>): Module {
+    fun takePostEditAction(
+        editions: List<Edition>,
+        editorConf: AppConf.Editor,
+        actionType: AppConf.PostEditAction.Type,
+        labelerConf: LabelerConf,
+    ): Module {
         val entries = entries.toMutableList()
-        editedIndexes.forEach {
-            entries[it] = entries[it].done()
+        var currentIndex = currentIndex
+        val conf = when (actionType) {
+            AppConf.PostEditAction.Type.Next -> editorConf.postEditNext
+            AppConf.PostEditAction.Type.Done -> editorConf.postEditDone
         }
-        return copy(entries = entries)
+        if (!conf.enabled) return this
+        val acceptedFieldNames = when (conf.field) {
+            AppConf.PostEditAction.TriggerField.UseLabeler -> when (actionType) {
+                AppConf.PostEditAction.Type.Next -> labelerConf.postEditNextTriggerFieldNames
+                AppConf.PostEditAction.Type.Done -> labelerConf.postEditDoneTriggerFieldNames
+            }
+            AppConf.PostEditAction.TriggerField.UseStart -> listOf("start")
+            AppConf.PostEditAction.TriggerField.UseEnd -> listOf("end")
+            AppConf.PostEditAction.TriggerField.UseAny -> null
+        }
+        val acceptedMethod = listOfNotNull(
+            Edition.Method.Dragging.takeIf { conf.useDragging },
+            Edition.Method.SetWithCursor.takeIf { conf.useCursorSet },
+        )
+        if (acceptedFieldNames?.isEmpty() == true || acceptedMethod.isEmpty()) return this
+        editions.forEach { edition ->
+            if (edition.method !in acceptedMethod) return@forEach
+            if (acceptedFieldNames != null && edition.fieldNames.intersect(acceptedFieldNames).isEmpty()) return@forEach
+            when (actionType) {
+                AppConf.PostEditAction.Type.Next -> {
+                    currentIndex = (edition.index + 1).coerceAtMost(entries.lastIndex)
+                }
+                AppConf.PostEditAction.Type.Done -> {
+                    entries[edition.index] = entries[edition.index].done()
+                }
+            }
+        }
+        return copy(entries = entries, currentIndex = currentIndex)
     }
 
     fun renameEntry(index: Int, newName: String, labelerConf: LabelerConf): Module {

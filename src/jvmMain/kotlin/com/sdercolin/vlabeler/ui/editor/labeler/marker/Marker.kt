@@ -34,8 +34,8 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.isLeftClick
 import com.sdercolin.vlabeler.ui.common.isRightClick
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
+import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.EditorState
-import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
@@ -165,9 +165,16 @@ fun MarkerCanvas(
             if (appState.isEditorActive.not()) return@collectLatest
             if (editorState.handleSetPropertyKeyAction(it)) return@collectLatest
             if (state.mayHandleScissorsKeyAction(it, editorState::cutEntry)) return@collectLatest
-            val updated = state.getUpdatedEntriesByKeyAction(it, appState.appConf, editorState.project.labelerConf)
-                ?: return@collectLatest
-            state.editEntryIfNeeded(updated, editorState::submitEntries)
+            val updated = state.getUpdatedEntriesByKeyAction(
+                it,
+                appState.appConf,
+                editorState.project.labelerConf,
+            ) ?: return@collectLatest
+            state.editEntryIfNeeded(
+                updated = updated,
+                editEntries = editorState::submitEntries,
+                method = Edition.Method.SetWithCursor,
+            )
         }
     }
 }
@@ -447,7 +454,7 @@ private fun FieldBorderCanvas(
 private fun MarkerState.handleMouseMove(
     tool: Tool,
     event: PointerEvent,
-    editEntries: (List<IndexedEntry>, Set<Int>) -> Unit,
+    editions: (List<Edition>) -> Unit,
     screenRange: FloatRange?,
     playByCursor: (Float) -> Unit,
     scrollState: ScrollState,
@@ -455,7 +462,7 @@ private fun MarkerState.handleMouseMove(
 ) {
     screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(event, editEntries, screenRange, playByCursor)
+        Tool.Cursor -> handleCursorMove(event, editions, screenRange, playByCursor)
         Tool.Scissors -> handleScissorsMove(event, screenRange)
         Tool.Pan -> handlePanMove(event, scrollState, scope)
         Tool.Playback -> handlePlaybackMove(event, screenRange)
@@ -464,7 +471,7 @@ private fun MarkerState.handleMouseMove(
 
 private fun MarkerState.handleCursorMove(
     event: PointerEvent,
-    editEntries: (List<IndexedEntry>, Set<Int>) -> Unit,
+    editions: (List<Edition>) -> Unit,
     screenRange: FloatRange,
     playByCursor: (Float) -> Unit,
 ) {
@@ -480,7 +487,11 @@ private fun MarkerState.handleCursorMove(
         } else {
             getDraggedEntries(cursorState.value.pointIndex, actualX, forcedDrag)
         }
-        editEntryIfNeeded(updated, editEntries)
+        editEntryIfNeeded(
+            updated = updated,
+            editEntries = editions,
+            method = Edition.Method.Dragging,
+        )
         if (cursorState.value.previewOnDragging) {
             playByCursor(entryConverter.convertToFrame(actualX))
         }
@@ -716,14 +727,30 @@ private fun MarkerState.handleScissorsCut(position: Float, cutEntry: (Int, Float
 
 private fun MarkerState.editEntryIfNeeded(
     updated: List<EntryInPixel>,
-    editEntries: (List<IndexedEntry>, Set<Int>) -> Unit,
+    editEntries: (List<Edition>) -> Unit,
+    method: Edition.Method,
 ) {
     if (updated != entriesInPixel) {
-        val updatedInMillis = updated.map { entryConverter.convertToMillis(it) }
         val edited = updated - entriesInPixel.toSet()
         if (edited.isEmpty()) return
 
-        val editedIndexes = edited.map { it.index }.toMutableSet()
+        val editions = edited.mapNotNull { entry ->
+            val entryInMillis = entryConverter.convertToMillis(entry)
+            val original =
+                entriesInPixel.firstOrNull { original -> original.index == entry.index } ?: return@mapNotNull null
+            val fieldNames = mutableListOf<String>()
+            if (entry.start != original.start) fieldNames.add("start")
+            if (entry.end != original.end) fieldNames.add("end")
+            entry.points.mapIndexed { index, point ->
+                if (point != original.points[index]) fieldNames.add(labelerConf.fields[index].name)
+            }
+            Edition(
+                entry.index,
+                entryInMillis.entry,
+                fieldNames = fieldNames,
+                method = Edition.Method.Dragging,
+            )
+        }.toMutableList()
 
         if (labelerConf.continuous) {
             val leftEntry = entriesInCurrentGroup.getPreviousOrNull { it.index == updated.firstOrNull()?.index }
@@ -731,7 +758,15 @@ private fun MarkerState.editEntryIfNeeded(
             val firstOriginal = entriesInPixel.firstOrNull { it.index == firstEdited.index }
             val leftBorderEdited = firstEdited.start != firstOriginal?.start
             if (leftEntry != null && leftBorderEdited) {
-                editedIndexes.add(leftEntry.index)
+                editions.add(
+                    0,
+                    Edition(
+                        leftEntry.index,
+                        leftEntry.entry.copy(end = editions.first().newValue.start),
+                        fieldNames = listOf("end"),
+                        method = method,
+                    ),
+                )
             }
 
             val rightEntry = entriesInCurrentGroup.getNextOrNull { it.index == updated.lastOrNull()?.index }
@@ -739,10 +774,17 @@ private fun MarkerState.editEntryIfNeeded(
             val lastOriginal = entriesInPixel.lastOrNull { it.index == lastEdited.index }
             val rightBorderEdited = lastEdited.end != lastOriginal?.end
             if (rightEntry != null && rightBorderEdited) {
-                editedIndexes.add(rightEntry.index)
+                editions.add(
+                    Edition(
+                        rightEntry.index,
+                        rightEntry.entry.copy(start = editions.last().newValue.end),
+                        fieldNames = listOf("start"),
+                        method = method,
+                    ),
+                )
             }
         }
-        editEntries(updatedInMillis, editedIndexes)
+        editEntries(editions)
     }
 }
 

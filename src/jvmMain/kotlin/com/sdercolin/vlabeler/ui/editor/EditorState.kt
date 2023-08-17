@@ -100,7 +100,7 @@ class EditorState(
         },
     )
 
-    private val editedIndexes = mutableSetOf<Int>()
+    private val editions = mutableMapOf<Int, Edition>()
 
     /**
      * Called from upstream
@@ -118,19 +118,25 @@ class EditorState(
         val changedEntries = editedEntries - project.getEntriesForEditing().second.toSet()
         if (changedEntries.isNotEmpty()) {
             Log.info("Submit entries: $changedEntries")
-            appState.editEntries(changedEntries, editedIndexes)
-            editedIndexes.clear()
+            appState.editEntries(editions.values.toList().sortedBy { it.index })
+        } else if (editions.isNotEmpty()) {
+            Log.info("No entries changed, discard editions: $editions")
         }
+        editions.clear()
     }
 
-    fun submitEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>) {
-        updateEntries(editedEntries, editedIndexes)
+    fun submitEntries(editions: List<Edition>) {
+        updateEntries(editions)
         submitEntries()
     }
 
-    fun updateEntries(editedEntries: List<IndexedEntry>, editedIndexes: Set<Int>) {
-        this.editedIndexes.addAll(editedIndexes)
-        this.editedEntries = editedEntries
+    fun updateEntries(editions: List<Edition>) {
+        val editedEntries = this.editedEntries.associateBy { it.index }.toMutableMap()
+        editions.forEach { edition ->
+            editedEntries[edition.index] = edition.toIndexedEntry()
+            this.editions[edition.index] = edition
+        }
+        this.editedEntries = editedEntries.map { it.value }.sortedBy { it.index }
     }
 
     fun cutEntry(index: Int, position: Float) {
@@ -142,7 +148,7 @@ class EditorState(
         val newValues = project.getEntriesForEditing().second
         if (newValues != editedEntries) {
             Log.info("Load new entries: $newValues")
-            editedIndexes.clear()
+            editions.clear()
             editedEntries = newValues
         }
     }
