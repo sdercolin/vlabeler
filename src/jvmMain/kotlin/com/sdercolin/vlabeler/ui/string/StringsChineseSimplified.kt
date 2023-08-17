@@ -378,7 +378,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorLockedDragDescription ->
         "选择启用锁定拖动的条件。" +
             "当锁定拖动有效，其他参数线将会跟随您拖动的参数线移动，以保持它们之间的相对位置。"
-    PreferencesEditorLockedDragUseLabeler -> "使用标注器的定义"
+    PreferencesEditorLockedDragUseLabeler -> "使用标注器的设置"
     PreferencesEditorLockedDragUseStart -> "当拖动条目的起始线时"
     PreferencesEditorLockedDragNever -> "从不启用"
     PreferencesEditorLockedSettingParameterWithCursor -> "光标设定时也应用锁定拖动"
@@ -395,7 +395,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorPostEditActionNext -> "编辑后跳转到下一个条目"
     PreferencesEditorPostEditActionEnabled -> "启用"
     PreferencesEditorPostEditActionTrigger -> "触发该行为的参数"
-    PreferencesEditorPostEditActionTriggerUseLabeler -> "使用标注器的定义"
+    PreferencesEditorPostEditActionTriggerUseLabeler -> "使用标注器的设置"
     PreferencesEditorPostEditActionTriggerUseStart -> "条目的起始线"
     PreferencesEditorPostEditActionTriggerUseEnd -> "条目的结束线"
     PreferencesEditorPostEditActionTriggerUseAny -> "任意参数"

@@ -392,6 +392,11 @@
           "zh": "编辑后跳转到下一个条目",
           "ja": "編集後に次のエントリーに移動する"
         },
+        "description": {
+          "en": "Please enable this action in `Preferences` -> `Editor` -> `Post-editing actions`, and choose `Use settings defined by the labeler` as the trigger.",
+          "zh": "请在`环境设置`->`编辑器`->`编辑后动作`中启用此功能，并选择`使用标注器的设置`为`触发该行为的参数`。",
+          "ja": "`環境設定`->`エディタ`->`編集後アクション`でこの機能を有効にし、`アクションを実行できるパラメータ`では`ラベラーの設定`を選択してください。"
+        },
         "defaultValue": "Disable",
         "options": [
           "Disable",
@@ -473,6 +478,11 @@
           "en": "Mark as done entry after editing",
           "zh": "编辑后标记为已完成条目",
           "ja": "編集後にエントリーを\"完了\"にする"
+        },
+        "description": {
+          "en": "Please enable this action in `Preferences` -> `Editor` -> `Post-editing actions`, and choose `Use settings defined by the labeler` as the trigger.",
+          "zh": "请在`环境设置`->`编辑器`->`编辑后动作`中启用此功能，并选择`使用标注器的设置`为`触发该行为的参数`。",
+          "ja": "`環境設定`->`エディタ`->`編集後アクション`でこの機能を有効にし、`アクションを実行できるパラメータ`では`ラベラーの設定`を選択してください。"
         },
         "defaultValue": "Any",
         "options": [
