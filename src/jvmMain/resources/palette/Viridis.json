@@ -1,0 +1,1029 @@
+{
+  "name": "Viridis",
+  "items": [
+    {
+      "color": "#440154",
+      "weight": 0.0
+    },
+    {
+      "color": "#440256",
+      "weight": 1.0
+    },
+    {
+      "color": "#450457",
+      "weight": 1.0
+    },
+    {
+      "color": "#450559",
+      "weight": 1.0
+    },
+    {
+      "color": "#46075A",
+      "weight": 1.0
+    },
+    {
+      "color": "#46085C",
+      "weight": 1.0
+    },
+    {
+      "color": "#460A5D",
+      "weight": 1.0
+    },
+    {
+      "color": "#460B5E",
+      "weight": 1.0
+    },
+    {
+      "color": "#470D60",
+      "weight": 1.0
+    },
+    {
+      "color": "#470E61",
+      "weight": 1.0
+    },
+    {
+      "color": "#471063",
+      "weight": 1.0
+    },
+    {
+      "color": "#471164",
+      "weight": 1.0
+    },
+    {
+      "color": "#471365",
+      "weight": 1.0
+    },
+    {
+      "color": "#481467",
+      "weight": 1.0
+    },
+    {
+      "color": "#481668",
+      "weight": 1.0
+    },
+    {
+      "color": "#481769",
+      "weight": 1.0
+    },
+    {
+      "color": "#48186A",
+      "weight": 1.0
+    },
+    {
+      "color": "#481A6C",
+      "weight": 1.0
+    },
+    {
+      "color": "#481B6D",
+      "weight": 1.0
+    },
+    {
+      "color": "#481C6E",
+      "weight": 1.0
+    },
+    {
+      "color": "#481D6F",
+      "weight": 1.0
+    },
+    {
+      "color": "#481F70",
+      "weight": 1.0
+    },
+    {
+      "color": "#482071",
+      "weight": 1.0
+    },
+    {
+      "color": "#482173",
+      "weight": 1.0
+    },
+    {
+      "color": "#482374",
+      "weight": 1.0
+    },
+    {
+      "color": "#482475",
+      "weight": 1.0
+    },
+    {
+      "color": "#482576",
+      "weight": 1.0
+    },
+    {
+      "color": "#482677",
+      "weight": 1.0
+    },
+    {
+      "color": "#482878",
+      "weight": 1.0
+    },
+    {
+      "color": "#482979",
+      "weight": 1.0
+    },
+    {
+      "color": "#472A7A",
+      "weight": 1.0
+    },
+    {
+      "color": "#472C7A",
+      "weight": 1.0
+    },
+    {
+      "color": "#472D7B",
+      "weight": 1.0
+    },
+    {
+      "color": "#472E7C",
+      "weight": 1.0
+    },
+    {
+      "color": "#472F7D",
+      "weight": 1.0
+    },
+    {
+      "color": "#46307E",
+      "weight": 1.0
+    },
+    {
+      "color": "#46327E",
+      "weight": 1.0
+    },
+    {
+      "color": "#46337F",
+      "weight": 1.0
+    },
+    {
+      "color": "#463480",
+      "weight": 1.0
+    },
+    {
+      "color": "#453581",
+      "weight": 1.0
+    },
+    {
+      "color": "#453781",
+      "weight": 1.0
+    },
+    {
+      "color": "#453882",
+      "weight": 1.0
+    },
+    {
+      "color": "#443983",
+      "weight": 1.0
+    },
+    {
+      "color": "#443A83",
+      "weight": 1.0
+    },
+    {
+      "color": "#443B84",
+      "weight": 1.0
+    },
+    {
+      "color": "#433D84",
+      "weight": 1.0
+    },
+    {
+      "color": "#433E85",
+      "weight": 1.0
+    },
+    {
+      "color": "#423F85",
+      "weight": 1.0
+    },
+    {
+      "color": "#424086",
+      "weight": 1.0
+    },
+    {
+      "color": "#424186",
+      "weight": 1.0
+    },
+    {
+      "color": "#414287",
+      "weight": 1.0
+    },
+    {
+      "color": "#414487",
+      "weight": 1.0
+    },
+    {
+      "color": "#404588",
+      "weight": 1.0
+    },
+    {
+      "color": "#404688",
+      "weight": 1.0
+    },
+    {
+      "color": "#3F4788",
+      "weight": 1.0
+    },
+    {
+      "color": "#3F4889",
+      "weight": 1.0
+    },
+    {
+      "color": "#3E4989",
+      "weight": 1.0
+    },
+    {
+      "color": "#3E4A89",
+      "weight": 1.0
+    },
+    {
+      "color": "#3E4C8A",
+      "weight": 1.0
+    },
+    {
+      "color": "#3D4D8A",
+      "weight": 1.0
+    },
+    {
+      "color": "#3D4E8A",
+      "weight": 1.0
+    },
+    {
+      "color": "#3C4F8A",
+      "weight": 1.0
+    },
+    {
+      "color": "#3C508B",
+      "weight": 1.0
+    },
+    {
+      "color": "#3B518B",
+      "weight": 1.0
+    },
+    {
+      "color": "#3B528B",
+      "weight": 1.0
+    },
+    {
+      "color": "#3A538B",
+      "weight": 1.0
+    },
+    {
+      "color": "#3A548C",
+      "weight": 1.0
+    },
+    {
+      "color": "#39558C",
+      "weight": 1.0
+    },
+    {
+      "color": "#39568C",
+      "weight": 1.0
+    },
+    {
+      "color": "#38588C",
+      "weight": 1.0
+    },
+    {
+      "color": "#38598C",
+      "weight": 1.0
+    },
+    {
+      "color": "#375A8C",
+      "weight": 1.0
+    },
+    {
+      "color": "#375B8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#365C8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#365D8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#355E8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#355F8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#34608D",
+      "weight": 1.0
+    },
+    {
+      "color": "#34618D",
+      "weight": 1.0
+    },
+    {
+      "color": "#33628D",
+      "weight": 1.0
+    },
+    {
+      "color": "#33638D",
+      "weight": 1.0
+    },
+    {
+      "color": "#32648E",
+      "weight": 1.0
+    },
+    {
+      "color": "#32658E",
+      "weight": 1.0
+    },
+    {
+      "color": "#31668E",
+      "weight": 1.0
+    },
+    {
+      "color": "#31678E",
+      "weight": 1.0
+    },
+    {
+      "color": "#31688E",
+      "weight": 1.0
+    },
+    {
+      "color": "#30698E",
+      "weight": 1.0
+    },
+    {
+      "color": "#306A8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2F6B8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2F6C8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2E6D8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2E6E8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2E6F8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2D708E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2D718E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2C718E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2C728E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2C738E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2B748E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2B758E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2A768E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2A778E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2A788E",
+      "weight": 1.0
+    },
+    {
+      "color": "#29798E",
+      "weight": 1.0
+    },
+    {
+      "color": "#297A8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#297B8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#287C8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#287D8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#277E8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#277F8E",
+      "weight": 1.0
+    },
+    {
+      "color": "#27808E",
+      "weight": 1.0
+    },
+    {
+      "color": "#26818E",
+      "weight": 1.0
+    },
+    {
+      "color": "#26828E",
+      "weight": 1.0
+    },
+    {
+      "color": "#26828E",
+      "weight": 1.0
+    },
+    {
+      "color": "#25838E",
+      "weight": 1.0
+    },
+    {
+      "color": "#25848E",
+      "weight": 1.0
+    },
+    {
+      "color": "#25858E",
+      "weight": 1.0
+    },
+    {
+      "color": "#24868E",
+      "weight": 1.0
+    },
+    {
+      "color": "#24878E",
+      "weight": 1.0
+    },
+    {
+      "color": "#23888E",
+      "weight": 1.0
+    },
+    {
+      "color": "#23898E",
+      "weight": 1.0
+    },
+    {
+      "color": "#238A8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#228B8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#228C8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#228D8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#218E8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#218F8D",
+      "weight": 1.0
+    },
+    {
+      "color": "#21908D",
+      "weight": 1.0
+    },
+    {
+      "color": "#21918C",
+      "weight": 1.0
+    },
+    {
+      "color": "#20928C",
+      "weight": 1.0
+    },
+    {
+      "color": "#20928C",
+      "weight": 1.0
+    },
+    {
+      "color": "#20938C",
+      "weight": 1.0
+    },
+    {
+      "color": "#1F948C",
+      "weight": 1.0
+    },
+    {
+      "color": "#1F958B",
+      "weight": 1.0
+    },
+    {
+      "color": "#1F968B",
+      "weight": 1.0
+    },
+    {
+      "color": "#1F978B",
+      "weight": 1.0
+    },
+    {
+      "color": "#1F988B",
+      "weight": 1.0
+    },
+    {
+      "color": "#1F998A",
+      "weight": 1.0
+    },
+    {
+      "color": "#1F9A8A",
+      "weight": 1.0
+    },
+    {
+      "color": "#1E9B8A",
+      "weight": 1.0
+    },
+    {
+      "color": "#1E9C89",
+      "weight": 1.0
+    },
+    {
+      "color": "#1E9D89",
+      "weight": 1.0
+    },
+    {
+      "color": "#1F9E89",
+      "weight": 1.0
+    },
+    {
+      "color": "#1F9F88",
+      "weight": 1.0
+    },
+    {
+      "color": "#1FA088",
+      "weight": 1.0
+    },
+    {
+      "color": "#1FA188",
+      "weight": 1.0
+    },
+    {
+      "color": "#1FA187",
+      "weight": 1.0
+    },
+    {
+      "color": "#1FA287",
+      "weight": 1.0
+    },
+    {
+      "color": "#20A386",
+      "weight": 1.0
+    },
+    {
+      "color": "#20A486",
+      "weight": 1.0
+    },
+    {
+      "color": "#21A585",
+      "weight": 1.0
+    },
+    {
+      "color": "#21A685",
+      "weight": 1.0
+    },
+    {
+      "color": "#22A785",
+      "weight": 1.0
+    },
+    {
+      "color": "#22A884",
+      "weight": 1.0
+    },
+    {
+      "color": "#23A983",
+      "weight": 1.0
+    },
+    {
+      "color": "#24AA83",
+      "weight": 1.0
+    },
+    {
+      "color": "#25AB82",
+      "weight": 1.0
+    },
+    {
+      "color": "#25AC82",
+      "weight": 1.0
+    },
+    {
+      "color": "#26AD81",
+      "weight": 1.0
+    },
+    {
+      "color": "#27AD81",
+      "weight": 1.0
+    },
+    {
+      "color": "#28AE80",
+      "weight": 1.0
+    },
+    {
+      "color": "#29AF7F",
+      "weight": 1.0
+    },
+    {
+      "color": "#2AB07F",
+      "weight": 1.0
+    },
+    {
+      "color": "#2CB17E",
+      "weight": 1.0
+    },
+    {
+      "color": "#2DB27D",
+      "weight": 1.0
+    },
+    {
+      "color": "#2EB37C",
+      "weight": 1.0
+    },
+    {
+      "color": "#2FB47C",
+      "weight": 1.0
+    },
+    {
+      "color": "#31B57B",
+      "weight": 1.0
+    },
+    {
+      "color": "#32B67A",
+      "weight": 1.0
+    },
+    {
+      "color": "#34B679",
+      "weight": 1.0
+    },
+    {
+      "color": "#35B779",
+      "weight": 1.0
+    },
+    {
+      "color": "#37B878",
+      "weight": 1.0
+    },
+    {
+      "color": "#38B977",
+      "weight": 1.0
+    },
+    {
+      "color": "#3ABA76",
+      "weight": 1.0
+    },
+    {
+      "color": "#3BBB75",
+      "weight": 1.0
+    },
+    {
+      "color": "#3DBC74",
+      "weight": 1.0
+    },
+    {
+      "color": "#3FBC73",
+      "weight": 1.0
+    },
+    {
+      "color": "#40BD72",
+      "weight": 1.0
+    },
+    {
+      "color": "#42BE71",
+      "weight": 1.0
+    },
+    {
+      "color": "#44BF70",
+      "weight": 1.0
+    },
+    {
+      "color": "#46C06F",
+      "weight": 1.0
+    },
+    {
+      "color": "#48C16E",
+      "weight": 1.0
+    },
+    {
+      "color": "#4AC16D",
+      "weight": 1.0
+    },
+    {
+      "color": "#4CC26C",
+      "weight": 1.0
+    },
+    {
+      "color": "#4EC36B",
+      "weight": 1.0
+    },
+    {
+      "color": "#50C46A",
+      "weight": 1.0
+    },
+    {
+      "color": "#52C569",
+      "weight": 1.0
+    },
+    {
+      "color": "#54C568",
+      "weight": 1.0
+    },
+    {
+      "color": "#56C667",
+      "weight": 1.0
+    },
+    {
+      "color": "#58C765",
+      "weight": 1.0
+    },
+    {
+      "color": "#5AC864",
+      "weight": 1.0
+    },
+    {
+      "color": "#5CC863",
+      "weight": 1.0
+    },
+    {
+      "color": "#5EC962",
+      "weight": 1.0
+    },
+    {
+      "color": "#60CA60",
+      "weight": 1.0
+    },
+    {
+      "color": "#63CB5F",
+      "weight": 1.0
+    },
+    {
+      "color": "#65CB5E",
+      "weight": 1.0
+    },
+    {
+      "color": "#67CC5C",
+      "weight": 1.0
+    },
+    {
+      "color": "#69CD5B",
+      "weight": 1.0
+    },
+    {
+      "color": "#6CCD5A",
+      "weight": 1.0
+    },
+    {
+      "color": "#6ECE58",
+      "weight": 1.0
+    },
+    {
+      "color": "#70CF57",
+      "weight": 1.0
+    },
+    {
+      "color": "#73D056",
+      "weight": 1.0
+    },
+    {
+      "color": "#75D054",
+      "weight": 1.0
+    },
+    {
+      "color": "#77D153",
+      "weight": 1.0
+    },
+    {
+      "color": "#7AD151",
+      "weight": 1.0
+    },
+    {
+      "color": "#7CD250",
+      "weight": 1.0
+    },
+    {
+      "color": "#7FD34E",
+      "weight": 1.0
+    },
+    {
+      "color": "#81D34D",
+      "weight": 1.0
+    },
+    {
+      "color": "#84D44B",
+      "weight": 1.0
+    },
+    {
+      "color": "#86D549",
+      "weight": 1.0
+    },
+    {
+      "color": "#89D548",
+      "weight": 1.0
+    },
+    {
+      "color": "#8BD646",
+      "weight": 1.0
+    },
+    {
+      "color": "#8ED645",
+      "weight": 1.0
+    },
+    {
+      "color": "#90D743",
+      "weight": 1.0
+    },
+    {
+      "color": "#93D741",
+      "weight": 1.0
+    },
+    {
+      "color": "#95D840",
+      "weight": 1.0
+    },
+    {
+      "color": "#98D83E",
+      "weight": 1.0
+    },
+    {
+      "color": "#9BD93C",
+      "weight": 1.0
+    },
+    {
+      "color": "#9DD93B",
+      "weight": 1.0
+    },
+    {
+      "color": "#A0DA39",
+      "weight": 1.0
+    },
+    {
+      "color": "#A2DA37",
+      "weight": 1.0
+    },
+    {
+      "color": "#A5DB36",
+      "weight": 1.0
+    },
+    {
+      "color": "#A8DB34",
+      "weight": 1.0
+    },
+    {
+      "color": "#AADC32",
+      "weight": 1.0
+    },
+    {
+      "color": "#ADDC30",
+      "weight": 1.0
+    },
+    {
+      "color": "#B0DD2F",
+      "weight": 1.0
+    },
+    {
+      "color": "#B2DD2D",
+      "weight": 1.0
+    },
+    {
+      "color": "#B5DE2B",
+      "weight": 1.0
+    },
+    {
+      "color": "#B8DE29",
+      "weight": 1.0
+    },
+    {
+      "color": "#BADE28",
+      "weight": 1.0
+    },
+    {
+      "color": "#BDDF26",
+      "weight": 1.0
+    },
+    {
+      "color": "#C0DF25",
+      "weight": 1.0
+    },
+    {
+      "color": "#C2DF23",
+      "weight": 1.0
+    },
+    {
+      "color": "#C5E021",
+      "weight": 1.0
+    },
+    {
+      "color": "#C8E020",
+      "weight": 1.0
+    },
+    {
+      "color": "#CAE11F",
+      "weight": 1.0
+    },
+    {
+      "color": "#CDE11D",
+      "weight": 1.0
+    },
+    {
+      "color": "#D0E11C",
+      "weight": 1.0
+    },
+    {
+      "color": "#D2E21B",
+      "weight": 1.0
+    },
+    {
+      "color": "#D5E21A",
+      "weight": 1.0
+    },
+    {
+      "color": "#D8E219",
+      "weight": 1.0
+    },
+    {
+      "color": "#DAE319",
+      "weight": 1.0
+    },
+    {
+      "color": "#DDE318",
+      "weight": 1.0
+    },
+    {
+      "color": "#DFE318",
+      "weight": 1.0
+    },
+    {
+      "color": "#E2E418",
+      "weight": 1.0
+    },
+    {
+      "color": "#E5E419",
+      "weight": 1.0
+    },
+    {
+      "color": "#E7E419",
+      "weight": 1.0
+    },
+    {
+      "color": "#EAE51A",
+      "weight": 1.0
+    },
+    {
+      "color": "#ECE51B",
+      "weight": 1.0
+    },
+    {
+      "color": "#EFE51C",
+      "weight": 1.0
+    },
+    {
+      "color": "#F1E51D",
+      "weight": 1.0
+    },
+    {
+      "color": "#F4E61E",
+      "weight": 1.0
+    },
+    {
+      "color": "#F6E620",
+      "weight": 1.0
+    },
+    {
+      "color": "#F8E621",
+      "weight": 1.0
+    },
+    {
+      "color": "#FBE723",
+      "weight": 1.0
+    },
+    {
+      "color": "#FDE725",
+      "weight": 1.0
+    }
+  ]
+}

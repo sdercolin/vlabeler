@@ -2,9 +2,11 @@ package com.sdercolin.vlabeler.model.palette
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.useResource
 import com.sdercolin.vlabeler.ui.theme.DarkGray
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.argbHexString
+import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.rgbHexString
 import kotlinx.serialization.Serializable
 
@@ -36,7 +38,7 @@ data class ColorPaletteDefinition(
     }
 
     companion object {
-        val presets = listOf(
+        private val presetsInCode = listOf(
             ColorPaletteDefinition(
                 name = "Plain",
                 items = listOf(
@@ -110,5 +112,17 @@ data class ColorPaletteDefinition(
                 ),
             ),
         )
+        private val presetsInFile = listOf(
+            "Inferno.json",
+            "Magma.json",
+            "Plasma.json",
+            "Viridis.json",
+        ).map { "palette/$it" }
+
+        val presets by lazy {
+            presetsInCode + presetsInFile.map { path ->
+                useResource(path) { it.bufferedReader().readText() }.parseJson()
+            }
+        }
     }
 }
