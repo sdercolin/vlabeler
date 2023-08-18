@@ -450,7 +450,7 @@
         "type": "enum",
         "name": "postEditDoneTrigger",
         "label": {
-          "en": "Mark as done entry after editing",
+          "en": "Mark entry as `Done` after editing",
           "zh": "编辑后标记为已完成条目",
           "ja": "編集後にエントリーを\"完了\"にする"
         },
