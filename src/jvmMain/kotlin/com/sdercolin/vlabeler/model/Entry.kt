@@ -45,7 +45,7 @@ data class Entry(
     /**
      * Extra data as [String] defined by [LabelerConf.extraFields]
      */
-    val extras: List<String>,
+    val extras: List<String?>,
     /**
      * Other properties of an entry which are only used in vLabeler
      */

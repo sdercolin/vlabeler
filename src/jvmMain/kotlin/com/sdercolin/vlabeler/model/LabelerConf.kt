@@ -481,6 +481,7 @@ data class LabelerConf(
         val displayedName: LocalizedJsonString,
         val isVisible: Boolean,
         val isEditable: Boolean,
+        val isOptional: Boolean,
     )
 
     fun migrate(): LabelerConf {
@@ -497,6 +498,7 @@ data class LabelerConf(
                         ),
                         isVisible = false,
                         isEditable = false,
+                        isOptional = false,     // Old version does not support optional extra fields
                     )
                 },
                 extraFieldNames = null,

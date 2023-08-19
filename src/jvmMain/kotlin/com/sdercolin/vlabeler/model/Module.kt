@@ -308,8 +308,16 @@ data class Module(
             require(it.points.size == labelerConf.fields.size) {
                 "Point size doesn't match in entry: $it. Required point size = ${labelerConf.fields.size}"
             }
+
             require(it.extras.size == labelerConf.extraFields.size) {
                 "Extra size doesn't match in entry: $it. Required extra size = ${labelerConf.extraFields.size}"
+            }
+            labelerConf.extraFields.forEachIndexed { index, extraField ->
+                if (!extraField.isOptional) {
+                    require(it.extras[index] != null) {
+                        "Extra field ${extraField.name} is not optional, but is null in entry: $it"
+                    }
+                }
             }
 
             var entryResult = it
