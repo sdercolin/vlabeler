@@ -498,7 +498,7 @@ data class LabelerConf(
                         ),
                         isVisible = false,
                         isEditable = false,
-                        isOptional = false,     // Old version does not support optional extra fields
+                        isOptional = false, // Old version does not support optional extra fields
                     )
                 },
                 extraFieldNames = null,
