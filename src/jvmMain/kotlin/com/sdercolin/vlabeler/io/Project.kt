@@ -80,6 +80,7 @@ suspend fun awaitLoadProject(
             appState.hideProgress()
             return
         }
+        .run { copy(labelerConf = this.labelerConf.migrate()) }
     val existingLabelerConf = appState.availableLabelerConfs.find { it.name == project.labelerConf.name }
     val originalLabelerConf = when {
         existingLabelerConf == null -> {

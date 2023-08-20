@@ -160,7 +160,7 @@ fun Project.singleModuleToRawLabels(moduleIndex: Int): String {
     val lines = modules[moduleIndex].entries
         .map { entry ->
             val fields = labelerConf.getFieldMap(entry)
-            val extras = labelerConf.getExtraMap(entry)
+            val extras = labelerConf.getExtraMapNotNull(entry)
             val properties = labelerConf.getPropertyMap(entry, js).mapKeys { it.key.name }
             val variables: Map<String, Any> =
                 fields.mapValues { (it.value as? Float)?.roundToDecimalDigit(labelerConf.decimalDigit) ?: it.value } +
@@ -210,8 +210,8 @@ private fun LabelerConf.getFieldMap(entry: Entry) =
         field.name to entry.points[index]
     }.toMap()
 
-private fun LabelerConf.getExtraMap(entry: Entry) = extraFieldNames.mapIndexed { index, name ->
-    name to entry.extras[index]
+private fun LabelerConf.getExtraMapNotNull(entry: Entry) = extraFields.mapIndexedNotNull { index, field ->
+    entry.extras[index]?.let { field.name to it }
 }.toMap()
 
 private fun LabelerConf.getPropertyBaseMap(

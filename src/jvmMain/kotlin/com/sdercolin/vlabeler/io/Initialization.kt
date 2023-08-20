@@ -101,6 +101,7 @@ fun File.asLabelerConf(): Result<LabelerConf> {
         text.parseJson<LabelerConf>()
             .copy(name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}"))
             .validate()
+            .migrate()
     }
     result.exceptionOrNull()?.let {
         Log.debug("Failed to parse labeler conf: $text. Error message: {${it.message}}.")

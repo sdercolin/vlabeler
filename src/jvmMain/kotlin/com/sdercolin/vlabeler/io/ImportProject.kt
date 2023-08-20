@@ -43,7 +43,7 @@ data class ImportedModule(
 
     fun isCompatibleWith(project: Project): Boolean {
         if (project.labelerConf.fields.size != pointSize) return false
-        if (project.labelerConf.extraFieldNames.size != extraSize) return false
+        if (project.labelerConf.extraFields.size != extraSize) return false
         if (project.labelerConf.continuous != continuous) return false
         if (project.labelerConf.extension != extension) return false
         return true
