@@ -472,6 +472,7 @@ data class LabelerConf(
      * @property displayedName Displayed name of the property in the UI (localized).
      * @property isVisible Whether the property is visible in the UI.
      * @property isEditable Whether the property is editable in the UI.
+     * @property isOptional Whether the property can be null.
      */
     @Serializable
     @Immutable
