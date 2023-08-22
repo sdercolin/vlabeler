@@ -311,33 +311,36 @@ data class LabelerConf(
          * - {name}: entry name.
          * - {start}: [Entry.start]
          * - {end}: [Entry.end]
-         * - {[Property.name]}: Evaluated value of a [Property].
+         * - {[Property.name]}: evaluated value of a [Property].
          * - {[Field.name]}: value in [Entry.points] with the same index of the corresponding [Field].
-         * - {<item in [extraFields]>}: value saved in [Parser].
+         * - {<[ExtraField.name] in [extraFields]>}: string value in [Entry.extras], with the same index of the
+         *     corresponding [ExtraField].
          *
-         * If a name is shared by a [Property] and [Field], it's considered as [Property].
+         * If a name is shared by a [Property] and [Field], the [Property] is assigned to the variable.
          *
          * @sample "{sample}.wav:{name}={start},{middle},{end}" will be written like "a.wav:a:100,220.5,300".
          */
         val format: String? = null,
         /**
-         * JavaScript code lines that sets "output" variable using the same variables as described in [format].
+         * JavaScript code lines that sets "output" variable.
          *
          * Available input variables in scope [Scope.Entry]:
          * - String "sample": [Entry.sample]
          * - String "name": [Entry.name]
          * - Number "start": [Entry.start]
          * - Number "end": [Entry.end]
-         * - Number array "points": [Entry.points]
-         * - String array "extras": [Entry.extras]
-         * - Object "notes": [EntryNotes]
+         * - Number "[Field.name]": value in [Entry.points] with the same index of the corresponding [Field].
+         * - String "<[ExtraField.name] in [extraFields]>": string value in [Entry.extras], with the same index of the
+         *     corresponding [ExtraField].
          * - Number "[Property.name]": Evaluated value of a [Property].
-         * - Map "params", created according to [parameters], see [ParameterHolder] for details.
+         * - Boolean "needSync": [Entry.needSync]
+         *
+         * If a name is shared by a [Property] and [Field], the [Property] is assigned to the variable.
          *
          * Available input variables in scope [Scope.Modules]:
          * - String array "moduleNames": Name of the modules that the scripts need to handle.
-         * - Object[] array "modules": An array of [Entry] arrays. The array has the same order as 'moduleNames'.
-         * - Map "params", created according to [parameters], see [ParameterHolder] for details.
+         * - Object[] array "modules": An array of [Entry] arrays. The array has the same order as "moduleNames".
+         * // TODO: add more variables to [Entry], including [Field.name], [ExtraField.name] and [Property.name]
          */
         val scripts: List<String>? = null,
     )
@@ -500,14 +503,15 @@ data class LabelerConf(
     }
 
     /**
-     * Definition of property of extra items.
+     * Definition of extra fields used in entry, module and project scopes.
+     * The values are always stored as strings.
      *
-     * @property name Unique name of the property.
-     * @property default Default value of the property.
-     * @property displayedName Displayed name of the property in the UI (localized).
-     * @property isVisible Whether the property is visible in the UI.
-     * @property isEditable Whether the property is editable in the UI.
-     * @property isOptional Whether the property can be null.
+     * @property name Unique name of the field.
+     * @property default Default value of the field.
+     * @property displayedName Displayed name of the field in the UI (localized).
+     * @property isVisible Whether the field is visible in the UI.
+     * @property isEditable Whether the field is editable in the UI.
+     * @property isOptional Whether the field can be null.
      */
     @Serializable
     @Immutable
