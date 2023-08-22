@@ -1,6 +1,7 @@
 {
   "name": "audacity.default",
-  "version": 8,
+  "version": 9,
+  "serialVersion": 1,
   "extension": "txt",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -22,9 +23,8 @@
     0,
     0
   ],
-  "defaultExtras": [],
   "fields": [],
-  "extraFieldNames": [],
+  "extraFields": [],
   "lockedDrag": {
     "useDragBase": false,
     "useStart": false

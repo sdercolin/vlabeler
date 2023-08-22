@@ -1,6 +1,7 @@
 {
   "name": "nnsvs-singer.default",
-  "version": 5,
+  "version": 6,
+  "serialVersion": 1,
   "extension": "lab",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -24,9 +25,8 @@
     0,
     0
   ],
-  "defaultExtras": [],
   "fields": [],
-  "extraFieldNames": [],
+  "extraFields": [],
   "lockedDrag": {
     "useDragBase": false,
     "useStart": false

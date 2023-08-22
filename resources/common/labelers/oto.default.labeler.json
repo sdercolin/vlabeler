@@ -1,6 +1,7 @@
 {
   "name": "oto-plus.default",
-  "version": 23,
+  "version": 24,
+  "serialVersion": 1,
   "extension": "ini",
   "defaultInputFilePath": "oto.ini",
   "displayedName": {
@@ -25,9 +26,6 @@
     200,
     100,
     500
-  ],
-  "defaultExtras": [
-    "500"
   ],
   "fields": [
     {
@@ -103,6 +101,13 @@
       "filling": "start",
       "constraints": [],
       "replaceStart": true
+    }
+  ],
+  "extraFields": [
+    {
+      "name": "rawRight",
+      "displayedName": "Raw right",
+      "default": "500"
     }
   ],
   "extraFieldNames": [

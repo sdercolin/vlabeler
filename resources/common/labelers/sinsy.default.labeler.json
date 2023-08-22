@@ -1,6 +1,7 @@
 {
   "name": "sinsy.default",
-  "version": 11,
+  "version": 12,
+  "serialVersion": 1,
   "extension": "lab",
   "defaultInputFilePath": null,
   "displayedName": {
@@ -22,9 +23,8 @@
     0,
     0
   ],
-  "defaultExtras": [],
   "fields": [],
-  "extraFieldNames": [],
+  "extraFields": [],
   "lockedDrag": {
     "useDragBase": false,
     "useStart": false

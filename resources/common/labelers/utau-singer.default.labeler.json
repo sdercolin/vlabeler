@@ -1,6 +1,7 @@
 {
   "name": "utau-singer.default",
-  "version": 17,
+  "version": 18,
+  "serialVersion": 1,
   "extension": "ini",
   "displayedName": {
     "en": "UTAU singer labeler",
@@ -24,9 +25,6 @@
     200,
     100,
     500
-  ],
-  "defaultExtras": [
-    "500"
   ],
   "fields": [
     {
@@ -104,8 +102,12 @@
       "replaceStart": true
     }
   ],
-  "extraFieldNames": [
-    "rawRight"
+  "extraFields": [
+    {
+      "name": "rawRight",
+      "displayedName": "Raw right",
+      "default": "500"
+    }
   ],
   "lockedDrag": {
     "useDragBase": true,

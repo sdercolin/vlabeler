@@ -517,9 +517,9 @@ data class LabelerConf(
         val name: String,
         val default: String,
         val displayedName: LocalizedJsonString,
-        val isVisible: Boolean,
-        val isEditable: Boolean,
-        val isOptional: Boolean,
+        val isVisible: Boolean = false,
+        val isEditable: Boolean = false,
+        val isOptional: Boolean = false,
     )
 
     fun migrate(): LabelerConf {
