@@ -126,18 +126,20 @@ data class LabelerConf(
     /**
      * Get names of all fields that could trigger `Mark as done` after editing.
      */
-    val postEditDoneTriggerFieldNames get() = listOfNotNull(
-        "start".takeIf { postEditDoneTrigger.useStart },
-        "end".takeIf { postEditDoneTrigger.useEnd },
-    ) + fields.filter { it.triggerPostEditDone }.map { it.name }
+    val postEditDoneTriggerFieldNames
+        get() = listOfNotNull(
+            "start".takeIf { postEditDoneTrigger.useStart },
+            "end".takeIf { postEditDoneTrigger.useEnd },
+        ) + fields.filter { it.triggerPostEditDone }.map { it.name }
 
     /**
      * Get names of all fields that could trigger `Go to next entry` after editing.
      */
-    val postEditNextTriggerFieldNames get() = listOfNotNull(
-        "start".takeIf { postEditNextTrigger.useStart },
-        "end".takeIf { postEditNextTrigger.useEnd },
-    ) + fields.filter { it.triggerPostEditNext }.map { it.name }
+    val postEditNextTriggerFieldNames
+        get() = listOfNotNull(
+            "start".takeIf { postEditNextTrigger.useStart },
+            "end".takeIf { postEditNextTrigger.useEnd },
+        ) + fields.filter { it.triggerPostEditNext }.map { it.name }
 
     /**
      * Custom field of the labeler.
