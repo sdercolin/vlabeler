@@ -72,6 +72,7 @@ import java.io.File
 data class LabelerConf(
     override val name: String,
     override val version: Int = 1,
+    val serialVersion: Int = 0,
     val extension: String,
     val defaultInputFilePath: String? = null,
     override val displayedName: LocalizedJsonString = name.toLocalized(),
@@ -499,11 +500,6 @@ data class LabelerConf(
 
     override fun getSavedParamsFile(): File = RecordDir.resolve(name + LabelerSavedParamsFileExtension)
 
-    companion object {
-        const val LabelerFileExtension = "labeler.json"
-        private const val LabelerSavedParamsFileExtension = ".labeler.param.json"
-    }
-
     /**
      * Definition of extra fields used in entry, module and project scopes.
      * The values are always stored as strings.
@@ -527,9 +523,16 @@ data class LabelerConf(
     )
 
     fun migrate(): LabelerConf {
-        if (extraFields.isEmpty() && defaultExtras != null && extraFieldNames != null) {
+        if (serialVersion == 0) {
             // Add the extra properties by defaultExtras and extraFieldNames.
-            Log.info("Migrating extra properties of labeler $name")
+            if (extraFieldNames == null || defaultExtras == null) {
+                Log.debug(
+                    "Migrating extra properties of labeler $name from serialVersion 0 to $SerialVersion failed: " +
+                        "extraFieldNames or defaultExtras is null",
+                )
+                return this
+            }
+            Log.debug("Migrating extra properties of labeler $name from serialVersion 0 to $SerialVersion")
             return this.copy(
                 extraFields = extraFieldNames.mapIndexed { index, extraFieldName ->
                     ExtraField(
@@ -549,5 +552,11 @@ data class LabelerConf(
         } else {
             return this
         }
+    }
+
+    companion object {
+        const val LabelerFileExtension = "labeler.json"
+        private const val LabelerSavedParamsFileExtension = ".labeler.param.json"
+        private const val SerialVersion = 1
     }
 }
