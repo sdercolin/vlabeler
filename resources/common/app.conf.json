@@ -111,5 +111,8 @@
   "history": {
     "maxSize": 100,
     "squashIndex": true
+  },
+  "misc": {
+    "useCustomFileDialog": false
   }
 }

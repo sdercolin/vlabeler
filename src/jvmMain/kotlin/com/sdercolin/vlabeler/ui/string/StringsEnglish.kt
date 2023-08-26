@@ -497,6 +497,13 @@ fun Strings.en(): String = when (this) {
     PreferencesHistorySquashIndexDescription ->
         "When enabled, index changes (e.g. switch entries) will not be saved " +
             "until the next content change."
+    PreferencesMisc -> "Miscellaneous"
+    PreferencesMiscDescription -> "Customize other behaviors. Please note that these settings may be experimental."
+    PreferencesMiscUseCustomFileDialog -> "Use custom file dialogs instead of system dialogs"
+    PreferencesMiscUseCustomFileDialogDescription ->
+        "When enabled, the file dialogs will be replaced by the custom ones. " +
+            "This may be useful if you are using a desktop environment that doesn't support " +
+            "the system file dialogs. You need to restart the app to apply this setting."
     ActionToggleSamplePlayback -> "Toggle Playback of Current Sample"
     ActionToggleEntryPlayback -> "Toggle Playback of Current Entry"
     ActionToggleScreenRangePlayback -> "Toggle Playback of Current Screen Range"

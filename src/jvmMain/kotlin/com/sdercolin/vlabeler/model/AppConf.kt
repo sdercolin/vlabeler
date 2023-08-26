@@ -22,6 +22,7 @@ import kotlinx.serialization.Serializable
  * @param playback Configurations about audio playback.
  * @param keymaps Custom keymap.
  * @param history Configurations about edit history (undo/redo).
+ * @param misc Other miscellaneous configurations.
  */
 @Serializable
 @Immutable
@@ -33,6 +34,7 @@ data class AppConf(
     val playback: Playback = Playback(),
     val keymaps: Keymaps = Keymaps(),
     val history: History = History(),
+    val misc: Misc = Misc(),
 ) {
     /**
      * Configurations about chart painting.
@@ -663,6 +665,20 @@ data class AppConf(
             const val DefaultMaxSize = 100
             const val MinMaxSize = 1
             const val DefaultSquashIndex = true
+        }
+    }
+
+    /**
+     * Other miscellaneous configurations.
+     * @param useCustomFileDialog True if the custom file dialog is used instead of the system one.
+     */
+    @Serializable
+    @Immutable
+    data class Misc(
+        val useCustomFileDialog: Boolean = DefaultUseCustomFileDialog,
+    ) {
+        companion object {
+            const val DefaultUseCustomFileDialog = false
         }
     }
 }

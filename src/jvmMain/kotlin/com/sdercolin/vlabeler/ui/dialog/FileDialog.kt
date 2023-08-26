@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui.dialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.AwtWindow
+import com.sdercolin.vlabeler.UseCustomFileDialog
 import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.env.setAwtDirectoryMode
@@ -48,7 +49,7 @@ private fun FileDialog(
     directoryMode: Boolean,
     onCloseRequest: (parent: String?, name: String?) -> Unit,
 ) = when {
-    DebugState.usesCustomFileDialog -> CustomFileDialog(
+    DebugState.forceUseCustomFileDialog || UseCustomFileDialog.current -> CustomFileDialog(
         mode,
         title,
         initialDirectory,

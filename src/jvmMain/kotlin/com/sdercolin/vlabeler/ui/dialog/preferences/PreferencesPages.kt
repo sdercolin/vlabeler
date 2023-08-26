@@ -920,6 +920,24 @@ object PreferencesPages {
             }
     }
 
+    object Misc : PreferencesPage(Strings.PreferencesMisc, Strings.PreferencesMiscDescription) {
+        override val content: List<PreferencesGroup>
+            get() = buildPageContent {
+                withContext(
+                    selector = { it.misc },
+                    updater = { copy(misc = it) },
+                ) {
+                    switch(
+                        title = Strings.PreferencesMiscUseCustomFileDialog,
+                        description = Strings.PreferencesMiscUseCustomFileDialogDescription,
+                        defaultValue = AppConf.Misc.DefaultUseCustomFileDialog,
+                        select = { it.useCustomFileDialog },
+                        update = { copy(useCustomFileDialog = it) },
+                    )
+                }
+            }
+    }
+
     val rootPages: Array<PreferencesPage>
         get() = arrayOf(
             Charts,
@@ -929,6 +947,7 @@ object PreferencesPages {
             Playback,
             AutoSave,
             History,
+            Misc,
         )
 }
 

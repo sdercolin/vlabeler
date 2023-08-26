@@ -554,8 +554,8 @@ fun FrameWindowScope.Menu(
                         )
                         CheckboxItem(
                             "Force Custom File Dialog",
-                            checked = DebugState.usesCustomFileDialog,
-                            onCheckedChange = { DebugState.usesCustomFileDialog = it },
+                            checked = DebugState.forceUseCustomFileDialog,
+                            onCheckedChange = { DebugState.forceUseCustomFileDialog = it },
                         )
                     }
                 }
