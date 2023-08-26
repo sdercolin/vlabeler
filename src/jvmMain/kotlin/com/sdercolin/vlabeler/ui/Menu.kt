@@ -552,6 +552,10 @@ fun FrameWindowScope.Menu(
                             "Open App Directory",
                             onClick = { Desktop.getDesktop().open(AppDir) },
                         )
+                        Item(
+                            "Custom file dialog",
+                            onClick = { DebugState.isShowingFileDialog = true },
+                        )
                     }
                 }
             }
