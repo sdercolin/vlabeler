@@ -668,6 +668,12 @@ object PreferencesPages {
                         select = { it.showTag },
                         update = { copy(showTag = it) },
                     )
+                    switch(
+                        title = Strings.PreferencesEditorShowExtra,
+                        defaultValue = AppConf.Editor.DefaultShowExtra,
+                        select = { it.showExtra },
+                        update = { copy(showExtra = it) },
+                    )
                 }
             }
     }

@@ -87,6 +87,7 @@ interface ProjectStore {
     fun toggleCurrentEntryStar()
     fun editEntryTag(index: Int, tag: String)
     fun editCurrentEntryTag(tag: String)
+    val canEditCurrentEntryExtra: Boolean
 
     fun shouldShowModuleNavigation(): Boolean
     val canGoNextModule: Boolean
@@ -491,6 +492,9 @@ class ProjectStoreImpl(
     override fun editCurrentEntryTag(tag: String) {
         editCurrentProjectModule { editEntryTag(currentIndex, tag) }
     }
+
+    override val canEditCurrentEntryExtra: Boolean
+        get() = project?.currentEntry?.extras?.isNotEmpty() ?: false
 
     override fun shouldShowModuleNavigation(): Boolean {
         val project = project ?: return false

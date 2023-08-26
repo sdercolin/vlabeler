@@ -59,6 +59,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.repository.ToolCursorRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.DoneIcon
+import com.sdercolin.vlabeler.ui.common.ExtraIcon
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.StarIcon
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
@@ -117,6 +118,8 @@ fun Labeler(
             isEditingTag = editorState.isEditingTag,
             setEditingTag = { editorState.isEditingTag = it },
             tagOptions = editorState.tagOptions,
+            hasExtra = editorState.entryExtra.isNotEmpty(),
+            editExtra = { editorState.editEntryExtra(editorState.project.currentModule.currentIndex) },
             openEditEntryNameDialog = openEditEntryNameDialog,
         )
         if (appState.isTimescaleBarDisplayed) {
@@ -253,6 +256,8 @@ private fun EntryTitleBar(
     isEditingTag: Boolean,
     setEditingTag: (Boolean) -> Unit,
     tagOptions: List<String>,
+    hasExtra: Boolean,
+    editExtra: () -> Unit,
     openEditEntryNameDialog: () -> Unit,
 ) {
     Surface {
@@ -281,7 +286,7 @@ private fun EntryTitleBar(
                         softWrap = false,
                     )
                 }
-                if (appConf.editor.let { it.showDone || it.showStar || it.showTag }) {
+                if (appConf.editor.let { it.showDone || it.showStar || it.showTag || it.showExtra }) {
                     Spacer(Modifier.width(20.dp))
                     Row(
                         modifier = Modifier.align(Alignment.Bottom)
@@ -312,6 +317,14 @@ private fun EntryTitleBar(
                                 modifier = Modifier.padding(8.dp),
                             ) {
                                 StarIcon(star)
+                            }
+                        }
+                        if (appConf.editor.showExtra) {
+                            FreeSizedIconButton(
+                                onClick = editExtra,
+                                modifier = Modifier.padding(8.dp),
+                            ) {
+                                ExtraIcon(hasExtra)
                             }
                         }
                     }

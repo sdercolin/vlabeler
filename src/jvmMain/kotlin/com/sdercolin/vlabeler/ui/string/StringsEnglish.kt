@@ -33,6 +33,7 @@ fun Strings.en(): String = when (this) {
     MenuEditToggleDone -> "Toggle Done for Current Entry"
     MenuEditToggleStar -> "Toggle Starred for Current Entry"
     MenuEditEditTag -> "Edit Tag of Current Entry"
+    MenuEditEditExtra -> "Edit Extra Information of Current Entry"
     MenuEditMultipleEditMode -> "Edit All Connected Entries"
     MenuView -> "View"
     MenuViewToggleMarker -> "Show Parameter Controllers"
@@ -429,10 +430,11 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorNotes -> "Notes"
     PreferencesEditorNotesDescription ->
         "Customize the editor's appearance and behavior about entry " +
-            "notes (starred, done, tag)."
+            "notes (starred, done, tag, extra information)."
     PreferencesEditorShowDone -> "Display \"Done\" status"
     PreferencesEditorShowStarred -> "Display \"Starred\" status"
     PreferencesEditorShowTag -> "Display tags"
+    PreferencesEditorShowExtra -> "Display \"Edit extra information\""
     PreferencesEditorPostEditAction -> "Post-editing actions"
     PreferencesEditorPostEditActionDescription -> "Define actions to be conducted after editing the entry."
     PreferencesEditorPostEditActionDone -> "Set edited entries as \"Done\" after editing"

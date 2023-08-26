@@ -86,6 +86,7 @@ interface AppDialogState {
     fun openJumpToEntryDialog()
     fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose)
     fun openMoveCurrentEntryDialog(appConf: AppConf)
+    fun openEditEntryExtraDialog(index: Int)
     fun askIfSaveBeforeExit()
     fun confirmIfRemoveCurrentEntry(isLastEntry: Boolean)
     fun confirmIfLoadAutoSavedProject(file: File)
@@ -328,6 +329,12 @@ class AppDialogStateImpl(
             viewConf = appConf.view,
         )
         openEmbeddedDialog(args)
+    }
+
+    override fun openEditEntryExtraDialog(index: Int) {
+        val project = projectStore.requireProject()
+        val entry = project.currentModule.entries[index]
+        TODO("Edit entry extra")
     }
 
     override fun askIfSaveBeforeExit() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExiting)

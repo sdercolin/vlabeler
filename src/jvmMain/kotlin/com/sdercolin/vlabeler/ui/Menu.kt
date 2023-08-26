@@ -216,6 +216,16 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.ToggleStar.getKeyShortCut(),
                         enabled = appState.isEditorActive,
                     )
+                    Item(
+                        string(Strings.MenuEditEditExtra),
+                        onClick = {
+                            appState.openEditEntryExtraDialog(
+                                index = appState.requireProject().currentModule.currentIndex,
+                            )
+                        },
+                        // TODO: shortcut
+                        enabled = appState.isEditorActive && appState.canEditCurrentEntryExtra,
+                    )
                     CheckboxItem(
                         string(Strings.MenuEditMultipleEditMode),
                         checked = appState.project?.multipleEditMode == true,
