@@ -334,12 +334,6 @@ fun FrameWindowScope.Menu(
                         enabled = appState.isEditorActive && appState.canGoNextEntryOrSample,
                     )
                     Item(
-                        string(Strings.MenuNavigateNextEntry),
-                        onClick = { appState.nextEntry() },
-                        shortcut = KeyAction.NavigateNextEntry.getKeyShortCut(),
-                        enabled = appState.isEditorActive && appState.canGoNextEntryOrSample,
-                    )
-                    Item(
                         string(Strings.MenuNavigatePreviousEntry),
                         onClick = { appState.previousEntry() },
                         shortcut = KeyAction.NavigatePreviousEntry.getKeyShortCut(),
