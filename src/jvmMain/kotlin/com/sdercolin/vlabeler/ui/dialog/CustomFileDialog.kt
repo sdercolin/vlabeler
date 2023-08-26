@@ -55,6 +55,9 @@ import cafe.adriel.bonsai.core.tree.TreeScope
 import com.sdercolin.vlabeler.ui.common.CancelButton
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
+import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.util.HomeDir
 import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.runIf
@@ -75,7 +78,7 @@ fun CustomFileDialog(
     directoryMode: Boolean,
     onCloseRequest: (parent: String?, name: String?) -> Unit,
 ) {
-    val root = initialDirectory?.toFile() ?: HomeDir
+    val root = HomeDir
     val fileFree = DirectoryTree(root)
     Dialog(
         title = title,
@@ -84,15 +87,18 @@ fun CustomFileDialog(
         state = rememberDialogState(width = 800.dp, height = 600.dp),
         resizable = true,
     ) {
-        Content(
-            mode = mode,
-            root = root,
-            fileFree = fileFree,
-            initialFileName = initialFileName,
-            extensions = extensions,
-            directoryMode = directoryMode,
-            onCloseRequest = onCloseRequest,
-        )
+        AppTheme {
+            Content(
+                mode = mode,
+                root = root,
+                fileTree = fileFree,
+                initialDirectory = initialDirectory,
+                initialFileName = initialFileName,
+                extensions = extensions,
+                directoryMode = directoryMode,
+                onCloseRequest = onCloseRequest,
+            )
+        }
     }
 }
 
@@ -101,19 +107,21 @@ fun CustomFileDialog(
 private fun Content(
     mode: Int,
     root: File,
-    fileFree: Tree<File>,
+    fileTree: Tree<File>,
+    initialDirectory: String?,
     initialFileName: String?,
     extensions: List<String>?,
     directoryMode: Boolean,
     onCloseRequest: (parent: String?, name: String?) -> Unit,
 ) {
+    val saveMode = remember(mode) { mode == java.awt.FileDialog.SAVE }
     val splitPaneState = remember {
         SplitPaneState(
             initialPositionPercentage = 0.3f,
             moveEnabled = true,
         )
     }
-    var currentDirectory by remember { mutableStateOf<File?>(root) }
+    var currentDirectory by remember { mutableStateOf(initialDirectory?.toFile() ?: root) }
     var currentFileName by remember { mutableStateOf(initialFileName ?: "") }
     var currentExtension by remember {
         mutableStateOf(
@@ -122,19 +130,25 @@ private fun Content(
             } ?: extensions?.firstOrNull() ?: "*",
         )
     }
+
+    fun updateCurrentDirectory(directory: File) {
+        currentDirectory = directory
+        if (!saveMode) {
+            currentFileName = ""
+        }
+    }
     Surface(modifier = Modifier.fillMaxSize()) {
         HorizontalSplitPane(splitPaneState = splitPaneState) {
             first {
                 Bonsai(
                     modifier = Modifier.fillMaxSize().padding(10.dp),
-                    tree = fileFree,
+                    tree = fileTree,
                     style = BonsaiStyle(
                         nodeNameTextStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onSurface),
                         toggleIconColorFilter = ColorFilter.tint(MaterialTheme.colors.onSurface),
                     ),
                     onClick = {
-                        currentDirectory = it.content
-                        currentFileName = ""
+                        updateCurrentDirectory(it.content)
                     },
                 )
             }
@@ -144,11 +158,10 @@ private fun Content(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        val canGoBack = currentDirectory != null && currentDirectory != root
+                        val canGoBack = currentDirectory != root
                         FreeSizedIconButton(
                             onClick = {
-                                currentDirectory = currentDirectory?.parentFile
-                                currentFileName = ""
+                                updateCurrentDirectory(currentDirectory.parentFile ?: root)
                             },
                             modifier = Modifier.padding(5.dp),
                             enabled = canGoBack,
@@ -165,7 +178,7 @@ private fun Content(
                             modifier = Modifier.weight(1f)
                                 .background(MaterialTheme.colors.onSurface.copy(alpha = 0.3f))
                                 .padding(10.dp),
-                            value = currentDirectory?.absolutePath ?: "",
+                            value = currentDirectory.absolutePath,
                             onValueChange = {},
                             readOnly = true,
                             singleLine = true,
@@ -177,7 +190,7 @@ private fun Content(
                             .weight(1f)
                             .padding(horizontal = 5.dp, vertical = 15.dp),
                     ) {
-                        val files = currentDirectory?.listFiles().orEmpty().sortedWith { o1, o2 ->
+                        val files = currentDirectory.listFiles().orEmpty().sortedWith { o1, o2 ->
                             when {
                                 o1.isDirectory && !o2.isDirectory -> -1
                                 !o1.isDirectory && o2.isDirectory -> 1
@@ -190,15 +203,18 @@ private fun Content(
                             modifier = Modifier.fillMaxSize(),
                         ) {
                             items(files, key = { it.absolutePath }) { file ->
-                                val isSelectable = file.isDirectory || currentExtension == "*" ||
-                                    file.name.endsWith(".$currentExtension")
+                                val isSelectable = if (directoryMode) {
+                                    file.isDirectory
+                                } else {
+                                    file.isDirectory || currentExtension == "*" ||
+                                        file.name.endsWith(".$currentExtension")
+                                }
                                 val isSelected = file.name == currentFileName
                                 Row(
                                     modifier = Modifier.fillMaxWidth()
                                         .clickable(enabled = isSelectable) {
                                             if (file.isDirectory) {
-                                                currentDirectory = file
-                                                currentFileName = ""
+                                                updateCurrentDirectory(file)
                                             } else {
                                                 currentFileName = file.name
                                             }
@@ -238,66 +254,68 @@ private fun Content(
                             adapter = rememberScrollbarAdapter(lazyState),
                         )
                     }
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
-                    ) {
-                        BasicTextField(
-                            modifier = Modifier.weight(1f)
-                                .background(MaterialTheme.colors.onSurface.copy(alpha = 0.3f))
-                                .padding(10.dp),
-                            value = currentFileName,
-                            onValueChange = { currentFileName = it },
-                            singleLine = true,
-                            textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onSurface),
-                            cursorBrush = SolidColor(MaterialTheme.colors.onSurface.copy(alpha = 0.8f)),
-                        )
-                        Spacer(modifier = Modifier.width(20.dp))
-                        var expanded by remember { mutableStateOf(false) }
-                        Box {
-                            Row(
-                                modifier = Modifier.background(MaterialTheme.colors.onSurface.copy(alpha = 0.3f))
+                    if (!directoryMode) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
+                        ) {
+                            BasicTextField(
+                                modifier = Modifier.weight(1f)
+                                    .background(MaterialTheme.colors.onSurface.copy(alpha = 0.3f))
                                     .padding(10.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Spacer(modifier = Modifier.width(5.dp))
-                                val selectable = extensions.orEmpty().size > 1
-                                FreeSizedIconButton(
-                                    onClick = { expanded = !expanded },
-                                    enabled = selectable,
+                                value = currentFileName,
+                                onValueChange = { currentFileName = it },
+                                singleLine = true,
+                                textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onSurface),
+                                cursorBrush = SolidColor(MaterialTheme.colors.onSurface.copy(alpha = 0.8f)),
+                            )
+                            Spacer(modifier = Modifier.width(20.dp))
+                            var expanded by remember { mutableStateOf(false) }
+                            Box {
+                                Row(
+                                    modifier = Modifier.background(MaterialTheme.colors.onSurface.copy(alpha = 0.3f))
+                                        .padding(10.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.ExpandLess,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp),
-                                        tint = MaterialTheme.colors.onSurface.copy(
-                                            alpha = if (selectable) 0.8f else 0.3f,
+                                    Spacer(modifier = Modifier.width(5.dp))
+                                    val selectable = extensions.orEmpty().size > 1
+                                    FreeSizedIconButton(
+                                        onClick = { expanded = !expanded },
+                                        enabled = selectable,
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.ExpandLess,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp),
+                                            tint = MaterialTheme.colors.onSurface.copy(
+                                                alpha = if (selectable) 0.8f else 0.3f,
+                                            ),
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(20.dp))
+                                    BasicTextField(
+                                        modifier = Modifier.width(60.dp),
+                                        value = "*.$currentExtension",
+                                        onValueChange = { },
+                                        readOnly = true,
+                                        singleLine = true,
+                                        textStyle = MaterialTheme.typography.body2.copy(
+                                            color = MaterialTheme.colors.onSurface,
                                         ),
                                     )
                                 }
-                                Spacer(modifier = Modifier.width(20.dp))
-                                BasicTextField(
-                                    modifier = Modifier.width(60.dp),
-                                    value = "*.$currentExtension",
-                                    onValueChange = { },
-                                    readOnly = true,
-                                    singleLine = true,
-                                    textStyle = MaterialTheme.typography.body2.copy(
-                                        color = MaterialTheme.colors.onSurface,
-                                    ),
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false },
-                            ) {
-                                extensions?.forEach { extension ->
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            currentExtension = extension
-                                            expanded = false
-                                        },
-                                    ) {
-                                        Text("*.$extension")
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false },
+                                ) {
+                                    extensions?.forEach { extension ->
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                currentExtension = extension
+                                                expanded = false
+                                            },
+                                        ) {
+                                            Text("*.$extension")
+                                        }
                                     }
                                 }
                             }
@@ -311,16 +329,47 @@ private fun Content(
                             },
                         )
                         Spacer(Modifier.width(25.dp))
-                        val canSubmit = currentFileName.isNotEmpty() &&
-                            currentDirectory?.resolve(currentFileName)?.isFile == true &&
-                            (currentExtension == "*" || currentFileName.endsWith(".$currentExtension"))
+                        val canSubmit = when {
+                            !directoryMode && !saveMode -> {
+                                currentFileName.isNotEmpty() &&
+                                    currentDirectory.resolve(currentFileName).isFile &&
+                                    (currentExtension == "*" || currentFileName.endsWith(".$currentExtension"))
+                            }
+
+                            else -> true
+                        }
+                        val confirmText = when {
+                            directoryMode -> Strings.CommonSelect
+                            saveMode -> Strings.CommonSave
+                            else -> Strings.CommonOpen
+                        }
                         ConfirmButton(
+                            text = string(confirmText),
                             enabled = canSubmit,
                             onClick = {
-                                onCloseRequest(
-                                    currentDirectory?.absolutePath,
-                                    currentFileName,
-                                )
+                                val parent = if (directoryMode) {
+                                    currentDirectory.parentFile?.absolutePath ?: ""
+                                } else {
+                                    currentDirectory.absolutePath
+                                }
+                                val name = when {
+                                    directoryMode -> {
+                                        currentDirectory.name
+                                    }
+
+                                    saveMode -> {
+                                        if (currentFileName.endsWith(".$currentExtension")) {
+                                            currentFileName
+                                        } else {
+                                            "$currentFileName.$currentExtension"
+                                        }
+                                    }
+
+                                    else -> {
+                                        currentFileName
+                                    }
+                                }
+                                onCloseRequest(parent, name)
                             },
                         )
                     }

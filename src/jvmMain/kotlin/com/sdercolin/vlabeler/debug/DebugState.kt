@@ -7,5 +7,5 @@ import androidx.compose.runtime.setValue
 object DebugState {
     var isShowingChunkBorder: Boolean by mutableStateOf(false)
     var printMemoryUsage: Boolean by mutableStateOf(false)
-    var isShowingFileDialog: Boolean by mutableStateOf(false)
+    var usesCustomFileDialog: Boolean by mutableStateOf(false)
 }

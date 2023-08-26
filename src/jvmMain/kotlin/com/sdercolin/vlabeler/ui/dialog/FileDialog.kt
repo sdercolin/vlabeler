@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui.dialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.AwtWindow
+import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.env.setAwtDirectoryMode
 import com.sdercolin.vlabeler.util.HomeDir
@@ -46,41 +47,55 @@ private fun FileDialog(
     extensions: List<String>?,
     directoryMode: Boolean,
     onCloseRequest: (parent: String?, name: String?) -> Unit,
-) = if (!isWindows) AwtWindow(
-    create = {
-        if (directoryMode) setAwtDirectoryMode(true)
+) = when {
+    DebugState.usesCustomFileDialog -> CustomFileDialog(
+        mode,
+        title,
+        initialDirectory,
+        initialFileName,
+        extensions,
+        directoryMode,
+        onCloseRequest,
+    )
 
-        object : FileDialog(null as Frame?, title, mode) {
-            override fun setVisible(value: Boolean) {
-                super.setVisible(value)
-                if (value) {
-                    onCloseRequest(directory, file)
+    !isWindows -> AwtWindow(
+        create = {
+            if (directoryMode) setAwtDirectoryMode(true)
+
+            object : FileDialog(null as Frame?, title, mode) {
+                override fun setVisible(value: Boolean) {
+                    super.setVisible(value)
+                    if (value) {
+                        onCloseRequest(directory, file)
+                    }
                 }
-            }
-        }.apply {
-            initialDirectory?.let { directory = it }
-            initialFileName?.let { file = it }
-            if (extensions != null) {
-                filenameFilter = FilenameFilter { _, name ->
-                    extensions.any {
-                        name.endsWith(it)
+            }.apply {
+                initialDirectory?.let { directory = it }
+                initialFileName?.let { file = it }
+                if (extensions != null) {
+                    filenameFilter = FilenameFilter { _, name ->
+                        extensions.any {
+                            name.endsWith(it)
+                        }
                     }
                 }
             }
-        }
-    },
-    dispose = {
-        if (directoryMode) setAwtDirectoryMode(false)
-        it.dispose()
-    },
-) else LwjglFileDialog(
-    mode,
-    initialDirectory,
-    initialFileName,
-    extensions,
-    directoryMode,
-    onCloseRequest,
-)
+        },
+        dispose = {
+            if (directoryMode) setAwtDirectoryMode(false)
+            it.dispose()
+        },
+    )
+
+    else -> LwjglFileDialog(
+        mode,
+        initialDirectory,
+        initialFileName,
+        extensions,
+        directoryMode,
+        onCloseRequest,
+    )
+}
 
 @Composable
 private fun LwjglFileDialog(
@@ -103,9 +118,11 @@ private fun LwjglFileDialog(
                 mode == SAVE -> {
                     NativeFileDialog.NFD_SaveDialog(filterList, defaultPathForFile, pathPointer)
                 }
+
                 directoryMode -> {
                     NativeFileDialog.NFD_PickFolder(initialDirectory ?: HomeDir.absolutePath, pathPointer)
                 }
+
                 else -> {
                     NativeFileDialog.NFD_OpenDialog(filterList, defaultPathForFile, pathPointer)
                 }

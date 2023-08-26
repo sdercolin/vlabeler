@@ -9,12 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.dialog.AboutDialog
-import com.sdercolin.vlabeler.ui.dialog.CustomFileDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.LicenseDialog
 import com.sdercolin.vlabeler.ui.dialog.TrackingSettingsDialog
@@ -40,7 +38,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.awt.FileDialog
 
 @Composable
 fun App(
@@ -222,16 +219,5 @@ fun App(
     }
     if (appState.isBusy) {
         CircularProgress()
-    }
-
-    if (DebugState.isShowingFileDialog) {
-        CustomFileDialog(
-            mode = FileDialog.LOAD,
-            title = "Custom file dialog",
-            initialDirectory = null,
-            initialFileName = null,
-            extensions = listOf("txt", "csv", "lab"),
-            directoryMode = false,
-        ) { _, _ -> DebugState.isShowingFileDialog = false }
     }
 }

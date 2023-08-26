@@ -552,9 +552,10 @@ fun FrameWindowScope.Menu(
                             "Open App Directory",
                             onClick = { Desktop.getDesktop().open(AppDir) },
                         )
-                        Item(
-                            "Custom file dialog",
-                            onClick = { DebugState.isShowingFileDialog = true },
+                        CheckboxItem(
+                            "Force Custom File Dialog",
+                            checked = DebugState.usesCustomFileDialog,
+                            onCheckedChange = { DebugState.usesCustomFileDialog = it },
                         )
                     }
                 }
