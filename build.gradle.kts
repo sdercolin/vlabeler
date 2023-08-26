@@ -52,7 +52,6 @@ kotlin {
                 implementation("com.segment.analytics.kotlin:core:1.9.1")
                 implementation("uk.co.caprica:vlcj:4.7.0")
                 implementation("cafe.adriel.bonsai:bonsai-core:1.2.0")
-                implementation("cafe.adriel.bonsai:bonsai-file-system:1.2.0")
 
                 val lwjglVersion = "3.3.1"
                 listOf("lwjgl", "lwjgl-nfd").forEach { lwjglDep ->

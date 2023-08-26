@@ -70,6 +70,7 @@ fun App(
                     activeTemplatePlugins = appState.getActivePlugins(Plugin.Type.Template),
                     appRecordStore = appState.appRecordStore,
                 )
+
             is Screen.Editor -> Editor(screen.state, appState)
         }
         if (appState.isShowingProjectSettingDialog) {
@@ -229,10 +230,8 @@ fun App(
             title = "Custom file dialog",
             initialDirectory = null,
             initialFileName = null,
-            extensions = null,
+            extensions = listOf("txt", "csv", "lab"),
             directoryMode = false,
-            onCloseRequest = { _, _ -> DebugState.isShowingFileDialog = false },
-            appConf = appState.appConf,
-        )
+        ) { _, _ -> DebugState.isShowingFileDialog = false }
     }
 }
