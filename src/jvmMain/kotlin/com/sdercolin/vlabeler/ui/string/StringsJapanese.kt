@@ -472,8 +472,8 @@ fun Strings.ja(): String? = when (this) {
     PreferencesMiscUseCustomFileDialog -> "独自のファイルダイアログを使用する"
     PreferencesMiscUseCustomFileDialogDescription ->
         "有効にすると、OS のファイルダイアログではなく、独自のファイルダイアログを使用します。" +
-                "これは、デフォルトのファイルダイアログに問題がある場合や、OSによってはファイルダイアログがサポートされていない場合に" +
-                "ご利用ください。この設定の変更を反映するには、アプリケーションを再起動する必要がある場合があります。"
+            "これは、デフォルトのファイルダイアログに問題がある場合や、OSによってはファイルダイアログがサポートされていない場合に" +
+            "ご利用ください。この設定の変更を反映するには、アプリケーションを再起動する必要がある場合があります。"
     ActionToggleSamplePlayback -> "現在のサンプルの再生/停止"
     ActionToggleEntryPlayback -> "現在のエントリの再生/停止"
     ActionToggleScreenRangePlayback -> "現在の画面範囲の再生/停止"

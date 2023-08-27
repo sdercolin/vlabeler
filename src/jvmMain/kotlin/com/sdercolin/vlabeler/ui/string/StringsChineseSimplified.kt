@@ -452,7 +452,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesMiscUseCustomFileDialog -> "使用自定义的文件对话框来代替系统文件对话框"
     PreferencesMiscUseCustomFileDialogDescription ->
         "启用后，文件对话框将会被自定义的对话框所代替。" +
-                "这可能会在您使用不支持系统文件对话框的桌面环境时有所帮助。您可能需要重启应用才能使该设置生效。"
+            "这可能会在您使用不支持系统文件对话框的桌面环境时有所帮助。您可能需要重启应用才能使该设置生效。"
     ActionToggleSamplePlayback -> "播放/暂停当前采样"
     ActionToggleEntryPlayback -> "播放/暂停当前条目"
     ActionToggleScreenRangePlayback -> "播放/暂停当前屏幕范围"
