@@ -8,6 +8,17 @@
       "moduleLicenseUrl": "http://www.apache.org/licenses/LICENSE-2.0"
     },
     {
+      "moduleName": "cafe.adriel.bonsai:bonsai-core",
+      "moduleVersion": "1.2.0"
+    },
+    {
+      "moduleName": "cafe.adriel.bonsai:bonsai-core-desktop",
+      "moduleUrl": "https://github.com/adrielcafe/bonsai",
+      "moduleVersion": "1.2.0",
+      "moduleLicense": "The MIT License",
+      "moduleLicenseUrl": "https://opensource.org/licenses/MIT"
+    },
+    {
       "moduleName": "ch.qos.logback:logback-classic",
       "moduleUrl": "http://www.qos.ch",
       "moduleVersion": "1.2.6",
