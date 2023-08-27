@@ -447,6 +447,12 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesHistorySquashIndexDescription ->
         "当启用该项时，仅包含索引变更的操作（如切换条目），直到下一次包含内容变更的操作前，" +
             "将不会被保存在历史中。"
+    PreferencesMisc -> "其他"
+    PreferencesMiscDescription -> "编辑其他设置。请注意，这些设置可能包含一些实验性的功能。"
+    PreferencesMiscUseCustomFileDialog -> "使用自定义的文件对话框来代替系统文件对话框"
+    PreferencesMiscUseCustomFileDialogDescription ->
+        "启用后，文件对话框将会被自定义的对话框所代替。" +
+                "这可能会在您使用不支持系统文件对话框的桌面环境时有所帮助。您可能需要重启应用才能使该设置生效。"
     ActionToggleSamplePlayback -> "播放/暂停当前采样"
     ActionToggleEntryPlayback -> "播放/暂停当前条目"
     ActionToggleScreenRangePlayback -> "播放/暂停当前屏幕范围"

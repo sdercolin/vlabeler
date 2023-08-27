@@ -503,7 +503,7 @@ fun Strings.en(): String = when (this) {
     PreferencesMiscUseCustomFileDialogDescription ->
         "When enabled, the file dialogs will be replaced by the custom ones. " +
             "This may be useful if you are using a desktop environment that doesn't support " +
-            "the system file dialogs. You need to restart the app to apply this setting."
+            "the system file dialogs. You might need to restart the app to apply this setting."
     ActionToggleSamplePlayback -> "Toggle Playback of Current Sample"
     ActionToggleEntryPlayback -> "Toggle Playback of Current Entry"
     ActionToggleScreenRangePlayback -> "Toggle Playback of Current Screen Range"

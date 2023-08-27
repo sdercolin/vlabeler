@@ -467,6 +467,13 @@ fun Strings.ja(): String? = when (this) {
     PreferencesHistorySquashIndexDescription ->
         "有効にすると、インデックスのみの変更（エントリの切り替えなど）は、" +
             "次に内容の変更があるまで、履歴に保存されません。"
+    PreferencesMisc -> "その他"
+    PreferencesMiscDescription -> "その他の動作をカスタマイズします。こちらの設定は、実験的なものも含まれます。"
+    PreferencesMiscUseCustomFileDialog -> "独自のファイルダイアログを使用する"
+    PreferencesMiscUseCustomFileDialogDescription ->
+        "有効にすると、OS のファイルダイアログではなく、独自のファイルダイアログを使用します。" +
+                "これは、デフォルトのファイルダイアログに問題がある場合や、OSによってはファイルダイアログがサポートされていない場合に" +
+                "ご利用ください。この設定の変更を反映するには、アプリケーションを再起動する必要がある場合があります。"
     ActionToggleSamplePlayback -> "現在のサンプルの再生/停止"
     ActionToggleEntryPlayback -> "現在のエントリの再生/停止"
     ActionToggleScreenRangePlayback -> "現在の画面範囲の再生/停止"

@@ -421,6 +421,9 @@ Please check [App Usage Tracking](readme/tracking.md) for details.
 4. Sometimes the window freezes unexpectedly. You can resize the window to refresh it.
 5. If all texts besides the menu bar are invisible, please try setting the environment variable `SKIKO_RENDER_API` to
    `SOFTWARE`.
+6. On some Linux distributions, the file dialogs may not work properly. In this case, you can enable a custom file
+   dialog in `Settings` -> `Preferences` -> `Miscellaneous`. Please note that the custom file dialog may not be as
+   powerful as the system file dialog.
 
 ### Localization help (besides code contributors)
 
