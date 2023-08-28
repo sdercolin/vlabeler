@@ -301,7 +301,7 @@ data class Module(
         return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
     }
 
-    fun setEntryDone(index: Int): Module {
+    private fun setEntryDone(index: Int): Module {
         val entry = entries[index]
         val editedEntry = entry.done()
         return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
