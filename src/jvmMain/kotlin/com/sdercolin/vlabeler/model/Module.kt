@@ -176,8 +176,6 @@ data class Module(
         actionType: AppConf.PostEditAction.Type,
         labelerConf: LabelerConf,
     ): Module {
-        val entries = entries.toMutableList()
-        var currentIndex = currentIndex
         val conf = when (actionType) {
             AppConf.PostEditAction.Type.Next -> editorConf.postEditNext
             AppConf.PostEditAction.Type.Done -> editorConf.postEditDone
@@ -197,19 +195,16 @@ data class Module(
             Edition.Method.SetWithCursor.takeIf { conf.useCursorSet },
         )
         if (acceptedFieldNames?.isEmpty() == true || acceptedMethod.isEmpty()) return this
-        editions.forEach { edition ->
-            if (edition.method !in acceptedMethod) return@forEach
-            if (acceptedFieldNames != null && edition.fieldNames.intersect(acceptedFieldNames).isEmpty()) return@forEach
+        return editions.fold(this) { module, edition ->
+            if (edition.method !in acceptedMethod) return@fold module
+            if (acceptedFieldNames != null && edition.fieldNames.intersect(acceptedFieldNames).isEmpty()) {
+                return@fold module
+            }
             when (actionType) {
-                AppConf.PostEditAction.Type.Next -> {
-                    currentIndex = (edition.index + 1).coerceAtMost(entries.lastIndex)
-                }
-                AppConf.PostEditAction.Type.Done -> {
-                    entries[edition.index] = entries[edition.index].done()
-                }
+                AppConf.PostEditAction.Type.Next -> module.nextEntry()
+                AppConf.PostEditAction.Type.Done -> module.setEntryDone(edition.index)
             }
         }
-        return copy(entries = entries, currentIndex = currentIndex)
     }
 
     fun renameEntry(index: Int, newName: String, labelerConf: LabelerConf): Module {
@@ -303,6 +298,12 @@ data class Module(
     fun toggleEntryDone(index: Int): Module {
         val entry = entries[index]
         val editedEntry = entry.doneToggled()
+        return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
+    }
+
+    fun setEntryDone(index: Int): Module {
+        val entry = entries[index]
+        val editedEntry = entry.done()
         return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
     }
 
