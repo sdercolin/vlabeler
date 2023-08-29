@@ -165,7 +165,7 @@ fun MarkerCanvas(
             if (appState.isEditorActive.not()) return@collectLatest
             if (editorState.handleSetPropertyKeyAction(it)) return@collectLatest
             if (state.mayHandleScissorsKeyAction(it, editorState::cutEntry)) return@collectLatest
-            val updated = state.getUpdatedEntriesByKeyAction(
+            val (updated, pointIndex) = state.getUpdatedEntriesByKeyAction(
                 it,
                 appState.appConf,
                 editorState.project.labelerConf,
@@ -174,6 +174,7 @@ fun MarkerCanvas(
                 updated = updated,
                 editEntries = editorState::submitEntries,
                 method = Edition.Method.SetWithCursor,
+                pointIndex = pointIndex,
             )
         }
     }
@@ -491,6 +492,7 @@ private fun MarkerState.handleCursorMove(
             updated = updated,
             editEntries = editions,
             method = Edition.Method.Dragging,
+            pointIndex = cursorState.value.pointIndex,
         )
         if (cursorState.value.previewOnDragging) {
             playByCursor(entryConverter.convertToFrame(actualX))
@@ -729,25 +731,24 @@ private fun MarkerState.editEntryIfNeeded(
     updated: List<EntryInPixel>,
     editEntries: (List<Edition>) -> Unit,
     method: Edition.Method,
+    pointIndex: Int,
 ) {
     if (updated != entriesInPixel) {
         val edited = updated - entriesInPixel.toSet()
         if (edited.isEmpty()) return
 
-        val editions = edited.mapNotNull { entry ->
+        val editedFieldName = when (pointIndex) {
+            StartPointIndex -> "start"
+            EndPointIndex -> "end"
+            else -> labelerConf.fields[pointIndex].name
+        }
+
+        val editions = edited.map { entry ->
             val entryInMillis = entryConverter.convertToMillis(entry)
-            val original =
-                entriesInPixel.firstOrNull { original -> original.index == entry.index } ?: return@mapNotNull null
-            val fieldNames = mutableListOf<String>()
-            if (entry.start != original.start) fieldNames.add("start")
-            if (entry.end != original.end) fieldNames.add("end")
-            entry.points.mapIndexed { index, point ->
-                if (point != original.points[index]) fieldNames.add(labelerConf.fields[index].name)
-            }
             Edition(
                 entry.index,
                 entryInMillis.entry,
-                fieldNames = fieldNames,
+                fieldNames = listOf(editedFieldName),
                 method = Edition.Method.Dragging,
             )
         }.toMutableList()
