@@ -242,7 +242,7 @@ fun Strings.en(): String = when (this) {
         "An unexpected error occurred during the plugin execution.\n" +
             "Please contact the author for more information."
     InvalidCreatedProjectException ->
-        "The created project is not valid." +
+        "The created project is not valid. " +
             "Please check the documentations of the labeler/plugin to ensure your settings are correct.\n" +
             "If the problem still occurs, please contact the author of the labeler/plugin for more information."
     InvalidOpenedProjectException ->
