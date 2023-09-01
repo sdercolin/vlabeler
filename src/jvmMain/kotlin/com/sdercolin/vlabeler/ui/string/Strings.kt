@@ -232,6 +232,7 @@ enum class Strings {
     VideoComponentInitializationException,
     VideoFileNotFoundExceptionTemplate,
     PluginRuntimeExceptionTemplate,
+    ProjectConstructorRuntimeExceptionTemplate,
     LabelerManagerTitle,
     LabelerManagerImportDialogTitle,
     TemplatePluginManagerTitle,

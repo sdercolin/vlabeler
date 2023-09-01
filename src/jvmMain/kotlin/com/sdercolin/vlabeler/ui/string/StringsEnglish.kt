@@ -261,6 +261,7 @@ fun Strings.en(): String = when (this) {
     InvalidEditedProjectException -> "Invalid edited project.\nPlease check error log for more information."
     CustomizableItemLoadingException -> "Could not load the selected customized item."
     PluginRuntimeExceptionTemplate -> "Plugin runtime error: %s"
+    ProjectConstructorRuntimeExceptionTemplate -> "Labeler runtime error when constructing project: %s"
     VideoComponentInitializationException ->
         "Could not initialize the video component. You need to install VLC on your device to use this feature. " +
             "Please read the `Video integration` section in README for details."

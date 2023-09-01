@@ -237,6 +237,7 @@ fun Strings.zhHans(): String? = when (this) {
     InvalidEditedProjectException -> "此次编辑将导致项目数据无效。详情请查看错误日志。"
     CustomizableItemLoadingException -> "无法读取该自定义组件。"
     PluginRuntimeExceptionTemplate -> "插件运行时错误：%s"
+    ProjectConstructorRuntimeExceptionTemplate -> "构建项目时的标注器运行时错误：%s"
     VideoComponentInitializationException ->
         "无法初始化视频组件。您需要在您的设备上安装 VLC 才能使用此功能。请阅读 README 中的 `集成视频` 部分以获取更多信息。"
     VideoFileNotFoundExceptionTemplate -> "未找到 %s 的同名视频文件（%s）"
