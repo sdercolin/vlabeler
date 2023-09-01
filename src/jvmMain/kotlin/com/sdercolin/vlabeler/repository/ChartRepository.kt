@@ -36,6 +36,7 @@ object ChartRepository {
      * @return true if previous cache is not consistent with current app configuration.
      */
     fun needReset(appConf: AppConf, version: Int): Boolean {
+        if (!::cacheParams.isInitialized) return true
         val params = ChartCacheParams(version, appConf.painter)
         return params != cacheParams
     }
