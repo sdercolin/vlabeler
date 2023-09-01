@@ -243,7 +243,7 @@ fun Strings.en(): String = when (this) {
             "Please contact the author for more information."
     InvalidCreatedProjectException ->
         "The created project is not valid. " +
-            "Please check the documentations of the labeler/plugin to ensure your settings are correct.\n" +
+            "Please check the settings of the labeler/plugin to ensure you have set it up correctly.\n" +
             "If the problem still occurs, please contact the author of the labeler/plugin for more information."
     InvalidOpenedProjectException ->
         "Could not open the project because it contains invalid data.\n" +
