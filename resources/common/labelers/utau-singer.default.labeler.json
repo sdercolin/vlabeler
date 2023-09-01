@@ -1,6 +1,6 @@
 {
   "name": "utau-singer.default",
-  "version": 18,
+  "version": 19,
   "serialVersion": 1,
   "extension": "ini",
   "displayedName": {
@@ -377,9 +377,14 @@
         "name": "forceRecursive",
         "type": "boolean",
         "label": {
-          "en": "Scan samples recursively",
-          "zh": "递归扫描采样",
-          "ja": "サンプルを再帰的にスキャンする"
+          "en": "Include children of child directories",
+          "zh": "包括子文件夹的子文件夹",
+          "ja": "子ディレクトリの子を含める"
+        },
+        "description": {
+          "en": "By default, only direct children of the root directory will be included due to restriction of UTAU. If you have samples in folders whose depth is greater than 1, please enable this option.",
+          "zh": "由于 UTAU 的限制，默认情况下只有根目录的直接子文件夹会被包括。如果您的采样文件夹的深度大于 1，请启用此选项。",
+          "ja": "UTAUの制限により、デフォルトではルートディレクトリの直接の子のみが含まれます。深さが1より大きいフォルダーにサンプルがある場合は、このオプションを有効にしてください。"
         },
         "defaultValue": false
       },
