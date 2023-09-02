@@ -11,7 +11,7 @@ interface WaveConverter {
     /**
      * Check if the converter can convert the given file.
      */
-    fun accept(inputFile: File): Boolean
+    fun accept(inputFile: File, conf: AppConf.Conversion): Boolean
 
     /**
      * Convert the given file to wav.

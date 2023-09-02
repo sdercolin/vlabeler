@@ -422,6 +422,12 @@ object PreferencesPages {
                         select = { it.ffmpegArgs },
                         update = { copy(ffmpegArgs = it) },
                     )
+                    switch(
+                        title = Strings.PreferencesChartsConversionFFmpegUseForWav,
+                        defaultValue = AppConf.Conversion.DefaultUseConversionForWav,
+                        select = { it.useConversionForWav },
+                        update = { copy(useConversionForWav = it) },
+                    )
                 }
             }
     }

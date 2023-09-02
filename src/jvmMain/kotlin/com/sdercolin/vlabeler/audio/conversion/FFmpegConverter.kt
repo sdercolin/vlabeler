@@ -13,8 +13,8 @@ import java.io.File
  */
 class FFmpegConverter : WaveConverter {
 
-    override fun accept(inputFile: File): Boolean {
-        return inputFile.isFile && inputFile.extension != "wav"
+    override fun accept(inputFile: File, conf: AppConf.Conversion): Boolean {
+        return inputFile.isFile && (inputFile.extension != "wav" || conf.useConversionForWav)
     }
 
     override suspend fun convert(inputFile: File, outputFile: File, conf: AppConf.Conversion) {

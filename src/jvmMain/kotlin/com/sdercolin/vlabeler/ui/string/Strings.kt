@@ -320,6 +320,7 @@ enum class Strings {
     PreferencesChartsConversionFFmpegPath,
     PreferencesChartsConversionFFmpegPathDescription,
     PreferencesChartsConversionFFmpegArgs,
+    PreferencesChartsConversionFFmpegUseForWav,
     PreferencesKeymap,
     PreferencesKeymapDescription,
     PreferencesKeymapKeyAction,

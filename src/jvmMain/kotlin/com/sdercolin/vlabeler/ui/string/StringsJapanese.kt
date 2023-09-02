@@ -357,6 +357,7 @@ fun Strings.ja(): String? = when (this) {
             "OS で実行可能になっていることを確認する必要があります。" +
             "実行可能ファイルが署名されていないか、アクセス権限に関連するエラーが発生する可能性があります。"
     PreferencesChartsConversionFFmpegArgs -> "FFmpeg の引数（入力と出力以外）"
+    PreferencesChartsConversionFFmpegUseForWav -> "wav ファイルも FFmpeg で変換する"
     PreferencesKeymap -> "ショートカットキー設定"
     PreferencesKeymapDescription -> "キーボード/マウスのショートカットキーをカスタマイズします。"
     PreferencesKeymapKeyAction -> "キーボード"

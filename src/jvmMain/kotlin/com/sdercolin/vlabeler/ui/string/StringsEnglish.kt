@@ -371,6 +371,7 @@ fun Strings.en(): String = when (this) {
             "You may also need to ensure the executable could be executed by your OS before using it in vLabeler. " +
             "Possible errors may be related to unsigned executables or access permissions."
     PreferencesChartsConversionFFmpegArgs -> "FFmpeg arguments besides input and output"
+    PreferencesChartsConversionFFmpegUseForWav -> "Use FFmpeg conversion for wav files"
     PreferencesKeymap -> "Keymap"
     PreferencesKeymapDescription -> "Customize key bindings for key/mouse actions."
     PreferencesKeymapKeyAction -> "Key actions"

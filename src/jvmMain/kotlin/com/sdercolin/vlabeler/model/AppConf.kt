@@ -267,16 +267,19 @@ data class AppConf(
      *
      * @param ffmpegPath Path to the ffmpeg executable.
      * @param ffmpegArgs Arguments passed to ffmpeg besides input and output file paths.
+     * @param useConversionForWav True if the conversion is used for wav files as well.
      */
     @Serializable
     @Immutable
     data class Conversion(
         val ffmpegPath: String = DefaultFFmpegPath,
         val ffmpegArgs: String = DefaultFFmpegArgs,
+        val useConversionForWav: Boolean = DefaultUseConversionForWav,
     ) {
         companion object {
             const val DefaultFFmpegPath = "ffmpeg"
             const val DefaultFFmpegArgs = "-acodec pcm_s16le -ac 1 -ar 44100"
+            const val DefaultUseConversionForWav = false
         }
     }
 

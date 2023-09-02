@@ -53,8 +53,7 @@ object SampleInfoRepository {
                 ?.readText()
                 ?.parseJson<SampleInfo>()
         }.getOrNull()
-        if (existingInfo != null && !existingInfo.shouldReload(project, sampleFile, appConf)
-        ) {
+        if (existingInfo != null && !existingInfo.shouldReload(project, sampleFile, appConf)) {
             // Return file cached sample info
             Log.info("Returning cached sample info for ${sampleFile.name} in module $moduleName")
             infoMap[moduleName to existingInfo.name] = existingInfo
