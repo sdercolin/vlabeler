@@ -88,6 +88,32 @@ class MarkerState(
         return index % (labelerConf.fields.size + 1)
     }
 
+    fun getPointIndexAsSingleEntry(entryIndex: Int, pointIndex: Int): Int {
+        val entryIndices = entriesInPixel.indices
+        val startPointIndex = if (entryIndex == 0) {
+            MarkerCursorState.StartPointIndex
+        } else {
+            entryIndex * (labelerConf.fields.size + 1) - 1
+        }
+        val endPointIndex = if (entryIndex == entryIndices.last()) {
+            MarkerCursorState.EndPointIndex
+        } else {
+            startPointIndex + labelerConf.fields.size + 1
+        }
+        return when (pointIndex) {
+            startPointIndex -> MarkerCursorState.StartPointIndex
+            endPointIndex -> MarkerCursorState.EndPointIndex
+            else -> {
+                val fieldPointIndexes = if (startPointIndex == MarkerCursorState.StartPointIndex) {
+                    0 until labelerConf.fields.size
+                } else {
+                    (startPointIndex + 1) until (startPointIndex + 1 + labelerConf.fields.size)
+                }
+                fieldPointIndexes.indexOfFirst { it == pointIndex }
+            }
+        }
+    }
+
     private fun getPointPosition(index: Int): Float = when (index) {
         MarkerCursorState.StartPointIndex -> startInPixel
         MarkerCursorState.EndPointIndex -> endInPixel

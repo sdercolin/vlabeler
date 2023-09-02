@@ -737,7 +737,7 @@ private fun MarkerState.editEntryIfNeeded(
         val edited = updated - entriesInPixel.toSet()
         if (edited.isEmpty()) return
 
-        val editedFieldName = when (pointIndex) {
+        fun getEditedFieldName(pointIndex: Int) = when (pointIndex) {
             StartPointIndex -> "start"
             EndPointIndex -> "end"
             else -> labelerConf.fields[pointIndex].name
@@ -745,6 +745,8 @@ private fun MarkerState.editEntryIfNeeded(
 
         val editions = edited.map { entry ->
             val entryInMillis = entryConverter.convertToMillis(entry)
+            val entryIndexInEdited = updated.indexOfFirst { it.index == entry.index }
+            val editedFieldName = getEditedFieldName(getPointIndexAsSingleEntry(entryIndexInEdited, pointIndex))
             Edition(
                 entry.index,
                 entryInMillis.entry,
