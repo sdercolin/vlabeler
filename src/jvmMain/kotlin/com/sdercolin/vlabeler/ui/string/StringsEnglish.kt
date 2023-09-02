@@ -181,6 +181,7 @@ fun Strings.en(): String = when (this) {
     InputEntryNameCutFormerDialogDescription -> "Input name for the former entry after cutting"
     InputEntryNameCutLatterDialogDescription -> "Input name for the latter entry after cutting"
     EditEntryNameDialogExistingError -> "The name you input already exists."
+    EditEntryExtraDialogDescription -> "Edit extra information"
     MoveEntryDialogDescription -> "Input new index for entry \"%1\$s\" (%2\$d ~ %3\$d)"
     AskIfRemoveEntryDialogDescription -> "Removing current entry..."
     AskIfRemoveEntryLastDialogDescription ->

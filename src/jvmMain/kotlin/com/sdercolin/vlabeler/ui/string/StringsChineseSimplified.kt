@@ -173,6 +173,7 @@ fun Strings.zhHans(): String? = when (this) {
     InputEntryNameCutFormerDialogDescription -> "请输入切割后的前一个条目名"
     InputEntryNameCutLatterDialogDescription -> "请输入切割后的后一个条目名"
     EditEntryNameDialogExistingError -> "该条目名已存在。"
+    EditEntryExtraDialogDescription -> "编辑额外信息"
     MoveEntryDialogDescription -> "请输入条目 \"%1\$s\" 的新索引（%2\$d ~ %3\$d）"
     AskIfRemoveEntryDialogDescription -> "将要删除当前条目..."
     AskIfRemoveEntryLastDialogDescription ->

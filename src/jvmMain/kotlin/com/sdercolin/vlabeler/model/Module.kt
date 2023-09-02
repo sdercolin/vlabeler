@@ -218,6 +218,12 @@ data class Module(
         return updateEntry(editedEntry.edit(renamed), labelerConf)
     }
 
+    fun updateEntryExtra(index: Int, extras: List<String?>, labelerConf: LabelerConf): Module {
+        val editedEntry = getEntryForEditing(index)
+        val updated = editedEntry.entry.copy(extras = extras)
+        return updateEntry(editedEntry.edit(updated), labelerConf)
+    }
+
     fun duplicateEntry(index: Int, newName: String, labelerConf: LabelerConf): Module {
         val entries = entries.toMutableList()
         var original = entries[index]

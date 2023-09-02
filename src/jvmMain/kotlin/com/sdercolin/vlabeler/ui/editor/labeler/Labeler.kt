@@ -118,7 +118,7 @@ fun Labeler(
             isEditingTag = editorState.isEditingTag,
             setEditingTag = { editorState.isEditingTag = it },
             tagOptions = editorState.tagOptions,
-            hasExtra = editorState.entryExtra.isNotEmpty(),
+            hasExtra = appState.canEditCurrentEntryExtra,
             editExtra = { editorState.editEntryExtra(editorState.project.currentModule.currentIndex) },
             openEditEntryNameDialog = openEditEntryNameDialog,
         )
@@ -323,6 +323,7 @@ private fun EntryTitleBar(
                             FreeSizedIconButton(
                                 onClick = editExtra,
                                 modifier = Modifier.padding(8.dp),
+                                enabled = hasExtra,
                             ) {
                                 ExtraIcon(hasExtra)
                             }

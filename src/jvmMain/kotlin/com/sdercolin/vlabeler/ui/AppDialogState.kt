@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
+import com.sdercolin.vlabeler.ui.dialog.EditEntryExtraDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogRequest
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
@@ -334,7 +335,13 @@ class AppDialogStateImpl(
     override fun openEditEntryExtraDialog(index: Int) {
         val project = projectStore.requireProject()
         val entry = project.currentModule.entries[index]
-        TODO("Edit entry extra")
+        openEmbeddedDialog(
+            EditEntryExtraDialogArgs(
+                index = index,
+                initial = entry.extras,
+                extraFields = project.labelerConf.extraFields,
+            ),
+        )
     }
 
     override fun askIfSaveBeforeExit() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExiting)

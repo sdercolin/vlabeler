@@ -172,6 +172,7 @@ enum class Strings {
     InputEntryNameCutFormerDialogDescription,
     InputEntryNameCutLatterDialogDescription,
     EditEntryNameDialogExistingError,
+    EditEntryExtraDialogDescription,
     MoveEntryDialogDescription,
     AskIfRemoveEntryDialogDescription,
     AskIfRemoveEntryLastDialogDescription,

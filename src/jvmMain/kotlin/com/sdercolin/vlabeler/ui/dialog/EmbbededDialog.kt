@@ -63,6 +63,8 @@ private fun <T : EmbeddedDialogArgs> TypedDialog(
             CommonConfirmationDialog(args, (request as EmbeddedDialogRequest<CommonConfirmationDialogAction>).onResult)
         is MoveEntryDialogArgs ->
             MoveEntryDialog(args, (request as EmbeddedDialogRequest<MoveEntryDialogArgs>).onResult)
+        is EditEntryExtraDialogArgs ->
+            EditEntryExtraDialog(args, (request as EmbeddedDialogRequest<EditEntryExtraDialogArgs>).onResult)
         else -> throw NotImplementedError("Dialog args handler is not implemented")
     }
 }

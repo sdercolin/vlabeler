@@ -178,6 +178,7 @@ fun Strings.ja(): String? = when (this) {
     InputEntryNameCutFormerDialogDescription -> "カットで生成する前のエントリの名前を入力してください"
     InputEntryNameCutLatterDialogDescription -> "カットで生成する後のエントリの名前を入力してください"
     EditEntryNameDialogExistingError -> "すでに存在するエントリ名です。"
+    EditEntryExtraDialogDescription -> "追加情報の編集"
     MoveEntryDialogDescription -> "エントリ「%1\$s」の新しいインデックスを入力してください (%2\$d ~ %3\$d)"
     AskIfRemoveEntryDialogDescription -> "このエントリを削除します。"
     AskIfRemoveEntryLastDialogDescription ->

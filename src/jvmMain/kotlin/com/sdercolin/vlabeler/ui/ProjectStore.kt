@@ -61,6 +61,7 @@ interface ProjectStore {
     fun jumpToEntry(index: Int)
     fun jumpToEntry(moduleName: String, index: Int)
     fun renameEntry(index: Int, newName: String)
+    fun updateEntryExtra(index: Int, extras: List<String?>)
     fun duplicateEntry(index: Int, newName: String)
     val canRemoveCurrentEntry: Boolean
     fun removeCurrentEntry()
@@ -339,6 +340,12 @@ class ProjectStoreImpl(
         }
     }
 
+    override fun updateEntryExtra(index: Int, extras: List<String?>) = editProject {
+        updateCurrentModule {
+            updateEntryExtra(index, extras, labelerConf)
+        }
+    }
+
     override fun duplicateEntry(index: Int, newName: String) = editProject {
         updateCurrentModule {
             duplicateEntry(index, newName, labelerConf).copy(currentIndex = index + 1)
@@ -494,7 +501,11 @@ class ProjectStoreImpl(
     }
 
     override val canEditCurrentEntryExtra: Boolean
-        get() = project?.currentEntry?.extras?.isNotEmpty() ?: false
+        get() {
+            val extras = project?.currentEntry?.extras ?: return false
+            if (extras.isEmpty()) return false
+            return project?.labelerConf?.extraFields?.map { it.isVisible }?.any { it } ?: false
+        }
 
     override fun shouldShowModuleNavigation(): Boolean {
         val project = project ?: return false
