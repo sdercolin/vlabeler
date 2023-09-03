@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -60,7 +59,7 @@ class EditEntryExtraState(args: EditEntryExtraDialogArgs) {
 }
 
 @Composable
-fun EditEntryExtraDialog (
+fun EditEntryExtraDialog(
     args: EditEntryExtraDialogArgs,
     finish: (EditEntryExtraDialogResult?) -> Unit,
 ) {
@@ -72,7 +71,7 @@ fun EditEntryExtraDialog (
         EditEntryExtraState(args)
     }
 
-    Column(modifier = Modifier.fillMaxWidth(0.5f).fillMaxHeight(0.5f)) {
+    Column(modifier = Modifier.width(400.dp).height(400.dp)) {
         Spacer(Modifier.height(20.dp))
         Text(
             text = string(Strings.EditEntryExtraDialogDescription),
@@ -108,7 +107,7 @@ private fun ColumnScope.ExtraContent(
                 if (extraField.isVisible) {
                     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = extraField.name,
+                            text = extraField.displayedName.get(),
                             style = MaterialTheme.typography.body2,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
