@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -238,10 +239,11 @@ private fun EditableNameLabel(
                 onValueChange = onEditName,
                 textStyle = MaterialTheme.typography.caption.copy(fontSize = fontSizeSp, color = color),
                 singleLine = true,
+                cursorBrush = SolidColor(color),
                 decorationBox = {
                     Box(
                         modifier = Modifier.widthIn(min = 20.dp, max = 100.dp)
-                            .background(color = Color.White.copy(alpha = 0.25f))
+                            .background(color = Color.White.copy(alpha = 0.1f))
                             .padding(vertical = 5.dp, horizontal = 5.dp),
                         contentAlignment = Alignment.Center,
                     ) {
