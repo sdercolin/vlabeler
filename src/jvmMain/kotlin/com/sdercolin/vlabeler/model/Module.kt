@@ -362,6 +362,11 @@ data class Module(
                 entryResult = entryResult.copy(start = 0f)
             }
             if (entryResult.end > 0 && entryResult.start > entryResult.end) {
+                if (labelerConf.continuous) {
+                    require(false) {
+                        "Start is greater than end in entry: $it"
+                    }
+                }
                 entryResult = entryResult.copy(end = entryResult.start)
             }
 

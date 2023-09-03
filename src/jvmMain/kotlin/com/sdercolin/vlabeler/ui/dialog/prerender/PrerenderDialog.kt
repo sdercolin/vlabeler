@@ -85,7 +85,6 @@ private fun Content(progress: ChartPrerenderer.Progress) {
         string(Strings.PrerendererChartText, progress.finishedCharts, progress.totalCharts)
     }
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        println(progress)
         if (progress.totalModules > 1) {
             Text(text = moduleProgressText, maxLines = 1, style = MaterialTheme.typography.body2)
             LinearProgressIndicator(

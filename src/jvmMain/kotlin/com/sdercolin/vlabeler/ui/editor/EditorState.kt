@@ -104,16 +104,18 @@ class EditorState(
 
     private val editions = mutableMapOf<Int, Edition>()
 
-    private val onScreenScissorsState = OnScreenScissorsState(this)
+    val onScreenScissorsState = OnScreenScissorsState(this)
 
     class OnScreenScissorsState(val editorState: EditorState) {
         var isOn: Boolean by mutableStateOf(false)
         var entryIndex: Int by mutableStateOf(-1)
-        var position: Float by mutableStateOf(0f)
+        var timePosition: Float by mutableStateOf(0f)
+        var pixelPosition: Float by mutableStateOf(0f)
         var text: String by mutableStateOf("")
 
-        fun start(entryIndex: Int, position: Float) {
-            this.position = position
+        fun start(entryIndex: Int, timePosition: Float, pixelPosition: Float) {
+            this.timePosition = timePosition
+            this.pixelPosition = pixelPosition
             this.entryIndex = entryIndex
             text = ""
             isOn = true
@@ -121,7 +123,6 @@ class EditorState(
 
         fun end() {
             isOn = false
-            editorState.commitEntryCut()
         }
     }
 
@@ -162,7 +163,7 @@ class EditorState(
         this.editedEntries = editedEntries.map { it.value }.sortedBy { it.index }
     }
 
-    fun cutEntry(index: Int, position: Float) {
+    fun cutEntry(index: Int, position: Float, pixelPosition: Float) {
         val sample = sampleInfoResult?.getOrNull() ?: return
         if (FeatureFlags.UseOnScreenScissors.get()) {
             appState.playSectionByCutting(index, position, sample)
@@ -175,7 +176,7 @@ class EditorState(
                 val targetEntryIndex = appConf.editor.scissorsActions.getTargetEntryIndex(index)
                 appState.cutEntryOnScreen(index, position, name, AppConf.ScissorsActions.Target.None, targetEntryIndex)
             } else {
-                onScreenScissorsState.start(index, position)
+                onScreenScissorsState.start(index, position, pixelPosition)
             }
         } else {
             appState.requestCutEntry(index, position, sample)
@@ -184,10 +185,19 @@ class EditorState(
 
     fun commitEntryCut() {
         val index = onScreenScissorsState.entryIndex
-        val position = onScreenScissorsState.position
+        val position = onScreenScissorsState.timePosition
         val name = onScreenScissorsState.text
         val targetEntryIndex = appConf.editor.scissorsActions.getTargetEntryIndex(index)
-        appState.cutEntryOnScreen(index, position, name, appConf.editor.scissorsActions.askForName, targetEntryIndex)
+        if (name.isNotEmpty()) {
+            appState.cutEntryOnScreen(
+                index,
+                position,
+                name,
+                appConf.editor.scissorsActions.askForName,
+                targetEntryIndex,
+            )
+        }
+        onScreenScissorsState.end()
     }
 
     private fun loadNewEntries() {

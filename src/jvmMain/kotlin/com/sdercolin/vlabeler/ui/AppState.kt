@@ -456,7 +456,8 @@ class AppState(
             return project != null &&
                 editor.state.isPinnedEntryListInputFocused.not() &&
                 editor.state.isEditingTag.not() &&
-                !anyDialogOpening()
+                !anyDialogOpening() &&
+                !editor.state.onScreenScissorsState.isOn
         }
 
     val isMacroPluginAvailable
