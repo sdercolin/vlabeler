@@ -28,5 +28,9 @@ Please go to `Menu` -> `Help` -> `About` and click `Copy info` and paste your in
 - You could omit the paths which may include your personal information
 - If you cannot even launch the app, please at least provide your OS info and the app version you are using
 
-**Additional context**
-Add any other context about the problem here.
+**Logs**
+Please find the latest logs and upload them.
+- info.log
+- error.log
+
+You can find the log files via `Menu` -> `Help` -> `Open Log Directory`.
