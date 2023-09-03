@@ -78,6 +78,7 @@ fun Strings.ja(): String? = when (this) {
     MenuHelp -> "ヘルプ"
     MenuHelpCheckForUpdates -> "アップデートを確認"
     MenuHelpOpenLogDirectory -> "ログディレクトリを開く"
+    MenuHelpOpenHomePage -> "vLabeler ホームページを開く"
     MenuHelpOpenLatestRelease -> "最新のリリースページを開く"
     MenuHelpOpenGitHub -> "GitHub リポジトリを開く"
     MenuHelpJoinDiscord -> "Discord サーバーに参加"

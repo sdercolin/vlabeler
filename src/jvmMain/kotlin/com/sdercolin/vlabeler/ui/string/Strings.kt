@@ -79,6 +79,7 @@ enum class Strings {
     MenuHelp,
     MenuHelpCheckForUpdates,
     MenuHelpOpenLogDirectory,
+    MenuHelpOpenHomePage,
     MenuHelpOpenLatestRelease,
     MenuHelpOpenGitHub,
     MenuHelpJoinDiscord,

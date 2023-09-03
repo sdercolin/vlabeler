@@ -490,6 +490,11 @@ fun FrameWindowScope.Menu(
                     shortcut = KeyAction.OpenLogDirectory.getKeyShortCut(),
                 )
                 Item(
+                    string(Strings.MenuHelpOpenHomePage),
+                    onClick = { Url.open(Url.HomePage) },
+                    shortcut = KeyAction.OpenHomePage.getKeyShortCut(),
+                )
+                Item(
                     string(Strings.MenuHelpOpenLatestRelease),
                     onClick = { Url.open(Url.LatestRelease) },
                     shortcut = KeyAction.OpenLatestRelease.getKeyShortCut(),
