@@ -1,17 +1,22 @@
 package com.sdercolin.vlabeler.flag
 
 /**
- * Feature flags are used to enable/disable features that are not ready for production.
+ * Feature flags are used to enable/disable features that are not ready for production. You can add a line in your
+ * `local.properties` file with `${key}=true` to enable a flag.
+ *
+ * @property key The key of the flag. Should always start with `flag.`.
  */
 sealed class FeatureFlags(val key: String) {
 
-    private fun getEnvironmentVariableKey(key: String) = "VLABELER_$key"
-
-    fun get() = System.getenv(getEnvironmentVariableKey(key))?.toBoolean() ?: false
+    fun get() = System.getProperty(key)?.toBoolean() ?: false
 
     /* region flags */
 
-    object EnableOnScreenScissors : FeatureFlags("ENABLE_ON_SCREEN_SCISSORS")
+    object UseOnScreenScissors : FeatureFlags("flag.use.on.screen.scissors")
 
     /* endregion */
+
+    companion object {
+        val all = listOf(UseOnScreenScissors)
+    }
 }

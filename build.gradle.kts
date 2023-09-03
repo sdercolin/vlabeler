@@ -76,6 +76,14 @@ compose.desktop {
     application {
         mainClass = "com.sdercolin.vlabeler.MainKt"
         jvmArgs("-Xmx2G")
+        if (project.localPropertiesFile.exists()) {
+            val localProperties = Properties().apply { load(project.localPropertiesFile.inputStream()) }
+            jvmArgs(
+                *localProperties.filter { it.key.toString().startsWith("flag") }
+                    .map { "-D${it.key}=${it.value}" }
+                    .toTypedArray(),
+            )
+        }
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "vLabeler"

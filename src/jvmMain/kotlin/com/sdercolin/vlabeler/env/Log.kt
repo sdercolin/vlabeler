@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.env
 
+import com.sdercolin.vlabeler.flag.FeatureFlags
 import com.sdercolin.vlabeler.hasUncaughtError
 import com.sdercolin.vlabeler.tracking.event.FatalErrorEvent
 import com.sdercolin.vlabeler.util.AppDir
@@ -59,6 +60,7 @@ object Log {
         }
 
         info("Log initialized")
+        val flags = FeatureFlags.all.filter { it.get() }.joinToString { it.key }
         val launchInfo = mapOf(
             "javaRuntimeVersion" to runtimeVersion,
             "appVersion" to appVersion,
@@ -66,6 +68,7 @@ object Log {
             "workingDir" to ResourcePath,
             "appDir" to AppDir,
             "locale" to Locale,
+            "flags" to flags,
         )
         debug("Launched in $osInfo, ${launchInfo.entries.joinToString(", ") { "${it.key}=${it.value}" }}")
     }
