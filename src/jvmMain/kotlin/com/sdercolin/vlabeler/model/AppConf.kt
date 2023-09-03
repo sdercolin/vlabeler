@@ -352,6 +352,12 @@ data class AppConf(
         val askForName: Target = DefaultAskForName,
         val play: Target = DefaultPlay,
     ) {
+        fun getTargetEntryIndex(currentEntryIndex: Int) = when (goTo) {
+            AppConf.ScissorsActions.Target.Former -> currentEntryIndex
+            AppConf.ScissorsActions.Target.Latter -> currentEntryIndex + 1
+            else -> null
+        }
+
         /**
          * Targets of the actions. Either of the two entries created by the scissors' cut.
          */
@@ -400,6 +406,7 @@ data class AppConf(
 
     /**
      * Action config after editing.
+     *
      * @param enabled True if the action is enabled.
      * @param field Trigger field of the action.
      * @param useDragging True if the action is conducted when dragging.
@@ -673,6 +680,7 @@ data class AppConf(
 
     /**
      * Other miscellaneous configurations.
+     *
      * @param useCustomFileDialog True if the custom file dialog is used instead of the system one.
      */
     @Serializable

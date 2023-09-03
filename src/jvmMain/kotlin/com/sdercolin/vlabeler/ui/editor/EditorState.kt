@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.audio.conversion.WaveConverterException
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.MissingSampleDirectoryException
+import com.sdercolin.vlabeler.flag.FeatureFlags
 import com.sdercolin.vlabeler.io.getPropertyValue
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
@@ -25,6 +26,7 @@ import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.JavaScript
+import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -102,6 +104,27 @@ class EditorState(
 
     private val editions = mutableMapOf<Int, Edition>()
 
+    private val onScreenScissorsState = OnScreenScissorsState(this)
+
+    class OnScreenScissorsState(val editorState: EditorState) {
+        var isOn: Boolean by mutableStateOf(false)
+        var entryIndex: Int by mutableStateOf(-1)
+        var position: Float by mutableStateOf(0f)
+        var text: String by mutableStateOf("")
+
+        fun start(entryIndex: Int, position: Float) {
+            this.position = position
+            this.entryIndex = entryIndex
+            text = ""
+            isOn = true
+        }
+
+        fun end() {
+            isOn = false
+            editorState.commitEntryCut()
+        }
+    }
+
     /**
      * Called from upstream
      */
@@ -141,7 +164,30 @@ class EditorState(
 
     fun cutEntry(index: Int, position: Float) {
         val sample = sampleInfoResult?.getOrNull() ?: return
-        appState.requestCutEntry(index, position, player, sample)
+        if (FeatureFlags.UseOnScreenScissors.get()) {
+            appState.playSectionByCutting(index, position, sample)
+            if (appConf.editor.scissorsActions.askForName == AppConf.ScissorsActions.Target.None) {
+                val name = getDefaultNewEntryName(
+                    project.currentModule.entries[index].name,
+                    project.currentModule.entries.map { it.name },
+                    project.labelerConf.allowSameNameEntry,
+                )
+                val targetEntryIndex = appConf.editor.scissorsActions.getTargetEntryIndex(index)
+                appState.cutEntryOnScreen(index, position, name, AppConf.ScissorsActions.Target.None, targetEntryIndex)
+            } else {
+                onScreenScissorsState.start(index, position)
+            }
+        } else {
+            appState.requestCutEntry(index, position, sample)
+        }
+    }
+
+    fun commitEntryCut() {
+        val index = onScreenScissorsState.entryIndex
+        val position = onScreenScissorsState.position
+        val name = onScreenScissorsState.text
+        val targetEntryIndex = appConf.editor.scissorsActions.getTargetEntryIndex(index)
+        appState.cutEntryOnScreen(index, position, name, appConf.editor.scissorsActions.askForName, targetEntryIndex)
     }
 
     private fun loadNewEntries() {
