@@ -22,10 +22,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.Strings
@@ -42,9 +46,17 @@ data class EditEntryExtraDialogResult(
     val extras: List<String?>,
 ) : EmbeddedDialogResult<EditEntryExtraDialogArgs>
 
-class EditEntryExtraState(args: EditEntryExtraDialogArgs) {
+class EditEntryExtraState(
+    args: EditEntryExtraDialogArgs,
+    private val finish: (EditEntryExtraDialogResult?) -> Unit,
+) {
+    private val entryIndex = args.index
     var values by mutableStateOf(args.initial)
     val extraFields = args.extraFields
+
+    fun getNotNull(index: Int): String {
+        return values[index] ?: ""
+    }
 
     fun update(index: Int, value: String?) {
         val newValues = values.toMutableList()
@@ -52,10 +64,28 @@ class EditEntryExtraState(args: EditEntryExtraDialogArgs) {
         values = newValues.toList()
     }
 
-    val isValid: Boolean
+    fun isValid(index: Int): Boolean {
+        return extraFields[index].isOptional || values[index].isNullOrBlank().not()
+    }
+
+    val isAllValid: Boolean
         get() = values
             .mapIndexed { index, s -> extraFields[index].isOptional || s != null }
             .all { it }
+
+    fun cancel() {
+        finish(null)
+    }
+
+    fun trySubmit() {
+        if (isAllValid) {
+            submit()
+        }
+    }
+
+    fun submit() {
+        finish(EditEntryExtraDialogResult(entryIndex, values))
+    }
 }
 
 @Composable
@@ -63,12 +93,8 @@ fun EditEntryExtraDialog(
     args: EditEntryExtraDialogArgs,
     finish: (EditEntryExtraDialogResult?) -> Unit,
 ) {
-    val dismiss = { finish(null) }
-    val submit = { extra: List<String?> ->
-        finish(EditEntryExtraDialogResult(args.index, extra))
-    }
     val state = remember {
-        EditEntryExtraState(args)
+        EditEntryExtraState(args, finish)
     }
 
     Column(modifier = Modifier.width(400.dp).height(400.dp)) {
@@ -83,19 +109,20 @@ fun EditEntryExtraDialog(
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             TextButton(
-                onClick = dismiss,
+                onClick = state::cancel,
             ) {
                 Text(string(Strings.CommonCancel))
             }
             Spacer(Modifier.width(25.dp))
             ConfirmButton(
-                enabled = state.isValid,
-                onClick = { submit(state.values) },
+                enabled = state.isAllValid,
+                onClick = state::trySubmit,
             )
         }
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun ColumnScope.ExtraContent(
     state: EditEntryExtraState,
@@ -114,11 +141,19 @@ private fun ColumnScope.ExtraContent(
                         )
                         Spacer(Modifier.width(25.dp))
                         TextField(
-                            modifier = Modifier.weight(1f),
-                            value = state.values[index] ?: "",
+                            modifier = Modifier.weight(1f)
+                                .onKeyEvent {
+                                    if (it.isReleased(Key.Enter)) {
+                                        state.trySubmit()
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                },
+                            value = state.getNotNull(index),
                             onValueChange = { state.update(index, it.ifBlank { null }) },
                             singleLine = true,
-                            isError = !extraField.isOptional && state.values[index].isNullOrBlank(),
+                            isError = state.isValid(index).not(),
                             enabled = extraField.isEditable,
                         )
                     }

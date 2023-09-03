@@ -223,7 +223,7 @@ fun FrameWindowScope.Menu(
                                 index = appState.requireProject().currentModule.currentIndex,
                             )
                         },
-                        // TODO: shortcut
+                        shortcut = KeyAction.EditExtra.getKeyShortCut(),
                         enabled = appState.isEditorActive && appState.canEditCurrentEntryExtra,
                     )
                     CheckboxItem(
