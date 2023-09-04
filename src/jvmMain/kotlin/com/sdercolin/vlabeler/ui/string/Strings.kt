@@ -386,6 +386,8 @@ enum class Strings {
     PreferencesEditorPostEditActionUseCursorSetDescription,
     PreferencesEditorScissors,
     PreferencesEditorScissorsDescription,
+    PreferencesEditorScissorsUseOnScreenScissors,
+    PreferencesEditorScissorsUseOnScreenScissorsDescription,
     PreferencesEditorScissorsColor,
     PreferencesEditorScissorsActionTargetNone,
     PreferencesEditorScissorsActionTargetFormer,

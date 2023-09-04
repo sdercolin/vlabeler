@@ -12,11 +12,9 @@ sealed class FeatureFlags(val key: String) {
 
     /* region flags */
 
-    object UseOnScreenScissors : FeatureFlags("flag.use.on.screen.scissors")
-
     /* endregion */
 
     companion object {
-        val all = listOf(UseOnScreenScissors)
+        val all: List<FeatureFlags> = listOf()
     }
 }

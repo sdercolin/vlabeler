@@ -410,6 +410,10 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorPostEditActionUseCursorSetDescription -> "在通过\"将参数设置到光标位置\"键盘操作来编辑条目后，触发该行为。"
     PreferencesEditorScissors -> "剪刀"
     PreferencesEditorScissorsDescription -> "编辑剪刀工具的外观与行为。"
+    PreferencesEditorScissorsUseOnScreenScissors -> "直接在编辑器中输入条目名"
+    PreferencesEditorScissorsUseOnScreenScissorsDescription ->
+        "如果启用该项，在使用剪刀工具点击后，将会在编辑器中显示一个输入框，用以输入新条目的名字。" +
+            "您可以通过按下回车键或将光标移开来确认切割操作。您也可以通过按下 Esc 键来取消该操作。"
     PreferencesEditorScissorsColor -> "颜色"
     PreferencesEditorScissorsActionTargetNone -> "无"
     PreferencesEditorScissorsActionTargetFormer -> "前一个条目"

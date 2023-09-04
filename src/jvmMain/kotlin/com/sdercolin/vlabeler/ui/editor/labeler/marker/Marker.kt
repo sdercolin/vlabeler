@@ -27,7 +27,6 @@ import com.sdercolin.vlabeler.audio.AudioSectionPlayer
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
-import com.sdercolin.vlabeler.flag.FeatureFlags
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.action.KeyAction
@@ -110,6 +109,7 @@ fun MarkerPointEventContainer(
                         editorState::cutEntry,
                         keyboardState,
                         screenRange,
+                        appState.appConf,
                     )
                     return@onPointerEvent
                 }
@@ -137,6 +137,7 @@ fun MarkerPointEventContainer(
                     editorState::cutEntry,
                     keyboardState,
                     screenRange,
+                    appState.appConf,
                 )
             },
         content = content,
@@ -171,7 +172,12 @@ fun MarkerCanvas(
         editorState.keyboardViewModel.keyboardActionFlow.collectLatest {
             if (appState.isEditorActive.not()) return@collectLatest
             if (editorState.handleSetPropertyKeyAction(it)) return@collectLatest
-            if (state.mayHandleScissorsKeyAction(it, editorState::cutEntry)) return@collectLatest
+            if (state.mayHandleScissorsKeyAction(
+                    onScreenMode = appState.appConf.editor.useOnScreenScissors,
+                    action = it,
+                    cutEntry = editorState::cutEntry,
+                )
+            ) return@collectLatest
             val (updated, pointIndex) = state.getUpdatedEntriesByKeyAction(
                 it,
                 appState.appConf,
@@ -645,12 +651,13 @@ private fun MarkerState.handleMouseRelease(
     cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
     keyboardState: KeyboardState,
     screenRange: FloatRange?,
+    appConf: AppConf,
 ) {
     screenRange ?: return
     val caughtAction = keyboardState.getEnabledMouseClickAction(event)
     val handled = when (tool) {
         Tool.Cursor -> handleCursorRelease(submitEntry)
-        Tool.Scissors -> handleScissorsRelease(cutEntry, event)
+        Tool.Scissors -> handleScissorsRelease(appConf.editor.useOnScreenScissors, cutEntry, event)
         Tool.Pan -> handlePanRelease()
         Tool.Playback -> {
             val playbackAction = keyboardState.getEnabledMouseClickAction(event, Tool.Playback)
@@ -681,13 +688,14 @@ private fun MarkerState.handleCursorRelease(
 }
 
 private fun MarkerState.handleScissorsRelease(
+    onScreenMode: Boolean,
     cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
     event: PointerEvent,
 ): Boolean {
     val scissorsState = scissorsState
     val position = scissorsState.value?.position ?: return false
     if (event.isRightClick) return false
-    handleScissorsCut(position, cutEntry)
+    handleScissorsCut(onScreenMode, position, cutEntry)
     return true
 }
 
@@ -738,22 +746,24 @@ private fun MarkerState.handlePlaybackRelease(
 }
 
 private fun MarkerState.mayHandleScissorsKeyAction(
+    onScreenMode: Boolean,
     action: KeyAction,
     cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
 ): Boolean {
     if (action != KeyAction.ScissorsCut) return false
     val position = scissorsState.value?.position ?: return false
-    handleScissorsCut(position, cutEntry)
+    handleScissorsCut(onScreenMode, position, cutEntry)
     return true
 }
 
 private fun MarkerState.handleScissorsCut(
+    onScreenMode: Boolean,
     position: Float,
     cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
 ) {
     val timePosition = entryConverter.convertToMillis(position)
     val entryIndex = getEntryIndexByCutPosition(position)
-    if (FeatureFlags.UseOnScreenScissors.get()) {
+    if (onScreenMode) {
         scissorsState.updateNonNull { copy(locked = true) }
     }
     cutEntry(entryIndex, timePosition, position)

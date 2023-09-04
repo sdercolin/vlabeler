@@ -430,6 +430,11 @@ fun Strings.ja(): String? = when (this) {
         "「パラメータをカーソル位置に設定」ショートカットでパラメータを設定した時に当該アクションを実行します。"
     PreferencesEditorScissors -> "はさみ"
     PreferencesEditorScissorsDescription -> "はさみツールに関する表示と動作をカスタマイズします。"
+    PreferencesEditorScissorsUseOnScreenScissors -> "エントリ名をエディタ上で直接入力する"
+    PreferencesEditorScissorsUseOnScreenScissorsDescription ->
+        "有効にすると、はさみでクリックした時に、エディタ上に新しいエントリ名の入力欄が表示されます。" +
+            "Enterキーを押すか、クリック位置からカーソルを離すことで、カットアクションを確定できます。" +
+            "Escキーを押すことで、アクションをキャンセルできます。"
     PreferencesEditorScissorsColor -> "色"
     PreferencesEditorScissorsActionTargetNone -> "なし"
     PreferencesEditorScissorsActionTargetFormer -> "前のエントリ"

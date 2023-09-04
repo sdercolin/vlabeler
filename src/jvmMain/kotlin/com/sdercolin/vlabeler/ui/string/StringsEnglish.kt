@@ -456,6 +456,11 @@ fun Strings.en(): String = when (this) {
         "Trigger the action after setting the parameter(s) with \"Set Parameter To Cursor Position\" key actions."
     PreferencesEditorScissors -> "Scissors"
     PreferencesEditorScissorsDescription -> "Customize appearance and behavior of the scissors tool."
+    PreferencesEditorScissorsUseOnScreenScissors -> "Type entry names directly in editor"
+    PreferencesEditorScissorsUseOnScreenScissorsDescription ->
+        "When enabled, an input box for the name of the new entry is shown in the editor after clicking " +
+            "with the scissors. You can confirm the cutting action by pressing Enter or moving the cursor away " +
+            "from the clicked position. You can also cancel the action by pressing Esc."
     PreferencesEditorScissorsColor -> "Color"
     PreferencesEditorScissorsActionTargetNone -> "None"
     PreferencesEditorScissorsActionTargetFormer -> "The former entry"

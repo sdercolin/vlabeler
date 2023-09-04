@@ -12,7 +12,6 @@ import com.sdercolin.vlabeler.audio.conversion.WaveConverterException
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.MissingSampleDirectoryException
-import com.sdercolin.vlabeler.flag.FeatureFlags
 import com.sdercolin.vlabeler.io.getPropertyValue
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
@@ -165,7 +164,7 @@ class EditorState(
 
     fun cutEntry(index: Int, position: Float, pixelPosition: Float) {
         val sample = sampleInfoResult?.getOrNull() ?: return
-        if (FeatureFlags.UseOnScreenScissors.get()) {
+        if (appConf.editor.useOnScreenScissors) {
             appState.playSectionByCutting(index, position, sample)
             if (appConf.editor.scissorsActions.askForName == AppConf.ScissorsActions.Target.None) {
                 val name = getDefaultNewEntryName(

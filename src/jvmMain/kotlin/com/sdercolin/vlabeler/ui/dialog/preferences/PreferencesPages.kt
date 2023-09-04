@@ -609,6 +609,13 @@ object PreferencesPages {
                     selector = { it.editor },
                     updater = { copy(editor = it) },
                 ) {
+                    switch(
+                        title = Strings.PreferencesEditorScissorsUseOnScreenScissors,
+                        description = Strings.PreferencesEditorScissorsUseOnScreenScissorsDescription,
+                        defaultValue = AppConf.Editor.DefaultUseOnScreenScissors,
+                        select = { it.useOnScreenScissors },
+                        update = { copy(useOnScreenScissors = it) },
+                    )
                     color(
                         title = Strings.PreferencesEditorScissorsColor,
                         defaultValue = AppConf.Editor.DefaultScissorsColor,

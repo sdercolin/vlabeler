@@ -288,6 +288,8 @@ data class AppConf(
      *
      * @param scissorsColor Color hex string of the scissors' cursor position.
      * @param scissorsActions Actions taken with a successful scissors click.
+     * @param useOnScreenScissors When true, the scissors process is handled on screen. Otherwise, it is handled in a
+     *     dialog.
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted.
      * @param showDone When true, the done button/icon is shown in the editor and entry lists.
      * @param showStar When true, the star button/icon is shown in the editor and entry lists.
@@ -300,6 +302,7 @@ data class AppConf(
         val playerCursorColor: String = DefaultPlayerCursorColor,
         val scissorsColor: String = DefaultScissorsColor,
         val scissorsActions: ScissorsActions = ScissorsActions(),
+        val useOnScreenScissors: Boolean = DefaultUseOnScreenScissors,
         val autoScroll: AutoScroll = AutoScroll(),
         val lockedDrag: LockedDrag = DefaultLockedDrag,
         val lockedSettingParameterWithCursor: Boolean = DefaultLockedSettingParameterWithCursor,
@@ -330,6 +333,7 @@ data class AppConf(
         companion object {
             const val DefaultPlayerCursorColor = "#FFFF00"
             const val DefaultScissorsColor = "#FFFFFF00"
+            const val DefaultUseOnScreenScissors = true
             val DefaultLockedDrag = LockedDrag.UseLabeler
             const val DefaultLockedSettingParameterWithCursor = true
             const val DefaultShowDone = true
