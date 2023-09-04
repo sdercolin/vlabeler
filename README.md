@@ -397,7 +397,7 @@ You can import/delete/disable batch edit plugins in `Tools` -> `Batch Edit` -> `
 We welcome plugin development for the application.
 You can distribute your plugin anywhere, or create a pull request to make it built-in.
 
-See [Plugin API Document](readme/plugin-development.md) for details.
+See [Plugin API Document](docs/plugin-development.md) for details.
 
 ## Logs
 

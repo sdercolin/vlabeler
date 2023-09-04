@@ -366,7 +366,7 @@ aaa;name:bbb;sample:ccc;tag:ddd
 我们欢迎您为 vLabeler 开发插件。
 您可以在任何地方分发您的插件，或者创建一个 Pull Request 来将其内置在 vLabeler 中。
 
-详见 [插件 API 文档](plugin-development.md)。
+详见 [插件 API 文档](../docs/plugin-development.md)。
 
 ## 日志
 
