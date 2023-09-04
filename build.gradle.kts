@@ -157,3 +157,14 @@ tasks.findByName("jvmMainClasses")?.dependsOn("createAppProperties")
 licenseReport {
     renderers = arrayOf(JsonReportRenderer())
 }
+
+task("updateLicenseReport") {
+    dependsOn("generateLicenseReport")
+    doLast {
+        val reportFile = File("$buildDir/reports/dependency-license/index.json")
+        val targetFile = File("src/jvmMain/resources/licenses.json")
+        reportFile.copyTo(targetFile, overwrite = true)
+    }
+}
+
+tasks.findByName("build")?.dependsOn("updateLicenseReport")
