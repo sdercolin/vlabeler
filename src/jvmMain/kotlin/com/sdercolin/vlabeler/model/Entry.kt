@@ -12,7 +12,8 @@ import kotlinx.serialization.Serializable
  * @property end Label end time in milliseconds. Minus or zero value represents a relative value to the sample file's
  *     end, which will be converted to positive value the sample is firstly loaded.
  * @property points Times in milliseconds for other points defined by [LabelerConf.fields].
- * @property extras Extra data as [String] defined by [LabelerConf.extraFields].
+ * @property extras Extra data as [String] defined by [LabelerConf.extraFields]. If [LabelerConf.ExtraField.isOptional]
+ *     is `true`, the corresponding value could be `null`.
  * @property notes Other properties of an entry which are only used in vLabeler.
  * @property needSync Whether the entry need to be updated with the sample file. Especially when `end` is `0`, we don't
  *     know if it's the actual start of the sample file or a relative value to the end, which needs to be converted to
