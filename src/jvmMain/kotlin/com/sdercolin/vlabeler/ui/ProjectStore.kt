@@ -230,6 +230,7 @@ class ProjectStoreImpl(
         ) {
             scrollFitViewModel.emitNext()
         }
+        editCurrentProjectModule { cutEntry(index, position, rename, newName, targetEntryIndex) }
     }
 
     override fun cutEntryOnScreen(
