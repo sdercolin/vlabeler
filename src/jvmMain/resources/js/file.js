@@ -3,7 +3,9 @@ let JavaFiles = Java.type('java.nio.file.Files')
 let Path = Java.type('java.nio.file.Path')
 let BufferedReader = Java.type('java.io.BufferedReader')
 let FileInputStream = Java.type('java.io.FileInputStream')
+let FileOutputStream = Java.type('java.io.FileOutputStream')
 let InputStreamReader = Java.type('java.io.InputStreamReader')
+let OutputStreamWriter = Java.type('java.io.OutputStreamWriter')
 
 class File {
     constructor(javaFile) {
@@ -101,6 +103,13 @@ class File {
         return lines
     }
 
+    write(text, encoding = "UTF-8") {
+        let outputStream = new FileOutputStream(this.javaFile)
+        let outputStreamWriter = new OutputStreamWriter(outputStream, encoding)
+        outputStreamWriter.write(text)
+        outputStreamWriter.close()
+    }
+
     mkdir() {
         return this.javaFile.mkdir()
     }
@@ -142,4 +151,12 @@ function getNameWithoutExtension(path) {
 
 function getExtension(path) {
     return File.fromPath(path).getExtension()
+}
+
+function getSafeFileName(name) {
+    let unsafeCharacters = ["\\", "/", ":", "*", "?", "\"", "<", ">", "|"]
+    for (let i = 0; i < unsafeCharacters.length; i++) {
+        name = name.replaceAll(unsafeCharacters[i], "_")
+    }
+    return name
 }

@@ -43,6 +43,8 @@ child path string.
 `readLines(encoding = 'UTF-8'): string[]` : read the content of this file as an array of lines using the specified
 encoding.
 
+`write(text: string, encoding = 'UTF-8'): void` : write the input string to this file using the specified encoding.
+
 `mkdir(): boolean` : create this directory, return `true` if the directory is created successfully.
 
 `mkdirs(): boolean` : create this directory and all parent directories, return `true` if the directory is created
@@ -58,6 +60,8 @@ successfully.
 `getNameWithoutExtension(fileName: string): string` : get the name without extension of the input string as a file name.
 
 `getExtension(fileName: string): string` : get the extension of the input string as a file name.
+
+`getSafeFileName(fileName: string): string` : get a safe file name from the input string.
 
 ### Source file
 
