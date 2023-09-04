@@ -40,7 +40,6 @@ fun runMacroPlugin(
 
         listOfNotNull(
             Resources.classEntryJs,
-            Resources.classEditedEntryJs,
             Resources.classModuleJs,
             Resources.expectedErrorJs,
             Resources.reportJs,
