@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.util
 
+import com.sdercolin.vlabeler.env.Log
 import kotlinx.serialization.Serializable
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.HostAccess
@@ -7,17 +8,36 @@ import org.graalvm.polyglot.Source
 import org.graalvm.polyglot.Value
 import java.io.Closeable
 import java.io.File
-import java.util.logging.Handler
+import java.io.OutputStream
+import java.time.Instant
 
 /**
  * A wrapper of JavaScript engine powered by GraalVM.
  */
-class JavaScript(logHandler: Handler? = null, currentWorkingDirectory: File? = null) : Closeable {
+class JavaScript(currentWorkingDirectory: File? = null) : Closeable {
+
+    private val outputStream = object : OutputStream() {
+
+        private val info = Log.getInfoOutputStream()
+        private var atNewLine = true
+
+        override fun write(b: Int) {
+            if (atNewLine) {
+                val timeTag = "[${Instant.now()}] "
+                val buf = timeTag.toByteArray()
+                System.out.write(buf)
+                info.write(buf)
+            }
+            System.out.write(b)
+            info.write(b)
+            atNewLine = b == '\n'.code
+        }
+    }
 
     private val context = Context.newBuilder()
         .allowHostAccess(HostAccess.ALL)
         .allowHostClassLookup { true }
-        .runIfHave(logHandler) { logHandler(it) }
+        .out(outputStream)
         .allowIO(true)
         .currentWorkingDirectory(currentWorkingDirectory?.toPath() ?: HomeDir.toPath())
         .option("engine.WarnInterpreterOnly", "false")

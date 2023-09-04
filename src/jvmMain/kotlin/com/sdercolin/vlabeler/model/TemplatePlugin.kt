@@ -40,7 +40,6 @@ fun runTemplatePlugin(
     moduleDefinition: ModuleDefinition,
 ): TemplatePluginResult {
     val js = JavaScript(
-        logHandler = Log.infoFileHandler,
         currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile(),
     )
     val result = runCatching {

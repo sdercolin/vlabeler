@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.tracking.event.FatalErrorEvent
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.ResourcePath
 import java.io.File
+import java.io.FileOutputStream
 import java.time.Instant
 import java.util.logging.FileHandler
 import java.util.logging.Formatter
@@ -29,13 +30,15 @@ object Log {
             record ?: return ""
             val tag = "[${record.instant}]"
             val message = formatMessage(record)
+            val lines = message.split("\n")
             val throwable = record.thrown?.stackTraceToString()
-            return listOfNotNull(tag, message, throwable).joinToString(" ") + "\n"
+            return lines.joinToString("") { listOfNotNull(tag, it, throwable).joinToString(" ") + "\n" }
         }
     }
-    lateinit var infoFileHandler: FileHandler
-        private set
+    private lateinit var infoFileHandler: FileHandler
     private val errorStreamHandler = StreamHandler(System.err, formatter)
+
+    fun getInfoOutputStream() = FileOutputStream("$LoggingPath/$InfoLogFileName", true)
 
     fun init() {
         val loggingDir = File(LoggingPath)
@@ -75,12 +78,16 @@ object Log {
 
     fun info(message: String) {
         infoLogger.fine(message)
-        println("[${Instant.now()}] INFO: $message")
+        message.lines().forEach {
+            println("[${Instant.now()}] INFO: $it")
+        }
     }
 
     fun debug(message: String) {
         infoLogger.info(message)
-        println("[${Instant.now()}] DEBUG: $message")
+        message.lines().forEach {
+            println("[${Instant.now()}] DEBUG: $it")
+        }
     }
 
     fun debug(exception: Throwable) {
