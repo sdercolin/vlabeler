@@ -245,11 +245,11 @@ Check the following built-in `template` plugins as examples:
 A plugin with `macro` type is executed by an item in the menu `Tools` -> `Batch Edit`. It is only available when editing
 a project.
 
-According to the `macroScope` property in the `plugin.json`, the plugin can be executed on the whole project or on the
+According to the `scope` property in the `plugin.json`, the plugin can be executed on the whole project or on the
 current module (subproject).
-If `macroScope` is set to `Module`, the input includes a list of `Entry` object in the current module named `entries`
+If `scope` is set to `Module`, the input includes a list of `Entry` object in the current module named `entries`
 along with an integer named `currentEntryIndex`.
-If `macroScope` is set to `Project`, the input includes a list of `Module` object named `modules` along with an integer
+If `scope` is set to `Project`, the input includes a list of `Module` object named `modules` along with an integer
 named `currentModuleIndex`.
 
 You can modify these variables directly to conduct batch edit on the whole project.
@@ -258,20 +258,20 @@ You can modify these variables directly to conduct batch edit on the whole proje
 
 The following variables are provided before your scripts are executed.
 
-| name                 | type                | description                                                                                                                                                   |
-|----------------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| entries              | Entry[]             | Only available when the plugin's `macroScope` is `Module`. List of current [Entry](../src/jvmMain/resources/js/class_entry.js) objects in the current module. |
-| currentEntryIndex    | Entry[]             | Only available when the plugin's `macroScope` is `Module`. The index of current shown entry.                                                                  |
-| module               | Module              | Only available when the plugin's `macroScope` is `Module`. The current [Module](../src/jvmMain/resources/js/class_module.js) object.                          |
-| modules              | Module[]            | Only available when the plugin's `macroScope` is `Project`. List of current [Module](../src/jvmMain/resources/js/class_module.js) objects in the project.     |
-| currentModuleIndex   | Integer             | Only available when the plugin's `macroScope` is `Project`. The index of current shown module.                                                                |
-| params               | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                                                          |
-| resources            | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                              |
-| labeler              | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                            |
-| labelerParams        | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                       |
-| debug                | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                         |
-| pluginDirectory      | [File](file-api.md) | Directory of this plugin                                                                                                                                      |
-| projectRootDirectory | [File](file-api.md) | Only available when the plugin's `macroScope` is `Project`.  Root directory of the project.                                                                   |
+| name                 | type                | description                                                                                                                                              |
+|----------------------|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| entries              | Entry[]             | Only available when the plugin's `scope` is `Module`. List of current [Entry](../src/jvmMain/resources/js/class_entry.js) objects in the current module. |
+| currentEntryIndex    | Entry[]             | Only available when the plugin's `scope` is `Module`. The index of current shown entry.                                                                  |
+| module               | Module              | Only available when the plugin's `scope` is `Module`. The current [Module](../src/jvmMain/resources/js/class_module.js) object.                          |
+| modules              | Module[]            | Only available when the plugin's `scope` is `Project`. List of current [Module](../src/jvmMain/resources/js/class_module.js) objects in the project.     |
+| currentModuleIndex   | Integer             | Only available when the plugin's `scope` is `Project`. The index of current shown module.                                                                |
+| params               | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                                                     |
+| resources            | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                         |
+| labeler              | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                       |
+| labelerParams        | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                  |
+| debug                | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                    |
+| pluginDirectory      | [File](file-api.md) | Directory of this plugin                                                                                                                                 |
+| projectRootDirectory | [File](file-api.md) | Only available when the plugin's `scope` is `Project`.  Root directory of the project.                                                                   |
 
 ### Use an entry selector
 
