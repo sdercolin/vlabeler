@@ -14,25 +14,10 @@ import java.time.Instant
 /**
  * A wrapper of JavaScript engine powered by GraalVM.
  */
-class JavaScript(currentWorkingDirectory: File? = null) : Closeable {
-
-    private val outputStream = object : OutputStream() {
-
-        private val info = Log.getInfoOutputStream()
-        private var atNewLine = true
-
-        override fun write(b: Int) {
-            if (atNewLine) {
-                val timeTag = "[${Instant.now()}] "
-                val buf = timeTag.toByteArray()
-                System.out.write(buf)
-                info.write(buf)
-            }
-            System.out.write(b)
-            info.write(b)
-            atNewLine = b == '\n'.code
-        }
-    }
+class JavaScript(
+    outputStream: OutputStream = CombinedLoggingOutputStream(),
+    currentWorkingDirectory: File? = null
+) : Closeable {
 
     private val context = Context.newBuilder()
         .allowHostAccess(HostAccess.ALL)
@@ -143,5 +128,23 @@ class JavaScript(currentWorkingDirectory: File? = null) : Closeable {
 
     override fun close() {
         context.close()
+    }
+}
+
+class CombinedLoggingOutputStream : OutputStream() {
+
+    private val info = Log.getInfoOutputStream()
+    private var atNewLine = true
+
+    override fun write(b: Int) {
+        if (atNewLine) {
+            val timeTag = "[${Instant.now()}] "
+            val buf = timeTag.toByteArray()
+            System.out.write(buf)
+            info.write(buf)
+        }
+        System.out.write(b)
+        info.write(b)
+        atNewLine = b == '\n'.code
     }
 }
