@@ -443,7 +443,7 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorShowTag -> "Display tags"
     PreferencesEditorShowExtra -> "Display \"Edit extra information\""
     PreferencesEditorShowExtraDescription ->
-        "If the labeler has no extra information, the button will always be hidden."
+        "Even if enabled, when the labeler does not define any extra information, the button will not be shown."
     PreferencesEditorPostEditAction -> "Post-editing actions"
     PreferencesEditorPostEditActionDescription -> "Define actions to be conducted after editing the entry."
     PreferencesEditorPostEditActionDone -> "Set edited entries as \"Done\" after editing"
