@@ -67,126 +67,161 @@ fun Canvas(
     editorState: EditorState,
     appState: AppState,
 ) {
-    val currentDensity = LocalDensity.current
     val sampleInfoResult = editorState.sampleInfoResult
-    val resolution = editorState.canvasResolution
-
     if (sampleInfoResult != null) {
-        val sampleInfo = sampleInfoResult.getOrNull()
-        if (sampleInfo != null) {
-            val chunkCount = sampleInfo.chunkCount
-            val density = LocalDensity.current
-            val layoutDirection = LocalLayoutDirection.current
-            LaunchedEffect(sampleInfo, appState.appConf, appState.isShowingPrerenderDialog) {
-                if (appState.isShowingPrerenderDialog.not()) {
-                    editorState.renderCharts(this, sampleInfo, appState.appConf, density, layoutDirection)
+        CanvasContent(
+            sampleInfoResult,
+            horizontalScrollState,
+            editorState,
+            appState,
+        )
+    }
+}
+
+@Composable
+private fun CanvasContent(
+    sampleInfoResult: Result<SampleInfo>,
+    horizontalScrollState: ScrollState,
+    editorState: EditorState,
+    appState: AppState,
+) {
+    val sampleInfo = sampleInfoResult.getOrNull()
+    if (sampleInfo != null) {
+        CanvasContentWithSample(
+            sampleInfo,
+            horizontalScrollState,
+            editorState,
+            appState,
+        )
+    } else {
+        val exception = sampleInfoResult.exceptionOrNull()
+        if (exception != null && exception !is CancellationException) {
+            Error(string(Strings.FailedToLoadSampleFileError))
+        }
+    }
+}
+
+@Composable
+private fun CanvasContentWithSample(
+    sampleInfo: SampleInfo,
+    horizontalScrollState: ScrollState,
+    editorState: EditorState,
+    appState: AppState,
+) {
+    val chunkCount = sampleInfo.chunkCount
+    val layoutDirection = LocalLayoutDirection.current
+    val density = LocalDensity.current
+    val resolution = editorState.canvasResolution
+    val canvasParams = remember(sampleInfo, resolution, density) {
+        CanvasParams(sampleInfo.length, chunkCount, resolution, density)
+    }
+    val markerState = rememberMarkerState(sampleInfo, canvasParams, editorState, appState)
+    val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
+    val screenRange = horizontalScrollState.getScreenRange(canvasParams.lengthInPixel)
+    val lazyListState = rememberLazyListState()
+    LaunchedEffect(sampleInfo, appState.appConf, appState.isShowingPrerenderDialog) {
+        if (appState.isShowingPrerenderDialog.not()) {
+            editorState.renderCharts(this, sampleInfo, appState.appConf, density, layoutDirection)
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { horizontalScrollState.value to horizontalScrollState.maxValue }
+            .scan(null as Pair<Int, Int>? to (0 to 0)) { accumulator, value ->
+                accumulator.second to value
+            }
+            .onEach { (oldPair, newPair) ->
+                val (oldValue, oldMax) = oldPair ?: return@onEach
+                // an emission here does not trigger recomposition, so we need to re-calculate the canvas params
+                // to get the correct scroll target
+                val innerCanvasParams = editorState.getCanvasParams(sampleInfo, density)
+                editorState.scrollOnResolutionChangeViewModel.scroll(
+                    horizontalScrollState,
+                    innerCanvasParams,
+                    sampleInfo,
+                )
+                val (newValue, newMax) = newPair
+                if (oldMax != newMax) {
+                    innerCanvasParams.getScrollTarget(newValue).also {
+                        lazyListState.scrollToItem(it.itemIndex, it.itemOffset)
+                    }
+                } else if (newValue != oldValue) {
+                    lazyListState.scrollBy((newValue - oldValue).toFloat())
                 }
             }
-            val canvasParams = CanvasParams(sampleInfo.length, sampleInfo.chunkCount, resolution, currentDensity)
-            editorState.scrollOnResolutionChangeViewModel.updateCanvasParams(canvasParams, sampleInfo)
-            val markerState = rememberMarkerState(sampleInfo, canvasParams, editorState, appState)
-            val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
-            val screenRange = horizontalScrollState.getScreenRange(markerState.canvasParams.lengthInPixel)
+            .launchIn(appState.mainScope)
+    }
+    LaunchedEffect(markerState) {
+        appState.keyboardViewModel.keyboardActionFlow.collect { action ->
+            appState.handleTogglePlayerAction(action, horizontalScrollState, markerState)
+        }
+    }
 
-            LaunchedEffect(markerState) {
-                appState.keyboardViewModel.keyboardActionFlow.collect { action ->
-                    appState.handleTogglePlayerAction(action, horizontalScrollState, markerState)
-                }
+    Column(modifier = Modifier.fillMaxSize()) {
+        val project = editorState.project
+        val parallelModulesCount = remember(project) {
+            project.modules.count { it.isParallelTo(project.currentModule) && project.labelerConf.continuous }
+        }
+        if (parallelModulesCount > 0) {
+            Box(modifier = Modifier.weight(0.1f * parallelModulesCount)) {
+                ParallelLabelCanvas(
+                    project,
+                    editorState,
+                    horizontalScrollState,
+                    canvasParams,
+                    sampleInfo,
+                    appState.appConf.editor,
+                )
             }
-
-            Column(modifier = Modifier.fillMaxSize()) {
-                val project = editorState.project
-                val parallelModulesCount = remember(project) {
-                    project.modules.count { it.isParallelTo(project.currentModule) && project.labelerConf.continuous }
-                }
-                if (parallelModulesCount > 0) {
-                    Box(modifier = Modifier.weight(0.1f * parallelModulesCount)) {
-                        ParallelLabelCanvas(
-                            project,
-                            editorState,
-                            horizontalScrollState,
+        }
+        Box(modifier = Modifier.fillMaxSize().weight(1f)) {
+            MarkerPointEventContainer(
+                screenRange,
+                keyboardState,
+                horizontalScrollState,
+                markerState,
+                editorState,
+                appState,
+            ) {
+                LazyRow(modifier = Modifier.fillMaxSize(), state = lazyListState) {
+                    items(chunkCount) { chunkIndex ->
+                        Chunk(
+                            chunkIndex,
                             canvasParams,
                             sampleInfo,
-                            appState.appConf.editor,
+                            appState,
+                            editorState,
                         )
                     }
                 }
-                Box(modifier = Modifier.fillMaxSize().weight(1f)) {
-                    MarkerPointEventContainer(
-                        screenRange,
-                        keyboardState,
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .runIf(appState.isMarkerDisplayed.not()) { alpha(0f) },
+                ) {
+                    MarkerCanvas(
+                        canvasParams,
                         horizontalScrollState,
                         markerState,
                         editorState,
                         appState,
-                    ) {
-                        val lazyListState = rememberLazyListState()
-                        LaunchedEffect(Unit) {
-                            snapshotFlow { horizontalScrollState.value to horizontalScrollState.maxValue }
-                                .scan(null as Pair<Int, Int>? to (0 to 0)) { accumulator, value ->
-                                    accumulator.second to value
-                                }
-                                .onEach { (oldPair, newPair) ->
-                                    val (oldValue, oldMax) = oldPair ?: return@onEach
-                                    val (newValue, newMax) = newPair
-                                    if (oldMax != newMax) {
-                                        val itemSize = lazyListState.layoutInfo.visibleItemsInfo.first().size
-                                        val itemIndex = newValue / itemSize
-                                        val itemOffset = newValue % itemSize
-                                        lazyListState.scrollToItem(itemIndex, itemOffset)
-                                    } else if (newValue != oldValue) {
-                                        lazyListState.scrollBy((newValue - oldValue).toFloat())
-                                    }
-                                }
-                                .launchIn(appState.mainScope)
-                        }
-                        LazyRow(modifier = Modifier.fillMaxSize(), state = lazyListState) {
-                            items(chunkCount) { chunkIndex ->
-                                Chunk(
-                                    chunkIndex,
-                                    canvasParams,
-                                    sampleInfo,
-                                    appState,
-                                    editorState,
-                                )
-                            }
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .runIf(appState.isMarkerDisplayed.not()) { alpha(0f) },
-                        ) {
-                            MarkerCanvas(
-                                canvasParams,
-                                horizontalScrollState,
-                                markerState,
-                                editorState,
-                                appState,
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .horizontalScroll(horizontalScrollState)
-                                .runIf(appState.isMarkerDisplayed.not()) { alpha(0f) },
-                        ) {
-                            MarkerLabels(screenRange, appState, editorState, markerState)
-                        }
-                    }
-                    if (appState.playerState.isPlaying) {
-                        PlayerCursor(
-                            canvasParams,
-                            appState.playerState,
-                            horizontalScrollState,
-                            appState.appConf.editor.playerCursorColor.toColor(),
-                        )
-                    }
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .horizontalScroll(horizontalScrollState)
+                        .runIf(appState.isMarkerDisplayed.not()) { alpha(0f) },
+                ) {
+                    MarkerLabels(screenRange, appState, editorState, markerState)
                 }
             }
-        } else {
-            val exception = sampleInfoResult.exceptionOrNull()
-            if (exception != null && exception !is CancellationException) {
-                Error(string(Strings.FailedToLoadSampleFileError))
+            if (appState.playerState.isPlaying) {
+                PlayerCursor(
+                    canvasParams,
+                    appState.playerState,
+                    horizontalScrollState,
+                    appState.appConf.editor.playerCursorColor.toColor(),
+                )
             }
         }
     }

@@ -21,6 +21,21 @@ data class CanvasParams(
         chunkWidths[index].toDp()
     }
 
+    data class LazyRowScrollTarget(
+        val itemIndex: Int,
+        val itemOffset: Int,
+    )
+
+    fun getScrollTarget(value: Int): LazyRowScrollTarget {
+        var offset = value
+        var index = 0
+        while (offset >= chunkWidths[index]) {
+            offset -= chunkWidths[index]
+            index++
+        }
+        return LazyRowScrollTarget(index, offset)
+    }
+
     @Immutable
     class ResolutionRange(
         private val conf: AppConf.CanvasResolution,

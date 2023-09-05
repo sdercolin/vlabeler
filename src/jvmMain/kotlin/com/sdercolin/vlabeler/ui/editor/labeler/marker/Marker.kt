@@ -162,9 +162,6 @@ fun MarkerCanvas(
         horizontalScrollState,
         appState.scrollFitViewModel,
     )
-    LaunchedEffect(horizontalScrollState.maxValue, horizontalScrollState.value) {
-        editorState.scrollOnResolutionChangeViewModel.scroll(horizontalScrollState)
-    }
     LaunchedEffect(editorState.tool) {
         state.switchTool(editorState.tool)
     }
@@ -240,7 +237,6 @@ private fun FieldBorderCanvas(
     editorConf: AppConf.Editor,
 ) {
     val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
-
     Canvas(Modifier.fillMaxSize()) {
         screenRange ?: return@Canvas
         try {

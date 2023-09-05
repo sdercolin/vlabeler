@@ -65,6 +65,13 @@ class EditorState(
     val entryTitle: String
         get() = project.currentEntry.name
 
+    fun getCanvasParams(sampleInfo: SampleInfo, density: Density) = CanvasParams(
+        dataLength = sampleInfo.length,
+        chunkCount = sampleInfo.chunkCount,
+        resolution = canvasResolution,
+        density = density,
+    )
+
     @Composable
     fun getEntrySubTitle(): String {
         val currentSampleName = project.currentSampleName.runIf(appConf.view.hideSampleExtension) {
