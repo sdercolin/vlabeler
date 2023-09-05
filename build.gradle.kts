@@ -215,5 +215,3 @@ task("updateLicenseReport") {
         generated.copyTo(source, overwrite = true)
     }
 }
-
-tasks.findByName("build")?.dependsOn("updateLicenseReport")
