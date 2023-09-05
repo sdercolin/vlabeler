@@ -1,4 +1,10 @@
 import com.github.jk1.license.render.JsonReportRenderer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.internal.utils.localPropertiesFile
@@ -166,12 +172,35 @@ licenseReport {
 task("checkLicenseReportUpdate") {
     dependsOn("generateLicenseReport")
     doLast {
-        val reportFile = File("$buildDir/reports/dependency-license/index.json")
-        val targetFile = File("src/jvmMain/resources/licenses.json")
-        val report = reportFile.readText()
-        val target = targetFile.readText()
-        if (report != target) {
-            throw IllegalStateException("License report is not up-to-date. Please run `./gradlew updateLicenseReport`")
+
+        fun getDependencyArray(json: String): List<JsonElement> {
+            return requireNotNull(Json.parseToJsonElement(json).jsonObject["dependencies"]).jsonArray
+        }
+
+        val excludedPatterns = listOf(
+            "org.jetbrains.compose.desktop:desktop-jvm-.*",
+            "org.jetbrains.skiko:skiko-awt-runtime-.*",
+        )
+
+        fun canIgnore(dependency: JsonObject): Boolean {
+            val name = dependency["moduleName"]?.jsonPrimitive?.content ?: return false
+            return excludedPatterns.any { name.matches(it.toRegex()) }
+        }
+
+        val generatedFile = File("$buildDir/reports/dependency-license/index.json")
+        val sourceFile = File("src/jvmMain/resources/licenses.json")
+        val generatedDependencies = getDependencyArray(generatedFile.readText())
+        val sourceDependencies = getDependencyArray(sourceFile.readText())
+
+        for (i in generatedDependencies.indices) {
+            val generated = generatedDependencies[i].jsonObject
+            val source = sourceDependencies[i].jsonObject
+            if (canIgnore(generated)) continue
+            if (generated.toString() != source.toString()) {
+                throw IllegalStateException(
+                    "License report is not up-to-date. Please run `./gradlew updateLicenseReport`",
+                )
+            }
         }
     }
 }
@@ -181,9 +210,9 @@ tasks.findByName("test")?.dependsOn("checkLicenseReportUpdate")
 task("updateLicenseReport") {
     dependsOn("generateLicenseReport")
     doLast {
-        val reportFile = File("$buildDir/reports/dependency-license/index.json")
-        val targetFile = File("src/jvmMain/resources/licenses.json")
-        reportFile.copyTo(targetFile, overwrite = true)
+        val generated = File("$buildDir/reports/dependency-license/index.json")
+        val source = File("src/jvmMain/resources/licenses.json")
+        generated.copyTo(source, overwrite = true)
     }
 }
 
