@@ -163,6 +163,21 @@ licenseReport {
     renderers = arrayOf(JsonReportRenderer())
 }
 
+task("checkLicenseReportUpdate") {
+    dependsOn("generateLicenseReport")
+    doLast {
+        val reportFile = File("$buildDir/reports/dependency-license/index.json")
+        val targetFile = File("src/jvmMain/resources/licenses.json")
+        val report = reportFile.readText()
+        val target = targetFile.readText()
+        if (report != target) {
+            throw IllegalStateException("License report is not up-to-date. Please run `./gradlew updateLicenseReport`")
+        }
+    }
+}
+
+tasks.findByName("test")?.dependsOn("checkLicenseReportUpdate")
+
 task("updateLicenseReport") {
     dependsOn("generateLicenseReport")
     doLast {
