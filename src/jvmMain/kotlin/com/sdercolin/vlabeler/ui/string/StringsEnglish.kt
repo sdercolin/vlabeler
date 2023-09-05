@@ -442,6 +442,8 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorShowStarred -> "Display \"Starred\" status"
     PreferencesEditorShowTag -> "Display tags"
     PreferencesEditorShowExtra -> "Display \"Edit extra information\""
+    PreferencesEditorShowExtraDescription ->
+        "If the labeler has no extra information, the button will always be hidden."
     PreferencesEditorPostEditAction -> "Post-editing actions"
     PreferencesEditorPostEditActionDescription -> "Define actions to be conducted after editing the entry."
     PreferencesEditorPostEditActionDone -> "Set edited entries as \"Done\" after editing"

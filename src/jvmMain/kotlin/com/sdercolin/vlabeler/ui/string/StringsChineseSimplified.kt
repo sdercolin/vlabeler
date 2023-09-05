@@ -397,6 +397,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorShowStarred -> "显示\"星标\"状态"
     PreferencesEditorShowTag -> "显示标签"
     PreferencesEditorShowExtra -> "显示\"编辑额外信息\""
+    PreferencesEditorShowExtraDescription -> "如果标注器没有额外信息，该按钮将始终被隐藏。"
     PreferencesEditorPostEditAction -> "编辑后的行为"
     PreferencesEditorPostEditActionDescription -> "编辑在编辑器中编辑条目后的行为。"
     PreferencesEditorPostEditActionDone -> "将编辑后的条目设为\"完成\""

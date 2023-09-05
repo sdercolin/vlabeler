@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.ui.common.CancelButton
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
@@ -108,11 +108,7 @@ fun EditEntryExtraDialog(
         ExtraContent(state)
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            TextButton(
-                onClick = state::cancel,
-            ) {
-                Text(string(Strings.CommonCancel))
-            }
+            CancelButton(state::cancel)
             Spacer(Modifier.width(25.dp))
             ConfirmButton(
                 enabled = state.isAllValid,

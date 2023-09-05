@@ -416,6 +416,8 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorShowStarred -> "\"スターマーク\"状態を表示"
     PreferencesEditorShowTag -> "タグを表示"
     PreferencesEditorShowExtra -> "\"追加情報の編集\"を表示"
+    PreferencesEditorShowExtraDescription ->
+        "ラベラーが追加情報を持たない場合、ボタンは常に非表示になります。"
     PreferencesEditorPostEditAction -> "編集後アクション"
     PreferencesEditorPostEditActionDescription -> "エントリの編集後に実行するアクションを設定します。"
     PreferencesEditorPostEditActionDone -> "編集後に\"完了\"状態にする"

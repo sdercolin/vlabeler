@@ -319,13 +319,12 @@ private fun EntryTitleBar(
                                 StarIcon(star)
                             }
                         }
-                        if (appConf.editor.showExtra) {
+                        if (appConf.editor.showExtra && hasExtra) {
                             FreeSizedIconButton(
                                 onClick = editExtra,
                                 modifier = Modifier.padding(8.dp),
-                                enabled = hasExtra,
                             ) {
-                                ExtraIcon(hasExtra)
+                                ExtraIcon()
                             }
                         }
                     }
