@@ -25,6 +25,7 @@ import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.JavaScript
+import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -64,6 +65,13 @@ class EditorState(
     val entryTitle: String
         get() = project.currentEntry.name
 
+    fun getCanvasParams(sampleInfo: SampleInfo, density: Density) = CanvasParams(
+        dataLength = sampleInfo.length,
+        chunkCount = sampleInfo.chunkCount,
+        resolution = canvasResolution,
+        density = density,
+    )
+
     @Composable
     fun getEntrySubTitle(): String {
         val currentSampleName = project.currentSampleName.runIf(appConf.view.hideSampleExtension) {
@@ -85,6 +93,9 @@ class EditorState(
     val entryTag: String
         get() = project.currentEntry.notes.tag
 
+    val entryExtra: List<String?>
+        get() = project.currentEntry.extras
+
     val tagOptions
         get() = project.currentModule.entries
             .mapNotNull { it.notes.tag.ifEmpty { null } }
@@ -101,6 +112,28 @@ class EditorState(
     )
 
     private val editions = mutableMapOf<Int, Edition>()
+
+    val onScreenScissorsState = OnScreenScissorsState(this)
+
+    class OnScreenScissorsState(val editorState: EditorState) {
+        var isOn: Boolean by mutableStateOf(false)
+        var entryIndex: Int by mutableStateOf(-1)
+        var timePosition: Float by mutableStateOf(0f)
+        var pixelPosition: Float by mutableStateOf(0f)
+        var text: String by mutableStateOf("")
+
+        fun start(entryIndex: Int, timePosition: Float, pixelPosition: Float) {
+            this.timePosition = timePosition
+            this.pixelPosition = pixelPosition
+            this.entryIndex = entryIndex
+            text = ""
+            isOn = true
+        }
+
+        fun end() {
+            isOn = false
+        }
+    }
 
     /**
      * Called from upstream
@@ -139,9 +172,41 @@ class EditorState(
         this.editedEntries = editedEntries.map { it.value }.sortedBy { it.index }
     }
 
-    fun cutEntry(index: Int, position: Float) {
+    fun cutEntry(index: Int, position: Float, pixelPosition: Float) {
         val sample = sampleInfoResult?.getOrNull() ?: return
-        appState.requestCutEntry(index, position, player, sample)
+        if (appConf.editor.useOnScreenScissors) {
+            appState.playSectionByCutting(index, position, sample)
+            if (appConf.editor.scissorsActions.askForName == AppConf.ScissorsActions.Target.None) {
+                val name = getDefaultNewEntryName(
+                    project.currentModule.entries[index].name,
+                    project.currentModule.entries.map { it.name },
+                    project.labelerConf.allowSameNameEntry,
+                )
+                val targetEntryIndex = appConf.editor.scissorsActions.getTargetEntryIndex(index)
+                appState.cutEntryOnScreen(index, position, name, AppConf.ScissorsActions.Target.None, targetEntryIndex)
+            } else {
+                onScreenScissorsState.start(index, position, pixelPosition)
+            }
+        } else {
+            appState.requestCutEntry(index, position, sample)
+        }
+    }
+
+    fun commitEntryCut() {
+        val index = onScreenScissorsState.entryIndex
+        val position = onScreenScissorsState.timePosition
+        val name = onScreenScissorsState.text
+        val targetEntryIndex = appConf.editor.scissorsActions.getTargetEntryIndex(index)
+        if (name.isNotEmpty()) {
+            appState.cutEntryOnScreen(
+                index,
+                position,
+                name,
+                appConf.editor.scissorsActions.askForName,
+                targetEntryIndex,
+            )
+        }
+        onScreenScissorsState.end()
     }
 
     private fun loadNewEntries() {
@@ -338,6 +403,10 @@ class EditorState(
 
     fun editEntryTag(index: Int, tag: String) {
         appState.editEntryTag(index, tag)
+    }
+
+    fun editEntryExtra(index: Int) {
+        appState.openEditEntryExtraDialog(index)
     }
 
     fun jumpToModule(index: Int) {

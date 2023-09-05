@@ -35,6 +35,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuEditToggleDone -> "对当前条目切换完成状态"
     MenuEditToggleStar -> "对当前条目切换星标状态"
     MenuEditEditTag -> "编辑当前条目的标签..."
+    MenuEditEditExtra -> "编辑当前条目的额外信息..."
     MenuEditMultipleEditMode -> "编辑所有互相连接的条目"
     MenuView -> "视图"
     MenuViewToggleMarker -> "显示参数控制线"
@@ -78,6 +79,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuHelp -> "帮助"
     MenuHelpCheckForUpdates -> "检查更新..."
     MenuHelpOpenLogDirectory -> "打开日志目录"
+    MenuHelpOpenHomePage -> "打开 vLabeler 主页"
     MenuHelpOpenLatestRelease -> "打开最新版本的发布页面"
     MenuHelpOpenGitHub -> "打开 GitHub 仓库页面"
     MenuHelpJoinDiscord -> "加入 Discord"
@@ -175,6 +177,7 @@ fun Strings.zhHans(): String? = when (this) {
     InputEntryNameCutFormerDialogDescription -> "请输入切割后的前一个条目名"
     InputEntryNameCutLatterDialogDescription -> "请输入切割后的后一个条目名"
     EditEntryNameDialogExistingError -> "该条目名已存在。"
+    EditEntryExtraDialogDescription -> "编辑额外信息"
     MoveEntryDialogDescription -> "请输入条目 \"%1\$s\" 的新索引（%2\$d ~ %3\$d）"
     AskIfRemoveEntryDialogDescription -> "将要删除当前条目..."
     AskIfRemoveEntryLastDialogDescription ->
@@ -389,10 +392,12 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "使用\"将参数设置到光标位置\"键盘操作时也应用上面的锁定拖动的设置。"
     PreferencesEditorNotes -> "备注"
-    PreferencesEditorNotesDescription -> "编辑与条目备注（星标，完成，标签）相关的外观与行为。 "
+    PreferencesEditorNotesDescription -> "编辑与条目备注（星标，完成，标签，额外信息）相关的外观与行为。 "
     PreferencesEditorShowDone -> "显示\"完成\"状态"
     PreferencesEditorShowStarred -> "显示\"星标\"状态"
     PreferencesEditorShowTag -> "显示标签"
+    PreferencesEditorShowExtra -> "显示\"编辑额外信息\""
+    PreferencesEditorShowExtraDescription -> "即使启用该项，如果标注器没有定义任何额外信息，该按钮也不会被显示。"
     PreferencesEditorPostEditAction -> "编辑后的行为"
     PreferencesEditorPostEditActionDescription -> "编辑在编辑器中编辑条目后的行为。"
     PreferencesEditorPostEditActionDone -> "将编辑后的条目设为\"完成\""
@@ -409,6 +414,10 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorPostEditActionUseCursorSetDescription -> "在通过\"将参数设置到光标位置\"键盘操作来编辑条目后，触发该行为。"
     PreferencesEditorScissors -> "剪刀"
     PreferencesEditorScissorsDescription -> "编辑剪刀工具的外观与行为。"
+    PreferencesEditorScissorsUseOnScreenScissors -> "直接在编辑器中输入条目名"
+    PreferencesEditorScissorsUseOnScreenScissorsDescription ->
+        "如果启用该项，在使用剪刀工具点击后，将会在编辑器中显示一个输入框，用以输入新条目的名字。" +
+            "您可以通过按下回车键或将光标移开来确认切割操作。您也可以通过按下 Esc 键来取消该操作。"
     PreferencesEditorScissorsColor -> "颜色"
     PreferencesEditorScissorsActionTargetNone -> "无"
     PreferencesEditorScissorsActionTargetFormer -> "前一个条目"

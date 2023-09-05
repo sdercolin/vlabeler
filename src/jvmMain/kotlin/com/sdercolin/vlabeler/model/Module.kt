@@ -213,6 +213,12 @@ data class Module(
         return updateEntry(editedEntry.edit(renamed), labelerConf)
     }
 
+    fun updateEntryExtra(index: Int, extras: List<String?>, labelerConf: LabelerConf): Module {
+        val editedEntry = getEntryForEditing(index)
+        val updated = editedEntry.entry.copy(extras = extras)
+        return updateEntry(editedEntry.edit(updated), labelerConf)
+    }
+
     fun duplicateEntry(index: Int, newName: String, labelerConf: LabelerConf): Module {
         val entries = entries.toMutableList()
         var original = entries[index]
@@ -362,6 +368,11 @@ data class Module(
                 entryResult = entryResult.copy(start = 0f)
             }
             if (entryResult.end > 0 && entryResult.start > entryResult.end) {
+                if (labelerConf.continuous) {
+                    require(false) {
+                        "Start is greater than end in entry: $it"
+                    }
+                }
                 entryResult = entryResult.copy(end = entryResult.start)
             }
 

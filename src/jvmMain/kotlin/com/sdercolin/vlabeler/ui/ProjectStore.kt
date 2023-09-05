@@ -45,6 +45,14 @@ interface ProjectStore {
     fun updateProjectOnLoadedSample(sampleInfo: SampleInfo, moduleName: String)
     fun editEntries(editions: List<Edition>)
     fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?)
+    fun cutEntryOnScreen(
+        index: Int,
+        position: Float,
+        name: String,
+        target: AppConf.ScissorsActions.Target,
+        targetEntryIndex: Int?,
+    )
+
     val canUndo: Boolean
     fun undo()
     val canRedo: Boolean
@@ -61,6 +69,7 @@ interface ProjectStore {
     fun jumpToEntry(index: Int)
     fun jumpToEntry(moduleName: String, index: Int)
     fun renameEntry(index: Int, newName: String)
+    fun updateEntryExtra(index: Int, extras: List<String?>)
     fun duplicateEntry(index: Int, newName: String)
     val canRemoveCurrentEntry: Boolean
     fun removeCurrentEntry()
@@ -87,6 +96,7 @@ interface ProjectStore {
     fun toggleCurrentEntryStar()
     fun editEntryTag(index: Int, tag: String)
     fun editCurrentEntryTag(tag: String)
+    val canEditCurrentEntryExtra: Boolean
 
     fun shouldShowModuleNavigation(): Boolean
     val canGoNextModule: Boolean
@@ -225,6 +235,20 @@ class ProjectStoreImpl(
         editCurrentProjectModule { cutEntry(index, position, rename, newName, targetEntryIndex) }
     }
 
+    override fun cutEntryOnScreen(
+        index: Int,
+        position: Float,
+        name: String,
+        target: AppConf.ScissorsActions.Target,
+        targetEntryIndex: Int?,
+    ) {
+        editCurrentProjectModule {
+            val rename = if (target != AppConf.ScissorsActions.Target.Former) null else name
+            val newName = if (target != AppConf.ScissorsActions.Target.Former) name else entries[index].name
+            cutEntry(index, position, rename, newName, targetEntryIndex)
+        }
+    }
+
     override val canUndo get() = history.canUndo
     override fun undo() {
         history.undo()
@@ -335,6 +359,12 @@ class ProjectStoreImpl(
     override fun renameEntry(index: Int, newName: String) = editProject {
         updateCurrentModule {
             renameEntry(index, newName, labelerConf)
+        }
+    }
+
+    override fun updateEntryExtra(index: Int, extras: List<String?>) = editProject {
+        updateCurrentModule {
+            updateEntryExtra(index, extras, labelerConf)
         }
     }
 
@@ -491,6 +521,9 @@ class ProjectStoreImpl(
     override fun editCurrentEntryTag(tag: String) {
         editCurrentProjectModule { editEntryTag(currentIndex, tag) }
     }
+
+    override val canEditCurrentEntryExtra: Boolean
+        get() = project?.labelerConf?.extraFields?.any { it.isVisible } == true
 
     override fun shouldShowModuleNavigation(): Boolean {
         val project = project ?: return false

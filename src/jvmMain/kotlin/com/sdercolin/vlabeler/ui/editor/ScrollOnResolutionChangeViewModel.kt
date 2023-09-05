@@ -13,8 +13,18 @@ class ScrollOnResolutionChangeViewModel {
     private var sampleInfo: SampleInfo? = null
     private var skipped = false
 
-    fun updateCanvasParams(canvasParams: CanvasParams, sampleInfo: SampleInfo) {
-        if (this.sampleInfo != sampleInfo) {
+    suspend fun scroll(horizontalScrollState: ScrollState, canvasParams: CanvasParams, sampleInfo: SampleInfo) {
+        updateCanvasParams(canvasParams, sampleInfo)
+        val newValue = getUpdatedValue(horizontalScrollState.maxValue, horizontalScrollState.value) ?: return
+        if (skipped) {
+            skipped = false
+            return
+        }
+        horizontalScrollState.scrollTo(newValue)
+    }
+
+    private fun updateCanvasParams(canvasParams: CanvasParams, sampleInfo: SampleInfo) {
+        if (this.sampleInfo != sampleInfo && this.sampleInfo != null) {
             // skip first scroll when switched sample
             this.sampleInfo = sampleInfo
             skipped = true
@@ -23,15 +33,6 @@ class ScrollOnResolutionChangeViewModel {
         if (canvasLength == canvasParams.lengthInPixel) return
         pendingLastCanvasLength = canvasLength
         canvasLength = canvasParams.lengthInPixel
-    }
-
-    suspend fun scroll(horizontalScrollState: ScrollState) {
-        val newValue = getUpdatedValue(horizontalScrollState.maxValue, horizontalScrollState.value) ?: return
-        if (skipped) {
-            skipped = false
-            return
-        }
-        horizontalScrollState.scrollTo(newValue)
     }
 
     private fun getUpdatedValue(max: Int, value: Int): Int? {

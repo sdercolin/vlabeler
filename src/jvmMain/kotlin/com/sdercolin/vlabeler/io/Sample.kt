@@ -11,6 +11,5 @@ object Sample {
         return sampleDirectory.listFiles().orEmpty().filter { it.extension in acceptableSampleFileExtensions }
     }
 
-    private const val SampleFileWavExtension = "wav"
-    val acceptableSampleFileExtensions = listOf(SampleFileWavExtension)
+    val acceptableSampleFileExtensions = listOf("wav", "mp3", "flac", "ogg", "m4a")
 }

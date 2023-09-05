@@ -288,10 +288,13 @@ data class AppConf(
      *
      * @param scissorsColor Color hex string of the scissors' cursor position.
      * @param scissorsActions Actions taken with a successful scissors click.
+     * @param useOnScreenScissors When true, the scissors process is handled on screen. Otherwise, it is handled in a
+     *     dialog.
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted.
      * @param showDone When true, the done button/icon is shown in the editor and entry lists.
      * @param showStar When true, the star button/icon is shown in the editor and entry lists.
      * @param showTag When true, the tag or "New tag" button is shown in the editor and entry lists.
+     * @param showExtra When true, the extra editor button/icon is shown in the editor and entry lists.
      * @param continuousLabelNames Appearance of the label names in the editor for continuous labelers.
      */
     @Serializable
@@ -300,12 +303,14 @@ data class AppConf(
         val playerCursorColor: String = DefaultPlayerCursorColor,
         val scissorsColor: String = DefaultScissorsColor,
         val scissorsActions: ScissorsActions = ScissorsActions(),
+        val useOnScreenScissors: Boolean = DefaultUseOnScreenScissors,
         val autoScroll: AutoScroll = AutoScroll(),
         val lockedDrag: LockedDrag = DefaultLockedDrag,
         val lockedSettingParameterWithCursor: Boolean = DefaultLockedSettingParameterWithCursor,
         val showDone: Boolean = DefaultShowDone,
         val showStar: Boolean = DefaultShowStar,
         val showTag: Boolean = DefaultShowTag,
+        val showExtra: Boolean = DefaultShowExtra,
         val continuousLabelNames: ContinuousLabelNames = ContinuousLabelNames(),
         val postEditNext: PostEditAction = PostEditAction.DefaultNext,
         val postEditDone: PostEditAction = PostEditAction.DefaultDone,
@@ -330,11 +335,13 @@ data class AppConf(
         companion object {
             const val DefaultPlayerCursorColor = "#FFFF00"
             const val DefaultScissorsColor = "#FFFFFF00"
+            const val DefaultUseOnScreenScissors = true
             val DefaultLockedDrag = LockedDrag.UseLabeler
             const val DefaultLockedSettingParameterWithCursor = true
             const val DefaultShowDone = true
             const val DefaultShowStar = true
             const val DefaultShowTag = true
+            const val DefaultShowExtra = true
         }
     }
 
@@ -352,6 +359,12 @@ data class AppConf(
         val askForName: Target = DefaultAskForName,
         val play: Target = DefaultPlay,
     ) {
+        fun getTargetEntryIndex(currentEntryIndex: Int) = when (goTo) {
+            AppConf.ScissorsActions.Target.Former -> currentEntryIndex
+            AppConf.ScissorsActions.Target.Latter -> currentEntryIndex + 1
+            else -> null
+        }
+
         /**
          * Targets of the actions. Either of the two entries created by the scissors' cut.
          */
@@ -400,6 +413,7 @@ data class AppConf(
 
     /**
      * Action config after editing.
+     *
      * @param enabled True if the action is enabled.
      * @param field Trigger field of the action.
      * @param useDragging True if the action is conducted when dragging.
@@ -673,6 +687,7 @@ data class AppConf(
 
     /**
      * Other miscellaneous configurations.
+     *
      * @param useCustomFileDialog True if the custom file dialog is used instead of the system one.
      */
     @Serializable

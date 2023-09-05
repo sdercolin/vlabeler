@@ -216,6 +216,16 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.ToggleStar.getKeyShortCut(),
                         enabled = appState.isEditorActive,
                     )
+                    Item(
+                        string(Strings.MenuEditEditExtra),
+                        onClick = {
+                            appState.openEditEntryExtraDialog(
+                                index = appState.requireProject().currentModule.currentIndex,
+                            )
+                        },
+                        shortcut = KeyAction.EditExtra.getKeyShortCut(),
+                        enabled = appState.isEditorActive && appState.canEditCurrentEntryExtra,
+                    )
                     CheckboxItem(
                         string(Strings.MenuEditMultipleEditMode),
                         checked = appState.project?.multipleEditMode == true,
@@ -488,6 +498,11 @@ fun FrameWindowScope.Menu(
                     string(Strings.MenuHelpOpenLogDirectory),
                     onClick = { Desktop.getDesktop().open(Log.LoggingPath.toFile()) },
                     shortcut = KeyAction.OpenLogDirectory.getKeyShortCut(),
+                )
+                Item(
+                    string(Strings.MenuHelpOpenHomePage),
+                    onClick = { Url.open(Url.HomePage) },
+                    shortcut = KeyAction.OpenHomePage.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuHelpOpenLatestRelease),

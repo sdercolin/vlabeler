@@ -315,8 +315,7 @@ suspend fun projectOf(
     autoExport: Boolean,
 ): Result<Project> {
     val moduleDefinitions = if (labelerConf.projectConstructor != null) {
-        val js = JavaScript(logHandler = Log.infoFileHandler)
-
+        val js = JavaScript()
         js.set("debug", isDebug)
         js.set("root", sampleDirectory.toFile())
         js.set("encoding", encoding)

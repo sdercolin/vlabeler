@@ -19,6 +19,8 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.areAnyPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.AudioSectionPlayer
@@ -69,6 +71,7 @@ const val StrokeWidth = 2f
 val LabelSize = DpSize(40.dp, 25.dp)
 val LabelShiftUp = 11.dp
 const val LabelMaxChunkLength = 5000
+val OnScreenScissorDistanceThreshold = 10.dp
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -90,6 +93,7 @@ fun MarkerPointEventContainer(
         }
     }
     val coroutineScope = rememberCoroutineScope()
+    val density = LocalDensity.current
     Box(
         modifier = Modifier.fillMaxSize()
             .onPointerEvent(PointerEventType.Move) { event ->
@@ -105,6 +109,7 @@ fun MarkerPointEventContainer(
                         editorState::cutEntry,
                         keyboardState,
                         screenRange,
+                        appState.appConf,
                     )
                     return@onPointerEvent
                 }
@@ -116,6 +121,8 @@ fun MarkerPointEventContainer(
                     playByCursor,
                     horizontalScrollState,
                     coroutineScope,
+                    editorState::commitEntryCut,
+                    density,
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
@@ -130,6 +137,7 @@ fun MarkerPointEventContainer(
                     editorState::cutEntry,
                     keyboardState,
                     screenRange,
+                    appState.appConf,
                 )
             },
         content = content,
@@ -154,9 +162,6 @@ fun MarkerCanvas(
         horizontalScrollState,
         appState.scrollFitViewModel,
     )
-    LaunchedEffect(horizontalScrollState.maxValue, horizontalScrollState.value) {
-        editorState.scrollOnResolutionChangeViewModel.scroll(horizontalScrollState)
-    }
     LaunchedEffect(editorState.tool) {
         state.switchTool(editorState.tool)
     }
@@ -164,7 +169,12 @@ fun MarkerCanvas(
         editorState.keyboardViewModel.keyboardActionFlow.collectLatest {
             if (appState.isEditorActive.not()) return@collectLatest
             if (editorState.handleSetPropertyKeyAction(it)) return@collectLatest
-            if (state.mayHandleScissorsKeyAction(it, editorState::cutEntry)) return@collectLatest
+            if (state.mayHandleScissorsKeyAction(
+                    onScreenMode = appState.appConf.editor.useOnScreenScissors,
+                    action = it,
+                    cutEntry = editorState::cutEntry,
+                )
+            ) return@collectLatest
             val (updated, pointIndex) = state.getUpdatedEntriesByKeyAction(
                 it,
                 appState.appConf,
@@ -184,6 +194,7 @@ fun MarkerCanvas(
 fun MarkerLabels(
     screenRange: FloatRange?,
     appState: AppState,
+    editorState: EditorState,
     state: MarkerState,
 ) {
     val requestRename: (Int) -> Unit = remember(appState) {
@@ -207,6 +218,7 @@ fun MarkerLabels(
     if (state.labelerConf.continuous) {
         NameLabels(
             appState.appConf,
+            editorState,
             state,
             requestRename,
             jumpToEntry,
@@ -225,7 +237,6 @@ private fun FieldBorderCanvas(
     editorConf: AppConf.Editor,
 ) {
     val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
-
     Canvas(Modifier.fillMaxSize()) {
         screenRange ?: return@Canvas
         try {
@@ -460,11 +471,13 @@ private fun MarkerState.handleMouseMove(
     playByCursor: (Float) -> Unit,
     scrollState: ScrollState,
     scope: CoroutineScope,
+    commitEntryCut: () -> Unit,
+    density: Density,
 ) {
     screenRange ?: return
     when (tool) {
         Tool.Cursor -> handleCursorMove(event, editions, screenRange, playByCursor)
-        Tool.Scissors -> handleScissorsMove(event, screenRange)
+        Tool.Scissors -> handleScissorsMove(event, screenRange, commitEntryCut, density)
         Tool.Pan -> handlePanMove(event, scrollState, scope)
         Tool.Playback -> handlePlaybackMove(event, screenRange)
     }
@@ -519,9 +532,21 @@ private fun MarkerState.handleCursorMove(
 private fun MarkerState.handleScissorsMove(
     event: PointerEvent,
     screenRange: FloatRange,
+    commitEntryCut: () -> Unit,
+    density: Density,
 ) {
-    val scissorsState = scissorsState
+    val scissorsStateValue = scissorsState.value
     val x = event.changes.first().position.x + screenRange.start
+    if (scissorsStateValue?.locked == true) {
+        val lockedPosition = scissorsStateValue.position ?: return
+        val distance = abs(x - lockedPosition)
+        val threshold = with(density) { OnScreenScissorDistanceThreshold.toPx() }
+        if (distance > threshold) {
+            scissorsState.updateNonNull { copy(locked = false) }
+            commitEntryCut()
+        }
+        return
+    }
     val position = x.takeIf { isValidCutPosition(it) }
     scissorsState.updateNonNull { copy(position = position) }
 }
@@ -619,15 +644,16 @@ private fun MarkerState.handleMouseRelease(
     event: PointerEvent,
     submitEntry: () -> Unit,
     audioSectionPlayer: AudioSectionPlayer,
-    cutEntry: (Int, Float) -> Unit,
+    cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
     keyboardState: KeyboardState,
     screenRange: FloatRange?,
+    appConf: AppConf,
 ) {
     screenRange ?: return
     val caughtAction = keyboardState.getEnabledMouseClickAction(event)
     val handled = when (tool) {
         Tool.Cursor -> handleCursorRelease(submitEntry)
-        Tool.Scissors -> handleScissorsRelease(cutEntry, event)
+        Tool.Scissors -> handleScissorsRelease(appConf.editor.useOnScreenScissors, cutEntry, event)
         Tool.Pan -> handlePanRelease()
         Tool.Playback -> {
             val playbackAction = keyboardState.getEnabledMouseClickAction(event, Tool.Playback)
@@ -658,13 +684,14 @@ private fun MarkerState.handleCursorRelease(
 }
 
 private fun MarkerState.handleScissorsRelease(
-    cutEntry: (Int, Float) -> Unit,
+    onScreenMode: Boolean,
+    cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
     event: PointerEvent,
 ): Boolean {
     val scissorsState = scissorsState
     val position = scissorsState.value?.position ?: return false
     if (event.isRightClick) return false
-    handleScissorsCut(position, cutEntry)
+    handleScissorsCut(onScreenMode, position, cutEntry)
     return true
 }
 
@@ -714,17 +741,28 @@ private fun MarkerState.handlePlaybackRelease(
     return true
 }
 
-private fun MarkerState.mayHandleScissorsKeyAction(action: KeyAction, cutEntry: (Int, Float) -> Unit): Boolean {
+private fun MarkerState.mayHandleScissorsKeyAction(
+    onScreenMode: Boolean,
+    action: KeyAction,
+    cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
+): Boolean {
     if (action != KeyAction.ScissorsCut) return false
     val position = scissorsState.value?.position ?: return false
-    handleScissorsCut(position, cutEntry)
+    handleScissorsCut(onScreenMode, position, cutEntry)
     return true
 }
 
-private fun MarkerState.handleScissorsCut(position: Float, cutEntry: (Int, Float) -> Unit) {
+private fun MarkerState.handleScissorsCut(
+    onScreenMode: Boolean,
+    position: Float,
+    cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
+) {
     val timePosition = entryConverter.convertToMillis(position)
     val entryIndex = getEntryIndexByCutPosition(position)
-    cutEntry(entryIndex, timePosition)
+    if (onScreenMode) {
+        scissorsState.updateNonNull { copy(locked = true) }
+    }
+    cutEntry(entryIndex, timePosition, position)
 }
 
 private fun MarkerState.editEntryIfNeeded(

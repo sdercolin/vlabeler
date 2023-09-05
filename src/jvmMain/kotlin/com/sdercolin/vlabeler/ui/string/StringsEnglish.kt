@@ -33,6 +33,7 @@ fun Strings.en(): String = when (this) {
     MenuEditToggleDone -> "Toggle Done for Current Entry"
     MenuEditToggleStar -> "Toggle Starred for Current Entry"
     MenuEditEditTag -> "Edit Tag of Current Entry"
+    MenuEditEditExtra -> "Edit Extra Information of Current Entry"
     MenuEditMultipleEditMode -> "Edit All Connected Entries"
     MenuView -> "View"
     MenuViewToggleMarker -> "Show Parameter Controllers"
@@ -76,6 +77,7 @@ fun Strings.en(): String = when (this) {
     MenuHelp -> "Help"
     MenuHelpCheckForUpdates -> "Check for Updates..."
     MenuHelpOpenLogDirectory -> "Open Log Directory"
+    MenuHelpOpenHomePage -> "Open vLabeler Home Page"
     MenuHelpOpenLatestRelease -> "Open Latest Release"
     MenuHelpOpenGitHub -> "Open GitHub Page"
     MenuHelpJoinDiscord -> "Join Discord"
@@ -183,6 +185,7 @@ fun Strings.en(): String = when (this) {
     InputEntryNameCutFormerDialogDescription -> "Input name for the former entry after cutting"
     InputEntryNameCutLatterDialogDescription -> "Input name for the latter entry after cutting"
     EditEntryNameDialogExistingError -> "The name you input already exists."
+    EditEntryExtraDialogDescription -> "Edit extra information"
     MoveEntryDialogDescription -> "Input new index for entry \"%1\$s\" (%2\$d ~ %3\$d)"
     AskIfRemoveEntryDialogDescription -> "Removing current entry..."
     AskIfRemoveEntryLastDialogDescription ->
@@ -434,10 +437,13 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorNotes -> "Notes"
     PreferencesEditorNotesDescription ->
         "Customize the editor's appearance and behavior about entry " +
-            "notes (starred, done, tag)."
+            "notes (starred, done, tag, extra information)."
     PreferencesEditorShowDone -> "Display \"Done\" status"
     PreferencesEditorShowStarred -> "Display \"Starred\" status"
     PreferencesEditorShowTag -> "Display tags"
+    PreferencesEditorShowExtra -> "Display \"Edit extra information\""
+    PreferencesEditorShowExtraDescription ->
+        "Even if enabled, when the labeler does not define any extra information, the button will not be shown."
     PreferencesEditorPostEditAction -> "Post-editing actions"
     PreferencesEditorPostEditActionDescription -> "Define actions to be conducted after editing the entry."
     PreferencesEditorPostEditActionDone -> "Set edited entries as \"Done\" after editing"
@@ -455,6 +461,11 @@ fun Strings.en(): String = when (this) {
         "Trigger the action after setting the parameter(s) with \"Set Parameter To Cursor Position\" key actions."
     PreferencesEditorScissors -> "Scissors"
     PreferencesEditorScissorsDescription -> "Customize appearance and behavior of the scissors tool."
+    PreferencesEditorScissorsUseOnScreenScissors -> "Type entry names directly in editor"
+    PreferencesEditorScissorsUseOnScreenScissorsDescription ->
+        "When enabled, an input box for the name of the new entry is shown in the editor after clicking " +
+            "with the scissors. You can confirm the cutting action by pressing Enter or moving the cursor away " +
+            "from the clicked position. You can also cancel the action by pressing Esc."
     PreferencesEditorScissorsColor -> "Color"
     PreferencesEditorScissorsActionTargetNone -> "None"
     PreferencesEditorScissorsActionTargetFormer -> "The former entry"

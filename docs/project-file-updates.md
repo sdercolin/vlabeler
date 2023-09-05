@@ -1,4 +1,4 @@
-## Update History of vLabeler project file (.vlp)
+## Update History of vLabeler project file (.lbp)
 
 #### v1
  - Add `version` field.

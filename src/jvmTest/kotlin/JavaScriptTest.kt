@@ -1,5 +1,6 @@
 import com.sdercolin.vlabeler.util.JavaScript
 import java.io.File
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -8,9 +9,16 @@ import kotlin.test.assertEquals
  */
 class JavaScriptTest {
 
+    private lateinit var js: JavaScript
+
+    @BeforeTest
+    fun setUp() {
+        js = JavaScript(System.out)
+    }
+
     @Test
     fun testDouble() {
-        JavaScript().use {
+        js.use {
             it.eval("a=1\nb=2.1")
             assertEquals(2.1, it.get("b"))
             assertEquals(3.1, it.eval("a+b")?.asDouble())
@@ -19,7 +27,7 @@ class JavaScriptTest {
 
     @Test
     fun testUnicodeString() {
-        JavaScript().use {
+        js.use {
             it.set("a", "あ")
             assertEquals("あ", it.get("a"))
         }
@@ -27,7 +35,7 @@ class JavaScriptTest {
 
     @Test
     fun testNull() {
-        JavaScript().use {
+        js.use {
             it.set("a", null)
             it.eval("b=null")
             assert(it.getOrNull<Any>("a") == null)
@@ -37,7 +45,7 @@ class JavaScriptTest {
 
     @Test
     fun testObjectNull() {
-        JavaScript().use {
+        js.use {
             it.set("a", null)
             assert(it.getJsonOrNull<Pair<String, Int>>("a") == null)
         }
@@ -45,21 +53,21 @@ class JavaScriptTest {
 
     @Test
     fun testUndefined() {
-        JavaScript().use {
+        js.use {
             assert(it.getOrNull<Any>("a") == null)
         }
     }
 
     @Test
     fun testObjectUndefined() {
-        JavaScript().use {
+        js.use {
             assert(it.getJsonOrNull<Pair<String, Int>>("a") == null)
         }
     }
 
     @Test
     fun testList() {
-        JavaScript().use {
+        js.use {
             val list = listOf(1, 2, 3)
             it.setJson("list", list)
             it.eval("list[0]=3\nlist.push(4)")
@@ -69,7 +77,7 @@ class JavaScriptTest {
 
     @Test
     fun testMap() {
-        JavaScript().use {
+        js.use {
             val map = mapOf("a" to 1, "b" to 2)
             it.setJson("map", map)
             it.eval("map[\"a\"]=3\nmap[\"c\"]=1")
@@ -79,7 +87,7 @@ class JavaScriptTest {
 
     @Test
     fun testObject() {
-        JavaScript().use {
+        js.use {
             val pair = Pair("c", 1)
             it.setJson("pair", pair)
             it.eval("pair.first = \"a\"")
@@ -89,7 +97,7 @@ class JavaScriptTest {
 
     @Test
     fun testObjectList() {
-        JavaScript().use {
+        js.use {
             val list = listOf("c" to 1, "d" to 2)
             it.setJson("list", list)
             it.eval(
@@ -111,7 +119,7 @@ class JavaScriptTest {
 
     @Test
     fun testRawObjectList() {
-        JavaScript().use {
+        js.use {
             val list = listOf(File("a"), File("b"))
             it.setArray("list", list)
             assertEquals(list, it.getArray("list"))

@@ -25,7 +25,6 @@ fun runMacroPlugin(
     listener: MacroPluginExecutionListener,
 ): Project {
     val js = JavaScript(
-        logHandler = Log.infoFileHandler,
         currentWorkingDirectory = requireNotNull(plugin.directory).absolutePath.toFile(),
     )
     val result = runCatching {
@@ -40,7 +39,6 @@ fun runMacroPlugin(
 
         listOfNotNull(
             Resources.classEntryJs,
-            Resources.classEditedEntryJs,
             Resources.classModuleJs,
             Resources.expectedErrorJs,
             Resources.reportJs,

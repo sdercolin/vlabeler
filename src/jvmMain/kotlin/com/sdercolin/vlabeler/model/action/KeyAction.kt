@@ -145,6 +145,11 @@ enum class KeyAction(
         KeySet(Key.L),
         true,
     ),
+    EditExtra(
+        listOf(Strings.MenuEdit, Strings.MenuEditEditExtra),
+        null,
+        true,
+    ),
     ToggleMultipleEditMode(
         listOf(Strings.MenuEdit, Strings.MenuEditMultipleEditMode),
         KeySet(Key.M, setOf(Key.Ctrl)),
@@ -277,6 +282,7 @@ enum class KeyAction(
     CheckForUpdates(listOf(Strings.MenuHelp, Strings.MenuHelpCheckForUpdates), null, true),
     OpenLogDirectory(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLogDirectory), null, true),
     OpenLatestRelease(listOf(Strings.MenuHelp, Strings.MenuHelpOpenLatestRelease), null, true),
+    OpenHomePage(listOf(Strings.MenuHelp, Strings.MenuHelpOpenHomePage), null, true),
     OpenGitHub(listOf(Strings.MenuHelp, Strings.MenuHelpOpenGitHub), null, true),
     JoinDiscord(listOf(Strings.MenuHelp, Strings.MenuHelpJoinDiscord), null, true),
     About(listOf(Strings.MenuHelp, Strings.MenuHelpAbout), null, true),
