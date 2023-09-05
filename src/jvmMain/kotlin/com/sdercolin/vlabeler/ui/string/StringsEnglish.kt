@@ -77,6 +77,7 @@ fun Strings.en(): String = when (this) {
     MenuHelp -> "Help"
     MenuHelpCheckForUpdates -> "Check for Updates..."
     MenuHelpOpenLogDirectory -> "Open Log Directory"
+    MenuHelpOpenHomePage -> "Open vLabeler Home Page"
     MenuHelpOpenLatestRelease -> "Open Latest Release"
     MenuHelpOpenGitHub -> "Open GitHub Page"
     MenuHelpJoinDiscord -> "Join Discord"
@@ -93,6 +94,9 @@ fun Strings.en(): String = when (this) {
     CommonPrevious -> "Previous"
     CommonNext -> "Next"
     CommonFinish -> "Finish"
+    CommonSelect -> "Select"
+    CommonOpen -> "Open"
+    CommonSave -> "Save"
     CommonInputErrorPromptNumber -> "Please enter a number."
     CommonInputErrorPromptInteger -> "Please enter an integer number."
     CommonInputErrorPromptNumberRange -> "Please enter a number between %s and %s."
@@ -241,8 +245,8 @@ fun Strings.en(): String = when (this) {
         "An unexpected error occurred during the plugin execution.\n" +
             "Please contact the author for more information."
     InvalidCreatedProjectException ->
-        "The created project is not valid." +
-            "Please check the documentations of the labeler/plugin to ensure your settings are correct.\n" +
+        "The created project is not valid. " +
+            "Please check the settings of the labeler/plugin to ensure you have set it up correctly.\n" +
             "If the problem still occurs, please contact the author of the labeler/plugin for more information."
     InvalidOpenedProjectException ->
         "Could not open the project because it contains invalid data.\n" +
@@ -260,6 +264,7 @@ fun Strings.en(): String = when (this) {
     InvalidEditedProjectException -> "Invalid edited project.\nPlease check error log for more information."
     CustomizableItemLoadingException -> "Could not load the selected customized item."
     PluginRuntimeExceptionTemplate -> "Plugin runtime error: %s"
+    ProjectConstructorRuntimeExceptionTemplate -> "Labeler runtime error when constructing project: %s"
     VideoComponentInitializationException ->
         "Could not initialize the video component. You need to install VLC on your device to use this feature. " +
             "Please read the `Video integration` section in README for details."
@@ -369,6 +374,7 @@ fun Strings.en(): String = when (this) {
             "You may also need to ensure the executable could be executed by your OS before using it in vLabeler. " +
             "Possible errors may be related to unsigned executables or access permissions."
     PreferencesChartsConversionFFmpegArgs -> "FFmpeg arguments besides input and output"
+    PreferencesChartsConversionFFmpegUseForWav -> "Use FFmpeg conversion for wav files"
     PreferencesKeymap -> "Keymap"
     PreferencesKeymapDescription -> "Customize key bindings for key/mouse actions."
     PreferencesKeymapKeyAction -> "Key actions"
@@ -453,6 +459,11 @@ fun Strings.en(): String = when (this) {
         "Trigger the action after setting the parameter(s) with \"Set Parameter To Cursor Position\" key actions."
     PreferencesEditorScissors -> "Scissors"
     PreferencesEditorScissorsDescription -> "Customize appearance and behavior of the scissors tool."
+    PreferencesEditorScissorsUseOnScreenScissors -> "Type entry names directly in editor"
+    PreferencesEditorScissorsUseOnScreenScissorsDescription ->
+        "When enabled, an input box for the name of the new entry is shown in the editor after clicking " +
+            "with the scissors. You can confirm the cutting action by pressing Enter or moving the cursor away " +
+            "from the clicked position. You can also cancel the action by pressing Esc."
     PreferencesEditorScissorsColor -> "Color"
     PreferencesEditorScissorsActionTargetNone -> "None"
     PreferencesEditorScissorsActionTargetFormer -> "The former entry"
@@ -497,6 +508,13 @@ fun Strings.en(): String = when (this) {
     PreferencesHistorySquashIndexDescription ->
         "When enabled, index changes (e.g. switch entries) will not be saved " +
             "until the next content change."
+    PreferencesMisc -> "Miscellaneous"
+    PreferencesMiscDescription -> "Customize other behaviors. Please note that these settings may be experimental."
+    PreferencesMiscUseCustomFileDialog -> "Use custom file dialogs instead of system dialogs"
+    PreferencesMiscUseCustomFileDialogDescription ->
+        "When enabled, the file dialogs will be replaced by the custom ones. " +
+            "This may be useful if you are using a desktop environment that doesn't support " +
+            "the system file dialogs. You might need to restart the app to apply this setting."
     ActionToggleSamplePlayback -> "Toggle Playback of Current Sample"
     ActionToggleEntryPlayback -> "Toggle Playback of Current Entry"
     ActionToggleScreenRangePlayback -> "Toggle Playback of Current Screen Range"

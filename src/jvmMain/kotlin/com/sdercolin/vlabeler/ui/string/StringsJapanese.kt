@@ -79,6 +79,7 @@ fun Strings.ja(): String? = when (this) {
     MenuHelp -> "ヘルプ"
     MenuHelpCheckForUpdates -> "アップデートを確認"
     MenuHelpOpenLogDirectory -> "ログディレクトリを開く"
+    MenuHelpOpenHomePage -> "vLabeler ホームページを開く"
     MenuHelpOpenLatestRelease -> "最新のリリースページを開く"
     MenuHelpOpenGitHub -> "GitHub リポジトリを開く"
     MenuHelpJoinDiscord -> "Discord サーバーに参加"
@@ -95,6 +96,9 @@ fun Strings.ja(): String? = when (this) {
     CommonPrevious -> "前へ"
     CommonNext -> "次へ"
     CommonFinish -> "完了"
+    CommonSelect -> "選択"
+    CommonOpen -> "開く"
+    CommonSave -> "保存"
     CommonInputErrorPromptNumber -> "数値を入力してください。"
     CommonInputErrorPromptInteger -> "整数を入力してください。"
     CommonInputErrorPromptNumberRange -> "%s から %s の間の数値を入力してください。"
@@ -236,8 +240,8 @@ fun Strings.ja(): String? = when (this) {
         "サンプルファイルを読み込めませんでした。存在しないか、サポートされていないフォーマットの可能性があります。"
     PluginRuntimeUnexpectedException -> "プラグインの実行中に予期しないエラーが発生しました。プラグインの作者に連絡してください。"
     InvalidCreatedProjectException ->
-        "作成したプロジェクトは無効です。お使いのラベラーまたはプラグインのドキュメントに確認し、" +
-            "設定してください。問題が解決できない場合は、ラベラーまたはプラグインの作者に連絡してください。"
+        "作成したプロジェクトは無効です。お使いのラベラーまたはプラグインの設定を確認してください。" +
+            "問題が解決できない場合は、ラベラーまたはプラグインの作者に連絡してください。"
     InvalidOpenedProjectException -> "プロジェクトを開けませんでした。無効なデータが含まれています。詳細はエラーログを確認してください。"
     ProjectParseException ->
         "プロジェクトを開けませんでした。破損しているか、互換性のないのバージョンの vLabeler によって作られています。" +
@@ -256,6 +260,7 @@ fun Strings.ja(): String? = when (this) {
     VideoFileNotFoundExceptionTemplate ->
         "ファイル名が「%s」で、拡張子が「%s」の動画は見つかりませんでした。"
     PluginRuntimeExceptionTemplate -> "プラグインの実行中にエラーが発生しました：%s"
+    ProjectConstructorRuntimeExceptionTemplate -> "プロジェクトの作成中にエラーが発生しました：%s"
     LabelerManagerTitle -> "ラベラー"
     LabelerManagerImportDialogTitle -> "ラベラーをインポート"
     TemplatePluginManagerTitle -> "テンプレート生成器"
@@ -355,6 +360,7 @@ fun Strings.ja(): String? = when (this) {
             "OS で実行可能になっていることを確認する必要があります。" +
             "実行可能ファイルが署名されていないか、アクセス権限に関連するエラーが発生する可能性があります。"
     PreferencesChartsConversionFFmpegArgs -> "FFmpeg の引数（入力と出力以外）"
+    PreferencesChartsConversionFFmpegUseForWav -> "wav ファイルも FFmpeg で変換する"
     PreferencesKeymap -> "ショートカットキー設定"
     PreferencesKeymapDescription -> "キーボード/マウスのショートカットキーをカスタマイズします。"
     PreferencesKeymapKeyAction -> "キーボード"
@@ -427,6 +433,11 @@ fun Strings.ja(): String? = when (this) {
         "「パラメータをカーソル位置に設定」ショートカットでパラメータを設定した時に当該アクションを実行します。"
     PreferencesEditorScissors -> "はさみ"
     PreferencesEditorScissorsDescription -> "はさみツールに関する表示と動作をカスタマイズします。"
+    PreferencesEditorScissorsUseOnScreenScissors -> "エントリ名をエディタ上で直接入力する"
+    PreferencesEditorScissorsUseOnScreenScissorsDescription ->
+        "有効にすると、はさみでクリックした時に、エディタ上に新しいエントリ名の入力欄が表示されます。" +
+            "Enterキーを押すか、クリック位置からカーソルを離すことで、カットアクションを確定できます。" +
+            "Escキーを押すことで、アクションをキャンセルできます。"
     PreferencesEditorScissorsColor -> "色"
     PreferencesEditorScissorsActionTargetNone -> "なし"
     PreferencesEditorScissorsActionTargetFormer -> "前のエントリ"
@@ -467,6 +478,13 @@ fun Strings.ja(): String? = when (this) {
     PreferencesHistorySquashIndexDescription ->
         "有効にすると、インデックスのみの変更（エントリの切り替えなど）は、" +
             "次に内容の変更があるまで、履歴に保存されません。"
+    PreferencesMisc -> "その他"
+    PreferencesMiscDescription -> "その他の動作をカスタマイズします。こちらの設定は、実験的なものも含まれます。"
+    PreferencesMiscUseCustomFileDialog -> "独自のファイルダイアログを使用する"
+    PreferencesMiscUseCustomFileDialogDescription ->
+        "有効にすると、OS のファイルダイアログではなく、独自のファイルダイアログを使用します。" +
+            "これは、デフォルトのファイルダイアログに問題がある場合や、OSによってはファイルダイアログがサポートされていない場合に" +
+            "ご利用ください。この設定の変更を反映するには、アプリケーションを再起動する必要がある場合があります。"
     ActionToggleSamplePlayback -> "現在のサンプルの再生/停止"
     ActionToggleEntryPlayback -> "現在のエントリの再生/停止"
     ActionToggleScreenRangePlayback -> "現在の画面範囲の再生/停止"

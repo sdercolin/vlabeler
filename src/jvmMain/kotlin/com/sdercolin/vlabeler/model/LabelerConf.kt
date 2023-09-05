@@ -39,6 +39,7 @@ import java.io.File
  * @property version Version code in integer. Configurations with same [name] and [version] should always have same
  *     contents if distributed in public.
  * @property extension File extension of the raw label file.
+ * @property serialVersion Serial version of the labeler used for migration. See the current version in [SerialVersion].
  * @property defaultInputFilePath Default name of the input file relative to the sample directory.
  * @property displayedName Name displayed in the UI (localized).
  * @property author Author of the labeler.
@@ -51,10 +52,11 @@ import java.io.File
  *     its next entry.
  * @property allowSameNameEntry Whether to allow more than one entry with a shared name in the project module.
  * @property defaultValues Default value listed as [start, *fields, end] in millisecond.
- * @property defaultExtras Default [extraFieldNames] values.
- * @property fields Objects in [Field] type containing data used in the label files, except for built-in "start" and
+ * @property defaultExtras (Deprecated) Use [extraFields] instead.
+ * @property fields [Field] definitions containing data used in the label files, except for built-in "start" and
  *     "end". Corresponds to [Entry.points].
- * @property extraFieldNames Extra field names for some data only for calculation. These fields are saved as String.
+ * @property extraFieldNames (Deprecated) Use [extraFields] instead.
+ * @property extraFields [ExtraField] definitions stored as strings. Corresponds to [Entry.extras].
  * @property lockedDrag Defines when to use locked dragging (all parameters will move with dragged one).
  * @property overflowBeforeStart Action taken when there are points before "start".
  * @property overflowAfterEnd Action taken when there are points after "end".
@@ -88,6 +90,7 @@ data class LabelerConf(
     val defaultExtras: List<String>? = null,
     val fields: List<Field> = listOf(),
     val extraFieldNames: List<String>? = null,
+    val extraFields: List<ExtraField> = listOf(),
     val lockedDrag: LockedDrag = LockedDrag(),
     val overflowBeforeStart: PointOverflow = PointOverflow.Error,
     val overflowAfterEnd: PointOverflow = PointOverflow.Error,
@@ -99,7 +102,6 @@ data class LabelerConf(
     val writer: Writer,
     val parameters: List<ParameterHolder> = listOf(),
     val projectConstructor: ProjectConstructor? = null,
-    val extraFields: List<ExtraField> = listOf(),
 ) : BasePlugin {
 
     private val fileName get() = "$name.$LabelerFileExtension"

@@ -6,9 +6,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -63,6 +65,8 @@ import kotlinx.coroutines.flow.onEach
 
 var hasUncaughtError = false
 
+val UseCustomFileDialog = compositionLocalOf { false }
+
 fun main() = application {
     remember { Log.init() }
     remember { ensureDirectories() }
@@ -100,30 +104,32 @@ fun main() = application {
 
     val windowTitle = string(Strings.AppName) + appState?.project?.projectName?.let { " - $it" }.orEmpty()
 
-    Window(
-        title = windowTitle,
-        icon = painterResource(Resources.iconIco),
-        state = windowState,
-        onCloseRequest = onCloseRequest,
-        onKeyEvent = onKeyEvent,
-    ) {
-        LaunchSaveWindowSize(windowState, appRecordStore)
-        Menu(mainScope, appState, appConf.value.view)
+    CompositionLocalProvider(UseCustomFileDialog.provides(appConf.value.misc.useCustomFileDialog)) {
+        Window(
+            title = windowTitle,
+            icon = painterResource(Resources.iconIco),
+            state = windowState,
+            onCloseRequest = onCloseRequest,
+            onKeyEvent = onKeyEvent,
+        ) {
+            LaunchSaveWindowSize(windowState, appRecordStore)
+            Menu(mainScope, appState, appConf.value.view)
 
-        if (appState == null) {
-            AppTheme(appConf.value.view) { Splash() }
-        }
+            if (appState == null) {
+                AppTheme(appConf.value.view) { Splash() }
+            }
 
-        appState?.let { state ->
-            LaunchValidate(state)
-            LaunchKeyboardEvent(state.keyboardViewModel, state, state.player)
-            LaunchExit(state, ::exitApplication)
-            LaunchTrackingLaunch(state)
-            AppTheme(state.appConf.view) { App(mainScope, state) }
-            StandaloneDialogs(mainScope, state)
-            ProjectChangesListener(state)
-            ProjectWriter(state)
-            SnackbarBox(state)
+            appState?.let { state ->
+                LaunchValidate(state)
+                LaunchKeyboardEvent(state.keyboardViewModel, state, state.player)
+                LaunchExit(state, ::exitApplication)
+                LaunchTrackingLaunch(state)
+                AppTheme(state.appConf.view) { App(mainScope, state) }
+                StandaloneDialogs(mainScope, state)
+                ProjectChangesListener(state)
+                ProjectWriter(state)
+                SnackbarBox(state)
+            }
         }
     }
 }

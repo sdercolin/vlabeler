@@ -5,6 +5,7 @@ import java.awt.Desktop
 import java.net.URI
 
 object Url {
+    const val HomePage = "https://vlabeler.com"
     const val ProjectGitHub = "https://github.com/sdercolin/vlabeler"
     const val LatestRelease = "https://github.com/sdercolin/vlabeler/releases/latest"
     const val DiscordInvitation = "https://discord.gg/yrTqG2SrRd"

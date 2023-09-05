@@ -8,9 +8,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.ui.AppSnackbarState
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.stringStatic
+import com.sdercolin.vlabeler.exception.VideoComponentInitializationException
+import com.sdercolin.vlabeler.exception.VideoFileNotFoundException
+import com.sdercolin.vlabeler.ui.AppErrorState
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.toMillisecond
 import java.io.FileNotFoundException
@@ -20,7 +20,7 @@ import java.io.FileNotFoundException
  */
 class VideoState(
     private val playerState: PlayerState,
-    private val snackbarState: AppSnackbarState,
+    private val errorState: AppErrorState,
     val exit: () -> Unit,
 ) {
     var width: Dp by mutableStateOf(DefaultWidth)
@@ -40,34 +40,34 @@ class VideoState(
     /**
      * @return false if initialization failed
      */
-    suspend fun init(): Boolean {
+    fun init(): Boolean {
         videoPath = null
         if (videoPlayer.mediaPlayerComponent == null) {
             videoPlayer.init()
                 .onFailure {
                     exit()
-                    snackbarState.showSnackbar(stringStatic(Strings.VideoComponentInitializationException))
+                    errorState.showError(VideoComponentInitializationException(it))
                     return false
                 }
         }
         return true
     }
 
-    suspend fun locatePath(audioPath: String): Result<String> {
+    fun locatePath(audioPath: String): Result<String> {
         return FindVideoStrategy.SamePlaceOfReferenceAudio.find(
             audioPath,
-            SupportedExtensionList,
+            SupportedExtensions,
         )
             .onSuccess { videoPath = it }
             .onFailure {
                 videoPath = null
                 exit()
                 if (it is FileNotFoundException) {
-                    snackbarState.showSnackbar(
-                        stringStatic(
-                            Strings.VideoFileNotFoundExceptionTemplate,
-                            audioPath.lastPathSection,
-                            SupportedExtensionList.joinToString("/"),
+                    errorState.showError(
+                        VideoFileNotFoundException(
+                            cause = it,
+                            path = audioPath.lastPathSection,
+                            supportedExtensions = SupportedExtensions,
                         ),
                     )
                 } else {
@@ -111,7 +111,7 @@ class VideoState(
         val MaxWidth = 600.dp
         val DefaultWidth = 360.dp
         const val AspectRatio = 3f / 4f
-        val SupportedExtensionList = listOf(".mp4", ".webm")
+        val SupportedExtensions = listOf(".mp4", ".webm")
     }
 
     enum class Mode {

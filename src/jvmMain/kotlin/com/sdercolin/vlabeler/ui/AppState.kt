@@ -120,9 +120,8 @@ class AppState(
 
     val videoState = VideoState(
         playerState,
-        snackbarState,
-        exit = { toggleVideoPopup(false) },
-    )
+        errorState,
+    ) { toggleVideoPopup(false) }
 
     private val ipcState: IpcState = IpcState(this)
     val trackingState = TrackingState(appRecordStore, mainScope)
@@ -225,7 +224,26 @@ class AppState(
         discardAutoSavedProjects()
     }
 
-    fun requestCutEntry(index: Int, position: Float, player: Player, sampleInfo: SampleInfo) {
+    fun playSectionByCutting(index: Int, position: Float, sampleInfo: SampleInfo) {
+        val actions = appConf.editor.scissorsActions
+        val sourceEntry = requireProject().currentModule.entries[index]
+        if (actions.play != AppConf.ScissorsActions.Target.None) {
+            val startFrame = toFrame(sourceEntry.start, sampleInfo.sampleRate)
+            val endFrame = toFrame(sourceEntry.end, sampleInfo.sampleRate)
+            val cutFrame = toFrame(position, sampleInfo.sampleRate)
+            when (actions.play) {
+                AppConf.ScissorsActions.Target.Former -> {
+                    player.playSection(startFrame, cutFrame)
+                }
+                AppConf.ScissorsActions.Target.Latter -> {
+                    player.playSection(cutFrame, endFrame)
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    fun requestCutEntry(index: Int, position: Float, sampleInfo: SampleInfo) {
         mainScope.launch {
             val sourceEntry = requireProject().currentModule.entries[index]
             val showSnackbar = { message: String ->
@@ -233,21 +251,9 @@ class AppState(
                 Unit
             }
 
+            playSectionByCutting(index, position, sampleInfo)
+
             val actions = appConf.editor.scissorsActions
-            if (actions.play != AppConf.ScissorsActions.Target.None) {
-                val startFrame = toFrame(sourceEntry.start, sampleInfo.sampleRate)
-                val endFrame = toFrame(sourceEntry.end, sampleInfo.sampleRate)
-                val cutFrame = toFrame(position, sampleInfo.sampleRate)
-                when (actions.play) {
-                    AppConf.ScissorsActions.Target.Former -> {
-                        player.playSection(startFrame, cutFrame)
-                    }
-                    AppConf.ScissorsActions.Target.Latter -> {
-                        player.playSection(cutFrame, endFrame)
-                    }
-                    else -> Unit
-                }
-            }
 
             val rename = if (actions.askForName == AppConf.ScissorsActions.Target.Former) {
                 val invalidOptions = if (requireProject().labelerConf.allowSameNameEntry) {
@@ -288,11 +294,7 @@ class AppState(
                 requireProject().currentModule.entries.map { it.name },
                 requireProject().labelerConf.allowSameNameEntry,
             )
-            val targetIndex = when (actions.goTo) {
-                AppConf.ScissorsActions.Target.Former -> index
-                AppConf.ScissorsActions.Target.Latter -> index + 1
-                else -> null
-            }
+            val targetIndex = actions.getTargetEntryIndex(index)
             cutEntry(index, position, rename, newName, targetIndex)
         }
     }
@@ -458,7 +460,8 @@ class AppState(
             return project != null &&
                 editor.state.isPinnedEntryListInputFocused.not() &&
                 editor.state.isEditingTag.not() &&
-                !anyDialogOpening()
+                !anyDialogOpening() &&
+                !editor.state.onScreenScissorsState.isOn
         }
 
     val isMacroPluginAvailable

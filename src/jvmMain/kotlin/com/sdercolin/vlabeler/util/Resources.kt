@@ -10,7 +10,6 @@ object Resources {
     val iconIco get() = "icon.ico"
     val iconPng get() = "icon.png"
     val licensesJson get() = "licenses.json"
-    val classEditedEntryJs get() = "js/class_edited_entry.js"
     val classEntryJs get() = "js/class_entry.js"
     val classModuleJs get() = "js/class_module.js"
     val expectedErrorJs get() = "js/expected_error.js"

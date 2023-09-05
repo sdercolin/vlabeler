@@ -24,7 +24,7 @@ import kotlinx.serialization.json.jsonArray
 import java.io.File
 
 /**
- * Only deserialization is supported. See [readme/plugin-development.md] for more information.
+ * Only deserialization is supported. See [docs/plugin-development.md] for more information.
  */
 @Serializable
 @Immutable

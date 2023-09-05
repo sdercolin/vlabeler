@@ -88,6 +88,32 @@ class MarkerState(
         return index % (labelerConf.fields.size + 1)
     }
 
+    fun getPointIndexAsSingleEntry(entryIndex: Int, pointIndex: Int): Int {
+        val entryIndices = entriesInPixel.indices
+        val startPointIndex = if (entryIndex == 0) {
+            MarkerCursorState.StartPointIndex
+        } else {
+            entryIndex * (labelerConf.fields.size + 1) - 1
+        }
+        val endPointIndex = if (entryIndex == entryIndices.last()) {
+            MarkerCursorState.EndPointIndex
+        } else {
+            startPointIndex + labelerConf.fields.size + 1
+        }
+        return when (pointIndex) {
+            startPointIndex -> MarkerCursorState.StartPointIndex
+            endPointIndex -> MarkerCursorState.EndPointIndex
+            else -> {
+                val fieldPointIndexes = if (startPointIndex == MarkerCursorState.StartPointIndex) {
+                    0 until labelerConf.fields.size
+                } else {
+                    (startPointIndex + 1) until (startPointIndex + 1 + labelerConf.fields.size)
+                }
+                fieldPointIndexes.indexOfFirst { it == pointIndex }
+            }
+        }
+    }
+
     private fun getPointPosition(index: Int): Float = when (index) {
         MarkerCursorState.StartPointIndex -> startInPixel
         MarkerCursorState.EndPointIndex -> endInPixel
@@ -400,7 +426,7 @@ class MarkerState(
         action: KeyAction,
         appConf: AppConf,
         labelerConf: LabelerConf,
-    ): List<EntryInPixel>? {
+    ): Pair<List<EntryInPixel>, Int>? {
         val paramIndex = when (action) {
             KeyAction.SetValue1 -> 0
             KeyAction.SetValue2 -> 1
@@ -440,11 +466,12 @@ class MarkerState(
                 AppConf.Editor.LockedDrag.UseStart -> pointIndex == MarkerCursorState.StartPointIndex
                 else -> false
             }
-        return if (lockDrag) {
+        val entries = if (lockDrag) {
             getLockedDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
         } else {
             getDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
         }
+        return entries to pointIndex
     }
 
     fun switchTool(tool: Tool) {

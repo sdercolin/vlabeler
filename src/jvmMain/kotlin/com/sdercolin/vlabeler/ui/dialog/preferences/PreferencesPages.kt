@@ -422,6 +422,12 @@ object PreferencesPages {
                         select = { it.ffmpegArgs },
                         update = { copy(ffmpegArgs = it) },
                     )
+                    switch(
+                        title = Strings.PreferencesChartsConversionFFmpegUseForWav,
+                        defaultValue = AppConf.Conversion.DefaultUseConversionForWav,
+                        select = { it.useConversionForWav },
+                        update = { copy(useConversionForWav = it) },
+                    )
                 }
             }
     }
@@ -603,6 +609,13 @@ object PreferencesPages {
                     selector = { it.editor },
                     updater = { copy(editor = it) },
                 ) {
+                    switch(
+                        title = Strings.PreferencesEditorScissorsUseOnScreenScissors,
+                        description = Strings.PreferencesEditorScissorsUseOnScreenScissorsDescription,
+                        defaultValue = AppConf.Editor.DefaultUseOnScreenScissors,
+                        select = { it.useOnScreenScissors },
+                        update = { copy(useOnScreenScissors = it) },
+                    )
                     color(
                         title = Strings.PreferencesEditorScissorsColor,
                         defaultValue = AppConf.Editor.DefaultScissorsColor,
@@ -926,6 +939,24 @@ object PreferencesPages {
             }
     }
 
+    object Misc : PreferencesPage(Strings.PreferencesMisc, Strings.PreferencesMiscDescription) {
+        override val content: List<PreferencesGroup>
+            get() = buildPageContent {
+                withContext(
+                    selector = { it.misc },
+                    updater = { copy(misc = it) },
+                ) {
+                    switch(
+                        title = Strings.PreferencesMiscUseCustomFileDialog,
+                        description = Strings.PreferencesMiscUseCustomFileDialogDescription,
+                        defaultValue = AppConf.Misc.DefaultUseCustomFileDialog,
+                        select = { it.useCustomFileDialog },
+                        update = { copy(useCustomFileDialog = it) },
+                    )
+                }
+            }
+    }
+
     val rootPages: Array<PreferencesPage>
         get() = arrayOf(
             Charts,
@@ -935,6 +966,7 @@ object PreferencesPages {
             Playback,
             AutoSave,
             History,
+            Misc,
         )
 }
 

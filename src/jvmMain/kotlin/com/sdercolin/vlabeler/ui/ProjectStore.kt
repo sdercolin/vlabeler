@@ -45,6 +45,14 @@ interface ProjectStore {
     fun updateProjectOnLoadedSample(sampleInfo: SampleInfo, moduleName: String)
     fun editEntries(editions: List<Edition>)
     fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?)
+    fun cutEntryOnScreen(
+        index: Int,
+        position: Float,
+        name: String,
+        target: AppConf.ScissorsActions.Target,
+        targetEntryIndex: Int?,
+    )
+
     val canUndo: Boolean
     fun undo()
     val canRedo: Boolean
@@ -225,6 +233,20 @@ class ProjectStoreImpl(
             scrollFitViewModel.emitNext()
         }
         editCurrentProjectModule { cutEntry(index, position, rename, newName, targetEntryIndex) }
+    }
+
+    override fun cutEntryOnScreen(
+        index: Int,
+        position: Float,
+        name: String,
+        target: AppConf.ScissorsActions.Target,
+        targetEntryIndex: Int?,
+    ) {
+        editCurrentProjectModule {
+            val rename = if (target != AppConf.ScissorsActions.Target.Former) null else name
+            val newName = if (target != AppConf.ScissorsActions.Target.Former) name else entries[index].name
+            cutEntry(index, position, rename, newName, targetEntryIndex)
+        }
     }
 
     override val canUndo get() = history.canUndo

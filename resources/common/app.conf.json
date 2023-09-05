@@ -42,7 +42,8 @@
     },
     "conversion": {
       "ffmpegPath": "ffmpeg",
-      "ffmpegArgs": "-acodec pcm_s16le -ac 1 -ar 44100"
+      "ffmpegArgs": "-acodec pcm_s16le -ac 1 -ar 44100",
+      "useConversionForWav": false
     }
   },
   "editor": {
@@ -53,6 +54,7 @@
       "askForName": "Former",
       "play": "Former"
     },
+    "useOnScreenScissors": true,
     "autoScroll": {
       "onLoadedNewSample": true,
       "onJumpedToEntry": true,
@@ -111,5 +113,8 @@
   "history": {
     "maxSize": 100,
     "squashIndex": true
+  },
+  "misc": {
+    "useCustomFileDialog": false
   }
 }

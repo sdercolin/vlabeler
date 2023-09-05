@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
+import com.sdercolin.vlabeler.exception.ProjectConstructorRuntimeException
 import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.io.moduleFromRawLabels
 import com.sdercolin.vlabeler.io.moduleGroupFromRawLabels
@@ -16,6 +17,7 @@ import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.containsFileRecursively
 import com.sdercolin.vlabeler.util.execResource
+import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.readTextByEncoding
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
@@ -313,8 +315,7 @@ suspend fun projectOf(
     autoExport: Boolean,
 ): Result<Project> {
     val moduleDefinitions = if (labelerConf.projectConstructor != null) {
-        val js = JavaScript(logHandler = Log.infoFileHandler)
-
+        val js = JavaScript()
         js.set("debug", isDebug)
         js.set("root", sampleDirectory.toFile())
         js.set("encoding", encoding)
@@ -327,7 +328,17 @@ suspend fun projectOf(
             Resources.prepareBuildProjectJs,
         ).forEach { js.execResource(it) }
         labelerParams.resolve(project = null, js = js).let { js.setJson("params", it) }
-        labelerConf.projectConstructor.scripts.joinToString("\n").let { js.eval(it) }
+        try {
+            labelerConf.projectConstructor.scripts.joinToString("\n").let { js.eval(it) }
+        } catch (t: Throwable) {
+            val expected = js.getOrNull("expectedError") ?: false
+            js.close()
+            return if (expected) {
+                Result.failure(ProjectConstructorRuntimeException(t, t.message?.parseJson()))
+            } else {
+                Result.failure(InvalidCreatedProjectException(t))
+            }
+        }
         val modules = js.getJson<List<RawModuleDefinition>>("modules")
         js.close()
         modules.map { it.toModuleDefinition() }

@@ -79,6 +79,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuHelp -> "帮助"
     MenuHelpCheckForUpdates -> "检查更新..."
     MenuHelpOpenLogDirectory -> "打开日志目录"
+    MenuHelpOpenHomePage -> "打开 vLabeler 主页"
     MenuHelpOpenLatestRelease -> "打开最新版本的发布页面"
     MenuHelpOpenGitHub -> "打开 GitHub 仓库页面"
     MenuHelpJoinDiscord -> "加入 Discord"
@@ -95,6 +96,9 @@ fun Strings.zhHans(): String? = when (this) {
     CommonPrevious -> "上一页"
     CommonNext -> "下一页"
     CommonFinish -> "完成"
+    CommonSelect -> "选择"
+    CommonOpen -> "打开"
+    CommonSave -> "保存"
     CommonInputErrorPromptNumber -> "请输入一个数字。"
     CommonInputErrorPromptInteger -> "请输入一个整数。"
     CommonInputErrorPromptNumberRange -> "请输入一个介于 %s 与 %s 之间的数字。"
@@ -226,8 +230,7 @@ fun Strings.zhHans(): String? = when (this) {
     FailedToLoadSampleFileError -> "无法读取该采样文件。它可能不存在，或是不支持的格式。"
     PluginRuntimeUnexpectedException -> "插件执行过程中发生了意外的错误。请联系插件作者以获取更多信息。"
     InvalidCreatedProjectException ->
-        "新建的项目为无效项目。请检查您正在使用的标注器或插件的文档，确保您的设置正确。" +
-            "如果问题仍然无法解决，请联系标注器或插件的作者以获取更多信息。"
+        "新建的项目为无效项目。请检查您正在使用的标注器或插件的设置。如果问题仍然无法解决，请联系标注器或插件的作者以获取更多信息。"
     InvalidOpenedProjectException -> "无法打开该项目，因为其中包含无效的数据。详情请查看错误日志。"
     ProjectParseException ->
         "无法打开该项目。它可能已损坏，或者是由一个与当前版本不兼容的 vLabeler 版本创建的。" +
@@ -237,6 +240,7 @@ fun Strings.zhHans(): String? = when (this) {
     InvalidEditedProjectException -> "此次编辑将导致项目数据无效。详情请查看错误日志。"
     CustomizableItemLoadingException -> "无法读取该自定义组件。"
     PluginRuntimeExceptionTemplate -> "插件运行时错误：%s"
+    ProjectConstructorRuntimeExceptionTemplate -> "构建项目时的标注器运行时错误：%s"
     VideoComponentInitializationException ->
         "无法初始化视频组件。您需要在您的设备上安装 VLC 才能使用此功能。请阅读 README 中的 `集成视频` 部分以获取更多信息。"
     VideoFileNotFoundExceptionTemplate -> "未找到 %s 的同名视频文件（%s）"
@@ -336,6 +340,7 @@ fun Strings.zhHans(): String? = when (this) {
         "请安装 @open{FFmpeg} 并设置可执行文件路径，用以进行音频文件格式的转换。" +
             "您可能还需要确保它在您的操作系统中可以被执行。（可能出现的问题包括：未签名的可执行文件，访问权限不足等）。"
     PreferencesChartsConversionFFmpegArgs -> "FFmpeg 参数（除输入和输出）"
+    PreferencesChartsConversionFFmpegUseForWav -> "使用 FFmpeg 转换 wav 文件"
     PreferencesKeymap -> "键位映射"
     PreferencesKeymapDescription -> "编辑键盘/鼠标操作的键位映射。"
     PreferencesKeymapKeyAction -> "键盘操作"
@@ -408,6 +413,10 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorPostEditActionUseCursorSetDescription -> "在通过\"将参数设置到光标位置\"键盘操作来编辑条目后，触发该行为。"
     PreferencesEditorScissors -> "剪刀"
     PreferencesEditorScissorsDescription -> "编辑剪刀工具的外观与行为。"
+    PreferencesEditorScissorsUseOnScreenScissors -> "直接在编辑器中输入条目名"
+    PreferencesEditorScissorsUseOnScreenScissorsDescription ->
+        "如果启用该项，在使用剪刀工具点击后，将会在编辑器中显示一个输入框，用以输入新条目的名字。" +
+            "您可以通过按下回车键或将光标移开来确认切割操作。您也可以通过按下 Esc 键来取消该操作。"
     PreferencesEditorScissorsColor -> "颜色"
     PreferencesEditorScissorsActionTargetNone -> "无"
     PreferencesEditorScissorsActionTargetFormer -> "前一个条目"
@@ -447,6 +456,12 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesHistorySquashIndexDescription ->
         "当启用该项时，仅包含索引变更的操作（如切换条目），直到下一次包含内容变更的操作前，" +
             "将不会被保存在历史中。"
+    PreferencesMisc -> "其他"
+    PreferencesMiscDescription -> "编辑其他设置。请注意，这些设置可能包含一些实验性的功能。"
+    PreferencesMiscUseCustomFileDialog -> "使用自定义的文件对话框来代替系统文件对话框"
+    PreferencesMiscUseCustomFileDialogDescription ->
+        "启用后，文件对话框将会被自定义的对话框所代替。" +
+            "这可能会在您使用不支持系统文件对话框的桌面环境时有所帮助。您可能需要重启应用才能使该设置生效。"
     ActionToggleSamplePlayback -> "播放/暂停当前采样"
     ActionToggleEntryPlayback -> "播放/暂停当前条目"
     ActionToggleScreenRangePlayback -> "播放/暂停当前屏幕范围"

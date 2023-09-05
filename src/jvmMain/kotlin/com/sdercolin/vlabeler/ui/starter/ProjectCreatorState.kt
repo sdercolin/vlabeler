@@ -1,6 +1,5 @@
 package com.sdercolin.vlabeler.ui.starter
 
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -19,7 +18,6 @@ import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.Language
 import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.currentLanguage
 import com.sdercolin.vlabeler.ui.string.string
 import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.HomeDir
@@ -28,7 +26,6 @@ import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.detectEncoding
 import com.sdercolin.vlabeler.util.encodingNameEquals
 import com.sdercolin.vlabeler.util.getDirectory
-import com.sdercolin.vlabeler.util.getLocalizedMessage
 import com.sdercolin.vlabeler.util.isValidFileName
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.toFile
@@ -548,10 +545,8 @@ class ProjectCreatorState(
                 encoding = encoding,
                 autoExport = autoExport,
             ).getOrElse {
-                val message = it.getLocalizedMessage(currentLanguage)
-                Log.error(it)
                 isLoading = false
-                appState.showSnackbar(message, duration = SnackbarDuration.Indefinite)
+                appState.showError(it)
                 return@launch
             }
             appState.onCreateProject(project, templatePlugin, templatePluginParams)

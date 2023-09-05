@@ -344,12 +344,6 @@ fun FrameWindowScope.Menu(
                         enabled = appState.isEditorActive && appState.canGoNextEntryOrSample,
                     )
                     Item(
-                        string(Strings.MenuNavigateNextEntry),
-                        onClick = { appState.nextEntry() },
-                        shortcut = KeyAction.NavigateNextEntry.getKeyShortCut(),
-                        enabled = appState.isEditorActive && appState.canGoNextEntryOrSample,
-                    )
-                    Item(
                         string(Strings.MenuNavigatePreviousEntry),
                         onClick = { appState.previousEntry() },
                         shortcut = KeyAction.NavigatePreviousEntry.getKeyShortCut(),
@@ -506,6 +500,11 @@ fun FrameWindowScope.Menu(
                     shortcut = KeyAction.OpenLogDirectory.getKeyShortCut(),
                 )
                 Item(
+                    string(Strings.MenuHelpOpenHomePage),
+                    onClick = { Url.open(Url.HomePage) },
+                    shortcut = KeyAction.OpenHomePage.getKeyShortCut(),
+                )
+                Item(
                     string(Strings.MenuHelpOpenLatestRelease),
                     onClick = { Url.open(Url.LatestRelease) },
                     shortcut = KeyAction.OpenLatestRelease.getKeyShortCut(),
@@ -567,6 +566,11 @@ fun FrameWindowScope.Menu(
                         Item(
                             "Open App Directory",
                             onClick = { Desktop.getDesktop().open(AppDir) },
+                        )
+                        CheckboxItem(
+                            "Force Custom File Dialog",
+                            checked = DebugState.forceUseCustomFileDialog,
+                            onCheckedChange = { DebugState.forceUseCustomFileDialog = it },
                         )
                     }
                 }

@@ -22,6 +22,7 @@ import kotlinx.serialization.Serializable
  * @param playback Configurations about audio playback.
  * @param keymaps Custom keymap.
  * @param history Configurations about edit history (undo/redo).
+ * @param misc Other miscellaneous configurations.
  */
 @Serializable
 @Immutable
@@ -33,6 +34,7 @@ data class AppConf(
     val playback: Playback = Playback(),
     val keymaps: Keymaps = Keymaps(),
     val history: History = History(),
+    val misc: Misc = Misc(),
 ) {
     /**
      * Configurations about chart painting.
@@ -265,16 +267,19 @@ data class AppConf(
      *
      * @param ffmpegPath Path to the ffmpeg executable.
      * @param ffmpegArgs Arguments passed to ffmpeg besides input and output file paths.
+     * @param useConversionForWav True if the conversion is used for wav files as well.
      */
     @Serializable
     @Immutable
     data class Conversion(
         val ffmpegPath: String = DefaultFFmpegPath,
         val ffmpegArgs: String = DefaultFFmpegArgs,
+        val useConversionForWav: Boolean = DefaultUseConversionForWav,
     ) {
         companion object {
             const val DefaultFFmpegPath = "ffmpeg"
             const val DefaultFFmpegArgs = "-acodec pcm_s16le -ac 1 -ar 44100"
+            const val DefaultUseConversionForWav = false
         }
     }
 
@@ -283,6 +288,8 @@ data class AppConf(
      *
      * @param scissorsColor Color hex string of the scissors' cursor position.
      * @param scissorsActions Actions taken with a successful scissors click.
+     * @param useOnScreenScissors When true, the scissors process is handled on screen. Otherwise, it is handled in a
+     *     dialog.
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted.
      * @param showDone When true, the done button/icon is shown in the editor and entry lists.
      * @param showStar When true, the star button/icon is shown in the editor and entry lists.
@@ -296,6 +303,7 @@ data class AppConf(
         val playerCursorColor: String = DefaultPlayerCursorColor,
         val scissorsColor: String = DefaultScissorsColor,
         val scissorsActions: ScissorsActions = ScissorsActions(),
+        val useOnScreenScissors: Boolean = DefaultUseOnScreenScissors,
         val autoScroll: AutoScroll = AutoScroll(),
         val lockedDrag: LockedDrag = DefaultLockedDrag,
         val lockedSettingParameterWithCursor: Boolean = DefaultLockedSettingParameterWithCursor,
@@ -327,6 +335,7 @@ data class AppConf(
         companion object {
             const val DefaultPlayerCursorColor = "#FFFF00"
             const val DefaultScissorsColor = "#FFFFFF00"
+            const val DefaultUseOnScreenScissors = true
             val DefaultLockedDrag = LockedDrag.UseLabeler
             const val DefaultLockedSettingParameterWithCursor = true
             const val DefaultShowDone = true
@@ -350,6 +359,12 @@ data class AppConf(
         val askForName: Target = DefaultAskForName,
         val play: Target = DefaultPlay,
     ) {
+        fun getTargetEntryIndex(currentEntryIndex: Int) = when (goTo) {
+            AppConf.ScissorsActions.Target.Former -> currentEntryIndex
+            AppConf.ScissorsActions.Target.Latter -> currentEntryIndex + 1
+            else -> null
+        }
+
         /**
          * Targets of the actions. Either of the two entries created by the scissors' cut.
          */
@@ -398,6 +413,7 @@ data class AppConf(
 
     /**
      * Action config after editing.
+     *
      * @param enabled True if the action is enabled.
      * @param field Trigger field of the action.
      * @param useDragging True if the action is conducted when dragging.
@@ -666,6 +682,21 @@ data class AppConf(
             const val DefaultMaxSize = 100
             const val MinMaxSize = 1
             const val DefaultSquashIndex = true
+        }
+    }
+
+    /**
+     * Other miscellaneous configurations.
+     *
+     * @param useCustomFileDialog True if the custom file dialog is used instead of the system one.
+     */
+    @Serializable
+    @Immutable
+    data class Misc(
+        val useCustomFileDialog: Boolean = DefaultUseCustomFileDialog,
+    ) {
+        companion object {
+            const val DefaultUseCustomFileDialog = false
         }
     }
 }

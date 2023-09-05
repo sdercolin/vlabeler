@@ -67,6 +67,7 @@ fun App(
                     activeTemplatePlugins = appState.getActivePlugins(Plugin.Type.Template),
                     appRecordStore = appState.appRecordStore,
                 )
+
             is Screen.Editor -> Editor(screen.state, appState)
         }
         if (appState.isShowingProjectSettingDialog) {

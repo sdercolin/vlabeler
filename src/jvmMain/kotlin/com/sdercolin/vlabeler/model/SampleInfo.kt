@@ -35,7 +35,7 @@ import kotlin.math.pow
  * @property length The number of frames in the sample file.
  * @property lengthMillis The length of the sample file in milliseconds.
  * @property chunkSize The number of frames in each chunk. The last chunk may have fewer frames, but it doesn't matter
- *    because the chunkSize is used for calculating the offset of the current chunk.
+ *     because the chunkSize is used for calculating the offset of the current chunk.
  * @property chunkCount The number of chunks.
  * @property hasSpectrogram Whether spectrogram is loaded for the sample file.
  * @property hasPower Whether power is loaded for the sample file.
@@ -82,6 +82,7 @@ data class SampleInfo(
         } else {
             powerChannels == channels
         }
+        val shouldHaveConvertedFile = WaveConverter.converters.any { it.accept(sampleFile, appConf.painter.conversion) }
         return maxSampleRate != appMaxSampleRate ||
             normalize != appNormalize ||
             hasSpectrogram != appHasSpectrogram ||
@@ -90,6 +91,7 @@ data class SampleInfo(
             algorithmVersion != WaveLoadingAlgorithmVersion ||
             !getFile(project).exists() ||
             lastModified != sampleFile.lastModified() ||
+            ((convertedFile != null) != shouldHaveConvertedFile) ||
             (convertedFile != null && !project.rootSampleDirectory.resolve(convertedFile).exists())
     }
 
@@ -194,7 +196,7 @@ data class SampleInfo(
             file: File,
             appConf: AppConf,
         ): File? {
-            val converter = WaveConverter.converters.find { it.accept(file) } ?: return null
+            val converter = WaveConverter.converters.find { it.accept(file, appConf.painter.conversion) } ?: return null
             Log.debug("Converting ${file.name} to wav using ${converter.javaClass.simpleName}")
             return ConvertedAudioRepository.create(project, file, moduleName, converter, appConf)
         }

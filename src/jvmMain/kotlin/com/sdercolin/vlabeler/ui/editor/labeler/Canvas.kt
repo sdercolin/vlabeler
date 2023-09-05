@@ -170,7 +170,7 @@ fun Canvas(
                                 .horizontalScroll(horizontalScrollState)
                                 .runIf(appState.isMarkerDisplayed.not()) { alpha(0f) },
                         ) {
-                            MarkerLabels(screenRange, appState, markerState)
+                            MarkerLabels(screenRange, appState, editorState, markerState)
                         }
                     }
                     if (appState.playerState.isPlaying) {

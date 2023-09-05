@@ -1,4 +1,4 @@
-# Plugin Development
+# Develop plugins for vLabeler
 
 This article introduces how to develop plugins for `vLabeler`.
 Feel free to ask questions or make feature requests if you find the plugin specification not sufficient for your
@@ -113,16 +113,6 @@ The object has the following properties:
 
 - `rawFile`: File path as string. In the scripts, it's passed as a string value without file reading.
 
-## Scripting Environment
-
-`vLabeler` uses embedded [JavaScript](https://developer.mozilla.org/ja/docs/Web/JavaScript) engine provided
-by [GraalVM 22.1](https://www.graalvm.org/22.1/reference-manual/js/).
-
-It implements JavaScript in the ECMAScript (ECMA-262) specification which is fully compatible with the ECMAScript 2021
-specification (ES12).
-Check [JavaScript Compatibility](https://www.graalvm.org/22.1/reference-manual/js/JavaScriptCompatibility/) for detailed
-info about language specifications.
-
 ## Template Generation Scripts
 
 A plugin with `template` type is selected and executed on the `New Project` page.
@@ -182,38 +172,20 @@ You can choose to offer `output` in the following two ways:
 
 #### 1. Output the parsed entry object
 
-Put items in the following type to the `output` list (the class is defined before your scripts are executed):
+Make an `output` array with parsed [Entry](../src/jvmMain/resources/js/class_entry.js) objects. e.g.
 
 ```javascript
-class Entry {
-    constructor(sample, name, start, end, points, extras, notes = new Notes(), needSync = false) {
-        this.sample = sample // sample file name
-        this.name = name // entry name (alias)
-        this.start = start // float value in millisecond
-        this.end = end // float value in millisecond
-        this.points = points // list of float values in millisecond
-        this.extras = extras // list of string values
-        this.notes = notes // info including "done", "starred" and tag
-        this.needSync = needSync // set true if the entry needs to be updated with the sample's length,
-                                 // typically for UTAU entries with non-negative cutoff values.
-    }
-}
+let output = []
 
-class Notes {
-    constructor(done = false, star = false, tag = "") {
-        this.done = done
-        this.star = star
-        this.tag = tag
-    }
+for (const line of lines) {
+    const entry = parseLineToEntry(line)
+    output.push(entry)
 }
 ```
 
-Please check [LabelerConf.kt](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) for details about its
-properties.
-
 #### 2. Output the raw entry string
 
-If `outputRawEntry` is set to `true`, instead of the above class, `output` should be set to a list of strings in the
+If `outputRawEntry` is set to `true`, instead of entry objects, `output` should be set to a list of strings in the
 format of the label file. They will be parsed by the labeler's parser later.
 
 ### Tips
@@ -224,8 +196,8 @@ format of the label file. They will be parsed by the labeler's parser later.
    users to see the error.
 3. If a project is created by labeler's parser with a raw label file, it will include all sample files even if they do
    not appear in the raw label file. In that case, a default entry will be created for each sample file. However, if a
-   project is created by a plugin, the sample files that are not referenced in the output will be ignored. So if you
-   want to cover every sample file, do it in your scripts.
+   project is created by a plugin, the sample files that are not referenced in the output will be ignored. So please be
+   sure to create entries for all the sample files that you want to include in the project.
 
 ### Examples
 
@@ -245,11 +217,11 @@ Check the following built-in `template` plugins as examples:
 A plugin with `macro` type is executed by an item in the menu `Tools` -> `Batch Edit`. It is only available when editing
 a project.
 
-According to the `macroScope` property in the `plugin.json`, the plugin can be executed on the whole project or on the
+According to the `scope` property in the `plugin.json`, the plugin can be executed on the whole project or on the
 current module (subproject).
-If `macroScope` is set to `Module`, the input includes a list of `Entry` object in the current module named `entries`
+If `scope` is set to `Module`, the input includes a list of `Entry` object in the current module named `entries`
 along with an integer named `currentEntryIndex`.
-If `macroScope` is set to `Project`, the input includes a list of `Module` object named `modules` along with an integer
+If `scope` is set to `Project`, the input includes a list of `Module` object named `modules` along with an integer
 named `currentModuleIndex`.
 
 You can modify these variables directly to conduct batch edit on the whole project.
@@ -258,20 +230,20 @@ You can modify these variables directly to conduct batch edit on the whole proje
 
 The following variables are provided before your scripts are executed.
 
-| name                 | type                | description                                                                                                                                                   |
-|----------------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| entries              | Entry[]             | Only available when the plugin's `macroScope` is `Module`. List of current [Entry](../src/jvmMain/resources/js/class_entry.js) objects in the current module. |
-| currentEntryIndex    | Entry[]             | Only available when the plugin's `macroScope` is `Module`. The index of current shown entry.                                                                  |
-| module               | Module              | Only available when the plugin's `macroScope` is `Module`. The current [Module](../src/jvmMain/resources/js/class_module.js) object.                          |
-| modules              | Module[]            | Only available when the plugin's `macroScope` is `Project`. List of current [Module](../src/jvmMain/resources/js/class_module.js) objects in the project.     |
-| currentModuleIndex   | Integer             | Only available when the plugin's `macroScope` is `Project`. The index of current shown module.                                                                |
-| params               | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                                                          |
-| resources            | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                              |
-| labeler              | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                            |
-| labelerParams        | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                       |
-| debug                | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                         |
-| pluginDirectory      | [File](file-api.md) | Directory of this plugin                                                                                                                                      |
-| projectRootDirectory | [File](file-api.md) | Only available when the plugin's `macroScope` is `Project`.  Root directory of the project.                                                                   |
+| name                 | type                | description                                                                                                                                              |
+|----------------------|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| entries              | Entry[]             | Only available when the plugin's `scope` is `Module`. List of current [Entry](../src/jvmMain/resources/js/class_entry.js) objects in the current module. |
+| currentEntryIndex    | Entry[]             | Only available when the plugin's `scope` is `Module`. The index of current shown entry.                                                                  |
+| module               | Module              | Only available when the plugin's `scope` is `Module`. The current [Module](../src/jvmMain/resources/js/class_module.js) object.                          |
+| modules              | Module[]            | Only available when the plugin's `scope` is `Project`. List of current [Module](../src/jvmMain/resources/js/class_module.js) objects in the project.     |
+| currentModuleIndex   | Integer             | Only available when the plugin's `scope` is `Project`. The index of current shown module.                                                                |
+| params               | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                                                     |
+| resources            | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                         |
+| labeler              | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                       |
+| labelerParams        | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                  |
+| debug                | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                    |
+| pluginDirectory      | [File](file-api.md) | Directory of this plugin                                                                                                                                 |
+| projectRootDirectory | [File](file-api.md) | Only available when the plugin's `scope` is `Project`.  Root directory of the project.                                                                   |
 
 ### Use an entry selector
 
@@ -306,31 +278,11 @@ for (let entry of entries) {
 
 ### Display a report after execution
 
-**This feature is only available of `macro` plugins.**
-
-You can show a report after the plugin is executed successfully by calling `report(message)`.
-The parameter `message` can be a string or a localized string.
-See the [Localization](#localization) section for more details.
-
-```javascript
-// display report in default language
-report("This is a report.")
-
-// display report in multiple languages
-report({
-    en: "This is a report in English.",
-    zh: "这是中文的报告。"
-})
-```
+See the corresponding section in [Scripting](scripting.md#display-a-report-after-execution) for more details.
 
 ### Request audio playback after execution
 
-**This feature is only available of `macro` plugins.**
-
-You can ask vLabeler to conduct audio playback after the plugin is executed successfully by
-calling `requestAudioFilePlayback(path, offset = 0, duration = null)`.
-
-See the [source code](../src/jvmMain/resources/js/request_audio_playback.js) for more details.
+See the corresponding section in [Scripting](scripting.md#request-audio-playback-after-execution) for more details.
 
 ### Examples
 
@@ -347,45 +299,13 @@ Check the following built-in `macro` plugins as examples:
 - [resampler-test](../resources/common/plugins/macro/resampler-test): Test the resampler synthesis of the current entry.
   You can refer to it for the usage of the `requestAudioFilePlayback()` function and `Env`, `File`, `CommandLine` APIs
 
-## Custom API list
+## Available APIs
 
-- [Env](env-api.md): For getting some environment information, such as OS name.
-- [File](file-api.md): For accessing files.
-- [CommandLine](command-line-api.md): For executing command line programs.
+Check [Scripting](scripting.md) for the available APIs in plugin scripts.
 
 ## Localization
 
-All the properties with a `String (Localized)` type can be provided in multiple languages.
-
-For example, if you want to provide a localized description, you can do it like this:
-
-```
-{
-    ...,
-    "description": {
-        "en": "This is a description in English.",
-        "zh": "这是中文的描述。"
-    },
-    ...
-}
-```
-
-It's totally optional, so you can still provide only the default language `en`:
-
-```
-{
-    ...,
-    "description": "This is a description in English.",
-    ...
-}
-```
-
-An option in the map is used when the current language code starts with its language code.
-e.g. If the current language code is "en-US", the entry with key "en" is used. So it's recommended to use common
-language codes like `en` and `zh` instead of `en-US` and `zh-CN`.
-
-Please note that you have to provide a default language `en` in your localization map, otherwise the plugin gets a
-parse error when being loaded.
+Check [Localization](scripting.md#localization) for the localization support in plugin definition and scripts.
 
 Specially, the `enum` type parameter also supports localized option names by setting the optional property
 `optionDisplayedNames`:
@@ -410,36 +330,12 @@ Specially, the `enum` type parameter also supports localized option names by set
 
 ## Error handling
 
-When the scripts encounter illegal inputs, you can show an error message to users by calling `error(message)`.
-The parameter `message` can be a string or a localized string.
-See the [Localization](#localization) section for more details.
-
-Other errors thrown in the scripts will be displayed as "Unexpected errors" without detailed information, indicating
-that it is more likely to be a bug of the plugin, rather than an illegal input or something else that may happen in
-normal use cases.
-
-If a user contacts you with an "Unexpected errors", you can ask for detailed information in the logs to help you solve
-the issue.
-
-```javascript
-let unknownExpressionMatch = expression.match(/\$\{\w+}/)
-if (unknownExpressionMatch) {
-
-    // throwing error in default language 
-    error(`Unknown placeholder: ${unknownExpressionMatch[0]}`)
-
-    // throwing error in multiple languages
-    error({
-        en: `Unknown placeholder: ${unknownExpressionMatch[0]}`,
-        zh: `未知的占位符: ${unknownExpressionMatch[0]}`
-    })
-}
-```
+See the corresponding section in [Scripting](scripting.md#error-handling) for more details.
 
 ## Debugging
 
 You can use logs to help debug your scripts.
-The standard output (e.g. `print()`) is written to `.logs/info.log` and the error output is written to
+The standard output (e.g. `console.log()`) is written to `.logs/info.log` and the error output is written to
 `.logs/error.log`.
 If the plugin is not shown in the list, there are probably some errors while loading the plugin (i.e.
 parsing `plugin.json`).
