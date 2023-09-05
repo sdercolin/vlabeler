@@ -501,11 +501,7 @@ class ProjectStoreImpl(
     }
 
     override val canEditCurrentEntryExtra: Boolean
-        get() {
-            val extras = project?.currentEntry?.extras ?: return false
-            if (extras.isEmpty()) return false
-            return project?.labelerConf?.extraFields?.map { it.isVisible }?.any { it } ?: false
-        }
+        get() = project?.labelerConf?.extraFields?.any { it.isVisible } == true
 
     override fun shouldShowModuleNavigation(): Boolean {
         val project = project ?: return false
