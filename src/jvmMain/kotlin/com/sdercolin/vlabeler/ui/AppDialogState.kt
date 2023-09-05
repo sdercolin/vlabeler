@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
+import com.sdercolin.vlabeler.ui.dialog.EditEntryExtraDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogRequest
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
@@ -86,6 +87,7 @@ interface AppDialogState {
     fun openJumpToEntryDialog()
     fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose)
     fun openMoveCurrentEntryDialog(appConf: AppConf)
+    fun openEditEntryExtraDialog(index: Int)
     fun askIfSaveBeforeExit()
     fun confirmIfRemoveCurrentEntry(isLastEntry: Boolean)
     fun confirmIfLoadAutoSavedProject(file: File)
@@ -328,6 +330,18 @@ class AppDialogStateImpl(
             viewConf = appConf.view,
         )
         openEmbeddedDialog(args)
+    }
+
+    override fun openEditEntryExtraDialog(index: Int) {
+        val project = projectStore.requireProject()
+        val entry = project.currentModule.entries[index]
+        openEmbeddedDialog(
+            EditEntryExtraDialogArgs(
+                index = index,
+                initial = entry.extras,
+                extraFields = project.labelerConf.extraFields,
+            ),
+        )
     }
 
     override fun askIfSaveBeforeExit() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsExiting)

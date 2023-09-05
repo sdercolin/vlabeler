@@ -35,6 +35,7 @@ fun Strings.ja(): String? = when (this) {
     MenuEditToggleDone -> "このエントリの完了状態を切り替える"
     MenuEditToggleStar -> "このエントリのスターマーク状態を切り替える"
     MenuEditEditTag -> "このエントリのタグを編集..."
+    MenuEditEditExtra -> "このエントリの追加情報を編集..."
     MenuEditMultipleEditMode -> "複数の連続エントリを全て編集"
     MenuView -> "表示"
     MenuViewToggleMarker -> "パラメータマーカーを表示"
@@ -181,6 +182,7 @@ fun Strings.ja(): String? = when (this) {
     InputEntryNameCutFormerDialogDescription -> "カットで生成する前のエントリの名前を入力してください"
     InputEntryNameCutLatterDialogDescription -> "カットで生成する後のエントリの名前を入力してください"
     EditEntryNameDialogExistingError -> "すでに存在するエントリ名です。"
+    EditEntryExtraDialogDescription -> "追加情報の編集"
     MoveEntryDialogDescription -> "エントリ「%1\$s」の新しいインデックスを入力してください (%2\$d ~ %3\$d)"
     AskIfRemoveEntryDialogDescription -> "このエントリを削除します。"
     AskIfRemoveEntryLastDialogDescription ->
@@ -409,10 +411,13 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "「パラメータをカーソル位置に設定」ショートカットでパラメータを設定するときにも、連動ドラッグ設定を適用します。"
     PreferencesEditorNotes -> "備考"
-    PreferencesEditorNotesDescription -> "エントリの備考（スターマーク、完了、タグ）に関する表示と動作をカスタマイズします。"
+    PreferencesEditorNotesDescription -> "エントリの備考（スターマーク、完了、タグ、追加情報）に関する表示と動作をカスタマイズします。"
     PreferencesEditorShowDone -> "\"完了\"状態を表示"
     PreferencesEditorShowStarred -> "\"スターマーク\"状態を表示"
     PreferencesEditorShowTag -> "タグを表示"
+    PreferencesEditorShowExtra -> "\"追加情報の編集\"を表示"
+    PreferencesEditorShowExtraDescription ->
+        "ラベラーが追加情報を持たない場合、ボタンは常に非表示になります。"
     PreferencesEditorPostEditAction -> "編集後アクション"
     PreferencesEditorPostEditActionDescription -> "エントリの編集後に実行するアクションを設定します。"
     PreferencesEditorPostEditActionDone -> "編集後に\"完了\"状態にする"

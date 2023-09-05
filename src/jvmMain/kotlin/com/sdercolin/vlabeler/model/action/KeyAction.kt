@@ -145,6 +145,11 @@ enum class KeyAction(
         KeySet(Key.L),
         true,
     ),
+    EditExtra(
+        listOf(Strings.MenuEdit, Strings.MenuEditEditExtra),
+        null,
+        true,
+    ),
     ToggleMultipleEditMode(
         listOf(Strings.MenuEdit, Strings.MenuEditMultipleEditMode),
         KeySet(Key.M, setOf(Key.Ctrl)),

@@ -86,6 +86,9 @@ class EditorState(
     val entryTag: String
         get() = project.currentEntry.notes.tag
 
+    val entryExtra: List<String?>
+        get() = project.currentEntry.extras
+
     val tagOptions
         get() = project.currentModule.entries
             .mapNotNull { it.notes.tag.ifEmpty { null } }
@@ -393,6 +396,10 @@ class EditorState(
 
     fun editEntryTag(index: Int, tag: String) {
         appState.editEntryTag(index, tag)
+    }
+
+    fun editEntryExtra(index: Int) {
+        appState.openEditEntryExtraDialog(index)
     }
 
     fun jumpToModule(index: Int) {

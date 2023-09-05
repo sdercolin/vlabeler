@@ -294,6 +294,7 @@ data class AppConf(
      * @param showDone When true, the done button/icon is shown in the editor and entry lists.
      * @param showStar When true, the star button/icon is shown in the editor and entry lists.
      * @param showTag When true, the tag or "New tag" button is shown in the editor and entry lists.
+     * @param showExtra When true, the extra editor button/icon is shown in the editor and entry lists.
      * @param continuousLabelNames Appearance of the label names in the editor for continuous labelers.
      */
     @Serializable
@@ -309,6 +310,7 @@ data class AppConf(
         val showDone: Boolean = DefaultShowDone,
         val showStar: Boolean = DefaultShowStar,
         val showTag: Boolean = DefaultShowTag,
+        val showExtra: Boolean = DefaultShowExtra,
         val continuousLabelNames: ContinuousLabelNames = ContinuousLabelNames(),
         val postEditNext: PostEditAction = PostEditAction.DefaultNext,
         val postEditDone: PostEditAction = PostEditAction.DefaultDone,
@@ -339,6 +341,7 @@ data class AppConf(
             const val DefaultShowDone = true
             const val DefaultShowStar = true
             const val DefaultShowTag = true
+            const val DefaultShowExtra = true
         }
     }
 
