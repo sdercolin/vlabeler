@@ -16,7 +16,7 @@ import java.time.Instant
  */
 class JavaScript(
     outputStream: OutputStream = CombinedLoggingOutputStream(),
-    currentWorkingDirectory: File? = null
+    currentWorkingDirectory: File? = null,
 ) : Closeable {
 
     private val context = Context.newBuilder()
