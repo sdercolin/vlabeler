@@ -92,6 +92,10 @@ sealed class Parameter<T : Any> {
         override val label: LocalizedJsonString,
         override val description: LocalizedJsonString? = null,
         override val enableIf: String? = null,
+        /**
+         * The default value could be a file reference, e.g. `file::default.txt`.
+         * See the overriding logic in [src/jvmMain/kotlin/com/sdercolin/vlabeler/io/Plugin.kt].
+         */
         override val defaultValue: String,
         val multiLine: Boolean = false,
         val optional: Boolean = false,
@@ -158,6 +162,10 @@ sealed class Parameter<T : Any> {
         override val label: LocalizedJsonString,
         override val description: LocalizedJsonString? = null,
         override val enableIf: String? = null,
+        /**
+         * The `file` field of the default value may be resolved to be relative to the plugin directory.
+         * See the overriding logic in [src/jvmMain/kotlin/com/sdercolin/vlabeler/io/Plugin.kt].
+         */
         override val defaultValue: FileWithEncoding,
         val optional: Boolean = false,
         val acceptExtensions: List<String>? = null,
@@ -180,6 +188,10 @@ sealed class Parameter<T : Any> {
         override val label: LocalizedJsonString,
         override val description: LocalizedJsonString? = null,
         override val enableIf: String? = null,
+        /**
+         * The default value may be resolved to be relative to the plugin directory.
+         * See the overriding logic in [src/jvmMain/kotlin/com/sdercolin/vlabeler/io/Plugin.kt].
+         */
         override val defaultValue: String,
         val optional: Boolean = false,
         val acceptExtensions: List<String>? = null,

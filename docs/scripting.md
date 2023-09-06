@@ -28,62 +28,12 @@ Provides APIs for environment info. See the documentation [here](../docs/env-api
 
 Provides APIs for command line operations. See the documentation [here](../docs/command-line-api.md).
 
-### Localization
-
-In scripts for json definition files of labelers and plugins, a localized string can be used instead of a plain string.
-
-A localized string is an object with language codes as keys and strings as values. e.g.
-
-```javascript
-// in a script
-let myLocalizedDescription = {
-    "en": "This is a description in English.",
-    "zh": "这是中文的描述。",
-    "ja": "これは日本語の説明です。"
-}
-```
-
-```
-// inside a JSON
-{
-    ...,
-    "description": {
-        "en": "This is a description in English.",
-        "zh": "这是中文的描述。",
-        "ja": "これは日本語の説明です。"
-    },
-    ...
-}
-```
-
-A localized string can always be assigned by a plain string, which is treated as the default language `en`.
-
-```javascript
-// in a script
-let myLocalizedDescription = "This is a description in English."
-
-// this is equivalent to
-
-let myLocalizedDescription = {
-    "en": "This is a description in English."
-}
-```
-
-When displaying a localized string, vLabeler will choose the string with the language code that matches the current
-language code in the application settings, or the default language `en` if no match is found, using startsWith matching.
-
-e.g. If the current language code is `en-US`, the string with key `en` will be used. So it's recommended to use common
-language codes like `en` and `zh` instead of `en-US` and `zh-CN` to cover more cases.
-
-Please note that you have to provide a default language `en` in your localization map, otherwise the plugin gets a
-parse error when being loaded.
-
 ### Error handling
 
 When the scripts encounter illegal inputs or other expected errors, you can show an error message to users by
 calling `error(message)`.
 The parameter `message` can be a string or a localized string.
-See the [Localization](#localization) section for more details.
+See [Localized strings](localized-string.md) for more details.
 
 Other errors thrown in the scripts will be displayed as "Unexpected errors" without detailed information, indicating
 that it is more likely to be a bug of the plugin, rather than an illegal input or something else that may happen in
@@ -178,6 +128,9 @@ We have the following types of scripts:
 - Template plugin scripts: included in the plugin folder of a template plugin, including the main scripts and the [input
   finder script](plugin-development.md#find-input-files-dynamically)
 
+There are other tiny scripts embedded in the labelers such as property getter/setter, but they only allow simple
+calculations and are not provided with the custom APIs. Here we don't list them.
+
 The availability of the APIs listed above depends on the type of the script.
 
 | API                                                       | Raw label parser | Raw label writer | Project constructor | Macro plugin | Template plugin |
@@ -185,7 +138,6 @@ The availability of the APIs listed above depends on the type of the script.
 | [File](#file-api)                                         | ✔                | ✔                | ✔                   | ✔            | ✔               |
 | [Env](#env-api)                                           | ✔                | ✔                | ✔                   | ✔            | ✔               |
 | [Command line](#command-line-api)                         |                  |                  |                     | ✔            | ✔               |
-| [Localization](#localization)                             | ✔                | ✔                | ✔                   | ✔            | ✔               |
 | [Error handling](#error-handling)                         | ✔                | ✔                | ✔                   | ✔            | ✔               |
 | [Report](#display-a-report-after-execution)               |                  |                  |                     | ✔            |                 |
 | [Audio playback](#request-audio-playback-after-execution) |                  |                  |                     | ✔            |                 |
