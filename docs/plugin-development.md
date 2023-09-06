@@ -4,6 +4,26 @@ This article introduces how to develop plugins for `vLabeler`.
 Feel free to ask questions or make feature requests if you find the plugin specification not sufficient for your
 intended functionality.
 
+## Overview
+
+Currently we support two types of plugins:
+
+- Macro plugins: They are executed during project editing. Typically they are used to edit the entries in batch.
+- Template plugins: They are executed when creating a new project. They generate a list of entries for subsequent
+  editing.
+
+The two types of plugins are defined in the same structure, but they are executed in different contexts i.e. the
+inputs and outputs are different.
+
+In this article, we will introduce:
+
+- [The file structure of a plugin](#plugin-file-structure)
+- [How to define a plugin](#plugin-definition)
+  - [Defining parameters](#defining-parameters)
+- [How to write scripts for plugins](#scripting-for-plugins)
+  - [Template generation scripts](#template-generation-scripts)
+  - [Batch edit (macro) scripts](#batch-edit-macro-scripts)
+
 ## Plugin File Structure
 
 A plugin for `vLabeler` is a folder containing:
@@ -68,7 +88,7 @@ The object has the following properties:
 | acceptExtensions     | String[] &#124; null             | null          | file, rawFile            | Extensions of the files that can be selected. If set `null`, any file can be selected.            |
 | isFolder             | Boolean                          | false         | rawFile                  | Set to `true` if you want to choose a folder.                                                     |
 
-### Parameter types
+#### Parameter types
 
 - `integer`: Integer value. Should be between `min` and `max` if defined.
 - `float`: Float value. Should be between `min` and `max` if defined.
@@ -113,12 +133,18 @@ The object has the following properties:
 
 - `rawFile`: File path as string. In the scripts, it's passed as a string value without file reading.
 
-## Template Generation Scripts
+## Scripting for Plugins
+
+The following sections describe how to write scripts for plugins.
+
+See [Scripting](scripting.md) for the scripting environment and available APIs.
+
+### Template Generation Scripts
 
 A plugin with `template` type is selected and executed on the `New Project` page.
 It should create a list of entries for subsequent editions.
 
-### Input
+#### Input
 
 The following variables are provided before your scripts are executed.
 
@@ -133,7 +159,7 @@ The following variables are provided before your scripts are executed.
 | debug           | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                  |
 | pluginDirectory | [File](file-api.md) | Directory of this plugin                                                                                               |
 
-### Find input files dynamically
+#### Find input files dynamically
 
 To support your template plugin with labelers that construct a project with subprojects, you may want to find input
 files dynamically for every subproject. To do this, you can provide a script file via the
@@ -159,18 +185,18 @@ Check the [audacity2lab plugin](../resources/common/plugins/template/audacity2la
 In this example, for consistency, even if the project has only one subproject, the input files are still found by the
 input finder script, so that we don't have to care about where the input comes from in the main script.
 
-### Use an input file parameter
+#### Use an input file parameter
 
 If your input file does not belong to a subproject (such as a dictionary file), you can use a parameter of type `file`
 or `rawFile` to get the content.
 See [Parameter Type](#parameter-types) for details.
 
-### Output
+#### Output
 
 You have to create a list named `output` to pass the result back to the application.
 You can choose to offer `output` in the following two ways:
 
-#### 1. Output the parsed entry object
+##### 1. Output the parsed entry object
 
 Make an `output` array with parsed [Entry](../src/jvmMain/resources/js/class_entry.js) objects. e.g.
 
@@ -183,12 +209,12 @@ for (const line of lines) {
 }
 ```
 
-#### 2. Output the raw entry string
+##### 2. Output the raw entry string
 
 If `outputRawEntry` is set to `true`, instead of entry objects, `output` should be set to a list of strings in the
 format of the label file. They will be parsed by the labeler's parser later.
 
-### Tips
+#### Tips
 
 1. If `labeler.allowSameNameEntry` is set to `false`, the labeler will discard entries with the same name except the
    first one. Handle the duplicated entry names in your scripts if you want to keep them.
@@ -199,7 +225,7 @@ format of the label file. They will be parsed by the labeler's parser later.
    project is created by a plugin, the sample files that are not referenced in the output will be ignored. So please be
    sure to create entries for all the sample files that you want to include in the project.
 
-### Examples
+#### Examples
 
 Check the following built-in `template` plugins as examples:
 
@@ -212,7 +238,7 @@ Check the following built-in `template` plugins as examples:
   It also supports the `NNSVS singer labeler` which constructs a project with subprojects.
   See [Find input files dynamically](#find-input-files-dynamically) for details.
 
-## Batch Edit (Macro) Scripts
+### Batch Edit (Macro) Scripts
 
 A plugin with `macro` type is executed by an item in the menu `Tools` -> `Batch Edit`. It is only available when editing
 a project.
@@ -226,7 +252,7 @@ named `currentModuleIndex`.
 
 You can modify these variables directly to conduct batch edit on the whole project.
 
-### Input
+#### Input
 
 The following variables are provided before your scripts are executed.
 
@@ -245,7 +271,7 @@ The following variables are provided before your scripts are executed.
 | pluginDirectory      | [File](file-api.md) | Directory of this plugin                                                                                                                                 |
 | projectRootDirectory | [File](file-api.md) | Only available when the plugin's `scope` is `Project`.  Root directory of the project.                                                                   |
 
-### Use an entry selector
+#### Use an entry selector
 
 A parameter with `entrySelector` type is passed in `params` as a list of the selected indexes of the `entries` list.
 
@@ -259,7 +285,7 @@ for (let index of selectedIndexes) {
 }
 ```
 
-### Output
+#### Output
 
 Change the content of the given `entries` or `modules` list to change the project's content.
 
@@ -276,15 +302,15 @@ for (let entry of entries) {
 }
 ```
 
-### Display a report after execution
+#### Display a report after execution
 
 See the corresponding section in [Scripting](scripting.md#display-a-report-after-execution) for more details.
 
-### Request audio playback after execution
+#### Request audio playback after execution
 
 See the corresponding section in [Scripting](scripting.md#request-audio-playback-after-execution) for more details.
 
-### Examples
+#### Examples
 
 Check the following built-in `macro` plugins as examples:
 
@@ -299,11 +325,7 @@ Check the following built-in `macro` plugins as examples:
 - [resampler-test](../resources/common/plugins/macro/resampler-test): Test the resampler synthesis of the current entry.
   You can refer to it for the usage of the `requestAudioFilePlayback()` function and `Env`, `File`, `CommandLine` APIs
 
-## Available APIs
-
-Check [Scripting](scripting.md) for the available APIs in plugin scripts.
-
-## Localization
+### Localization
 
 Check [Localization](scripting.md#localization) for the localization support in plugin definition and scripts.
 
@@ -328,11 +350,11 @@ Specially, the `enum` type parameter also supports localized option names by set
 }
 ```
 
-## Error handling
+### Error handling
 
 See the corresponding section in [Scripting](scripting.md#error-handling) for more details.
 
-## Debugging
+### Debugging
 
 You can use logs to help debug your scripts.
 The standard output (e.g. `console.log()`) is written to `.logs/info.log` and the error output is written to
