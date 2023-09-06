@@ -1,7 +1,8 @@
 {
   "name": "utau-singer.default",
-  "version": 20,
-  "serialVersion": 1,
+  "version": 21,
+  "serialVersion": 2,
+  "singleFile": false,
   "extension": "ini",
   "displayedName": {
     "en": "UTAU singer labeler",
@@ -15,7 +16,7 @@
     "zh": "用于 UTAU singer（多音阶）的默认标注器。会在包含采样音频的每个文件夹下创建/编辑 `oto.ini` 文件。请将采样目录设置为歌手的根目录。",
     "ja": "UTAU 音源（多音階）のデフォルトラベラーです。サンプル音声を含むフォルダーの中に `oto.ini` ファイルを作成/編集します。サンプルディレクトリを歌手のルートディレクトリに設定してください。"
   },
-  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
+  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers/utau-singer-labeler",
   "categoryTag": "UTAU",
   "displayOrder": 0,
   "defaultValues": [
@@ -127,15 +128,8 @@
         "zh": "左边界",
         "ja": "左ブランク"
       },
-      "valueGetter": [
-        "value = entry.points[3]"
-      ],
-      "valueSetter": [
-        "entry.points[3] = value",
-        "if (value < entry.start) {",
-        "    entry.start = value",
-        "}"
-      ],
+      "valueGetter": "left-getter.js",
+      "valueSetter": "left-setter.js",
       "shortcutIndex": 0
     },
     {
@@ -145,16 +139,8 @@
         "zh": "重叠",
         "ja": "オーバーラップ"
       },
-      "valueGetter": [
-        "value = entry.points[2] - entry.points[3]"
-      ],
-      "valueSetter": [
-        "newOverlap = value + entry.points[3]",
-        "entry.points[2] = newOverlap",
-        "if (newOverlap < entry.start) {",
-        "    entry.start = newOverlap",
-        "}"
-      ],
+      "valueGetter": "ovl-getter.js",
+      "valueSetter": "ovl-setter.js",
       "shortcutIndex": 1
     },
     {
@@ -164,12 +150,8 @@
         "zh": "先行发声",
         "ja": "先行発声"
       },
-      "valueGetter": [
-        "value = entry.points[1] - entry.points[3]"
-      ],
-      "valueSetter": [
-        "entry.points[1] = value + entry.points[3]"
-      ],
+      "valueGetter": "preu-getter.js",
+      "valueSetter": "preu-setter.js",
       "shortcutIndex": 2
     },
     {
@@ -179,12 +161,8 @@
         "zh": "固定",
         "ja": "固定範囲"
       },
-      "valueGetter": [
-        "value = entry.points[0] - entry.points[3]"
-      ],
-      "valueSetter": [
-        "entry.points[0] = value + entry.points[3]"
-      ],
+      "valueGetter": "fixed-getter.js",
+      "valueSetter": "fixed-setter.js",
       "shortcutIndex": 3
     },
     {
@@ -194,22 +172,8 @@
         "zh": "右边界",
         "ja": "右ブランク"
       },
-      "valueGetter": [
-        "if(entry.needSync || entry.end < 0) {",
-        "    value = parseFloat(entry.extras[0])",
-        "} else {",
-        "    value = entry.points[3] - entry.end",
-        "}"
-      ],
-      "valueSetter": [
-        "if(value < 0) {",
-        "    entry.end = -value + entry.points[3]",
-        "} else {",
-        "    entry.needSync = true",
-        "    entry.end = -value",
-        "    entry.extras[0] = value.toString()",
-        "}"
-      ],
+      "valueGetter": "right-getter.js",
+      "valueSetter": "right-setter.js",
       "shortcutIndex": 4
     }
   ],
@@ -226,60 +190,7 @@
       "preu",
       "ovl"
     ],
-    "scripts": [
-      "if (typeof sample === 'undefined' || !sample) {",
-      "    error('Sample name is empty.')",
-      "}",
-      "if (typeof sample === 'name' || !name) {",
-      "    name = getNameWithoutExtension(sample)",
-      "}",
-      "offset = 0",
-      "if (ovl === '') {",
-      "    ovl = '0'",
-      "}",
-      "ovl = parseFloat(ovl)",
-      "if (ovl < 0) {",
-      "    offset = -ovl",
-      "}",
-      "if (left === '') {",
-      "    left = '0'",
-      "}",
-      "left = parseFloat(left)",
-      "start = left - offset",
-      "points = []",
-      "extras = []",
-      "if (fixed === '') {",
-      "    fixed = '0'",
-      "}",
-      "fixed = parseFloat(fixed)",
-      "if (fixed < 0) {",
-      "    fixed = 0",
-      "}",
-      "points.push(fixed + left)",
-      "if (right === '') {",
-      "    right = '0'",
-      "}",
-      "right = parseFloat(right)",
-      "rawRight = right // for restoring from a non-negative value (distance to sample end)",
-      "extras.push(rawRight)",
-      "if (right < 0) {",
-      "    end = left - right",
-      "} else {",
-      "    end = -right",
-      "}",
-      "if (preu === '') {",
-      "    preu = '0'",
-      "}",
-      "preu = parseFloat(preu)",
-      "if (preu < 0) {",
-      "    preu = 0",
-      "}",
-      "points.push(preu + left)",
-      "points.push(ovl + left)",
-      "points.push(left)",
-      "needSync = right >= 0",
-      "entry = new Entry(sample, name, start, end, points, extras, new Notes(), needSync)"
-    ]
+    "scripts": "parser.js"
   },
   "writer": {
     "scope": "Entry",
@@ -297,9 +208,7 @@
         },
         "defaultValue": true
       },
-      "injector": [
-        "labeler.fields[2].constraints[0].min = value ? null : 3"
-      ],
+      "injector": "useNegativeOvl-injector.js",
       "changeable": true
     },
     {
@@ -341,21 +250,7 @@
           }
         ]
       },
-      "injector": [
-        "if (value !== 'Preutterance') {",
-        "    labeler.fields[1].dragBase = false",
-        "}",
-        "if (value === 'Fixed') {",
-        "    labeler.fields[0].dragBase = true",
-        "}",
-        "if (value === 'Overlap') {",
-        "    labeler.fields[2].dragBase = true",
-        "}",
-        "if (value === 'Left') {",
-        "    labeler.lockedDrag.useDragBase = false",
-        "    labeler.lockedDrag.useStart = true",
-        "}"
-      ],
+      "injector": "dragBase-injector.js",
       "changeable": true
     },
     {
@@ -451,29 +346,7 @@
           }
         ]
       },
-      "injector": [
-        "if (value === 'Left') {",
-        "    labeler.postEditNextTrigger = { 'useStart': true }",
-        "}",
-        "if (value === 'Fixed') {",
-        "    labeler.fields[0].triggerPostEditNext = true",
-        "}",
-        "if (value === 'Preutterance') {",
-        "    labeler.fields[1].triggerPostEditNext = true",
-        "}",
-        "if (value === 'Overlap') {",
-        "    labeler.fields[2].triggerPostEditNext = true",
-        "}",
-        "if (value === 'Cutoff') {",
-        "    labeler.postEditNextTrigger = { 'useEnd': true }",
-        "}",
-        "if (value === 'Any') {",
-        "    labeler.postEditNextTrigger = { 'useStart': true, 'useEnd': true }",
-        "    labeler.fields[0].triggerPostEditNext = true",
-        "    labeler.fields[1].triggerPostEditNext = true",
-        "    labeler.fields[2].triggerPostEditNext = true",
-        "}"
-      ],
+      "injector": "postEditNextTrigger-injector.js",
       "changeable": true
     },
     {
@@ -538,88 +411,11 @@
           }
         ]
       },
-      "injector": [
-        "if (value === 'Disable') {",
-        "    labeler.postEditDoneTrigger = {}",
-        "    labeler.fields[0].triggerPostEditDone = false",
-        "    labeler.fields[1].triggerPostEditDone = false",
-        "    labeler.fields[2].triggerPostEditDone = false",
-        "}",
-        "if (value === 'Left') {",
-        "    labeler.postEditDoneTrigger = { 'useStart': true }",
-        "    labeler.fields[0].triggerPostEditDone = false",
-        "    labeler.fields[1].triggerPostEditDone = false",
-        "    labeler.fields[2].triggerPostEditDone = false",
-        "}",
-        "if (value === 'Fixed') {",
-        "    labeler.postEditDoneTrigger = {}",
-        "    labeler.fields[1].triggerPostEditDone = false",
-        "    labeler.fields[2].triggerPostEditDone = false",
-        "}",
-        "if (value === 'Preutterance') {",
-        "    labeler.postEditDoneTrigger = {}",
-        "    labeler.fields[0].triggerPostEditDone = false",
-        "    labeler.fields[2].triggerPostEditDone = false",
-        "}",
-        "if (value === 'Overlap') {",
-        "    labeler.postEditDoneTrigger = {}",
-        "    labeler.fields[0].triggerPostEditDone = false",
-        "    labeler.fields[1].triggerPostEditDone = false",
-        "}",
-        "if (value === 'Cutoff') {",
-        "    labeler.postEditDoneTrigger = { 'useEnd': true }",
-        "    labeler.fields[0].triggerPostEditDone = false",
-        "    labeler.fields[1].triggerPostEditDone = false",
-        "    labeler.fields[2].triggerPostEditDone = false",
-        "}"
-      ],
+      "injector": "postEditDoneTrigger-injector.js",
       "changeable": true
     }
   ],
   "projectConstructor": {
-    "scripts": [
-      "// `root` is the input File object indicating the root sample directory.",
-      "// `acceptedSampleExtensions` is provided as list of strings indicating the accepted extensions of sample files",
-      "let modules = []",
-      "let rootModule = null",
-      "function putFolder(folder, parentPath, depth) {",
-      "    let thisName = depth === 0 ? '' : ( depth ===1  ? folder.getName() : parentPath + '/' + folder.getName())",
-      "    let samples = folder.listChildFiles().filter(file => acceptedSampleExtensions.includes(file.getExtension()))",
-      "    if (samples.length > 0) {",
-      "        let otoFile = folder.resolve('oto.ini')",
-      "        let otoPath = otoFile.getAbsolutePath()",
-      "        let def = new ModuleDefinition(",
-      "                        thisName,",
-      "                        folder.getAbsolutePath(),",
-      "                        samples.map(f => f.getName()),",
-      "                        [otoPath],",
-      "                        otoPath",
-      "                  )",
-      "        let included = true",
-      "        if (depth === 0) {",
-      "            included = params['useRootDirectory']",
-      "            rootModule = def",
-      "        }",
-      "        if (depth > 1) {",
-      "            included = otoFile.exists() || params['forceRecursive']",
-      "        }",
-      "        if (included) {",
-      "            modules.push(def)",
-      "        }",
-      "    }",
-      "    folder.listChildDirectories().forEach(f => putFolder(f, thisName, depth + 1))",
-      "}",
-      "putFolder(root, '', 0)",
-      "if (rootModule && modules.length === 0) {",
-      "    modules.push(rootModule)",
-      "}",
-      "if (modules.length === 0) {",
-      "    error({",
-      "        en: 'No sample files found. Please check the labeler settings to ensure your sample folders are included.',",
-      "        zh: '未找到采样文件。请检查标注器设置以确保您的采样文件夹被包括在内。',",
-      "        ja: 'サンプルファイルが見つかりませんでした。ラベラーの設定でサンプルフォルダーが含まれていることを確認してください。'",
-      "    })",
-      "}"
-    ]
+    "scripts": "projectConstructor.js"
   }
 }
