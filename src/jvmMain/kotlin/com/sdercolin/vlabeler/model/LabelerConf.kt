@@ -289,7 +289,7 @@ data class LabelerConf(
      * @property variableNames Definition of how the extracted string groups will be put into variables later in the
      *     parser JavaScript code. Should be in the same order as the extracted groups. Only used when [scope] is
      *     [Scope.Entry].
-     * @property scripts JavaScript code in lines that sets properties of [Entry] using the variables extracted.
+     * @property scripts JavaScript code that sets properties of [Entry] using the variables extracted.
      */
     @Serializable
     @Immutable
@@ -326,8 +326,8 @@ data class LabelerConf(
      *
      * @property scope [Scope] of the writer.
      * @property format String format to generate the output line.
-     * @property scripts JavaScript code in lines that generate the output line Either [format] or [scripts] should be
-     *     given. If both of them are given, [scripts] is used.
+     * @property scripts JavaScript code that generate the output line Either [format] or [scripts] should be given. If
+     *     both of them are given, [scripts] is used.
      */
     @Serializable
     @Immutable
@@ -350,7 +350,7 @@ data class LabelerConf(
          */
         val format: String? = null,
         /**
-         * JavaScript code lines that sets "output" variable.
+         * JavaScript code that sets "output" variable.
          *
          * Available input variables in scope [Scope.Entry]:
          * - String "sample": [Entry.sample]
@@ -378,13 +378,12 @@ data class LabelerConf(
      *
      * @property name Unique name of the property.
      * @property displayedName Name displayed in property view UI (localized).
-     * @property valueGetter JavaScript code lines that calculates the value from {entry} object and set {value}
-     *     variable.
+     * @property valueGetter JavaScript code that calculates the value from {entry} object and set {value} variable.
      *    - Input: "entry" - the JavaScript object for [Entry]. See src/main/resources/labeler/entry.js for the actual
      *      JavaScript class definition.
      *    - Output: "value" - the value of the property as number.
      *
-     * @property valueSetter JavaScript code lines that takes the value of input the property and update {entry} object
+     * @property valueSetter JavaScript code that takes the value of input the property and update {entry} object
      *     accordingly. Could be null if you want to disable the value setting feature in the UI.
      *    - Input: "value" - the value of the property as number. "entry" - the JavaScript object for [Entry]. See
      *      src/main/resources/labeler/entry.js for the actual JavaScript class definition.
@@ -476,9 +475,9 @@ data class LabelerConf(
 
     /**
      * In order to edit multiple label files in a single project, the labeler should be able to construct subprojects
-     * when creating the project. This property defines the subproject structure and building procedure. In the
-     * source code, we call the subproject as "Module". The [scripts] is JavaScript code lines that creates
-     * [RawModuleDefinition] objects.
+     * when creating the project. This property defines the subproject structure and building procedure. In the source
+     * code, we call the subproject as "Module". The [scripts] is JavaScript code that creates [RawModuleDefinition]
+     * objects.
      *
      * Available input variables:
      * - File "root": the root directory of the project (the `Sample Directory` chosen in the project creation page) the
