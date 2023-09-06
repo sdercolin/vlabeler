@@ -17,6 +17,7 @@ val Color.argbHexString get() = String.format("#%08X", 0xffffffff and toArgb().t
 
 val Char.isHexChar get() = this in '0'..'9' || this in 'a'..'f' || this in 'A'..'F'
 
+@Suppress("UnnecessaryVariable")
 fun Color.toHsv(): FloatArray {
     val min = minOf(red, green, blue)
     val max = maxOf(red, green, blue)

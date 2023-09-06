@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui
+package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.PluginQuickLaunch
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.LargeDialogContainer
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog

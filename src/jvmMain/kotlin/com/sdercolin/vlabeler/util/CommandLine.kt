@@ -1,5 +1,4 @@
 @file:OptIn(DelicateCoroutinesApi::class)
-@file:Suppress("unused")
 
 package com.sdercolin.vlabeler.util
 

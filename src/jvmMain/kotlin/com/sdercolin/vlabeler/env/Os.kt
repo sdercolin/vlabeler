@@ -7,7 +7,7 @@ import androidx.compose.ui.text.toLowerCase
  * Information about the current operating system.
  */
 
-val osName by lazy { System.getProperty("os.name") }
+val osName by lazy { System.getProperty("os.name").toString() }
 val osNameWithVersion by lazy { osName + " " + System.getProperty("os.version") }
 val osInfo by lazy { osNameWithVersion + " " + System.getProperty("os.arch") }
 val isWindows by lazy { osName.toLowerCase(Locale.current).contains("windows") }

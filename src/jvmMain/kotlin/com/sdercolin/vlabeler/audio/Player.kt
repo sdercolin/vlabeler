@@ -29,7 +29,7 @@ import kotlin.math.roundToInt
  *
  * @property playbackConfig The playback configuration.
  * @property maxSampleRate The maximum sample rate of the audio. Audio files with higher sample rate will be
- *     downsampled.
+ *     down-sampled.
  * @property coroutineScope The coroutine scope to run the player.
  * @property state The [PlayerState] containing all the state of the player.
  * @property listener The listener to notify the UI of the playback progress.
@@ -135,8 +135,8 @@ class Player(
      * @param endFrame The frame position to end writing at.
      * @param repeat Whether to repeat the audio data.
      * @param cancelFormer Whether to cancel the former writing job.
-     * @param backgroundPlay Whether the playing is not showing in UI. If true, [state.isPlaying] is not set to true so
-     *     we should not check it in the loop.
+     * @param backgroundPlay Whether the playing is not showing in UI. If true, [state::isPlaying] is not set to true,
+     *     so we should not check it in the loop.
      */
     private suspend fun startWriting(
         startFrame: Int = 0,

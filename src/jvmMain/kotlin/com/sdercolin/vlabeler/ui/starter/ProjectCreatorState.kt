@@ -382,11 +382,13 @@ class ProjectCreatorState(
     }
 
     fun getSupportedPlugins(language: Language) = templatePlugins
+        .asSequence()
         .filter { it.type == Plugin.Type.Template }
         .filter { it.isLabelFileExtensionSupported(labeler.extension) }
         .map { it to it.displayedName.getCertain(language) }
         .sortedBy { it.second }
         .map { it.first }
+        .toList()
 
     fun updateInputFile(path: String, editedByUser: Boolean, detectEncoding: Boolean = true) {
         if (editedByUser) inputFileEdited = true

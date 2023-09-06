@@ -340,8 +340,8 @@ class ChartStore {
         val maxYLength = data[maxLengthIndex].size
         val step = appConf.painter.spectrogram.melScaleStep
         val displayMels = IntArray((maxMel / step) + 1) { it * step } + listOf(maxMel)
-        val displayFreqs = displayMels.map { MelScale.toFreq(it.toDouble()) }
-        val displayIndexes = displayFreqs.map { it * (maxYLength - 1) / maxFrequency }
+        val displayFrequencies = displayMels.map { MelScale.toFreq(it.toDouble()) }
+        val displayIndexes = displayFrequencies.map { it * (maxYLength - 1) / maxFrequency }
         // image size
         val width = data.size
         val height = displayIndexes.size
