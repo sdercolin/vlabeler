@@ -53,7 +53,7 @@ fun moduleFromRawLabels(
             parser.variableNames.mapIndexed { i, name ->
                 js.set(name, groups.getOrNull(i))
             }
-            val script = parser.scripts.joinToString("\n")
+            val script = parser.scripts.getScripts(labelerConf.directory)
             js.eval(script)
             js.getJson<Entry>("entry")
         }.getOrElse {
@@ -100,7 +100,7 @@ fun moduleGroupFromRawLabels(
     js.setJson("moduleNames", definitionGroup.map { it.name })
     js.setJson("inputs", inputs)
 
-    val script = labelerConf.parser.scripts.joinToString("\n")
+    val script = labelerConf.parser.scripts.getScripts(labelerConf.directory)
     js.eval(script)
 
     val result = js.getJson<List<List<Entry>>>("modules")
@@ -144,7 +144,7 @@ fun Project.modulesToRawLabels(moduleIndexes: List<Int>): String {
     val scripts = labelerConf.writer.scripts
     requireNotNull(scripts) { "Writer scripts are required when scope is Scope.Modules" }
 
-    js.eval(scripts.joinToString("\n"))
+    js.eval(scripts.getScripts(labelerConf.directory))
     val result = js.get<String>("output")
     js.close()
     return result
@@ -177,7 +177,7 @@ fun Project.singleModuleToRawLabels(moduleIndex: Int): String {
                 for (variable in variables) {
                     js.set(variable.key, variable.value)
                 }
-                js.eval(scripts.joinToString("\n"))
+                js.eval(scripts.getScripts(labelerConf.directory))
                 js.get("output")
             } else {
                 val format = labelerConf.writer.format!!
@@ -220,7 +220,7 @@ private fun LabelerConf.getPropertyBaseMap(
 ) = properties.associateWith {
     run {
         js.setJson("entry", entry)
-        js.eval(it.valueGetter.joinToString("\n"))
+        js.eval(it.valueGetter.getScripts(directory))
         js.get<Double>("value").roundToDecimalDigit(decimalDigit)
     }
 }

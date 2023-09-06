@@ -239,14 +239,14 @@ fun LabelerConf.injectLabelerParams(paramMap: ParamMap): LabelerConf {
         }
         .filter { it.second != it.first.parameter.defaultValue }
         .map { it.first }
-        .filter { it.injector.isNullOrEmpty().not() }
+        .filter { it.injector != null }
     if (paramDefsToInject.isEmpty()) return this
 
     val js = JavaScript()
     js.setJson("labeler", this)
     for (def in paramDefsToInject) {
         js.setJson("value", paramMap.resolveItem(def.parameter.name, project = null, js = js))
-        def.injector.orEmpty().joinToString("\n").let { js.eval(it) }
+        def.injector?.getScripts(directory)?.let { js.eval(it) }
     }
     val labelerResult = js.getJson<LabelerConf>("labeler").migrate()
     js.close()
@@ -329,7 +329,7 @@ suspend fun projectOf(
         ).forEach { js.execResource(it) }
         labelerParams.resolve(project = null, js = js).let { js.setJson("params", it) }
         try {
-            labelerConf.projectConstructor.scripts.joinToString("\n").let { js.eval(it) }
+            labelerConf.projectConstructor.scripts.getScripts(labelerConf.directory).let { js.eval(it) }
         } catch (t: Throwable) {
             val expected = js.getOrNull("expectedError") ?: false
             js.close()

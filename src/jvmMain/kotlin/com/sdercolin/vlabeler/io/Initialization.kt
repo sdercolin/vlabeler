@@ -99,7 +99,7 @@ fun File.asLabelerConf(): Result<LabelerConf> {
     val text = readText()
     val result = runCatching {
         text.parseJson<LabelerConf>()
-            .copy(name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}"))
+            .copy(name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}"), directory = parentFile)
             .validate()
             .migrate()
     }

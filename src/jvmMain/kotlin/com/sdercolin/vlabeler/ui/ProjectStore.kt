@@ -629,7 +629,7 @@ class ProjectStoreImpl(
             val js = JavaScript()
             js.setJson("entry", project.currentModule.currentEntry)
             js.set("value", value)
-            js.eval(setter.joinToString("\n"))
+            js.eval(setter.getScripts(project.labelerConf.directory))
             val updatedEntry = js.getJson("entry") as? Entry ?: return
             js.close()
             editCurrentProjectModule { updateCurrentEntry(updatedEntry, project.labelerConf) }

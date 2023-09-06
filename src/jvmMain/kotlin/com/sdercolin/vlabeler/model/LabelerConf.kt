@@ -4,6 +4,8 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.model.LabelerConf.Companion.SerialVersion
+import com.sdercolin.vlabeler.model.LabelerConf.ExtraField
 import com.sdercolin.vlabeler.model.LabelerConf.Field
 import com.sdercolin.vlabeler.model.LabelerConf.ParameterHolder
 import com.sdercolin.vlabeler.model.LabelerConf.ProjectConstructor
@@ -19,8 +21,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.Transient
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonDecoder
@@ -53,8 +54,8 @@ import java.io.File
  * @property allowSameNameEntry Whether to allow more than one entry with a shared name in the project module.
  * @property defaultValues Default value listed as [start, *fields, end] in millisecond.
  * @property defaultExtras (Deprecated) Use [extraFields] instead.
- * @property fields [Field] definitions containing data used in the label files, except for built-in "start" and
- *     "end". Corresponds to [Entry.points].
+ * @property fields [Field] definitions containing data used in the label files, except for built-in "start" and "end".
+ *     Corresponds to [Entry.points].
  * @property extraFieldNames (Deprecated) Use [extraFields] instead.
  * @property extraFields [ExtraField] definitions stored as strings. Corresponds to [Entry.extras].
  * @property lockedDrag Defines when to use locked dragging (all parameters will move with dragged one).
@@ -102,6 +103,7 @@ data class LabelerConf(
     val writer: Writer,
     val parameters: List<ParameterHolder> = listOf(),
     val projectConstructor: ProjectConstructor? = null,
+    @Transient val directory: File? = null,
 ) : BasePlugin {
 
     private val fileName get() = "$name.$LabelerFileExtension"
@@ -210,8 +212,8 @@ data class LabelerConf(
     )
 
     /**
-     * Trigger settings of post edit actions on start and end.
-     * For triggering with fields, see [Field.triggerPostEditNext] and [Field.triggerPostEditDone].
+     * Trigger settings of post edit actions on start and end. For triggering with fields, see
+     * [Field.triggerPostEditNext] and [Field.triggerPostEditDone].
      */
     @Serializable
     @Immutable
@@ -295,7 +297,7 @@ data class LabelerConf(
          *   The array should have the same order as 'moduleNames' given as input. Every item in the array should be an
          *   array of [Entry] objects in this module.
          */
-        val scripts: List<String>,
+        val scripts: EmbeddedScripts,
     )
 
     /**
@@ -319,7 +321,7 @@ data class LabelerConf(
          * - {[Property.name]}: evaluated value of a [Property].
          * - {[Field.name]}: value in [Entry.points] with the same index of the corresponding [Field].
          * - {<[ExtraField.name] in [extraFields]>}: string value in [Entry.extras], with the same index of the
-         *     corresponding [ExtraField].
+         *   corresponding [ExtraField].
          *
          * If a name is shared by a [Property] and [Field], the [Property] is assigned to the variable.
          *
@@ -336,7 +338,7 @@ data class LabelerConf(
          * - Number "end": [Entry.end]
          * - Number "[Field.name]": value in [Entry.points] with the same index of the corresponding [Field].
          * - String "<[ExtraField.name] in [extraFields]>": string value in [Entry.extras], with the same index of the
-         *     corresponding [ExtraField].
+         *   corresponding [ExtraField].
          * - Number "[Property.name]": Evaluated value of a [Property].
          * - Boolean "needSync": [Entry.needSync]
          *
@@ -345,9 +347,9 @@ data class LabelerConf(
          * Available input variables in scope [Scope.Modules]:
          * - String array "moduleNames": Name of the modules that the scripts need to handle.
          * - Object[] array "modules": An array of [Entry] arrays. The array has the same order as "moduleNames".
-         * // TODO: add more variables to [Entry], including [Field.name], [ExtraField.name] and [Property.name]
+         *   // TODO: add more variables to [Entry], including [Field.name], [ExtraField.name] and [Property.name]
          */
-        val scripts: List<String>? = null,
+        val scripts: EmbeddedScripts? = null,
     )
 
     /**
@@ -374,8 +376,8 @@ data class LabelerConf(
     data class Property(
         val name: String,
         val displayedName: LocalizedJsonString,
-        val valueGetter: List<String>,
-        val valueSetter: List<String>? = null,
+        val valueGetter: EmbeddedScripts,
+        val valueSetter: EmbeddedScripts? = null,
         val shortcutIndex: Int? = null,
     )
 
@@ -411,7 +413,7 @@ data class LabelerConf(
     @Immutable
     data class ParameterHolder(
         val parameter: Parameter<*>,
-        val injector: List<String>? = null,
+        val injector: EmbeddedScripts? = null,
         val changeable: Boolean = false,
     )
 
@@ -425,7 +427,7 @@ data class LabelerConf(
                 decoder.json.decodeFromJsonElement(PolymorphicSerializer(Parameter::class), it)
             }
             val injector = element["injector"]?.takeUnless { it is JsonNull }?.let {
-                decoder.json.decodeFromJsonElement(ListSerializer(String.serializer()), it)
+                decoder.json.decodeFromJsonElement(EmbeddedScriptsSerializer, it)
             }
             val changeable = element["changeable"]?.jsonPrimitive?.boolean ?: false
             return ParameterHolder(parameter, injector, changeable)
@@ -441,7 +443,7 @@ data class LabelerConf(
                     ),
                     "injector" to (
                         value.injector?.let {
-                            encoder.json.encodeToJsonElement(ListSerializer(String.serializer()), it)
+                            encoder.json.encodeToJsonElement(EmbeddedScriptsSerializer, it)
                         } ?: JsonNull
                         ),
                     "changeable" to JsonPrimitive(value.changeable),
@@ -476,7 +478,7 @@ data class LabelerConf(
     @Serializable
     @Immutable
     data class ProjectConstructor(
-        val scripts: List<String>,
+        val scripts: EmbeddedScripts,
     )
 
     val useImplicitStart: Boolean
@@ -503,8 +505,7 @@ data class LabelerConf(
     override fun getSavedParamsFile(): File = RecordDir.resolve(name + LabelerSavedParamsFileExtension)
 
     /**
-     * Definition of extra fields used in entry, module and project scopes.
-     * The values are always stored as strings.
+     * Definition of extra fields used in entry, module and project scopes. The values are always stored as strings.
      *
      * @property name Unique name of the field.
      * @property default Default value of the field.
@@ -559,6 +560,6 @@ data class LabelerConf(
     companion object {
         const val LabelerFileExtension = "labeler.json"
         private const val LabelerSavedParamsFileExtension = ".labeler.param.json"
-        private const val SerialVersion = 1
+        private const val SerialVersion = 2
     }
 }
