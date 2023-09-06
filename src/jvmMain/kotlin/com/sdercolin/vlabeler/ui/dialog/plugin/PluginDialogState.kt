@@ -56,7 +56,7 @@ class PluginDialogState(
             .first()
             .copy(isCurrent = slot == null)
 
-        val slots = List(PluginQuickLaunch.SlotCount) { index ->
+        val slots = List(PluginQuickLaunch.SLOT_COUNT) { index ->
             val quickLaunch = record.pluginQuickLaunchSlots[index]
             BasePluginPresetItem.Memory(
                 pluginName = quickLaunch?.pluginName,

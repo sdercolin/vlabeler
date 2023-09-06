@@ -68,7 +68,7 @@ class UpdateRepository {
     private suspend fun getResponse(vararg paths: String): Result<HttpResponse> =
         useClient {
             runCatching {
-                get(Url.GithubApiRoot) {
+                get(Url.GITHUB_API_ROOT) {
                     url { appendPathSegments(*paths) }
                     headers {
                         append("Accept", "application/vnd.github.v3+json")

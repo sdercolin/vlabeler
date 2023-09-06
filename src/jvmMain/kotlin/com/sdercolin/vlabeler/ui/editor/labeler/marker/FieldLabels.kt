@@ -139,7 +139,7 @@ private fun FieldLabelsChunk(
 
 @Composable
 private fun FieldLabelText(model: FieldLabelModel) {
-    val alpha = if (model.isActive) 1f else IdleLineAlpha
+    val alpha = if (model.isActive) 1f else IDLE_LINE_ALPHA
     val fontSize = if (LocalLanguage.current in listOf(Language.ChineseSimplified)) {
         // Show Chinese characters in bigger size
         16.sp

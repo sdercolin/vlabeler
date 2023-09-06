@@ -8,7 +8,7 @@ import com.sdercolin.vlabeler.exception.ProjectConstructorRuntimeException
 import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.io.moduleFromRawLabels
 import com.sdercolin.vlabeler.io.moduleGroupFromRawLabels
-import com.sdercolin.vlabeler.model.Project.Companion.ProjectVersion
+import com.sdercolin.vlabeler.model.Project.Companion.PROJECT_VERSION
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.util.DefaultEncoding
 import com.sdercolin.vlabeler.util.JavaScript
@@ -74,7 +74,7 @@ data class Project(
         get() = rootSampleDirectory.resolve(workingDirectoryPath)
 
     val projectFile: File
-        get() = workingDirectory.resolve("$projectName.$ProjectFileExtension")
+        get() = workingDirectory.resolve("$projectName.$PROJECT_FILE_EXTENSION")
 
     val cacheDirectory: File
         get() = rootSampleDirectory.resolve(cacheDirectoryPath)
@@ -173,13 +173,13 @@ data class Project(
     }
 
     companion object {
-        const val ProjectVersion = 3
+        const val PROJECT_VERSION = 3
 
-        const val ProjectFileExtension = "lbp"
-        private const val DefaultCacheDirectorySuffix = ".$ProjectFileExtension.caches"
+        const val PROJECT_FILE_EXTENSION = "lbp"
+        private const val DEFAULT_CACHE_DIRECTORY_SUFFIX = ".$PROJECT_FILE_EXTENSION.caches"
 
         fun getDefaultCacheDirectory(location: String, projectName: String): String {
-            return File(location, "$projectName$DefaultCacheDirectorySuffix").absolutePath
+            return File(location, "$projectName$DEFAULT_CACHE_DIRECTORY_SUFFIX").absolutePath
         }
     }
 }
@@ -373,7 +373,7 @@ suspend fun projectOf(
             "No entries were found for any module"
         }
         Project(
-            version = ProjectVersion,
+            version = PROJECT_VERSION,
             rootSampleDirectoryPath = sampleDirectory,
             workingDirectoryPath = workingDirectory,
             projectName = projectName,

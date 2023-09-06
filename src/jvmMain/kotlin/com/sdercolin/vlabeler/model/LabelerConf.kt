@@ -4,7 +4,7 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.model.LabelerConf.Companion.SerialVersion
+import com.sdercolin.vlabeler.model.LabelerConf.Companion.SERIAL_VERSION
 import com.sdercolin.vlabeler.model.LabelerConf.ExtraField
 import com.sdercolin.vlabeler.model.LabelerConf.Field
 import com.sdercolin.vlabeler.model.LabelerConf.ParameterHolder
@@ -109,7 +109,7 @@ data class LabelerConf(
     @Transient val directory: File? = null,
 ) : BasePlugin {
 
-    private val singleFileName get() = "$name.$LabelerFileExtension"
+    private val singleFileName get() = "$name.$LABELER_FILE_EXTENSION"
     val isBuiltIn get() = DefaultLabelerDir.listFiles().orEmpty().any { it.name == singleFileName }
     val rootFile: File
         get() = if (singleFile) {
@@ -516,7 +516,7 @@ data class LabelerConf(
     val useImplicitEnd: Boolean
         get() = fields.any { it.replaceEnd }
 
-    override fun getSavedParamsFile(): File = RecordDir.resolve(name + LabelerSavedParamsFileExtension)
+    override fun getSavedParamsFile(): File = RecordDir.resolve(name + LABELER_SAVED_PARAMS_FILE_EXTENSION)
 
     /**
      * Preload the scripts in [EmbeddedScripts] to avoid reading script files every time.
@@ -559,12 +559,12 @@ data class LabelerConf(
             // Add the extra properties by defaultExtras and extraFieldNames.
             if (extraFieldNames == null || defaultExtras == null) {
                 Log.debug(
-                    "Migrating extra properties of labeler $name from serialVersion 0 to $SerialVersion failed: " +
+                    "Migrating extra properties of labeler $name from serialVersion 0 to $SERIAL_VERSION failed: " +
                         "extraFieldNames or defaultExtras is null",
                 )
                 return this
             }
-            Log.debug("Migrating extra properties of labeler $name from serialVersion 0 to $SerialVersion")
+            Log.debug("Migrating extra properties of labeler $name from serialVersion 0 to $SERIAL_VERSION")
             return this.copy(
                 extraFields = extraFieldNames.mapIndexed { index, extraFieldName ->
                     ExtraField(
@@ -587,8 +587,8 @@ data class LabelerConf(
     }
 
     companion object {
-        const val LabelerFileExtension = "labeler.json"
-        private const val LabelerSavedParamsFileExtension = ".labeler.param.json"
-        private const val SerialVersion = 2
+        const val LABELER_FILE_EXTENSION = "labeler.json"
+        private const val LABELER_SAVED_PARAMS_FILE_EXTENSION = ".labeler.param.json"
+        private const val SERIAL_VERSION = 2
     }
 }

@@ -29,13 +29,13 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
         val entry = entriesInPixel.find { it.index == currentIndex } ?: return
         val start = entry.start
         val end = entry.end
-        val center = if (end - start <= screenLength - (2 * screenLength / MinScreenRatioOffset)) {
+        val center = if (end - start <= screenLength - (2 * screenLength / MIN_SCREEN_RATIO_OFFSET)) {
             (start + end) / 2
         } else {
             if (showLeftSide) {
-                start + screenLength / 2 - screenLength / MinScreenRatioOffset
+                start + screenLength / 2 - screenLength / MIN_SCREEN_RATIO_OFFSET
             } else {
-                end - screenLength / 2 + screenLength / MinScreenRatioOffset
+                end - screenLength / 2 + screenLength / MIN_SCREEN_RATIO_OFFSET
             }
         }
         val target = (center - screenLength / 2).toInt().coerceAtMost(scrollMax).coerceAtLeast(0)
@@ -61,6 +61,6 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
     }
 
     companion object {
-        private const val MinScreenRatioOffset = 20
+        private const val MIN_SCREEN_RATIO_OFFSET = 20
     }
 }

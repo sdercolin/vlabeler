@@ -49,6 +49,6 @@ data class PluginQuickLaunch(
     }
 
     companion object {
-        const val SlotCount = 8
+        const val SLOT_COUNT = 8
     }
 }

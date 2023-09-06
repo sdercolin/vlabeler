@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.MelScale
-import com.sdercolin.vlabeler.io.NormalizedSampleSizeInBits
+import com.sdercolin.vlabeler.io.NORMALIZED_SAMPLE_SIZE_IN_BITS
 import com.sdercolin.vlabeler.io.loadSampleChunk
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
@@ -72,13 +72,13 @@ class ChartStore {
         appConf: AppConf,
         sampleInfo: SampleInfo,
     ): Boolean {
-        if (currentSampleInfo == sampleInfo && !ChartRepository.needReset(appConf, PaintingAlgorithmVersion)) {
+        if (currentSampleInfo == sampleInfo && !ChartRepository.needReset(appConf, PAINTING_ALGORITHM_VERSION)) {
             return false
         }
         currentSampleInfo = sampleInfo
         job?.cancel()
         initializeStates(sampleInfo.chunkCount, sampleInfo.channels)
-        ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
+        ChartRepository.init(project, appConf, PAINTING_ALGORITHM_VERSION)
         return true
     }
 
@@ -252,11 +252,11 @@ class ChartStore {
         val data = chunk.wave.channels[channelIndex].data
         val dataDensity = appConf.painter.amplitude.unitSize
         val width = data.size / dataDensity
-        val maxRawY = 2.0.pow(NormalizedSampleSizeInBits - 1).toFloat()
+        val maxRawY = 2.0.pow(NORMALIZED_SAMPLE_SIZE_IN_BITS - 1).toFloat()
         val height = appConf.painter.amplitude.intensityAccuracy
         val size = Size(width.toFloat(), height.toFloat())
         val newBitmap = ImageBitmap(width, height)
-        val color = appConf.painter.amplitude.color.toColorOrNull() ?: AppConf.Amplitude.DefaultColor.toColor()
+        val color = appConf.painter.amplitude.color.toColorOrNull() ?: AppConf.Amplitude.DEFAULT_COLOR.toColor()
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
             val yScale = maxRawY / height * 2 * (1 + appConf.painter.amplitude.yAxisBlankRate)
             data.toList()
@@ -431,7 +431,7 @@ class ChartStore {
         val height = appConf.painter.power.intensityAccuracy
         val imageData = ByteArray(width * height * 4)
         // draw
-        val color = appConf.painter.power.color.toColorOrNull() ?: AppConf.Power.DefaultColor.toColor()
+        val color = appConf.painter.power.color.toColorOrNull() ?: AppConf.Power.DEFAULT_COLOR.toColor()
         data.forEachIndexed { index, value ->
             val valueInRange = maxOf(minValue, minOf(maxValue, value))
             val y = (height - 1 - (valueInRange - minValue) / (maxValue - minValue) * (height - 1)).toInt()
@@ -453,6 +453,6 @@ class ChartStore {
     }
 
     companion object {
-        private const val PaintingAlgorithmVersion = 7
+        private const val PAINTING_ALGORITHM_VERSION = 7
     }
 }

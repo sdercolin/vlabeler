@@ -24,9 +24,9 @@ object ToolCursorRepository {
                 ImageIO.read(it)
             }
         }
-        val point = Point(ImageSizePixel / 2, ImageSizePixel / 2)
+        val point = Point(IMAGE_SIZE_PIXEL / 2, IMAGE_SIZE_PIXEL / 2)
         return Toolkit.getDefaultToolkit().createCustomCursor(image, point, tool.name)
     }
 
-    private const val ImageSizePixel = 24
+    private const val IMAGE_SIZE_PIXEL = 24
 }

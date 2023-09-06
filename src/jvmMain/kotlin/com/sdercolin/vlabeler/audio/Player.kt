@@ -182,7 +182,7 @@ class Player(
             val sampleRate = format?.sampleRate ?: return@launch
             listener.onFramePositionChanged(frame)
             while (true) {
-                delay(PlayingTimeInterval)
+                delay(PLAYING_TIME_INTERVAL)
                 if (!state.isPlaying) break
                 frame = firstFrame + (System.currentTimeMillis() - firstTime) * sampleRate / 1000
                 if (repeat) {
@@ -335,6 +335,6 @@ class Player(
     }
 
     companion object {
-        private const val PlayingTimeInterval = 5L
+        private const val PLAYING_TIME_INTERVAL = 5L
     }
 }

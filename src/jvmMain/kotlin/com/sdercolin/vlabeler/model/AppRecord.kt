@@ -82,7 +82,7 @@ data class AppRecord(
     fun getPluginQuickLaunch(slot: Int) = pluginQuickLaunchSlots[slot]
 
     fun getUsedPluginQuickLaunchSlots() =
-        (0 until PluginQuickLaunch.SlotCount).filter { pluginQuickLaunchSlots.containsKey(it) }
+        (0 until PluginQuickLaunch.SLOT_COUNT).filter { pluginQuickLaunchSlots.containsKey(it) }
 
     fun saveQuickLaunch(slot: Int, pluginQuickLaunch: PluginQuickLaunch?) =
         copy(

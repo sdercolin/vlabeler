@@ -141,7 +141,7 @@ fun NameLabels(
                             name = editorState.onScreenScissorsState.text,
                             onEditName = { editorState.onScreenScissorsState.text = it },
                             color = appConf.editor.continuousLabelNames.color.toRgbColorOrNull()
-                                ?: AppConf.ContinuousLabelNames.DefaultColor.toRgbColor(),
+                                ?: AppConf.ContinuousLabelNames.DEFAULT_COLOR.toRgbColor(),
                             cutPosition = editorState.onScreenScissorsState.pixelPosition,
                             appConf = appConf,
                             commit = {
@@ -295,7 +295,7 @@ private fun NameLabelsChunk(
         listOfNotNull(entryChunk.leftEntry) + entryChunk.entries + listOfNotNull(entryChunk.rightEntry)
     }
     val activeColor = appConf.editor.continuousLabelNames.color.toRgbColorOrNull()
-        ?: AppConf.ContinuousLabelNames.DefaultColor.toRgbColor()
+        ?: AppConf.ContinuousLabelNames.DEFAULT_COLOR.toRgbColor()
     val inactiveColor = Black
     val colors = remember(entryChunk, activeColor, inactiveColor) {
         listOfNotNull(entryChunk.leftEntry).map { inactiveColor } +

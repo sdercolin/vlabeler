@@ -59,7 +59,7 @@ private fun rememberState(appState: AppState) = remember(appState) {
 class QuickLaunchManagerDialogState(val appState: AppState) {
 
     private var slots by mutableStateOf(
-        (0 until PluginQuickLaunch.SlotCount).map { appState.appRecordStore.value.getPluginQuickLaunch(it) },
+        (0 until PluginQuickLaunch.SLOT_COUNT).map { appState.appRecordStore.value.getPluginQuickLaunch(it) },
     )
 
     val appConf get() = appState.appConf
@@ -168,7 +168,7 @@ private fun ColumnScope.Content(state: QuickLaunchManagerDialogState) {
                     )
                 }
             }
-            repeat(PluginQuickLaunch.SlotCount) { index ->
+            repeat(PluginQuickLaunch.SLOT_COUNT) { index ->
                 Item(index, state)
             }
         }

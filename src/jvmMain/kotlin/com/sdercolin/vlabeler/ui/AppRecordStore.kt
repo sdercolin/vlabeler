@@ -30,7 +30,7 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
     private fun collectAndWrite() {
         scope.launch(Dispatchers.IO) {
             _stateFlow.collectLatest {
-                delay(ThrottlePeriodMs)
+                delay(THROTTLE_PERIOD_MS)
                 AppRecordFile.writeText(it.stringifyJson())
                 Log.info("Written appRecord: $it")
             }
@@ -44,6 +44,6 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
     }
 
     companion object {
-        private const val ThrottlePeriodMs = 500L
+        private const val THROTTLE_PERIOD_MS = 500L
     }
 }

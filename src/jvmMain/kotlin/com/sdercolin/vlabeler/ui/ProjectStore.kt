@@ -451,7 +451,7 @@ class ProjectStoreImpl(
     }
 
     private fun listAutoSavedProjectFiles() = RecordDir.getChildren()
-        .filter { it.extension == Project.ProjectFileExtension && it.name.startsWith("_") }
+        .filter { it.extension == Project.PROJECT_FILE_EXTENSION && it.name.startsWith("_") }
 
     override fun getAutoSavedProjectFile(): File? = listAutoSavedProjectFiles().firstOrNull()
 

@@ -20,7 +20,7 @@ data class Power(val data: List<FloatArray>)
  * @param conf The power configuration.
  */
 fun Wave.toPower(conf: AppConf.Power): Power {
-    val ref = 2.0.pow(NormalizedSampleSizeInBits - 1).toFloat()
+    val ref = 2.0.pow(NORMALIZED_SAMPLE_SIZE_IN_BITS - 1).toFloat()
     // merge channels
     val merged = if (conf.mergeChannels) {
         val dataLength = channels.minOf { it.data.size }

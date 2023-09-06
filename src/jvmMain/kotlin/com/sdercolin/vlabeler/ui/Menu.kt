@@ -504,22 +504,22 @@ fun FrameWindowScope.Menu(
                 )
                 Item(
                     string(Strings.MenuHelpOpenHomePage),
-                    onClick = { Url.open(Url.HomePage) },
+                    onClick = { Url.open(Url.HOME_PAGE) },
                     shortcut = KeyAction.OpenHomePage.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuHelpOpenLatestRelease),
-                    onClick = { Url.open(Url.LatestRelease) },
+                    onClick = { Url.open(Url.LATEST_RELEASE) },
                     shortcut = KeyAction.OpenLatestRelease.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuHelpOpenGitHub),
-                    onClick = { Url.open(Url.ProjectGitHub) },
+                    onClick = { Url.open(Url.PROJECT_GIT_HUB) },
                     shortcut = KeyAction.OpenGitHub.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuHelpJoinDiscord),
-                    onClick = { Url.open(Url.DiscordInvitation) },
+                    onClick = { Url.open(Url.DISCORD_INVITATION) },
                     shortcut = KeyAction.JoinDiscord.getKeyShortCut(),
                 )
                 Item(

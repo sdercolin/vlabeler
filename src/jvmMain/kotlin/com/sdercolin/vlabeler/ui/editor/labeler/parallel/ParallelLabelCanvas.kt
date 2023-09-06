@@ -151,7 +151,7 @@ fun ColumnScope.ModuleRow(
 
     val labelColor = remember(editorConf) {
         editorConf.continuousLabelNames.color.toRgbColorOrNull()
-            ?: AppConf.ContinuousLabelNames.DefaultColor.toRgbColor()
+            ?: AppConf.ContinuousLabelNames.DEFAULT_COLOR.toRgbColor()
     }
 
     Box(modifier = Modifier.fillMaxWidth().weight(1f)) {

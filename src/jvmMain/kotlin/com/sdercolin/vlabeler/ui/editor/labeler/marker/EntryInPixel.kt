@@ -3,8 +3,8 @@ package com.sdercolin.vlabeler.ui.editor.labeler.marker
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.EntryNotes
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.EndPointIndex
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.StartPointIndex
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.END_POINT_INDEX
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.START_POINT_INDEX
 
 @Immutable
 data class EntryInPixel(
@@ -45,8 +45,8 @@ data class EntryInPixel(
     )
 
     fun getPoint(index: Int) = when (index) {
-        StartPointIndex -> start
-        EndPointIndex -> end
+        START_POINT_INDEX -> start
+        END_POINT_INDEX -> end
         else -> points[index]
     }
 

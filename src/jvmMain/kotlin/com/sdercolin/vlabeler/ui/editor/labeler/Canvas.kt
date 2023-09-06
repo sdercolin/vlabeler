@@ -247,7 +247,7 @@ private fun Chunk(
         Column(Modifier.fillMaxSize()) {
             val weightOfEachChannel = 1f / sampleInfo.channels
             val backgroundColor = appState.appConf.painter.amplitude.backgroundColor.toColorOrNull()
-                ?: AppConf.Amplitude.DefaultBackgroundColor.toColor()
+                ?: AppConf.Amplitude.DEFAULT_BACKGROUND_COLOR.toColor()
             repeat(sampleInfo.channels) { channelIndex ->
                 Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
                     val imageStatus = editorState.chartStore.getWaveformStatus(channelIndex, chunkIndex)
@@ -259,7 +259,7 @@ private fun Chunk(
             if (sampleInfo.hasPower && appState.appConf.painter.power.enabled) {
                 val powerWeightOfEachChannel = appState.appConf.painter.power.heightWeight / sampleInfo.powerChannels
                 val powerBackgroundColor = appState.appConf.painter.power.backgroundColor.toColorOrNull()
-                    ?: AppConf.Power.DefaultBackgroundColor.toColor()
+                    ?: AppConf.Power.DEFAULT_BACKGROUND_COLOR.toColor()
                 repeat(sampleInfo.powerChannels) { channelIndex ->
                     Box(Modifier.weight(powerWeightOfEachChannel).fillMaxWidth()) {
                         val imageStatus = editorState.chartStore.getPowerGraphStatus(channelIndex, chunkIndex)

@@ -137,4 +137,4 @@ fun getSampleValueFromFrame(
         .sum().toFloat()
 }
 
-const val WaveLoadingAlgorithmVersion = 4
+const val WAVE_LOADING_ALGORITHM_VERSION = 4

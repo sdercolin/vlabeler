@@ -62,9 +62,9 @@ data class EntrySelector(
 
         override fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean {
             val subjectValue = when (subject) {
-                TextItemSubjectEntryName -> entry.name
-                TextItemSubjectSampleName -> entry.sampleNameWithoutExtension
-                TextItemSubjectTagName -> entry.notes.tag
+                TEXT_ITEM_SUBJECT_ENTRY_NAME -> entry.name
+                TEXT_ITEM_SUBJECT_SAMPLE_NAME -> entry.sampleNameWithoutExtension
+                TEXT_ITEM_SUBJECT_TAG_NAME -> entry.notes.tag
                 else -> throw IllegalArgumentException("Unknown subject name as text: $subject")
             }
             return when (matchType) {
@@ -145,8 +145,8 @@ data class EntrySelector(
 
         override fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean {
             val subjectValue = when (subject) {
-                BooleanItemSubjectDone -> entry.notes.done
-                BooleanItemSubjectStar -> entry.notes.star
+                BOOLEAN_ITEM_SUBJECT_DONE -> entry.notes.done
+                BOOLEAN_ITEM_SUBJECT_STAR -> entry.notes.star
                 else -> throw IllegalArgumentException("Unknown subject name as boolean: $subject")
             }
             return subjectValue == matcherBoolean
@@ -159,7 +159,7 @@ data class EntrySelector(
         val script: String, // a JavaScript expression of a function (entry, labeler) => boolean
     ) : FilterItem() {
 
-        override val subject: String = ScriptItemSubject
+        override val subject: String = SCRIPT_ITEM_SUBJECT
 
         override fun isValid(labelerConf: LabelerConf) = true
 
@@ -182,27 +182,27 @@ data class EntrySelector(
     companion object {
         val textItemSubjects
             get() = listOf(
-                TextItemSubjectEntryName to Strings.PluginEntrySelectorPreservedSubjectName,
-                TextItemSubjectSampleName to Strings.PluginEntrySelectorPreservedSubjectSample,
-                TextItemSubjectTagName to Strings.PluginEntrySelectorPreservedSubjectTag,
+                TEXT_ITEM_SUBJECT_ENTRY_NAME to Strings.PluginEntrySelectorPreservedSubjectName,
+                TEXT_ITEM_SUBJECT_SAMPLE_NAME to Strings.PluginEntrySelectorPreservedSubjectSample,
+                TEXT_ITEM_SUBJECT_TAG_NAME to Strings.PluginEntrySelectorPreservedSubjectTag,
             )
 
         val booleanItemSubjects
             get() = listOf(
-                BooleanItemSubjectDone to Strings.PluginEntrySelectorPreservedSubjectDone,
-                BooleanItemSubjectStar to Strings.PluginEntrySelectorPreservedSubjectStar,
+                BOOLEAN_ITEM_SUBJECT_DONE to Strings.PluginEntrySelectorPreservedSubjectDone,
+                BOOLEAN_ITEM_SUBJECT_STAR to Strings.PluginEntrySelectorPreservedSubjectStar,
             )
 
         val scriptItemSubjects
             get() = listOf(
-                ScriptItemSubject to Strings.PluginEntrySelectorPreservedSubjectScript,
+                SCRIPT_ITEM_SUBJECT to Strings.PluginEntrySelectorPreservedSubjectScript,
             )
 
-        private const val TextItemSubjectEntryName = "name"
-        private const val TextItemSubjectSampleName = "sample"
-        private const val TextItemSubjectTagName = "tag"
-        private const val BooleanItemSubjectDone = "done"
-        private const val BooleanItemSubjectStar = "star"
-        private const val ScriptItemSubject = "script"
+        private const val TEXT_ITEM_SUBJECT_ENTRY_NAME = "name"
+        private const val TEXT_ITEM_SUBJECT_SAMPLE_NAME = "sample"
+        private const val TEXT_ITEM_SUBJECT_TAG_NAME = "tag"
+        private const val BOOLEAN_ITEM_SUBJECT_DONE = "done"
+        private const val BOOLEAN_ITEM_SUBJECT_STAR = "star"
+        private const val SCRIPT_ITEM_SUBJECT = "script"
     }
 }

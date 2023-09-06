@@ -31,8 +31,8 @@ class IpcServer(val coroutineScope: CoroutineScope) {
     fun bind() {
         socket = zContext.createSocket(SocketType.REP)
         try {
-            socket.bind("tcp://*:$Port")
-            Log.debug("IpcServer bound to port $Port")
+            socket.bind("tcp://*:$PORT")
+            Log.debug("IpcServer bound to port $PORT")
         } catch (t: Throwable) {
             Log.error("Failed to bind socket:")
             Log.error(t)
@@ -48,7 +48,7 @@ class IpcServer(val coroutineScope: CoroutineScope) {
                     return@launch
                 }
                 try {
-                    delay(ThrottlePeriodMs)
+                    delay(THROTTLE_PERIOD_MS)
                     val message = socket.recvStr()
                     Log.info("Received request: $message")
                     val request = jsonForIpc.decodeFromString<IpcRequest>(message)
@@ -81,7 +81,7 @@ class IpcServer(val coroutineScope: CoroutineScope) {
     }
 
     companion object {
-        private const val ThrottlePeriodMs = 200L
-        private const val Port = 32342
+        private const val THROTTLE_PERIOD_MS = 200L
+        private const val PORT = 32342
     }
 }

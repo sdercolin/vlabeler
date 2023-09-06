@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FilenameFilter
 
-private val labelerFileFilter = FilenameFilter { _, name -> name.endsWith(LabelerConf.LabelerFileExtension) }
+private val labelerFileFilter = FilenameFilter { _, name -> name.endsWith(LabelerConf.LABELER_FILE_EXTENSION) }
 private fun File.getLabelers(): List<File> {
     val singleFileLabelers = getChildren(labelerFileFilter)
     val directoryLabelers = getChildren().filter { it.isDirectory }
@@ -73,7 +73,7 @@ private fun EmbeddedScripts.writeTo(location: File, fallbackPath: String): Embed
 fun LabelerConf.install(location: File): Result<File> = runCatching {
     if (singleFile) {
         val text = stringifyJson()
-        val fileName = "$name.${LabelerConf.LabelerFileExtension}"
+        val fileName = "$name.${LabelerConf.LABELER_FILE_EXTENSION}"
         val file = File(location, fileName)
         file.writeText(text)
         Log.debug("Installed labeler $name (version $version) to ${file.absolutePath}")
@@ -108,7 +108,7 @@ fun LabelerConf.install(location: File): Result<File> = runCatching {
             parameters = parameters,
             projectConstructor = projectConstructor,
         ).stringifyJson()
-        val file = File(folder, LabelerConf.LabelerFileExtension)
+        val file = File(folder, LabelerConf.LABELER_FILE_EXTENSION)
         file.writeText(text)
         Log.debug("Installed labeler $name (version $version) to ${folder.absolutePath}")
         file

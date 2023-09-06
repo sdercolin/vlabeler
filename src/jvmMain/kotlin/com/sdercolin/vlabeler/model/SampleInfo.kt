@@ -3,7 +3,7 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.audio.conversion.WaveConverter
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.io.WaveLoadingAlgorithmVersion
+import com.sdercolin.vlabeler.io.WAVE_LOADING_ALGORITHM_VERSION
 import com.sdercolin.vlabeler.io.getSampleValueFromFrame
 import com.sdercolin.vlabeler.io.normalize
 import com.sdercolin.vlabeler.repository.ConvertedAudioRepository
@@ -88,7 +88,7 @@ data class SampleInfo(
             hasSpectrogram != appHasSpectrogram ||
             hasPower != appHasPower ||
             !correctPowerChannels ||
-            algorithmVersion != WaveLoadingAlgorithmVersion ||
+            algorithmVersion != WAVE_LOADING_ALGORITHM_VERSION ||
             !getFile(project).exists() ||
             lastModified != sampleFile.lastModified() ||
             ((convertedFile != null) != shouldHaveConvertedFile) ||
@@ -162,7 +162,7 @@ data class SampleInfo(
                     hasPower = appConf.painter.power.enabled,
                     powerChannels = powerChannels,
                     lastModified = file.lastModified(),
-                    algorithmVersion = WaveLoadingAlgorithmVersion,
+                    algorithmVersion = WAVE_LOADING_ALGORITHM_VERSION,
                 )
             }
 

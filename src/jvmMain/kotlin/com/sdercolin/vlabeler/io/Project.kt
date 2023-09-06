@@ -298,7 +298,7 @@ suspend fun saveProjectFile(project: Project, allowAutoExport: Boolean = false):
         if (!workingDirectory.exists()) {
             workingDirectory.mkdir()
         }
-        val projectContent = project.copy(version = Project.ProjectVersion).stringifyJson()
+        val projectContent = project.copy(version = Project.PROJECT_VERSION).stringifyJson()
         project.projectFile.writeText(projectContent)
         Log.debug("Project saved to ${project.projectFile}")
 

@@ -21,8 +21,8 @@ import java.util.logging.StreamHandler
 object Log {
 
     val LoggingPath: String = AppDir.resolve(".logs").absolutePath
-    private const val InfoLogFileName = "info.log"
-    private const val ErrorLogFileName = "error.log"
+    private const val INFO_LOG_FILE_NAME = "info.log"
+    private const val ERROR_LOG_FILE_NAME = "error.log"
     private val infoLogger = Logger.getLogger("info")
     private val errorLogger = Logger.getLogger("error")
     private val formatter = object : Formatter() {
@@ -38,18 +38,18 @@ object Log {
     private lateinit var infoFileHandler: FileHandler
     private val errorStreamHandler = StreamHandler(System.err, formatter)
 
-    fun getInfoOutputStream() = FileOutputStream("$LoggingPath/$InfoLogFileName", true)
+    fun getInfoOutputStream() = FileOutputStream("$LoggingPath/$INFO_LOG_FILE_NAME", true)
 
     fun init() {
         val loggingDir = File(LoggingPath)
         if (loggingDir.exists().not()) loggingDir.mkdirs()
-        infoFileHandler = FileHandler("$LoggingPath/$InfoLogFileName", true)
+        infoFileHandler = FileHandler("$LoggingPath/$INFO_LOG_FILE_NAME", true)
         infoFileHandler.formatter = formatter
         infoLogger.useParentHandlers = false
         infoLogger.addHandler(infoFileHandler)
         infoLogger.level = Level.INFO
 
-        val errorHandler = FileHandler("$LoggingPath/$ErrorLogFileName", true)
+        val errorHandler = FileHandler("$LoggingPath/$ERROR_LOG_FILE_NAME", true)
         errorHandler.formatter = formatter
         errorLogger.useParentHandlers = false
         errorLogger.addHandler(errorHandler)

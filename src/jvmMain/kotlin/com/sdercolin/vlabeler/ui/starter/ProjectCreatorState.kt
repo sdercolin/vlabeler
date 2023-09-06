@@ -167,7 +167,7 @@ class ProjectCreatorState(
 
     fun isProjectFileExisting(): Boolean {
         return if (isWorkingDirectoryValid() && isProjectNameValid()) {
-            File(workingDirectory, "$projectName.${Project.ProjectFileExtension}").exists()
+            File(workingDirectory, "$projectName.${Project.PROJECT_FILE_EXTENSION}").exists()
         } else false
     }
 

@@ -118,7 +118,7 @@ data class Plugin(
         }
     }
 
-    override fun getSavedParamsFile(): File = RecordDir.resolve(name + PluginSavedParamsFileExtension)
+    override fun getSavedParamsFile(): File = RecordDir.resolve(name + PLUGIN_SAVED_PARAMS_FILE_EXTENSION)
 
     @Serializer(Parameters::class)
     object PluginParameterListSerializer : KSerializer<Parameters> {
@@ -134,6 +134,6 @@ data class Plugin(
     }
 
     companion object {
-        private const val PluginSavedParamsFileExtension = ".plugin.param.json"
+        private const val PLUGIN_SAVED_PARAMS_FILE_EXTENSION = ".plugin.param.json"
     }
 }
