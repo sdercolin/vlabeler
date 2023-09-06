@@ -584,7 +584,6 @@ fun FrameWindowScope.Menu(
                                     labeler.install(AppDir.resolve("debug"))
                                         .onSuccess { Desktop.getDesktop().open(it.parentFile) }
                                         .onFailure { Log.error(it) }
-
                                 }
                             },
                         )
