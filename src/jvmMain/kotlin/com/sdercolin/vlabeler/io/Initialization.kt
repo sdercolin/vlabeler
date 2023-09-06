@@ -100,6 +100,7 @@ fun File.asLabelerConf(): Result<LabelerConf> {
     val result = runCatching {
         text.parseJson<LabelerConf>()
             .copy(name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}"), directory = parentFile)
+            .preloadScripts()
             .validate()
             .migrate()
     }

@@ -509,6 +509,27 @@ data class LabelerConf(
 
     override fun getSavedParamsFile(): File = RecordDir.resolve(name + LabelerSavedParamsFileExtension)
 
+    /**
+     * Preload the scripts in [EmbeddedScripts] to avoid reading script files every time.
+     */
+    fun preloadScripts(): LabelerConf {
+        fun EmbeddedScripts.preload() = copy(lines = getScripts(directory).lines())
+        return copy(
+            parser = parser.copy(scripts = parser.scripts.preload()),
+            writer = writer.copy(scripts = writer.scripts?.preload()),
+            projectConstructor = projectConstructor?.copy(scripts = projectConstructor.scripts.preload()),
+            properties = properties.map {
+                it.copy(
+                    valueGetter = it.valueGetter.preload(),
+                    valueSetter = it.valueSetter?.preload(),
+                )
+            },
+            parameters = parameters.map {
+                it.copy(injector = it.injector?.preload(),)
+            },
+        )
+    }
+
     fun validate() = this.also {
         if (continuous) {
             require(useImplicitStart.not() && useImplicitEnd.not()) {
