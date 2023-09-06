@@ -48,7 +48,7 @@ fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
                                 }
                             }
                             is Parameter.FileParam -> {
-                                if (param.optional.not()) {
+                                if (param.optional.not() || param.defaultValue.file?.isNotEmpty() == true) {
                                     val defaultValue = param.defaultValue.let {
                                         it.copy(
                                             file = it.file?.resolveRelativePath(file.parentFile),
@@ -60,7 +60,7 @@ fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
                                 }
                             }
                             is Parameter.RawFileParam -> {
-                                if (param.optional.not()) {
+                                if (param.optional.not() || param.defaultValue.isNotEmpty()) {
                                     val defaultValue = param.defaultValue.resolveRelativePath(file.parentFile)
                                     param.copy(defaultValue = defaultValue)
                                 } else {
