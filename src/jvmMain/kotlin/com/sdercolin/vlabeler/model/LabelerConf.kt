@@ -260,6 +260,27 @@ data class LabelerConf(
     }
 
     /**
+     * Definition of extra fields used in entry, module and project scopes. The values are always stored as strings.
+     *
+     * @property name Unique name of the field.
+     * @property default Default value of the field.
+     * @property displayedName Displayed name of the field in the UI (localized).
+     * @property isVisible Whether the field is visible in the UI.
+     * @property isEditable Whether the field is editable in the UI.
+     * @property isOptional Whether the field can be null.
+     */
+    @Serializable
+    @Immutable
+    data class ExtraField(
+        val name: String,
+        val default: String,
+        val displayedName: LocalizedJsonString,
+        val isVisible: Boolean = false,
+        val isEditable: Boolean = false,
+        val isOptional: Boolean = false,
+    )
+
+    /**
      * Definition for parsing the raw label file to local [Entry].
      *
      * @property scope [Scope] of the parser.
@@ -487,6 +508,8 @@ data class LabelerConf(
     val useImplicitEnd: Boolean
         get() = fields.any { it.replaceEnd }
 
+    override fun getSavedParamsFile(): File = RecordDir.resolve(name + LabelerSavedParamsFileExtension)
+
     fun validate() = this.also {
         if (continuous) {
             require(useImplicitStart.not() && useImplicitEnd.not()) {
@@ -501,29 +524,6 @@ data class LabelerConf(
             }
         }
     }
-
-    override fun getSavedParamsFile(): File = RecordDir.resolve(name + LabelerSavedParamsFileExtension)
-
-    /**
-     * Definition of extra fields used in entry, module and project scopes. The values are always stored as strings.
-     *
-     * @property name Unique name of the field.
-     * @property default Default value of the field.
-     * @property displayedName Displayed name of the field in the UI (localized).
-     * @property isVisible Whether the field is visible in the UI.
-     * @property isEditable Whether the field is editable in the UI.
-     * @property isOptional Whether the field can be null.
-     */
-    @Serializable
-    @Immutable
-    data class ExtraField(
-        val name: String,
-        val default: String,
-        val displayedName: LocalizedJsonString,
-        val isVisible: Boolean = false,
-        val isEditable: Boolean = false,
-        val isOptional: Boolean = false,
-    )
 
     fun migrate(): LabelerConf {
         if (serialVersion == 0) {
