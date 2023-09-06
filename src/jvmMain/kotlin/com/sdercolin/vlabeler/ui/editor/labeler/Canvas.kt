@@ -131,21 +131,25 @@ private fun CanvasContentWithSample(
             }
             .onEach { (oldPair, newPair) ->
                 val (oldValue, oldMax) = oldPair ?: return@onEach
-                // an emission here does not trigger recomposition, so we need to re-calculate the canvas params
-                // to get the correct scroll target
-                val innerCanvasParams = editorState.getCanvasParams(sampleInfo, density)
-                editorState.scrollOnResolutionChangeViewModel.scroll(
-                    horizontalScrollState,
-                    innerCanvasParams,
-                    sampleInfo,
-                )
-                val (newValue, newMax) = newPair
-                if (oldMax != newMax) {
-                    innerCanvasParams.getScrollTarget(newValue).also {
-                        lazyListState.scrollToItem(it.itemIndex, it.itemOffset)
+                try {
+                    // an emission here does not trigger recomposition, so we need to re-calculate the canvas params
+                    // to get the correct scroll target
+                    val innerCanvasParams = editorState.getCanvasParams(sampleInfo, density)
+                    editorState.scrollOnResolutionChangeViewModel.scroll(
+                        horizontalScrollState,
+                        innerCanvasParams,
+                        sampleInfo,
+                    )
+                    val (newValue, newMax) = newPair
+                    if (oldMax != newMax) {
+                        innerCanvasParams.getScrollTarget(newValue).also {
+                            lazyListState.scrollToItem(it.itemIndex, it.itemOffset)
+                        }
+                    } else if (newValue != oldValue) {
+                        lazyListState.scrollBy((newValue - oldValue).toFloat())
                     }
-                } else if (newValue != oldValue) {
-                    lazyListState.scrollBy((newValue - oldValue).toFloat())
+                } catch (e: Exception) {
+                    Log.error(e)
                 }
             }
             .launchIn(appState.mainScope)

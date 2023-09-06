@@ -32,6 +32,11 @@ data class CanvasParams(
         while (offset >= chunkWidths[index]) {
             offset -= chunkWidths[index]
             index++
+            if (index >= chunkCount) {
+                index = chunkCount - 1
+                offset = chunkWidths[index]
+                break
+            }
         }
         return LazyRowScrollTarget(index, offset)
     }
