@@ -141,7 +141,10 @@ fun NameLabels(
                                 ?: AppConf.ContinuousLabelNames.DefaultColor.toRgbColor(),
                             cutPosition = editorState.onScreenScissorsState.pixelPosition,
                             appConf = appConf,
-                            commit = editorState::commitEntryCut,
+                            commit = {
+                                editorState.commitEntryCut()
+                                state.scissorsState.updateNonNull { copy(locked = false) }
+                            },
                             cancel = {
                                 editorState.onScreenScissorsState.end()
                                 state.scissorsState.updateNonNull { copy(locked = false) }
