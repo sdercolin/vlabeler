@@ -4,6 +4,7 @@ import androidx.compose.material.SnackbarHostState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.BasePlugin
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.stringStatic
@@ -28,6 +29,16 @@ class LabelerDialogState(
 
     override val basePlugin: BasePlugin
         get() = labeler
+
+    override val acceptedParamTypes: List<String> = listOf(
+        Parameter.IntParam.Type,
+        Parameter.FloatParam.Type,
+        Parameter.BooleanParam.Type,
+        Parameter.StringParam.Type,
+        Parameter.EnumParam.Type,
+        Parameter.FileParam.Type,
+        Parameter.RawFileParam.Type,
+    )
 
     override fun isChangeable(parameterName: String): Boolean {
         if (isExistingProject.not()) return true

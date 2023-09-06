@@ -4,6 +4,7 @@ import androidx.compose.material.SnackbarHostState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.BasePlugin
+import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.PluginQuickLaunch
 import com.sdercolin.vlabeler.model.Project
@@ -32,6 +33,17 @@ class PluginDialogState(
 
     override val basePlugin: BasePlugin
         get() = plugin
+
+    override val acceptedParamTypes: List<String> = listOfNotNull(
+        Parameter.IntParam.Type,
+        Parameter.FloatParam.Type,
+        Parameter.BooleanParam.Type,
+        Parameter.StringParam.Type,
+        Parameter.EnumParam.Type,
+        if (plugin.type == Plugin.Type.Macro) Parameter.EntrySelectorParam.Type else null,
+        Parameter.FileParam.Type,
+        Parameter.RawFileParam.Type,
+    )
 
     private fun getPresetItems(
         record: AppRecord,

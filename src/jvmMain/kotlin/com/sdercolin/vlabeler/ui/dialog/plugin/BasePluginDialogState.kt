@@ -37,6 +37,10 @@ abstract class BasePluginDialogState(paramMap: ParamMap) {
     val hasParams get() = paramDefs.isNotEmpty()
     val needJsClient get() = paramDefs.any { it is Parameter.EntrySelectorParam }
 
+    abstract val acceptedParamTypes: List<String>
+
+    fun acceptParamType(type: String) = acceptedParamTypes.contains(type)
+
     fun getCurrentParamMap() = params.mapIndexed { index, value ->
         paramDefs[index].name to value
     }.toMap().toParamMap()
