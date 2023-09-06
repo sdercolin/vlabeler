@@ -230,7 +230,7 @@ sealed class Parameter<T : Any> {
                 val file = stringValue.toFileOrNull(ensureExists = true) ?: return@let false
                 val isFolder = file.isDirectory
                 if (isFolder != this.isFolder) return@let false
-                if (acceptExtensions != null && file.extension !in acceptExtensions) return@let false
+                if (!this.isFolder && acceptExtensions != null && file.extension !in acceptExtensions) return@let false
                 true
             } == true
         }
