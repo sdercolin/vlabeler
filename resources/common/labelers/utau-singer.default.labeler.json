@@ -1,6 +1,6 @@
 {
   "name": "utau-singer.default",
-  "version": 19,
+  "version": 20,
   "serialVersion": 1,
   "extension": "ini",
   "displayedName": {
@@ -295,8 +295,7 @@
           "zh": "允许重叠为负值",
           "ja": "オーバーラップのマイナス値を許容する"
         },
-        "defaultValue": true,
-        "required": true
+        "defaultValue": true
       },
       "injector": [
         "labeler.fields[2].constraints[0].min = value ? null : 3"

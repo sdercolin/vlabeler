@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.util
 
+import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.Parameter
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -13,7 +14,7 @@ import kotlinx.serialization.modules.subclass
  */
 val json = Json {
     isLenient = true
-    ignoreUnknownKeys = true
+    ignoreUnknownKeys = !isDebug
     prettyPrint = true
     encodeDefaults = true
     serializersModule = getSerializersModule()
