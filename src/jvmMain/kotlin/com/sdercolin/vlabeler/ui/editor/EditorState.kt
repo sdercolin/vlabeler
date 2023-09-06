@@ -115,6 +115,9 @@ class EditorState(
 
     val onScreenScissorsState = OnScreenScissorsState(this)
 
+    val canUseOnScreenScissors: Boolean
+        get() = appConf.editor.useOnScreenScissors && project.multipleEditMode
+
     class OnScreenScissorsState(val editorState: EditorState) {
         var isOn: Boolean by mutableStateOf(false)
         var entryIndex: Int by mutableStateOf(-1)
@@ -122,11 +125,11 @@ class EditorState(
         var pixelPosition: Float by mutableStateOf(0f)
         var text: String by mutableStateOf("")
 
-        fun start(entryIndex: Int, timePosition: Float, pixelPosition: Float) {
+        fun start(entryIndex: Int, timePosition: Float, pixelPosition: Float, initialText: String) {
             this.timePosition = timePosition
             this.pixelPosition = pixelPosition
             this.entryIndex = entryIndex
-            text = ""
+            text = initialText
             isOn = true
         }
 
@@ -174,7 +177,7 @@ class EditorState(
 
     fun cutEntry(index: Int, position: Float, pixelPosition: Float) {
         val sample = sampleInfoResult?.getOrNull() ?: return
-        if (appConf.editor.useOnScreenScissors) {
+        if (canUseOnScreenScissors) {
             appState.playSectionByCutting(index, position, sample)
             if (appConf.editor.scissorsActions.askForName == AppConf.ScissorsActions.Target.None) {
                 val name = getDefaultNewEntryName(
@@ -185,7 +188,8 @@ class EditorState(
                 val targetEntryIndex = appConf.editor.scissorsActions.getTargetEntryIndex(index)
                 appState.cutEntryOnScreen(index, position, name, AppConf.ScissorsActions.Target.None, targetEntryIndex)
             } else {
-                onScreenScissorsState.start(index, position, pixelPosition)
+                val currentEntry = project.currentModule.entries[index]
+                onScreenScissorsState.start(index, position, pixelPosition, currentEntry.name)
             }
         } else {
             appState.requestCutEntry(index, position, sample)
@@ -339,18 +343,22 @@ class EditorState(
                 shouldSwitchSample = true,
                 positive = true,
             )
+
             MouseScrollAction.GoToPreviousSample -> switchEntryByPointerEvent(
                 shouldSwitchSample = true,
                 positive = false,
             )
+
             MouseScrollAction.GoToNextEntry -> switchEntryByPointerEvent(
                 shouldSwitchSample = false,
                 positive = true,
             )
+
             MouseScrollAction.GoToPreviousEntry -> switchEntryByPointerEvent(
                 shouldSwitchSample = false,
                 positive = false,
             )
+
             MouseScrollAction.ZoomInCanvas -> changeResolutionByPointerEvent(true)
             MouseScrollAction.ZoomOutCanvas -> changeResolutionByPointerEvent(false)
             else -> Unit

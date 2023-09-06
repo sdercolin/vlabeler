@@ -417,7 +417,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorScissorsUseOnScreenScissors -> "直接在编辑器中输入条目名"
     PreferencesEditorScissorsUseOnScreenScissorsDescription ->
         "如果启用该项，在使用剪刀工具点击后，将会在编辑器中显示一个输入框，用以输入新条目的名字。" +
-            "您可以通过按下回车键或将光标移开来确认切割操作。您也可以通过按下 Esc 键来取消该操作。"
+            "您可以通过按下回车键或将光标移开来确认切割操作。您也可以通过按下 Esc 键来取消该操作。该项只在多重编辑模式下有效。"
     PreferencesEditorScissorsColor -> "颜色"
     PreferencesEditorScissorsActionTargetNone -> "无"
     PreferencesEditorScissorsActionTargetFormer -> "前一个条目"

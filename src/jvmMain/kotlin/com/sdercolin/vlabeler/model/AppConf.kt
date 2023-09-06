@@ -289,7 +289,7 @@ data class AppConf(
      * @param scissorsColor Color hex string of the scissors' cursor position.
      * @param scissorsActions Actions taken with a successful scissors click.
      * @param useOnScreenScissors When true, the scissors process is handled on screen. Otherwise, it is handled in a
-     *     dialog.
+     *     dialog. Only effective when [Project.multipleEditMode] is true.
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted.
      * @param showDone When true, the done button/icon is shown in the editor and entry lists.
      * @param showStar When true, the star button/icon is shown in the editor and entry lists.

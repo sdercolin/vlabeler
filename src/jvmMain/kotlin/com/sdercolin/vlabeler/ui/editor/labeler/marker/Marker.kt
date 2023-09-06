@@ -109,7 +109,7 @@ fun MarkerPointEventContainer(
                         editorState::cutEntry,
                         keyboardState,
                         screenRange,
-                        appState.appConf,
+                        editorState.canUseOnScreenScissors,
                     )
                     return@onPointerEvent
                 }
@@ -137,7 +137,7 @@ fun MarkerPointEventContainer(
                     editorState::cutEntry,
                     keyboardState,
                     screenRange,
-                    appState.appConf,
+                    editorState.canUseOnScreenScissors,
                 )
             },
         content = content,
@@ -170,7 +170,7 @@ fun MarkerCanvas(
             if (appState.isEditorActive.not()) return@collectLatest
             if (editorState.handleSetPropertyKeyAction(it)) return@collectLatest
             if (state.mayHandleScissorsKeyAction(
-                    onScreenMode = appState.appConf.editor.useOnScreenScissors,
+                    onScreenMode = editorState.canUseOnScreenScissors,
                     action = it,
                     cutEntry = editorState::cutEntry,
                 )
@@ -647,13 +647,13 @@ private fun MarkerState.handleMouseRelease(
     cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
     keyboardState: KeyboardState,
     screenRange: FloatRange?,
-    appConf: AppConf,
+    canUseOnScreenScissors: Boolean,
 ) {
     screenRange ?: return
     val caughtAction = keyboardState.getEnabledMouseClickAction(event)
     val handled = when (tool) {
         Tool.Cursor -> handleCursorRelease(submitEntry)
-        Tool.Scissors -> handleScissorsRelease(appConf.editor.useOnScreenScissors, cutEntry, event)
+        Tool.Scissors -> handleScissorsRelease(canUseOnScreenScissors, cutEntry, event)
         Tool.Pan -> handlePanRelease()
         Tool.Playback -> {
             val playbackAction = keyboardState.getEnabledMouseClickAction(event, Tool.Playback)
