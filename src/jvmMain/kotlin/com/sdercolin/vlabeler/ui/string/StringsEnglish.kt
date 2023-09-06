@@ -465,7 +465,8 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorScissorsUseOnScreenScissorsDescription ->
         "When enabled, an input box for the name of the new entry is shown in the editor after clicking " +
             "with the scissors. You can confirm the cutting action by pressing Enter or moving the cursor away " +
-            "from the clicked position. You can also cancel the action by pressing Esc."
+            "from the clicked position. You can also cancel the action by pressing Esc. This is only available " +
+            "in multiple edit mode."
     PreferencesEditorScissorsColor -> "Color"
     PreferencesEditorScissorsActionTargetNone -> "None"
     PreferencesEditorScissorsActionTargetFormer -> "The former entry"

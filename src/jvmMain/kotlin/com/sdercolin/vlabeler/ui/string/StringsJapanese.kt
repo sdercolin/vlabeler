@@ -439,7 +439,7 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorScissorsUseOnScreenScissorsDescription ->
         "有効にすると、はさみでクリックした時に、エディタ上に新しいエントリ名の入力欄が表示されます。" +
             "Enterキーを押すか、クリック位置からカーソルを離すことで、カットアクションを確定できます。" +
-            "Escキーを押すことで、アクションをキャンセルできます。"
+            "Escキーを押すことで、アクションをキャンセルできます。この設定は、複数エントリ編集モードでのみ有効です。"
     PreferencesEditorScissorsColor -> "色"
     PreferencesEditorScissorsActionTargetNone -> "なし"
     PreferencesEditorScissorsActionTargetFormer -> "前のエントリ"
