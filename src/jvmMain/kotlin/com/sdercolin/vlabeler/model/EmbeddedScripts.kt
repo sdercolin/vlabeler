@@ -10,21 +10,25 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import java.io.File
 
+/**
+ * A data class that represents some embedded scripts in a [LabelerConf]. Either [path] or [lines] should be non-null.
+ */
 @Serializable(with = EmbeddedScriptsSerializer::class)
 @Immutable
 data class EmbeddedScripts(
     val path: String?,
-    val lines: List<String>,
+    val lines: List<String>?,
 ) {
 
     fun getScripts(directory: File?): String {
-        if (lines.isNotEmpty()) return lines.joinToString("\n")
+        if (lines?.isNotEmpty() == true) return lines.joinToString("\n")
         if (path != null && directory != null) {
             val file = File(directory, path)
             return file.readText()
@@ -38,7 +42,11 @@ data class EmbeddedScripts(
 object EmbeddedScriptsSerializer : KSerializer<EmbeddedScripts> {
 
     override fun serialize(encoder: Encoder, value: EmbeddedScripts) {
-        val array = JsonArray(value.lines.map { JsonPrimitive(it) })
+        require(encoder is JsonEncoder)
+        require(value.lines.isNullOrEmpty().not()) {
+            "EmbeddedScripts should have lines when being serialized"
+        }
+        val array = JsonArray(value.lines.orEmpty().map { JsonPrimitive(it) })
         encoder.encodeSerializableValue(JsonArray.serializer(), array)
     }
 
