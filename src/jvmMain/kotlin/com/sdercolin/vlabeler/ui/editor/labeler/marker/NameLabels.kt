@@ -21,6 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -35,6 +36,8 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.isReleased
@@ -216,6 +219,7 @@ private fun EditableNameLabel(
     Layout(
         modifier = modifier,
         content = {
+            val editValue = remember { mutableStateOf(TextFieldValue(name, selection = TextRange(0, name.length))) }
             val focusRequester = remember { FocusRequester() }
             LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
@@ -238,8 +242,11 @@ private fun EditableNameLabel(
                             }
                         }
                     },
-                value = name,
-                onValueChange = onEditName,
+                value = editValue.value,
+                onValueChange = {
+                    editValue.value = it
+                    onEditName(it.text)
+                },
                 textStyle = MaterialTheme.typography.caption.copy(fontSize = fontSizeSp, color = color),
                 singleLine = true,
                 cursorBrush = SolidColor(color),
