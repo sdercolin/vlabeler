@@ -46,8 +46,15 @@ val DefaultDownloadDir: File
         ?: HomeDir
 
 private val labelerFileFilter = FilenameFilter { _, name -> name.endsWith(".$LabelerFileExtension") }
-fun getDefaultLabelers() = DefaultLabelerDir.getChildren(labelerFileFilter)
-fun getCustomLabelers() = CustomLabelerDir.getChildren(labelerFileFilter)
+private fun File.getLabelers(): List<File> {
+    val singleFileLabelers = getChildren(labelerFileFilter)
+    val directoryLabelers = getChildren().filter { it.isDirectory }
+        .flatMap { it.getChildren(labelerFileFilter) }
+    return singleFileLabelers + directoryLabelers
+}
+
+fun getDefaultLabelers() = DefaultLabelerDir.getLabelers()
+fun getCustomLabelers() = CustomLabelerDir.getLabelers()
 
 // Project files
 fun Project.getCacheDir() = cacheDirectory

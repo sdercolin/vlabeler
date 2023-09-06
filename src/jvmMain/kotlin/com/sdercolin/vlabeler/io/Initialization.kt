@@ -26,6 +26,7 @@ import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.or
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.runIf
+import com.sdercolin.vlabeler.util.runIfHave
 import com.sdercolin.vlabeler.util.savedMutableStateOf
 import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.coroutines.CoroutineScope
@@ -99,7 +100,8 @@ fun File.asLabelerConf(): Result<LabelerConf> {
     val text = readText()
     val result = runCatching {
         text.parseJson<LabelerConf>()
-            .copy(name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}"), directory = parentFile)
+            .copy(name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}"))
+            .run { if (singleFile) copy(directory = parentFile) else this }
             .preloadScripts()
             .validate()
             .migrate()

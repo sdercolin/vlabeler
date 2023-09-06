@@ -39,6 +39,7 @@ import java.io.File
  * @property name Unique name of the labeler.
  * @property version Version code in integer. Configurations with same [name] and [version] should always have same
  *     contents if distributed in public.
+ * @property singleFile Whether the labeler is defined by a single JSON file.
  * @property extension File extension of the raw label file.
  * @property serialVersion Serial version of the labeler used for migration. See the current version in [SerialVersion].
  * @property defaultInputFilePath Default name of the input file relative to the sample directory.
@@ -69,6 +70,7 @@ import java.io.File
  * @property writer Defines how to write content in the original label format.
  * @property parameters Configurable parameters of the labeler. See [ParameterHolder].
  * @property projectConstructor Scripts to construct a project with subprojects. See [ProjectConstructor].
+ * @property directory Directory of the labeler. For single file labeler, it is null.
  */
 @Serializable
 @Immutable
@@ -76,6 +78,7 @@ data class LabelerConf(
     override val name: String,
     override val version: Int = 1,
     val serialVersion: Int = 0,
+    val singleFile: Boolean = true,
     val extension: String,
     val defaultInputFilePath: String? = null,
     override val displayedName: LocalizedJsonString = name.toLocalized(),
