@@ -305,13 +305,19 @@ The normal cursor tool to drag parameter controllers.
 
 ### Scissors
 
-Cut the current entry into two parts by your click position.
+Cut the entry into two parts by your click position.
+This is typically used in the [Multi-entry editing mode](#multi-entry-editing-mode) to create new labels.
+
 By default, when you click on a valid position with the scissors:
 
-1. Audio of the former (left) part after cutting is played so that you can confirm the phoneme
-2. A dialog is shown, asking you to rename the former entry
-3. Cutting and renaming are conducted
-4. The editor goes to the former entry
+1. Audio of the first part after cutting is played so that you can confirm the phoneme
+2. An input box is shown in the editor to rename the first part
+3. You can press `Enter` to confirm the input, or press `Esc` to cancel
+4. If you move the cursor away from the clicked position, the input is confirmed as well
+5. Cutting is conducted. The first one uses your input as its name, and the second one uses the original name
+6. The editor goes to the first entry after cutting
+
+In single-entry editing mode, the name input is requested in a dialog instead of in the editor.
 
 These actions can be customized in `Prefereneces` -> `Editor` -> `Scissors`.
 
