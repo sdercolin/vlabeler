@@ -19,10 +19,10 @@ In this article, we will introduce:
 
 - [The file structure of a plugin](#plugin-file-structure)
 - [How to define a plugin](#plugin-definition)
-  - [Defining parameters](#defining-parameters)
+    - [Defining parameters](#defining-parameters)
 - [How to write scripts for plugins](#scripting-for-plugins)
-  - [Template generation scripts](#template-generation-scripts)
-  - [Batch edit (macro) scripts](#batch-edit-macro-scripts)
+    - [Template generation scripts](#template-generation-scripts)
+    - [Batch edit (macro) scripts](#batch-edit-macro-scripts)
 
 ## Plugin File Structure
 
@@ -68,70 +68,9 @@ A plugin for `vLabeler` is a folder containing:
 }
 ```
 
-Every object in `list` defines a parameter that is shown in the plugin config dialog and passed to your scripts.
-The object has the following properties:
+Every object in `list` defines a parameter that is shown in the plugin configuration dialog and passed to your scripts.
 
-| Property             | Type                             | Default value | Supported parameter type | Description                                                                                       |
-|----------------------|----------------------------------|---------------|--------------------------|---------------------------------------------------------------------------------------------------|
-| type                 | String                           | (Required)    | all                      | Can be any one of `integer`, `float`, `boolean`, `string`, `enum` and ,`entrySelector`.           |
-| name                 | String                           | (Required)    | all                      | Parameter name for reference in your scripts.                                                     |
-| label                | String (Localized)               | (Required)    | all                      | Displayed in the config dialog.                                                                   |
-| description          | String (Localized)               | ""            | all                      | Displayed in the config dialog.                                                                   |
-| enableIf             | String &#124; null               | null          | all                      | If set, this parameter is enabled only when the parameter with the set name is truthy.            |
-| defaultValue         | (Actual type of the value)       | (Required)    | all                      | Value type is according to the parameter's `type`.                                                |
-| min                  | (Actual type of the value)       | null          | integer, float           |                                                                                                   |
-| max                  | (Actual type of the value)       | null          | integer, float           |                                                                                                   |
-| multiLine            | Boolean                          | false         | string                   | Set to `true` if you want to allow multi-line string values.                                      |
-| optional             | Boolean                          | false         | string, file, rawFile    | Set to `true` if you want to allow empty string values or `null` file                             |
-| options              | String[]                         | (Required)    | enum                     | Items of the enumerable.                                                                          |
-| optionDisplayedNames | String[] (Localized) &#124; null | null          | enum                     | Displayed names of the corresponding items in `options`. If set `null`, `options` itself is used. |
-| acceptExtensions     | String[] &#124; null             | null          | file, rawFile            | Extensions of the files that can be selected. If set `null`, any file can be selected.            |
-| isFolder             | Boolean                          | false         | rawFile                  | Set to `true` if you want to choose a folder.                                                     |
-
-#### Parameter types
-
-- `integer`: Integer value. Should be between `min` and `max` if defined.
-- `float`: Float value. Should be between `min` and `max` if defined.
-- `boolean`: Should be either `true` or `false`.
-- `string`: String value. Should not contain line breaks if `multiLine` is `false`. Should not be empty if `optional`
-  is `false`. You can set `defaultValue` to `file::path/to/file` to load the file's content as the default value.
-- `enum`: Enumerable value described as string. Should be one of the items in `options`.
-- `entrySelector`: **Can only be used in a `macro` type plugin.** Instance
-  of [EntrySelector](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/EntrySelector.kt) type. For detailed usage, see
-  section [Use an entry selector](#use-an-entry-selector). An example of valid values follows:
-
-```
-{
-    "filters": [
-        {
-            "type": "text", // an example of a `text` filter
-            "subject": "name", // `name` for entry name or `sample` for sample name
-            "matchType": "Contains", // `Contains` | `Equals` | `StartsWith` | `EndsWith` | `Regex`
-            "matcherText": "foo"
-        },
-        {
-            "type": "number", // an example of a `number` filter
-            "subject": "overlap", // `name` of any property defined in the labeler
-            "matchType": "GreaterThan", // `Equals` | `GreaterThan`| `LessThan` | `GreaterThanOrEquals` | `LessThanOrEquals`
-            "comparerValue": 0.5, // only used when `comparerName` is null
-            "comparerName": "offset" // nullable, `name` of any property defined in the labeler
-        }
-    ]
-}
-```
-
-- `file`: Instance of [FileWithEncoding](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/FileWithEncoding.kt). In the
-  scripts, instead of the object itself, the file's content will be passed as a string value. An example of valid values
-  follows:
-
-```
-{
-    "file": "path/to/file", // can be null or omitted
-    "encoding": "UTF-8" // can be null or omitted
-}
-```
-
-- `rawFile`: File path as string. In the scripts, it's passed as a string value without file reading.
+See [Parameter](parameter.md) for the definition of a parameter.
 
 ## Scripting for Plugins
 
@@ -285,6 +224,8 @@ for (let index of selectedIndexes) {
 }
 ```
 
+This type of parameter is only available when the `scope` is `Module`. Otherwise, no value is passed.
+
 #### Output
 
 Change the content of the given `entries` or `modules` list to change the project's content.
@@ -327,28 +268,7 @@ Check the following built-in `macro` plugins as examples:
 
 ### Localization
 
-Check [Localization](scripting.md#localization) for the localization support in plugin definition and scripts.
-
-Specially, the `enum` type parameter also supports localized option names by setting the optional property
-`optionDisplayedNames`:
-
-```
-{
-    ...,
-    "defaultValue": "option1",
-    "options": [
-        "option1",
-        "option2",
-        "option3"
-    ]
-    "optionDisplayedNames": [
-        { en: "Option 1", zh: "选项1" },
-        { en: "Option 2", zh: "选项2" },
-        { en: "Option 3", zh: "选项3" }
-    ],
-    ...
-}
-```
+Check [Localized string](localized-string.md) for the localization support in plugin definition and scripts.
 
 ### Error handling
 

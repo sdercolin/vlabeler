@@ -2,6 +2,7 @@
 
 package com.sdercolin.vlabeler.util
 
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.BasePlugin
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.FileWithEncoding
@@ -71,12 +72,15 @@ class ParamMap(private val map: Map<String, Any>) : Map<String, Any> {
             is String -> JsonPrimitive(value)
             is Boolean -> JsonPrimitive(value)
             is EntrySelector -> {
-                requireNotNull(project) { "Project is required to resolve EntrySelector" }
-                requireNotNull(js) { "JavaScript is required to resolve EntrySelector" }
-                buildJsonArray {
-                    for (index in value.select(project.currentModule.entries, project.labelerConf, js)) {
-                        add(JsonPrimitive(index))
+                if (project != null && js != null) {
+                    buildJsonArray {
+                        for (index in value.select(project.currentModule.entries, project.labelerConf, js)) {
+                            add(JsonPrimitive(index))
+                        }
                     }
+                } else {
+                    Log.error("EntrySelector is not supported in this context")
+                    JsonNull
                 }
             }
             is FileWithEncoding -> {

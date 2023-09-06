@@ -472,70 +472,72 @@ private fun Params(state: BasePluginDialogState, js: JavaScript?, coroutineScope
                     val value = state.params[i]
                     val isError = state.isValid(i).not()
                     val onValueChange = { newValue: Any -> state.update(i, newValue) }
-                    when (def) {
-                        is Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange, enabled)
-                        is Parameter.EnumParam -> ParamDropDown(
-                            options = def.options,
-                            optionDisplayedNames = def.optionDisplayedNames ?: def.options.map { it.toLocalized() },
-                            value = value as String,
-                            onValueChange = onValueChange,
-                            enabled = enabled,
-                        )
-                        is Parameter.FloatParam -> ParamNumberTextField(
-                            value = value as Float,
-                            onValueChange = onValueChange,
-                            isError = isError,
-                            parse = { it.toFloatOrNull() },
-                            onParseErrorChange = { state.setParseError(i, it) },
-                            enabled = enabled,
-                        )
-                        is Parameter.IntParam -> ParamNumberTextField(
-                            value = value as Int,
-                            onValueChange = onValueChange,
-                            isError = isError,
-                            parse = { it.toIntOrNull() },
-                            onParseErrorChange = { state.setParseError(i, it) },
-                            enabled = enabled,
-                        )
-                        is Parameter.StringParam -> ParamTextField(
-                            value = value as String,
-                            onValueChange = onValueChange,
-                            isError = isError,
-                            isLong = true,
-                            singleLine = def.multiLine.not(),
-                            enabled = enabled,
-                        )
-                        is Parameter.EntrySelectorParam -> ParamEntrySelector(
-                            labelerConf = state.project?.labelerConf,
-                            value = value as EntrySelector,
-                            onValueChange = onValueChange,
-                            isError = isError,
-                            onParseErrorChange = { state.setParseError(i, it) },
-                            entries = state.project?.currentModule?.entries,
-                            js = js,
-                            enabled = enabled,
-                            onError = {
-                                coroutineScope.launch {
-                                    state.showSnackbar(
-                                        it.message ?: it.toString(),
-                                    )
-                                }
-                            },
-                        )
-                        is Parameter.FileParam -> ParamFileTextField(
-                            value = value as FileWithEncoding,
-                            onValueChange = onValueChange,
-                            param = def,
-                            isError = isError,
-                            enabled = enabled,
-                        )
-                        is Parameter.RawFileParam -> ParamRawFileTextField(
-                            value = value as String,
-                            onValueChange = onValueChange,
-                            param = def,
-                            isError = isError,
-                            enabled = enabled,
-                        )
+                    if (state.acceptParamType(def.type)) {
+                        when (def) {
+                            is Parameter.BooleanParam -> ParamSwitch(value as Boolean, onValueChange, enabled)
+                            is Parameter.EnumParam -> ParamDropDown(
+                                options = def.options,
+                                optionDisplayedNames = def.optionDisplayedNames ?: def.options.map { it.toLocalized() },
+                                value = value as String,
+                                onValueChange = onValueChange,
+                                enabled = enabled,
+                            )
+                            is Parameter.FloatParam -> ParamNumberTextField(
+                                value = value as Float,
+                                onValueChange = onValueChange,
+                                isError = isError,
+                                parse = { it.toFloatOrNull() },
+                                onParseErrorChange = { state.setParseError(i, it) },
+                                enabled = enabled,
+                            )
+                            is Parameter.IntParam -> ParamNumberTextField(
+                                value = value as Int,
+                                onValueChange = onValueChange,
+                                isError = isError,
+                                parse = { it.toIntOrNull() },
+                                onParseErrorChange = { state.setParseError(i, it) },
+                                enabled = enabled,
+                            )
+                            is Parameter.StringParam -> ParamTextField(
+                                value = value as String,
+                                onValueChange = onValueChange,
+                                isError = isError,
+                                isLong = true,
+                                singleLine = def.multiLine.not(),
+                                enabled = enabled,
+                            )
+                            is Parameter.EntrySelectorParam -> ParamEntrySelector(
+                                labelerConf = state.project?.labelerConf,
+                                value = value as EntrySelector,
+                                onValueChange = onValueChange,
+                                isError = isError,
+                                onParseErrorChange = { state.setParseError(i, it) },
+                                entries = state.project?.currentModule?.entries,
+                                js = js,
+                                enabled = enabled,
+                                onError = {
+                                    coroutineScope.launch {
+                                        state.showSnackbar(
+                                            it.message ?: it.toString(),
+                                        )
+                                    }
+                                },
+                            )
+                            is Parameter.FileParam -> ParamFileTextField(
+                                value = value as FileWithEncoding,
+                                onValueChange = onValueChange,
+                                param = def,
+                                isError = isError,
+                                enabled = enabled,
+                            )
+                            is Parameter.RawFileParam -> ParamRawFileTextField(
+                                value = value as String,
+                                onValueChange = onValueChange,
+                                param = def,
+                                isError = isError,
+                                enabled = enabled,
+                            )
+                        }
                     }
                 }
             }
