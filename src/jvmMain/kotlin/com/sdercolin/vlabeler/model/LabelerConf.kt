@@ -109,9 +109,15 @@ data class LabelerConf(
     @Transient val directory: File? = null,
 ) : BasePlugin {
 
-    private val fileName get() = "$name.$LabelerFileExtension"
-    val isBuiltIn get() = DefaultLabelerDir.listFiles().orEmpty().any { it.name == fileName }
-    val file get() = if (isBuiltIn) DefaultLabelerDir.resolve(fileName) else CustomLabelerDir.resolve(fileName)
+    private val singleFileName get() = "$name.$LabelerFileExtension"
+    val isBuiltIn get() = DefaultLabelerDir.listFiles().orEmpty().any { it.name == singleFileName }
+    val rootFile: File
+        get() = if (singleFile) {
+            val parent = if (isBuiltIn) DefaultLabelerDir else CustomLabelerDir
+            File(parent, singleFileName)
+        } else {
+            directory ?: throw IllegalStateException("LabelerConf $name is not single file but directory is null")
+        }
     val isSelfConstructed get() = projectConstructor != null
 
     override val parameterDefs: List<Parameter<*>>
@@ -528,7 +534,7 @@ data class LabelerConf(
                 )
             },
             parameters = parameters.map {
-                it.copy(injector = it.injector?.preload(),)
+                it.copy(injector = it.injector?.preload())
             },
         )
     }

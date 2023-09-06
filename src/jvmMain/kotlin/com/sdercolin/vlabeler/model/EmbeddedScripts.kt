@@ -25,6 +25,7 @@ import java.io.File
 data class EmbeddedScripts(
     val path: String?,
     val lines: List<String>?,
+    @Transient val writeAsPath: Boolean = false,
 ) {
 
     fun getScripts(directory: File?): String {
@@ -43,11 +44,14 @@ object EmbeddedScriptsSerializer : KSerializer<EmbeddedScripts> {
 
     override fun serialize(encoder: Encoder, value: EmbeddedScripts) {
         require(encoder is JsonEncoder)
-        require(value.lines.isNullOrEmpty().not()) {
-            "EmbeddedScripts should have lines when being serialized"
+        if (value.writeAsPath) {
+            requireNotNull(value.path)
+            encoder.encodeSerializableValue(JsonPrimitive.serializer(), JsonPrimitive(value.path))
+        } else {
+            require(value.lines.isNullOrEmpty().not())
+            val array = JsonArray(value.lines.orEmpty().map { JsonPrimitive(it) })
+            encoder.encodeSerializableValue(JsonArray.serializer(), array)
         }
-        val array = JsonArray(value.lines.orEmpty().map { JsonPrimitive(it) })
-        encoder.encodeSerializableValue(JsonArray.serializer(), array)
     }
 
     override fun deserialize(decoder: Decoder): EmbeddedScripts {

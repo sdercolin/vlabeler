@@ -5,9 +5,7 @@ import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Locale
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.ColorPaletteRepository
 import com.sdercolin.vlabeler.tracking.TrackingService
@@ -21,19 +19,15 @@ import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.CustomPluginDir
 import com.sdercolin.vlabeler.util.DefaultAppConfFile
 import com.sdercolin.vlabeler.util.RecordDir
-import com.sdercolin.vlabeler.util.getCustomLabelers
-import com.sdercolin.vlabeler.util.getDefaultLabelers
 import com.sdercolin.vlabeler.util.or
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.runIf
-import com.sdercolin.vlabeler.util.runIfHave
 import com.sdercolin.vlabeler.util.savedMutableStateOf
 import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 fun loadAppConf(mainScope: CoroutineScope, appRecord: AppRecordStore): MutableState<AppConf> {
     val customAppConf = if (CustomAppConfFile.exists()) {
@@ -69,47 +63,8 @@ fun loadAppConf(mainScope: CoroutineScope, appRecord: AppRecordStore): MutableSt
     }
 }
 
-suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatchers.IO) {
-    val defaultLabelers = getDefaultLabelers().mapNotNull {
-        it.asLabelerConf().getOrElse { t ->
-            if (isDebug) {
-                throw t
-            } else {
-                null
-            }
-        }
-    }.toList()
-    val defaultLabelerNames = defaultLabelers.map { it.name }
-    val customLabelers = getCustomLabelers().mapNotNull {
-        it.asLabelerConf().getOrNull()
-    }.toList()
-    val validCustomLabelers = customLabelers.filterNot { it.name in defaultLabelerNames }
-
-    val availableLabelers = defaultLabelers + validCustomLabelers
-    availableLabelers.forEach {
-        Log.info("Loaded labeler: ${it.name}")
-    }
-    availableLabelers.sortedBy { it.name }
-}
-
 suspend fun loadPlugins(language: Language): List<Plugin> = withContext(Dispatchers.IO) {
     loadPlugins(Plugin.Type.Template, language) + loadPlugins(Plugin.Type.Macro, language)
-}
-
-fun File.asLabelerConf(): Result<LabelerConf> {
-    val text = readText()
-    val result = runCatching {
-        text.parseJson<LabelerConf>()
-            .copy(name = name.removeSuffix(".${LabelerConf.LabelerFileExtension}"))
-            .run { if (singleFile) copy(directory = parentFile) else this }
-            .preloadScripts()
-            .validate()
-            .migrate()
-    }
-    result.exceptionOrNull()?.let {
-        Log.debug("Failed to parse labeler conf: $text. Error message: {${it.message}}.")
-    }
-    return result
 }
 
 fun ensureDirectories() {

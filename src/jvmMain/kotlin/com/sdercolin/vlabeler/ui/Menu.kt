@@ -13,6 +13,7 @@ import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
+import com.sdercolin.vlabeler.io.install
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.action.KeyAction
@@ -31,6 +32,8 @@ import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.awt.Desktop
 import java.io.File
 
@@ -571,6 +574,19 @@ fun FrameWindowScope.Menu(
                             "Force Custom File Dialog",
                             checked = DebugState.forceUseCustomFileDialog,
                             onCheckedChange = { DebugState.forceUseCustomFileDialog = it },
+                        )
+                        Item(
+                            "Export current labeler",
+                            enabled = appState.hasProject,
+                            onClick = {
+                                appState.mainScope.launch(Dispatchers.IO) {
+                                    val labeler = appState.project?.labelerConf ?: return@launch
+                                    labeler.install(AppDir.resolve("debug"))
+                                        .onSuccess { Desktop.getDesktop().open(it.parentFile) }
+                                        .onFailure { Log.error(it) }
+
+                                }
+                            },
                         )
                     }
                 }

@@ -2,13 +2,11 @@ package com.sdercolin.vlabeler.util
 
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.env.isWindows
-import com.sdercolin.vlabeler.model.LabelerConf.Companion.LabelerFileExtension
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.repository.ChartRepository
 import com.sdercolin.vlabeler.repository.ConvertedAudioRepository
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import java.io.File
-import java.io.FilenameFilter
 
 private const val APP_NAME_PATH = "vLabeler"
 private const val APP_CONF_FILE_NAME = "app.conf.json"
@@ -44,17 +42,6 @@ val DefaultDownloadDir: File
     ).find { HomeDir.resolve(it).absolutePath.toFileOrNull(ensureIsDirectory = true) != null }
         ?.let { HomeDir.resolve(it) }
         ?: HomeDir
-
-private val labelerFileFilter = FilenameFilter { _, name -> name.endsWith(".$LabelerFileExtension") }
-private fun File.getLabelers(): List<File> {
-    val singleFileLabelers = getChildren(labelerFileFilter)
-    val directoryLabelers = getChildren().filter { it.isDirectory }
-        .flatMap { it.getChildren(labelerFileFilter) }
-    return singleFileLabelers + directoryLabelers
-}
-
-fun getDefaultLabelers() = DefaultLabelerDir.getLabelers()
-fun getCustomLabelers() = CustomLabelerDir.getLabelers()
 
 // Project files
 fun Project.getCacheDir() = cacheDirectory

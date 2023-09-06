@@ -13,7 +13,7 @@ class LabelerItem(
     description = labelerConf.description,
     email = labelerConf.email,
     website = labelerConf.website,
-    rootFile = labelerConf.file,
+    rootFile = labelerConf.rootFile,
     canRemove = labelerConf.isBuiltIn.not(),
     disabled = disabled,
 )
