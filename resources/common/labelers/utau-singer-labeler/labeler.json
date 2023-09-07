@@ -107,7 +107,7 @@
         {
             "name": "rawRight",
             "default": "500",
-            "displayedName": "Raw right",
+            "displayedName": "Raw right"
         }
     ],
     "lockedDrag": {
