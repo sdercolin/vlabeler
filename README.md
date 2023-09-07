@@ -4,14 +4,14 @@
 
 Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | [日本語](readme/README-ja.md)
 
-`vLabeler` is an open-sourced voice labeling application, aiming:
+`vLabeler` is an open-source voice labeling application with the following objectives:
 
-- Modern and fluent UI/UX
-- Customizable labeling process, to be used by different types of voice generation software
-- High performance with multiplatform support
+- Delivering a modern and seamless UI/UX.
+- Offering a customizable labeling process suitable for various voice generation software.
+- Ensuring high performance and support across multiple platforms.
 
-**The project is now in Beta.
-For help, suggestions, issue reports, etc. please join our [Discord](https://discord.gg/yrTqG2SrRd).**
+**The project is currently in its Beta phase.
+For assistance, feedback, reporting issues, and more, please join our [Discord](https://discord.gg/yrTqG2SrRd).**
 
 Demo video (in English): [YouTube](https://youtu.be/xFX8SRrJEzM)
 | [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
