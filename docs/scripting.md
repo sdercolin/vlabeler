@@ -33,7 +33,7 @@ Provides APIs for command line operations. See the documentation [here](../docs/
 When the scripts encounter illegal inputs or other expected errors, you can show an error message to users by
 calling `error(message)`.
 The parameter `message` can be a string or a localized string.
-See [Localized strings](localized-string.md) for more details.
+See [Localized strings in vLabeler](localized-string.md) for more details.
 
 Other errors thrown in the scripts will be displayed as "Unexpected errors" without detailed information, indicating
 that it is more likely to be a bug of the plugin, rather than an illegal input or something else that may happen in

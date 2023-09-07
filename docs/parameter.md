@@ -22,7 +22,7 @@ Each parameter is framed as a JSON object encompassing the subsequent standard f
 | enableIf     | String &#124; null             | null          | Activates this parameter only if the specified parameter has a value that equals to the JavaScript `true`. |
 | defaultValue | (Dependent on `type`)          | (Required)    | The parameter's default value.                                                                             |
 
-Note that the `label` and `description` fields can be [localized strings](localized-string.md).
+Note that the `label` and `description` fields can be [Localized strings in vLabeler](localized-string.md).
 
 ## Parameter Types
 
