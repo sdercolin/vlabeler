@@ -232,6 +232,7 @@ enum class Strings {
     ProjectUpdateOnSampleException,
     InvalidEditedProjectException,
     CustomizableItemLoadingException,
+    CustomizableItemRemovingException,
     VideoComponentInitializationException,
     VideoFileNotFoundExceptionTemplate,
     PluginRuntimeExceptionTemplate,

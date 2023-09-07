@@ -263,6 +263,7 @@ fun Strings.en(): String = when (this) {
             "\nPlease check the error log for more information."
     InvalidEditedProjectException -> "Invalid edited project.\nPlease check error log for more information."
     CustomizableItemLoadingException -> "Could not load the selected customized item."
+    CustomizableItemRemovingException -> "Could not remove the selected customized item."
     PluginRuntimeExceptionTemplate -> "Plugin runtime error: %s"
     ProjectConstructorRuntimeExceptionTemplate -> "Labeler runtime error when constructing project: %s"
     VideoComponentInitializationException ->

@@ -4,15 +4,12 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.model.LabelerConf.Companion.SERIAL_VERSION
 import com.sdercolin.vlabeler.model.LabelerConf.ExtraField
 import com.sdercolin.vlabeler.model.LabelerConf.Field
 import com.sdercolin.vlabeler.model.LabelerConf.ParameterHolder
 import com.sdercolin.vlabeler.model.LabelerConf.ProjectConstructor
 import com.sdercolin.vlabeler.model.LabelerConf.Property
-import com.sdercolin.vlabeler.ui.string.Language
-import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
-import com.sdercolin.vlabeler.ui.string.toLocalized
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.DefaultLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
@@ -110,7 +107,12 @@ data class LabelerConf(
 ) : BasePlugin {
 
     private val singleFileName get() = "$name.$LABELER_FILE_EXTENSION"
-    val isBuiltIn get() = DefaultLabelerDir.listFiles().orEmpty().any { it.name == singleFileName }
+    val isBuiltIn
+        get() = if (singleFile) {
+            DefaultLabelerDir.listFiles().orEmpty().any { it.name == singleFileName }
+        } else {
+            directory?.parentFile == DefaultLabelerDir
+        }
     val rootFile: File
         get() = if (singleFile) {
             val parent = if (isBuiltIn) DefaultLabelerDir else CustomLabelerDir

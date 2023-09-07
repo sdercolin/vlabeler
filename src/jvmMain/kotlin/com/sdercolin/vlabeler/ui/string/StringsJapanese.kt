@@ -254,6 +254,7 @@ fun Strings.ja(): String? = when (this) {
         "プロジェクトのデータとサンプルのデータをマッチングできませんでした。詳細はエラーログを確認してください。"
     InvalidEditedProjectException -> "この編集は無効です。詳細はエラーログを確認してください。"
     CustomizableItemLoadingException -> "コンポーネントを読み込めませんでした。"
+    CustomizableItemRemovingException -> "コンポーネントを削除できませんでした。"
     VideoComponentInitializationException ->
         "ビデオコンポーネントを初期化できませんでした。この機能を使用するには、VLC をインストールする必要があります。" +
             "詳細については、README の `ビデオ表示` セクションを参照してください。"

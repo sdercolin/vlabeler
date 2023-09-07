@@ -239,6 +239,7 @@ fun Strings.zhHans(): String? = when (this) {
     ProjectUpdateOnSampleException -> "无法将项目中的数据与当前读取到的采样进行匹配。详情请查看错误日志。"
     InvalidEditedProjectException -> "此次编辑将导致项目数据无效。详情请查看错误日志。"
     CustomizableItemLoadingException -> "无法读取该自定义组件。"
+    CustomizableItemRemovingException -> "无法删除该自定义组件。"
     PluginRuntimeExceptionTemplate -> "插件运行时错误：%s"
     ProjectConstructorRuntimeExceptionTemplate -> "构建项目时的标注器运行时错误：%s"
     VideoComponentInitializationException ->

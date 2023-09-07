@@ -40,6 +40,8 @@ suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatc
         it.asLabelerConf().getOrNull()
     }.toList()
     val validCustomLabelers = customLabelers.filterNot { it.name in defaultLabelerNames }
+        .groupBy { it.name }
+        .mapNotNull { (_, labelers) -> labelers.maxByOrNull { it.version } }
 
     val availableLabelers = defaultLabelers + validCustomLabelers
     availableLabelers.forEach {
