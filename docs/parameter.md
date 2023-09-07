@@ -182,8 +182,8 @@ the `defaultValue` as follows, it will be resolved to `path/to/plugin/dictionary
 ```
 
 You can also set the default value to an empty object `{}`. In this case, if `optional` is `false`, the parameter value
-will be regarded as invalid and the user will be asked to provide a file before running the plugin. If it's used in a
-labeler, we recommend you to set `optional` to `true` to avoid this situation.
+will be regarded as invalid and the user will be asked to provide a file before running the scripts. If it's used in a
+single-file labeler, we recommend you to set `optional` to `true` to avoid this situation.
 
 ### `rawFile`
 
