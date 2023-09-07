@@ -13,34 +13,33 @@ both.
 
 Each parameter is framed as a JSON object encompassing the subsequent standard fields:
 
-| Property     | Type                           | Default value | Description                                                            |
-|--------------|--------------------------------|---------------|------------------------------------------------------------------------|
-| type         | String                         | (Required)    | Types: `integer`, `float`, `boolean`, `string`, `enum`, etc.           |
-| name         | String                         | (Required)    | A distinct parameter name for referencing within your scripts.         |
-| label        | String (Localized)             | (Required)    | The display name for the parameter in the configuration dialog.        |
-| description  | String (Localized) &#124; null | null          | A brief note displayed adjacent to the label.                          |
-| enableIf     | String &#124; null             | null          | Activates this parameter only if the specified parameter returns true. |
-| defaultValue | (Dependent on `type`)          | (Required)    | The parameter's default value.                                         |
+| Property     | Type                           | Default value | Description                                                                                                |
+|--------------|--------------------------------|---------------|------------------------------------------------------------------------------------------------------------|
+| type         | String                         | (Required)    | Types: `integer`, `float`, `boolean`, `string`, `enum`, etc.                                               |
+| name         | String                         | (Required)    | A distinct parameter name for referencing within your scripts.                                             |
+| label        | String (Localized)             | (Required)    | The display name for the parameter in the configuration dialog.                                            |
+| description  | String (Localized) &#124; null | null          | A brief note displayed adjacent to the label.                                                              |
+| enableIf     | String &#124; null             | null          | Activates this parameter only if the specified parameter has a value that equals to the JavaScript `true`. |
+| defaultValue | (Dependent on `type`)          | (Required)    | The parameter's default value.                                                                             |
 
-It's essential to note that both the `label` and `description` fields can
-utilize [localized strings](localized-string.md).
+Note that the `label` and `description` fields can be [localized strings](localized-string.md).
 
 ## Parameter Types
 
 ### `integer`
 
-Represents an integer. The configuration dialog will feature an input box for this parameter. Non-integer inputs are
-disregarded.
+Represents an integer. The configuration dialog will feature an input box for this parameter. Non-integer inputs will
+not be accepted.
 
 In addition to standard fields, the `integer` type may include:
 
-- `min`: The minimum permissible value.
-- `max`: The maximum permissible value.
+- `min`: The minimum permissible value. (Optional)
+- `max`: The maximum permissible value. (Optional)
 
 ### `float`
 
 Represents a floating-point number. It functions similarly to `integer`, but allows decimal values. This type
-encompasses the same fields as `integer`.
+has the same fields as `integer`.
 
 ### `boolean`
 
@@ -52,11 +51,12 @@ Represents textual data. The configuration dialog displays an input box for this
 
 Additional fields for the `string` type:
 
-- `multiLine`: Enables multiline input if set to `true`.
-- `optional`: Allows an empty string input if set to `true`.
+- `multiLine`: Enables multiline input if set to `true`. Defaults to `false`.
+- `optional`: Allows an empty string input if set to `true`. Defaults to `false`.
 
-Specifically for plugins, the `defaultValue` can point to a file, using the format `file::path/to/file`, to use its
-content as the default.
+The `defaultValue` can point to a file, using the format `file::path/to/file`, to use its
+content as the default. You can include some files in the directory of your plugins/labelers, and refer to them by
+relative paths. These files should always be encoded in `UTF-8`.
 
 ### `enum`
 
@@ -67,12 +67,12 @@ The `enum` type can feature:
 - `options`: A mandatory list of valid values.
 - `optionDisplayedNames`: Display names for the options. If unspecified, values from the `options` list are used
   directly.
-
+w
 For instance, an `enum` parameter might look like:
 
-```json
+```json5
 {
-    ...,
+    // ...,
     "defaultValue": "option1",
     "options": [
         "option1",
@@ -81,12 +81,20 @@ For instance, an `enum` parameter might look like:
     ],
     "optionDisplayedNames": [
         {
-            en: "Option 1",
-            zh: "选项1"
+            "en": "Option 1",
+            "zh": "选项1"
         },
-        ...
+        {
+            "en": "Option 2",
+            "zh": "选项2"
+        },
+        {
+            "en": "Option 3",
+            "zh": "选项3"
+        },
+        // ...
     ],
-    ...
+    // ...
 }
 ```
 
@@ -94,8 +102,8 @@ For instance, an `enum` parameter might look like:
 
 **This type is specific to macro plugins.**
 
-It comprises a set of filters to select entries from the ongoing subproject. The configuration dialog will present an
-editable filter list.
+This parameter comprises a set of filters to select entries from the ongoing subproject. The configuration dialog will
+present an editable filter list.
 
 For the `entrySelector` type, the default value configuration should ideally be:
 
@@ -110,26 +118,32 @@ to [EntrySelector](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/EntrySelec
 
 A sample `entrySelector` parameter is provided below:
 
-```json
+```json5
 {
-    ...,
+    // ...,
     "defaultValue": {
         "filters": [
             {
-                "type": "text",
-                "subject": "name",
-                "matchType": "Contains",
+                "type": "text", // an example of a `text` filter
+                "subject": "name", // `name` for entry name or `sample` for sample name
+                "matchType": "Contains", // `Contains` | `Equals` | `StartsWith` | `EndsWith` | `Regex`
                 "matcherText": "foo"
             },
-            ...
+            {
+                "type": "number", // an example of a `number` filter
+                "subject": "overlap", // `name` of any property defined in the labeler
+                "matchType": "GreaterThan", // `Equals` | `GreaterThan`| `LessThan` | `GreaterThanOrEquals` | `LessThanOrEquals`
+                "comparerValue": 0.5, // only used when `comparerName` is null
+                "comparerName": "offset" // nullable, `name` of any property defined in the labeler
+            }
         ]
     },
-    ...
+    // ...
 }
 ```
 
 Please refer to [Using an entry selector](plugin-development.md#use-an-entry-selector) for further details on
-implementing it within scripts.
+using it within scripts.
 
 ### `file`
 
@@ -138,8 +152,9 @@ path input field as well as an encoding selection dropdown.
 
 For the `file` type, additional fields are:
 
-- `optional`: When set to `true`, the `file` field can be left empty. The default is `false`.
-- `acceptExtensions`: A list of accepted file extensions, such as `["txt", "json"]`.
+- `optional`: When set to `true`, the `file` field can be left empty. Defaults to `false`.
+- `acceptExtensions`: A list of accepted file extensions, such as `["txt", "json"]`. If it is not set, all files are
+  accepted.
 
 Within your scripts, the content of the specified file is passed as the parameter value. If the `optional` is `true` and
 the path is unspecified, the parameter value will be `null`.
@@ -147,13 +162,13 @@ the path is unspecified, the parameter value will be `null`.
 For plugins, you can set the `file` field of the `defaultValue` to be relative to the plugin's root directory. For
 instance:
 
-```json
+```json5
 {
-    ...,
+    // ...,
     "defaultValue": {
-        "file": "dictionary.txt"
+        "file": "dictionary.txt" // under the root directory of the labeler/plugin
     },
-    ...
+    // ...
 }
 ```
 
@@ -165,5 +180,5 @@ file before script execution.
 This type indicates a file's path. In contrast to the `file` type, the actual path is passed to the scripts instead of
 the file's content.
 
-In addition to the common fields and the `file` type fields, `rawFile` has the `isFolder` field. When set to `true`,
+In addition to standard fields and the `file` type fields, `rawFile` has the `isFolder` field. When set to `true`,
 only folder selection will be allowed through the input box.
