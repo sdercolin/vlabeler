@@ -1,0 +1,73 @@
+{
+    "name": "audacity.default",
+    "version": 10,
+    "serialVersion": 2,
+    "singleFile": false,
+    "extension": "txt",
+    "defaultInputFilePath": null,
+    "displayedName": {
+        "en": "Audacity labeler",
+        "zh": "Audacity 标注器",
+        "ja": "Audacity ラベラー"
+    },
+    "author": "sdercolin",
+    "email": "sder.colin@gmail.com",
+    "description": {
+        "en": "Default labeler for Audacity Labels file. Basic behaviours are same as the Sinsy lab labeler.",
+        "zh": "用于 Audacity 式标签文件的默认标注器。基本行为与 Sinsy lab 标注器相同。",
+        "ja": "Audacity ラベルファイルのデフォルトラベラー。基本的な動作は Sinsy labラベラーと同じです。"
+    },
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
+    "continuous": true,
+    "allowSameNameEntry": true,
+    "defaultValues": [
+        0,
+        0
+    ],
+    "fields": [],
+    "extraFields": [],
+    "lockedDrag": {
+        "useDragBase": false,
+        "useStart": false
+    },
+    "decimalDigit": 4,
+    "properties": [
+        {
+            "name": "start",
+            "displayedName": "Start",
+            "valueGetter": [
+                "value = entry.start"
+            ],
+            "valueSetter": [
+                "entry.start = value"
+            ],
+            "shortcutIndex": 0
+        },
+        {
+            "name": "end",
+            "displayedName": "End",
+            "valueGetter": [
+                "value = entry.end"
+            ],
+            "valueSetter": [
+                "entry.end = value"
+            ],
+            "shortcutIndex": 1
+        }
+    ],
+    "parser": {
+        "scope": "Entry",
+        "defaultEncoding": "UTF-8",
+        "extractionPattern": "(.*)\t(.*)\t(.*)",
+        "variableNames": [
+            "left",
+            "right",
+            "name"
+        ],
+        "scripts": "parser.js"
+    },
+    "writer": {
+        "scope": "Entry",
+        "scripts": "writer.js"
+    }
+}
