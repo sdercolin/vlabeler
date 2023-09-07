@@ -84,7 +84,7 @@ to [Scripting in vLabeler](scripting.md).
 
 ### Template Generation Scripts
 
-`Template` type plugins operate on the `New Project` page, facilitating the creation of entry lists for subsequent
+Plugins with `template` type operate on the `New Project` page, facilitating the creation of entry lists for subsequent
 edits.
 
 #### Input
@@ -170,9 +170,9 @@ Explore these integrated `template` plugins for insight:
 
 ### Batch Edit (Macro) Scripts
 
-In the context of vLabeler, batch edit or macro scripts are designed to operate over projects, either over the entire
-project or a particular subproject/module. The scope of the plugin determines the domain of operation, with `Module`
-scope operating on the current module, and `Project` scope covering the entire project.
+In the context of vLabeler, batch edit scripts (type: `macro`) are designed to operate over projects, either over the
+entire project or a particular subproject/module. The scope of the plugin determines the domain of operation,
+with `Module` scope operating on the current module, and `Project` scope covering the entire project.
 
 #### Input
 
@@ -193,7 +193,7 @@ Your script will be supplied with the following variables:
 | pluginDirectory      | [File](file-api.md) | All     | The plugin directory.                                                                                                    |                                                                   
 | projectRootDirectory | [File](file-api.md) | Project | The project's root directory.                                                                                            |
 
-#### How to Utilize an Entry Selector
+#### Use an entry selector
 
 This type of parameter lets the user specify a subset of entries for operation and is accessible under `Module` scope.
 Here's a code snippet for its utilization:
