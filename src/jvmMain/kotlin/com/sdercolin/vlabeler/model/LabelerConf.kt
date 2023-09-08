@@ -67,7 +67,9 @@ import java.io.File
  * @property writer Defines how to write content in the original label format.
  * @property parameters Configurable parameters of the labeler. See [ParameterHolder].
  * @property projectConstructor Scripts to construct a project with subprojects. See [ProjectConstructor].
+ * @property resourceFiles Paths of the resource files used in the scripts.
  * @property directory Directory of the labeler. For single file labeler, it is null.
+ * @property builtIn Whether the labeler is built-in.
  */
 @Serializable
 @Immutable
@@ -103,19 +105,15 @@ data class LabelerConf(
     val writer: Writer,
     val parameters: List<ParameterHolder> = listOf(),
     val projectConstructor: ProjectConstructor? = null,
-    @Transient val directory: File? = null,
+    override val resourceFiles: List<String> = listOf(),
+    @Transient override val directory: File? = null,
+    @Transient val builtIn: Boolean = false,
 ) : BasePlugin {
 
     private val singleFileName get() = "$name.$LABELER_FILE_EXTENSION"
-    val isBuiltIn
-        get() = if (singleFile) {
-            DefaultLabelerDir.listFiles().orEmpty().any { it.name == singleFileName }
-        } else {
-            directory?.parentFile == DefaultLabelerDir
-        }
     val rootFile: File
         get() = if (singleFile) {
-            val parent = if (isBuiltIn) DefaultLabelerDir else CustomLabelerDir
+            val parent = if (builtIn) DefaultLabelerDir else CustomLabelerDir
             File(parent, singleFileName)
         } else {
             directory ?: throw IllegalStateException("LabelerConf $name is not single file but directory is null")

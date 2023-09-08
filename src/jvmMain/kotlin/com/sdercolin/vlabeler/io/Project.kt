@@ -4,14 +4,13 @@ import androidx.compose.material.SnackbarDuration
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.ProjectImportException
 import com.sdercolin.vlabeler.exception.ProjectParseException
+import com.sdercolin.vlabeler.exception.RequiredLabelerNotFoundException
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.injectLabelerParams
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.importentries.ImportEntriesDialogArgs
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.currentLanguage
-import com.sdercolin.vlabeler.ui.string.stringStatic
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.clearCache
@@ -85,33 +84,47 @@ suspend fun awaitLoadProject(
     val existingLabelerConf = appState.availableLabelerConfs.find { it.name == project.labelerConf.name }
     val originalLabelerConf = when {
         existingLabelerConf == null -> {
-            project.labelerConf.install(CustomLabelerDir)
-                .onFailure { Log.error(it) }
-                .onSuccess {
-                    showSnackbar(
-                        stringStatic(
-                            Strings.LoadProjectWarningLabelerCreated,
-                            project.labelerConf.displayedName.getCertain(currentLanguage),
-                        ),
-                    )
-                }
+            if (project.labelerConf.resourceFiles.isNotEmpty()) {
+                throw RequiredLabelerNotFoundException(
+                    project.labelerConf.displayedName.getCertain(currentLanguage),
+                    project.labelerConf.version.toString(),
+                )
+            } else {
+                project.labelerConf.install(CustomLabelerDir)
+                    .onFailure { Log.error(it) }
+                    .onSuccess {
+                        showSnackbar(
+                            stringStatic(
+                                Strings.LoadProjectWarningLabelerCreated,
+                                project.labelerConf.displayedName.getCertain(currentLanguage),
+                            ),
+                        )
+                    }
+            }
             project.labelerConf
         }
         existingLabelerConf.version >= project.labelerConf.version -> {
             existingLabelerConf
         }
         else -> {
-            project.labelerConf.install(CustomLabelerDir)
-                .onFailure { Log.error(it) }
-                .onSuccess {
-                    showSnackbar(
-                        stringStatic(
-                            Strings.LoadProjectWarningLabelerUpdated,
-                            project.labelerConf.displayedName.getCertain(currentLanguage),
-                            project.labelerConf.version,
-                        ),
-                    )
-                }
+            if (project.labelerConf.resourceFiles.isNotEmpty()) {
+                throw RequiredLabelerNotFoundException(
+                    project.labelerConf.displayedName.getCertain(currentLanguage),
+                    project.labelerConf.version.toString(),
+                )
+            } else {
+                project.labelerConf.install(CustomLabelerDir)
+                    .onFailure { Log.error(it) }
+                    .onSuccess {
+                        showSnackbar(
+                            stringStatic(
+                                Strings.LoadProjectWarningLabelerUpdated,
+                                project.labelerConf.displayedName.getCertain(currentLanguage),
+                                project.labelerConf.version,
+                            ),
+                        )
+                    }
+            }
             project.labelerConf
         }
     }

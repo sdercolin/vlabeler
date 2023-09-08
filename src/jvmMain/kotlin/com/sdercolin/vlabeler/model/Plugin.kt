@@ -5,8 +5,7 @@ package com.sdercolin.vlabeler.model
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
-import com.sdercolin.vlabeler.ui.string.toLocalized
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
 import com.sdercolin.vlabeler.util.RecordDir
@@ -41,10 +40,10 @@ data class Plugin(
     val outputRawEntry: Boolean = false,
     val parameters: Parameters? = null,
     val scriptFiles: List<String>,
-    val resourceFiles: List<String> = listOf(),
+    override val resourceFiles: List<String> = listOf(),
     val inputFinderScriptFile: String? = null,
     val scope: PluginProcessScope = PluginProcessScope.Module,
-    @Transient val directory: File? = null,
+    @Transient override val directory: File? = null,
     @Transient val builtIn: Boolean = false,
 ) : BasePlugin {
 
@@ -62,7 +61,6 @@ data class Plugin(
             Type.Macro -> true
         }
 
-    fun readResourceFiles() = resourceFiles.map { requireNotNull(directory).resolve(it).readText() }
     fun readScriptTexts() = scriptFiles.map { requireNotNull(directory).resolve(it).readText() }
 
     fun isMacroExecutable(appState: AppState): Boolean {

@@ -537,6 +537,7 @@ fun Strings.zhHans(): String? = when (this) {
     AboutDialogShowLicenses -> "显示许可"
     LicenseDialogTitle -> "vLabeler - 许可"
     LicenseDialogLicenses -> "vLabeler 使用到的开源许可"
+    LoadProjectErrorLabelerNotFound -> "无法在此设备上找到所需的标注器 `%1\$s`（版本 %2\$s）。请在打开项目前手动安装它。"
     LoadProjectWarningLabelerCreated -> "从项目文件中安装了新的标注器 `%s`。"
     LoadProjectWarningLabelerUpdated -> "从项目文件中安装了标注器 `%1\$s` 的版本更新 `%2\$s`。"
     LoadProjectWarningCacheDirReset -> "无法找到/创建项目文件所定义的缓存目录。将使用默认的缓存目录。"

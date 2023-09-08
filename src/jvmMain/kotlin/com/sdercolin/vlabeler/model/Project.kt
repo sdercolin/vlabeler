@@ -320,6 +320,7 @@ suspend fun projectOf(
         js.set("root", sampleDirectory.toFile())
         js.set("encoding", encoding)
         js.setJson("acceptedSampleExtensions", Sample.acceptableSampleFileExtensions)
+        js.setJson("resources", labelerConf.readResourceFiles())
         listOf(
             Resources.envJs,
             Resources.fileJs,

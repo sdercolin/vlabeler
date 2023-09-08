@@ -27,7 +27,7 @@ fun getCustomLabelers() = CustomLabelerDir.getLabelers()
 
 suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatchers.IO) {
     val defaultLabelers = getDefaultLabelers().mapNotNull {
-        it.asLabelerConf().getOrElse { t ->
+        it.asLabelerConf(isBuiltIn = true).getOrElse { t ->
             if (isDebug) {
                 throw t
             } else {
@@ -37,7 +37,7 @@ suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatc
     }.toList()
     val defaultLabelerNames = defaultLabelers.map { it.name }
     val customLabelers = getCustomLabelers().mapNotNull {
-        it.asLabelerConf().getOrNull()
+        it.asLabelerConf(isBuiltIn = false).getOrNull()
     }.toList()
     val validCustomLabelers = customLabelers.filterNot { it.name in defaultLabelerNames }
         .groupBy { it.name }
@@ -50,10 +50,11 @@ suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatc
     availableLabelers.sortedBy { it.name }
 }
 
-fun File.asLabelerConf(): Result<LabelerConf> {
+fun File.asLabelerConf(isBuiltIn: Boolean): Result<LabelerConf> {
     val text = readText()
     val result = runCatching {
         text.parseJson<LabelerConf>()
+            .copy(builtIn = isBuiltIn)
             .run { if (singleFile) this else copy(directory = parentFile) }
             .preloadScripts()
             .validate()

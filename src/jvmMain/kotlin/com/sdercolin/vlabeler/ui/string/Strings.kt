@@ -507,6 +507,7 @@ enum class Strings {
     AboutDialogShowLicenses,
     LicenseDialogTitle,
     LicenseDialogLicenses,
+    LoadProjectErrorLabelerNotFound,
     LoadProjectWarningLabelerCreated,
     LoadProjectWarningLabelerUpdated,
     LoadProjectWarningCacheDirReset,

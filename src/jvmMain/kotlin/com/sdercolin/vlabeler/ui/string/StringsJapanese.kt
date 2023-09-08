@@ -561,6 +561,9 @@ fun Strings.ja(): String? = when (this) {
     AboutDialogShowLicenses -> "ライセンスを表示"
     LicenseDialogTitle -> "vLabeler - ライセンス"
     LicenseDialogLicenses -> "vLabeler が使用しているライブラリのライセンス"
+    LoadProjectErrorLabelerNotFound ->
+        "必要なラベラー `%1\$s` （バージョン `%2\$s`）が見つかりません。" +
+            "このプロジェクトを開くためには、該当するラベラーをインストールしてください。"
     LoadProjectWarningLabelerCreated -> "プロジェクトファイルにより新しいラベラー `%s`をインストールしました。"
     LoadProjectWarningLabelerUpdated -> "プロジェクトファイルによりラベラー `%1\$s` を `%2\$s` にアップデートしました。"
     LoadProjectWarningCacheDirReset ->

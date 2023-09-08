@@ -40,7 +40,7 @@ fun moduleFromRawLabels(
     val extractor = Regex(parser.extractionPattern)
     val inputFileNames = listOfNotNull(inputFile?.name)
     val sampleFileNames = sampleFiles.map { it.name }
-    val js = prepareJsForParsing(labelerParams, inputFileNames, sampleFileNames, encoding)
+    val js = prepareJsForParsing(labelerConf, labelerParams, inputFileNames, sampleFileNames, encoding)
     val entries = sources.mapIndexedNotNull { index, source ->
         if (source.isBlank()) return@mapIndexedNotNull null
         val errorMessageSuffix = "in file ${inputFile?.absolutePath}, line ${index + 1}: $source"
@@ -95,7 +95,7 @@ fun moduleGroupFromRawLabels(
         }
     }
 
-    val js = prepareJsForParsing(labelerParams, inputFileNames, sampleFileNames, encoding)
+    val js = prepareJsForParsing(labelerConf, labelerParams, inputFileNames, sampleFileNames, encoding)
     val inputs = requireNotNull(definitionGroup.first().inputFiles).map { it.readTextByEncoding(encoding).lines() }
     js.setJson("moduleNames", definitionGroup.map { it.name })
     js.setJson("inputs", inputs)
@@ -110,6 +110,7 @@ fun moduleGroupFromRawLabels(
 }
 
 private fun prepareJsForParsing(
+    labelerConf: LabelerConf,
     labelerParams: ParamMap,
     inputFileNames: List<String>,
     sampleFileNames: List<String>,
@@ -127,6 +128,7 @@ private fun prepareJsForParsing(
     js.setJson("inputFileNames", inputFileNames)
     js.setJson("sampleFileNames", sampleFileNames)
     js.set("encoding", encoding)
+    js.setJson("resources", labelerConf.readResourceFiles())
     return js
 }
 
@@ -197,6 +199,7 @@ private fun Project.prepareJsForWriting(): JavaScript {
         Resources.fileJs,
     ).forEach { js.execResource(it) }
     js.set("debug", isDebug)
+    js.setJson("resources", labelerConf.readResourceFiles())
     js.setJson("params", labelerParams.resolve(labelerConf).resolve(project = null, js = js))
     return js
 }

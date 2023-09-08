@@ -12,7 +12,8 @@ interface AppErrorState {
     fun clearError()
 
     enum class ErrorPendingAction {
-        Exit
+        Exit,
+        ExitProject,
     }
 }
 

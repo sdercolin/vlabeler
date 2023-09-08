@@ -14,6 +14,6 @@ class LabelerItem(
     email = labelerConf.email,
     website = labelerConf.website,
     rootFile = labelerConf.rootFile,
-    canRemove = labelerConf.isBuiltIn.not(),
+    canRemove = labelerConf.builtIn.not(),
     disabled = disabled,
 )

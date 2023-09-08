@@ -54,7 +54,7 @@ import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState
-import com.sdercolin.vlabeler.ui.string.currentLanguage
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.getScreenRange
@@ -366,6 +366,7 @@ class AppState(
         action ?: return
         when (action) {
             AppErrorState.ErrorPendingAction.Exit -> exit(true)
+            AppErrorState.ErrorPendingAction.ExitProject -> reset()
         }
     }
 
@@ -484,57 +485,61 @@ class AppState(
         trackMacroPluginExecution(plugin, params, quickLaunch = slot != null)
     }
 
-    fun consumeOpenOrCreateIpcRequest(request: OpenOrCreateRequest) = mainScope.launch {
-        // check if the project is already opened
-        val isProjectAlreadyOpened = request.projectFile.toFile().absolutePath == project?.projectFile?.absolutePath
-        if (!isProjectAlreadyOpened) {
-            // check if the project exists
-            val isProjectExisting = request.projectFile.toFile().exists()
+    fun consumeOpenOrCreateIpcRequest(request: OpenOrCreateRequest) = runCatching {
+        mainScope.launch {
+            // check if the project is already opened
+            val isProjectAlreadyOpened = request.projectFile.toFile().absolutePath == project?.projectFile?.absolutePath
+            if (!isProjectAlreadyOpened) {
+                // check if the project exists
+                val isProjectExisting = request.projectFile.toFile().exists()
 
-            // save current project if it is not saved
-            if (project != null && hasUnsavedChanges) {
-                val purpose = if (isProjectExisting) {
-                    AskIfSaveDialogPurpose.IsOpening
-                } else {
-                    AskIfSaveDialogPurpose.IsCreatingNew
+                // save current project if it is not saved
+                if (project != null && hasUnsavedChanges) {
+                    val purpose = if (isProjectExisting) {
+                        AskIfSaveDialogPurpose.IsOpening
+                    } else {
+                        AskIfSaveDialogPurpose.IsCreatingNew
+                    }
+                    val result = awaitEmbeddedDialog(purpose) as AskIfSaveDialogResult?
+                    when {
+                        result == null -> {
+                            // canceled, the request is discarded
+                            return@launch
+                        }
+                        result.save -> {
+                            saveProjectFile(project)
+                        }
+                    }
                 }
-                val result = awaitEmbeddedDialog(purpose) as AskIfSaveDialogResult?
-                when {
-                    result == null -> {
-                        // canceled, the request is discarded
+                if (isProjectExisting) {
+                    // load the project
+                    awaitLoadProject(request.projectFile.toFile(), this@AppState)
+                } else {
+                    // create a new project
+                    val newProject = request.newProjectArgs.create(
+                        projectFile = request.projectFile.toFile(),
+                        availableLabelers = activeLabelerConfs,
+                        availableTemplatePlugins = getActivePlugins(Plugin.Type.Template),
+                    ).getOrElse {
+                        showError(it)
                         return@launch
                     }
-                    result.save -> {
-                        saveProjectFile(project)
-                    }
+                    trackProjectCreation(newProject, byIpcRequest = true)
+                    awaitOpenCreatedProject(newProject, this@AppState)
                 }
             }
-            if (isProjectExisting) {
-                // load the project
-                awaitLoadProject(request.projectFile.toFile(), this@AppState)
-            } else {
-                // create a new project
-                val newProject = request.newProjectArgs.create(
-                    projectFile = request.projectFile.toFile(),
-                    availableLabelers = activeLabelerConfs,
-                    availableTemplatePlugins = getActivePlugins(Plugin.Type.Template),
-                ).getOrElse {
-                    showError(it)
-                    return@launch
-                }
-                trackProjectCreation(newProject, byIpcRequest = true)
-                awaitOpenCreatedProject(newProject, this@AppState)
-            }
-        }
 
-        // go to the entry
-        request.gotoEntryByIndex?.let {
-            jumpToModuleByNameAndEntry(it.parentFolderName, it.entryIndex)
-            return@launch
+            // go to the entry
+            request.gotoEntryByIndex?.let {
+                jumpToModuleByNameAndEntry(it.parentFolderName, it.entryIndex)
+                return@launch
+            }
+            request.gotoEntryByName?.let {
+                jumpToModuleByNameAndEntryName(it.parentFolderName, it.entryName)
+            }
         }
-        request.gotoEntryByName?.let {
-            jumpToModuleByNameAndEntryName(it.parentFolderName, it.entryName)
-        }
+    }.onFailure {
+        showError(it, pendingAction = AppErrorState.ErrorPendingAction.ExitProject)
     }
 
     fun onCreateProject(project: Project, plugin: Plugin?, pluginParams: ParamMap?) {

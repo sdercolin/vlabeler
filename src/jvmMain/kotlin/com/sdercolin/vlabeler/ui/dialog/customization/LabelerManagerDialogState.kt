@@ -8,7 +8,7 @@ import com.sdercolin.vlabeler.io.asLabelerConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import java.io.File
 
@@ -30,7 +30,7 @@ class LabelerManagerDialogState(
     }
 
     override suspend fun importNewItem(configFile: File): String = runCatching {
-        val labeler = configFile.asLabelerConf().getOrThrow()
+        val labeler = configFile.asLabelerConf(isBuiltIn = false).getOrThrow()
         if (labeler.singleFile) {
             val targetPath = CustomLabelerDir.resolve(configFile.name)
             configFile.copyTo(targetPath, overwrite = true)

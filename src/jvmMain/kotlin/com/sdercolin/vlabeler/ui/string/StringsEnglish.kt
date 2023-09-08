@@ -592,6 +592,9 @@ fun Strings.en(): String = when (this) {
     AboutDialogShowLicenses -> "Show licenses"
     LicenseDialogTitle -> "vLabeler - Licenses"
     LicenseDialogLicenses -> "OSS Licenses used in vLabeler"
+    LoadProjectErrorLabelerNotFound ->
+        "Cannot find the required labeler `%1\$s` (version %2\$s) on this device. " +
+            "Please install it manually before opening the project."
     LoadProjectWarningLabelerCreated -> "A new labeler `%s` is installed by the project file."
     LoadProjectWarningLabelerUpdated -> "Labeler `%s` is updated to version `%s` by the project file."
     LoadProjectWarningCacheDirReset ->
