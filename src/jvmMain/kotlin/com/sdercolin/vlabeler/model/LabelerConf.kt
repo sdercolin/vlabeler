@@ -579,8 +579,6 @@ data class LabelerConf(
                         isOptional = false, // Old version does not support optional extra fields
                     )
                 },
-                extraFieldNames = null,
-                defaultExtras = null,
             )
         } else {
             return this
