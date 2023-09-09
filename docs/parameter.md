@@ -13,7 +13,7 @@ both.
 
 Each parameter is framed as a JSON object encompassing the subsequent standard fields:
 
-| Property     | Type                           | Default value | Description                                                                                                |
+| Key          | Type                           | Default value | Description                                                                                                |
 |--------------|--------------------------------|---------------|------------------------------------------------------------------------------------------------------------|
 | type         | String                         | (Required)    | Types: `integer`, `float`, `boolean`, `string`, `enum`, etc.                                               |
 | name         | String                         | (Required)    | A distinct parameter name for referencing within your scripts.                                             |
@@ -67,8 +67,8 @@ The `enum` type can feature:
 - `options`: A mandatory list of valid values.
 - `optionDisplayedNames`: Display names for the options. If unspecified, values from the `options` list are used
   directly.
-w
-For instance, an `enum` parameter might look like:
+  w
+  For instance, an `enum` parameter might look like:
 
 ```json5
 {
@@ -124,17 +124,25 @@ A sample `entrySelector` parameter is provided below:
     "defaultValue": {
         "filters": [
             {
-                "type": "text", // an example of a `text` filter
-                "subject": "name", // `name` for entry name or `sample` for sample name
-                "matchType": "Contains", // `Contains` | `Equals` | `StartsWith` | `EndsWith` | `Regex`
+                "type": "text",
+                // an example of a `text` filter
+                "subject": "name",
+                // `name` for entry name or `sample` for sample name
+                "matchType": "Contains",
+                // `Contains` | `Equals` | `StartsWith` | `EndsWith` | `Regex`
                 "matcherText": "foo"
             },
             {
-                "type": "number", // an example of a `number` filter
-                "subject": "overlap", // `name` of any property defined in the labeler
-                "matchType": "GreaterThan", // `Equals` | `GreaterThan`| `LessThan` | `GreaterThanOrEquals` | `LessThanOrEquals`
-                "comparerValue": 0.5, // only used when `comparerName` is null
-                "comparerName": "offset" // nullable, `name` of any property defined in the labeler
+                "type": "number",
+                // an example of a `number` filter
+                "subject": "overlap",
+                // `name` of any property defined in the labeler
+                "matchType": "GreaterThan",
+                // `Equals` | `GreaterThan`| `LessThan` | `GreaterThanOrEquals` | `LessThanOrEquals`
+                "comparerValue": 0.5,
+                // only used when `comparerName` is null
+                "comparerName": "offset"
+                // nullable, `name` of any property defined in the labeler
             }
         ]
     },
@@ -142,7 +150,7 @@ A sample `entrySelector` parameter is provided below:
 }
 ```
 
-Please refer to [Using an entry selector](plugin-development.md#use-an-entry-selector) for further details on
+Please refer to [Using an Entry Selector](plugin-development.md#use-an-entry-selector) for further details on
 using it within scripts.
 
 ### `file`
@@ -166,7 +174,8 @@ instance:
 {
     // ...,
     "defaultValue": {
-        "file": "dictionary.txt" // under the root directory of the labeler/plugin
+        "file": "dictionary.txt"
+        // under the root directory of the labeler/plugin
     },
     // ...
 }

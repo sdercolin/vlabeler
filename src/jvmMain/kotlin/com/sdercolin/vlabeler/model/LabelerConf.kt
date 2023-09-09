@@ -47,10 +47,10 @@ import java.io.File
  * @property website Website url of the labeler.
  * @property categoryTag Category tag of the labeler, "" as `Other`.
  * @property displayOrder Display order of the labeler in the dropdown list.
- * @property continuous Whether the labeler use continuous mode, where the end of entry is forced set to the start of
- *     its next entry.
- * @property allowSameNameEntry Whether to allow more than one entry with a shared name in the project module.
- * @property defaultValues Default value listed as [start, *fields, end] in millisecond.
+ * @property continuous Whether the entries are continuous, i.e. the end time of an entry is the start time of the next
+ *     entry.
+ * @property allowSameNameEntry Whether a module can contain entries with the same name.
+ * @property defaultValues Default value listed as [start, *fields, end] in milliseconds.
  * @property defaultExtras (Deprecated) Use [extraFields] instead.
  * @property fields [Field] definitions containing data used in the label files, except for built-in "start" and "end".
  *     Corresponds to [Entry.points].
@@ -371,14 +371,12 @@ data class LabelerConf(
          * - String "<[ExtraField.name] in [extraFields]>": string value in [Entry.extras], with the same index of the
          *   corresponding [ExtraField].
          * - Number "[Property.name]": Evaluated value of a [Property].
-         * - Boolean "needSync": [Entry.needSync]
          *
          * If a name is shared by a [Property] and [Field], the [Property] is assigned to the variable.
          *
          * Available input variables in scope [Scope.Modules]:
          * - String array "moduleNames": Name of the modules that the scripts need to handle.
          * - Object[] array "modules": An array of [Entry] arrays. The array has the same order as "moduleNames".
-         *   // TODO: add more variables to [Entry], including [Field.name], [ExtraField.name] and [Property.name]
          */
         val scripts: EmbeddedScripts? = null,
     )
@@ -418,8 +416,7 @@ data class LabelerConf(
      *    - value could be undefined, which means the parameter is not set
      * 2. via injected (updated) [LabelerConf] by [injector], if it is not null
      *
-     * @property parameter Definition of the parameter. They are the same with the parameters used by a plugin, so you
-     *     can also see [readme/plugin-development.md] for details.
+     * @property parameter Definition of the parameter. See [docs/parameter.md] for details.
      * @property injector JavaScript code that injects the parameter value into the labeler. `labeler` and `value` are
      *     available as variables. Note the injector cannot change the following info of the labeler:
      *       - [name]
@@ -490,6 +487,7 @@ data class LabelerConf(
      * objects.
      *
      * Available input variables:
+     * - Boolean "debug": whether the application is in debug mode.
      * - File "root": the root directory of the project (the `Sample Directory` chosen in the project creation page) the
      *   `File` type is a wrapper of Java's `java.io.File` class. Please check the documentation in
      *   [readme/file-api.md], or the source code in [src/main/jvmMain/resources/js/file.js].

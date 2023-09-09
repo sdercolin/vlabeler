@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
+import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectConstructorRuntimeException
 import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.io.moduleFromRawLabels

@@ -1,4 +1,4 @@
-# Develop plugins for vLabeler
+# Develop Plugins for vLabeler
 
 This guide illustrates the process of developing plugins for `vLabeler`. Should you encounter any inadequacies in the
 plugin specification for your needs, please do not hesitate to submit questions or feature requests.
@@ -36,16 +36,16 @@ A `vLabeler` plugin is a folder containing:
 
 The `plugin.json` file is structured as a JSON object, containing the following properties:
 
-| Property                    | Type                   | Default value | Supported Plugin Type | Description                                                                                                                                     |
+| Key                         | Type                   | Default value | Supported Plugin Type | Description                                                                                                                                     |
 |-----------------------------|------------------------|---------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
 | name                        | String                 | (Required)    | All                   | This value should match the folder's name.                                                                                                      |
-| version                     | Integer                | 1             | All                   | Plugin version number.                                                                                                                          |
+| version                     | Integer                | 1             | All                   | The version of the plugin.                                                                                                                      |
 | type                        | String                 | (Required)    | All                   | Specify as either `template` or `macro`.                                                                                                        |
-| displayedName               | String (Localized)     | `name` value  | All                   | Display name for the plugin.                                                                                                                    |
-| author                      | String                 | (Required)    | All                   | Plugin author's name.                                                                                                                           |
-| email                       | String                 | ""            | All                   | Contact email of the plugin author.                                                                                                             |
-| description                 | String (Localized)     | ""            | All                   | Brief description of the plugin.                                                                                                                |
-| website                     | String                 | ""            | All                   | Official website or source of the plugin.                                                                                                       |
+| displayedName               | String (Localized)     | `name` value  | All                   | The displayed name of the plugin.                                                                                                               |
+| author                      | String                 | (Required)    | All                   | The author of the plugin.                                                                                                                       |
+| email                       | String                 | ""            | All                   | Contact email of the author.                                                                                                                    |
+| description                 | String (Localized)     | ""            | All                   | A brief description of the plugin.                                                                                                              |
+| website                     | String                 | ""            | All                   | The website or source code repository of the plugin                                                                                             |
 | supportedLabelFileExtension | String                 | (Required)    | All                   | Supported extensions for your label file (e.g., `ini` for UTAU oto). Use "*" to accept all types; use "&#124;" to separate multiple extensions. |
 | outputRawEntry              | Boolean                | false         | Template              | If set to `true`, outputs the raw entry text rather than a parsed object.                                                                       |
 | scope                       | String                 | "Module"      | All                   | Determines the plugin's access range: either `Module` or `Project`.                                                                             |
@@ -89,7 +89,7 @@ edits.
 
 #### Input
 
-Your script will be supplied with the following variables:
+Before your scripts are executed, the following variables will be set in the JavaScript environment:
 
 | Name            | Type                | Description                                                                                                              |
 |-----------------|---------------------|--------------------------------------------------------------------------------------------------------------------------|
@@ -137,7 +137,7 @@ Construct an `output` array containing parsed [Entry](../src/jvmMain/resources/j
 let output = [];
 for (const line of lines) {
     // parse line to get `name`, `sample`, `start`, `end`, etc.
-    const entry = new Entry(name, sample, start, end, points, extras);
+    const entry = new Entry(sample, name, start, end, points, extras);
     output.push(entry);
 }
 ```
@@ -176,7 +176,7 @@ with `Module` scope operating on the current module, and `Project` scope coverin
 
 #### Input
 
-Your script will be supplied with the following variables:
+Before your scripts are executed, the following variables will be set in the JavaScript environment:
 
 | Parameter Name       | Type                | Scope   | Description                                                                                                              |
 |----------------------|---------------------|---------|--------------------------------------------------------------------------------------------------------------------------|
@@ -193,7 +193,7 @@ Your script will be supplied with the following variables:
 | pluginDirectory      | [File](file-api.md) | All     | The plugin directory.                                                                                                    |                                                                   
 | projectRootDirectory | [File](file-api.md) | Project | The project's root directory.                                                                                            |
 
-#### Use an entry selector
+#### Use an Entry Selector
 
 This type of parameter lets the user specify a subset of entries for operation and is accessible under `Module` scope.
 Here's a code snippet for its utilization:
@@ -241,14 +241,14 @@ Explore these integrated `macro` plugins for insight:
   project. The function `report()` is used here.
 - [execute-scripts](../resources/common/plugins/macro/execute-scripts): Run input scripts to edit the project. It can be
   used as a debugging tool during plugin development.
-- [resampler-test](../resources/common/plugins/macro/resampler-test): Examine the resampler synthesis of the active
+- [resampler-test](https://github.com/sdercolin/vlabeler-resampler-test): Examine the resampler synthesis of the active
   entry. Demonstrates the use of `requestAudioFilePlayback()`, along with `Env`, `File`, and `CommandLine` APIs.
 
 ## Miscellaneous
 
 ### Localization
 
-For plugin definition and scripting localization support, refer to [Localized strings in vLabeler](localized-string.md).
+Check [Localized strings in vLabeler](localized-string.md) about the `String (Localized)` type mentioned above.
 
 ### Error handling
 
