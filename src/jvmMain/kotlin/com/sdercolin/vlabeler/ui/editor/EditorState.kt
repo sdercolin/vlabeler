@@ -447,6 +447,7 @@ class EditorState(
         val property = project.labelerConf.properties
             .find { it.shortcutIndex == propertyShortcutIndex }
             ?: return false
+        if (property.valueSetter == null) return false
         val js = JavaScript()
         val currentValue = project.labelerConf.getPropertyValue(
             property,
