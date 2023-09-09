@@ -294,6 +294,12 @@ fun LabelerConf.injectLabelerParams(paramMap: ParamMap): LabelerConf {
     require(labelerResult.fields.map { it.name } == fields.map { it.name }) {
         "Could not inject to change the name of a field of LabelerConf"
     }
+    require(labelerResult.extraFields.map { it.name } == extraFields.map { it.name }) {
+        "Could not inject to change the name of an extra field of LabelerConf"
+    }
+    require(labelerResult.properties.map { it.name } == properties.map { it.name }) {
+        "Could not inject to change the name of a property of LabelerConf"
+    }
     return labelerResult
 }
 
