@@ -105,7 +105,7 @@ fun moduleGroupFromRawLabels(
     val inputs = requireNotNull(definitionGroup.first().inputFiles).map {
         runCatching { it.readTextByEncoding(encoding).lines() }.getOrNull()
     }
-    js.setJson("moduleNames", definitionGroup.map { it.name })
+    js.setJson("moduleDefinitions", definitionGroup.map { it.toRawModuleDefinition() })
     js.setJson("inputs", inputs)
 
     val script = labelerConf.parser.scripts.getScripts(labelerConf.directory)
