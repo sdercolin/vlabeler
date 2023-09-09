@@ -68,7 +68,9 @@ fun runTemplatePlugin(
                 it.toFile().readTextByEncoding(encodingByScript ?: encoding)
             }
         } else {
-            emptyList()
+            moduleDefinition.inputFiles?.map {
+                runCatching { it.readTextByEncoding(encoding) }.getOrNull()
+            } ?: emptyList()
         }
         js.setJson("inputs", inputTexts)
         val resourceTexts = plugin.readResourceFiles()
