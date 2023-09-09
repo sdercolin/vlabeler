@@ -69,11 +69,12 @@ fun File.findUnusedFile(base: String, existingAbsolutePaths: Set<String>): File 
 }
 
 /**
- * Check whether the given [File] is a child of this [File].
+ * Check whether the given [File] is a child of this [File]. If any of the two [File]s is not absolute, return false.
  *
  * @param file The file to be checked as a child.
  */
 fun File.containsFileRecursively(file: File): Boolean {
+    if (file.isAbsolute.not() || isAbsolute.not()) return false
     if (file.absolutePath == absolutePath) return true
     val sections = absolutePath.split(File.separator)
     val childSections = file.absolutePath.split(File.separator)
