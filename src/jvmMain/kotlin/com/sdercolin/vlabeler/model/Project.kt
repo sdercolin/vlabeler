@@ -244,9 +244,13 @@ fun LabelerConf.injectLabelerParams(paramMap: ParamMap): LabelerConf {
 
     val js = JavaScript()
     js.setJson("labeler", this)
-    for (def in paramDefsToInject) {
-        js.setJson("value", paramMap.resolveItem(def.parameter.name, project = null, js = js))
-        def.injector?.getScripts(directory)?.let { js.eval(it) }
+    try {
+        for (def in paramDefsToInject) {
+            js.setJson("value", paramMap.resolveItem(def.parameter.name, project = null, js = js))
+            def.injector?.getScripts(directory)?.let { js.eval(it) }
+        }
+    } catch (t: Throwable) {
+        throw InvalidEditedProjectException(t)
     }
     val labelerResult = js.getJson<LabelerConf>("labeler").migrate()
     js.close()
