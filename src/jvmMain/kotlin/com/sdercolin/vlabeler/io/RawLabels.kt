@@ -221,10 +221,13 @@ private fun LabelerConf.getPropertyBaseMap(
     entry: Entry,
     js: JavaScript,
 ) = properties.associateWith {
-    run {
+    runCatching {
         js.setJson("entry", entry)
         js.eval(it.valueGetter.getScripts(directory))
         js.get<Double>("value").roundToDecimalDigit(decimalDigit)
+    }.getOrElse {
+        Log.error(it)
+        0.0
     }
 }
 

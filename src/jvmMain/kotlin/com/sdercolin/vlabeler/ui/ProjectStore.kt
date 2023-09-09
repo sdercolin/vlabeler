@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectUpdateOnSampleException
+import com.sdercolin.vlabeler.exception.PropertySetterRuntimeException
+import com.sdercolin.vlabeler.exception.PropertySetterUnexpectedRuntimeException
 import com.sdercolin.vlabeler.io.autoSaveTemporaryProjectFile
 import com.sdercolin.vlabeler.io.exportProject
 import com.sdercolin.vlabeler.io.exportProjectModule
@@ -21,7 +23,10 @@ import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.RecordDir
+import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.getChildren
+import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.savedMutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -627,12 +632,25 @@ class ProjectStoreImpl(
             val property = project.labelerConf.properties[propertyIndex]
             val setter = requireNotNull(property.valueSetter)
             val js = JavaScript()
-            js.setJson("entry", project.currentModule.currentEntry)
-            js.set("value", value)
-            js.eval(setter.getScripts(project.labelerConf.directory))
-            val updatedEntry = js.getJson("entry") as? Entry ?: return
-            js.close()
-            editCurrentProjectModule { updateCurrentEntry(updatedEntry, project.labelerConf) }
+            try {
+                js.execResource(Resources.expectedErrorJs)
+                js.setJson("entry", project.currentModule.currentEntry)
+                js.set("value", value)
+                js.eval(setter.getScripts(project.labelerConf.directory))
+                val updatedEntry = js.getJson("entry") as? Entry
+                if (updatedEntry != null) {
+                    editCurrentProjectModule { updateCurrentEntry(updatedEntry, project.labelerConf) }
+                }
+                js.close()
+            } catch (e: Exception) {
+                val expected = js.getOrNull("expectedError") ?: false
+                js.close()
+                if (expected) {
+                    throw PropertySetterRuntimeException(e, e.message?.parseJson())
+                } else {
+                    throw PropertySetterUnexpectedRuntimeException(e)
+                }
+            }
         }.onFailure {
             errorState.showError(it)
         }

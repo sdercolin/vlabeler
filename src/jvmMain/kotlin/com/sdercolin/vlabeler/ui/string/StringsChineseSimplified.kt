@@ -242,6 +242,8 @@ fun Strings.zhHans(): String? = when (this) {
     CustomizableItemRemovingException -> "无法删除该自定义组件。"
     PluginRuntimeExceptionTemplate -> "插件运行时错误：%s"
     ProjectConstructorRuntimeExceptionTemplate -> "构建项目时的标注器运行时错误：%s"
+    PropertySetterRuntimeExceptionTemplate -> "设置属性时的标注器运行时错误：%s"
+    PropertySetterUnexpectedRuntimeException -> "设置属性时发生了意外的错误。请联系标注器作者以获取更多信息。"
     VideoComponentInitializationException ->
         "无法初始化视频组件。您需要在您的设备上安装 VLC 才能使用此功能。请阅读 README 中的 `集成视频` 部分以获取更多信息。"
     VideoFileNotFoundExceptionTemplate -> "未找到 %s 的同名视频文件（%s）"

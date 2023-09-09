@@ -266,6 +266,10 @@ fun Strings.en(): String = when (this) {
     CustomizableItemRemovingException -> "Could not remove the selected customized item."
     PluginRuntimeExceptionTemplate -> "Plugin runtime error: %s"
     ProjectConstructorRuntimeExceptionTemplate -> "Labeler runtime error when constructing project: %s"
+    PropertySetterRuntimeExceptionTemplate -> "Labeler runtime error when setting property: %s"
+    PropertySetterUnexpectedRuntimeException ->
+        "An unexpected error occurred when setting property.\n" +
+            "Please contact the author of the labeler for more information."
     VideoComponentInitializationException ->
         "Could not initialize the video component. You need to install VLC on your device to use this feature. " +
             "Please read the `Video integration` section in README for details."

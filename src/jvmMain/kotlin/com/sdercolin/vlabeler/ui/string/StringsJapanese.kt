@@ -262,6 +262,9 @@ fun Strings.ja(): String? = when (this) {
         "ファイル名が「%s」で、拡張子が「%s」の動画は見つかりませんでした。"
     PluginRuntimeExceptionTemplate -> "プラグインの実行中にエラーが発生しました：%s"
     ProjectConstructorRuntimeExceptionTemplate -> "プロジェクトの作成中にエラーが発生しました：%s"
+    PropertySetterRuntimeExceptionTemplate -> "プロパティの設定中にエラーが発生しました：%s"
+    PropertySetterUnexpectedRuntimeException ->
+        "プロパティの設定中に予期しないエラーが発生しました。ラベラーの作者に連絡してください。"
     LabelerManagerTitle -> "ラベラー"
     LabelerManagerImportDialogTitle -> "ラベラーをインポート"
     TemplatePluginManagerTitle -> "テンプレート生成器"

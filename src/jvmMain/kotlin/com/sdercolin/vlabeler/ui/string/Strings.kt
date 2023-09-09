@@ -237,6 +237,8 @@ enum class Strings {
     VideoFileNotFoundExceptionTemplate,
     PluginRuntimeExceptionTemplate,
     ProjectConstructorRuntimeExceptionTemplate,
+    PropertySetterRuntimeExceptionTemplate,
+    PropertySetterUnexpectedRuntimeException,
     LabelerManagerTitle,
     LabelerManagerImportDialogTitle,
     TemplatePluginManagerTitle,
