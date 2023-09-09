@@ -37,7 +37,7 @@ fun moduleFromRawLabels(
     encoding: String,
 ): List<Entry> {
     val parser = labelerConf.parser
-    val extractor = Regex(parser.extractionPattern)
+    val extractor = parser.extractionPattern?.let { Regex(it) }
     val inputFileNames = listOfNotNull(inputFile?.name)
     val sampleFileNames = sampleFiles.map { it.name }
     val js = prepareJsForParsing(labelerConf, labelerParams, inputFileNames, sampleFileNames, encoding)
@@ -45,15 +45,21 @@ fun moduleFromRawLabels(
         if (source.isBlank()) return@mapIndexedNotNull null
         val errorMessageSuffix = "in file ${inputFile?.absolutePath}, line ${index + 1}: $source"
         runCatching {
-            val groups = source.matchGroups(extractor)
-            require(groups.size >= parser.variableNames.size) {
-                "Extracted groups less than required $errorMessageSuffix"
+            if (parser.variableNames.isNotEmpty()) {
+                requireNotNull(extractor) {
+                    "extractionPattern is required but not defined $errorMessageSuffix"
+                }
+                val groups = source.matchGroups(extractor)
+                require(groups.size >= parser.variableNames.size) {
+                    "Extracted groups less than required $errorMessageSuffix"
+                }
+                parser.variableNames.mapIndexed { i, name ->
+                    js.set(name, groups.getOrNull(i))
+                }
             }
 
-            parser.variableNames.mapIndexed { i, name ->
-                js.set(name, groups.getOrNull(i))
-            }
             val script = parser.scripts.getScripts(labelerConf.directory)
+            js.set("input", source)
             js.eval(script)
             js.getJson<Entry>("entry")
         }.getOrElse {

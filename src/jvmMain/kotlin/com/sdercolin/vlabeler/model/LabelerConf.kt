@@ -305,7 +305,7 @@ data class LabelerConf(
     data class Parser(
         val scope: Scope,
         val defaultEncoding: String = "UTF-8",
-        val extractionPattern: String = "",
+        val extractionPattern: String? = null,
         val variableNames: List<String> = emptyList(),
         /**
          * Available input variables:
@@ -313,6 +313,7 @@ data class LabelerConf(
          * - String array "sampleFileNames": Name of the samples files in the folder.
          * - String "<item in [variableNames]>": Values extracted by [extractionPattern]. Only available when [scope] is
          *   [Scope.Entry].
+         *   String "input": The current line of the input file. Only available when [scope] is [Scope.Entry].
          * - String "moduleNames": Name of the modules that the scripts need to build. Only available when [scope] is
          *   [Scope.Modules].
          * - String[] array "inputs": Input file contents in lines that belong to this module set. Only available when
