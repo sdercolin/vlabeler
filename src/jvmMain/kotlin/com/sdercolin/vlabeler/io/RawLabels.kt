@@ -102,7 +102,9 @@ fun moduleGroupFromRawLabels(
     }
 
     val js = prepareJsForParsing(labelerConf, labelerParams, inputFileNames, sampleFileNames, encoding)
-    val inputs = requireNotNull(definitionGroup.first().inputFiles).map { it.readTextByEncoding(encoding).lines() }
+    val inputs = requireNotNull(definitionGroup.first().inputFiles).map {
+        runCatching { it.readTextByEncoding(encoding).lines() }.getOrNull()
+    }
     js.setJson("moduleNames", definitionGroup.map { it.name })
     js.setJson("inputs", inputs)
 
