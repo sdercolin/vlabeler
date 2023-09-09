@@ -345,8 +345,7 @@ data class LabelerConf(
         val scope: Scope = Scope.Entry,
         /**
          * String format using the following variables written as "{<var_name>}", only used by [Scope.Entry]:
-         * - {sample}: sample file name without extension.
-         * - {extension}: sample file extension.
+         * - {sample}: sample file name.
          * - {name}: entry name.
          * - {start}: [Entry.start]
          * - {end}: [Entry.end]
@@ -357,7 +356,7 @@ data class LabelerConf(
          *
          * If a name is shared by a [Property] and [Field], the [Property] is assigned to the variable.
          *
-         * @sample "{sample}.wav:{name}={start},{middle},{end}" will be written like "a.wav:a:100,220.5,300".
+         * @sample "{sample.wav}:{name}={start},{middle},{end}" will be written like "a.wav:a:100,220.5,300".
          */
         val format: String? = null,
         /**
