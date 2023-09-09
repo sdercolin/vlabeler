@@ -298,7 +298,8 @@ data class LabelerConf(
      * @property variableNames Definition of how the extracted string groups will be put into variables later in the
      *     parser JavaScript code. Should be in the same order as the extracted groups. Only used when [scope] is
      *     [Scope.Entry].
-     * @property scripts JavaScript code that sets properties of [Entry] using the variables extracted.
+     * @property scripts JavaScript code that sets properties of [Entry] using the variables extracted. See the "Parsing
+     *     Raw Labels" section of [docs/labeler-development.md] for details.
      */
     @Serializable
     @Immutable
@@ -307,27 +308,6 @@ data class LabelerConf(
         val defaultEncoding: String = "UTF-8",
         val extractionPattern: String? = null,
         val variableNames: List<String> = emptyList(),
-        /**
-         * Available input variables:
-         * - String "inputFileName": Name of the input file. Could be null.
-         * - String array "sampleFileNames": Name of the samples files in the folder.
-         * - String "<item in [variableNames]>": Values extracted by [extractionPattern]. Only available when [scope] is
-         *   [Scope.Entry].
-         *   String "input": The current line of the input file. Only available when [scope] is [Scope.Entry].
-         * - String "moduleNames": Name of the modules that the scripts need to build. Only available when [scope] is
-         *   [Scope.Modules].
-         * - String[] array "inputs": Input file contents in lines that belong to this module set. Only available when
-         *   [scope] is [Scope.Modules].
-         * - Map "params", created according to [parameters], see [ParameterHolder] for details.
-         * - String "encoding": the encoding selected in the project creation page.
-         *
-         * Output variables that the scripts should set:
-         * - entry: the JavaScript object for [Entry]. This is only required when [scope] is [Scope.Entry]. See
-         *   src/main/resources/labeler/entry.js for the actual JavaScript class definition.
-         * - modules: an array of entry (described above) arrays. This is only required when [scope] is [Scope.Modules].
-         *   The array should have the same order as 'moduleNames' given as input. Every item in the array should be an
-         *   array of [Entry] objects in this module.
-         */
         val scripts: EmbeddedScripts,
     )
 
@@ -335,49 +315,17 @@ data class LabelerConf(
      * Definition for line format in the raw label file.
      *
      * @property scope [Scope] of the writer.
-     * @property format String format to generate the output line.
+     * @property format String format to generate the output line. See the "Writer" section of
+     *     [docs/labeler-development.md] for details.
      * @property scripts JavaScript code that generate the output line Either [format] or [scripts] should be given. If
-     *     both of them are given, [scripts] is used.
+     *     both of them are given, [scripts] is used. See the "Writing Raw Labels" section of
+     *     [docs/labeler-development.md] for details.
      */
     @Serializable
     @Immutable
     data class Writer(
         val scope: Scope = Scope.Entry,
-        /**
-         * String format using the following variables written as "{<var_name>}", only used by [Scope.Entry]:
-         * - {sample}: sample file name.
-         * - {name}: entry name.
-         * - {start}: [Entry.start]
-         * - {end}: [Entry.end]
-         * - {[Property.name]}: evaluated value of a [Property].
-         * - {[Field.name]}: value in [Entry.points] with the same index of the corresponding [Field].
-         * - {<[ExtraField.name] in [extraFields]>}: string value in [Entry.extras], with the same index of the
-         *   corresponding [ExtraField].
-         *
-         * If a name is shared by a [Property] and [Field], the [Property] is assigned to the variable.
-         *
-         * @sample "{sample.wav}:{name}={start},{middle},{end}" will be written like "a.wav:a:100,220.5,300".
-         */
         val format: String? = null,
-        /**
-         * JavaScript code that sets "output" variable.
-         *
-         * Available input variables in scope [Scope.Entry]:
-         * - String "sample": [Entry.sample]
-         * - String "name": [Entry.name]
-         * - Number "start": [Entry.start]
-         * - Number "end": [Entry.end]
-         * - Number "[Field.name]": value in [Entry.points] with the same index of the corresponding [Field].
-         * - String "<[ExtraField.name] in [extraFields]>": string value in [Entry.extras], with the same index of the
-         *   corresponding [ExtraField].
-         * - Number "[Property.name]": Evaluated value of a [Property].
-         *
-         * If a name is shared by a [Property] and [Field], the [Property] is assigned to the variable.
-         *
-         * Available input variables in scope [Scope.Modules]:
-         * - String array "moduleNames": Name of the modules that the scripts need to handle.
-         * - Object[] array "modules": An array of [Entry] arrays. The array has the same order as "moduleNames".
-         */
         val scripts: EmbeddedScripts? = null,
     )
 
@@ -386,17 +334,10 @@ data class LabelerConf(
      *
      * @property name Unique name of the property.
      * @property displayedName Name displayed in property view UI (localized).
-     * @property valueGetter JavaScript code that calculates the value from {entry} object and set {value} variable.
-     *    - Input: "entry" - the JavaScript object for [Entry]. See src/main/resources/labeler/entry.js for the actual
-     *      JavaScript class definition.
-     *    - Output: "value" - the value of the property as number.
-     *
-     * @property valueSetter JavaScript code that takes the value of input the property and update {entry} object
-     *     accordingly. Could be null if you want to disable the value setting feature in the UI.
-     *    - Input: "value" - the value of the property as number. "entry" - the JavaScript object for [Entry]. See
-     *      src/main/resources/labeler/entry.js for the actual JavaScript class definition.
-     *    - Output:"entry" - the updated JavaScript object for [Entry].
-     *
+     * @property valueGetter JavaScript code that gets the property value from the entry object. See the "Property
+     *     Getter" section of [docs/labeler-development.md] for details.
+     * @property valueSetter JavaScript code that takes a new property value and modifies the entry object. See the
+     *     "Property Setter" section of [docs/labeler-development.md] for details.
      * @property shortcutIndex Index in the shortcut list of Action `Set Property`. Could be 0~9.
      */
     @Serializable
@@ -417,23 +358,8 @@ data class LabelerConf(
      * 2. via injected (updated) [LabelerConf] by [injector], if it is not null
      *
      * @property parameter Definition of the parameter. See [docs/parameter.md] for details.
-     * @property injector JavaScript code that injects the parameter value into the labeler. `labeler` and `value` are
-     *     available as variables. Note the injector cannot change the following info of the labeler:
-     *       - [name]
-     *       - [version]
-     *       - [extension]
-     *       - [displayedName]
-     *       - [description]
-     *       - [author]
-     *       - [website]
-     *       - [email]
-     *       - [continuous]
-     *       - [parameters]
-     *       - size of [fields]
-     *       - size of [defaultValues]
-     *       - size of [extraFields]
-     *       - [Field.name]s in [fields]
-     *
+     * @property injector JavaScript code that injects the parameter value into the labeler. See the "Injecting
+     *     Parameter Values" section of [docs/labeler-development.md] for details.*
      * @property changeable Whether the parameter is changeable after the project is created.
      */
     @Serializable(with = ParameterHolderSerializer::class)
@@ -484,24 +410,7 @@ data class LabelerConf(
      * In order to edit multiple label files in a single project, the labeler should be able to construct subprojects
      * when creating the project. This property defines the subproject structure and building procedure. In the source
      * code, we call the subproject as "Module". The [scripts] is JavaScript code that creates [RawModuleDefinition]
-     * objects.
-     *
-     * Available input variables:
-     * - Boolean "debug": whether the application is in debug mode.
-     * - File "root": the root directory of the project (the `Sample Directory` chosen in the project creation page) the
-     *   `File` type is a wrapper of Java's `java.io.File` class. Please check the documentation in
-     *   [readme/file-api.md], or the source code in [src/main/jvmMain/resources/js/file.js].
-     * - Map "params", created according to [parameters], see [ParameterHolder] for details.
-     * - String "encoding": the encoding selected in the project creation page.
-     * - String array "acceptedSampleExtensions": the array of accepted sample extensions in the current application.
-     *   Defined in [com.sdercolin.vlabeler.io.Sample.acceptableSampleFileExtensions].
-     *
-     * Output variables that the scripts should set:
-     * - Array "modules": an array of [RawModuleDefinition] objects. Use `new ModuleDefinition()` to create a new
-     *   object. Please check the JavaScript source code with documentations in
-     *   [src/main/jvmMain/resources/js/module_definition.js] for details. Specifically, if there are multiple modules
-     *   that only differ in `name`, they will be processed together in [Parser] and [Writer] if the [Scope] is set to
-     *   [Scope.Modules].
+     * objects. See the "Constructing a Project" section of [docs/labeler-development.md] for details.
      */
     @Serializable
     @Immutable
