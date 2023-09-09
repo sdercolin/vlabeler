@@ -61,7 +61,7 @@ fun runTemplatePlugin(
             val inputFinderScriptTexts = plugin.directory.resolve(inputFinderScriptFile).readText()
             js.set("root", rootSampleDirectory)
             js.set("moduleName", moduleDefinition.name)
-            js.execResource(Resources.prepareBuildProjectJs)
+            js.eval("root = new File(root)")
             js.exec(inputFinderScriptFile, inputFinderScriptTexts)
             val encodingByScript = js.getOrNull<String>("encoding")
             js.getJson<List<String>>("inputFilePaths").map {

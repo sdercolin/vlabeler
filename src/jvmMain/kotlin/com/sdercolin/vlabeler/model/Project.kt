@@ -326,8 +326,8 @@ suspend fun projectOf(
             Resources.fileJs,
             Resources.expectedErrorJs,
             Resources.moduleDefinitionJs,
-            Resources.prepareBuildProjectJs,
         ).forEach { js.execResource(it) }
+        js.eval("root = new File(root)")
         labelerParams.resolve(project = null, js = js).let { js.setJson("params", it) }
         try {
             labelerConf.projectConstructor.scripts.getScripts(labelerConf.directory).let { js.eval(it) }
