@@ -89,10 +89,11 @@ fun moduleGroupFromRawLabels(
     labelerParams: ParamMap,
     encoding: String,
 ): List<List<Entry>> {
-    val inputFileNames = definitionGroup.first().inputFiles.orEmpty().map { it.name }
+    val inputFiles = definitionGroup.first().inputFiles.orEmpty()
+    val existingInputFiles = inputFiles.filter { it.isFile }
     val sampleFileNames = definitionGroup.first().sampleFiles.map { it.name }
 
-    if (inputFileNames.isEmpty()) {
+    if (existingInputFiles.isEmpty()) {
         // No input files, fallback to default values
         return definitionGroup.map {
             sampleFileNames.map { sampleName ->
@@ -100,7 +101,7 @@ fun moduleGroupFromRawLabels(
             }
         }
     }
-
+    val inputFileNames = inputFiles.map { it.name }
     val js = prepareJsForParsing(labelerConf, labelerParams, inputFileNames, sampleFileNames, encoding)
     val inputs = requireNotNull(definitionGroup.first().inputFiles).map {
         runCatching { it.readTextByEncoding(encoding).lines() }.getOrNull()
