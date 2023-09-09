@@ -346,6 +346,7 @@ data class LabelerConf(
         /**
          * String format using the following variables written as "{<var_name>}", only used by [Scope.Entry]:
          * - {sample}: sample file name without extension.
+         * - {extension}: sample file extension.
          * - {name}: entry name.
          * - {start}: [Entry.start]
          * - {end}: [Entry.end]

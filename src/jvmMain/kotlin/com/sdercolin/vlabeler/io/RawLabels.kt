@@ -177,7 +177,8 @@ fun Project.singleModuleToRawLabels(moduleIndex: Int): String {
                     properties.mapValues { it.value.roundToDecimalDigit(labelerConf.decimalDigit) } +
                     extras +
                     mapOf(
-                        "sample" to entry.sample,
+                        "sample" to entry.sample.substringBeforeLast('.'),
+                        "extension" to entry.sample.substringAfterLast('.'),
                         "name" to entry.name,
                     )
             val scripts = labelerConf.writer.scripts
