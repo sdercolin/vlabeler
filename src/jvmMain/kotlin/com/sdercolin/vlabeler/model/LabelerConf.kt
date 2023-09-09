@@ -283,7 +283,7 @@ data class LabelerConf(
     data class ExtraField(
         val name: String,
         val default: String,
-        val displayedName: LocalizedJsonString,
+        val displayedName: LocalizedJsonString = name.toLocalized(),
         val isVisible: Boolean = false,
         val isEditable: Boolean = false,
         val isOptional: Boolean = false,
