@@ -176,7 +176,7 @@ suspend fun awaitLoadProject(
         project.cacheDirectoryPath
     }
 
-    Log.info("Project loaded: ${file.absolutePath}, original path is ${project.projectFile.absolutePath}")
+    Log.debug("Project loaded: ${file.absolutePath}, original path is ${project.projectFile.absolutePath}")
     val fixedProject = project.copy(
         labelerConf = labelerConf,
         originalLabelerConf = originalLabelerConf,

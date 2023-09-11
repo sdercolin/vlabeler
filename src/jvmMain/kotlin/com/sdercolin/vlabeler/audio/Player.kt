@@ -83,7 +83,7 @@ class Player(
         file = newFile
         openJob = coroutineScope.launch(Dispatchers.IO) {
             runCatching {
-                Log.info("Player.load(\"${newFile.absolutePath}\")")
+                Log.debug("Player.load(\"${newFile.absolutePath}\")")
                 val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
                     format = stream.format.normalize(maxSampleRate)
                     data = AudioSystem.getAudioInputStream(format, stream).use {
