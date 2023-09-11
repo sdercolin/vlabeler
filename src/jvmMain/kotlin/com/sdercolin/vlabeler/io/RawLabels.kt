@@ -60,7 +60,7 @@ fun moduleFromRawLabels(
 
             val script = parser.scripts.getScripts(labelerConf.directory)
             js.set("input", source)
-            js.eval(script)
+            js.execInScope(script)
             js.getJson<Entry>("entry")
         }.getOrElse {
             Log.debug(it)
@@ -188,7 +188,7 @@ fun Project.singleModuleToRawLabels(moduleIndex: Int): String {
                 for (variable in variables) {
                     js.set(variable.key, variable.value)
                 }
-                js.eval(scripts.getScripts(labelerConf.directory))
+                js.execInScope(scripts.getScripts(labelerConf.directory))
                 js.get("output")
             } else {
                 val format = requireNotNull(labelerConf.writer.format)
@@ -232,7 +232,7 @@ private fun LabelerConf.getPropertyBaseMap(
 ) = properties.associateWith {
     runCatching {
         js.setJson("entry", entry)
-        js.eval(it.valueGetter.getScripts(directory))
+        js.execInScope(it.valueGetter.getScripts(directory))
         js.get<Double>("value").roundToDecimalDigit(decimalDigit)
     }.getOrElse {
         Log.error(it)

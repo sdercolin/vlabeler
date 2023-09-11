@@ -688,7 +688,9 @@ property.
 
 #### Output
 
-- `value`: You need to set the `value` variable to the calculated value as a number.
+- `value`: You need to set the **global** `value` variable to the calculated value as a number.
+
+Note: `let value = ...` or `const value = ...` will be ignored.
 
 For example, if we want to define a simple property `duration` that is the difference between `end` and `start`, we can
 write the getter as:
@@ -780,7 +782,9 @@ Besides the common input variables, the following variables will be set in the J
 - `input`: the text of current line of the input file.
 - any element in `variableNames`: the value of the variable extracted from the current line.
 
-You need to assign the `entry` variable to the created [entry](../src/jvmMain/resources/js/class_entry.js) object.
+You need to assign the **global** `entry` variable to the created [entry](../src/jvmMain/resources/js/class_entry.js) object.
+
+Note: `let entry = ...` or `const entry = ...` will be ignored.
 
 Here is an example of a parser script to work on a fake label file:
 
@@ -838,7 +842,9 @@ With the `Entry` scope, the writer scripts are executed per entry.
 Besides the common input variables, the application sets the same variables as described in
 the [Use `format`](#use-format) section.
 
-The writer scripts should set the `output` variable to the text of the output line.
+The writer scripts should set the **global** `output` variable to the text of the output line.
+
+Note: `let output = ...` or `const output = ...` will be ignored. 
 
 #### Writing in scope `Modules`
 
