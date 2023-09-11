@@ -198,7 +198,8 @@ code [LabelerConf.kt](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Labeler
 | allowSameNameEntry   | Boolean                        | false         | Whether a module can contain entries with the same name.                                                                                   |
 | defaultValues        | Float[]                        | (Required)    | The default values of timing parameters listed as `[start, *fields, end]` in milliseconds.                                                 |
 | fields               | Field[]                        | (Required)    | The custom timing field definitions of an entry besides standard "start" and "end" fields. See [Field](#field) for details.                |
-| extraFields          | ExtraField[]                   | []            | The extra field definitions that are not timing fields. See [Extra Field](#extra-field) for details.                                       |
+| extraFields          | ExtraField[]                   | []            | The extra field definitions that are not timing fields in entry level. See [Extra Field](#extra-field) for details.                        |
+| moduleExtraFields    | ExtraField[]                   | []            | The extra field definitions in module level. See [Extra Field](#extra-field) for details.                                                  |
 | lockedDrag           | LockedDrag                     | {}            | The definition of locked drag behavior i.e. all parameters will move with dragged one. See [Locked Drag](#locked-drag) for details.        |
 | overflowBeforeStart  | PointOverflow                  | "Error"       | Action taken when there are points before "start". See [Point Overflow](#point-overflow) for details.                                      |
 | overflowAfterEnd     | PointOverflow                  | "Error"       | Action taken when there are points after "end". See [Point Overflow](#point-overflow) for details.                                         |
@@ -345,7 +346,8 @@ Note that this feature is only supported for non-[continuous](#continuous) label
 
 ### Extra Field
 
-The `extraFields` field defines the extra field definitions that are not timing fields.
+The `extraFields` field defines the extra field definitions that are not timing fields, used in entry level or module
+level.
 Comparing to the `fields` field, the extra fields are not timing fields, and their values are stored as strings or
 explicit `null`s.
 
@@ -353,10 +355,13 @@ Typically, the extra fields are used to store some extra information of an entry
 Some are not supposed to be visible to users, but only used in the scripts; some may be visible and/or editable in a
 dialog for users to edit the extra information of an entry.
 
-The value of the extra fields will be stored in the `extras` field of
+For entry level extras, the values will be stored in the `extras` field of
 an [entry](../src/jvmMain/resources/js/class_entry.js) The order of the values in `extras`
 should be strictly the same as the order of its corresponding `ExtraField` in the `extraFields` field.
 When an extra field has a `null` value, it should also appear in the `extras` field to keep the correct index.
+
+For module level extras, the values will be stored as a map. See [Parsing in Scope `Modules`](#parsing-in-scope-modules)
+and [Writing in Scope `Modules`](#writing-in-scope-modules) for details.
 
 The `extraFields` field is an array of `ExtraField` objects, which has the following fields:
 
@@ -755,7 +760,7 @@ group which is defined by the project constructor in the previous step.
 
 Next, let's see how to write the parser scripts that should be set in the `parser` object.
 
-#### Common input
+#### Common Input
 
 The following variables will be set in the JavaScript environment before the parser scripts are executed, for both
 `Entry` and `Modules` scoped parsers:
@@ -769,7 +774,7 @@ The following variables will be set in the JavaScript environment before the par
 | encoding        | String     | The encoding of the raw label file, selected by the user during project creation.                                |
 | debug           | Boolean    | Whether the execution is in debug mode (during the Gradle `run` task).                                           |
 
-#### Parsing in scope `Entry`
+#### Parsing in Scope `Entry`
 
 As introduced in the [Parser](#parser) section, the `Entry` scoped parser utilizes the `extractionPattern` field and
 `variableNames` field to extract variables from an entry line.
@@ -782,7 +787,8 @@ Besides the common input variables, the following variables will be set in the J
 - `input`: the text of current line of the input file.
 - any element in `variableNames`: the value of the variable extracted from the current line.
 
-You need to assign the **global** `entry` variable to the created [entry](../src/jvmMain/resources/js/class_entry.js) object.
+You need to assign the **global** `entry` variable to the created [entry](../src/jvmMain/resources/js/class_entry.js)
+object.
 
 Note: `let entry = ...` or `const entry = ...` will be ignored.
 
@@ -797,7 +803,7 @@ parts = input.split(",")
 entry = new Entry(parts[0], parts[1], parseFloat(parts[2]), parseFloat(parts[3]), [], [])
 ```
 
-#### Parsing in scope `Modules`
+#### Parsing in Scope `Modules`
 
 The `Modules` scoped parser is executed per module group, which is defined by the project constructor in the previous
 step.
@@ -816,6 +822,11 @@ You need to assign a `modules` variable with type `Entry[][]` to the created ent
 variable is an array of entries for a module in the module group. The order of the elements in `modules` should be the
 same as the order of the `moduleDefinitions` variable.
 
+In addition, you can assign a `moduleExtras` variable with type `Dictionary[]` to the extras of each module in the
+module group. The order should be the same as `modules`. The keys of each dictionary are the names of
+elements in `moduleExtraFields` in `labeler.json`. The values are all stored as strings. If a value is `null`, do not
+include the corresponding key in the dictionary.
+
 ### Writing Raw Labels
 
 In the [Writer](#writer) section, we have learned that the `format` field or `scripts` field in the `writer` object
@@ -824,7 +835,7 @@ we need to use the `scripts` field to write the raw labels.
 
 Similar to the parser, we have two scopes for the writer: `Entry` and `Modules`.
 
-#### Common input
+#### Common Input
 
 The following variables will be set in the JavaScript environment before the writer scripts are executed, for both
 `Entry` and `Modules` scoped parsers:
@@ -835,7 +846,7 @@ The following variables will be set in the JavaScript environment before the wri
 | resources | String[]   | Texts from resource files, in the order they appear in `labeler.json`.                                           |
 | debug     | Boolean    | Whether the execution is in debug mode (during the Gradle `run` task).                                           |
 
-#### Writing in scope `Entry`
+#### Writing in Scope `Entry`
 
 With the `Entry` scope, the writer scripts are executed per entry.
 
@@ -844,9 +855,9 @@ the [Use `format`](#use-format) section.
 
 The writer scripts should set the **global** `output` variable to the text of the output line.
 
-Note: `let output = ...` or `const output = ...` will be ignored. 
+Note: `let output = ...` or `const output = ...` will be ignored.
 
-#### Writing in scope `Modules`
+#### Writing in Scope `Modules`
 
 With the `Modules` scope, the writer scripts are executed per module group, which is defined by the project constructor
 in the previous step.
@@ -856,6 +867,10 @@ Besides the common input variables, the application sets the following variables
 - `moduleNames`: the names of the modules in the module group.
 - `modules`: in `Entry[][]` type, the entries of the module group. The order of the elements in `modules` is the same
   as the order of the `moduleNames` variable.
+- `moduleExtras`: in `Dictionary[]` type, the extras of each module in the module group. The order of the elements in
+  `moduleExtras` is the same as the order of the `moduleNames` variable. The keys of each dictionary are the names of
+  elements in `moduleExtraFields` in `labeler.json`. The values are all stored as strings. If a value is `null`, the
+  corresponding key will not appear in the dictionary.
 
 The writer scripts should set the `output` variable to the text of the output file, which will be written to the
 `labelFilePath` field in the module definition.

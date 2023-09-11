@@ -21,6 +21,7 @@ import java.io.File
  *     actual directory.
  * @property entries The list of entries in the module.
  * @property currentIndex The index of the current entry in [entries].
+ * @property extras The extra info of the module, where the key is the `name` of [LabelerConf.moduleExtraFields].
  * @property rawFilePath The path of the target raw label file. Should always be under [Project.rootSampleDirectory].
  *     Basically, it's stored as a relative path to [Project.rootSampleDirectory]. Use [getRawFile] to get the actual
  *     file.
@@ -34,6 +35,7 @@ data class Module(
     val sampleDirectoryPath: String,
     val entries: List<Entry>,
     val currentIndex: Int,
+    val extras: Map<String, String> = emptyMap(),
     val rawFilePath: String? = null,
     val entryFilter: EntryFilter? = null,
 ) {
@@ -44,6 +46,7 @@ data class Module(
         sampleDirectory: File,
         entries: List<Entry>,
         currentIndex: Int,
+        extras: Map<String, String> = emptyMap(),
         rawFilePath: File? = null,
         entryFilter: EntryFilter? = null,
     ) : this(
@@ -55,6 +58,7 @@ data class Module(
         },
         entries = entries,
         currentIndex = currentIndex,
+        extras = extras,
         rawFilePath = if (rawFilePath?.isAbsolute == true) {
             rawFilePath.relativeTo(rootDirectory).path
         } else {
@@ -476,6 +480,7 @@ data class JsModule(
     val sampleDirectory: String,
     val entries: List<Entry>,
     val currentIndex: Int,
+    val extras: Map<String, String>,
     val rawFilePath: String?,
     val entryFilter: EntryFilter?,
 ) {
@@ -485,6 +490,7 @@ data class JsModule(
         sampleDirectory = sampleDirectory.toFile(),
         entries = entries,
         currentIndex = currentIndex,
+        extras = extras,
         rawFilePath = rawFilePath?.toFile(),
         entryFilter = entryFilter,
     )
@@ -495,6 +501,7 @@ fun Module.toJs(project: Project) = JsModule(
     sampleDirectory = getSampleDirectory(project).absolutePath,
     entries = entries,
     currentIndex = currentIndex,
+    extras = extras,
     rawFilePath = getRawFile(project)?.absolutePath,
     entryFilter = entryFilter,
 )

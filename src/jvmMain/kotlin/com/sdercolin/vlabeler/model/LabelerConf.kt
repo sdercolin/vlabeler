@@ -55,7 +55,8 @@ import java.io.File
  * @property fields [Field] definitions containing data used in the label files, except for built-in "start" and "end".
  *     Corresponds to [Entry.points].
  * @property extraFieldNames (Deprecated) Use [extraFields] instead.
- * @property extraFields [ExtraField] definitions stored as strings. Corresponds to [Entry.extras].
+ * @property extraFields Entry level [ExtraField] definitions. Corresponds to [Entry.extras].
+ * @property moduleExtraFields Module level [ExtraField] definitions. Corresponds to [Module.extras].
  * @property lockedDrag Defines when to use locked dragging (all parameters will move with dragged one).
  * @property overflowBeforeStart Action taken when there are points before "start".
  * @property overflowAfterEnd Action taken when there are points after "end".
@@ -94,6 +95,7 @@ data class LabelerConf(
     val fields: List<Field> = listOf(),
     val extraFieldNames: List<String>? = null,
     val extraFields: List<ExtraField> = listOf(),
+    val moduleExtraFields: List<ExtraField> = listOf(),
     val lockedDrag: LockedDrag = LockedDrag(),
     val overflowBeforeStart: PointOverflow = PointOverflow.Error,
     val overflowAfterEnd: PointOverflow = PointOverflow.Error,
@@ -269,7 +271,7 @@ data class LabelerConf(
     }
 
     /**
-     * Definition of extra fields used in entry, module and project scopes. The values are always stored as strings.
+     * Definition of extra fields used in entry or module levels. The values are always stored as strings.
      *
      * @property name Unique name of the field.
      * @property default Default value of the field.

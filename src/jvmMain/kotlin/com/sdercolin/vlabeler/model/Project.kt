@@ -493,16 +493,17 @@ private fun parseModuleGroup(
     // TODO: pluginParams: ParamMap?,
     encoding: String,
 ): List<Module> {
-    val result = moduleGroupFromRawLabels(moduleDefinitionGroup, labelerConf, labelerParams, encoding)
-    require(moduleDefinitionGroup.size == result.size) {
-        "Module group size mismatch: ${moduleDefinitionGroup.size} != ${result.size}"
+    val results = moduleGroupFromRawLabels(moduleDefinitionGroup, labelerConf, labelerParams, encoding)
+    require(moduleDefinitionGroup.size == results.size) {
+        "Module group size mismatch: ${moduleDefinitionGroup.size} != ${results.size}"
     }
-    return moduleDefinitionGroup.zip(result).map { (def, entries) ->
+    return moduleDefinitionGroup.zip(results).map { (def, result) ->
         Module(
             rootDirectory = rootSampleDirectory.toFile(),
             name = def.name,
             sampleDirectory = def.sampleDirectory,
-            entries = entries,
+            entries = result.entries,
+            extras = result.extras,
             currentIndex = 0,
             rawFilePath = def.labelFile,
         )
