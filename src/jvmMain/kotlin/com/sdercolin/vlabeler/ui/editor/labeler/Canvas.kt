@@ -134,11 +134,12 @@ private fun CanvasContentWithSample(
                 try {
                     // an emission here does not trigger recomposition, so we need to re-calculate the canvas params
                     // to get the correct scroll target
-                    val innerCanvasParams = editorState.getCanvasParams(sampleInfo, density)
+                    val innerSampleInfo = editorState.sampleInfoResult?.getOrNull() ?: return@onEach
+                    val innerCanvasParams = editorState.getCanvasParams(innerSampleInfo, density)
                     editorState.scrollOnResolutionChangeViewModel.scroll(
                         horizontalScrollState,
                         innerCanvasParams,
-                        sampleInfo,
+                        innerSampleInfo,
                     )
                     val (newValue, newMax) = newPair
                     if (oldMax != newMax) {
