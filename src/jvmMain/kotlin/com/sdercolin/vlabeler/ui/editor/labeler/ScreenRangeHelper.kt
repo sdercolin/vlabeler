@@ -1,7 +1,6 @@
 package com.sdercolin.vlabeler.ui.editor.labeler
 
 import androidx.compose.foundation.ScrollState
-import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.util.FloatRange
 
 /**
