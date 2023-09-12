@@ -254,7 +254,6 @@ class EditorState(
                 sampleInfoState.value = null
             }
             val sampleInfo = SampleInfoRepository.load(project, project.currentSampleFile, moduleName, appConf)
-            sampleInfoState.value = sampleInfo
             sampleInfo.getOrElse {
                 Log.error(it)
                 if (it is WaveConverterException) {
@@ -270,6 +269,7 @@ class EditorState(
                 }
                 player.load(it.getFile(project))
             }
+            sampleInfoState.value = sampleInfo
         }
     }
 
