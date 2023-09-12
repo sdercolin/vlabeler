@@ -29,7 +29,6 @@ import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -273,9 +272,7 @@ class EditorState(
                         val renderProgressTotal = it.totalChartCount
                         _renderProgress = 0 to renderProgressTotal
                     }
-                    launch {
-                        player.load(it.getFile(project))
-                    }
+                    player.load(it.getFile(project))
                     val params = getCanvasParams(it)
                     canvasState = CanvasState.Loaded(params, it)
                 }

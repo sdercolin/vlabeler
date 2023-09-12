@@ -16,6 +16,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
@@ -76,27 +77,29 @@ class Player(
     private var countingJob: Job? = null
     private var writingJob: Job? = null
 
-    suspend fun load(newFile: File) {
+    fun load(newFile: File) {
         if (file == newFile) return
-        openJob?.cancelAndJoin()
-        stop()
+        openJob?.cancel()
         file = newFile
-        openJob = coroutineScope.launch(Dispatchers.IO) {
-            runCatching {
-                Log.debug("Player.load(\"${newFile.absolutePath}\")")
-                val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
-                    format = stream.format.normalize(maxSampleRate)
-                    data = AudioSystem.getAudioInputStream(format, stream).use {
-                        val bytes = it.readAllBytes()
-                        Log.info("Player.load: read ${bytes.size} bytes")
-                        bytes
+        openJob = coroutineScope.launch {
+            stop()
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    Log.debug("Player.load(\"${newFile.absolutePath}\")")
+                    val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
+                        format = stream.format.normalize(maxSampleRate)
+                        data = AudioSystem.getAudioInputStream(format, stream).use {
+                            val bytes = it.readAllBytes()
+                            Log.info("Player.load: read ${bytes.size} bytes")
+                            bytes
+                        }
+                        AudioSystem.getSourceDataLine(format)
                     }
-                    AudioSystem.getSourceDataLine(format)
+                    this@Player.line = line
+                    line.open()
+                }.onFailure {
+                    Log.error(it)
                 }
-                this@Player.line = line
-                line.open()
-            }.onFailure {
-                Log.error(it)
             }
         }
     }
