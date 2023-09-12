@@ -57,7 +57,6 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
-import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFrame
 import com.sdercolin.vlabeler.video.VideoState
@@ -382,7 +381,7 @@ class AppState(
                 player.toggle(range)
             }
             KeyAction.ToggleScreenRangePlayback -> {
-                val range = scrollState.getScreenRange(markerState.canvasParams.lengthInPixel)?.let {
+                val range = editor.getScreenRange(markerState.canvasParams.lengthInPixel, scrollState)?.let {
                     val converter = markerState.entryConverter
                     val start = converter.convertToFrame(it.start).coerceAtLeast(0f)
                     val end =

@@ -1,7 +1,7 @@
 package com.sdercolin.vlabeler.ui.editor
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,7 +22,9 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasState
+import com.sdercolin.vlabeler.ui.editor.labeler.ScreenRangeHelper
 import com.sdercolin.vlabeler.ui.string.*
+import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.runIf
@@ -40,7 +42,6 @@ class EditorState(
 ) {
     var canvasState by mutableStateOf<CanvasState>(CanvasState.Loading)
         private set
-    private val sampleInfoState: MutableState<Result<SampleInfo>?> = mutableStateOf(null)
     val isLoading get() = canvasState is CanvasState.Loading
     val isError get() = canvasState is CanvasState.Error
     var project: Project by mutableStateOf(project)
@@ -67,6 +68,8 @@ class EditorState(
     val entryTitle: String
         get() = project.currentEntry.name
 
+    private var screenRangeHolder = ScreenRangeHelper()
+
     fun getSampleInfo(): SampleInfo? = (canvasState as? CanvasState.Loaded)?.sampleInfo
 
     private fun getCanvasParams(sampleInfo: SampleInfo) = CanvasParams(
@@ -74,6 +77,9 @@ class EditorState(
         chunkCount = sampleInfo.chunkCount,
         resolution = canvasResolution,
     )
+
+    fun getScreenRange(canvasLength: Float, scrollState: ScrollState): FloatRange? =
+        screenRangeHolder.get(canvasLength, scrollState)
 
     @Composable
     fun getEntrySubTitle(): String {

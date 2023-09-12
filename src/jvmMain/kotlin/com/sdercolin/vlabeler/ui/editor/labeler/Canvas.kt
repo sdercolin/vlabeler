@@ -49,10 +49,8 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerLabels
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerPointEventContainer
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.rememberMarkerState
 import com.sdercolin.vlabeler.ui.editor.labeler.parallel.ParallelLabelCanvas
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.DarkYellow
-import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.toColorOrNull
@@ -94,7 +92,7 @@ private fun CanvasContent(
     val density = LocalDensity.current
     val markerState = rememberMarkerState(canvasState, editorState, appState)
     val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
-    val screenRange = horizontalScrollState.getScreenRange(canvasState.params.lengthInPixel)
+    val screenRange = editorState.getScreenRange(canvasState.params.lengthInPixel, horizontalScrollState)
     val lazyListState = rememberLazyListState()
     LaunchedEffect(canvasState.sampleInfo, appState.appConf, appState.isShowingPrerenderDialog) {
         if (appState.isShowingPrerenderDialog.not()) {
@@ -198,6 +196,7 @@ private fun CanvasContent(
                     canvasState.params,
                     appState.playerState,
                     horizontalScrollState,
+                    editorState,
                     appState.appConf.editor.playerCursorColor.toColor(),
                 )
             }
@@ -311,9 +310,10 @@ private fun PlayerCursor(
     canvasParams: CanvasParams,
     playerState: PlayerState,
     scrollState: ScrollState,
+    editorState: EditorState,
     color: Color,
 ) {
-    val screenRange = scrollState.getScreenRange(canvasParams.lengthInPixel)
+    val screenRange = editorState.getScreenRange(canvasParams.lengthInPixel, scrollState)
     Canvas(Modifier.fillMaxSize()) {
         val framePosition = playerState.framePosition
         if (framePosition != null) {

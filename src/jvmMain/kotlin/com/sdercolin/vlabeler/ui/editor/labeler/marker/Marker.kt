@@ -50,7 +50,6 @@ import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.contains
 import com.sdercolin.vlabeler.util.getNextOrNull
 import com.sdercolin.vlabeler.util.getPreviousOrNull
-import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.length
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.update
@@ -152,7 +151,7 @@ fun MarkerCanvas(
     editorState: EditorState,
     appState: AppState,
 ) {
-    FieldBorderCanvas(horizontalScrollState, state, appState.appConf.editor)
+    FieldBorderCanvas(editorState, horizontalScrollState, state, appState.appConf.editor)
     LaunchAdjustScrollPosition(
         appState.appConf,
         state.entriesInPixel,
@@ -232,11 +231,12 @@ fun MarkerLabels(
 
 @Composable
 private fun FieldBorderCanvas(
+    editorState: EditorState,
     horizontalScrollState: ScrollState,
     state: MarkerState,
     editorConf: AppConf.Editor,
 ) {
-    val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
+    val screenRange = editorState.getScreenRange(state.canvasParams.lengthInPixel, horizontalScrollState)
     Canvas(Modifier.fillMaxSize()) {
         screenRange ?: return@Canvas
         try {

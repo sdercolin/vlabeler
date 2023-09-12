@@ -45,7 +45,6 @@ import com.sdercolin.vlabeler.ui.editor.labeler.CanvasState
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.EntryConverter
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.LightGray
-import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.toRgbColor
 import com.sdercolin.vlabeler.util.toRgbColorOrNull
 
@@ -131,7 +130,7 @@ fun ColumnScope.ModuleRow(
     canvasParams: CanvasParams,
     sampleInfo: SampleInfo,
 ) {
-    val screenRange = horizontalScrollState.getScreenRange(canvasParams.lengthInPixel)
+    val screenRange = editorState.getScreenRange(canvasParams.lengthInPixel, horizontalScrollState)
     val entryConverter = remember(sampleInfo.sampleRate, canvasParams.resolution) {
         EntryConverter(sampleInfo.sampleRate, canvasParams.resolution)
     }
