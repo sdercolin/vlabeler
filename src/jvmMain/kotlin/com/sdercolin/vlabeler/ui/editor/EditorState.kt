@@ -26,6 +26,7 @@ import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.runIf
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -258,6 +259,7 @@ class EditorState(
             }
             SampleInfoRepository.load(project, project.currentSampleFile, moduleName, appConf)
                 .onFailure {
+                    if (it is CancellationException) return@onFailure
                     if (it is WaveConverterException) {
                         appState.showError(it, null)
                     } else {
