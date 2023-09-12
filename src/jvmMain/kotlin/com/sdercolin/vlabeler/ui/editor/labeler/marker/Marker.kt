@@ -476,7 +476,7 @@ private fun MarkerState.handleMouseMove(
 ) {
     screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(event, editions, screenRange, playByCursor)
+        Tool.Cursor -> handleCursorMove(event, editions, screenRange, playByCursor, density)
         Tool.Scissors -> handleScissorsMove(event, screenRange, commitEntryCut, density)
         Tool.Pan -> handlePanMove(event, scrollState, scope)
         Tool.Playback -> handlePlaybackMove(event, screenRange)
@@ -488,6 +488,7 @@ private fun MarkerState.handleCursorMove(
     editions: (List<Edition>) -> Unit,
     screenRange: FloatRange,
     playByCursor: (Float) -> Unit,
+    density: Density,
 ) {
     val eventChange = event.changes.first()
     val x = eventChange.position.x
@@ -517,7 +518,7 @@ private fun MarkerState.handleCursorMove(
             conf = labelerConf,
             canvasHeight = canvasHeightState.value,
             waveformsHeightRatio = waveformsHeightRatio,
-            density = canvasParams.density,
+            density = density,
             labelSize = LabelSize,
             labelShiftUp = LabelShiftUp,
         )

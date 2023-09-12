@@ -112,8 +112,8 @@ private fun CanvasContentWithSample(
     val layoutDirection = LocalLayoutDirection.current
     val density = LocalDensity.current
     val resolution = editorState.canvasResolution
-    val canvasParams = remember(sampleInfo, resolution, density) {
-        CanvasParams(sampleInfo.length, chunkCount, resolution, density)
+    val canvasParams = remember(sampleInfo, resolution) {
+        CanvasParams(sampleInfo.length, chunkCount, resolution)
     }
     val markerState = rememberMarkerState(sampleInfo, canvasParams, editorState, appState)
     val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
@@ -135,7 +135,7 @@ private fun CanvasContentWithSample(
                     // an emission here does not trigger recomposition, so we need to re-calculate the canvas params
                     // to get the correct scroll target
                     val innerSampleInfo = editorState.sampleInfoResult?.getOrNull() ?: return@onEach
-                    val innerCanvasParams = editorState.getCanvasParams(innerSampleInfo, density)
+                    val innerCanvasParams = editorState.getCanvasParams(innerSampleInfo)
                     editorState.scrollOnResolutionChangeViewModel.scroll(
                         horizontalScrollState,
                         innerCanvasParams,
@@ -242,7 +242,7 @@ private fun Chunk(
 ) {
     Box(
         Modifier.fillMaxHeight()
-            .requiredWidth(canvasParams.getChunkWidthInDp(chunkIndex))
+            .requiredWidth(canvasParams.getChunkWidthInDp(chunkIndex, LocalDensity.current))
             .runIf(DebugState.isShowingChunkBorder) { border(1.dp, DarkYellow) },
     ) {
         Column(Modifier.fillMaxSize()) {

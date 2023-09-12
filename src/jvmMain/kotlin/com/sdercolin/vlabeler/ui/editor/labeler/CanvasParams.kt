@@ -11,13 +11,12 @@ data class CanvasParams(
     val dataLength: Int,
     val chunkCount: Int,
     val resolution: Int,
-    val density: Density,
 ) {
     val lengthInPixel = dataLength.toFloat() / resolution
 
     private val chunkWidths = List(chunkCount) { lengthInPixel / chunkCount }.roundPixels()
 
-    fun getChunkWidthInDp(index: Int) = with(density) {
+    fun getChunkWidthInDp(index: Int, density: Density) = with(density) {
         chunkWidths[index].toDp()
     }
 

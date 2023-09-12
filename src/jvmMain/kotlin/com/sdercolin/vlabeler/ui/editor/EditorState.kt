@@ -65,11 +65,10 @@ class EditorState(
     val entryTitle: String
         get() = project.currentEntry.name
 
-    fun getCanvasParams(sampleInfo: SampleInfo, density: Density) = CanvasParams(
+    fun getCanvasParams(sampleInfo: SampleInfo) = CanvasParams(
         dataLength = sampleInfo.length,
         chunkCount = sampleInfo.chunkCount,
         resolution = canvasResolution,
-        density = density,
     )
 
     @Composable

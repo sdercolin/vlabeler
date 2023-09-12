@@ -79,7 +79,7 @@ private fun rememberTimescaleBarState(
     val sampleInfo = editorState.sampleInfoResult?.getOrNull()
     val resolution = editorState.canvasResolution
     val screenRange = if (sampleInfo != null) {
-        val canvasParams = CanvasParams(sampleInfo.length, sampleInfo.chunkCount, resolution, LocalDensity.current)
+        val canvasParams = CanvasParams(sampleInfo.length, sampleInfo.chunkCount, resolution)
         horizontalScrollState.getScreenRange(canvasParams.lengthInPixel)
     } else {
         null
