@@ -11,13 +11,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
+import com.sdercolin.vlabeler.ui.editor.labeler.CanvasState
 import com.sdercolin.vlabeler.ui.editor.labeler.parallel.SnapDrag
 import com.sdercolin.vlabeler.util.clear
 import com.sdercolin.vlabeler.util.getNextOrNull
@@ -506,11 +506,12 @@ class MarkerState(
 
 @Composable
 fun rememberMarkerState(
-    sampleInfo: SampleInfo,
-    canvasParams: CanvasParams,
+    canvasState: CanvasState.Loaded,
     editorState: EditorState,
     appState: AppState,
 ): MarkerState {
+    val sampleInfo = canvasState.sampleInfo
+    val canvasParams = canvasState.params
     val sampleRate = sampleInfo.sampleRate
     val sampleLengthMillis = sampleInfo.lengthMillis
     val entries = editorState.editedEntries

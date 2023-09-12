@@ -56,7 +56,6 @@ import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.toColorOrNull
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
@@ -67,61 +66,39 @@ fun Canvas(
     editorState: EditorState,
     appState: AppState,
 ) {
-    val sampleInfoResult = editorState.sampleInfoResult
-    if (sampleInfoResult != null) {
-        CanvasContent(
-            sampleInfoResult,
-            horizontalScrollState,
-            editorState,
-            appState,
-        )
-    }
-}
-
-@Composable
-private fun CanvasContent(
-    sampleInfoResult: Result<SampleInfo>,
-    horizontalScrollState: ScrollState,
-    editorState: EditorState,
-    appState: AppState,
-) {
-    val sampleInfo = sampleInfoResult.getOrNull()
-    if (sampleInfo != null) {
-        CanvasContentWithSample(
-            sampleInfo,
-            horizontalScrollState,
-            editorState,
-            appState,
-        )
-    } else {
-        val exception = sampleInfoResult.exceptionOrNull()
-        if (exception != null && exception !is CancellationException) {
+    when (val canvasState = editorState.canvasState) {
+        is CanvasState.Loading -> {}
+        is CanvasState.Loaded -> {
+            CanvasContent(
+                canvasState,
+                horizontalScrollState,
+                editorState,
+                appState,
+            )
+        }
+        is CanvasState.Error -> {
             Error(string(Strings.FailedToLoadSampleFileError))
         }
     }
 }
 
 @Composable
-private fun CanvasContentWithSample(
-    sampleInfo: SampleInfo,
+private fun CanvasContent(
+    canvasState: CanvasState.Loaded,
     horizontalScrollState: ScrollState,
     editorState: EditorState,
     appState: AppState,
 ) {
-    val chunkCount = sampleInfo.chunkCount
+    val chunkCount = canvasState.sampleInfo.chunkCount
     val layoutDirection = LocalLayoutDirection.current
     val density = LocalDensity.current
-    val resolution = editorState.canvasResolution
-    val canvasParams = remember(sampleInfo, resolution) {
-        CanvasParams(sampleInfo.length, chunkCount, resolution)
-    }
-    val markerState = rememberMarkerState(sampleInfo, canvasParams, editorState, appState)
+    val markerState = rememberMarkerState(canvasState, editorState, appState)
     val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
-    val screenRange = horizontalScrollState.getScreenRange(canvasParams.lengthInPixel)
+    val screenRange = horizontalScrollState.getScreenRange(canvasState.params.lengthInPixel)
     val lazyListState = rememberLazyListState()
-    LaunchedEffect(sampleInfo, appState.appConf, appState.isShowingPrerenderDialog) {
+    LaunchedEffect(canvasState.sampleInfo, appState.appConf, appState.isShowingPrerenderDialog) {
         if (appState.isShowingPrerenderDialog.not()) {
-            editorState.renderCharts(this, sampleInfo, appState.appConf, density, layoutDirection)
+            editorState.renderCharts(this, canvasState.sampleInfo, appState.appConf, density, layoutDirection)
         }
     }
     LaunchedEffect(Unit) {
@@ -132,18 +109,15 @@ private fun CanvasContentWithSample(
             .onEach { (oldPair, newPair) ->
                 val (oldValue, oldMax) = oldPair ?: return@onEach
                 try {
-                    // an emission here does not trigger recomposition, so we need to re-calculate the canvas params
-                    // to get the correct scroll target
-                    val innerSampleInfo = editorState.sampleInfoResult?.getOrNull() ?: return@onEach
-                    val innerCanvasParams = editorState.getCanvasParams(innerSampleInfo)
+                    val innerCanvasState = editorState.canvasState as? CanvasState.Loaded ?: return@onEach
                     editorState.scrollOnResolutionChangeViewModel.scroll(
                         horizontalScrollState,
-                        innerCanvasParams,
-                        innerSampleInfo,
+                        innerCanvasState.params,
+                        innerCanvasState.sampleInfo,
                     )
                     val (newValue, newMax) = newPair
                     if (oldMax != newMax) {
-                        innerCanvasParams.getScrollTarget(newValue).also {
+                        innerCanvasState.params.getScrollTarget(newValue).also {
                             lazyListState.scrollToItem(it.itemIndex, it.itemOffset)
                         }
                     } else if (newValue != oldValue) {
@@ -170,10 +144,9 @@ private fun CanvasContentWithSample(
             Box(modifier = Modifier.weight(0.1f * parallelModulesCount)) {
                 ParallelLabelCanvas(
                     project,
+                    canvasState,
                     editorState,
                     horizontalScrollState,
-                    canvasParams,
-                    sampleInfo,
                     appState.appConf.editor,
                 )
             }
@@ -191,8 +164,8 @@ private fun CanvasContentWithSample(
                     items(chunkCount) { chunkIndex ->
                         Chunk(
                             chunkIndex,
-                            canvasParams,
-                            sampleInfo,
+                            canvasState.params,
+                            canvasState.sampleInfo,
                             appState,
                             editorState,
                         )
@@ -204,7 +177,7 @@ private fun CanvasContentWithSample(
                         .runIf(appState.isMarkerDisplayed.not()) { alpha(0f) },
                 ) {
                     MarkerCanvas(
-                        canvasParams,
+                        canvasState.params,
                         horizontalScrollState,
                         markerState,
                         editorState,
@@ -222,7 +195,7 @@ private fun CanvasContentWithSample(
             }
             if (appState.playerState.isPlaying) {
                 PlayerCursor(
-                    canvasParams,
+                    canvasState.params,
                     appState.playerState,
                     horizontalScrollState,
                     appState.appConf.editor.playerCursorColor.toColor(),

@@ -20,53 +20,60 @@ import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.ui.editor.EditorState
-import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
+import com.sdercolin.vlabeler.ui.editor.labeler.CanvasState
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.EntryConverter
-import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.getTimeText
 import kotlin.math.ceil
 import kotlin.math.floor
 
 class TimescaleBarState(
-    sampleRate: Float?,
-    resolution: Int,
-    screenRange: FloatRange?,
+    canvasState: CanvasState,
+    horizontalScrollState: ScrollState,
 ) {
 
     val scalePositions: List<Pair<Float, String?>>?
     val scalePositionsWithTexts: List<Pair<Float, String>>?
 
     init {
-        if (sampleRate == null || screenRange == null) {
+        if (canvasState !is CanvasState.Loaded) {
             scalePositions = null
             scalePositionsWithTexts = null
         } else {
-            val converter = EntryConverter(sampleRate, resolution)
-            val timescale = Timescale.find { converter.convertToPixel(it) }
-            val offset = screenRange.start
-            val majorStepPx = converter.convertToPixel(timescale.major.toFloat())
-            val minorStepPx = converter.convertToPixel(timescale.minor.toFloat())
-            val firstMajorPointIndex = ceil(offset / majorStepPx).toInt()
-            val lastMajorPointIndex = floor(screenRange.endInclusive / majorStepPx).toInt()
-            val majorIndexes = (firstMajorPointIndex..lastMajorPointIndex)
-            val majorResults = majorIndexes.map { index ->
-                val text = getTimeText(index * timescale.major)
-                val position = index * majorStepPx - offset
-                position to text
-            }
-            val firstMinorPointIndex = ceil(offset / minorStepPx).toInt()
-            val lastMinorPointIndex = floor(screenRange.endInclusive / minorStepPx).toInt()
-            val minorPoints = (firstMinorPointIndex..lastMinorPointIndex).map { it * minorStepPx }
-            val minorResults = minorPoints.map { it - offset }
-            val result = majorResults.toMap<Float, String?>().toMutableMap()
-            minorResults.forEach {
-                if (!result.containsKey(it)) {
-                    result[it] = null as String?
+            val sampleInfo = canvasState.sampleInfo
+            val sampleRate = sampleInfo.sampleRate
+            val resolution = canvasState.params.resolution
+            val screenRange = horizontalScrollState.getScreenRange(canvasState.params.lengthInPixel)
+            if (screenRange == null) {
+                scalePositions = null
+                scalePositionsWithTexts = null
+            } else {
+                val converter = EntryConverter(sampleRate, resolution)
+                val timescale = Timescale.find { converter.convertToPixel(it) }
+                val offset = screenRange.start
+                val majorStepPx = converter.convertToPixel(timescale.major.toFloat())
+                val minorStepPx = converter.convertToPixel(timescale.minor.toFloat())
+                val firstMajorPointIndex = ceil(offset / majorStepPx).toInt()
+                val lastMajorPointIndex = floor(screenRange.endInclusive / majorStepPx).toInt()
+                val majorIndexes = (firstMajorPointIndex..lastMajorPointIndex)
+                val majorResults = majorIndexes.map { index ->
+                    val text = getTimeText(index * timescale.major)
+                    val position = index * majorStepPx - offset
+                    position to text
                 }
+                val firstMinorPointIndex = ceil(offset / minorStepPx).toInt()
+                val lastMinorPointIndex = floor(screenRange.endInclusive / minorStepPx).toInt()
+                val minorPoints = (firstMinorPointIndex..lastMinorPointIndex).map { it * minorStepPx }
+                val minorResults = minorPoints.map { it - offset }
+                val result = majorResults.toMap<Float, String?>().toMutableMap()
+                minorResults.forEach {
+                    if (!result.containsKey(it)) {
+                        result[it] = null as String?
+                    }
+                }
+                scalePositions = result.toList().sortedBy { it.first }
+                scalePositionsWithTexts = majorResults.sortedBy { it.first }
             }
-            scalePositions = result.toList().sortedBy { it.first }
-            scalePositionsWithTexts = majorResults.sortedBy { it.first }
         }
     }
 }
@@ -76,20 +83,9 @@ private fun rememberTimescaleBarState(
     editorState: EditorState,
     horizontalScrollState: ScrollState,
 ): TimescaleBarState {
-    val sampleInfo = editorState.sampleInfoResult?.getOrNull()
-    val resolution = editorState.canvasResolution
-    val screenRange = if (sampleInfo != null) {
-        val canvasParams = CanvasParams(sampleInfo.length, sampleInfo.chunkCount, resolution)
-        horizontalScrollState.getScreenRange(canvasParams.lengthInPixel)
-    } else {
-        null
-    }
-    return remember(sampleInfo, resolution, screenRange) {
-        TimescaleBarState(
-            sampleInfo?.sampleRate,
-            resolution,
-            screenRange,
-        )
+    val canvasState = editorState.canvasState
+    return remember(canvasState) {
+        TimescaleBarState(canvasState, horizontalScrollState)
     }
 }
 

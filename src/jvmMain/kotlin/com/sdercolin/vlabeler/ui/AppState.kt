@@ -372,7 +372,7 @@ class AppState(
 
     fun handleTogglePlayerAction(action: KeyAction, scrollState: ScrollState, markerState: MarkerState) {
         if (isEditorActive.not()) return
-        val sampleInfo = editor?.sampleInfoResult?.getOrNull() ?: return
+        val sampleInfo = editor?.getSampleInfo() ?: return
         when (action) {
             KeyAction.ToggleEntryPlayback -> {
                 val sampleRate = sampleInfo.sampleRate
@@ -468,7 +468,7 @@ class AppState(
     val isMacroPluginAvailable
         get() = project != null && screen is Screen.Editor && !anyDialogOpeningExceptMacroPluginManager()
 
-    val isScrollFitEnabled get() = editor?.sampleInfoResult?.exceptionOrNull() == null
+    val isScrollFitEnabled get() = editor?.isError == false
 
     private val macroPluginExecutionListener = MacroPluginExecutionListener(
         onReport = { showMacroPluginReport(it) },
