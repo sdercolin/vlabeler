@@ -106,7 +106,6 @@ class ChartStore {
                 }
 
                 repeat(sampleInfo.channels) { channelIndex ->
-                    System.gc()
                     renderWaveform(
                         sampleInfo,
                         chunk,
@@ -119,7 +118,6 @@ class ChartStore {
                     )
                 }
                 if (sampleInfo.hasSpectrogram && appConf.painter.spectrogram.enabled) {
-                    System.gc()
                     renderSpectrogram(
                         sampleInfo,
                         chunk,
@@ -131,7 +129,6 @@ class ChartStore {
                 }
                 if (sampleInfo.hasPower && appConf.painter.power.enabled) {
                     repeat(sampleInfo.powerChannels) { channelIndex ->
-                        System.gc()
                         renderPowerGraph(
                             sampleInfo,
                             chunk,
@@ -277,6 +274,7 @@ class ChartStore {
         yield()
         waveformStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
         onRenderProgress()
+        System.gc()
     }
 
     private fun hasCachedSpectrogram(
@@ -376,6 +374,7 @@ class ChartStore {
         yield()
         spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loaded
         onRenderProgress()
+        System.gc()
     }
 
     private fun hasCachedPowerGraph(
@@ -450,6 +449,7 @@ class ChartStore {
         yield()
         powerGraphStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
         onRenderProgress()
+        System.gc()
     }
 
     companion object {
