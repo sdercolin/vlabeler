@@ -181,6 +181,7 @@ class AppState(
     }
 
     fun openEditor(project: Project) {
+        changeScreen(Screen.Starter)
         runCatching { newProject(project) }
             .onFailure {
                 showError(InvalidOpenedProjectException(it))
