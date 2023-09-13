@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
@@ -132,6 +133,7 @@ data class Module(
 
     fun updateOnLoadedSample(sampleInfo: SampleInfo): Module {
         val entries = entries.toMutableList()
+        Log.info("Updating entries on loaded sample: $sampleInfo, entries: $entries")
         val changedEntries = entries.withIndex()
             .filter { it.value.sample == sampleInfo.name }
             .filter { entry ->
@@ -141,6 +143,7 @@ data class Module(
                 val end = sampleInfo.lengthMillis + it.value.end
                 it.copy(value = it.value.copy(end = end, needSync = false))
             }
+        Log.info("Changed entries: $changedEntries")
         if (changedEntries.isEmpty()) return this
         changedEntries.forEach { entries[it.index] = it.value }
         return copy(entries = entries)
