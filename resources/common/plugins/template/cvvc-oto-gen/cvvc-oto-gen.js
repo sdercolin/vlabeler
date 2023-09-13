@@ -241,7 +241,7 @@ function parseSample(sample) {
 
         if (lastVowel !== "" && (useVCV || consonant === "")) {
             let aliasVCV = lastVowel + " " + matched
-            let tag = consonant === "" ? "VV" : "VCV"
+            let tag = consonant === "" ? "VV" : "vcv"
             pushCV(sample, index, aliasVCV, false, tag)
         }
 
