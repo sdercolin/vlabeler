@@ -62,6 +62,7 @@ enum class Strings {
     MenuNavigateNextModule,
     MenuNavigatePreviousModule,
     MenuNavigateJumpToEntry,
+    MenuNavigateJumpToModule,
     MenuNavigateScrollFit,
     MenuTools,
     MenuToolsBatchEdit,

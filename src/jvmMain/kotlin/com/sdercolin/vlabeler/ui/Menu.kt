@@ -364,6 +364,12 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.NavigatePreviousSample.getKeyShortCut(),
                         enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample,
                     )
+                    Item(
+                        string(Strings.MenuNavigateJumpToEntry),
+                        onClick = { appState.openJumpToEntryDialog() },
+                        shortcut = KeyAction.NavigateJumpToEntry.getKeyShortCut(),
+                        enabled = appState.isEditorActive,
+                    )
                     if (appState.shouldShowModuleNavigation()) {
                         Item(
                             string(Strings.MenuNavigateNextModule),
@@ -377,13 +383,13 @@ fun FrameWindowScope.Menu(
                             shortcut = KeyAction.NavigatePreviousModule.getKeyShortCut(),
                             enabled = appState.isEditorActive && appState.canGoPreviousModule,
                         )
+                        Item(
+                            string(Strings.MenuNavigateJumpToModule),
+                            onClick = { appState.openJumpToModuleDialog() },
+                            shortcut = KeyAction.NavigateJumpToModule.getKeyShortCut(),
+                            enabled = appState.isEditorActive,
+                        )
                     }
-                    Item(
-                        string(Strings.MenuNavigateJumpToEntry),
-                        onClick = { appState.openJumpToEntryDialog() },
-                        shortcut = KeyAction.NavigateJumpToEntry.getKeyShortCut(),
-                        enabled = appState.isEditorActive,
-                    )
                     Item(
                         string(Strings.MenuNavigateScrollFit),
                         onClick = { appState.scrollFitViewModel.emit() },

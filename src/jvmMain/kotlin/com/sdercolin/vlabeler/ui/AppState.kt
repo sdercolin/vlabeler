@@ -47,6 +47,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogResult
+import com.sdercolin.vlabeler.ui.dialog.JumpToModuleDialogResult
 import com.sdercolin.vlabeler.ui.dialog.MoveEntryDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetEntryPropertyDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.SetEntryPropertyDialogResult
@@ -326,6 +327,9 @@ class AppState(
             is AskIfSaveDialogResult -> takeAskIfSaveResult(result)
             is JumpToEntryDialogResult -> {
                 jumpToEntry(result.index)
+            }
+            is JumpToModuleDialogResult -> {
+                jumpToModule(result.index)
             }
             is InputEntryNameDialogResult -> run {
                 when (result.purpose) {
