@@ -78,7 +78,7 @@ fun Strings.en(): String = when (this) {
     MenuHelp -> "Help"
     MenuHelpCheckForUpdates -> "Check for Updates..."
     MenuHelpOpenLogDirectory -> "Open Log Directory"
-    MenuHelpIncludeInfoLog -> "Enable detailed logging"
+    MenuHelpIncludeInfoLog -> "Enable Detailed Logging"
     MenuHelpOpenHomePage -> "Open vLabeler Home Page"
     MenuHelpOpenLatestRelease -> "Open Latest Release"
     MenuHelpOpenGitHub -> "Open GitHub Page"
