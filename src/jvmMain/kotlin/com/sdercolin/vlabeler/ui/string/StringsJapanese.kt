@@ -80,6 +80,7 @@ fun Strings.ja(): String? = when (this) {
     MenuHelp -> "ヘルプ"
     MenuHelpCheckForUpdates -> "アップデートを確認"
     MenuHelpOpenLogDirectory -> "ログディレクトリを開く"
+    MenuHelpIncludeInfoLog -> "詳細なログを有効にする"
     MenuHelpOpenHomePage -> "vLabeler ホームページを開く"
     MenuHelpOpenLatestRelease -> "最新のリリースページを開く"
     MenuHelpOpenGitHub -> "GitHub リポジトリを開く"

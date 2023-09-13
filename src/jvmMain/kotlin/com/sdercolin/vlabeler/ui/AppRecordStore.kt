@@ -32,6 +32,7 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
             _stateFlow.collectLatest {
                 delay(THROTTLE_PERIOD_MS)
                 AppRecordFile.writeText(it.stringifyJson())
+                applyLogSettings(it)
                 Log.info("Written appRecord: $it")
             }
         }
@@ -41,6 +42,10 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
 
     fun update(updater: AppRecord.() -> AppRecord) {
         push(updater(value))
+    }
+
+    private fun applyLogSettings(appRecord: AppRecord) {
+        Log.enableFineLogging(appRecord.includeInfoLog)
     }
 
     companion object {

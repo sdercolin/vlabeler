@@ -81,6 +81,7 @@ enum class Strings {
     MenuHelp,
     MenuHelpCheckForUpdates,
     MenuHelpOpenLogDirectory,
+    MenuHelpIncludeInfoLog,
     MenuHelpOpenHomePage,
     MenuHelpOpenLatestRelease,
     MenuHelpOpenGitHub,

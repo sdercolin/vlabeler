@@ -46,6 +46,7 @@ data class AppRecord(
     val trackingId: String? = null,
     val showDisabledMacroPluginItems: Boolean = false,
     val isTimescaleBarDisplayed: Boolean = false,
+    val includeInfoLog: Boolean = false,
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(

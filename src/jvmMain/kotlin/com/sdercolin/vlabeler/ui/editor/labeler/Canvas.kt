@@ -259,7 +259,6 @@ private fun Chunk(
 
 @Composable
 private fun WaveformChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex: Int, backgroundColor: Color) {
-    Log.info("Waveform (chunk $chunkIndex, channel $channelIndex): composed")
     Box(Modifier.fillMaxSize().background(backgroundColor)) {
         ChunkAsyncImage(
             load = { ChartRepository.getWaveform(sampleInfo, channelIndex, chunkIndex) },
@@ -272,7 +271,6 @@ private fun WaveformChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex:
 
 @Composable
 private fun SpectrogramChunk(sampleInfo: SampleInfo, chunkIndex: Int) {
-    Log.info("Spectrogram (chunk $chunkIndex): composed")
     Box(Modifier.fillMaxSize()) {
         ChunkAsyncImage(
             load = { ChartRepository.getSpectrogram(sampleInfo, chunkIndex) },

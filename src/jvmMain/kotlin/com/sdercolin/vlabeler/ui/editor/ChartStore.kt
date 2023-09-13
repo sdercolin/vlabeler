@@ -245,7 +245,6 @@ class ChartStore {
         requireNotNull(chunk) {
             "Chunk $chunkIndex is required. However it's not loaded."
         }
-        Log.info("Waveforms chunk $chunkIndex in channel $channelIndex: draw bitmap start")
         val data = chunk.wave.channels[channelIndex].data
         val dataDensity = appConf.painter.amplitude.unitSize
         val width = data.size / dataDensity
@@ -268,7 +267,6 @@ class ChartStore {
                     )
                 }
         }
-        Log.info("Waveforms chunk $chunkIndex in channel $channelIndex: draw bitmap end")
         yield()
         ChartRepository.putWaveform(sampleInfo, channelIndex, chunkIndex, newBitmap)
         yield()
@@ -318,7 +316,6 @@ class ChartStore {
         requireNotNull(chunk) {
             "Chunk $chunkIndex is required. However it's not loaded."
         }
-        Log.info("Spectrogram chunk $chunkIndex: draw bitmap start")
         val rawData = requireNotNull(chunk.spectrogram).data
         val pointDensity = appConf.painter.spectrogram.pointDensity
         val data = rawData.chunked(pointDensity).map { group ->
@@ -368,7 +365,6 @@ class ChartStore {
         val imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
         val image = Image.Companion.makeRaster(imageInfo, imageData, width * 4)
         val bitmap = Bitmap.makeFromImage(image).asComposeImageBitmap()
-        Log.info("Spectrogram chunk $chunkIndex: draw bitmap end")
         yield()
         ChartRepository.putSpectrogram(sampleInfo, chunkIndex, bitmap)
         yield()
@@ -420,7 +416,6 @@ class ChartStore {
         requireNotNull(chunk) {
             "Chunk $chunkIndex is required. However it's not loaded."
         }
-        Log.info("Power graph chunk $chunkIndex: draw bitmap start")
         // get data
         val data = requireNotNull(chunk.power).data[channelIndex]
         val minValue = appConf.painter.power.minPower
@@ -443,7 +438,6 @@ class ChartStore {
         val imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
         val image = Image.Companion.makeRaster(imageInfo, imageData, width * 4)
         val bitmap = Bitmap.makeFromImage(image).asComposeImageBitmap()
-        Log.info("Power graph chunk $chunkIndex: draw bitmap end")
         yield()
         ChartRepository.putPowerGraph(sampleInfo, channelIndex, chunkIndex, bitmap)
         yield()

@@ -80,6 +80,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuHelp -> "帮助"
     MenuHelpCheckForUpdates -> "检查更新..."
     MenuHelpOpenLogDirectory -> "打开日志目录"
+    MenuHelpIncludeInfoLog -> "启用详细日志"
     MenuHelpOpenHomePage -> "打开 vLabeler 主页"
     MenuHelpOpenLatestRelease -> "打开最新版本的发布页面"
     MenuHelpOpenGitHub -> "打开 GitHub 仓库页面"

@@ -508,6 +508,14 @@ fun FrameWindowScope.Menu(
                     onClick = { Desktop.getDesktop().open(Log.LoggingPath.toFile()) },
                     shortcut = KeyAction.OpenLogDirectory.getKeyShortCut(),
                 )
+                if (appState != null) {
+                    val appRecord by appState.appRecordFlow.collectAsState()
+                    CheckboxItem(
+                        string(Strings.MenuHelpIncludeInfoLog),
+                        checked = appRecord.includeInfoLog,
+                        onCheckedChange = { appState.appRecordStore.update { copy(includeInfoLog = it) } },
+                    )
+                }
                 Item(
                     string(Strings.MenuHelpOpenHomePage),
                     onClick = { Url.open(Url.HOME_PAGE) },

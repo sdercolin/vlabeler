@@ -119,6 +119,10 @@ object Log {
 
     var fatalErrorTracker: FatalErrorTracker? = null
 
+    fun enableFineLogging(enabled: Boolean) {
+        infoLogger.level = if (enabled) Level.FINE else Level.INFO
+    }
+
     var muted: Boolean = false
         set(value) {
             field = value
