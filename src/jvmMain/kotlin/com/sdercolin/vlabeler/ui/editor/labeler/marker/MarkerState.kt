@@ -474,6 +474,9 @@ class MarkerState(
         return entries to pointIndex
     }
 
+    val isCursor: Boolean
+        get() = scissorsState.value == null && panState.value == null && playbackState.value == null
+
     fun switchTool(tool: Tool) {
         Tool.values().forEach {
             if (it == tool) {

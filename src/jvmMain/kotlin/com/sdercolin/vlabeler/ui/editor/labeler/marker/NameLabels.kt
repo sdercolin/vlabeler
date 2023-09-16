@@ -130,6 +130,7 @@ fun NameLabels(
                         modifier = Modifier.fillMaxSize(),
                         entryChunk = chunks[index],
                         offset = index * chunkLength,
+                        clickable = state.isCursor,
                         requestRename = requestRename,
                         jumpToEntry = jumpToEntry,
                         onHovered = onHovered,
@@ -168,6 +169,7 @@ private fun NameLabel(
     name: String,
     color: Color,
     fontSize: AppConf.FontSize,
+    clickable: Boolean,
     requestRename: (Int) -> Unit,
     jumpToEntry: (Int) -> Unit,
     onHovered: (Int, Boolean) -> Unit,
@@ -181,6 +183,7 @@ private fun NameLabel(
         modifier = Modifier.widthIn(max = 100.dp)
             .wrapContentSize()
             .combinedClickable(
+                enabled = clickable,
                 onClick = { requestRename(index) },
                 onLongClick = { jumpToEntry(index) },
             )
@@ -287,6 +290,7 @@ private fun NameLabelsChunk(
     modifier: Modifier,
     entryChunk: NameLabelEntryChunk,
     offset: Float,
+    clickable: Boolean,
     requestRename: (Int) -> Unit,
     jumpToEntry: (Int) -> Unit,
     onHovered: (Int, Boolean) -> Unit,
@@ -314,6 +318,7 @@ private fun NameLabelsChunk(
                     name = item.name,
                     color = color,
                     fontSize = appConf.editor.continuousLabelNames.size,
+                    clickable = clickable,
                     requestRename = requestRename,
                     jumpToEntry = jumpToEntry,
                     onHovered = onHovered,
