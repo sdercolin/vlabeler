@@ -41,7 +41,8 @@ import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
-import com.sdercolin.vlabeler.ui.dialog.EditEntryExtraDialogResult
+import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogResult
+import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogTarget
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
@@ -359,8 +360,8 @@ class AppState(
                     action.state.removeItem(action.item)
                 }
             }
-            is EditEntryExtraDialogResult -> {
-                updateEntryExtra(result.index, result.extras)
+            is EditExtraDialogResult -> when (result.target){
+                EditExtraDialogTarget.EditEntry -> updateEntryExtra(result.index, result.extras)
             }
             else -> throw NotImplementedError("Dialog result handler is not implemented")
         }

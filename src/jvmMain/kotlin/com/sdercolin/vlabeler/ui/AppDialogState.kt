@@ -12,7 +12,8 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
-import com.sdercolin.vlabeler.ui.dialog.EditEntryExtraDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogTarget
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogRequest
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
@@ -342,10 +343,11 @@ class AppDialogStateImpl(
         val project = projectStore.requireProject()
         val entry = project.currentModule.entries[index]
         openEmbeddedDialog(
-            EditEntryExtraDialogArgs(
+            EditExtraDialogArgs(
                 index = index,
                 initial = entry.extras,
                 extraFields = project.labelerConf.extraFields,
+                target = EditExtraDialogTarget.EditEntry,
             ),
         )
     }

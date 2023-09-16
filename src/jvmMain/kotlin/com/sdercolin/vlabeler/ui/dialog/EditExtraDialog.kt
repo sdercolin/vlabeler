@@ -21,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -35,24 +34,32 @@ import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.Strings
 import com.sdercolin.vlabeler.ui.string.string
 
-data class EditEntryExtraDialogArgs(
+data class EditExtraDialogArgs(
     val index: Int,
     val initial: List<String?>,
     val extraFields: List<LabelerConf.ExtraField>,
+    val target: EditExtraDialogTarget,
 ) : EmbeddedDialogArgs
 
-data class EditEntryExtraDialogResult(
+enum class EditExtraDialogTarget(val stringKey: Strings) {
+    EditEntry(Strings.EditEntryExtraDialogDescription),
+    // TODO : EditModule(Strings.EditModuleExtraDialogDescription),
+}
+
+data class EditExtraDialogResult(
     val index: Int,
     val extras: List<String?>,
-) : EmbeddedDialogResult<EditEntryExtraDialogArgs>
+    val target: EditExtraDialogTarget,
+) : EmbeddedDialogResult<EditExtraDialogArgs>
 
-class EditEntryExtraState(
-    args: EditEntryExtraDialogArgs,
-    private val finish: (EditEntryExtraDialogResult?) -> Unit,
+class EditExtraState(
+    args: EditExtraDialogArgs,
+    private val finish: (EditExtraDialogResult?) -> Unit,
 ) {
     private val entryIndex = args.index
     var values by mutableStateOf(args.initial)
     val extraFields = args.extraFields
+    val target = args.target
 
     fun getNotNull(index: Int): String {
         return values[index] ?: ""
@@ -84,23 +91,23 @@ class EditEntryExtraState(
     }
 
     fun submit() {
-        finish(EditEntryExtraDialogResult(entryIndex, values))
+        finish(EditExtraDialogResult(entryIndex, values, target))
     }
 }
 
 @Composable
-fun EditEntryExtraDialog(
-    args: EditEntryExtraDialogArgs,
-    finish: (EditEntryExtraDialogResult?) -> Unit,
+fun EditExtraDialog(
+    args: EditExtraDialogArgs,
+    finish: (EditExtraDialogResult?) -> Unit,
 ) {
     val state = remember {
-        EditEntryExtraState(args, finish)
+        EditExtraState(args, finish)
     }
 
     Column(modifier = Modifier.width(400.dp).height(400.dp)) {
         Spacer(Modifier.height(20.dp))
         Text(
-            text = string(Strings.EditEntryExtraDialogDescription),
+            text = string(args.target.stringKey),
             style = MaterialTheme.typography.body2,
             fontWeight = FontWeight.Bold,
         )
@@ -118,10 +125,9 @@ fun EditEntryExtraDialog(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun ColumnScope.ExtraContent(
-    state: EditEntryExtraState,
+    state: EditExtraState,
 ) {
     Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
         val scrollState = rememberScrollState()
