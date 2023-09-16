@@ -353,7 +353,7 @@ aaa;name:bbb;sample:ccc;tag:ddd
 vLabeler に対応していない音声合成ソフトのラベルを編集したい場合は、
 そのソフトウェアをサポートする開発を依頼する代わりに、ラベラーを作成して機能させることができます（ただし、コーディングに関するある程度の知識が求め
 られます）。
-[LabelerConf.kt](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) でラベラーを開発方法を確認してください。
+[Develop Custom Labelers](../docs/labeler-development.md) （英語）でラベラーを開発方法を確認してください。
 
 `設定` -> `ラベラー...` で独自のラベラーをインポートできます。
 また、自分で作成したラベラーを他のユーザーに配布したり、我々に連絡してビルトインにすることもできます。
@@ -394,7 +394,7 @@ vLabeler に対応していない音声合成ソフトのラベルを編集し�
 アプリケーションのプラグイン開発を歓迎します。
 プラグインはどこにでも配布できます。また、プルリクエストを作成してビルトインにすることもできます。
 
-詳細については、[プラグイン API ドキュメント](../docs/plugin-development.md) を参照してください。
+詳細については、[Develop Plugins for vLabeler](../docs/plugin-development.md) （英語）を参照してください。
 
 ## ログ
 

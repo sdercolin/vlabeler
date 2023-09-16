@@ -360,8 +360,7 @@ You can find the settings in the `Settings` icon next to the labeler selector in
 If you want to edit the labels for a voice generation software that is not supported by `vLabeler`,
 instead of requesting development supporting that software, you can create a labeler to make it work. (it requires
 some knowledge of the coding though).
-Please check [LabelerConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) to understand how to
-develop a labeler.
+Please check [Develop Custom Labelers](docs/labeler-development.md) for details about labeler development.
 
 You can import your own labelers in `Settings` -> `Labelers...`.
 You can also distribute the labelers created by yourself to other users, or contact us for making them built-in.
@@ -403,7 +402,7 @@ You can import/delete/disable batch edit plugins in `Tools` -> `Batch Edit` -> `
 We welcome plugin development for the application.
 You can distribute your plugin anywhere, or create a pull request to make it built-in.
 
-See [Plugin API Document](docs/plugin-development.md) for details.
+See [Develop Plugins for vLabeler](docs/plugin-development.md) for details.
 
 ## Logs
 
