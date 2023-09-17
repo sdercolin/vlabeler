@@ -101,7 +101,7 @@ class PreferencesEditorState(
             _conf = _conf.copy(
                 painter = _conf.painter.copy(
                     spectrogram = _conf.painter.spectrogram.copy(
-                        colorPalette = AppConf.Spectrogram.DefaultColorPalette,
+                        colorPalette = AppConf.Spectrogram.DEFAULT_COLOR_PALETTE,
                     ),
                 ),
             )

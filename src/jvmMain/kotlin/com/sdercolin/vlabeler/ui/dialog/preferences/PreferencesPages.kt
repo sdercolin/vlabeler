@@ -45,8 +45,8 @@ object PreferencesPages {
                         integer(
                             title = Strings.PreferencesChartsCanvasResolutionDefault,
                             defaultValue = AppConf.CanvasResolution.DEFAULT_DEFAULT,
-                            min = AppConf.CanvasResolution.Min,
-                            max = AppConf.CanvasResolution.Max,
+                            min = AppConf.CanvasResolution.MIN,
+                            max = AppConf.CanvasResolution.MAX,
                             select = { it.default },
                             update = { copy(default = it) },
                         )
@@ -198,7 +198,7 @@ object PreferencesPages {
                     )
                     selection(
                         title = Strings.PreferencesChartsSpectrogramWindowType,
-                        defaultValue = AppConf.Spectrogram.DefaultWindowType,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_WINDOW_TYPE,
                         select = { it.windowType },
                         update = { copy(windowType = it) },
                         options = AppConf.WindowType.values(),
@@ -249,7 +249,7 @@ object PreferencesPages {
                     )
                     selection(
                         title = Strings.PreferencesChartsSpectrogramColorPalette,
-                        defaultValue = AppConf.Spectrogram.DefaultColorPalette,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_COLOR_PALETTE,
                         description = Strings.PreferencesChartsSpectrogramColorPaletteDescription,
                         clickableTags = listOf(
                             ClickableTag(
@@ -519,7 +519,7 @@ object PreferencesPages {
                 ) {
                     selection(
                         title = Strings.PreferencesViewLanguage,
-                        defaultValue = AppConf.View.DefaultLanguage,
+                        defaultValue = AppConf.View.DEFAULT_LANGUAGE,
                         select = { it.language },
                         update = { copy(language = it) },
                         options = Language.values(),
@@ -546,7 +546,7 @@ object PreferencesPages {
                     )
                     selection(
                         title = Strings.PreferencesViewPinnedEntryListPosition,
-                        defaultValue = AppConf.View.DefaultPinnedEntryListPosition,
+                        defaultValue = AppConf.View.DEFAULT_PINNED_ENTRY_LIST_POSITION,
                         select = { it.pinnedEntryListPosition },
                         update = { copy(pinnedEntryListPosition = it) },
                         options = AppConf.ViewPosition.values(),
@@ -576,7 +576,7 @@ object PreferencesPages {
                         title = Strings.PreferencesEditorLockedDrag,
                         description = Strings.PreferencesEditorLockedDragDescription,
                         columnStyle = true,
-                        defaultValue = AppConf.Editor.DefaultLockedDrag,
+                        defaultValue = AppConf.Editor.DEFAULT_LOCKED_DRAG,
                         select = { it.lockedDrag },
                         update = { copy(lockedDrag = it) },
                         options = AppConf.Editor.LockedDrag.values(),
@@ -630,21 +630,21 @@ object PreferencesPages {
                 ) {
                     selection(
                         title = Strings.PreferencesEditorScissorsActionGoTo,
-                        defaultValue = AppConf.ScissorsActions.DefaultGoTo,
+                        defaultValue = AppConf.ScissorsActions.DEFAULT_GO_TO,
                         select = { it.goTo },
                         update = { copy(goTo = it) },
                         options = AppConf.ScissorsActions.Target.values(),
                     )
                     selection(
                         title = Strings.PreferencesEditorScissorsActionAskForName,
-                        defaultValue = AppConf.ScissorsActions.DefaultAskForName,
+                        defaultValue = AppConf.ScissorsActions.DEFAULT_ASK_FOR_NAME,
                         select = { it.askForName },
                         update = { copy(askForName = it) },
                         options = AppConf.ScissorsActions.Target.values(),
                     )
                     selection(
                         title = Strings.PreferencesEditorScissorsActionPlay,
-                        defaultValue = AppConf.ScissorsActions.DefaultPlay,
+                        defaultValue = AppConf.ScissorsActions.DEFAULT_PLAY,
                         select = { it.play },
                         update = { copy(play = it) },
                         options = AppConf.ScissorsActions.Target.values(),
@@ -705,13 +705,13 @@ object PreferencesPages {
                     ) {
                         switch(
                             title = Strings.PreferencesEditorPostEditActionEnabled,
-                            defaultValue = AppConf.PostEditAction.DefaultDone.enabled,
+                            defaultValue = AppConf.PostEditAction.DEFAULT_DONE.enabled,
                             select = { it.enabled },
                             update = { copy(enabled = it) },
                         )
                         selection(
                             title = Strings.PreferencesEditorPostEditActionTrigger,
-                            defaultValue = AppConf.PostEditAction.DefaultDone.field,
+                            defaultValue = AppConf.PostEditAction.DEFAULT_DONE.field,
                             options = AppConf.PostEditAction.TriggerField.values(),
                             select = { it.field },
                             update = { copy(field = it) },
@@ -720,7 +720,7 @@ object PreferencesPages {
                         switch(
                             title = Strings.PreferencesEditorPostEditActionUseDragging,
                             description = Strings.PreferencesEditorPostEditActionUseDraggingDescription,
-                            defaultValue = AppConf.PostEditAction.DefaultDone.useDragging,
+                            defaultValue = AppConf.PostEditAction.DEFAULT_DONE.useDragging,
                             select = { it.useDragging },
                             update = { copy(useDragging = it) },
                             enabled = { it.enabled },
@@ -728,7 +728,7 @@ object PreferencesPages {
                         switch(
                             title = Strings.PreferencesEditorPostEditActionUseCursorSet,
                             description = Strings.PreferencesEditorPostEditActionUseCursorSetDescription,
-                            defaultValue = AppConf.PostEditAction.DefaultDone.useCursorSet,
+                            defaultValue = AppConf.PostEditAction.DEFAULT_DONE.useCursorSet,
                             select = { it.useCursorSet },
                             update = { copy(useCursorSet = it) },
                             enabled = { it.enabled },
@@ -742,13 +742,13 @@ object PreferencesPages {
                     ) {
                         switch(
                             title = Strings.PreferencesEditorPostEditActionEnabled,
-                            defaultValue = AppConf.PostEditAction.DefaultNext.enabled,
+                            defaultValue = AppConf.PostEditAction.DEFAULT_NEXT.enabled,
                             select = { it.enabled },
                             update = { copy(enabled = it) },
                         )
                         selection(
                             title = Strings.PreferencesEditorPostEditActionTrigger,
-                            defaultValue = AppConf.PostEditAction.DefaultNext.field,
+                            defaultValue = AppConf.PostEditAction.DEFAULT_NEXT.field,
                             options = AppConf.PostEditAction.TriggerField.values(),
                             select = { it.field },
                             update = { copy(field = it) },
@@ -757,7 +757,7 @@ object PreferencesPages {
                         switch(
                             title = Strings.PreferencesEditorPostEditActionUseDragging,
                             description = Strings.PreferencesEditorPostEditActionUseDraggingDescription,
-                            defaultValue = AppConf.PostEditAction.DefaultNext.useDragging,
+                            defaultValue = AppConf.PostEditAction.DEFAULT_NEXT.useDragging,
                             select = { it.useDragging },
                             update = { copy(useDragging = it) },
                             enabled = { it.enabled },
@@ -765,7 +765,7 @@ object PreferencesPages {
                         switch(
                             title = Strings.PreferencesEditorPostEditActionUseCursorSet,
                             description = Strings.PreferencesEditorPostEditActionUseCursorSetDescription,
-                            defaultValue = AppConf.PostEditAction.DefaultNext.useCursorSet,
+                            defaultValue = AppConf.PostEditAction.DEFAULT_NEXT.useCursorSet,
                             select = { it.useCursorSet },
                             update = { copy(useCursorSet = it) },
                             enabled = { it.enabled },
@@ -835,14 +835,14 @@ object PreferencesPages {
                     )
                     selection(
                         title = Strings.PreferencesEditorContinuousLabelNamesSize,
-                        defaultValue = AppConf.ContinuousLabelNames.DefaultSize,
+                        defaultValue = AppConf.ContinuousLabelNames.DEFAULT_SIZE,
                         select = { it.size },
                         update = { copy(size = it) },
                         options = AppConf.FontSize.values(),
                     )
                     selection(
                         title = Strings.PreferencesEditorContinuousLabelNamesPosition,
-                        defaultValue = AppConf.ContinuousLabelNames.DefaultPosition,
+                        defaultValue = AppConf.ContinuousLabelNames.DEFAULT_POSITION,
                         select = { it.position },
                         update = { copy(position = it) },
                         options = AppConf.ViewCornerPosition.values(),
@@ -899,7 +899,7 @@ object PreferencesPages {
                 ) {
                     selection(
                         title = Strings.PreferencesAutoSaveTarget,
-                        defaultValue = AppConf.AutoSave.DefaultTarget,
+                        defaultValue = AppConf.AutoSave.DEFAULT_TARGET,
                         select = { it.target },
                         update = { copy(target = it) },
                         options = AppConf.AutoSave.Target.values(),

@@ -82,12 +82,12 @@ data class AppConf(
         val default: Int = DEFAULT_DEFAULT,
         val step: Int = DEFAULT_STEP,
     ) {
-        val min: Int get() = Min
-        val max: Int get() = Max
+        val min: Int get() = MIN
+        val max: Int get() = MAX
 
         companion object {
-            const val Max = 400
-            const val Min = 10
+            const val MAX = 400
+            const val MIN = 10
             const val DEFAULT_DEFAULT = 40
             const val DEFAULT_STEP = 20
         }
@@ -162,12 +162,12 @@ data class AppConf(
         val pointDensity: Int = DEFAULT_POINT_DENSITY,
         val standardHopSize: Int = DEFAULT_STANDARD_HOP_SIZE,
         val standardWindowSize: Int = DEFAULT_STANDARD_WINDOW_SIZE,
-        val windowType: WindowType = DefaultWindowType,
+        val windowType: WindowType = DEFAULT_WINDOW_TYPE,
         val melScaleStep: Int = DEFAULT_MEL_SCALE_STEP,
         val maxFrequency: Int = DEFAULT_MAX_FREQUENCY,
         val minIntensity: Int = DEFAULT_MIN_INTENSITY,
         val maxIntensity: Int = DEFAULT_MAX_INTENSITY,
-        val colorPalette: String = DefaultColorPalette,
+        val colorPalette: String = DEFAULT_COLOR_PALETTE,
         val useHighAlphaContrast: Boolean = DEFAULT_USE_HIGH_ALPHA_CONTRAST,
     ) {
         companion object {
@@ -192,8 +192,8 @@ data class AppConf(
             const val MIN_MAX_FREQUENCY = 5000
             const val DEFAULT_MIN_INTENSITY = -20
             const val DEFAULT_MAX_INTENSITY = 55
-            val DefaultWindowType = WindowType.BlackmanHarris
-            val DefaultColorPalette = ColorPaletteDefinition.presets.first().name
+            val DEFAULT_WINDOW_TYPE = WindowType.BlackmanHarris
+            val DEFAULT_COLOR_PALETTE = ColorPaletteDefinition.presets.first().name
             const val DEFAULT_USE_HIGH_ALPHA_CONTRAST = true
         }
     }
@@ -305,15 +305,15 @@ data class AppConf(
         val scissorsActions: ScissorsActions = ScissorsActions(),
         val useOnScreenScissors: Boolean = DEFAULT_USE_ON_SCREEN_SCISSORS,
         val autoScroll: AutoScroll = AutoScroll(),
-        val lockedDrag: LockedDrag = DefaultLockedDrag,
+        val lockedDrag: LockedDrag = DEFAULT_LOCKED_DRAG,
         val lockedSettingParameterWithCursor: Boolean = DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR,
         val showDone: Boolean = DEFAULT_SHOW_DONE,
         val showStar: Boolean = DEFAULT_SHOW_STAR,
         val showTag: Boolean = DEFAULT_SHOW_TAG,
         val showExtra: Boolean = DEFAULT_SHOW_EXTRA,
         val continuousLabelNames: ContinuousLabelNames = ContinuousLabelNames(),
-        val postEditNext: PostEditAction = PostEditAction.DefaultNext,
-        val postEditDone: PostEditAction = PostEditAction.DefaultDone,
+        val postEditNext: PostEditAction = PostEditAction.DEFAULT_NEXT,
+        val postEditDone: PostEditAction = PostEditAction.DEFAULT_DONE,
     ) {
 
         /**
@@ -336,7 +336,7 @@ data class AppConf(
             const val DEFAULT_PLAYER_CURSOR_COLOR = "#FFFF00"
             const val DEFAULT_SCISSORS_COLOR = "#FFFFFF00"
             const val DEFAULT_USE_ON_SCREEN_SCISSORS = true
-            val DefaultLockedDrag = LockedDrag.UseLabeler
+            val DEFAULT_LOCKED_DRAG = LockedDrag.UseLabeler
             const val DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR = true
             const val DEFAULT_SHOW_DONE = true
             const val DEFAULT_SHOW_STAR = true
@@ -355,9 +355,9 @@ data class AppConf(
     @Serializable
     @Immutable
     data class ScissorsActions(
-        val goTo: Target = DefaultGoTo,
-        val askForName: Target = DefaultAskForName,
-        val play: Target = DefaultPlay,
+        val goTo: Target = DEFAULT_GO_TO,
+        val askForName: Target = DEFAULT_ASK_FOR_NAME,
+        val play: Target = DEFAULT_PLAY,
     ) {
         fun getTargetEntryIndex(currentEntryIndex: Int) = when (goTo) {
             AppConf.ScissorsActions.Target.Former -> currentEntryIndex
@@ -383,9 +383,9 @@ data class AppConf(
         }
 
         companion object {
-            val DefaultGoTo = Target.Former
-            val DefaultAskForName = Target.Former
-            val DefaultPlay = Target.Former
+            val DEFAULT_GO_TO = Target.Former
+            val DEFAULT_ASK_FOR_NAME = Target.Former
+            val DEFAULT_PLAY = Target.Former
         }
     }
 
@@ -400,14 +400,14 @@ data class AppConf(
     @Immutable
     data class ContinuousLabelNames(
         val color: String = DEFAULT_COLOR,
-        val size: FontSize = DefaultSize,
-        val position: ViewCornerPosition = DefaultPosition,
+        val size: FontSize = DEFAULT_SIZE,
+        val position: ViewCornerPosition = DEFAULT_POSITION,
     ) {
 
         companion object {
             const val DEFAULT_COLOR = "#E89F17"
-            val DefaultSize = FontSize.Small
-            val DefaultPosition = ViewCornerPosition.TopRight
+            val DEFAULT_SIZE = FontSize.Small
+            val DEFAULT_POSITION = ViewCornerPosition.TopRight
         }
     }
 
@@ -454,14 +454,14 @@ data class AppConf(
 
         companion object {
 
-            val DefaultNext = PostEditAction(
+            val DEFAULT_NEXT = PostEditAction(
                 enabled = false,
                 field = TriggerField.UseLabeler,
                 useDragging = true,
                 useCursorSet = true,
             )
 
-            val DefaultDone = PostEditAction(
+            val DEFAULT_DONE = PostEditAction(
                 enabled = true,
                 field = TriggerField.UseAny,
                 useDragging = true,
@@ -482,16 +482,16 @@ data class AppConf(
     @Serializable
     @Immutable
     data class View(
-        val language: Language = DefaultLanguage,
+        val language: Language = DEFAULT_LANGUAGE,
         val hideSampleExtension: Boolean = DEFAULT_HIDE_SAMPLE_EXTENSION,
         val accentColor: String = DEFAULT_ACCENT_COLOR,
         val accentColorVariant: String = DEFAULT_ACCENT_COLOR_VARIANT,
-        val pinnedEntryListPosition: ViewPosition = DefaultPinnedEntryListPosition,
+        val pinnedEntryListPosition: ViewPosition = DEFAULT_PINNED_ENTRY_LIST_POSITION,
     ) {
 
         companion object {
 
-            val DefaultLanguage = Language.English
+            val DEFAULT_LANGUAGE = Language.English
             const val DEFAULT_HIDE_SAMPLE_EXTENSION = true
 
             /**
@@ -503,7 +503,7 @@ data class AppConf(
              * Equals to [com.sdercolin.vlabeler.ui.theme.DarkPink]
              */
             const val DEFAULT_ACCENT_COLOR_VARIANT = "#AD375F"
-            val DefaultPinnedEntryListPosition = ViewPosition.Right
+            val DEFAULT_PINNED_ENTRY_LIST_POSITION = ViewPosition.Right
         }
     }
 
@@ -578,7 +578,7 @@ data class AppConf(
     @Serializable
     @Immutable
     data class AutoSave(
-        val target: Target = DefaultTarget,
+        val target: Target = DEFAULT_TARGET,
         val intervalSec: Int = DEFAULT_INTERVAL_SEC,
     ) {
         /**
@@ -608,7 +608,7 @@ data class AppConf(
         }
 
         companion object {
-            val DefaultTarget = Target.Record
+            val DEFAULT_TARGET = Target.Record
             const val DEFAULT_INTERVAL_SEC = 30
             const val MIN_INTERVAL_SEC = 1
         }
