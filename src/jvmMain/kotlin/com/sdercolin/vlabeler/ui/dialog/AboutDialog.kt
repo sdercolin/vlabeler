@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.sdercolin.vlabeler.env.Locale
 import com.sdercolin.vlabeler.env.appVersion
@@ -54,7 +54,7 @@ fun AboutDialog(
     showLicenses: () -> Unit,
     finish: () -> Unit,
 ) {
-    Dialog(
+    DialogWindow(
         title = string(Strings.AboutDialogTitle),
         icon = painterResource(Resources.iconIco),
         onCloseRequest = finish,

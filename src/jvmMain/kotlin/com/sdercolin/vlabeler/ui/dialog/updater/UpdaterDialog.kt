@@ -35,7 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.sdercolin.vlabeler.env.appVersion
 import com.sdercolin.vlabeler.model.AppConf
@@ -73,7 +73,7 @@ fun UpdaterDialog(
     finish: () -> Unit,
     state: UpdaterDialogState = rememberUpdaterDialogState(update, appRecordStore, onError, finish),
 ) {
-    Dialog(
+    DialogWindow(
         title = string(Strings.UpdaterDialogTitle),
         icon = painterResource(Resources.iconIco),
         onCloseRequest = { state.cancel() },

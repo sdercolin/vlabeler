@@ -44,7 +44,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import cafe.adriel.bonsai.core.Bonsai
 import cafe.adriel.bonsai.core.BonsaiStyle
@@ -80,7 +80,7 @@ fun CustomFileDialog(
 ) {
     val root = HomeDir
     val fileFree = DirectoryTree(root)
-    Dialog(
+    DialogWindow(
         title = title,
         icon = painterResource(Resources.iconIco),
         onCloseRequest = { onCloseRequest(null, null) },

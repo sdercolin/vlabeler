@@ -47,12 +47,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.ui.common.ColorHexInputBox
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.Black50
@@ -237,7 +236,7 @@ fun ColorPickerDialog(
         ColorPickerState(initialColor, useAlpha, submit)
     },
 ) {
-    Dialog(
+    DialogWindow(
         title = string(Strings.ColorPickerDialogTitle),
         icon = painterResource(Resources.iconIco),
         onCloseRequest = state::cancel,

@@ -61,8 +61,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogState
+import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
@@ -256,7 +256,7 @@ private fun PluginDialog(
 ) {
     val appRecord = appRecordStore.stateFlow.collectAsState()
     val dialogState = rememberResizableDialogState(appRecord)
-    Dialog(
+    DialogWindow(
         title = string(Strings.PluginDialogTitle),
         icon = painterResource(Resources.iconIco),
         onCloseRequest = { state.cancel() },
