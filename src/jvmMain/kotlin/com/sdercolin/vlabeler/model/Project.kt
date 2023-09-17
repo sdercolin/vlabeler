@@ -30,7 +30,7 @@ import java.io.File
 /**
  * The project object.
  *
- * @property version The version of the project file. Should be [ProjectVersion] when created.
+ * @property version The version of the project file. Should be [PROJECT_VERSION] when created.
  * @property rootSampleDirectoryPath The directory where all sample files are stored. Should always be an absolute path.
  * @property workingDirectoryPath The directory where the project file is stored. Can be relative to
  *     [rootSampleDirectory].
