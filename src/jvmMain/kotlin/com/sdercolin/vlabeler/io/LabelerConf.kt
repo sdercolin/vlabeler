@@ -26,15 +26,18 @@ fun getDefaultLabelers() = DefaultLabelerDir.getLabelers()
 fun getCustomLabelers() = CustomLabelerDir.getLabelers()
 
 suspend fun loadAvailableLabelerConfs(): List<LabelerConf> = withContext(Dispatchers.IO) {
-    val defaultLabelers = getDefaultLabelers().mapNotNull {
-        it.asLabelerConf(isBuiltIn = true).getOrElse { t ->
-            if (isDebug) {
-                throw t
-            } else {
-                null
+    val defaultLabelers = getDefaultLabelers()
+        .mapNotNull {
+            it.asLabelerConf(isBuiltIn = true).getOrElse { t ->
+                if (isDebug) {
+                    throw t
+                } else {
+                    null
+                }
             }
         }
-    }.toList()
+        .groupBy { it.name }
+        .mapNotNull { (_, labelers) -> labelers.maxByOrNull { it.version } }
     val defaultLabelerNames = defaultLabelers.map { it.name }
     val customLabelers = getCustomLabelers().mapNotNull {
         it.asLabelerConf(isBuiltIn = false).getOrNull()
