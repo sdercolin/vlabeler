@@ -4,6 +4,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.repository.update.model.Release
 import com.sdercolin.vlabeler.repository.update.model.Update
+import com.sdercolin.vlabeler.repository.update.model.UpdateChannel
 import com.sdercolin.vlabeler.util.Url
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -77,10 +78,10 @@ class UpdateRepository {
             }
         }
 
-    suspend fun fetchUpdate(): Result<Update?> {
+    suspend fun fetchUpdate(updateChannel: UpdateChannel): Result<Update?> {
         return getResponse("releases")
             .mapCatching<List<Release>, HttpResponse> { it.body() }
-            .map { Update.from(it) }
+            .map { Update.from(it, updateChannel) }
             .onFailure { if (it !is CancellationException) Log.error(it) }
     }
 

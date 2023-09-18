@@ -45,15 +45,17 @@ data class Update(
         get() = assetUrl.substringAfterLast('/')
 
     companion object {
-        fun from(releases: List<Release>): Update? {
-            val newReleases = releases.mapNotNull {
-                val version = Version.from(it.tagName) ?: return@mapNotNull null
-                version to it
-            }
-                .filter { it.first > appVersion }
+        fun from(releases: List<Release>, channel: UpdateChannel): Update? {
+            val newReleases = releases.asSequence()
+                .mapNotNull {
+                    val version = Version.from(it.tagName) ?: return@mapNotNull null
+                    version to it
+                }
+                .filter { it.first.isInChannel(channel) && it.first > appVersion }
                 .sortedBy { it.first }
                 .runIf(!isDebug) { filterNot { it.second.prerelease } }
                 .filterNot { it.second.draft }
+                .toList()
 
             if (newReleases.isEmpty()) return null
 

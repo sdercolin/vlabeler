@@ -92,7 +92,7 @@ class AppState(
     unsavedChangesState: AppUnsavedChangesState = AppUnsavedChangesStateImpl(),
     snackbarState: AppSnackbarState = AppSnackbarStateImpl(snackbarHostState),
     dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarState),
-    updaterState: AppUpdaterState = AppUpdaterStateImpl(snackbarState, dialogState, appRecordStore, mainScope),
+    updaterState: AppUpdaterState = AppUpdaterStateImpl(appConf, snackbarState, dialogState, appRecordStore, mainScope),
 ) : AppErrorState by errorState,
     AppViewState by viewState,
     AppScreenState by screenState,

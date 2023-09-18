@@ -8,9 +8,8 @@ import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseClickActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseScrollActionKeyBind
 import com.sdercolin.vlabeler.repository.ColorPaletteRepository
-import com.sdercolin.vlabeler.ui.string.ClickableTag
-import com.sdercolin.vlabeler.ui.string.Language
-import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.repository.update.model.UpdateChannel
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.divideWithBigDecimal
 import com.sdercolin.vlabeler.util.multiplyWithBigDecimal
@@ -947,6 +946,14 @@ object PreferencesPages {
                     selector = { it.misc },
                     updater = { copy(misc = it) },
                 ) {
+                    selection(
+                        title = Strings.PreferencesMiscUpdateChannel,
+                        description = Strings.PreferencesMiscUpdateChannelDescription,
+                        defaultValue = AppConf.Misc.DEFAULT_UPDATE_CHANNEL,
+                        options = UpdateChannel.values(),
+                        select = { it.updateChannel },
+                        update = { copy(updateChannel = it) },
+                    )
                     switch(
                         title = Strings.PreferencesMiscUseCustomFileDialog,
                         description = Strings.PreferencesMiscUseCustomFileDialogDescription,

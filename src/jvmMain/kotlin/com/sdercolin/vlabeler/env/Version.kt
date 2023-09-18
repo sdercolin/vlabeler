@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.env
 
+import com.sdercolin.vlabeler.repository.update.model.UpdateChannel
 import java.util.Properties
 
 /**
@@ -13,6 +14,7 @@ val appVersion: Version by lazy {
 
 /**
  * A data class representing a version.
+ *
  * @property major The major version number.
  * @property minor The minor version number.
  * @property patch The patch version number.
@@ -51,6 +53,11 @@ data class Version(
 
     val isAlpha: Boolean
         get() = stage == VersionStage.Alpha
+
+    fun isInChannel(channel: UpdateChannel): Boolean = when (channel) {
+        UpdateChannel.Stable -> isStable
+        UpdateChannel.Preview -> isBeta
+    }
 
     companion object {
 

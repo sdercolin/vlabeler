@@ -6,9 +6,8 @@ import com.sdercolin.vlabeler.model.action.MouseClickAction
 import com.sdercolin.vlabeler.model.action.MouseScrollAction
 import com.sdercolin.vlabeler.model.key.KeySet
 import com.sdercolin.vlabeler.model.palette.ColorPaletteDefinition
-import com.sdercolin.vlabeler.ui.string.Language
-import com.sdercolin.vlabeler.ui.string.LocalizedText
-import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.repository.update.model.UpdateChannel
+import com.sdercolin.vlabeler.ui.string.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -688,14 +687,17 @@ data class AppConf(
     /**
      * Other miscellaneous configurations.
      *
+     * @param updateChannel Update channel of the app.
      * @param useCustomFileDialog True if the custom file dialog is used instead of the system one.
      */
     @Serializable
     @Immutable
     data class Misc(
+        val updateChannel: UpdateChannel = DEFAULT_UPDATE_CHANNEL,
         val useCustomFileDialog: Boolean = DEFAULT_USE_CUSTOM_FILE_DIALOG,
     ) {
         companion object {
+            val DEFAULT_UPDATE_CHANNEL = UpdateChannel.Stable
             const val DEFAULT_USE_CUSTOM_FILE_DIALOG = false
         }
     }

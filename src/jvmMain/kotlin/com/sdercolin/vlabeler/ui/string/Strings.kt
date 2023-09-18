@@ -1,9 +1,7 @@
 package com.sdercolin.vlabeler.ui.string
 
 import androidx.compose.runtime.Composable
-import com.sdercolin.vlabeler.ui.string.Language.ChineseSimplified
-import com.sdercolin.vlabeler.ui.string.Language.English
-import com.sdercolin.vlabeler.ui.string.Language.Japanese
+import com.sdercolin.vlabeler.ui.string.Language.*
 
 enum class Strings {
     AppName,
@@ -436,6 +434,10 @@ enum class Strings {
     PreferencesHistorySquashIndexDescription,
     PreferencesMisc,
     PreferencesMiscDescription,
+    PreferencesMiscUpdateChannel,
+    PreferencesMiscUpdateChannelDescription,
+    UpdateChannelStable,
+    UpdateChannelPreview,
     PreferencesMiscUseCustomFileDialog,
     PreferencesMiscUseCustomFileDialogDescription,
     ActionToggleSamplePlayback,

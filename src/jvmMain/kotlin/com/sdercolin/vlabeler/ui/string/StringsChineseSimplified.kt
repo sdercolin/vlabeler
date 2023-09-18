@@ -464,6 +464,10 @@ fun Strings.zhHans(): String? = when (this) {
             "将不会被保存在历史中。"
     PreferencesMisc -> "其他"
     PreferencesMiscDescription -> "编辑其他设置。请注意，这些设置可能包含一些实验性的功能。"
+    PreferencesMiscUpdateChannel -> "更新通道"
+    PreferencesMiscUpdateChannelDescription -> "自动更新检查以及 `帮助` -> `检查更新...` 所使用的更新通道。"
+    UpdateChannelStable -> "稳定版"
+    UpdateChannelPreview -> "预览版"
     PreferencesMiscUseCustomFileDialog -> "使用自定义的文件对话框来代替系统文件对话框"
     PreferencesMiscUseCustomFileDialogDescription ->
         "启用后，文件对话框将会被自定义的对话框所代替。" +

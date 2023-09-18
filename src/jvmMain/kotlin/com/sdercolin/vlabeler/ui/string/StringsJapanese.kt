@@ -488,6 +488,10 @@ fun Strings.ja(): String? = when (this) {
             "次に内容の変更があるまで、履歴に保存されません。"
     PreferencesMisc -> "その他"
     PreferencesMiscDescription -> "その他の動作をカスタマイズします。こちらの設定は、実験的なものも含まれます。"
+    PreferencesMiscUpdateChannel -> "アップデート確認チャンネル"
+    PreferencesMiscUpdateChannelDescription -> "自動アップデート確認及び「ヘルプ」->「アップデートを確認」で使用するチャンネル。"
+    UpdateChannelStable -> "正式版"
+    UpdateChannelPreview -> "プレビュー版"
     PreferencesMiscUseCustomFileDialog -> "独自のファイルダイアログを使用する"
     PreferencesMiscUseCustomFileDialogDescription ->
         "有効にすると、OS のファイルダイアログではなく、独自のファイルダイアログを使用します。" +
