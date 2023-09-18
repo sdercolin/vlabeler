@@ -55,6 +55,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.repository.ToolCursorRepository
 import com.sdercolin.vlabeler.ui.AppState
@@ -68,8 +69,7 @@ import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.editor.RenderStatusLabel
 import com.sdercolin.vlabeler.ui.editor.ToolboxView
 import com.sdercolin.vlabeler.ui.editor.labeler.timescale.TimescaleBar
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.DarkGray
 import com.sdercolin.vlabeler.ui.theme.LightGray
@@ -414,7 +414,7 @@ private fun TagRegion(
             Popup(
                 alignment = Alignment.TopStart,
                 offset = IntOffset(0, 80),
-                focusable = false,
+                properties = PopupProperties(focusable = false),
                 onDismissRequest = {},
             ) {
                 Column(modifier = Modifier.width(IntrinsicSize.Min)) {
