@@ -27,15 +27,11 @@ let suffixes = params["suffixes"].split(',')
 if (!suffixes.includes(appendSuffix)) {
     suffixes.push(appendSuffix)
 }
-let preuCV = params["preuCV"]
-let ovlCV = params["ovlCV"]
-let cutoffCV = params["cutoffCV"]
-let fixedCV = params["fixedCV"]
-let lengthVC = params["lengthVC"]
-let preuVC = params["preuVC"]
-let ovlVC = params["ovlVC"]
-let cutoffVC = params["cutoffVC"]
-let fixedVC = params["fixedVC"]
+
+let spacer = params["spacer"]
+let fixBuffer = Math.max(params["fixBuffer"], beatLength/6)
+let consLength = Math.max(params["consLength"], beatLength/6)
+let ovlVC = Math.max(params["ovlVC"], beatLength/6)
 
 let useHeadCV = params["useHeadCV"]
 let useVCV = params["useVCV"]
@@ -117,22 +113,46 @@ let aliasCountMap = new Map()
 
 let outputSampleCVMap = new Map()
 let outputSampleVCMap = new Map()
+let outputSampleOtherMap = new Map()
 
-function push(entry, asCV) {
+function push(entry, type) {
     if (!reorder) {
         output.push(entry)
         return
     }
 
     let sample = entry.sample
-    let map = asCV ? outputSampleCVMap : outputSampleVCMap
+    let map = type == "CV" ? outputSampleCVMap : type == "VC" ? outputSampleVCMap : outputSampleOtherMap
 
     let list = map.get(sample) || []
     list.push(entry)
     map.set(sample, list)
 }
 
-// Include CV, VCV, VV and special
+function checkAliasCount(alias, isOther) {
+    let max = isSingleC ? repeatC : repeat
+    let count = aliasCountMap.get(alias) || 0
+    if (!isOther && count >= max) {
+        return ""
+    }
+
+    let thisCount = count + 1
+    let thisAlias = alias
+    if (thisCount > 1) {
+        thisAlias += repeatSuffix.replaceAll("{number}", thisCount)
+    }
+    return thisAlias
+}
+
+function pushHeadCV() {
+    // to implement
+}
+
+function pushHeadV() {
+    // to implement
+}
+
+// to edit
 function pushCV(sample, index, alias, isSpecial, tag) {
     // check alias count
     let max = repeat
@@ -162,10 +182,10 @@ function pushCV(sample, index, alias, isSpecial, tag) {
     }
     let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
     aliasCountMap.set(alias, count + 1)
-    push(entry, true)
+    push(entry, "CV")
 }
 
-// Include VC and SingleC
+// to edit
 function pushVC(sample, index, alias, isSingleC, tag) {
     // check alias count
     let max = isSingleC ? repeatC : repeat
@@ -195,12 +215,50 @@ function pushVC(sample, index, alias, isSingleC, tag) {
     }
     let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
     aliasCountMap.set(alias, count + 1)
-    push(entry, false)
+    push(entry, "VC")
+}
+
+function pushSoloC() {
+    // to implement
+}
+
+function pushVV() {
+    // to implement
+}
+
+function pushVCV() {
+    // to implement
+}
+
+function pushTail() {
+    // to implement
+}
+
+function pushOther(sample) {
+    let alias = checkAliasCount(sample, true)
+
+    let start = offset
+    let preu = start + spacer
+    let ovl = start + 2*spacer
+    let fixed = start + 3*spacer
+    let cutoff = 0 - 4*spacer
+    let end = start - cutoff
+    
+    let points = [fixed, preu, ovl]
+    points.push(start)
+    let extras = [cutoff.toString()]
+    let notes = new Notes()
+    if (appendTags) {
+        notes.tag = "Others"
+    }
+    let entry = new Entry(sample, alias, start, end, points, extras, notes)
+    aliasCountMap.set(alias, count + 1)
+    push(entry, "other")
 }
 
 function parseSample(sample) {
     if (prefix !== "" && !sample.startsWith(prefix)) {
-        pushCV(sample, 0, sample, true, "Others")
+        pushOther(sample)
         return
     }
 
@@ -217,7 +275,7 @@ function parseSample(sample) {
                 let alias = (lastVowel + " " + suffix).trim()
                 pushCV(sample, index, alias, false, "Tail")
             } else if (index === 0) {
-                pushCV(sample, 0, sample, true, "Others")
+                pushOther(sample)
             }
             return
         }
@@ -264,8 +322,8 @@ for (let sample of samples) {
 
 if (reorder) {
     let maps = reorderCVFirst
-            ? [outputSampleCVMap, outputSampleVCMap]
-            : [outputSampleVCMap, outputSampleCVMap]
+            ? [outputSampleCVMap, outputSampleVCMap, outputSampleOtherMap]
+            : [outputSampleVCMap, outputSampleCVMap, outputSampleOtherMap]
     if (reorderAcrossSample) {
 
         for (map of maps) {
