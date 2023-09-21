@@ -306,12 +306,12 @@ enum class KeyAction(
     ),
     ToggleVideoPopupEmbedded(
         listOf(Strings.ActionToggleVideoPopupEmbedded),
-        KeySet(Key.V),
+        KeySet(Key.V, setOf(Key.Ctrl)),
         true,
     ),
     ToggleVideoPopupNewWindow(
         listOf(Strings.ActionToggleVideoPopupNewWindow),
-        KeySet(Key.V, setOf(Key.Shift)),
+        KeySet(Key.V, setOf(Key.Ctrl, Key.Shift)),
         true,
     ),
     IncreaseResolution(
