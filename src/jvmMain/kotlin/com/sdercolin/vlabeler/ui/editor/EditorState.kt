@@ -27,6 +27,7 @@ import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
+import com.sdercolin.vlabeler.util.groupContinuouslyBy
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -177,12 +178,32 @@ class EditorState(
 
     fun updateEntries(editions: List<Edition>) {
         val editedEntries = this.editedEntries.associateBy { it.index }.toMutableMap()
-        editions.forEach { edition ->
-            editedEntries[edition.index] = edition.toIndexedEntry()
-            this.editions[edition.index] = edition
+        val editionGroups = editions.groupContinuouslyBy { index }
+        editionGroups.forEach { group ->
+            group.forEach { edition ->
+                editedEntries[edition.index] = edition.toIndexedEntry()
+                this.editions[edition.index] = edition
+            }
+            if (project.labelerConf.continuous) {
+                val lastEdition = group.last()
+                val nextEntry = editedEntries[lastEdition.index + 1]
+                if (nextEntry != null) {
+                    editedEntries[nextEntry.index] =
+                        nextEntry.copy(entry = nextEntry.entry.copy(start = lastEdition.newValue.end))
+                }
+                val firstEdition = group.first()
+                val previousEntry = editedEntries[firstEdition.index - 1]
+                if (previousEntry != null) {
+                    editedEntries[previousEntry.index] =
+                        previousEntry.copy(entry = previousEntry.entry.copy(end = firstEdition.newValue.start))
+                }
+            }
         }
         this.editedEntries = editedEntries.map { it.value }.sortedBy { it.index }
     }
+
+    private fun groupContinuousEditions(editions: List<Edition>): List<List<Edition>> =
+        editions.groupContinuouslyBy { index }
 
     fun cutEntry(index: Int, position: Float, pixelPosition: Float) {
         val sample = getSampleInfo() ?: return

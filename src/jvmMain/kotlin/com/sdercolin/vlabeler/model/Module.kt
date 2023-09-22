@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
+import com.sdercolin.vlabeler.util.groupContinuouslyBy
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -151,20 +152,28 @@ data class Module(
 
     fun updateEntries(editedEntries: List<IndexedEntry>, labelerConf: LabelerConf): Module {
         val entries = entries.toMutableList()
-        if (labelerConf.continuous) {
-            val previousIndex = editedEntries.first().index - 1
-            entries.getOrNull(previousIndex)
-                ?.takeIf { it.sample == editedEntries.first().sample }
-                ?.copy(end = editedEntries.first().start)
-                ?.let { entries[previousIndex] = it }
-            val nextIndex = editedEntries.last().index + 1
-            entries.getOrNull(nextIndex)
-                ?.takeIf { it.sample == editedEntries.last().sample }
-                ?.copy(start = editedEntries.last().end)
-                ?.let { entries[nextIndex] = it }
-        }
         editedEntries.forEach {
             entries[it.index] = it.entry
+        }
+        if (labelerConf.continuous) {
+            val groups = editedEntries
+                .groupBy { it.sample }.values
+                .flatMap { it.groupContinuouslyBy { index } }
+                .toList()
+            for (group in groups) {
+                val first = group.first()
+                val previousIndex = first.index - 1
+                entries.getOrNull(previousIndex)
+                    ?.takeIf { it.sample == first.sample }
+                    ?.copy(end = first.start)
+                    ?.let { entries[previousIndex] = it }
+                val last = group.last()
+                val nextIndex = last.index + 1
+                entries.getOrNull(nextIndex)
+                    ?.takeIf { it.sample == last.sample }
+                    ?.copy(start = last.end)
+                    ?.let { entries[nextIndex] = it }
+            }
         }
         return copy(entries = entries)
     }
