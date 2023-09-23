@@ -35,7 +35,7 @@ fun Strings.en(): String = when (this) {
     MenuEditEditTag -> "Edit Tag of Current Entry"
     MenuEditEditEntryExtra -> "Edit Extra Information of Current Entry"
     MenuEditMultipleEditMode -> "Edit All Connected Entries"
-    MenuEditEditModuleExtra -> "Edit Extra Information of Current Module"
+    MenuEditEditModuleExtra -> "Edit Extra Information of Current Subproject"
     MenuView -> "View"
     MenuViewToggleMarker -> "Show Parameter Controllers"
     MenuViewPinEntryList -> "Pin Entry List"
