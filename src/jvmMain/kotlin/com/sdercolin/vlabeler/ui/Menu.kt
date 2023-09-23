@@ -220,13 +220,13 @@ fun FrameWindowScope.Menu(
                         enabled = appState.isEditorActive,
                     )
                     Item(
-                        string(Strings.MenuEditEditExtra),
+                        string(Strings.MenuEditEditEntryExtra),
                         onClick = {
                             appState.openEditEntryExtraDialog(
                                 index = appState.requireProject().currentModule.currentIndex,
                             )
                         },
-                        shortcut = KeyAction.EditExtra.getKeyShortCut(),
+                        shortcut = KeyAction.EditEntryExtra.getKeyShortCut(),
                         enabled = appState.isEditorActive && appState.canEditCurrentEntryExtra,
                     )
                     CheckboxItem(
@@ -235,6 +235,14 @@ fun FrameWindowScope.Menu(
                         onCheckedChange = { appState.toggleMultipleEditMode(it) },
                         shortcut = KeyAction.ToggleMultipleEditMode.getKeyShortCut(),
                         enabled = appState.isEditorActive && appState.project?.labelerConf?.continuous == true,
+                    )
+                    Item(
+                        string(Strings.MenuEditEditModuleExtra),
+                        onClick = {
+                            appState.openEditModuleExtraDialog()
+                        },
+                        shortcut = KeyAction.EditModuleExtra.getKeyShortCut(),
+                        enabled = appState.isEditorActive && appState.canEditCurrentModuleExtra,
                     )
                 }
             }

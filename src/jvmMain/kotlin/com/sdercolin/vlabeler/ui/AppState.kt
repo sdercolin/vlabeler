@@ -360,8 +360,9 @@ class AppState(
                     action.state.removeItem(action.item)
                 }
             }
-            is EditExtraDialogResult -> when (result.target){
+            is EditExtraDialogResult -> when (result.target) {
                 EditExtraDialogTarget.EditEntry -> updateEntryExtra(result.index, result.extras)
+                EditExtraDialogTarget.EditModule -> updateCurrentModuleExtra(result.extras)
             }
             else -> throw NotImplementedError("Dialog result handler is not implemented")
         }

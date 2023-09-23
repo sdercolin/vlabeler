@@ -43,7 +43,7 @@ data class EditExtraDialogArgs(
 
 enum class EditExtraDialogTarget(val stringKey: Strings) {
     EditEntry(Strings.EditEntryExtraDialogDescription),
-    // TODO : EditModule(Strings.EditModuleExtraDialogDescription),
+    EditModule(Strings.EditModuleExtraDialogDescription),
 }
 
 data class EditExtraDialogResult(
@@ -56,7 +56,7 @@ class EditExtraState(
     args: EditExtraDialogArgs,
     private val finish: (EditExtraDialogResult?) -> Unit,
 ) {
-    private val entryIndex = args.index
+    private val itemIndex = args.index
     var values by mutableStateOf(args.initial)
     val extraFields = args.extraFields
     val target = args.target
@@ -91,7 +91,7 @@ class EditExtraState(
     }
 
     fun submit() {
-        finish(EditExtraDialogResult(entryIndex, values, target))
+        finish(EditExtraDialogResult(itemIndex, values, target))
     }
 }
 
