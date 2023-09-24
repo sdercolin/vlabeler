@@ -21,6 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -35,6 +36,8 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.isReleased
@@ -127,6 +130,7 @@ fun NameLabels(
                         modifier = Modifier.fillMaxSize(),
                         entryChunk = chunks[index],
                         offset = index * chunkLength,
+                        clickable = state.isCursor,
                         requestRename = requestRename,
                         jumpToEntry = jumpToEntry,
                         onHovered = onHovered,
@@ -138,10 +142,13 @@ fun NameLabels(
                             name = editorState.onScreenScissorsState.text,
                             onEditName = { editorState.onScreenScissorsState.text = it },
                             color = appConf.editor.continuousLabelNames.color.toRgbColorOrNull()
-                                ?: AppConf.ContinuousLabelNames.DefaultColor.toRgbColor(),
+                                ?: AppConf.ContinuousLabelNames.DEFAULT_COLOR.toRgbColor(),
                             cutPosition = editorState.onScreenScissorsState.pixelPosition,
                             appConf = appConf,
-                            commit = editorState::commitEntryCut,
+                            commit = {
+                                editorState.commitEntryCut()
+                                state.scissorsState.updateNonNull { copy(locked = false) }
+                            },
                             cancel = {
                                 editorState.onScreenScissorsState.end()
                                 state.scissorsState.updateNonNull { copy(locked = false) }
@@ -162,6 +169,7 @@ private fun NameLabel(
     name: String,
     color: Color,
     fontSize: AppConf.FontSize,
+    clickable: Boolean,
     requestRename: (Int) -> Unit,
     jumpToEntry: (Int) -> Unit,
     onHovered: (Int, Boolean) -> Unit,
@@ -175,6 +183,7 @@ private fun NameLabel(
         modifier = Modifier.widthIn(max = 100.dp)
             .wrapContentSize()
             .combinedClickable(
+                enabled = clickable,
                 onClick = { requestRename(index) },
                 onLongClick = { jumpToEntry(index) },
             )
@@ -213,6 +222,7 @@ private fun EditableNameLabel(
     Layout(
         modifier = modifier,
         content = {
+            val editValue = remember { mutableStateOf(TextFieldValue(name, selection = TextRange(0, name.length))) }
             val focusRequester = remember { FocusRequester() }
             LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
@@ -235,8 +245,11 @@ private fun EditableNameLabel(
                             }
                         }
                     },
-                value = name,
-                onValueChange = onEditName,
+                value = editValue.value,
+                onValueChange = {
+                    editValue.value = it
+                    onEditName(it.text)
+                },
                 textStyle = MaterialTheme.typography.caption.copy(fontSize = fontSizeSp, color = color),
                 singleLine = true,
                 cursorBrush = SolidColor(color),
@@ -277,6 +290,7 @@ private fun NameLabelsChunk(
     modifier: Modifier,
     entryChunk: NameLabelEntryChunk,
     offset: Float,
+    clickable: Boolean,
     requestRename: (Int) -> Unit,
     jumpToEntry: (Int) -> Unit,
     onHovered: (Int, Boolean) -> Unit,
@@ -285,7 +299,7 @@ private fun NameLabelsChunk(
         listOfNotNull(entryChunk.leftEntry) + entryChunk.entries + listOfNotNull(entryChunk.rightEntry)
     }
     val activeColor = appConf.editor.continuousLabelNames.color.toRgbColorOrNull()
-        ?: AppConf.ContinuousLabelNames.DefaultColor.toRgbColor()
+        ?: AppConf.ContinuousLabelNames.DEFAULT_COLOR.toRgbColor()
     val inactiveColor = Black
     val colors = remember(entryChunk, activeColor, inactiveColor) {
         listOfNotNull(entryChunk.leftEntry).map { inactiveColor } +
@@ -304,6 +318,7 @@ private fun NameLabelsChunk(
                     name = item.name,
                     color = color,
                     fontSize = appConf.editor.continuousLabelNames.size,
+                    clickable = clickable,
                     requestRename = requestRename,
                     jumpToEntry = jumpToEntry,
                     onHovered = onHovered,

@@ -58,9 +58,10 @@ fun Strings.ja(): String? = when (this) {
     MenuNavigatePreviousEntry -> "前のエントリ"
     MenuNavigateNextSample -> "次のサンプル"
     MenuNavigatePreviousSample -> "前のサンプル"
+    MenuNavigateJumpToEntry -> "エントリに移動..."
     MenuNavigateNextModule -> "次のサブプロジェクト"
     MenuNavigatePreviousModule -> "前のサブプロジェクト"
-    MenuNavigateJumpToEntry -> "エントリに移動..."
+    MenuNavigateJumpToModule -> "サブプロジェクトに移動..."
     MenuNavigateScrollFit -> "このエントリを中央に表示"
     MenuTools -> "ツール"
     MenuToolsBatchEdit -> "一括編集"
@@ -79,6 +80,7 @@ fun Strings.ja(): String? = when (this) {
     MenuHelp -> "ヘルプ"
     MenuHelpCheckForUpdates -> "アップデートを確認"
     MenuHelpOpenLogDirectory -> "ログディレクトリを開く"
+    MenuHelpIncludeInfoLog -> "詳細なログを有効にする"
     MenuHelpOpenHomePage -> "vLabeler ホームページを開く"
     MenuHelpOpenLatestRelease -> "最新のリリースページを開く"
     MenuHelpOpenGitHub -> "GitHub リポジトリを開く"
@@ -254,6 +256,7 @@ fun Strings.ja(): String? = when (this) {
         "プロジェクトのデータとサンプルのデータをマッチングできませんでした。詳細はエラーログを確認してください。"
     InvalidEditedProjectException -> "この編集は無効です。詳細はエラーログを確認してください。"
     CustomizableItemLoadingException -> "コンポーネントを読み込めませんでした。"
+    CustomizableItemRemovingException -> "コンポーネントを削除できませんでした。"
     VideoComponentInitializationException ->
         "ビデオコンポーネントを初期化できませんでした。この機能を使用するには、VLC をインストールする必要があります。" +
             "詳細については、README の `ビデオ表示` セクションを参照してください。"
@@ -261,6 +264,9 @@ fun Strings.ja(): String? = when (this) {
         "ファイル名が「%s」で、拡張子が「%s」の動画は見つかりませんでした。"
     PluginRuntimeExceptionTemplate -> "プラグインの実行中にエラーが発生しました：%s"
     ProjectConstructorRuntimeExceptionTemplate -> "プロジェクトの作成中にエラーが発生しました：%s"
+    PropertySetterRuntimeExceptionTemplate -> "プロパティの設定中にエラーが発生しました：%s"
+    PropertySetterUnexpectedRuntimeException ->
+        "プロパティの設定中に予期しないエラーが発生しました。ラベラーの作者に連絡してください。"
     LabelerManagerTitle -> "ラベラー"
     LabelerManagerImportDialogTitle -> "ラベラーをインポート"
     TemplatePluginManagerTitle -> "テンプレート生成器"
@@ -439,7 +445,7 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorScissorsUseOnScreenScissorsDescription ->
         "有効にすると、はさみでクリックした時に、エディタ上に新しいエントリ名の入力欄が表示されます。" +
             "Enterキーを押すか、クリック位置からカーソルを離すことで、カットアクションを確定できます。" +
-            "Escキーを押すことで、アクションをキャンセルできます。"
+            "Escキーを押すことで、アクションをキャンセルできます。この設定は、複数エントリ編集モードでのみ有効です。"
     PreferencesEditorScissorsColor -> "色"
     PreferencesEditorScissorsActionTargetNone -> "なし"
     PreferencesEditorScissorsActionTargetFormer -> "前のエントリ"
@@ -560,6 +566,9 @@ fun Strings.ja(): String? = when (this) {
     AboutDialogShowLicenses -> "ライセンスを表示"
     LicenseDialogTitle -> "vLabeler - ライセンス"
     LicenseDialogLicenses -> "vLabeler が使用しているライブラリのライセンス"
+    LoadProjectErrorLabelerNotFound ->
+        "必要なラベラー `%1\$s` （バージョン `%2\$s`）が見つかりません。" +
+            "このプロジェクトを開くためには、該当するラベラーをインストールしてください。"
     LoadProjectWarningLabelerCreated -> "プロジェクトファイルにより新しいラベラー `%s`をインストールしました。"
     LoadProjectWarningLabelerUpdated -> "プロジェクトファイルによりラベラー `%1\$s` を `%2\$s` にアップデートしました。"
     LoadProjectWarningCacheDirReset ->

@@ -39,7 +39,7 @@ class SnapDrag(project: Project, lengthInPixel: Float, entryConverter: EntryConv
         for ((key, count) in mapInRange) {
             val countToUse = if (current == key) count - 1 else count
             if (countToUse <= 0) continue
-            if (abs(key - position) <= SnapDistance) {
+            if (abs(key - position) <= SNAP_DISTANCE) {
                 return key
             }
         }
@@ -47,6 +47,6 @@ class SnapDrag(project: Project, lengthInPixel: Float, entryConverter: EntryConv
     }
 
     companion object {
-        private const val SnapDistance = 10f
+        private const val SNAP_DISTANCE = 10f
     }
 }

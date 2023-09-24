@@ -409,7 +409,7 @@ private fun FilterRow(
                 }
                 FreeSizedIconButton(
                     onClick = {
-                        Url.open(Url.EntrySelectorScriptDocument)
+                        Url.open(Url.ENTRY_SELECTOR_SCRIPT_DOCUMENT)
                     },
                 ) {
                     Icon(Icons.Default.HelpOutline, contentDescription = null, tint = White50)

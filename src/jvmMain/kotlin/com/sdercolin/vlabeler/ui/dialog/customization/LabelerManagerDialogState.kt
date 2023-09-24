@@ -3,12 +3,12 @@ package com.sdercolin.vlabeler.ui.dialog.customization
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import com.sdercolin.vlabeler.exception.CustomizedItemLoadingException
+import com.sdercolin.vlabeler.exception.CustomizableItemLoadingException
 import com.sdercolin.vlabeler.io.asLabelerConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import java.io.File
 
@@ -18,7 +18,7 @@ class LabelerManagerDialogState(
 ) : CustomizableItemManagerDialogState<LabelerItem>(
     title = Strings.LabelerManagerTitle,
     importDialogTitle = Strings.LabelerManagerImportDialogTitle,
-    definitionFileExtension = LabelerConf.LabelerFileExtension,
+    definitionFileExtension = LabelerConf.LABELER_FILE_EXTENSION,
     directory = CustomLabelerDir,
     allowExecution = false,
     appState = appState,
@@ -29,13 +29,18 @@ class LabelerManagerDialogState(
         appRecordStore.update { setLabelerDisabled(item.name, item.disabled) }
     }
 
-    override suspend fun importNewItem(configFile: File) = runCatching {
-        configFile.asLabelerConf().getOrThrow()
-        val targetPath = CustomLabelerDir.resolve(configFile.name)
-        configFile.copyTo(targetPath, overwrite = true)
-        Unit
+    override suspend fun importNewItem(configFile: File): String = runCatching {
+        val labeler = configFile.asLabelerConf(isBuiltIn = false).getOrThrow()
+        if (labeler.singleFile) {
+            val targetPath = CustomLabelerDir.resolve(configFile.name)
+            configFile.copyTo(targetPath, overwrite = true)
+        } else {
+            val targetFolder = CustomLabelerDir.resolve(requireNotNull(labeler.directory).name)
+            configFile.parentFile.copyRecursively(targetFolder, overwrite = true)
+        }
+        labeler.name
     }.getOrElse {
-        throw CustomizedItemLoadingException(it)
+        throw CustomizableItemLoadingException(it)
     }
 
     override fun reload() {

@@ -16,6 +16,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
@@ -29,7 +30,7 @@ import kotlin.math.roundToInt
  *
  * @property playbackConfig The playback configuration.
  * @property maxSampleRate The maximum sample rate of the audio. Audio files with higher sample rate will be
- *     downsampled.
+ *     down-sampled.
  * @property coroutineScope The coroutine scope to run the player.
  * @property state The [PlayerState] containing all the state of the player.
  * @property listener The listener to notify the UI of the playback progress.
@@ -76,27 +77,29 @@ class Player(
     private var countingJob: Job? = null
     private var writingJob: Job? = null
 
-    suspend fun load(newFile: File) {
+    fun load(newFile: File) {
         if (file == newFile) return
-        openJob?.cancelAndJoin()
-        stop()
+        openJob?.cancel()
         file = newFile
-        openJob = coroutineScope.launch(Dispatchers.IO) {
-            runCatching {
-                Log.info("Player.load(\"${newFile.absolutePath}\")")
-                val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
-                    format = stream.format.normalize(maxSampleRate)
-                    data = AudioSystem.getAudioInputStream(format, stream).use {
-                        val bytes = it.readAllBytes()
-                        Log.info("Player.load: read ${bytes.size} bytes")
-                        bytes
+        openJob = coroutineScope.launch {
+            stop()
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    Log.debug("Player.load(\"${newFile.absolutePath}\")")
+                    val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
+                        format = stream.format.normalize(maxSampleRate)
+                        data = AudioSystem.getAudioInputStream(format, stream).use {
+                            val bytes = it.readAllBytes()
+                            Log.info("Player.load: read ${bytes.size} bytes")
+                            bytes
+                        }
+                        AudioSystem.getSourceDataLine(format)
                     }
-                    AudioSystem.getSourceDataLine(format)
+                    this@Player.line = line
+                    line.open()
+                }.onFailure {
+                    Log.error(it)
                 }
-                this@Player.line = line
-                line.open()
-            }.onFailure {
-                Log.error(it)
             }
         }
     }
@@ -135,8 +138,8 @@ class Player(
      * @param endFrame The frame position to end writing at.
      * @param repeat Whether to repeat the audio data.
      * @param cancelFormer Whether to cancel the former writing job.
-     * @param backgroundPlay Whether the playing is not showing in UI. If true, [state.isPlaying] is not set to true so
-     *     we should not check it in the loop.
+     * @param backgroundPlay Whether the playing is not showing in UI. If true, [state::isPlaying] is not set to true,
+     *     so we should not check it in the loop.
      */
     private suspend fun startWriting(
         startFrame: Int = 0,
@@ -182,7 +185,7 @@ class Player(
             val sampleRate = format?.sampleRate ?: return@launch
             listener.onFramePositionChanged(frame)
             while (true) {
-                delay(PlayingTimeInterval)
+                delay(PLAYING_TIME_INTERVAL)
                 if (!state.isPlaying) break
                 frame = firstFrame + (System.currentTimeMillis() - firstTime) * sampleRate / 1000
                 if (repeat) {
@@ -335,6 +338,6 @@ class Player(
     }
 
     companion object {
-        private const val PlayingTimeInterval = 5L
+        private const val PLAYING_TIME_INTERVAL = 5L
     }
 }

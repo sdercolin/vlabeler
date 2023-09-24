@@ -78,7 +78,7 @@ class ImportProjectTest {
                                 "end": 2,
                                 "points": [1, 2],
                                 "extras": ["a", "b"],
-                                "meta": {
+                                "notes": {
                                     "done": false,
                                     "star": true,
                                     "tag": "tag1"
@@ -284,7 +284,7 @@ class ImportProjectTest {
                                 "end": 2,
                                 "points": [1, 2],
                                 "extras": ["a", "b"],
-                                "meta": {
+                                "notes": {
                                     "done": false,
                                     "star": true,
                                     "tag": "tag1"

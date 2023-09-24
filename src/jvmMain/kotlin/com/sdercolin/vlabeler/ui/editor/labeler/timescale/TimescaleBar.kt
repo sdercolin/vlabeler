@@ -2,69 +2,67 @@ package com.sdercolin.vlabeler.ui.editor.labeler.timescale
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.EntryConverter
 import com.sdercolin.vlabeler.util.FloatRange
-import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.getTimeText
-import org.jetbrains.skia.Font
-import org.jetbrains.skia.Paint
-import org.jetbrains.skia.TextLine
 import kotlin.math.ceil
 import kotlin.math.floor
 
 class TimescaleBarState(
-    sampleRate: Float?,
+    sampleRate: Float,
     resolution: Int,
-    screenRange: FloatRange?,
+    screenRange: FloatRange,
 ) {
 
-    val scalePositionsWithTexts: List<Pair<Float, String?>>?
+    val scalePositions: List<Pair<Float, String?>>
+    val scalePositionsWithTexts: List<Pair<Float, String>>
 
     init {
-        if (sampleRate == null || screenRange == null) {
-            scalePositionsWithTexts = null
-        } else {
-            val converter = EntryConverter(sampleRate, resolution)
-            val timescale = Timescale.find { converter.convertToPixel(it) }
-            val offset = screenRange.start
-            val majorStepPx = converter.convertToPixel(timescale.major.toFloat())
-            val minorStepPx = converter.convertToPixel(timescale.minor.toFloat())
-            val firstMajorPointIndex = ceil(offset / majorStepPx).toInt()
-            val lastMajorPointIndex = floor(screenRange.endInclusive / majorStepPx).toInt()
-            val majorIndexes = (firstMajorPointIndex..lastMajorPointIndex)
-            val majorResults = majorIndexes.map { index ->
-                val text = getTimeText(index * timescale.major)
-                val position = index * majorStepPx - offset
-                position to text
-            }
-            val firstMinorPointIndex = ceil(offset / minorStepPx).toInt()
-            val lastMinorPointIndex = floor(screenRange.endInclusive / minorStepPx).toInt()
-            val minorPoints = (firstMinorPointIndex..lastMinorPointIndex).map { it * minorStepPx }
-            val minorResults = minorPoints.map { it - offset }
-            val result = majorResults.toMap<Float, String?>().toMutableMap()
-            minorResults.forEach {
-                if (!result.containsKey(it)) {
-                    result[it] = null as String?
-                }
-            }
-            scalePositionsWithTexts = result.toList().sortedBy { it.first }
+        val converter = EntryConverter(sampleRate, resolution)
+        val timescale = Timescale.find { converter.convertToPixel(it) }
+        val offset = screenRange.start
+        val majorStepPx = converter.convertToPixel(timescale.major.toFloat())
+        val minorStepPx = converter.convertToPixel(timescale.minor.toFloat())
+        val firstMajorPointIndex = ceil(offset / majorStepPx).toInt()
+        val lastMajorPointIndex = floor(screenRange.endInclusive / majorStepPx).toInt()
+        val majorIndexes = (firstMajorPointIndex..lastMajorPointIndex)
+
+        val majorResults = majorIndexes.map { index ->
+            val text = getTimeText(index * timescale.major)
+            val position = index * majorStepPx - offset
+            position to text
         }
+        val firstMinorPointIndex = ceil(offset / minorStepPx).toInt()
+        val lastMinorPointIndex = floor(screenRange.endInclusive / minorStepPx).toInt()
+        val minorPoints = (firstMinorPointIndex..lastMinorPointIndex).map { it * minorStepPx }
+        val minorResults = minorPoints.map { it - offset }
+        val result = majorResults.toMap<Float, String?>().toMutableMap()
+        minorResults.forEach {
+            if (!result.containsKey(it)) {
+                result[it] = null as String?
+            }
+        }
+        scalePositions = result.toList().sortedBy { it.first }
+        scalePositionsWithTexts = majorResults.sortedBy { it.first }
     }
 }
 
@@ -72,59 +70,86 @@ class TimescaleBarState(
 private fun rememberTimescaleBarState(
     editorState: EditorState,
     horizontalScrollState: ScrollState,
-): TimescaleBarState {
-    val sampleInfo = editorState.sampleInfoResult?.getOrNull()
+): TimescaleBarState? {
+    val sampleInfo = editorState.getSampleInfo()
     val resolution = editorState.canvasResolution
     val screenRange = if (sampleInfo != null) {
-        val canvasParams = CanvasParams(sampleInfo.length, sampleInfo.chunkCount, resolution, LocalDensity.current)
-        horizontalScrollState.getScreenRange(canvasParams.lengthInPixel)
+        val canvasParams = CanvasParams(sampleInfo.length, sampleInfo.chunkCount, resolution)
+        editorState.getScreenRange(canvasParams.lengthInPixel, horizontalScrollState)
     } else {
         null
     }
-    return remember(sampleInfo, resolution, screenRange) {
-        TimescaleBarState(
-            sampleInfo?.sampleRate,
-            resolution,
-            screenRange,
-        )
+    val sampleRate = sampleInfo?.sampleRate
+    return remember(sampleRate, resolution, screenRange) {
+        if (sampleRate != null && screenRange != null) {
+            TimescaleBarState(
+                sampleRate,
+                resolution,
+                screenRange,
+            )
+        } else {
+            null
+        }
     }
 }
+
+private val TotalHeight = 40.dp
+private val MajorScaleHeight = 16.dp
+private val MinorScaleHeight = 8.dp
+private val TextBottomMargin = 5.dp
 
 @Composable
 fun TimescaleBar(
     editorState: EditorState,
     horizontalScrollState: ScrollState,
-    state: TimescaleBarState = rememberTimescaleBarState(editorState, horizontalScrollState),
+    state: TimescaleBarState? = rememberTimescaleBarState(editorState, horizontalScrollState),
 ) {
-    if (state.scalePositionsWithTexts != null) {
-        Canvas(Modifier.fillMaxWidth().height(35.dp)) {
-            val height = size.height
-            try {
-                for ((position, text) in state.scalePositionsWithTexts) {
-                    val isMajor = text != null
-                    val y = if (isMajor) height * 0.3f else height * 0.85f
-                    drawLine(
-                        color = Color.White,
-                        start = Offset(position, y),
-                        end = Offset(position, height),
-                        strokeWidth = 3f,
-                    )
-                    if (text != null) {
-                        drawIntoCanvas {
-                            it.nativeCanvas.drawTextLine(
-                                TextLine.Companion.make(text, Font(null, 20f)),
-                                position + 10,
-                                35f,
-                                Paint().apply {
-                                    color = Color.White.toArgb()
-                                },
-                            )
-                        }
+    val density = LocalDensity.current
+    Box(modifier = Modifier.fillMaxWidth().height(TotalHeight)) {
+        val majorScaleLength = with(density) { MajorScaleHeight.toPx().toInt() }
+        val minorScaleLength = with(density) { MinorScaleHeight.toPx().toInt() }
+        if (state?.scalePositions != null) {
+            Canvas(Modifier.fillMaxSize()) {
+                val height = size.height
+                try {
+                    for ((position, text) in state.scalePositions) {
+                        val isMajor = text != null
+                        val y = height - (if (isMajor) majorScaleLength else minorScaleLength)
+                        drawLine(
+                            color = Color.White,
+                            start = Offset(position, y),
+                            end = Offset(position, height),
+                            strokeWidth = 3f,
+                        )
+                    }
+                } catch (t: Throwable) {
+                    if (isDebug) throw t
+                    Log.debug(t)
+                }
+            }
+        }
+        if (state?.scalePositionsWithTexts != null) {
+            val yBottom = with(density) { (TotalHeight - MajorScaleHeight - TextBottomMargin).toPx() }
+            Layout(
+                modifier = Modifier.fillMaxSize(),
+                content = {
+                    state.scalePositionsWithTexts.forEach { (_, text) ->
+                        BasicText(
+                            text = text,
+                            style = MaterialTheme.typography.caption.copy(color = Color.White, fontSize = 10.sp),
+                        )
+                    }
+                },
+            ) { measureables, constraints ->
+                val placeables = measureables.map { it.measure(constraints.copy(minWidth = 0, minHeight = 0)) }
+
+                layout(constraints.maxWidth, constraints.maxHeight) {
+                    placeables.forEachIndexed { index, placeable ->
+                        val x = state.scalePositionsWithTexts[index].first - placeable.width / 2
+                        val y = yBottom - placeable.height
+                        placeable.placeRelative(x = x.toInt(), y = y.toInt())
                     }
                 }
-            } catch (t: Throwable) {
-                if (isDebug) throw t
-                Log.debug(t)
             }
         }
     }

@@ -41,16 +41,15 @@ import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.EndPointIndex
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.NonePointIndex
-import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.StartPointIndex
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.END_POINT_INDEX
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.NONE_POINT_INDEX
+import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerCursorState.Companion.START_POINT_INDEX
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.contains
 import com.sdercolin.vlabeler.util.getNextOrNull
 import com.sdercolin.vlabeler.util.getPreviousOrNull
-import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.length
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.update
@@ -62,15 +61,15 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
 
-const val RegionAlpha = 0.3f
+const val REGION_ALPHA = 0.3f
 val EditableOutsideRegionColor = White
-const val UneditableRegionAlpha = 0.9f
+const val UNEDITABLE_REGION_ALPHA = 0.9f
 val UneditableRegionColor = Black
-const val IdleLineAlpha = 0.7f
-const val StrokeWidth = 2f
+const val IDLE_LINE_ALPHA = 0.7f
+const val STROKE_WIDTH = 2f
 val LabelSize = DpSize(40.dp, 25.dp)
 val LabelShiftUp = 11.dp
-const val LabelMaxChunkLength = 5000
+const val LABEL_MAX_CHUNK_LENGTH = 5000
 val OnScreenScissorDistanceThreshold = 10.dp
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -109,7 +108,7 @@ fun MarkerPointEventContainer(
                         editorState::cutEntry,
                         keyboardState,
                         screenRange,
-                        appState.appConf,
+                        editorState.canUseOnScreenScissors,
                     )
                     return@onPointerEvent
                 }
@@ -137,7 +136,7 @@ fun MarkerPointEventContainer(
                     editorState::cutEntry,
                     keyboardState,
                     screenRange,
-                    appState.appConf,
+                    editorState.canUseOnScreenScissors,
                 )
             },
         content = content,
@@ -152,7 +151,7 @@ fun MarkerCanvas(
     editorState: EditorState,
     appState: AppState,
 ) {
-    FieldBorderCanvas(horizontalScrollState, state, appState.appConf.editor)
+    FieldBorderCanvas(editorState, horizontalScrollState, state, appState.appConf.editor)
     LaunchAdjustScrollPosition(
         appState.appConf,
         state.entriesInPixel,
@@ -170,7 +169,7 @@ fun MarkerCanvas(
             if (appState.isEditorActive.not()) return@collectLatest
             if (editorState.handleSetPropertyKeyAction(it)) return@collectLatest
             if (state.mayHandleScissorsKeyAction(
-                    onScreenMode = appState.appConf.editor.useOnScreenScissors,
+                    onScreenMode = editorState.canUseOnScreenScissors,
                     action = it,
                     cutEntry = editorState::cutEntry,
                 )
@@ -207,7 +206,7 @@ fun MarkerLabels(
         { index, hovered -> state.onLabelHovered(index, hovered) }
     }
 
-    val chunkCount = ceil(state.canvasParams.lengthInPixel / LabelMaxChunkLength).toInt()
+    val chunkCount = ceil(state.canvasParams.lengthInPixel / LABEL_MAX_CHUNK_LENGTH).toInt()
     val chunkLength = state.canvasParams.lengthInPixel / chunkCount
 
     val chunkVisibleList = List(chunkCount) {
@@ -232,11 +231,12 @@ fun MarkerLabels(
 
 @Composable
 private fun FieldBorderCanvas(
+    editorState: EditorState,
     horizontalScrollState: ScrollState,
     state: MarkerState,
     editorConf: AppConf.Editor,
 ) {
-    val screenRange = horizontalScrollState.getScreenRange(state.canvasParams.lengthInPixel)
+    val screenRange = editorState.getScreenRange(state.canvasParams.lengthInPixel, horizontalScrollState)
     Canvas(Modifier.fillMaxSize()) {
         screenRange ?: return@Canvas
         try {
@@ -267,15 +267,15 @@ private fun FieldBorderCanvas(
                 val relativeLeftBorder = leftBorder - screenRange.start
                 drawRect(
                     color = leftBorderColor,
-                    alpha = UneditableRegionAlpha,
+                    alpha = UNEDITABLE_REGION_ALPHA,
                     topLeft = Offset.Zero,
                     size = Size(width = relativeLeftBorder, height = canvasHeight),
                 )
                 drawLine(
-                    color = leftBorderColor.copy(alpha = IdleLineAlpha),
+                    color = leftBorderColor.copy(alpha = IDLE_LINE_ALPHA),
                     start = Offset(relativeLeftBorder, 0f),
                     end = Offset(relativeLeftBorder, canvasHeight),
-                    strokeWidth = StrokeWidth,
+                    strokeWidth = STROKE_WIDTH,
                 )
             }
 
@@ -288,16 +288,16 @@ private fun FieldBorderCanvas(
                 val coercedStart = relativeStart.coerceAtMost(screenRange.length)
                 drawRect(
                     color = startColor,
-                    alpha = RegionAlpha,
+                    alpha = REGION_ALPHA,
                     topLeft = Offset(coercedLeftBorder, 0f),
                     size = Size(width = coercedStart - coercedLeftBorder, height = canvasHeight),
                 )
-                val startLineAlpha = if (cursorState.value.usingStartPoint) 1f else IdleLineAlpha
+                val startLineAlpha = if (cursorState.value.usingStartPoint) 1f else IDLE_LINE_ALPHA
                 drawLine(
                     color = startColor.copy(alpha = startLineAlpha),
                     start = Offset(coercedStart, 0f),
                     end = Offset(coercedStart, canvasHeight),
-                    strokeWidth = StrokeWidth,
+                    strokeWidth = STROKE_WIDTH,
                 )
             }
 
@@ -311,14 +311,14 @@ private fun FieldBorderCanvas(
                     val borderLineAlpha =
                         if (state.isBorderIndex(pointIndex) &&
                             state.getEntryIndexesByBorderIndex(pointIndex).second == entryIndex
-                        ) 1f else IdleLineAlpha
+                        ) 1f else IDLE_LINE_ALPHA
                     if (border in screenRange) {
                         val relativeBorder = border - screenRange.start
                         drawLine(
                             color = borderColor.copy(alpha = borderLineAlpha),
                             start = Offset(relativeBorder, 0f),
                             end = Offset(relativeBorder, canvasHeight),
-                            strokeWidth = StrokeWidth,
+                            strokeWidth = STROKE_WIDTH,
                         )
                     }
                 }
@@ -331,8 +331,8 @@ private fun FieldBorderCanvas(
                     val top = waveformsHeight - height
                     val color = field.color.toColor()
                     val fillTargetIndex = when (field.filling) {
-                        "start" -> StartPointIndex
-                        "end" -> EndPointIndex
+                        "start" -> START_POINT_INDEX
+                        "end" -> END_POINT_INDEX
                         null -> null
                         else -> labelerConf.fields.withIndex().find { it.value.name == field.filling }?.index
                     }
@@ -346,7 +346,7 @@ private fun FieldBorderCanvas(
                             val coercedRelativeRight = (right - screenRange.start).coerceAtMost(screenRange.length)
                             drawRect(
                                 color = color,
-                                alpha = RegionAlpha,
+                                alpha = REGION_ALPHA,
                                 topLeft = Offset(coercedRelativeLeft, top),
                                 size = Size(width = coercedRelativeRight - coercedRelativeLeft, height = height),
                             )
@@ -354,14 +354,14 @@ private fun FieldBorderCanvas(
                     }
 
                     val pointIndex = fieldIndex + entryIndex * (state.labelerConf.fields.size + 1)
-                    val lineAlpha = if (cursorState.value.pointIndex != pointIndex) IdleLineAlpha else 1f
+                    val lineAlpha = if (cursorState.value.pointIndex != pointIndex) IDLE_LINE_ALPHA else 1f
                     if (x in screenRange) {
                         val relativeX = x - screenRange.start
                         drawLine(
                             color = color.copy(alpha = lineAlpha),
                             start = Offset(relativeX, top),
                             end = Offset(relativeX, canvasHeight),
-                            strokeWidth = StrokeWidth,
+                            strokeWidth = STROKE_WIDTH,
                         )
                     }
                 }
@@ -376,16 +376,16 @@ private fun FieldBorderCanvas(
                 val coercedRightBorder = relativeRightBorder.coerceAtMost(screenRange.length)
                 drawRect(
                     color = endColor,
-                    alpha = RegionAlpha,
+                    alpha = REGION_ALPHA,
                     topLeft = Offset(coercedEnd, 0f),
                     size = Size(width = coercedRightBorder - coercedEnd, height = canvasHeight),
                 )
-                val endLineAlpha = if (cursorState.value.usingEndPoint) 1f else IdleLineAlpha
+                val endLineAlpha = if (cursorState.value.usingEndPoint) 1f else IDLE_LINE_ALPHA
                 drawLine(
                     color = endColor.copy(alpha = endLineAlpha),
                     start = Offset(coercedEnd, 0f),
                     end = Offset(coercedEnd, canvasHeight),
-                    strokeWidth = StrokeWidth,
+                    strokeWidth = STROKE_WIDTH,
                 )
             }
 
@@ -395,15 +395,15 @@ private fun FieldBorderCanvas(
                 val relativeRightBorder = rightBorder - screenRange.start
                 drawRect(
                     color = rightBorderColor,
-                    alpha = UneditableRegionAlpha,
+                    alpha = UNEDITABLE_REGION_ALPHA,
                     topLeft = Offset(relativeRightBorder, 0f),
                     size = Size(width = screenRange.endInclusive - relativeRightBorder, height = canvasHeight),
                 )
                 drawLine(
-                    color = rightBorderColor.copy(alpha = IdleLineAlpha),
+                    color = rightBorderColor.copy(alpha = IDLE_LINE_ALPHA),
                     start = Offset(relativeRightBorder, 0f),
                     end = Offset(relativeRightBorder, canvasHeight),
-                    strokeWidth = StrokeWidth,
+                    strokeWidth = STROKE_WIDTH,
                 )
             }
 
@@ -417,7 +417,7 @@ private fun FieldBorderCanvas(
                             color = editorConf.scissorsColor.toColor(),
                             start = Offset(relativePosition, 0f),
                             end = Offset(relativePosition, canvasHeight),
-                            strokeWidth = StrokeWidth,
+                            strokeWidth = STROKE_WIDTH,
                         )
                     }
                 }
@@ -433,7 +433,7 @@ private fun FieldBorderCanvas(
                             color = editorConf.playerCursorColor.toColor(),
                             start = Offset(relativePosition, 0f),
                             end = Offset(relativePosition, canvasHeight),
-                            strokeWidth = StrokeWidth,
+                            strokeWidth = STROKE_WIDTH,
                         )
                     }
                 }
@@ -450,7 +450,7 @@ private fun FieldBorderCanvas(
                     ).sorted()
                     drawRect(
                         color = editorConf.playerCursorColor.toColor(),
-                        alpha = RegionAlpha,
+                        alpha = REGION_ALPHA,
                         topLeft = Offset(relativeStartPosition, 0f),
                         size = Size(width = relativeEndPosition - relativeStartPosition, height = canvasHeight),
                     )
@@ -476,7 +476,7 @@ private fun MarkerState.handleMouseMove(
 ) {
     screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(event, editions, screenRange, playByCursor)
+        Tool.Cursor -> handleCursorMove(event, editions, screenRange, playByCursor, density)
         Tool.Scissors -> handleScissorsMove(event, screenRange, commitEntryCut, density)
         Tool.Pan -> handlePanMove(event, scrollState, scope)
         Tool.Playback -> handlePlaybackMove(event, screenRange)
@@ -488,6 +488,7 @@ private fun MarkerState.handleCursorMove(
     editions: (List<Edition>) -> Unit,
     screenRange: FloatRange,
     playByCursor: (Float) -> Unit,
+    density: Density,
 ) {
     val eventChange = event.changes.first()
     val x = eventChange.position.x
@@ -517,11 +518,11 @@ private fun MarkerState.handleCursorMove(
             conf = labelerConf,
             canvasHeight = canvasHeightState.value,
             waveformsHeightRatio = waveformsHeightRatio,
-            density = canvasParams.density,
+            density = density,
             labelSize = LabelSize,
             labelShiftUp = LabelShiftUp,
         )
-        if (newPointIndex == NonePointIndex) {
+        if (newPointIndex == NONE_POINT_INDEX) {
             cursorState.update { moveToNothing() }
         } else {
             cursorState.update { moveToHover(newPointIndex) }
@@ -647,13 +648,13 @@ private fun MarkerState.handleMouseRelease(
     cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
     keyboardState: KeyboardState,
     screenRange: FloatRange?,
-    appConf: AppConf,
+    canUseOnScreenScissors: Boolean,
 ) {
     screenRange ?: return
     val caughtAction = keyboardState.getEnabledMouseClickAction(event)
     val handled = when (tool) {
         Tool.Cursor -> handleCursorRelease(submitEntry)
-        Tool.Scissors -> handleScissorsRelease(appConf.editor.useOnScreenScissors, cutEntry, event)
+        Tool.Scissors -> handleScissorsRelease(canUseOnScreenScissors, cutEntry, event)
         Tool.Pan -> handlePanRelease()
         Tool.Playback -> {
             val playbackAction = keyboardState.getEnabledMouseClickAction(event, Tool.Playback)
@@ -776,8 +777,8 @@ private fun MarkerState.editEntryIfNeeded(
         if (edited.isEmpty()) return
 
         fun getEditedFieldName(pointIndex: Int) = when (pointIndex) {
-            StartPointIndex -> "start"
-            EndPointIndex -> "end"
+            START_POINT_INDEX -> "start"
+            END_POINT_INDEX -> "end"
             else -> labelerConf.fields[pointIndex].name
         }
 

@@ -4,11 +4,12 @@ import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
+import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectConstructorRuntimeException
 import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.io.moduleFromRawLabels
 import com.sdercolin.vlabeler.io.moduleGroupFromRawLabels
-import com.sdercolin.vlabeler.model.Project.Companion.ProjectVersion
+import com.sdercolin.vlabeler.model.Project.Companion.PROJECT_VERSION
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.util.DefaultEncoding
 import com.sdercolin.vlabeler.util.JavaScript
@@ -74,7 +75,7 @@ data class Project(
         get() = rootSampleDirectory.resolve(workingDirectoryPath)
 
     val projectFile: File
-        get() = workingDirectory.resolve("$projectName.$ProjectFileExtension")
+        get() = workingDirectory.resolve("$projectName.$PROJECT_FILE_EXTENSION")
 
     val cacheDirectory: File
         get() = rootSampleDirectory.resolve(cacheDirectoryPath)
@@ -173,13 +174,13 @@ data class Project(
     }
 
     companion object {
-        const val ProjectVersion = 3
+        const val PROJECT_VERSION = 3
 
-        const val ProjectFileExtension = "lbp"
-        private const val DefaultCacheDirectorySuffix = ".$ProjectFileExtension.caches"
+        const val PROJECT_FILE_EXTENSION = "lbp"
+        private const val DEFAULT_CACHE_DIRECTORY_SUFFIX = ".$PROJECT_FILE_EXTENSION.caches"
 
         fun getDefaultCacheDirectory(location: String, projectName: String): String {
-            return File(location, "$projectName$DefaultCacheDirectorySuffix").absolutePath
+            return File(location, "$projectName$DEFAULT_CACHE_DIRECTORY_SUFFIX").absolutePath
         }
     }
 }
@@ -239,14 +240,18 @@ fun LabelerConf.injectLabelerParams(paramMap: ParamMap): LabelerConf {
         }
         .filter { it.second != it.first.parameter.defaultValue }
         .map { it.first }
-        .filter { it.injector.isNullOrEmpty().not() }
+        .filter { it.injector != null }
     if (paramDefsToInject.isEmpty()) return this
 
     val js = JavaScript()
     js.setJson("labeler", this)
-    for (def in paramDefsToInject) {
-        js.setJson("value", paramMap.resolveItem(def.parameter.name, project = null, js = js))
-        def.injector.orEmpty().joinToString("\n").let { js.eval(it) }
+    try {
+        for (def in paramDefsToInject) {
+            js.setJson("value", paramMap.resolveItem(def.parameter.name, project = null, js = js))
+            def.injector?.getScripts(directory)?.let { js.eval(it) }
+        }
+    } catch (t: Throwable) {
+        throw InvalidEditedProjectException(t)
     }
     val labelerResult = js.getJson<LabelerConf>("labeler").migrate()
     js.close()
@@ -294,6 +299,12 @@ fun LabelerConf.injectLabelerParams(paramMap: ParamMap): LabelerConf {
     require(labelerResult.fields.map { it.name } == fields.map { it.name }) {
         "Could not inject to change the name of a field of LabelerConf"
     }
+    require(labelerResult.extraFields.map { it.name } == extraFields.map { it.name }) {
+        "Could not inject to change the name of an extra field of LabelerConf"
+    }
+    require(labelerResult.properties.map { it.name } == properties.map { it.name }) {
+        "Could not inject to change the name of a property of LabelerConf"
+    }
     return labelerResult
 }
 
@@ -320,16 +331,17 @@ suspend fun projectOf(
         js.set("root", sampleDirectory.toFile())
         js.set("encoding", encoding)
         js.setJson("acceptedSampleExtensions", Sample.acceptableSampleFileExtensions)
+        js.setJson("resources", labelerConf.readResourceFiles())
         listOf(
             Resources.envJs,
             Resources.fileJs,
             Resources.expectedErrorJs,
             Resources.moduleDefinitionJs,
-            Resources.prepareBuildProjectJs,
         ).forEach { js.execResource(it) }
+        js.eval("root = new File(root)")
         labelerParams.resolve(project = null, js = js).let { js.setJson("params", it) }
         try {
-            labelerConf.projectConstructor.scripts.joinToString("\n").let { js.eval(it) }
+            labelerConf.projectConstructor.scripts.getScripts(labelerConf.directory).let { js.eval(it) }
         } catch (t: Throwable) {
             val expected = js.getOrNull("expectedError") ?: false
             js.close()
@@ -373,7 +385,7 @@ suspend fun projectOf(
             "No entries were found for any module"
         }
         Project(
-            version = ProjectVersion,
+            version = PROJECT_VERSION,
             rootSampleDirectoryPath = sampleDirectory,
             workingDirectoryPath = workingDirectory,
             projectName = projectName,
@@ -481,16 +493,17 @@ private fun parseModuleGroup(
     // TODO: pluginParams: ParamMap?,
     encoding: String,
 ): List<Module> {
-    val result = moduleGroupFromRawLabels(moduleDefinitionGroup, labelerConf, labelerParams, encoding)
-    require(moduleDefinitionGroup.size == result.size) {
-        "Module group size mismatch: ${moduleDefinitionGroup.size} != ${result.size}"
+    val results = moduleGroupFromRawLabels(moduleDefinitionGroup, labelerConf, labelerParams, encoding)
+    require(moduleDefinitionGroup.size == results.size) {
+        "Module group size mismatch: ${moduleDefinitionGroup.size} != ${results.size}"
     }
-    return moduleDefinitionGroup.zip(result).map { (def, entries) ->
+    return moduleDefinitionGroup.zip(results).map { (def, result) ->
         Module(
             rootDirectory = rootSampleDirectory.toFile(),
             name = def.name,
             sampleDirectory = def.sampleDirectory,
-            entries = entries,
+            entries = result.entries,
+            extras = result.extras,
             currentIndex = 0,
             rawFilePath = def.labelFile,
         )

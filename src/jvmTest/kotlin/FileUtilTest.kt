@@ -71,4 +71,18 @@ class FileUtilTest {
         val child = File("/src/jvmMain/kotlin/com/sdercolin/")
         assertEquals(false, parent.containsFileRecursively(child))
     }
+
+    @Test
+    fun testContainsFileRecursivelyChildIsRelative() {
+        val parent = File("/src/jvmMain/kotlin/com/sdercolin/vlabeler/ui")
+        val child = File("wav")
+        assertEquals(false, parent.containsFileRecursively(child))
+    }
+
+    @Test
+    fun testContainsFileRecursivelyParentIsRelative() {
+        val parent = File("vlabeler")
+        val child = File("/src/jvmMain/kotlin/com/sdercolin/vlabeler/ui")
+        assertEquals(false, parent.containsFileRecursively(child))
+    }
 }

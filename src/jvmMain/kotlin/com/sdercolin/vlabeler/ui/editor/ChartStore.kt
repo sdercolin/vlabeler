@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.MelScale
-import com.sdercolin.vlabeler.io.NormalizedSampleSizeInBits
+import com.sdercolin.vlabeler.io.NORMALIZED_SAMPLE_SIZE_IN_BITS
 import com.sdercolin.vlabeler.io.loadSampleChunk
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
@@ -72,13 +72,13 @@ class ChartStore {
         appConf: AppConf,
         sampleInfo: SampleInfo,
     ): Boolean {
-        if (currentSampleInfo == sampleInfo && !ChartRepository.needReset(appConf, PaintingAlgorithmVersion)) {
+        if (currentSampleInfo == sampleInfo && !ChartRepository.needReset(appConf, PAINTING_ALGORITHM_VERSION)) {
             return false
         }
         currentSampleInfo = sampleInfo
         job?.cancel()
         initializeStates(sampleInfo.chunkCount, sampleInfo.channels)
-        ChartRepository.init(project, appConf, PaintingAlgorithmVersion)
+        ChartRepository.init(project, appConf, PAINTING_ALGORITHM_VERSION)
         return true
     }
 
@@ -106,7 +106,6 @@ class ChartStore {
                 }
 
                 repeat(sampleInfo.channels) { channelIndex ->
-                    System.gc()
                     renderWaveform(
                         sampleInfo,
                         chunk,
@@ -119,7 +118,6 @@ class ChartStore {
                     )
                 }
                 if (sampleInfo.hasSpectrogram && appConf.painter.spectrogram.enabled) {
-                    System.gc()
                     renderSpectrogram(
                         sampleInfo,
                         chunk,
@@ -131,7 +129,6 @@ class ChartStore {
                 }
                 if (sampleInfo.hasPower && appConf.painter.power.enabled) {
                     repeat(sampleInfo.powerChannels) { channelIndex ->
-                        System.gc()
                         renderPowerGraph(
                             sampleInfo,
                             chunk,
@@ -248,15 +245,14 @@ class ChartStore {
         requireNotNull(chunk) {
             "Chunk $chunkIndex is required. However it's not loaded."
         }
-        Log.info("Waveforms chunk $chunkIndex in channel $channelIndex: draw bitmap start")
         val data = chunk.wave.channels[channelIndex].data
         val dataDensity = appConf.painter.amplitude.unitSize
         val width = data.size / dataDensity
-        val maxRawY = 2.0.pow(NormalizedSampleSizeInBits - 1).toFloat()
+        val maxRawY = 2.0.pow(NORMALIZED_SAMPLE_SIZE_IN_BITS - 1).toFloat()
         val height = appConf.painter.amplitude.intensityAccuracy
         val size = Size(width.toFloat(), height.toFloat())
         val newBitmap = ImageBitmap(width, height)
-        val color = appConf.painter.amplitude.color.toColorOrNull() ?: AppConf.Amplitude.DefaultColor.toColor()
+        val color = appConf.painter.amplitude.color.toColorOrNull() ?: AppConf.Amplitude.DEFAULT_COLOR.toColor()
         CanvasDrawScope().draw(density, layoutDirection, Canvas(newBitmap), size) {
             val yScale = maxRawY / height * 2 * (1 + appConf.painter.amplitude.yAxisBlankRate)
             data.toList()
@@ -271,12 +267,12 @@ class ChartStore {
                     )
                 }
         }
-        Log.info("Waveforms chunk $chunkIndex in channel $channelIndex: draw bitmap end")
         yield()
         ChartRepository.putWaveform(sampleInfo, channelIndex, chunkIndex, newBitmap)
         yield()
         waveformStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
         onRenderProgress()
+        System.gc()
     }
 
     private fun hasCachedSpectrogram(
@@ -320,7 +316,6 @@ class ChartStore {
         requireNotNull(chunk) {
             "Chunk $chunkIndex is required. However it's not loaded."
         }
-        Log.info("Spectrogram chunk $chunkIndex: draw bitmap start")
         val rawData = requireNotNull(chunk.spectrogram).data
         val pointDensity = appConf.painter.spectrogram.pointDensity
         val data = rawData.chunked(pointDensity).map { group ->
@@ -340,8 +335,8 @@ class ChartStore {
         val maxYLength = data[maxLengthIndex].size
         val step = appConf.painter.spectrogram.melScaleStep
         val displayMels = IntArray((maxMel / step) + 1) { it * step } + listOf(maxMel)
-        val displayFreqs = displayMels.map { MelScale.toFreq(it.toDouble()) }
-        val displayIndexes = displayFreqs.map { it * (maxYLength - 1) / maxFrequency }
+        val displayFrequencies = displayMels.map { MelScale.toFreq(it.toDouble()) }
+        val displayIndexes = displayFrequencies.map { it * (maxYLength - 1) / maxFrequency }
         // image size
         val width = data.size
         val height = displayIndexes.size
@@ -370,12 +365,12 @@ class ChartStore {
         val imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
         val image = Image.Companion.makeRaster(imageInfo, imageData, width * 4)
         val bitmap = Bitmap.makeFromImage(image).asComposeImageBitmap()
-        Log.info("Spectrogram chunk $chunkIndex: draw bitmap end")
         yield()
         ChartRepository.putSpectrogram(sampleInfo, chunkIndex, bitmap)
         yield()
         spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loaded
         onRenderProgress()
+        System.gc()
     }
 
     private fun hasCachedPowerGraph(
@@ -421,7 +416,6 @@ class ChartStore {
         requireNotNull(chunk) {
             "Chunk $chunkIndex is required. However it's not loaded."
         }
-        Log.info("Power graph chunk $chunkIndex: draw bitmap start")
         // get data
         val data = requireNotNull(chunk.power).data[channelIndex]
         val minValue = appConf.painter.power.minPower
@@ -431,7 +425,7 @@ class ChartStore {
         val height = appConf.painter.power.intensityAccuracy
         val imageData = ByteArray(width * height * 4)
         // draw
-        val color = appConf.painter.power.color.toColorOrNull() ?: AppConf.Power.DefaultColor.toColor()
+        val color = appConf.painter.power.color.toColorOrNull() ?: AppConf.Power.DEFAULT_COLOR.toColor()
         data.forEachIndexed { index, value ->
             val valueInRange = maxOf(minValue, minOf(maxValue, value))
             val y = (height - 1 - (valueInRange - minValue) / (maxValue - minValue) * (height - 1)).toInt()
@@ -444,15 +438,15 @@ class ChartStore {
         val imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
         val image = Image.Companion.makeRaster(imageInfo, imageData, width * 4)
         val bitmap = Bitmap.makeFromImage(image).asComposeImageBitmap()
-        Log.info("Power graph chunk $chunkIndex: draw bitmap end")
         yield()
         ChartRepository.putPowerGraph(sampleInfo, channelIndex, chunkIndex, bitmap)
         yield()
         powerGraphStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
         onRenderProgress()
+        System.gc()
     }
 
     companion object {
-        private const val PaintingAlgorithmVersion = 7
+        private const val PAINTING_ALGORITHM_VERSION = 7
     }
 }

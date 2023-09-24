@@ -15,6 +15,7 @@ import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.dialog.AboutDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.LicenseDialog
+import com.sdercolin.vlabeler.ui.dialog.QuickLaunchManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.TrackingSettingsDialog
 import com.sdercolin.vlabeler.ui.dialog.WarningDialog
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialog

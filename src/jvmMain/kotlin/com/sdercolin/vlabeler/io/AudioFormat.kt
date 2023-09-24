@@ -14,11 +14,11 @@ fun AudioFormat.normalize(maxSampleRate: Int): AudioFormat {
     }
     return AudioFormat(
         sampleRate,
-        NormalizedSampleSizeInBits,
+        NORMALIZED_SAMPLE_SIZE_IN_BITS,
         channels,
         true,
         isBigEndian,
     )
 }
 
-const val NormalizedSampleSizeInBits = 16
+const val NORMALIZED_SAMPLE_SIZE_IN_BITS = 16

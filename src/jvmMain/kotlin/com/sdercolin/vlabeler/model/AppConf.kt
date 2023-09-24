@@ -49,7 +49,7 @@ data class AppConf(
     @Immutable
     data class Painter(
         val canvasResolution: CanvasResolution = CanvasResolution(),
-        val maxDataChunkSize: Int = DefaultMaxDataChunkSize,
+        val maxDataChunkSize: Int = DEFAULT_MAX_DATA_CHUNK_SIZE,
         val amplitude: Amplitude = Amplitude(),
         val spectrogram: Spectrogram = Spectrogram(),
         val power: Power = Power(),
@@ -63,9 +63,9 @@ data class AppConf(
                     )
 
         companion object {
-            const val DefaultMaxDataChunkSize = 441000
-            const val MinMaxDataChunkSize = DefaultMaxDataChunkSize / 2
-            const val MaxMaxDataChunkSize = DefaultMaxDataChunkSize * 3
+            const val DEFAULT_MAX_DATA_CHUNK_SIZE = 441000
+            const val MIN_MAX_DATA_CHUNK_SIZE = DEFAULT_MAX_DATA_CHUNK_SIZE / 2
+            const val MAX_MAX_DATA_CHUNK_SIZE = DEFAULT_MAX_DATA_CHUNK_SIZE * 3
         }
     }
 
@@ -79,8 +79,8 @@ data class AppConf(
     @Serializable
     @Immutable
     data class CanvasResolution(
-        val default: Int = DefaultDefault,
-        val step: Int = DefaultStep,
+        val default: Int = DEFAULT_DEFAULT,
+        val step: Int = DEFAULT_STEP,
     ) {
         val min: Int get() = Min
         val max: Int get() = Max
@@ -88,8 +88,8 @@ data class AppConf(
         companion object {
             const val Max = 400
             const val Min = 10
-            const val DefaultDefault = 40
-            const val DefaultStep = 20
+            const val DEFAULT_DEFAULT = 40
+            const val DEFAULT_STEP = 20
         }
     }
 
@@ -108,29 +108,29 @@ data class AppConf(
     @Serializable
     @Immutable
     data class Amplitude(
-        val resampleDownToHz: Int = DefaultResampleDownToHz,
-        val normalize: Boolean = DefaultNormalize,
-        val unitSize: Int = DefaultUnitSize,
-        val intensityAccuracy: Int = DefaultIntensityAccuracy,
-        val yAxisBlankRate: Float = DefaultYAxisBlankRate,
-        val color: String = DefaultColor,
-        val backgroundColor: String = DefaultBackgroundColor,
+        val resampleDownToHz: Int = DEFAULT_RESAMPLE_DOWN_TO_HZ,
+        val normalize: Boolean = DEFAULT_NORMALIZE,
+        val unitSize: Int = DEFAULT_UNIT_SIZE,
+        val intensityAccuracy: Int = DEFAULT_INTENSITY_ACCURACY,
+        val yAxisBlankRate: Float = DEFAULT_YAXIS_BLANK_RATE,
+        val color: String = DEFAULT_COLOR,
+        val backgroundColor: String = DEFAULT_BACKGROUND_COLOR,
     ) {
         companion object {
-            const val DefaultResampleDownToHz = 44100
-            const val MinResampleDownToHz = 0
-            const val DefaultNormalize = false
-            const val DefaultUnitSize = 60
-            const val MaxUnitSize = DefaultUnitSize * 10
-            const val MinUnitSize = 1
-            const val DefaultIntensityAccuracy = 1000
-            const val MaxIntensityAccuracy = DefaultIntensityAccuracy * 5
-            const val MinIntensityAccuracy = DefaultIntensityAccuracy / 5
-            const val DefaultYAxisBlankRate = 0.1f
-            const val MaxYAxisBlankRate = 3f
-            const val MinYAxisBlankRate = 0f
-            const val DefaultColor = "#FFF2F2F2"
-            const val DefaultBackgroundColor = "#00000000"
+            const val DEFAULT_RESAMPLE_DOWN_TO_HZ = 44100
+            const val MIN_RESAMPLE_DOWN_TO_HZ = 0
+            const val DEFAULT_NORMALIZE = false
+            const val DEFAULT_UNIT_SIZE = 60
+            const val MAX_UNIT_SIZE = DEFAULT_UNIT_SIZE * 10
+            const val MIN_UNIT_SIZE = 1
+            const val DEFAULT_INTENSITY_ACCURACY = 1000
+            const val MAX_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY * 5
+            const val MIN_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY / 5
+            const val DEFAULT_YAXIS_BLANK_RATE = 0.1f
+            const val MAX_YAXIS_BLANK_RATE = 3f
+            const val MIN_YAXIS_BLANK_RATE = 0f
+            const val DEFAULT_COLOR = "#FFF2F2F2"
+            const val DEFAULT_BACKGROUND_COLOR = "#00000000"
         }
     }
 
@@ -157,44 +157,44 @@ data class AppConf(
     @Serializable
     @Immutable
     data class Spectrogram(
-        val enabled: Boolean = DefaultEnabled,
-        val heightWeight: Float = DefaultHeightWeight,
-        val pointDensity: Int = DefaultPointDensity,
-        val standardHopSize: Int = DefaultStandardHopSize,
-        val standardWindowSize: Int = DefaultStandardWindowSize,
+        val enabled: Boolean = DEFAULT_ENABLED,
+        val heightWeight: Float = DEFAULT_HEIGHT_WEIGHT,
+        val pointDensity: Int = DEFAULT_POINT_DENSITY,
+        val standardHopSize: Int = DEFAULT_STANDARD_HOP_SIZE,
+        val standardWindowSize: Int = DEFAULT_STANDARD_WINDOW_SIZE,
         val windowType: WindowType = DefaultWindowType,
-        val melScaleStep: Int = DefaultMelScaleStep,
-        val maxFrequency: Int = DefaultMaxFrequency,
-        val minIntensity: Int = DefaultMinIntensity,
-        val maxIntensity: Int = DefaultMaxIntensity,
+        val melScaleStep: Int = DEFAULT_MEL_SCALE_STEP,
+        val maxFrequency: Int = DEFAULT_MAX_FREQUENCY,
+        val minIntensity: Int = DEFAULT_MIN_INTENSITY,
+        val maxIntensity: Int = DEFAULT_MAX_INTENSITY,
         val colorPalette: String = DefaultColorPalette,
-        val useHighAlphaContrast: Boolean = DefaultUseHighAlphaContrast,
+        val useHighAlphaContrast: Boolean = DEFAULT_USE_HIGH_ALPHA_CONTRAST,
     ) {
         companion object {
-            const val DefaultEnabled = true
-            const val DefaultHeightWeight = 0.75f
-            const val MaxHeightWeight = 5f
-            const val MinHeightWeight = 0.1f
-            const val DefaultPointDensity = 2
-            const val MaxPointDensity = 30
-            const val MinPointDensity = 1
-            const val DefaultStandardHopSize = 110
-            const val MaxStandardHopSize = 2048
-            const val MinStandardHopSize = 1
-            const val DefaultStandardWindowSize = 512
-            const val MaxStandardWindowSize = 4096
-            const val MinStandardWindowSize = 128
-            const val DefaultMaxFrequency = 20000
-            const val DefaultMelScaleStep = 10
-            const val MaxMelScaleStep = 100
-            const val MinMelScaleStep = 1
-            const val MaxMaxFrequency = 48000
-            const val MinMaxFrequency = 5000
-            const val DefaultMinIntensity = -20
-            const val DefaultMaxIntensity = 55
+            const val DEFAULT_ENABLED = true
+            const val DEFAULT_HEIGHT_WEIGHT = 0.75f
+            const val MAX_HEIGHT_WEIGHT = 5f
+            const val MIN_HEIGHT_WEIGHT = 0.1f
+            const val DEFAULT_POINT_DENSITY = 2
+            const val MAX_POINT_DENSITY = 30
+            const val MIN_POINT_DENSITY = 1
+            const val DEFAULT_STANDARD_HOP_SIZE = 110
+            const val MAX_STANDARD_HOP_SIZE = 2048
+            const val MIN_STANDARD_HOP_SIZE = 1
+            const val DEFAULT_STANDARD_WINDOW_SIZE = 512
+            const val MAX_STANDARD_WINDOW_SIZE = 4096
+            const val MIN_STANDARD_WINDOW_SIZE = 128
+            const val DEFAULT_MAX_FREQUENCY = 20000
+            const val DEFAULT_MEL_SCALE_STEP = 10
+            const val MAX_MEL_SCALE_STEP = 100
+            const val MIN_MEL_SCALE_STEP = 1
+            const val MAX_MAX_FREQUENCY = 48000
+            const val MIN_MAX_FREQUENCY = 5000
+            const val DEFAULT_MIN_INTENSITY = -20
+            const val DEFAULT_MAX_INTENSITY = 55
             val DefaultWindowType = WindowType.BlackmanHarris
             val DefaultColorPalette = ColorPaletteDefinition.presets.first().name
-            const val DefaultUseHighAlphaContrast = true
+            const val DEFAULT_USE_HIGH_ALPHA_CONTRAST = true
         }
     }
 
@@ -215,38 +215,38 @@ data class AppConf(
     @Serializable
     @Immutable
     data class Power(
-        val enabled: Boolean = DefaultEnabled,
-        val mergeChannels: Boolean = DefaultMergeChannels,
-        val heightWeight: Float = DefaultHeightWeight,
-        val unitSize: Int = DefaultUnitSize,
-        val windowSize: Int = DefaultWindowSize,
-        val minPower: Float = DefaultMinPower,
-        val maxPower: Float = DefaultMaxPower,
-        val intensityAccuracy: Int = DefaultIntensityAccuracy,
-        val color: String = DefaultColor,
-        val backgroundColor: String = DefaultBackgroundColor,
+        val enabled: Boolean = DEFAULT_ENABLED,
+        val mergeChannels: Boolean = DEFAULT_MERGE_CHANNELS,
+        val heightWeight: Float = DEFAULT_HEIGHT_WEIGHT,
+        val unitSize: Int = DEFAULT_UNIT_SIZE,
+        val windowSize: Int = DEFAULT_WINDOW_SIZE,
+        val minPower: Float = DEFAULT_MIN_POWER,
+        val maxPower: Float = DEFAULT_MAX_POWER,
+        val intensityAccuracy: Int = DEFAULT_INTENSITY_ACCURACY,
+        val color: String = DEFAULT_COLOR,
+        val backgroundColor: String = DEFAULT_BACKGROUND_COLOR,
     ) {
         companion object {
-            const val DefaultEnabled = false
-            const val DefaultMergeChannels = true
-            const val DefaultHeightWeight = 0.5f
-            const val MaxHeightWeight = 5f
-            const val MinHeightWeight = 0.1f
-            const val DefaultUnitSize = 60
-            const val MaxUnitSize = DefaultUnitSize * 10
-            const val MinUnitSize = 1
-            const val DefaultWindowSize = 300
-            const val MaxWindowSize = DefaultWindowSize * 10
-            const val MinWindowSize = 1
-            const val DefaultMinPower = -48f
-            const val DefaultMaxPower = 0.0f
-            const val MinMinPower = -192.66f
-            const val MaxMaxPower = 0.0f
-            const val DefaultIntensityAccuracy = 200
-            const val MaxIntensityAccuracy = DefaultIntensityAccuracy * 5
-            const val MinIntensityAccuracy = DefaultIntensityAccuracy / 5
-            const val DefaultColor = "#FFF2F2F2"
-            const val DefaultBackgroundColor = "#00000000"
+            const val DEFAULT_ENABLED = false
+            const val DEFAULT_MERGE_CHANNELS = true
+            const val DEFAULT_HEIGHT_WEIGHT = 0.5f
+            const val MAX_HEIGHT_WEIGHT = 5f
+            const val MIN_HEIGHT_WEIGHT = 0.1f
+            const val DEFAULT_UNIT_SIZE = 60
+            const val MAX_UNIT_SIZE = DEFAULT_UNIT_SIZE * 10
+            const val MIN_UNIT_SIZE = 1
+            const val DEFAULT_WINDOW_SIZE = 300
+            const val MAX_WINDOW_SIZE = DEFAULT_WINDOW_SIZE * 10
+            const val MIN_WINDOW_SIZE = 1
+            const val DEFAULT_MIN_POWER = -48f
+            const val DEFAULT_MAX_POWER = 0.0f
+            const val MIN_MIN_POWER = -192.66f
+            const val MAX_MAX_POWER = 0.0f
+            const val DEFAULT_INTENSITY_ACCURACY = 200
+            const val MAX_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY * 5
+            const val MIN_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY / 5
+            const val DEFAULT_COLOR = "#FFF2F2F2"
+            const val DEFAULT_BACKGROUND_COLOR = "#00000000"
         }
     }
 
@@ -272,14 +272,14 @@ data class AppConf(
     @Serializable
     @Immutable
     data class Conversion(
-        val ffmpegPath: String = DefaultFFmpegPath,
-        val ffmpegArgs: String = DefaultFFmpegArgs,
-        val useConversionForWav: Boolean = DefaultUseConversionForWav,
+        val ffmpegPath: String = DEFAULT_FFMPEG_PATH,
+        val ffmpegArgs: String = DEFAULT_FFMPEG_ARGS,
+        val useConversionForWav: Boolean = DEFAULT_USE_CONVERSION_FOR_WAV,
     ) {
         companion object {
-            const val DefaultFFmpegPath = "ffmpeg"
-            const val DefaultFFmpegArgs = "-acodec pcm_s16le -ac 1 -ar 44100"
-            const val DefaultUseConversionForWav = false
+            const val DEFAULT_FFMPEG_PATH = "ffmpeg"
+            const val DEFAULT_FFMPEG_ARGS = "-acodec pcm_s16le -ac 1 -ar 44100"
+            const val DEFAULT_USE_CONVERSION_FOR_WAV = false
         }
     }
 
@@ -289,7 +289,7 @@ data class AppConf(
      * @param scissorsColor Color hex string of the scissors' cursor position.
      * @param scissorsActions Actions taken with a successful scissors click.
      * @param useOnScreenScissors When true, the scissors process is handled on screen. Otherwise, it is handled in a
-     *     dialog.
+     *     dialog. Only effective when [Project.multipleEditMode] is true.
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted.
      * @param showDone When true, the done button/icon is shown in the editor and entry lists.
      * @param showStar When true, the star button/icon is shown in the editor and entry lists.
@@ -300,17 +300,17 @@ data class AppConf(
     @Serializable
     @Immutable
     data class Editor(
-        val playerCursorColor: String = DefaultPlayerCursorColor,
-        val scissorsColor: String = DefaultScissorsColor,
+        val playerCursorColor: String = DEFAULT_PLAYER_CURSOR_COLOR,
+        val scissorsColor: String = DEFAULT_SCISSORS_COLOR,
         val scissorsActions: ScissorsActions = ScissorsActions(),
-        val useOnScreenScissors: Boolean = DefaultUseOnScreenScissors,
+        val useOnScreenScissors: Boolean = DEFAULT_USE_ON_SCREEN_SCISSORS,
         val autoScroll: AutoScroll = AutoScroll(),
         val lockedDrag: LockedDrag = DefaultLockedDrag,
-        val lockedSettingParameterWithCursor: Boolean = DefaultLockedSettingParameterWithCursor,
-        val showDone: Boolean = DefaultShowDone,
-        val showStar: Boolean = DefaultShowStar,
-        val showTag: Boolean = DefaultShowTag,
-        val showExtra: Boolean = DefaultShowExtra,
+        val lockedSettingParameterWithCursor: Boolean = DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR,
+        val showDone: Boolean = DEFAULT_SHOW_DONE,
+        val showStar: Boolean = DEFAULT_SHOW_STAR,
+        val showTag: Boolean = DEFAULT_SHOW_TAG,
+        val showExtra: Boolean = DEFAULT_SHOW_EXTRA,
         val continuousLabelNames: ContinuousLabelNames = ContinuousLabelNames(),
         val postEditNext: PostEditAction = PostEditAction.DefaultNext,
         val postEditDone: PostEditAction = PostEditAction.DefaultDone,
@@ -333,15 +333,15 @@ data class AppConf(
         }
 
         companion object {
-            const val DefaultPlayerCursorColor = "#FFFF00"
-            const val DefaultScissorsColor = "#FFFFFF00"
-            const val DefaultUseOnScreenScissors = true
+            const val DEFAULT_PLAYER_CURSOR_COLOR = "#FFFF00"
+            const val DEFAULT_SCISSORS_COLOR = "#FFFFFF00"
+            const val DEFAULT_USE_ON_SCREEN_SCISSORS = true
             val DefaultLockedDrag = LockedDrag.UseLabeler
-            const val DefaultLockedSettingParameterWithCursor = true
-            const val DefaultShowDone = true
-            const val DefaultShowStar = true
-            const val DefaultShowTag = true
-            const val DefaultShowExtra = true
+            const val DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR = true
+            const val DEFAULT_SHOW_DONE = true
+            const val DEFAULT_SHOW_STAR = true
+            const val DEFAULT_SHOW_TAG = true
+            const val DEFAULT_SHOW_EXTRA = true
         }
     }
 
@@ -399,13 +399,13 @@ data class AppConf(
     @Serializable
     @Immutable
     data class ContinuousLabelNames(
-        val color: String = DefaultColor,
+        val color: String = DEFAULT_COLOR,
         val size: FontSize = DefaultSize,
         val position: ViewCornerPosition = DefaultPosition,
     ) {
 
         companion object {
-            const val DefaultColor = "#E89F17"
+            const val DEFAULT_COLOR = "#E89F17"
             val DefaultSize = FontSize.Small
             val DefaultPosition = ViewCornerPosition.TopRight
         }
@@ -483,26 +483,26 @@ data class AppConf(
     @Immutable
     data class View(
         val language: Language = DefaultLanguage,
-        val hideSampleExtension: Boolean = DefaultHideSampleExtension,
-        val accentColor: String = DefaultAccentColor,
-        val accentColorVariant: String = DefaultAccentColorVariant,
+        val hideSampleExtension: Boolean = DEFAULT_HIDE_SAMPLE_EXTENSION,
+        val accentColor: String = DEFAULT_ACCENT_COLOR,
+        val accentColorVariant: String = DEFAULT_ACCENT_COLOR_VARIANT,
         val pinnedEntryListPosition: ViewPosition = DefaultPinnedEntryListPosition,
     ) {
 
         companion object {
 
             val DefaultLanguage = Language.English
-            const val DefaultHideSampleExtension = true
+            const val DEFAULT_HIDE_SAMPLE_EXTENSION = true
 
             /**
              * Equals to [com.sdercolin.vlabeler.ui.theme.Pink]
              */
-            const val DefaultAccentColor = "#F48FB1"
+            const val DEFAULT_ACCENT_COLOR = "#F48FB1"
 
             /**
              * Equals to [com.sdercolin.vlabeler.ui.theme.DarkPink]
              */
-            const val DefaultAccentColorVariant = "#AD375F"
+            const val DEFAULT_ACCENT_COLOR_VARIANT = "#AD375F"
             val DefaultPinnedEntryListPosition = ViewPosition.Right
         }
     }
@@ -555,17 +555,17 @@ data class AppConf(
     @Serializable
     @Immutable
     data class AutoScroll(
-        val onLoadedNewSample: Boolean = DefaultOnLoadedNewSample,
-        val onJumpedToEntry: Boolean = DefaultOnJumpedToEntry,
-        val onSwitchedInMultipleEditMode: Boolean = DefaultOnSwitchedInMultipleEditMode,
-        val onSwitched: Boolean = DefaultOnSwitched,
+        val onLoadedNewSample: Boolean = DEFAULT_ON_LOADED_NEW_SAMPLE,
+        val onJumpedToEntry: Boolean = DEFAULT_ON_JUMPED_TO_ENTRY,
+        val onSwitchedInMultipleEditMode: Boolean = DEFAULT_ON_SWITCHED_IN_MULTIPLE_EDIT_MODE,
+        val onSwitched: Boolean = DEFAULT_ON_SWITCHED,
     ) {
 
         companion object {
-            const val DefaultOnLoadedNewSample = true
-            const val DefaultOnJumpedToEntry = true
-            const val DefaultOnSwitchedInMultipleEditMode = true
-            const val DefaultOnSwitched = false
+            const val DEFAULT_ON_LOADED_NEW_SAMPLE = true
+            const val DEFAULT_ON_JUMPED_TO_ENTRY = true
+            const val DEFAULT_ON_SWITCHED_IN_MULTIPLE_EDIT_MODE = true
+            const val DEFAULT_ON_SWITCHED = false
         }
     }
 
@@ -579,7 +579,7 @@ data class AppConf(
     @Immutable
     data class AutoSave(
         val target: Target = DefaultTarget,
-        val intervalSec: Int = DefaultIntervalSec,
+        val intervalSec: Int = DEFAULT_INTERVAL_SEC,
     ) {
         /**
          * Targets of the auto-save.
@@ -609,8 +609,8 @@ data class AppConf(
 
         companion object {
             val DefaultTarget = Target.Record
-            const val DefaultIntervalSec = 30
-            const val MinIntervalSec = 1
+            const val DEFAULT_INTERVAL_SEC = 30
+            const val MIN_INTERVAL_SEC = 1
         }
     }
 
@@ -635,18 +635,18 @@ data class AppConf(
     @Serializable
     @Immutable
     data class PlayOnDragging(
-        val enabled: Boolean = DefaultPlayOnDraggingEnabled,
-        val rangeRadiusMillis: Int = DefaultPlayOnDraggingRangeRadiusMillis,
-        val eventQueueSize: Int = DefaultPlayOnDraggingEventQueueSize,
+        val enabled: Boolean = DEFAULT_PLAY_ON_DRAGGING_ENABLED,
+        val rangeRadiusMillis: Int = DEFAULT_PLAY_ON_DRAGGING_RANGE_RADIUS_MILLIS,
+        val eventQueueSize: Int = DEFAULT_PLAY_ON_DRAGGING_EVENT_QUEUE_SIZE,
     ) {
         companion object {
-            const val DefaultPlayOnDraggingEnabled = true
-            const val DefaultPlayOnDraggingRangeRadiusMillis = 10
-            const val MaxPlayOnDraggingRangeRadiusMillis = 100
-            const val MinPlayOnDraggingRangeRadiusMillis = 1
-            const val DefaultPlayOnDraggingEventQueueSize = 5
-            const val MaxPlayOnDraggingEventQueueSize = 100
-            const val MinPlayOnDraggingEventQueueSize = 1
+            const val DEFAULT_PLAY_ON_DRAGGING_ENABLED = true
+            const val DEFAULT_PLAY_ON_DRAGGING_RANGE_RADIUS_MILLIS = 10
+            const val MAX_PLAY_ON_DRAGGING_RANGE_RADIUS_MILLIS = 100
+            const val MIN_PLAY_ON_DRAGGING_RANGE_RADIUS_MILLIS = 1
+            const val DEFAULT_PLAY_ON_DRAGGING_EVENT_QUEUE_SIZE = 5
+            const val MAX_PLAY_ON_DRAGGING_EVENT_QUEUE_SIZE = 100
+            const val MIN_PLAY_ON_DRAGGING_EVENT_QUEUE_SIZE = 1
         }
     }
 
@@ -675,13 +675,13 @@ data class AppConf(
     @Serializable
     @Immutable
     data class History(
-        val maxSize: Int = DefaultMaxSize,
-        val squashIndex: Boolean = DefaultSquashIndex,
+        val maxSize: Int = DEFAULT_MAX_SIZE,
+        val squashIndex: Boolean = DEFAULT_SQUASH_INDEX,
     ) {
         companion object {
-            const val DefaultMaxSize = 100
-            const val MinMaxSize = 1
-            const val DefaultSquashIndex = true
+            const val DEFAULT_MAX_SIZE = 100
+            const val MIN_MAX_SIZE = 1
+            const val DEFAULT_SQUASH_INDEX = true
         }
     }
 
@@ -693,10 +693,10 @@ data class AppConf(
     @Serializable
     @Immutable
     data class Misc(
-        val useCustomFileDialog: Boolean = DefaultUseCustomFileDialog,
+        val useCustomFileDialog: Boolean = DEFAULT_USE_CUSTOM_FILE_DIALOG,
     ) {
         companion object {
-            const val DefaultUseCustomFileDialog = false
+            const val DEFAULT_USE_CUSTOM_FILE_DIALOG = false
         }
     }
 }

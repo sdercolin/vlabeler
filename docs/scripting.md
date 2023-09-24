@@ -33,7 +33,7 @@ Provides APIs for command line operations. See the documentation [here](../docs/
 When the scripts encounter illegal inputs or other expected errors, you can show an error message to users by
 calling `error(message)`.
 The parameter `message` can be a string or a localized string.
-See [Localized strings](localized-string.md) for more details.
+See [Localized strings in vLabeler](localized-string.md) for more details.
 
 Other errors thrown in the scripts will be displayed as "Unexpected errors" without detailed information, indicating
 that it is more likely to be a bug of the plugin, rather than an illegal input or something else that may happen in
@@ -65,7 +65,7 @@ if (unknownExpressionMatch) {
 
 You can show a report after a `macro` plugin is executed successfully by calling `report(message)`.
 The parameter `message` can be a string or a localized string.
-See the [Localization](#localization) section for more details.
+See [Localized strings in vLabeler](localized-string.md) for more details.
 
 ```javascript
 // display report in default language
@@ -121,15 +121,17 @@ the [JavaScript source code](../src/jvmMain/resources/js/module_definition.js) f
 
 We have the following types of scripts:
 
-- Raw label parser scripts: embedded in labelers, used to parse raw labels into entries
-- Raw label writer scripts: embedded in labelers, used to write entries as raw labels
-- Project constructor scripts: embedded in labelers, used to construct a project with multiple modules
-- Macro plugin scripts: included in the plugin folder of a macro plugin
-- Template plugin scripts: included in the plugin folder of a template plugin, including the main scripts and the [input
-  finder script](plugin-development.md#find-input-files-dynamically)
-
-There are other tiny scripts embedded in the labelers such as property getter/setter, but they only allow simple
-calculations and are not provided with the custom APIs. Here we don't list them.
+- [Raw label parser scripts](labeler-development.md#parsing-raw-labels) : contained in labelers, used to parse raw
+  labels
+- [Raw label writer scripts](labeler-development.md#writing-raw-labels): contained in labelers, used to write entries as
+  raw labels
+- [Project constructor scripts](labeler-development.md#constructing-a-project): contained in labelers, used to construct a
+  project with multiple modules
+- [Macro plugin scripts](plugin-development.md#batch-edit-macro-scripts): included in the plugin folder of a macro
+  plugin
+- [Template plugin scripts](plugin-development.md#template-generation-scripts): included in the plugin folder of a
+  template plugin, including the main scripts and
+  the [input finder script](plugin-development.md#dynamic-input-file-retrieval)
 
 The availability of the APIs listed above depends on the type of the script.
 
@@ -144,3 +146,7 @@ The availability of the APIs listed above depends on the type of the script.
 | [Entry](#entry)                                           | ✔                | ✔                |                     | ✔            | ✔               |
 | [Module](#module)                                         |                  |                  |                     | ✔            |                 |
 | [Module definition](#module-definition)                   |                  |                  | ✔                   |              |                 |
+
+There are other tiny scripts contained in the labelers such as property getter/setter, but they only allow simple
+calculations and are not provided with most of the APIs introduced above. Please
+check [the labeler development guide](labeler-development.md) for their detailed information.

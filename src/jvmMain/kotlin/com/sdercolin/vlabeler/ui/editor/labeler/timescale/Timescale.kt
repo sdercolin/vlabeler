@@ -26,10 +26,10 @@ object Timescale {
     }
 
     fun find(convertTimeMillisToPx: (Float) -> Float): TimescaleItem = items.firstOrNull {
-        convertTimeMillisToPx(it.minor.toFloat()) >= MinMinorStepPx
+        convertTimeMillisToPx(it.minor.toFloat()) >= MIN_MINOR_STEP_PX
     } ?: items.last()
 
-    private const val MinMinorStepPx = 80
+    private const val MIN_MINOR_STEP_PX = 80
 }
 
 /**

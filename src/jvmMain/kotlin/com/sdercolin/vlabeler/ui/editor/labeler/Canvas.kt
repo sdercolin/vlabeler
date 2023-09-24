@@ -49,14 +49,11 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerLabels
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerPointEventContainer
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.rememberMarkerState
 import com.sdercolin.vlabeler.ui.editor.labeler.parallel.ParallelLabelCanvas
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.DarkYellow
-import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toColor
 import com.sdercolin.vlabeler.util.toColorOrNull
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
@@ -67,61 +64,39 @@ fun Canvas(
     editorState: EditorState,
     appState: AppState,
 ) {
-    val sampleInfoResult = editorState.sampleInfoResult
-    if (sampleInfoResult != null) {
-        CanvasContent(
-            sampleInfoResult,
-            horizontalScrollState,
-            editorState,
-            appState,
-        )
-    }
-}
-
-@Composable
-private fun CanvasContent(
-    sampleInfoResult: Result<SampleInfo>,
-    horizontalScrollState: ScrollState,
-    editorState: EditorState,
-    appState: AppState,
-) {
-    val sampleInfo = sampleInfoResult.getOrNull()
-    if (sampleInfo != null) {
-        CanvasContentWithSample(
-            sampleInfo,
-            horizontalScrollState,
-            editorState,
-            appState,
-        )
-    } else {
-        val exception = sampleInfoResult.exceptionOrNull()
-        if (exception != null && exception !is CancellationException) {
+    when (val canvasState = editorState.canvasState) {
+        is CanvasState.Loading -> {}
+        is CanvasState.Loaded -> {
+            CanvasContent(
+                canvasState,
+                horizontalScrollState,
+                editorState,
+                appState,
+            )
+        }
+        is CanvasState.Error -> {
             Error(string(Strings.FailedToLoadSampleFileError))
         }
     }
 }
 
 @Composable
-private fun CanvasContentWithSample(
-    sampleInfo: SampleInfo,
+private fun CanvasContent(
+    canvasState: CanvasState.Loaded,
     horizontalScrollState: ScrollState,
     editorState: EditorState,
     appState: AppState,
 ) {
-    val chunkCount = sampleInfo.chunkCount
+    val chunkCount = canvasState.sampleInfo.chunkCount
     val layoutDirection = LocalLayoutDirection.current
     val density = LocalDensity.current
-    val resolution = editorState.canvasResolution
-    val canvasParams = remember(sampleInfo, resolution, density) {
-        CanvasParams(sampleInfo.length, chunkCount, resolution, density)
-    }
-    val markerState = rememberMarkerState(sampleInfo, canvasParams, editorState, appState)
+    val markerState = rememberMarkerState(canvasState, editorState, appState)
     val keyboardState by appState.keyboardViewModel.keyboardStateFlow.collectAsState()
-    val screenRange = horizontalScrollState.getScreenRange(canvasParams.lengthInPixel)
+    val screenRange = editorState.getScreenRange(canvasState.params.lengthInPixel, horizontalScrollState)
     val lazyListState = rememberLazyListState()
-    LaunchedEffect(sampleInfo, appState.appConf, appState.isShowingPrerenderDialog) {
+    LaunchedEffect(canvasState.sampleInfo, appState.appConf, appState.isShowingPrerenderDialog) {
         if (appState.isShowingPrerenderDialog.not()) {
-            editorState.renderCharts(this, sampleInfo, appState.appConf, density, layoutDirection)
+            editorState.renderCharts(this, canvasState.sampleInfo, appState.appConf, density, layoutDirection)
         }
     }
     LaunchedEffect(Unit) {
@@ -131,21 +106,23 @@ private fun CanvasContentWithSample(
             }
             .onEach { (oldPair, newPair) ->
                 val (oldValue, oldMax) = oldPair ?: return@onEach
-                // an emission here does not trigger recomposition, so we need to re-calculate the canvas params
-                // to get the correct scroll target
-                val innerCanvasParams = editorState.getCanvasParams(sampleInfo, density)
-                editorState.scrollOnResolutionChangeViewModel.scroll(
-                    horizontalScrollState,
-                    innerCanvasParams,
-                    sampleInfo,
-                )
-                val (newValue, newMax) = newPair
-                if (oldMax != newMax) {
-                    innerCanvasParams.getScrollTarget(newValue).also {
-                        lazyListState.scrollToItem(it.itemIndex, it.itemOffset)
+                try {
+                    val innerCanvasState = editorState.canvasState as? CanvasState.Loaded ?: return@onEach
+                    editorState.scrollOnResolutionChangeViewModel.scroll(
+                        horizontalScrollState,
+                        innerCanvasState.params,
+                        innerCanvasState.sampleInfo,
+                    )
+                    val (newValue, newMax) = newPair
+                    if (oldMax != newMax) {
+                        innerCanvasState.params.getScrollTarget(newValue).also {
+                            lazyListState.scrollToItem(it.itemIndex, it.itemOffset)
+                        }
+                    } else if (newValue != oldValue) {
+                        lazyListState.scrollBy((newValue - oldValue).toFloat())
                     }
-                } else if (newValue != oldValue) {
-                    lazyListState.scrollBy((newValue - oldValue).toFloat())
+                } catch (e: Exception) {
+                    Log.error(e)
                 }
             }
             .launchIn(appState.mainScope)
@@ -165,10 +142,9 @@ private fun CanvasContentWithSample(
             Box(modifier = Modifier.weight(0.1f * parallelModulesCount)) {
                 ParallelLabelCanvas(
                     project,
+                    canvasState,
                     editorState,
                     horizontalScrollState,
-                    canvasParams,
-                    sampleInfo,
                     appState.appConf.editor,
                 )
             }
@@ -186,8 +162,8 @@ private fun CanvasContentWithSample(
                     items(chunkCount) { chunkIndex ->
                         Chunk(
                             chunkIndex,
-                            canvasParams,
-                            sampleInfo,
+                            canvasState.params,
+                            canvasState.sampleInfo,
                             appState,
                             editorState,
                         )
@@ -199,7 +175,7 @@ private fun CanvasContentWithSample(
                         .runIf(appState.isMarkerDisplayed.not()) { alpha(0f) },
                 ) {
                     MarkerCanvas(
-                        canvasParams,
+                        canvasState.params,
                         horizontalScrollState,
                         markerState,
                         editorState,
@@ -217,9 +193,10 @@ private fun CanvasContentWithSample(
             }
             if (appState.playerState.isPlaying) {
                 PlayerCursor(
-                    canvasParams,
+                    canvasState.params,
                     appState.playerState,
                     horizontalScrollState,
+                    editorState,
                     appState.appConf.editor.playerCursorColor.toColor(),
                 )
             }
@@ -237,13 +214,13 @@ private fun Chunk(
 ) {
     Box(
         Modifier.fillMaxHeight()
-            .requiredWidth(canvasParams.getChunkWidthInDp(chunkIndex))
+            .requiredWidth(canvasParams.getChunkWidthInDp(chunkIndex, LocalDensity.current))
             .runIf(DebugState.isShowingChunkBorder) { border(1.dp, DarkYellow) },
     ) {
         Column(Modifier.fillMaxSize()) {
             val weightOfEachChannel = 1f / sampleInfo.channels
             val backgroundColor = appState.appConf.painter.amplitude.backgroundColor.toColorOrNull()
-                ?: AppConf.Amplitude.DefaultBackgroundColor.toColor()
+                ?: AppConf.Amplitude.DEFAULT_BACKGROUND_COLOR.toColor()
             repeat(sampleInfo.channels) { channelIndex ->
                 Box(Modifier.weight(weightOfEachChannel).fillMaxWidth()) {
                     val imageStatus = editorState.chartStore.getWaveformStatus(channelIndex, chunkIndex)
@@ -255,7 +232,7 @@ private fun Chunk(
             if (sampleInfo.hasPower && appState.appConf.painter.power.enabled) {
                 val powerWeightOfEachChannel = appState.appConf.painter.power.heightWeight / sampleInfo.powerChannels
                 val powerBackgroundColor = appState.appConf.painter.power.backgroundColor.toColorOrNull()
-                    ?: AppConf.Power.DefaultBackgroundColor.toColor()
+                    ?: AppConf.Power.DEFAULT_BACKGROUND_COLOR.toColor()
                 repeat(sampleInfo.powerChannels) { channelIndex ->
                     Box(Modifier.weight(powerWeightOfEachChannel).fillMaxWidth()) {
                         val imageStatus = editorState.chartStore.getPowerGraphStatus(channelIndex, chunkIndex)
@@ -294,7 +271,6 @@ private fun WaveformChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkIndex:
 
 @Composable
 private fun SpectrogramChunk(sampleInfo: SampleInfo, chunkIndex: Int) {
-    Log.info("Spectrogram (chunk $chunkIndex): composed")
     Box(Modifier.fillMaxSize()) {
         ChunkAsyncImage(
             load = { ChartRepository.getSpectrogram(sampleInfo, chunkIndex) },
@@ -332,9 +308,10 @@ private fun PlayerCursor(
     canvasParams: CanvasParams,
     playerState: PlayerState,
     scrollState: ScrollState,
+    editorState: EditorState,
     color: Color,
 ) {
-    val screenRange = scrollState.getScreenRange(canvasParams.lengthInPixel)
+    val screenRange = editorState.getScreenRange(canvasParams.lengthInPixel, scrollState)
     Canvas(Modifier.fillMaxSize()) {
         val framePosition = playerState.framePosition
         if (framePosition != null) {

@@ -41,20 +41,19 @@ import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
+import com.sdercolin.vlabeler.ui.editor.labeler.CanvasState
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.EntryConverter
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.ui.theme.LightGray
-import com.sdercolin.vlabeler.util.getScreenRange
 import com.sdercolin.vlabeler.util.toRgbColor
 import com.sdercolin.vlabeler.util.toRgbColorOrNull
 
 @Composable
 fun BoxScope.ParallelLabelCanvas(
     project: Project,
+    canvasState: CanvasState.Loaded,
     editorState: EditorState,
     horizontalScrollState: ScrollState,
-    canvasParams: CanvasParams,
-    sampleInfo: SampleInfo,
     editorConf: AppConf.Editor,
 ) {
     val modules = remember(project) {
@@ -69,8 +68,8 @@ fun BoxScope.ParallelLabelCanvas(
                 module = module,
                 editorState = editorState,
                 horizontalScrollState = horizontalScrollState,
-                canvasParams = canvasParams,
-                sampleInfo = sampleInfo,
+                canvasParams = canvasState.params,
+                sampleInfo = canvasState.sampleInfo,
                 editorConf = editorConf,
             )
             val dividerAlpha = if (index == modules.lastIndex) 0.1f else 0.4f
@@ -131,7 +130,7 @@ fun ColumnScope.ModuleRow(
     canvasParams: CanvasParams,
     sampleInfo: SampleInfo,
 ) {
-    val screenRange = horizontalScrollState.getScreenRange(canvasParams.lengthInPixel)
+    val screenRange = editorState.getScreenRange(canvasParams.lengthInPixel, horizontalScrollState)
     val entryConverter = remember(sampleInfo.sampleRate, canvasParams.resolution) {
         EntryConverter(sampleInfo.sampleRate, canvasParams.resolution)
     }
@@ -151,7 +150,7 @@ fun ColumnScope.ModuleRow(
 
     val labelColor = remember(editorConf) {
         editorConf.continuousLabelNames.color.toRgbColorOrNull()
-            ?: AppConf.ContinuousLabelNames.DefaultColor.toRgbColor()
+            ?: AppConf.ContinuousLabelNames.DEFAULT_COLOR.toRgbColor()
     }
 
     Box(modifier = Modifier.fillMaxWidth().weight(1f)) {

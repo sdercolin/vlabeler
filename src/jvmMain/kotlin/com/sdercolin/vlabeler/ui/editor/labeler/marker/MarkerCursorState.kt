@@ -10,7 +10,7 @@ data class MarkerCursorState(
      * [entries[0].start, entries[0].points[0], entries[0].points[1], entries[0].end, entries[1].points[1], ... ] where
      * the size of points is 2. It's ensured that: entry's end is equal to the next entry's start.
      */
-    val pointIndex: Int = NonePointIndex,
+    val pointIndex: Int = NONE_POINT_INDEX,
     val lockedDrag: Boolean = false,
     val previewOnDragging: Boolean = false,
     val forcedDrag: Boolean = false,
@@ -26,7 +26,7 @@ data class MarkerCursorState(
 
     fun finishDragging() = copy(mouse = Mouse.None, lockedDrag = false)
 
-    fun moveToNothing() = copy(pointIndex = NonePointIndex, mouse = Mouse.None)
+    fun moveToNothing() = copy(pointIndex = NONE_POINT_INDEX, mouse = Mouse.None)
     fun moveToHover(index: Int) = copy(pointIndex = index, mouse = Mouse.Hovering)
 
     enum class Mouse {
@@ -35,12 +35,12 @@ data class MarkerCursorState(
         None
     }
 
-    val usingStartPoint get() = pointIndex == StartPointIndex
-    val usingEndPoint get() = pointIndex == EndPointIndex
+    val usingStartPoint get() = pointIndex == START_POINT_INDEX
+    val usingEndPoint get() = pointIndex == END_POINT_INDEX
 
     companion object {
-        const val NonePointIndex = -3
-        const val StartPointIndex = -2
-        const val EndPointIndex = -1
+        const val NONE_POINT_INDEX = -3
+        const val START_POINT_INDEX = -2
+        const val END_POINT_INDEX = -1
     }
 }

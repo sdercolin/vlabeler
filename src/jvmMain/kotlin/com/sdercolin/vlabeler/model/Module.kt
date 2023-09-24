@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
@@ -21,6 +22,7 @@ import java.io.File
  *     actual directory.
  * @property entries The list of entries in the module.
  * @property currentIndex The index of the current entry in [entries].
+ * @property extras The extra info of the module, where the key is the `name` of [LabelerConf.moduleExtraFields].
  * @property rawFilePath The path of the target raw label file. Should always be under [Project.rootSampleDirectory].
  *     Basically, it's stored as a relative path to [Project.rootSampleDirectory]. Use [getRawFile] to get the actual
  *     file.
@@ -34,6 +36,7 @@ data class Module(
     val sampleDirectoryPath: String,
     val entries: List<Entry>,
     val currentIndex: Int,
+    val extras: Map<String, String> = emptyMap(),
     val rawFilePath: String? = null,
     val entryFilter: EntryFilter? = null,
 ) {
@@ -44,6 +47,7 @@ data class Module(
         sampleDirectory: File,
         entries: List<Entry>,
         currentIndex: Int,
+        extras: Map<String, String> = emptyMap(),
         rawFilePath: File? = null,
         entryFilter: EntryFilter? = null,
     ) : this(
@@ -55,6 +59,7 @@ data class Module(
         },
         entries = entries,
         currentIndex = currentIndex,
+        extras = extras,
         rawFilePath = if (rawFilePath?.isAbsolute == true) {
             rawFilePath.relativeTo(rootDirectory).path
         } else {
@@ -128,6 +133,7 @@ data class Module(
 
     fun updateOnLoadedSample(sampleInfo: SampleInfo): Module {
         val entries = entries.toMutableList()
+        Log.info("Updating entries on loaded sample: $sampleInfo, entries: $entries")
         val changedEntries = entries.withIndex()
             .filter { it.value.sample == sampleInfo.name }
             .filter { entry ->
@@ -137,6 +143,7 @@ data class Module(
                 val end = sampleInfo.lengthMillis + it.value.end
                 it.copy(value = it.value.copy(end = end, needSync = false))
             }
+        Log.info("Changed entries: $changedEntries")
         if (changedEntries.isEmpty()) return this
         changedEntries.forEach { entries[it.index] = it.value }
         return copy(entries = entries)
@@ -476,6 +483,7 @@ data class JsModule(
     val sampleDirectory: String,
     val entries: List<Entry>,
     val currentIndex: Int,
+    val extras: Map<String, String>,
     val rawFilePath: String?,
     val entryFilter: EntryFilter?,
 ) {
@@ -485,6 +493,7 @@ data class JsModule(
         sampleDirectory = sampleDirectory.toFile(),
         entries = entries,
         currentIndex = currentIndex,
+        extras = extras,
         rawFilePath = rawFilePath?.toFile(),
         entryFilter = entryFilter,
     )
@@ -495,6 +504,7 @@ fun Module.toJs(project: Project) = JsModule(
     sampleDirectory = getSampleDirectory(project).absolutePath,
     entries = entries,
     currentIndex = currentIndex,
+    extras = extras,
     rawFilePath = getRawFile(project)?.absolutePath,
     entryFilter = entryFilter,
 )

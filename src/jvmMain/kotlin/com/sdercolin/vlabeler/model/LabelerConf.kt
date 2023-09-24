@@ -4,13 +4,12 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.model.LabelerConf.ExtraField
 import com.sdercolin.vlabeler.model.LabelerConf.Field
 import com.sdercolin.vlabeler.model.LabelerConf.ParameterHolder
 import com.sdercolin.vlabeler.model.LabelerConf.ProjectConstructor
 import com.sdercolin.vlabeler.model.LabelerConf.Property
-import com.sdercolin.vlabeler.ui.string.Language
-import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
-import com.sdercolin.vlabeler.ui.string.toLocalized
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.CustomLabelerDir
 import com.sdercolin.vlabeler.util.DefaultLabelerDir
 import com.sdercolin.vlabeler.util.RecordDir
@@ -19,8 +18,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.Transient
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonDecoder
@@ -38,6 +36,7 @@ import java.io.File
  * @property name Unique name of the labeler.
  * @property version Version code in integer. Configurations with same [name] and [version] should always have same
  *     contents if distributed in public.
+ * @property singleFile Whether the labeler is defined by a single JSON file.
  * @property extension File extension of the raw label file.
  * @property serialVersion Serial version of the labeler used for migration. See the current version in [SerialVersion].
  * @property defaultInputFilePath Default name of the input file relative to the sample directory.
@@ -48,15 +47,16 @@ import java.io.File
  * @property website Website url of the labeler.
  * @property categoryTag Category tag of the labeler, "" as `Other`.
  * @property displayOrder Display order of the labeler in the dropdown list.
- * @property continuous Whether the labeler use continuous mode, where the end of entry is forced set to the start of
- *     its next entry.
- * @property allowSameNameEntry Whether to allow more than one entry with a shared name in the project module.
- * @property defaultValues Default value listed as [start, *fields, end] in millisecond.
+ * @property continuous Whether the entries are continuous, i.e. the end time of an entry is the start time of the next
+ *     entry.
+ * @property allowSameNameEntry Whether a module can contain entries with the same name.
+ * @property defaultValues Default value listed as [start, *fields, end] in milliseconds.
  * @property defaultExtras (Deprecated) Use [extraFields] instead.
- * @property fields [Field] definitions containing data used in the label files, except for built-in "start" and
- *     "end". Corresponds to [Entry.points].
+ * @property fields [Field] definitions containing data used in the label files, except for built-in "start" and "end".
+ *     Corresponds to [Entry.points].
  * @property extraFieldNames (Deprecated) Use [extraFields] instead.
- * @property extraFields [ExtraField] definitions stored as strings. Corresponds to [Entry.extras].
+ * @property extraFields Entry level [ExtraField] definitions. Corresponds to [Entry.extras].
+ * @property moduleExtraFields Module level [ExtraField] definitions. Corresponds to [Module.extras].
  * @property lockedDrag Defines when to use locked dragging (all parameters will move with dragged one).
  * @property overflowBeforeStart Action taken when there are points before "start".
  * @property overflowAfterEnd Action taken when there are points after "end".
@@ -68,6 +68,9 @@ import java.io.File
  * @property writer Defines how to write content in the original label format.
  * @property parameters Configurable parameters of the labeler. See [ParameterHolder].
  * @property projectConstructor Scripts to construct a project with subprojects. See [ProjectConstructor].
+ * @property resourceFiles Paths of the resource files used in the scripts.
+ * @property directory Directory of the labeler. For single file labeler, it is null.
+ * @property builtIn Whether the labeler is built-in.
  */
 @Serializable
 @Immutable
@@ -75,6 +78,7 @@ data class LabelerConf(
     override val name: String,
     override val version: Int = 1,
     val serialVersion: Int = 0,
+    val singleFile: Boolean = true,
     val extension: String,
     val defaultInputFilePath: String? = null,
     override val displayedName: LocalizedJsonString = name.toLocalized(),
@@ -91,6 +95,7 @@ data class LabelerConf(
     val fields: List<Field> = listOf(),
     val extraFieldNames: List<String>? = null,
     val extraFields: List<ExtraField> = listOf(),
+    val moduleExtraFields: List<ExtraField> = listOf(),
     val lockedDrag: LockedDrag = LockedDrag(),
     val overflowBeforeStart: PointOverflow = PointOverflow.Error,
     val overflowAfterEnd: PointOverflow = PointOverflow.Error,
@@ -102,11 +107,19 @@ data class LabelerConf(
     val writer: Writer,
     val parameters: List<ParameterHolder> = listOf(),
     val projectConstructor: ProjectConstructor? = null,
+    override val resourceFiles: List<String> = listOf(),
+    @Transient override val directory: File? = null,
+    @Transient val builtIn: Boolean = false,
 ) : BasePlugin {
 
-    private val fileName get() = "$name.$LabelerFileExtension"
-    val isBuiltIn get() = DefaultLabelerDir.listFiles().orEmpty().any { it.name == fileName }
-    val file get() = if (isBuiltIn) DefaultLabelerDir.resolve(fileName) else CustomLabelerDir.resolve(fileName)
+    private val singleFileName get() = "$name.$LABELER_FILE_EXTENSION"
+    val rootFile: File
+        get() = if (singleFile) {
+            val parent = if (builtIn) DefaultLabelerDir else CustomLabelerDir
+            File(parent, singleFileName)
+        } else {
+            directory ?: throw IllegalStateException("LabelerConf $name is not single file but directory is null")
+        }
     val isSelfConstructed get() = projectConstructor != null
 
     override val parameterDefs: List<Parameter<*>>
@@ -210,8 +223,8 @@ data class LabelerConf(
     )
 
     /**
-     * Trigger settings of post edit actions on start and end.
-     * For triggering with fields, see [Field.triggerPostEditNext] and [Field.triggerPostEditDone].
+     * Trigger settings of post edit actions on start and end. For triggering with fields, see
+     * [Field.triggerPostEditNext] and [Field.triggerPostEditDone].
      */
     @Serializable
     @Immutable
@@ -258,6 +271,27 @@ data class LabelerConf(
     }
 
     /**
+     * Definition of extra fields used in entry or module levels. The values are always stored as strings.
+     *
+     * @property name Unique name of the field.
+     * @property default Default value of the field.
+     * @property displayedName Displayed name of the field in the UI (localized).
+     * @property isVisible Whether the field is visible in the UI.
+     * @property isEditable Whether the field is editable in the UI.
+     * @property isOptional Whether the field can be null.
+     */
+    @Serializable
+    @Immutable
+    data class ExtraField(
+        val name: String,
+        val default: String?,
+        val displayedName: LocalizedJsonString = name.toLocalized(),
+        val isVisible: Boolean = false,
+        val isEditable: Boolean = false,
+        val isOptional: Boolean = false,
+    )
+
+    /**
      * Definition for parsing the raw label file to local [Entry].
      *
      * @property scope [Scope] of the parser.
@@ -266,88 +300,35 @@ data class LabelerConf(
      * @property variableNames Definition of how the extracted string groups will be put into variables later in the
      *     parser JavaScript code. Should be in the same order as the extracted groups. Only used when [scope] is
      *     [Scope.Entry].
-     * @property scripts JavaScript code in lines that sets properties of [Entry] using the variables extracted.
+     * @property scripts JavaScript code that sets properties of [Entry] using the variables extracted. See the "Parsing
+     *     Raw Labels" section of [docs/labeler-development.md] for details.
      */
     @Serializable
     @Immutable
     data class Parser(
         val scope: Scope,
         val defaultEncoding: String = "UTF-8",
-        val extractionPattern: String = "",
+        val extractionPattern: String? = null,
         val variableNames: List<String> = emptyList(),
-        /**
-         * Available input variables:
-         * - String "inputFileName": Name of the input file. Could be null.
-         * - String array "sampleFileNames": Name of the samples files in the folder.
-         * - String "<item in [variableNames]>": Values extracted by [extractionPattern]. Only available when [scope] is
-         *   [Scope.Entry].
-         * - String "moduleNames": Name of the modules that the scripts need to build. Only available when [scope] is
-         *   [Scope.Modules].
-         * - String[] array "inputs": Input file contents in lines that belong to this module set. Only available when
-         *   [scope] is [Scope.Modules].
-         * - Map "params", created according to [parameters], see [ParameterHolder] for details.
-         * - String "encoding": the encoding selected in the project creation page.
-         *
-         * Output variables that the scripts should set:
-         * - entry: the JavaScript object for [Entry]. This is only required when [scope] is [Scope.Entry]. See
-         *   src/main/resources/labeler/entry.js for the actual JavaScript class definition.
-         * - modules: an array of entry (described above) arrays. This is only required when [scope] is [Scope.Modules].
-         *   The array should have the same order as 'moduleNames' given as input. Every item in the array should be an
-         *   array of [Entry] objects in this module.
-         */
-        val scripts: List<String>,
+        val scripts: EmbeddedScripts,
     )
 
     /**
      * Definition for line format in the raw label file.
      *
      * @property scope [Scope] of the writer.
-     * @property format String format to generate the output line.
-     * @property scripts JavaScript code in lines that generate the output line Either [format] or [scripts] should be
-     *     given. If both of them are given, [scripts] is used.
+     * @property format String format to generate the output line. See the "Writer" section of
+     *     [docs/labeler-development.md] for details.
+     * @property scripts JavaScript code that generate the output line Either [format] or [scripts] should be given. If
+     *     both of them are given, [scripts] is used. See the "Writing Raw Labels" section of
+     *     [docs/labeler-development.md] for details.
      */
     @Serializable
     @Immutable
     data class Writer(
         val scope: Scope = Scope.Entry,
-        /**
-         * String format using the following variables written as "{<var_name>}", only used by [Scope.Entry]:
-         * - {sample}: sample file name without extension.
-         * - {name}: entry name.
-         * - {start}: [Entry.start]
-         * - {end}: [Entry.end]
-         * - {[Property.name]}: evaluated value of a [Property].
-         * - {[Field.name]}: value in [Entry.points] with the same index of the corresponding [Field].
-         * - {<[ExtraField.name] in [extraFields]>}: string value in [Entry.extras], with the same index of the
-         *     corresponding [ExtraField].
-         *
-         * If a name is shared by a [Property] and [Field], the [Property] is assigned to the variable.
-         *
-         * @sample "{sample}.wav:{name}={start},{middle},{end}" will be written like "a.wav:a:100,220.5,300".
-         */
         val format: String? = null,
-        /**
-         * JavaScript code lines that sets "output" variable.
-         *
-         * Available input variables in scope [Scope.Entry]:
-         * - String "sample": [Entry.sample]
-         * - String "name": [Entry.name]
-         * - Number "start": [Entry.start]
-         * - Number "end": [Entry.end]
-         * - Number "[Field.name]": value in [Entry.points] with the same index of the corresponding [Field].
-         * - String "<[ExtraField.name] in [extraFields]>": string value in [Entry.extras], with the same index of the
-         *     corresponding [ExtraField].
-         * - Number "[Property.name]": Evaluated value of a [Property].
-         * - Boolean "needSync": [Entry.needSync]
-         *
-         * If a name is shared by a [Property] and [Field], the [Property] is assigned to the variable.
-         *
-         * Available input variables in scope [Scope.Modules]:
-         * - String array "moduleNames": Name of the modules that the scripts need to handle.
-         * - Object[] array "modules": An array of [Entry] arrays. The array has the same order as "moduleNames".
-         * // TODO: add more variables to [Entry], including [Field.name], [ExtraField.name] and [Property.name]
-         */
-        val scripts: List<String>? = null,
+        val scripts: EmbeddedScripts? = null,
     )
 
     /**
@@ -355,18 +336,10 @@ data class LabelerConf(
      *
      * @property name Unique name of the property.
      * @property displayedName Name displayed in property view UI (localized).
-     * @property valueGetter JavaScript code lines that calculates the value from {entry} object and set {value}
-     *     variable.
-     *    - Input: "entry" - the JavaScript object for [Entry]. See src/main/resources/labeler/entry.js for the actual
-     *      JavaScript class definition.
-     *    - Output: "value" - the value of the property as number.
-     *
-     * @property valueSetter JavaScript code lines that takes the value of input the property and update {entry} object
-     *     accordingly. Could be null if you want to disable the value setting feature in the UI.
-     *    - Input: "value" - the value of the property as number. "entry" - the JavaScript object for [Entry]. See
-     *      src/main/resources/labeler/entry.js for the actual JavaScript class definition.
-     *    - Output:"entry" - the updated JavaScript object for [Entry].
-     *
+     * @property valueGetter JavaScript code that gets the property value from the entry object. See the "Property
+     *     Getter" section of [docs/labeler-development.md] for details.
+     * @property valueSetter JavaScript code that takes a new property value and modifies the entry object. See the
+     *     "Property Setter" section of [docs/labeler-development.md] for details.
      * @property shortcutIndex Index in the shortcut list of Action `Set Property`. Could be 0~9.
      */
     @Serializable
@@ -374,8 +347,8 @@ data class LabelerConf(
     data class Property(
         val name: String,
         val displayedName: LocalizedJsonString,
-        val valueGetter: List<String>,
-        val valueSetter: List<String>? = null,
+        val valueGetter: EmbeddedScripts,
+        val valueSetter: EmbeddedScripts? = null,
         val shortcutIndex: Int? = null,
     )
 
@@ -386,32 +359,16 @@ data class LabelerConf(
      *    - value could be undefined, which means the parameter is not set
      * 2. via injected (updated) [LabelerConf] by [injector], if it is not null
      *
-     * @property parameter Definition of the parameter. They are the same with the parameters used by a plugin, so you
-     *     can also see [readme/plugin-development.md] for details.
-     * @property injector JavaScript code that injects the parameter value into the labeler. `labeler` and `value` are
-     *     available as variables. Note the injector cannot change the following info of the labeler:
-     *       - [name]
-     *       - [version]
-     *       - [extension]
-     *       - [displayedName]
-     *       - [description]
-     *       - [author]
-     *       - [website]
-     *       - [email]
-     *       - [continuous]
-     *       - [parameters]
-     *       - size of [fields]
-     *       - size of [defaultValues]
-     *       - size of [extraFields]
-     *       - [Field.name]s in [fields]
-     *
+     * @property parameter Definition of the parameter. See [docs/parameter.md] for details.
+     * @property injector JavaScript code that injects the parameter value into the labeler. See the "Injecting
+     *     Parameter Values" section of [docs/labeler-development.md] for details.*
      * @property changeable Whether the parameter is changeable after the project is created.
      */
     @Serializable(with = ParameterHolderSerializer::class)
     @Immutable
     data class ParameterHolder(
         val parameter: Parameter<*>,
-        val injector: List<String>? = null,
+        val injector: EmbeddedScripts? = null,
         val changeable: Boolean = false,
     )
 
@@ -425,7 +382,7 @@ data class LabelerConf(
                 decoder.json.decodeFromJsonElement(PolymorphicSerializer(Parameter::class), it)
             }
             val injector = element["injector"]?.takeUnless { it is JsonNull }?.let {
-                decoder.json.decodeFromJsonElement(ListSerializer(String.serializer()), it)
+                decoder.json.decodeFromJsonElement(EmbeddedScriptsSerializer, it)
             }
             val changeable = element["changeable"]?.jsonPrimitive?.boolean ?: false
             return ParameterHolder(parameter, injector, changeable)
@@ -441,7 +398,7 @@ data class LabelerConf(
                     ),
                     "injector" to (
                         value.injector?.let {
-                            encoder.json.encodeToJsonElement(ListSerializer(String.serializer()), it)
+                            encoder.json.encodeToJsonElement(EmbeddedScriptsSerializer, it)
                         } ?: JsonNull
                         ),
                     "changeable" to JsonPrimitive(value.changeable),
@@ -453,30 +410,14 @@ data class LabelerConf(
 
     /**
      * In order to edit multiple label files in a single project, the labeler should be able to construct subprojects
-     * when creating the project. This property defines the subproject structure and building procedure. In the
-     * source code, we call the subproject as "Module". The [scripts] is JavaScript code lines that creates
-     * [RawModuleDefinition] objects.
-     *
-     * Available input variables:
-     * - File "root": the root directory of the project (the `Sample Directory` chosen in the project creation page) the
-     *   `File` type is a wrapper of Java's `java.io.File` class. Please check the documentation in
-     *   [readme/file-api.md], or the source code in [src/main/jvmMain/resources/js/file.js].
-     * - Map "params", created according to [parameters], see [ParameterHolder] for details.
-     * - String "encoding": the encoding selected in the project creation page.
-     * - String array "acceptedSampleExtensions": the array of accepted sample extensions in the current application.
-     *   Defined in [com.sdercolin.vlabeler.io.Sample.acceptableSampleFileExtensions].
-     *
-     * Output variables that the scripts should set:
-     * - Array "modules": an array of [RawModuleDefinition] objects. Use `new ModuleDefinition()` to create a new
-     *   object. Please check the JavaScript source code with documentations in
-     *   [src/main/jvmMain/resources/js/module_definition.js] for details. Specifically, if there are multiple modules
-     *   that only differ in `name`, they will be processed together in [Parser] and [Writer] if the [Scope] is set to
-     *   [Scope.Modules].
+     * when creating the project. This property defines the subproject structure and building procedure. In the source
+     * code, we call the subproject as "Module". The [scripts] is JavaScript code that creates [RawModuleDefinition]
+     * objects. See the "Constructing a Project" section of [docs/labeler-development.md] for details.
      */
     @Serializable
     @Immutable
     data class ProjectConstructor(
-        val scripts: List<String>,
+        val scripts: EmbeddedScripts,
     )
 
     val useImplicitStart: Boolean
@@ -484,6 +425,29 @@ data class LabelerConf(
 
     val useImplicitEnd: Boolean
         get() = fields.any { it.replaceEnd }
+
+    override fun getSavedParamsFile(): File = RecordDir.resolve(name + LABELER_SAVED_PARAMS_FILE_EXTENSION)
+
+    /**
+     * Preload the scripts in [EmbeddedScripts] to avoid reading script files every time.
+     */
+    fun preloadScripts(): LabelerConf {
+        fun EmbeddedScripts.preload() = copy(lines = getScripts(directory).lines())
+        return copy(
+            parser = parser.copy(scripts = parser.scripts.preload()),
+            writer = writer.copy(scripts = writer.scripts?.preload()),
+            projectConstructor = projectConstructor?.copy(scripts = projectConstructor.scripts.preload()),
+            properties = properties.map {
+                it.copy(
+                    valueGetter = it.valueGetter.preload(),
+                    valueSetter = it.valueSetter?.preload(),
+                )
+            },
+            parameters = parameters.map {
+                it.copy(injector = it.injector?.preload())
+            },
+        )
+    }
 
     fun validate() = this.also {
         if (continuous) {
@@ -500,41 +464,17 @@ data class LabelerConf(
         }
     }
 
-    override fun getSavedParamsFile(): File = RecordDir.resolve(name + LabelerSavedParamsFileExtension)
-
-    /**
-     * Definition of extra fields used in entry, module and project scopes.
-     * The values are always stored as strings.
-     *
-     * @property name Unique name of the field.
-     * @property default Default value of the field.
-     * @property displayedName Displayed name of the field in the UI (localized).
-     * @property isVisible Whether the field is visible in the UI.
-     * @property isEditable Whether the field is editable in the UI.
-     * @property isOptional Whether the field can be null.
-     */
-    @Serializable
-    @Immutable
-    data class ExtraField(
-        val name: String,
-        val default: String,
-        val displayedName: LocalizedJsonString,
-        val isVisible: Boolean = false,
-        val isEditable: Boolean = false,
-        val isOptional: Boolean = false,
-    )
-
     fun migrate(): LabelerConf {
         if (serialVersion == 0) {
             // Add the extra properties by defaultExtras and extraFieldNames.
             if (extraFieldNames == null || defaultExtras == null) {
                 Log.debug(
-                    "Migrating extra properties of labeler $name from serialVersion 0 to $SerialVersion failed: " +
+                    "Migrating extra properties of labeler $name from serialVersion 0 to $SERIAL_VERSION failed: " +
                         "extraFieldNames or defaultExtras is null",
                 )
                 return this
             }
-            Log.debug("Migrating extra properties of labeler $name from serialVersion 0 to $SerialVersion")
+            Log.debug("Migrating extra properties of labeler $name from serialVersion 0 to $SERIAL_VERSION")
             return this.copy(
                 extraFields = extraFieldNames.mapIndexed { index, extraFieldName ->
                     ExtraField(
@@ -548,8 +488,6 @@ data class LabelerConf(
                         isOptional = false, // Old version does not support optional extra fields
                     )
                 },
-                extraFieldNames = null,
-                defaultExtras = null,
             )
         } else {
             return this
@@ -557,8 +495,8 @@ data class LabelerConf(
     }
 
     companion object {
-        const val LabelerFileExtension = "labeler.json"
-        private const val LabelerSavedParamsFileExtension = ".labeler.param.json"
-        private const val SerialVersion = 1
+        const val LABELER_FILE_EXTENSION = "labeler.json"
+        private const val LABELER_SAVED_PARAMS_FILE_EXTENSION = ".labeler.param.json"
+        private const val SERIAL_VERSION = 2
     }
 }

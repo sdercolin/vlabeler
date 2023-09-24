@@ -1,6 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog.customization
 
-import com.sdercolin.vlabeler.exception.CustomizedItemLoadingException
+import com.sdercolin.vlabeler.exception.CustomizableItemLoadingException
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
@@ -37,8 +37,9 @@ abstract class PluginManagerDialogState<T : CustomizableItem>(
         require(configFile.parentFile.copyRecursively(targetFolder, overwrite = true)) {
             "Failed to copy plugin to ${targetFolder.absolutePath}"
         }
+        plugin.name
     }.getOrElse {
-        throw CustomizedItemLoadingException(it)
+        throw CustomizableItemLoadingException(it)
     }
 
     override fun reload() {

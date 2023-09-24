@@ -22,8 +22,8 @@ class TrackingService(appRecordStore: AppRecordStore, mainScope: CoroutineScope)
 
     private var enabled: Boolean? = null
 
-    private val analytics = Analytics(WriteKey) {
-        application = ApplicationName
+    private val analytics = Analytics(WRITE_KEY) {
+        application = APPLICATION_NAME
     }
 
     init {
@@ -62,7 +62,7 @@ class TrackingService(appRecordStore: AppRecordStore, mainScope: CoroutineScope)
     }
 
     companion object {
-        private const val WriteKey = "o53TJAzB08cMpilJhu3mwdAAzojyVxIu"
-        private const val ApplicationName = "vLabeler"
+        private const val WRITE_KEY = "o53TJAzB08cMpilJhu3mwdAAzojyVxIu"
+        private const val APPLICATION_NAME = "vLabeler"
     }
 }

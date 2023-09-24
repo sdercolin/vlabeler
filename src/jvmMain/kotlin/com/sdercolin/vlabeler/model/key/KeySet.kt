@@ -18,7 +18,6 @@ import com.sdercolin.vlabeler.env.released
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -31,7 +30,7 @@ import kotlinx.serialization.encoding.Encoder
  * @property mainKey The main key of the set. If this is null, the set is incomplete.
  * @property subKeys The sub keys of the set.
  */
-@Serializable(KeySet.KeySetSerializer::class)
+@Serializable(with = KeySet.KeySetSerializer::class)
 @Immutable
 data class KeySet(
     val mainKey: Key?,
@@ -93,7 +92,6 @@ data class KeySet(
         return true
     }
 
-    @Serializer(KeySet::class)
     object KeySetSerializer : KSerializer<KeySet> {
         override val descriptor: SerialDescriptor
             get() = PrimitiveSerialDescriptor("KeySet", PrimitiveKind.STRING)

@@ -27,7 +27,7 @@ fun StandaloneDialogs(
     when {
         appState.isShowingOpenProjectDialog -> OpenFileDialog(
             title = string(Strings.OpenProjectDialogTitle),
-            extensions = listOf(Project.ProjectFileExtension),
+            extensions = listOf(Project.PROJECT_FILE_EXTENSION),
         ) { parent, name ->
             appState.closeOpenProjectDialog()
             if (parent != null && name != null) {
@@ -36,7 +36,7 @@ fun StandaloneDialogs(
         }
         appState.isShowingSaveAsProjectDialog -> SaveFileDialog(
             title = string(Strings.SaveAsProjectDialogTitle),
-            extensions = listOf(Project.ProjectFileExtension),
+            extensions = listOf(Project.PROJECT_FILE_EXTENSION),
             initialDirectory = appState.requireProject().workingDirectory.absolutePath,
             initialFileName = appState.requireProject().projectFile.name,
         ) { directory, fileName ->
@@ -114,7 +114,7 @@ fun StandaloneDialogs(
         appState.isShowingImportDialog -> {
             OpenFileDialog(
                 title = string(Strings.ImportDialogTitle),
-                extensions = listOf(Project.ProjectFileExtension),
+                extensions = listOf(Project.PROJECT_FILE_EXTENSION),
             ) { parent, name ->
                 appState.closeImportDialog()
                 if (parent != null && name != null) {

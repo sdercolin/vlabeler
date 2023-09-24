@@ -49,7 +49,7 @@ object ChartRepository {
      * @param version Version of the painting algorithm.
      */
     fun init(project: Project, appConf: AppConf, version: Int) {
-        cacheDirectory = project.getCacheDir().resolve(ChartsCacheFolderName)
+        cacheDirectory = project.getCacheDir().resolve(CHARTS_CACHE_FOLDER_NAME)
         cacheDirectory.mkdirs()
         cacheParams = ChartCacheParams(
             version,
@@ -112,7 +112,7 @@ object ChartRepository {
         waveform: ImageBitmap,
     ) {
         val file = getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
-        saveImage(waveform, file, sampleInfo.getCacheKey(KeyWaveform, channelIndex, chunkIndex))
+        saveImage(waveform, file, sampleInfo.getCacheKey(KEY_WAVEFORM, channelIndex, chunkIndex))
     }
 
     /**
@@ -120,7 +120,7 @@ object ChartRepository {
      */
     fun putSpectrogram(sampleInfo: SampleInfo, chunkIndex: Int, spectrogram: ImageBitmap) {
         val file = getSpectrogramImageFile(sampleInfo, chunkIndex)
-        saveImage(spectrogram, file, sampleInfo.getCacheKey(KeySpectrogram, chunkIndex))
+        saveImage(spectrogram, file, sampleInfo.getCacheKey(KEY_SPECTROGRAM, chunkIndex))
     }
 
     /**
@@ -133,7 +133,7 @@ object ChartRepository {
         powerGraph: ImageBitmap,
     ) {
         val file = getPowerGraphImageFile(sampleInfo, channelIndex, chunkIndex)
-        saveImage(powerGraph, file, sampleInfo.getCacheKey(KeyPowerGraph, channelIndex, chunkIndex))
+        saveImage(powerGraph, file, sampleInfo.getCacheKey(KEY_POWER_GRAPH, channelIndex, chunkIndex))
     }
 
     private fun saveImage(image: ImageBitmap, file: File, cacheKey: String) {
@@ -157,13 +157,13 @@ object ChartRepository {
         sampleInfo: SampleInfo,
         channelIndex: Int,
         chunkIndex: Int,
-    ) = cacheMap[sampleInfo.getCacheKey(KeyWaveform, channelIndex, chunkIndex)]
+    ) = cacheMap[sampleInfo.getCacheKey(KEY_WAVEFORM, channelIndex, chunkIndex)]
         ?.let { cacheDirectory.resolve(it) }
         ?.takeIf { it.isFile }
         ?: run {
             val modulePrefix = sampleInfo.moduleName.let { "${it}_" }
             val baseFileName =
-                "${modulePrefix}${sampleInfo.name}_${KeyWaveform}_${channelIndex}_$chunkIndex.$Extension"
+                "${modulePrefix}${sampleInfo.name}_${KEY_WAVEFORM}_${channelIndex}_$chunkIndex.$EXTENSION"
             cacheDirectory.findUnusedFile(
                 base = baseFileName,
                 existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
@@ -176,12 +176,12 @@ object ChartRepository {
     fun getSpectrogramImageFile(
         sampleInfo: SampleInfo,
         chunkIndex: Int,
-    ) = cacheMap[sampleInfo.getCacheKey(KeySpectrogram, chunkIndex)]
+    ) = cacheMap[sampleInfo.getCacheKey(KEY_SPECTROGRAM, chunkIndex)]
         ?.let { cacheDirectory.resolve(it) }
         ?.takeIf { it.isFile }
         ?: run {
             val modulePrefix = sampleInfo.moduleName.let { "${it}_" }
-            val baseFileName = "${modulePrefix}${sampleInfo.name}_${KeySpectrogram}_$chunkIndex.$Extension"
+            val baseFileName = "${modulePrefix}${sampleInfo.name}_${KEY_SPECTROGRAM}_$chunkIndex.$EXTENSION"
             cacheDirectory.findUnusedFile(
                 base = baseFileName,
                 existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
@@ -195,11 +195,11 @@ object ChartRepository {
         sampleInfo: SampleInfo,
         channelIndex: Int,
         chunkIndex: Int,
-    ) = cacheMap[sampleInfo.getCacheKey(KeyPowerGraph, channelIndex, chunkIndex)]
+    ) = cacheMap[sampleInfo.getCacheKey(KEY_POWER_GRAPH, channelIndex, chunkIndex)]
         ?.let { cacheDirectory.resolve(it) }
         ?.takeIf { it.isFile }
         ?: run {
-            val baseFileName = "${sampleInfo.name}_${KeyPowerGraph}_${channelIndex}_$chunkIndex.$Extension"
+            val baseFileName = "${sampleInfo.name}_${KEY_POWER_GRAPH}_${channelIndex}_$chunkIndex.$EXTENSION"
             cacheDirectory.findUnusedFile(
                 base = baseFileName,
                 existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
@@ -212,24 +212,24 @@ object ChartRepository {
 
     fun clear(project: Project) {
         cacheMap.clear()
-        project.getCacheDir().resolve(ChartsCacheFolderName).deleteRecursively()
+        project.getCacheDir().resolve(CHARTS_CACHE_FOLDER_NAME).deleteRecursively()
     }
 
     /**
      * Move the cache from the old cache directory to the new cache directory.
      */
     fun moveTo(oldCacheDirectory: File, newCacheDirectory: File, clearOld: Boolean) {
-        val oldDirectory = oldCacheDirectory.resolve(ChartsCacheFolderName)
+        val oldDirectory = oldCacheDirectory.resolve(CHARTS_CACHE_FOLDER_NAME)
         if (oldDirectory.isDirectory.not()) return
-        oldDirectory.copyRecursively(newCacheDirectory.resolve(ChartsCacheFolderName), overwrite = true)
+        oldDirectory.copyRecursively(newCacheDirectory.resolve(CHARTS_CACHE_FOLDER_NAME), overwrite = true)
         if (clearOld) oldDirectory.deleteRecursively()
     }
 
-    private const val ChartsCacheFolderName = "charts"
-    private const val KeyWaveform = "waveform"
-    private const val KeySpectrogram = "spectrogram"
-    private const val KeyPowerGraph = "power_graph"
-    private const val Extension = "png"
+    private const val CHARTS_CACHE_FOLDER_NAME = "charts"
+    private const val KEY_WAVEFORM = "waveform"
+    private const val KEY_SPECTROGRAM = "spectrogram"
+    private const val KEY_POWER_GRAPH = "power_graph"
+    private const val EXTENSION = "png"
 }
 
 @Serializable

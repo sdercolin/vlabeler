@@ -1,7 +1,7 @@
 package com.sdercolin.vlabeler.ui.string
 
 /**
- * A pair of the tag inclucded in a clickable string and the corresponding action.
+ * A pair of the tag included in a clickable string and the corresponding action.
  */
 class ClickableTag(
     val tag: String,

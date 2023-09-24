@@ -24,7 +24,7 @@ class VideoState(
     val exit: () -> Unit,
 ) {
     var width: Dp by mutableStateOf(DefaultWidth)
-    var height: Dp = width * AspectRatio
+    var height: Dp = width * ASPECT_RATIO
 
     val videoPlayer: VideoPlayer = VideoPlayer()
     var videoPath: String? by mutableStateOf(null)
@@ -110,7 +110,7 @@ class VideoState(
         val MinWidth = 200.dp
         val MaxWidth = 600.dp
         val DefaultWidth = 360.dp
-        const val AspectRatio = 3f / 4f
+        const val ASPECT_RATIO = 3f / 4f
         val SupportedExtensions = listOf(".mp4", ".webm")
     }
 

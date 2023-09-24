@@ -21,7 +21,7 @@ object ConvertedAudioRepository {
     private var cacheMap: MutableMap<String, String> = mutableMapOf()
 
     fun init(project: Project) {
-        cacheDirectory = project.getCacheDir().resolve(WaveCacheFolderName)
+        cacheDirectory = project.getCacheDir().resolve(WAVE_CACHE_FOLDER_NAME)
         cacheDirectory.mkdirs()
         cacheMap = runCatching {
             cacheMapFile.takeIf { it.exists() }?.readText()?.parseJson<Map<String, String>>()?.toMutableMap()
@@ -60,18 +60,18 @@ object ConvertedAudioRepository {
      * Clear cached sample information files.
      */
     fun clear(project: Project) {
-        project.getCacheDir().resolve(WaveCacheFolderName).deleteRecursively()
+        project.getCacheDir().resolve(WAVE_CACHE_FOLDER_NAME).deleteRecursively()
     }
 
     /**
      * Move the cache from the old cache directory to the new cache directory.
      */
     fun moveTo(oldCacheDirectory: File, newCacheDirectory: File, clearOld: Boolean) {
-        val oldDirectory = oldCacheDirectory.resolve(WaveCacheFolderName)
+        val oldDirectory = oldCacheDirectory.resolve(WAVE_CACHE_FOLDER_NAME)
         if (oldDirectory.isDirectory.not()) return
-        oldDirectory.copyRecursively(newCacheDirectory.resolve(WaveCacheFolderName), overwrite = true)
+        oldDirectory.copyRecursively(newCacheDirectory.resolve(WAVE_CACHE_FOLDER_NAME), overwrite = true)
         if (clearOld) oldDirectory.deleteRecursively()
     }
 
-    private const val WaveCacheFolderName = "wav"
+    private const val WAVE_CACHE_FOLDER_NAME = "wav"
 }

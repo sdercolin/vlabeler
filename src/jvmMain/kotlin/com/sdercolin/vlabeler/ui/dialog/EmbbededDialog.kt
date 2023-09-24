@@ -57,6 +57,8 @@ private fun <T : EmbeddedDialogArgs> TypedDialog(
             AskIfSaveDialog(args, (request as EmbeddedDialogRequest<AskIfSaveDialogPurpose>).onResult)
         is JumpToEntryDialogArgs ->
             JumpToEntryDialog(args, (request as EmbeddedDialogRequest<JumpToEntryDialogArgs>).onResult)
+        is JumpToModuleDialogArgs ->
+            JumpToModuleDialog(args, (request as EmbeddedDialogRequest<JumpToModuleDialogArgs>).onResult)
         is InputEntryNameDialogArgs ->
             InputEntryNameDialog(args, (request as EmbeddedDialogRequest<InputEntryNameDialogArgs>).onResult)
         is CommonConfirmationDialogAction ->

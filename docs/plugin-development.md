@@ -1,243 +1,219 @@
-# Develop plugins for vLabeler
+# Develop Plugins for vLabeler
 
-This article introduces how to develop plugins for `vLabeler`.
-Feel free to ask questions or make feature requests if you find the plugin specification not sufficient for your
-intended functionality.
+This guide illustrates the process of developing plugins for `vLabeler`. Should you encounter any inadequacies in the
+plugin specification for your needs, please do not hesitate to submit questions or feature requests.
 
 ## Overview
 
-Currently we support two types of plugins:
+`vLabeler` currently supports two types of plugins:
 
-- Macro plugins: They are executed during project editing. Typically they are used to edit the entries in batch.
-- Template plugins: They are executed when creating a new project. They generate a list of entries for subsequent
-  editing.
+- **Macro plugins**: Execute during the project editing phase. They are typically used for batch editing of entries.
+- **Template plugins**: Execute when initiating a new project. Their primary function is to generate a series of entries
+  for further editing.
 
-The two types of plugins are defined in the same structure, but they are executed in different contexts i.e. the
-inputs and outputs are different.
+While both plugin types share the same structural design, their execution contexts differ, leading to variations in
+inputs and outputs.
 
-In this article, we will introduce:
+This guide will cover:
 
-- [The file structure of a plugin](#plugin-file-structure)
-- [How to define a plugin](#plugin-definition)
-    - [Defining parameters](#defining-parameters)
-- [How to write scripts for plugins](#scripting-for-plugins)
-    - [Template generation scripts](#template-generation-scripts)
-    - [Batch edit (macro) scripts](#batch-edit-macro-scripts)
+- [Plugin File Structure](#plugin-file-structure)
+- [Plugin Definition](#plugin-definition)
+    - [Parameter Definition](#defining-parameters)
+- [Scripting Guidelines for Plugins](#scripting-for-plugins)
+    - [Creating Template Generation Scripts](#template-generation-scripts)
+    - [Creating Batch Edit (macro) Scripts](#batch-edit-macro-scripts)
+    - [Miscellaneous](#miscellaneous)
 
 ## Plugin File Structure
 
-A plugin for `vLabeler` is a folder containing:
+A `vLabeler` plugin is a folder containing:
 
-1. A `plugin.json` file to define the plugin's behaviors
-2. At least one `*.js` file as the scripts
-3. Other files that your scripts use
+1. A `plugin.json` file to specify the plugin's behavior.
+2. At least one `*.js` script file.
+3. Additional files needed by your scripts.
 
 ## Plugin Definition
 
-`plugin.json` file is a JSON object which has the following properties:
+The `plugin.json` file is structured as a JSON object, containing the following properties:
 
-| Property                    | Type                   | Default value  | Supported plugin type | Description                                                                                                                                                                        |
-|-----------------------------|------------------------|----------------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| name                        | String                 | (Required)     | all                   | Make sure the value is the same as the folder's name.                                                                                                                              |
-| version                     | Integer                | 1              | all                   |                                                                                                                                                                                    |
-| type                        | String                 | (Required)     | all                   | `template` or `macro`.                                                                                                                                                             |
-| displayedName               | String (Localized)     | same as `name` | all                   |                                                                                                                                                                                    |
-| author                      | String                 | (Required)     | all                   |                                                                                                                                                                                    |
-| email                       | String                 | ""             | all                   |                                                                                                                                                                                    |
-| description                 | String (Localized)     | ""             | all                   |                                                                                                                                                                                    |
-| website                     | String                 | ""             | all                   |                                                                                                                                                                                    |
-| supportedLabelFileExtension | String                 | (Required)     | all                   | Extension(s) of your label file (e.g. `ini` for UTAU oto). "*" and "&#124;" are supported.                                                                                         |
-| outputRawEntry              | Boolean                | false          | template              | Set to `true` if you want to output the raw entry instead of parsed object.                                                                                                        |
-| scope                       | String                 | "Module"       | all                   | `Module` or `Project`. The scope that the plugin can access and edit.                                                                                                              |
-| parameters                  | Parameters &#124; null | null           | all                   | See the `Defining Parameters` section for detail.                                                                                                                                  |
-| scriptFiles                 | String[]               | (Required)     | all                   | File names of all your scripts files. The files will be executed in the same order as declared.                                                                                    |
-| resourceFiles               | String[]               | []             | all                   | List of String. File names of all the files that you use as resources in your scripts. The contents will be passed to your scripts as string values in the same order as declared. |
-| inputFinderScriptFile       | String &#124; null     | null           | template              | File name of the script file to help find the input files dynamically.                                                                                                             |
+| Key                         | Type                   | Default value | Supported Plugin Type | Description                                                                                                                                     |
+|-----------------------------|------------------------|---------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| name                        | String                 | (Required)    | All                   | This value should match the folder's name.                                                                                                      |
+| version                     | Integer                | 1             | All                   | The version of the plugin.                                                                                                                      |
+| type                        | String                 | (Required)    | All                   | Specify as either `template` or `macro`.                                                                                                        |
+| displayedName               | String (Localized)     | `name` value  | All                   | The displayed name of the plugin.                                                                                                               |
+| author                      | String                 | (Required)    | All                   | The author of the plugin.                                                                                                                       |
+| email                       | String                 | ""            | All                   | Contact email of the author.                                                                                                                    |
+| description                 | String (Localized)     | ""            | All                   | A brief description of the plugin.                                                                                                              |
+| website                     | String                 | ""            | All                   | The website or source code repository of the plugin                                                                                             |
+| supportedLabelFileExtension | String                 | (Required)    | All                   | Supported extensions for your label file (e.g., `ini` for UTAU oto). Use "*" to accept all types; use "&#124;" to separate multiple extensions. |
+| outputRawEntry              | Boolean                | false         | Template              | If set to `true`, outputs the raw entry text rather than a parsed object.                                                                       |
+| scope                       | String                 | "Module"      | All                   | Determines the plugin's access range: either `Module` or `Project`.                                                                             |
+| parameters                  | Parameters &#124; null | null          | All                   | For details, refer to the `Defining Parameters` section.                                                                                        |
+| scriptFiles                 | String[]               | (Required)    | All                   | Names of all script files. These files execute in the order they are listed.                                                                    |
+| resourceFiles               | String[]               | []            | All                   | Files utilized as resources in your scripts. Their contents are fed into your scripts as string values in the order listed.                     |
+| inputFinderScriptFile       | String &#124; null     | null          | Template              | Name of the script file used to identify input files dynamically.                                                                               |
 
 ### Defining Parameters
 
-`parameters` object contains an array named `list`:
+Within the `parameters` object is an array named `list`:
 
-```
+```json5
 {
-    ...,
+    // ...,
     "parameters": {
-        "list": [...]
+        "list": [
+            // ...
+        ]
     },
-    ...
+    // ...
 }
 ```
 
-Every object in `list` defines a parameter that is shown in the plugin configuration dialog and passed to your scripts.
+Each object within `list` specifies a parameter that will appear in the plugin configuration dialog and will be passed
+to your scripts.
 
-See [Parameter](parameter.md) for the definition of a parameter.
+For a comprehensive definition of a parameter, see [Parameter](parameter.md).
 
 ## Scripting for Plugins
 
-The following sections describe how to write scripts for plugins.
+Below are guidelines on scripting for plugins:
 
-See [Scripting](scripting.md) for the scripting environment and available APIs.
+For detailed information on the scripting environment and available APIs, please refer
+to [Scripting in vLabeler](scripting.md).
 
 ### Template Generation Scripts
 
-A plugin with `template` type is selected and executed on the `New Project` page.
-It should create a list of entries for subsequent editions.
+Plugins with `template` type operate on the `New Project` page, facilitating the creation of entry lists for subsequent
+edits.
 
 #### Input
 
-The following variables are provided before your scripts are executed.
+Before your scripts are executed, the following variables will be set in the JavaScript environment:
 
-| name            | type                | description                                                                                                            |
-|-----------------|---------------------|------------------------------------------------------------------------------------------------------------------------|
-| inputs          | String[]            | List of texts read from the input files. They are provided by the [input finder script](#find-input-files-dynamically) |
-| samples         | String[]            | List of file names of the sample files.                                                                                |
-| params          | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                   |
-| resources       | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                       |
-| labeler         | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.     |
-| labelerParams   | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                |
-| debug           | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                  |
-| pluginDirectory | [File](file-api.md) | Directory of this plugin                                                                                               |
+| Name            | Type                | Description                                                                                                              |
+|-----------------|---------------------|--------------------------------------------------------------------------------------------------------------------------|
+| inputs          | String[]            | Texts sourced from input files, facilitated by the [input finder script](#dynamic-input-file-retrieval).                 |
+| samples         | String[]            | List of sample file names.                                                                                               |
+| params          | Dictionary          | A dictionary containing all parameters defined in `plugin.json`. You can get values using their `name` as the key.       |
+| resources       | String[]            | Texts from resource files, in the order they appear in `plugin.json`.                                                    |
+| labeler         | LabelerConf         | JSON object mirroring [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt).                  |
+| labelerParams   | Dictionary          | A dictionary containing all parameters defined in the current labeler. You can get values using their `name` as the key. |
+| debug           | Boolean             | Whether the execution is in debug mode (during the Gradle `run` task).                                                   |
+| pluginDirectory | [File](file-api.md) | The plugin directory.                                                                                                    |
 
-#### Find input files dynamically
+#### Dynamic input file retrieval
 
-To support your template plugin with labelers that construct a project with subprojects, you may want to find input
-files dynamically for every subproject. To do this, you can provide a script file via the
-plugin's `inputFinderScriptFile` property in the `plugin.json`.
+For labelers that create projects with subprojects, you can dynamically find input files for every subproject. The
+plugin's `inputFinderScriptFile` attribute in `plugin.json` should specify a script for this.
 
-The script file should be a JavaScript file which:
+This JavaScript file:
 
-- takes a variable `root` of `File` type as input, which indicates the root directory of the project, i.e.
-  the `Sample Directory` set in the project creation page.
-- takes a variable `moduleName` of `String` type as input, which indicates the name of the subproject.
-- takes variables `debug`, `labeler`, `params` as input, which are the same as the ones provided in the template
-  generation
-  scripts.
-- should set a variable `inputFilePaths` of `String[]` type as output, which contains all the absolute paths of the
-  input files you want to use.
-- may set a variable `encoding` of `String` type as output, which indicates the encoding of the input files. If not set,
-  the encoding selected in the project creation page is used.
+- Receives `root` (type: `File`), representing the project's root directory.
+- Receives `moduleName` (type: `String`), the subproject name.
+- Accepts variables `debug`, `params`, `labeler`, `labelerParams`, similar to those in the template generation scripts.
+- Outputs `inputFilePaths` (type: `String[]`), containing desired input file paths.
+- Optionally, outputs `encoding` (type: `String`) to specify input file encoding; otherwise, the chosen encoding during
+  project creation is used.
 
-The `File` type is a JavaScript wrapper of Java's `java.io.File` class. See the [documentation](file-api.md) for
-details.
+Refer to the [documentation](file-api.md) for the `File` type's specifications and
+the [audacity2lab plugin](../resources/common/plugins/template/audacity2lab) as a sample implementation.
 
-Check the [audacity2lab plugin](../resources/common/plugins/template/audacity2lab) for an example.
-In this example, for consistency, even if the project has only one subproject, the input files are still found by the
-input finder script, so that we don't have to care about where the input comes from in the main script.
+#### Request input files from the user
 
-#### Use an input file parameter
-
-If your input file does not belong to a subproject (such as a dictionary file), you can use a parameter of type `file`
-or `rawFile` to get the content.
-See [Parameter Type](#parameter-types) for details.
+For input files unrelated to a subproject (like user customizable dictionaries), utilize a `file` or `rawFile` parameter
+type.
+See [Defining a Parameter](parameter.md) for specifics.
 
 #### Output
 
-You have to create a list named `output` to pass the result back to the application.
-You can choose to offer `output` in the following two ways:
+Return results to the app using a list named `output`. This can be presented in two methods:
 
-##### 1. Output the parsed entry object
+##### 1. Directly return parsed entry objects
 
-Make an `output` array with parsed [Entry](../src/jvmMain/resources/js/class_entry.js) objects. e.g.
+Construct an `output` array containing parsed [Entry](../src/jvmMain/resources/js/class_entry.js) objects. For example:
 
 ```javascript
-let output = []
-
+let output = [];
 for (const line of lines) {
-    const entry = parseLineToEntry(line)
-    output.push(entry)
+    // parse line to get `name`, `sample`, `start`, `end`, etc.
+    const entry = new Entry(sample, name, start, end, points, extras);
+    output.push(entry);
 }
 ```
 
-##### 2. Output the raw entry string
+##### 2. Return raw entry strings
 
-If `outputRawEntry` is set to `true`, instead of entry objects, `output` should be set to a list of strings in the
-format of the label file. They will be parsed by the labeler's parser later.
+If `outputRawEntry` is set to `true`, populate `output` with raw entry strings in the label file's format. The labeler's
+parser will process these later.
 
 #### Tips
 
-1. If `labeler.allowSameNameEntry` is set to `false`, the labeler will discard entries with the same name except the
-   first one. Handle the duplicated entry names in your scripts if you want to keep them.
-2. The labeler will throw an error if no entry is created. Create a fallback entry in your scripts if you don't want
-   users to see the error.
-3. If a project is created by labeler's parser with a raw label file, it will include all sample files even if they do
-   not appear in the raw label file. In that case, a default entry will be created for each sample file. However, if a
-   project is created by a plugin, the sample files that are not referenced in the output will be ignored. So please be
-   sure to create entries for all the sample files that you want to include in the project.
+1. When `labeler.allowSameNameEntry` is `false`, only the first entry with a duplicate name is retained. Address this in
+   your script if preserving all is necessary.
+2. If no entries are created, an error will be raised. As a remedy, include a fallback entry.
+3. Projects initiated by a labeler's parser with a raw label file will encompass all sample files, even those absent in
+   the raw label. Default entries are generated for these. However, for projects initiated by a plugin, unreferenced
+   sample files in the output are ignored. Ensure all desired sample files have corresponding entries.
 
-#### Examples
+#### Example Plugins
 
-Check the following built-in `template` plugins as examples:
+Explore these integrated `template` plugins for insight:
 
-- [ust2lab-ja-kana](../resources/common/plugins/template/ust2lab-ja-kana): Use an input ust file to generate sinsy lab
-  entries
-- [cv-oto-gen](../resources/common/plugins/template/cv-oto-gen): Generate CV oto entries from parameters
-- [regex-raw-gen](../resources/common/plugins/template/regex-raw-gen): Use a regular expression to generate raw entry
-  lines. Supports all types of labelers.
-- [audacity2lab](../resources/common/plugins/template/audacity2lab): Generate lab entries from an audacity label file.
-  It also supports the `NNSVS singer labeler` which constructs a project with subprojects.
-  See [Find input files dynamically](#find-input-files-dynamically) for details.
+- [ust2lab-ja-kana](../resources/common/plugins/template/ust2lab-ja-kana): Converts an input UST file to Sinsy lab
+  entries.
+- [cv-oto-gen](../resources/common/plugins/template/cv-oto-gen): Produces CV oto entries from parameters.
+- [regex-raw-gen](../resources/common/plugins/template/regex-raw-gen): Uses regex to craft raw entry lines, supporting
+  all labeler types.
+- [audacity2lab](../resources/common/plugins/template/audacity2lab): Creates lab entries from an Audacity label file.
+  Also compatible with `NNSVS singer labeler`, which constructs projects with subprojects.
 
 ### Batch Edit (Macro) Scripts
 
-A plugin with `macro` type is executed by an item in the menu `Tools` -> `Batch Edit`. It is only available when editing
-a project.
-
-According to the `scope` property in the `plugin.json`, the plugin can be executed on the whole project or on the
-current module (subproject).
-If `scope` is set to `Module`, the input includes a list of `Entry` object in the current module named `entries`
-along with an integer named `currentEntryIndex`.
-If `scope` is set to `Project`, the input includes a list of `Module` object named `modules` along with an integer
-named `currentModuleIndex`.
-
-You can modify these variables directly to conduct batch edit on the whole project.
+In the context of vLabeler, batch edit scripts (type: `macro`) are designed to operate over projects, either over the
+entire project or a particular subproject/module. The scope of the plugin determines the domain of operation,
+with `Module` scope operating on the current module, and `Project` scope covering the entire project.
 
 #### Input
 
-The following variables are provided before your scripts are executed.
+Before your scripts are executed, the following variables will be set in the JavaScript environment:
 
-| name                 | type                | description                                                                                                                                              |
-|----------------------|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| entries              | Entry[]             | Only available when the plugin's `scope` is `Module`. List of current [Entry](../src/jvmMain/resources/js/class_entry.js) objects in the current module. |
-| currentEntryIndex    | Entry[]             | Only available when the plugin's `scope` is `Module`. The index of current shown entry.                                                                  |
-| module               | Module              | Only available when the plugin's `scope` is `Module`. The current [Module](../src/jvmMain/resources/js/class_module.js) object.                          |
-| modules              | Module[]            | Only available when the plugin's `scope` is `Project`. List of current [Module](../src/jvmMain/resources/js/class_module.js) objects in the project.     |
-| currentModuleIndex   | Integer             | Only available when the plugin's `scope` is `Project`. The index of current shown module.                                                                |
-| params               | Dictionary          | Use `name` of the defined parameters as the key to get values in their actual types.                                                                     |
-| resources            | String[]            | List of texts read from the resources files in the same order as declared in your `plugin.json`.                                                         |
-| labeler              | LabelerConf         | Equivalent Json object to [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object.                                       |
-| labelerParams        | Dictionary          | Use `name` of the defined parameters in current labeler as the key to get values in their actual types.                                                  |
-| debug                | Boolean             | It's set to `true` only when the application is running in the debug environment (Gradle `run` task).                                                    |
-| pluginDirectory      | [File](file-api.md) | Directory of this plugin                                                                                                                                 |
-| projectRootDirectory | [File](file-api.md) | Only available when the plugin's `scope` is `Project`.  Root directory of the project.                                                                   |
+| Parameter Name       | Type                | Scope   | Description                                                                                                              |
+|----------------------|---------------------|---------|--------------------------------------------------------------------------------------------------------------------------|
+| entries              | Entry[]             | Module  | A list of the current Entry objects in the active module.                                                                |
+| currentEntryIndex    | Entry[]             | Module  | The index of the currently displayed entry.                                                                              |
+| module               | Module              | Module  | The current Module object.                                                                                               |
+| modules              | Module[]            | Project | All Module objects in the project.                                                                                       |
+| currentModuleIndex   | Integer             | Project | The index of the currently displayed module.                                                                             |
+| params               | Dictionary          | All     | A dictionary containing all parameters defined in `plugin.json`. You can get values using their `name` as the key.       |
+| resources            | String[]            | All     | Texts from resource files, in the order they appear in `plugin.json`.                                                    |
+| labeler              | LabelerConf         | All     | JSON object mirroring [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt).                  |
+| labelerParams        | Dictionary          | All     | A dictionary containing all parameters defined in the current labeler. You can get values using their `name` as the key. |
+| debug                | Boolean             | All     | Whether the execution is in debug mode (during the Gradle `run` task).                                                   |
+| pluginDirectory      | [File](file-api.md) | All     | The plugin directory.                                                                                                    |                                                                   
+| projectRootDirectory | [File](file-api.md) | Project | The project's root directory.                                                                                            |
 
-#### Use an entry selector
+#### Use an Entry Selector
 
-A parameter with `entrySelector` type is passed in `params` as a list of the selected indexes of the `entries` list.
-
-The following code is an example of using an entry selector:
+This type of parameter lets the user specify a subset of entries for operation and is accessible under `Module` scope.
+Here's a code snippet for its utilization:
 
 ```javascript
-let selectedIndexes = params["selector"] // use actual name of your parameter
+let selectedIndexes = params["selector"] // `selector` is the name of the entry selector parameter
 for (let index of selectedIndexes) {
     let entry = entries[index]
-    // edit the entry
+    // do something with the entry
 }
 ```
 
-This type of parameter is only available when the `scope` is `Module`. Otherwise, no value is passed.
-
 #### Output
 
-Change the content of the given `entries` or `modules` list to change the project's content.
-
-Note that you can access to `module` if the scope is `Module`, but the changes to it will not be reflected.
-
-The following code is an example of adding a suffix to every entry's name in the current module:
+To bring about changes in the project, directly modify the `entries` or `modules` list. Note that for `Module` scope,
+while you can access the `module`, changes to it won't be saved. Here's an example to add suffixes to each entry name in
+the current module:
 
 ```javascript
 let suffix = params["suffix"]
-
-// This is `Module` scope, so `entries` is available
 for (let entry of entries) {
     entry.name += suffix
 }
@@ -245,39 +221,45 @@ for (let entry of entries) {
 
 #### Display a report after execution
 
-See the corresponding section in [Scripting](scripting.md#display-a-report-after-execution) for more details.
+After execution, you can display reports. Refer to the section
+in [Scripting in vLabeler](scripting.md#display-a-report-after-execution) for more details.
 
 #### Request audio playback after execution
 
-See the corresponding section in [Scripting](scripting.md#request-audio-playback-after-execution) for more details.
+After execution, you can request an audio playback. Refer to the section
+in [Scripting in vLabeler](scripting.md#request-audio-playback-after-execution) for more details.
 
-#### Examples
+#### Example Plugins
 
-Check the following built-in `macro` plugins as examples:
+Explore these integrated `macro` plugins for insight:
 
-- [batch-edit-entry-name](../resources/common/plugins/macro/batch-edit-entry-name): Edit selected entry names for all
-  labelers. You can refer to it for the usage of the entry selector
-- [batch-edit-oto-parameter](../resources/common/plugins/macro/batch-edit-oto-parameter): Edit parameters of selected
-  entries for UTAU oto. The `labeler` is used to get the specific settings about `oto.ini`
-- [compare-oto-entries](../resources/common/plugins/macro/compare-oto-entries): Compare an input oto with the current
-  project. You can refer to it for the usage of the `report()` function
-- [execute-scripts](../resources/common/plugins/macro/execute-scripts): Execute input scripts to edit the project. It
-  can be used as a debug tool when developing a plugin.
-- [resampler-test](../resources/common/plugins/macro/resampler-test): Test the resampler synthesis of the current entry.
-  You can refer to it for the usage of the `requestAudioFilePlayback()` function and `Env`, `File`, `CommandLine` APIs
+- [batch-edit-entry-name](../resources/common/plugins/macro/batch-edit-entry-name): Modify names of selected entries
+  across all labelers. It demonstrates the use of the entry selector.
+- [batch-edit-oto-parameter](../resources/common/plugins/macro/batch-edit-oto-parameter): Edit parameters of chosen UTAU
+  oto entries. It demonstrates the use of the `labeler` variable.
+- [compare-oto-entries](../resources/common/plugins/macro/compare-oto-entries): Compares an input oto with the ongoing
+  project. The function `report()` is used here.
+- [execute-scripts](../resources/common/plugins/macro/execute-scripts): Run input scripts to edit the project. It can be
+  used as a debugging tool during plugin development.
+- [resampler-test](https://github.com/sdercolin/vlabeler-resampler-test): Examine the resampler synthesis of the active
+  entry. Demonstrates the use of `requestAudioFilePlayback()`, along with `Env`, `File`, and `CommandLine` APIs.
+
+## Miscellaneous
 
 ### Localization
 
-Check [Localized string](localized-string.md) for the localization support in plugin definition and scripts.
+Check [Localized strings in vLabeler](localized-string.md) about the `String (Localized)` type mentioned above.
 
 ### Error handling
 
-See the corresponding section in [Scripting](scripting.md#error-handling) for more details.
+For in-depth understanding and strategies to handle errors, refer to the section
+in [Scripting in vLabeler](scripting.md#error-handling).
 
 ### Debugging
 
 You can use logs to help debug your scripts.
 The standard output (e.g. `console.log()`) is written to `.logs/info.log` and the error output is written to
 `.logs/error.log`.
-If the plugin is not shown in the list, there are probably some errors while loading the plugin (i.e.
-parsing `plugin.json`).
+
+If your plugin doesn't appear in the list, it might have faced issues during loading,
+such as problems parsing `plugin.json`. Check the error log for more information.

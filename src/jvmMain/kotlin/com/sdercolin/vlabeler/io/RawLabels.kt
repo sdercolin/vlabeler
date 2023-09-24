@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.io
 
+import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.model.Entry
@@ -16,6 +17,7 @@ import com.sdercolin.vlabeler.util.readTextByEncoding
 import com.sdercolin.vlabeler.util.replaceWithVariables
 import com.sdercolin.vlabeler.util.resolve
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
+import kotlinx.serialization.Serializable
 import java.io.File
 
 /**
@@ -37,24 +39,30 @@ fun moduleFromRawLabels(
     encoding: String,
 ): List<Entry> {
     val parser = labelerConf.parser
-    val extractor = Regex(parser.extractionPattern)
+    val extractor = parser.extractionPattern?.let { Regex(it) }
     val inputFileNames = listOfNotNull(inputFile?.name)
     val sampleFileNames = sampleFiles.map { it.name }
-    val js = prepareJsForParsing(labelerParams, inputFileNames, sampleFileNames, encoding)
+    val js = prepareJsForParsing(labelerConf, labelerParams, inputFileNames, sampleFileNames, encoding)
     val entries = sources.mapIndexedNotNull { index, source ->
         if (source.isBlank()) return@mapIndexedNotNull null
         val errorMessageSuffix = "in file ${inputFile?.absolutePath}, line ${index + 1}: $source"
         runCatching {
-            val groups = source.matchGroups(extractor)
-            require(groups.size >= parser.variableNames.size) {
-                "Extracted groups less than required $errorMessageSuffix"
+            if (parser.variableNames.isNotEmpty()) {
+                requireNotNull(extractor) {
+                    "extractionPattern is required but not defined $errorMessageSuffix"
+                }
+                val groups = source.matchGroups(extractor)
+                require(groups.size >= parser.variableNames.size) {
+                    "Extracted groups less than required $errorMessageSuffix"
+                }
+                parser.variableNames.mapIndexed { i, name ->
+                    js.set(name, groups.getOrNull(i))
+                }
             }
 
-            parser.variableNames.mapIndexed { i, name ->
-                js.set(name, groups.getOrNull(i))
-            }
-            val script = parser.scripts.joinToString("\n")
-            js.eval(script)
+            val script = parser.scripts.getScripts(labelerConf.directory)
+            js.set("input", source)
+            js.execInScope(script)
             js.getJson<Entry>("entry")
         }.getOrElse {
             Log.debug(it)
@@ -68,9 +76,19 @@ fun moduleFromRawLabels(
 }
 
 /**
- * Create a list of entry list from a group of module definitions. The items in the group should have same contents
- * expect the module name. This is typically used when multiple modules are linked to a single raw label file, such as
- * TextGrid usages.
+ * A result of [LabelerConf.Scope.Modules] parsing.
+ */
+@Serializable
+@Immutable
+data class ModuleParseResult(
+    val entries: List<Entry>,
+    val extras: Map<String, String> = emptyMap(),
+)
+
+/**
+ * Parse entries and extras from a group of module definitions. The items in the group should have same contents expect
+ * the module name. This is typically used when multiple modules are linked to a single raw label file, such as TextGrid
+ * usages.
  *
  * @param definitionGroup The module definitions.
  * @param labelerConf The labeler.
@@ -82,34 +100,50 @@ fun moduleGroupFromRawLabels(
     labelerConf: LabelerConf,
     labelerParams: ParamMap,
     encoding: String,
-): List<List<Entry>> {
-    val inputFileNames = definitionGroup.first().inputFiles.orEmpty().map { it.name }
+): List<ModuleParseResult> {
+    val inputFiles = definitionGroup.first().inputFiles.orEmpty()
+    val existingInputFiles = inputFiles.filter { it.isFile }
     val sampleFileNames = definitionGroup.first().sampleFiles.map { it.name }
 
-    if (inputFileNames.isEmpty()) {
+    if (existingInputFiles.isEmpty()) {
         // No input files, fallback to default values
         return definitionGroup.map {
-            sampleFileNames.map { sampleName ->
-                Entry.fromDefaultValues(sampleName, sampleName.substringBeforeLast('.'), labelerConf)
-            }
+            ModuleParseResult(
+                entries = sampleFileNames.map { sampleName ->
+                    Entry.fromDefaultValues(sampleName, sampleName.substringBeforeLast('.'), labelerConf)
+                },
+                extras = labelerConf.moduleExtraFields.mapNotNull { field ->
+                    field.default?.let { field.name to it }
+                }.toMap(),
+            )
         }
     }
-
-    val js = prepareJsForParsing(labelerParams, inputFileNames, sampleFileNames, encoding)
-    val inputs = requireNotNull(definitionGroup.first().inputFiles).map { it.readTextByEncoding(encoding).lines() }
-    js.setJson("moduleNames", definitionGroup.map { it.name })
+    val inputFileNames = inputFiles.map { it.name }
+    val js = prepareJsForParsing(labelerConf, labelerParams, inputFileNames, sampleFileNames, encoding)
+    val inputs = requireNotNull(definitionGroup.first().inputFiles).map {
+        runCatching { it.readTextByEncoding(encoding).lines() }.getOrNull()
+    }
+    js.setJson("moduleDefinitions", definitionGroup.map { it.toRawModuleDefinition() })
     js.setJson("inputs", inputs)
 
-    val script = labelerConf.parser.scripts.joinToString("\n")
+    val script = labelerConf.parser.scripts.getScripts(labelerConf.directory)
     js.eval(script)
 
-    val result = js.getJson<List<List<Entry>>>("modules")
+    val entries = js.getJson<List<List<Entry>>>("modules")
+    val extrasList = js.getJsonOrNull<List<Map<String, String>>>("moduleExtras")
+
     js.close()
 
-    return result
+    return entries.indices.map { index ->
+        ModuleParseResult(
+            entries = entries[index],
+            extras = extrasList?.getOrNull(index) ?: emptyMap(),
+        )
+    }
 }
 
 private fun prepareJsForParsing(
+    labelerConf: LabelerConf,
     labelerParams: ParamMap,
     inputFileNames: List<String>,
     sampleFileNames: List<String>,
@@ -127,6 +161,7 @@ private fun prepareJsForParsing(
     js.setJson("inputFileNames", inputFileNames)
     js.setJson("sampleFileNames", sampleFileNames)
     js.set("encoding", encoding)
+    js.setJson("resources", labelerConf.readResourceFiles())
     return js
 }
 
@@ -141,10 +176,12 @@ fun Project.modulesToRawLabels(moduleIndexes: List<Int>): String {
     val relatedModules = moduleIndexes.map { modules[it] }
     js.setJson("moduleNames", relatedModules.map { it.name })
     js.setJson("modules", relatedModules.map { it.entries })
+    js.setJson("moduleExtras", relatedModules.map { it.extras })
+
     val scripts = labelerConf.writer.scripts
     requireNotNull(scripts) { "Writer scripts are required when scope is Scope.Modules" }
 
-    js.eval(scripts.joinToString("\n"))
+    js.eval(scripts.getScripts(labelerConf.directory))
     val result = js.get<String>("output")
     js.close()
     return result
@@ -177,10 +214,10 @@ fun Project.singleModuleToRawLabels(moduleIndex: Int): String {
                 for (variable in variables) {
                     js.set(variable.key, variable.value)
                 }
-                js.eval(scripts.joinToString("\n"))
+                js.execInScope(scripts.getScripts(labelerConf.directory))
                 js.get("output")
             } else {
-                val format = labelerConf.writer.format!!
+                val format = requireNotNull(labelerConf.writer.format)
                 format.replaceWithVariables(variables)
             }
         }
@@ -197,6 +234,7 @@ private fun Project.prepareJsForWriting(): JavaScript {
         Resources.fileJs,
     ).forEach { js.execResource(it) }
     js.set("debug", isDebug)
+    js.setJson("resources", labelerConf.readResourceFiles())
     js.setJson("params", labelerParams.resolve(labelerConf).resolve(project = null, js = js))
     return js
 }
@@ -218,10 +256,13 @@ private fun LabelerConf.getPropertyBaseMap(
     entry: Entry,
     js: JavaScript,
 ) = properties.associateWith {
-    run {
+    runCatching {
         js.setJson("entry", entry)
-        js.eval(it.valueGetter.joinToString("\n"))
+        js.execInScope(it.valueGetter.getScripts(directory))
         js.get<Double>("value").roundToDecimalDigit(decimalDigit)
+    }.getOrElse {
+        Log.error(it)
+        0.0
     }
 }
 

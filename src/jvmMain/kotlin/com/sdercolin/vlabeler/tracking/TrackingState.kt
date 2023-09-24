@@ -37,6 +37,6 @@ class TrackingState(
     }
 
     fun openDetailsWebPage() {
-        Url.open(Url.TrackingDocument)
+        Url.open(Url.TRACKING_DOCUMENT)
     }
 }

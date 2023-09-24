@@ -21,7 +21,7 @@ class ColorPalette(definition: ColorPaletteDefinition) {
             } else {
                 val stepWeight = stepWeights[index]
                 val lastColor = acc.last()
-                val size = InterpolationStandardSize
+                val size = INTERPOLATION_STANDARD_SIZE
                 val lastR = lastColor.red * size
                 val lastG = lastColor.green * size
                 val lastB = lastColor.blue * size
@@ -61,7 +61,7 @@ class ColorPalette(definition: ColorPaletteDefinition) {
     }
 
     companion object {
-        private const val InterpolationStandardSize = 255
+        private const val INTERPOLATION_STANDARD_SIZE = 255
     }
 }
 

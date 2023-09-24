@@ -19,6 +19,7 @@ import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.JumpToModuleDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.MoveEntryDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
@@ -85,6 +86,7 @@ interface AppDialogState {
     fun <T : EmbeddedDialogArgs> openEmbeddedDialog(args: T)
     suspend fun <T : EmbeddedDialogArgs> awaitEmbeddedDialog(args: T): EmbeddedDialogResult<T>?
     fun openJumpToEntryDialog()
+    fun openJumpToModuleDialog()
     fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose)
     fun openMoveCurrentEntryDialog(appConf: AppConf)
     fun openEditEntryExtraDialog(index: Int)
@@ -299,6 +301,10 @@ class AppDialogStateImpl(
 
     override fun openJumpToEntryDialog() = openEmbeddedDialog(
         JumpToEntryDialogArgs(projectStore.requireProject(), state.appConf.editor, state.appConf.view),
+    )
+
+    override fun openJumpToModuleDialog() = openEmbeddedDialog(
+        JumpToModuleDialogArgs(projectStore.requireProject(), state.appConf.editor, state.appConf.view),
     )
 
     override fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose) {

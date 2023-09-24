@@ -13,6 +13,7 @@ import androidx.compose.ui.window.MenuBar
 import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
+import com.sdercolin.vlabeler.io.install
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.action.KeyAction
@@ -31,6 +32,8 @@ import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.awt.Desktop
 import java.io.File
 
@@ -361,6 +364,12 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.NavigatePreviousSample.getKeyShortCut(),
                         enabled = appState.isEditorActive && appState.canGoPreviousEntryOrSample,
                     )
+                    Item(
+                        string(Strings.MenuNavigateJumpToEntry),
+                        onClick = { appState.openJumpToEntryDialog() },
+                        shortcut = KeyAction.NavigateJumpToEntry.getKeyShortCut(),
+                        enabled = appState.isEditorActive,
+                    )
                     if (appState.shouldShowModuleNavigation()) {
                         Item(
                             string(Strings.MenuNavigateNextModule),
@@ -374,13 +383,13 @@ fun FrameWindowScope.Menu(
                             shortcut = KeyAction.NavigatePreviousModule.getKeyShortCut(),
                             enabled = appState.isEditorActive && appState.canGoPreviousModule,
                         )
+                        Item(
+                            string(Strings.MenuNavigateJumpToModule),
+                            onClick = { appState.openJumpToModuleDialog() },
+                            shortcut = KeyAction.NavigateJumpToModule.getKeyShortCut(),
+                            enabled = appState.isEditorActive,
+                        )
                     }
-                    Item(
-                        string(Strings.MenuNavigateJumpToEntry),
-                        onClick = { appState.openJumpToEntryDialog() },
-                        shortcut = KeyAction.NavigateJumpToEntry.getKeyShortCut(),
-                        enabled = appState.isEditorActive,
-                    )
                     Item(
                         string(Strings.MenuNavigateScrollFit),
                         onClick = { appState.scrollFitViewModel.emit() },
@@ -499,24 +508,32 @@ fun FrameWindowScope.Menu(
                     onClick = { Desktop.getDesktop().open(Log.LoggingPath.toFile()) },
                     shortcut = KeyAction.OpenLogDirectory.getKeyShortCut(),
                 )
+                if (appState != null) {
+                    val appRecord by appState.appRecordFlow.collectAsState()
+                    CheckboxItem(
+                        string(Strings.MenuHelpIncludeInfoLog),
+                        checked = appRecord.includeInfoLog,
+                        onCheckedChange = { appState.appRecordStore.update { copy(includeInfoLog = it) } },
+                    )
+                }
                 Item(
                     string(Strings.MenuHelpOpenHomePage),
-                    onClick = { Url.open(Url.HomePage) },
+                    onClick = { Url.open(Url.HOME_PAGE) },
                     shortcut = KeyAction.OpenHomePage.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuHelpOpenLatestRelease),
-                    onClick = { Url.open(Url.LatestRelease) },
+                    onClick = { Url.open(Url.LATEST_RELEASE) },
                     shortcut = KeyAction.OpenLatestRelease.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuHelpOpenGitHub),
-                    onClick = { Url.open(Url.ProjectGitHub) },
+                    onClick = { Url.open(Url.PROJECT_GIT_HUB) },
                     shortcut = KeyAction.OpenGitHub.getKeyShortCut(),
                 )
                 Item(
                     string(Strings.MenuHelpJoinDiscord),
-                    onClick = { Url.open(Url.DiscordInvitation) },
+                    onClick = { Url.open(Url.DISCORD_INVITATION) },
                     shortcut = KeyAction.JoinDiscord.getKeyShortCut(),
                 )
                 Item(
@@ -571,6 +588,18 @@ fun FrameWindowScope.Menu(
                             "Force Custom File Dialog",
                             checked = DebugState.forceUseCustomFileDialog,
                             onCheckedChange = { DebugState.forceUseCustomFileDialog = it },
+                        )
+                        Item(
+                            "Export current labeler",
+                            enabled = appState.hasProject,
+                            onClick = {
+                                appState.mainScope.launch(Dispatchers.IO) {
+                                    val labeler = appState.project?.labelerConf ?: return@launch
+                                    labeler.install(AppDir.resolve("debug"))
+                                        .onSuccess { Desktop.getDesktop().open(it.parentFile) }
+                                        .onFailure { Log.error(it) }
+                                }
+                            },
                         )
                     }
                 }

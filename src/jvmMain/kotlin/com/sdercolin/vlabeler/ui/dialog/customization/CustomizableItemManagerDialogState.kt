@@ -5,9 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.exception.CustomizableItemRemovingException
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.*
 import java.awt.Desktop
 import java.io.File
 
@@ -24,12 +25,29 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
     private val _items = mutableStateListOf<T>()
     val items: List<T> get() = _items
 
+    private val newlyAddedItemNames = mutableSetOf<String>()
+
     var selectedIndex: Int? by mutableStateOf(null)
         private set
 
     fun loadItems(items: List<T>) {
+        val oldNames = _items.map { it.name }.toSet()
         _items.clear()
         _items.addAll(items)
+        if (oldNames.isNotEmpty()) {
+            val newNames = _items.map { it.name }.toSet()
+            val newlyAddedNames = newNames - oldNames
+            moveNewItemsToBottom(newlyAddedNames)
+        }
+    }
+
+    private fun moveNewItemsToBottom(newlyAddedNames: Set<String>) {
+        for (name in newlyAddedNames) {
+            val item = _items.first { it.name == name }
+            _items.remove(item)
+            _items.add(item)
+            selectedIndex = _items.indexOf(item)
+        }
     }
 
     abstract fun reload()
@@ -55,7 +73,11 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
     fun removeItem(item: CustomizableItem) {
         require(item.canRemove)
         require(item in items)
-        item.remove()
+        if (!item.remove()) {
+            appState.showError(CustomizableItemRemovingException(null))
+            return
+        }
+        selectedIndex = null
         reload()
     }
 
@@ -90,19 +112,19 @@ abstract class CustomizableItemManagerDialogState<T : CustomizableItem>(
     }
 
     private suspend fun addNewItem(configFile: File) {
-        runCatching { importNewItem(configFile) }.getOrElse {
+        val item = runCatching { importNewItem(configFile) }.getOrElse {
             appState.showSnackbar(it.message.orEmpty())
             return
         }
+        newlyAddedItemNames.add(item)
         reload()
-        selectedIndex = items.size
     }
 
     fun finish() {
         appState.closeCustomizableItemManagerDialog()
     }
 
-    protected abstract suspend fun importNewItem(configFile: File)
+    protected abstract suspend fun importNewItem(configFile: File): String
 }
 
 @Composable

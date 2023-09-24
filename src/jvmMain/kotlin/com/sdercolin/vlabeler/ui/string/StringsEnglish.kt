@@ -56,9 +56,10 @@ fun Strings.en(): String = when (this) {
     MenuNavigatePreviousEntry -> "Go to Previous Entry"
     MenuNavigateNextSample -> "Go to Next Sample"
     MenuNavigatePreviousSample -> "Go to Previous Sample"
+    MenuNavigateJumpToEntry -> "Go to Entry..."
     MenuNavigateNextModule -> "Go to Next Subproject"
     MenuNavigatePreviousModule -> "Go to Previous Subproject"
-    MenuNavigateJumpToEntry -> "Go to Entry..."
+    MenuNavigateJumpToModule -> "Go to Subproject..."
     MenuNavigateScrollFit -> "Scroll to Show the Current Entry"
     MenuTools -> "Tools"
     MenuToolsBatchEdit -> "Batch Edit"
@@ -77,6 +78,7 @@ fun Strings.en(): String = when (this) {
     MenuHelp -> "Help"
     MenuHelpCheckForUpdates -> "Check for Updates..."
     MenuHelpOpenLogDirectory -> "Open Log Directory"
+    MenuHelpIncludeInfoLog -> "Enable Detailed Logging"
     MenuHelpOpenHomePage -> "Open vLabeler Home Page"
     MenuHelpOpenLatestRelease -> "Open Latest Release"
     MenuHelpOpenGitHub -> "Open GitHub Page"
@@ -263,8 +265,13 @@ fun Strings.en(): String = when (this) {
             "\nPlease check the error log for more information."
     InvalidEditedProjectException -> "Invalid edited project.\nPlease check error log for more information."
     CustomizableItemLoadingException -> "Could not load the selected customized item."
+    CustomizableItemRemovingException -> "Could not remove the selected customized item."
     PluginRuntimeExceptionTemplate -> "Plugin runtime error: %s"
     ProjectConstructorRuntimeExceptionTemplate -> "Labeler runtime error when constructing project: %s"
+    PropertySetterRuntimeExceptionTemplate -> "Labeler runtime error when setting property: %s"
+    PropertySetterUnexpectedRuntimeException ->
+        "An unexpected error occurred when setting property.\n" +
+            "Please contact the author of the labeler for more information."
     VideoComponentInitializationException ->
         "Could not initialize the video component. You need to install VLC on your device to use this feature. " +
             "Please read the `Video integration` section in README for details."
@@ -465,7 +472,8 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorScissorsUseOnScreenScissorsDescription ->
         "When enabled, an input box for the name of the new entry is shown in the editor after clicking " +
             "with the scissors. You can confirm the cutting action by pressing Enter or moving the cursor away " +
-            "from the clicked position. You can also cancel the action by pressing Esc."
+            "from the clicked position. You can also cancel the action by pressing Esc. This is only available " +
+            "in multiple edit mode."
     PreferencesEditorScissorsColor -> "Color"
     PreferencesEditorScissorsActionTargetNone -> "None"
     PreferencesEditorScissorsActionTargetFormer -> "The former entry"
@@ -590,6 +598,9 @@ fun Strings.en(): String = when (this) {
     AboutDialogShowLicenses -> "Show licenses"
     LicenseDialogTitle -> "vLabeler - Licenses"
     LicenseDialogLicenses -> "OSS Licenses used in vLabeler"
+    LoadProjectErrorLabelerNotFound ->
+        "Cannot find the required labeler `%1\$s` (version %2\$s) on this device. " +
+            "Please install it manually before opening the project."
     LoadProjectWarningLabelerCreated -> "A new labeler `%s` is installed by the project file."
     LoadProjectWarningLabelerUpdated -> "Labeler `%s` is updated to version `%s` by the project file."
     LoadProjectWarningCacheDirReset ->

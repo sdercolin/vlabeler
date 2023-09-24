@@ -25,7 +25,7 @@ fun PointerEvent.toVirtualKey(): Key? {
         PointerEventType.Scroll -> {
             val change = changes.firstOrNull()?.scrollDelta ?: return null
             if (change.x != 0f && change.y != 0f) {
-                Log.info("Warning: getting a mouse scroll event with both x:${change.x} and y:${change.y} changes")
+                Log.debug("Warning: getting a mouse scroll event with both x:${change.x} and y:${change.y} changes")
             }
             when {
                 change.x > 0 -> {

@@ -11,13 +11,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
-import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.Tool
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
+import com.sdercolin.vlabeler.ui.editor.labeler.CanvasState
 import com.sdercolin.vlabeler.ui.editor.labeler.parallel.SnapDrag
 import com.sdercolin.vlabeler.util.clear
 import com.sdercolin.vlabeler.util.getNextOrNull
@@ -91,20 +91,20 @@ class MarkerState(
     fun getPointIndexAsSingleEntry(entryIndex: Int, pointIndex: Int): Int {
         val entryIndices = entriesInPixel.indices
         val startPointIndex = if (entryIndex == 0) {
-            MarkerCursorState.StartPointIndex
+            MarkerCursorState.START_POINT_INDEX
         } else {
             entryIndex * (labelerConf.fields.size + 1) - 1
         }
         val endPointIndex = if (entryIndex == entryIndices.last()) {
-            MarkerCursorState.EndPointIndex
+            MarkerCursorState.END_POINT_INDEX
         } else {
             startPointIndex + labelerConf.fields.size + 1
         }
         return when (pointIndex) {
-            startPointIndex -> MarkerCursorState.StartPointIndex
-            endPointIndex -> MarkerCursorState.EndPointIndex
+            startPointIndex -> MarkerCursorState.START_POINT_INDEX
+            endPointIndex -> MarkerCursorState.END_POINT_INDEX
             else -> {
-                val fieldPointIndexes = if (startPointIndex == MarkerCursorState.StartPointIndex) {
+                val fieldPointIndexes = if (startPointIndex == MarkerCursorState.START_POINT_INDEX) {
                     0 until labelerConf.fields.size
                 } else {
                     (startPointIndex + 1) until (startPointIndex + 1 + labelerConf.fields.size)
@@ -115,8 +115,8 @@ class MarkerState(
     }
 
     private fun getPointPosition(index: Int): Float = when (index) {
-        MarkerCursorState.StartPointIndex -> startInPixel
-        MarkerCursorState.EndPointIndex -> endInPixel
+        MarkerCursorState.START_POINT_INDEX -> startInPixel
+        MarkerCursorState.END_POINT_INDEX -> endInPixel
         else -> middlePointsInPixel[index]
     }
 
@@ -125,7 +125,7 @@ class MarkerState(
         x: Float,
         forcedDrag: Boolean,
     ): List<EntryInPixel> {
-        if (pointIndex == MarkerCursorState.NonePointIndex) return entriesInPixel
+        if (pointIndex == MarkerCursorState.NONE_POINT_INDEX) return entriesInPixel
         return if (!forcedDrag) {
             val dxMin = leftBorder - startInPixel
             val dxMax = (rightBorder - endInPixel - 1).coerceAtLeast(0f)
@@ -148,8 +148,8 @@ class MarkerState(
         val entries = entriesInPixel.toMutableList()
         val currentEntries = entriesInSampleInPixel
         when {
-            pointIndex == MarkerCursorState.NonePointIndex -> Unit
-            pointIndex == MarkerCursorState.StartPointIndex -> {
+            pointIndex == MarkerCursorState.NONE_POINT_INDEX -> Unit
+            pointIndex == MarkerCursorState.START_POINT_INDEX -> {
                 val max = if (!labelerConf.useImplicitStart) {
                     if (forcedDrag) rightBorder - 1 else middlePointsInPixelSorted.firstOrNull() ?: endInPixel
                 } else {
@@ -166,7 +166,7 @@ class MarkerState(
                 val firstUpdated = entries.first().setActualStart(labelerConf, start)
                 entries[0] = firstUpdated
             }
-            pointIndex == MarkerCursorState.EndPointIndex -> {
+            pointIndex == MarkerCursorState.END_POINT_INDEX -> {
                 val min = if (!labelerConf.useImplicitEnd) {
                     if (forcedDrag) leftBorder else middlePointsInPixelSorted.lastOrNull() ?: startInPixel
                 } else {
@@ -232,10 +232,10 @@ class MarkerState(
         if (forcedDrag) {
             val lastEntryIndex = entries.lastIndex
             val (leftEntryIndex, currentEntryIndex, rightEntryIndex) = when {
-                pointIndex == MarkerCursorState.NonePointIndex -> return entries
-                pointIndex == MarkerCursorState.StartPointIndex ->
+                pointIndex == MarkerCursorState.NONE_POINT_INDEX -> return entries
+                pointIndex == MarkerCursorState.START_POINT_INDEX ->
                     Triple(null, null, if (lastEntryIndex >= 0) 0 else null)
-                pointIndex == MarkerCursorState.EndPointIndex ->
+                pointIndex == MarkerCursorState.END_POINT_INDEX ->
                     Triple((lastEntryIndex).takeIf { it >= 0 }, null, null)
                 isBorderIndex(pointIndex) -> {
                     val (firstEntryIndex, secondEntryIndex) = getEntryIndexesByBorderIndex(pointIndex)
@@ -314,20 +314,20 @@ class MarkerState(
         labelSize: DpSize,
         labelShiftUp: Dp,
     ): Int {
-        if (isLabelHovered) return MarkerCursorState.NonePointIndex
+        if (isLabelHovered) return MarkerCursorState.NONE_POINT_INDEX
 
         // end
-        if ((endInPixel - x).absoluteValue <= NearRadiusStartOrEnd) {
-            if (x >= endInPixel) return MarkerCursorState.EndPointIndex
+        if ((endInPixel - x).absoluteValue <= NEAR_RADIUS_START_OR_END) {
+            if (x >= endInPixel) return MarkerCursorState.END_POINT_INDEX
             val prev = middlePointsInPixelSorted.lastOrNull() ?: startInPixel
-            if (endInPixel - x <= x - prev) return MarkerCursorState.EndPointIndex
+            if (endInPixel - x <= x - prev) return MarkerCursorState.END_POINT_INDEX
         }
 
         // start
-        if ((startInPixel - x).absoluteValue <= NearRadiusStartOrEnd) {
-            if (x <= startInPixel) return MarkerCursorState.StartPointIndex
+        if ((startInPixel - x).absoluteValue <= NEAR_RADIUS_START_OR_END) {
+            if (x <= startInPixel) return MarkerCursorState.START_POINT_INDEX
             val next = middlePointsInPixelSorted.firstOrNull() ?: endInPixel
-            if (x - startInPixel <= next - x) return MarkerCursorState.StartPointIndex
+            if (x - startInPixel <= next - x) return MarkerCursorState.START_POINT_INDEX
         }
 
         // other points
@@ -351,11 +351,11 @@ class MarkerState(
         }
 
         // line part
-        (listOf(IndexedValue(MarkerCursorState.StartPointIndex, startInPixel)) + pointsSorted)
+        (listOf(IndexedValue(MarkerCursorState.START_POINT_INDEX, startInPixel)) + pointsSorted)
             .reversed()
             .zipWithNext()
             .forEach { (current, next) ->
-                val radius = if (isBorderIndex(current.index)) NearRadiusStartOrEnd else NearRadiusCustom
+                val radius = if (isBorderIndex(current.index)) NEAR_RADIUS_START_OR_END else NEAR_RADIUS_CUSTOM
 
                 fun inRange(point: IndexedValue<Float>) = (x - point.value).absoluteValue <= radius
 
@@ -376,16 +376,16 @@ class MarkerState(
             }
 
         // check start again
-        if ((endInPixel - x).absoluteValue <= NearRadiusStartOrEnd) {
-            return MarkerCursorState.EndPointIndex
+        if ((endInPixel - x).absoluteValue <= NEAR_RADIUS_START_OR_END) {
+            return MarkerCursorState.END_POINT_INDEX
         }
 
         // check end again
-        if ((startInPixel - x).absoluteValue <= NearRadiusStartOrEnd) {
-            MarkerCursorState.StartPointIndex
+        if ((startInPixel - x).absoluteValue <= NEAR_RADIUS_START_OR_END) {
+            MarkerCursorState.START_POINT_INDEX
         }
 
-        return MarkerCursorState.NonePointIndex
+        return MarkerCursorState.NONE_POINT_INDEX
     }
 
     fun getClickedAudioRange(
@@ -446,8 +446,8 @@ class MarkerState(
 
         val fieldCount = this.labelerConf.fields.filter { it.shortcutIndex != null }.size
         val pointIndex = when {
-            paramIndex == 0 -> MarkerCursorState.StartPointIndex
-            paramIndex == fieldCount + 1 -> MarkerCursorState.EndPointIndex
+            paramIndex == 0 -> MarkerCursorState.START_POINT_INDEX
+            paramIndex == fieldCount + 1 -> MarkerCursorState.END_POINT_INDEX
             paramIndex <= fieldCount -> this.labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
                 .takeIf { it >= 0 } ?: return null
             else -> return null
@@ -460,10 +460,10 @@ class MarkerState(
                         labelerConf.lockedDrag.useDragBase &&
                             labelerConf.fields.getOrNull(pointIndex)?.dragBase == true
                     val lockedDragByStart =
-                        labelerConf.lockedDrag.useStart && pointIndex == MarkerCursorState.StartPointIndex
+                        labelerConf.lockedDrag.useStart && pointIndex == MarkerCursorState.START_POINT_INDEX
                     lockedDragByBaseField || lockedDragByStart
                 }
-                AppConf.Editor.LockedDrag.UseStart -> pointIndex == MarkerCursorState.StartPointIndex
+                AppConf.Editor.LockedDrag.UseStart -> pointIndex == MarkerCursorState.START_POINT_INDEX
                 else -> false
             }
         val entries = if (lockDrag) {
@@ -473,6 +473,9 @@ class MarkerState(
         }
         return entries to pointIndex
     }
+
+    val isCursor: Boolean
+        get() = scissorsState.value == null && panState.value == null && playbackState.value == null
 
     fun switchTool(tool: Tool) {
         Tool.values().forEach {
@@ -499,18 +502,19 @@ class MarkerState(
     }
 
     companion object {
-        private const val NearRadiusStartOrEnd = 20f
-        private const val NearRadiusCustom = 5f
+        private const val NEAR_RADIUS_START_OR_END = 20f
+        private const val NEAR_RADIUS_CUSTOM = 5f
     }
 }
 
 @Composable
 fun rememberMarkerState(
-    sampleInfo: SampleInfo,
-    canvasParams: CanvasParams,
+    canvasState: CanvasState.Loaded,
     editorState: EditorState,
     appState: AppState,
 ): MarkerState {
+    val sampleInfo = canvasState.sampleInfo
+    val canvasParams = canvasState.params
     val sampleRate = sampleInfo.sampleRate
     val sampleLengthMillis = sampleInfo.lengthMillis
     val entries = editorState.editedEntries

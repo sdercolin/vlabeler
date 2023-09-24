@@ -3,9 +3,7 @@ package com.sdercolin.vlabeler.model.action
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.key.Key
 import com.sdercolin.vlabeler.model.key.KeySet
-import com.sdercolin.vlabeler.ui.string.Language
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.stringCertain
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.getNullableOrElse
 
 /**
@@ -225,19 +223,24 @@ enum class KeyAction(
         KeySet(Key.Up, setOf(Key.Ctrl)),
         true,
     ),
+    NavigateJumpToEntry(
+        listOf(Strings.MenuNavigate, Strings.MenuNavigateJumpToEntry),
+        KeySet(Key.G, setOf(Key.Ctrl)),
+        true,
+    ),
     NavigateNextModule(
         listOf(Strings.MenuNavigate, Strings.MenuNavigateNextModule),
-        null,
+        KeySet(Key.Right, setOf(Key.Ctrl)),
         true,
     ),
     NavigatePreviousModule(
         listOf(Strings.MenuNavigate, Strings.MenuNavigatePreviousModule),
-        null,
+        KeySet(Key.Left, setOf(Key.Ctrl)),
         true,
     ),
-    NavigateJumpToEntry(
-        listOf(Strings.MenuNavigate, Strings.MenuNavigateJumpToEntry),
-        KeySet(Key.G, setOf(Key.Ctrl)),
+    NavigateJumpToModule(
+        listOf(Strings.MenuNavigate, Strings.MenuNavigateJumpToModule),
+        KeySet(Key.G, setOf(Key.Ctrl, Key.Shift)),
         true,
     ),
     NavigateScrollFit(

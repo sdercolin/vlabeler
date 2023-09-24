@@ -1,4 +1,4 @@
-package com.sdercolin.vlabeler.ui
+package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.PluginQuickLaunch
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.LargeDialogContainer
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
@@ -58,7 +59,7 @@ private fun rememberState(appState: AppState) = remember(appState) {
 class QuickLaunchManagerDialogState(val appState: AppState) {
 
     private var slots by mutableStateOf(
-        (0 until PluginQuickLaunch.SlotCount).map { appState.appRecordStore.value.getPluginQuickLaunch(it) },
+        (0 until PluginQuickLaunch.SLOT_COUNT).map { appState.appRecordStore.value.getPluginQuickLaunch(it) },
     )
 
     val appConf get() = appState.appConf
@@ -167,7 +168,7 @@ private fun ColumnScope.Content(state: QuickLaunchManagerDialogState) {
                     )
                 }
             }
-            repeat(PluginQuickLaunch.SlotCount) { index ->
+            repeat(PluginQuickLaunch.SLOT_COUNT) { index ->
                 Item(index, state)
             }
         }

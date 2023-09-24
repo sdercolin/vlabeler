@@ -43,10 +43,9 @@ import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
-import com.sdercolin.vlabeler.ui.common.EntryItemNumber
-import com.sdercolin.vlabeler.ui.common.EntryItemSummary
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.common.NavigatorItemSummary
+import com.sdercolin.vlabeler.ui.common.NavigatorListItemNumber
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.runIf
 
 data class MoveEntryDialogArgs(val currentIndex: Int, val entries: List<Entry>, val viewConf: AppConf.View) :
@@ -186,8 +185,8 @@ private fun ResultView(entries: List<Entry>, oldIndex: Int, newIndex: Int, viewC
                     .padding(end = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                EntryItemNumber(entry.newIndex)
-                EntryItemSummary(entry.entry.name, entry.entry.sample, viewConf)
+                NavigatorListItemNumber(entry.newIndex)
+                NavigatorItemSummary(entry.entry.name, entry.entry.sample, viewConf, isEntry = true)
             }
         }
     }

@@ -58,7 +58,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-logging:2.1.0")
                 implementation("io.ktor:ktor-client-content-negotiation:2.1.0")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.0")
-                implementation("ch.qos.logback:logback-classic:1.2.6")
+                implementation("ch.qos.logback:logback-classic:1.2.9")
                 implementation("org.zeromq:jeromq:0.5.2")
                 implementation("com.segment.analytics.kotlin:core:1.9.1")
                 implementation("uk.co.caprica:vlcj:4.7.0")

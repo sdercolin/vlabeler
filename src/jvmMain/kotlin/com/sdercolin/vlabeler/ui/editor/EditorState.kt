@@ -1,7 +1,7 @@
 package com.sdercolin.vlabeler.ui.editor
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.audio.conversion.WaveConverterException
 import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.exception.MissingSampleDirectoryException
 import com.sdercolin.vlabeler.io.getPropertyValue
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
@@ -22,11 +21,14 @@ import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.editor.labeler.CanvasState
+import com.sdercolin.vlabeler.ui.editor.labeler.ScreenRangeHelper
+import com.sdercolin.vlabeler.ui.string.*
+import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.runIf
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -38,9 +40,10 @@ class EditorState(
     project: Project,
     private val appState: AppState,
 ) {
-    private val sampleInfoState: MutableState<Result<SampleInfo>?> = mutableStateOf(null)
-    val sampleInfoResult get() = sampleInfoState.value
-    val isLoading get() = sampleInfoState.value == null
+    var canvasState by mutableStateOf<CanvasState>(CanvasState.Loading)
+        private set
+    val isLoading get() = canvasState is CanvasState.Loading
+    val isError get() = canvasState is CanvasState.Error
     var project: Project by mutableStateOf(project)
     var editedEntries: List<IndexedEntry> by mutableStateOf(project.getEntriesForEditing().second)
     private val isActive get() = appState.isEditorActive
@@ -65,12 +68,18 @@ class EditorState(
     val entryTitle: String
         get() = project.currentEntry.name
 
-    fun getCanvasParams(sampleInfo: SampleInfo, density: Density) = CanvasParams(
+    private var screenRangeHolder = ScreenRangeHelper()
+
+    fun getSampleInfo(): SampleInfo? = (canvasState as? CanvasState.Loaded)?.sampleInfo
+
+    private fun getCanvasParams(sampleInfo: SampleInfo) = CanvasParams(
         dataLength = sampleInfo.length,
         chunkCount = sampleInfo.chunkCount,
         resolution = canvasResolution,
-        density = density,
     )
+
+    fun getScreenRange(canvasLength: Float, scrollState: ScrollState): FloatRange? =
+        screenRangeHolder.get(canvasLength, scrollState)
 
     @Composable
     fun getEntrySubTitle(): String {
@@ -115,6 +124,9 @@ class EditorState(
 
     val onScreenScissorsState = OnScreenScissorsState(this)
 
+    val canUseOnScreenScissors: Boolean
+        get() = appConf.editor.useOnScreenScissors && project.multipleEditMode
+
     class OnScreenScissorsState(val editorState: EditorState) {
         var isOn: Boolean by mutableStateOf(false)
         var entryIndex: Int by mutableStateOf(-1)
@@ -122,11 +134,11 @@ class EditorState(
         var pixelPosition: Float by mutableStateOf(0f)
         var text: String by mutableStateOf("")
 
-        fun start(entryIndex: Int, timePosition: Float, pixelPosition: Float) {
+        fun start(entryIndex: Int, timePosition: Float, pixelPosition: Float, initialText: String) {
             this.timePosition = timePosition
             this.pixelPosition = pixelPosition
             this.entryIndex = entryIndex
-            text = ""
+            text = initialText
             isOn = true
         }
 
@@ -173,8 +185,8 @@ class EditorState(
     }
 
     fun cutEntry(index: Int, position: Float, pixelPosition: Float) {
-        val sample = sampleInfoResult?.getOrNull() ?: return
-        if (appConf.editor.useOnScreenScissors) {
+        val sample = getSampleInfo() ?: return
+        if (canUseOnScreenScissors) {
             appState.playSectionByCutting(index, position, sample)
             if (appConf.editor.scissorsActions.askForName == AppConf.ScissorsActions.Target.None) {
                 val name = getDefaultNewEntryName(
@@ -185,7 +197,8 @@ class EditorState(
                 val targetEntryIndex = appConf.editor.scissorsActions.getTargetEntryIndex(index)
                 appState.cutEntryOnScreen(index, position, name, AppConf.ScissorsActions.Target.None, targetEntryIndex)
             } else {
-                onScreenScissorsState.start(index, position, pixelPosition)
+                val currentEntry = project.currentModule.entries[index]
+                onScreenScissorsState.start(index, position, pixelPosition, currentEntry.name)
             }
         } else {
             appState.requestCutEntry(index, position, sample)
@@ -240,37 +253,40 @@ class EditorState(
             }
 
             if (needRedirect) {
-                sampleInfoState.value = Result.failure(MissingSampleDirectoryException())
+                canvasState = CanvasState.Error
                 appState.confirmIfRedirectSampleDirectory(sampleDirectory)
                 return@withContext
             }
 
-            val previousSampleInfo = sampleInfoState.value?.getOrNull()
+            val previousSampleInfo = getSampleInfo()
             if (previousSampleInfo?.getFile(project)?.absolutePath != project.currentSampleFile.absolutePath) {
-                sampleInfoState.value = null
+                canvasState = CanvasState.Loading
             }
-            val sampleInfo = SampleInfoRepository.load(project, project.currentSampleFile, moduleName, appConf)
-            sampleInfoState.value = sampleInfo
-            sampleInfo.getOrElse {
-                Log.error(it)
-                if (it is WaveConverterException) {
-                    appState.showError(it, null)
+            SampleInfoRepository.load(project, project.currentSampleFile, moduleName, appConf)
+                .onFailure {
+                    if (it is CancellationException) return@onFailure
+                    if (it is WaveConverterException) {
+                        appState.showError(it, null)
+                    } else {
+                        Log.error(it)
+                    }
+                    canvasState = CanvasState.Error
+                }.onSuccess {
+                    val updated = chartStore.prepareForNewLoading(project, appConf, it)
+                    appState.updateProjectOnLoadedSample(it, moduleName)
+                    if (updated) {
+                        val renderProgressTotal = it.totalChartCount
+                        _renderProgress = 0 to renderProgressTotal
+                    }
+                    player.load(it.getFile(project))
+                    val params = getCanvasParams(it)
+                    canvasState = CanvasState.Loaded(params, it)
                 }
-                null
-            }?.let {
-                val updated = chartStore.prepareForNewLoading(project, appConf, it)
-                appState.updateProjectOnLoadedSample(it, moduleName)
-                if (updated) {
-                    val renderProgressTotal = it.totalChartCount
-                    _renderProgress = 0 to renderProgressTotal
-                }
-                player.load(it.getFile(project))
-            }
         }
     }
 
     fun cancelLoading() {
-        sampleInfoState.value = null
+        canvasState = CanvasState.Loading
         _renderProgress = 0 to 0
     }
 
@@ -306,6 +322,10 @@ class EditorState(
 
     fun changeResolution(resolution: Int) {
         canvasResolution = resolution
+        val canvasState = canvasState as? CanvasState.Loaded ?: return
+        val sampleInfo = canvasState.sampleInfo
+        val params = getCanvasParams(sampleInfo)
+        this.canvasState = CanvasState.Loaded(params, sampleInfo)
     }
 
     suspend fun updateResolution() {
@@ -339,18 +359,22 @@ class EditorState(
                 shouldSwitchSample = true,
                 positive = true,
             )
+
             MouseScrollAction.GoToPreviousSample -> switchEntryByPointerEvent(
                 shouldSwitchSample = true,
                 positive = false,
             )
+
             MouseScrollAction.GoToNextEntry -> switchEntryByPointerEvent(
                 shouldSwitchSample = false,
                 positive = true,
             )
+
             MouseScrollAction.GoToPreviousEntry -> switchEntryByPointerEvent(
                 shouldSwitchSample = false,
                 positive = false,
             )
+
             MouseScrollAction.ZoomInCanvas -> changeResolutionByPointerEvent(true)
             MouseScrollAction.ZoomOutCanvas -> changeResolutionByPointerEvent(false)
             else -> Unit
@@ -439,6 +463,7 @@ class EditorState(
         val property = project.labelerConf.properties
             .find { it.shortcutIndex == propertyShortcutIndex }
             ?: return false
+        if (property.valueSetter == null) return false
         val js = JavaScript()
         val currentValue = project.labelerConf.getPropertyValue(
             property,

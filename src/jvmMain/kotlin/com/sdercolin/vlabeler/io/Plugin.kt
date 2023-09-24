@@ -21,9 +21,10 @@ fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
     listOf(CustomPluginDir, DefaultPluginDir)
         .let { if (isDebug) it.reversed() else it }
         .flatMap { it.resolve(type.directoryName).getChildren() }
+        .asSequence()
         .filter { it.isDirectory }
         .distinctBy { it.name }
-        .map { it.resolve(PluginInfoFileName) }
+        .map { it.resolve(PLUGIN_INFO_FILE_NAME) }
         .filter { it.exists() }
         .map { it to it.readText() }
         .mapNotNull { (file, text) ->
@@ -80,9 +81,10 @@ fun loadPlugins(type: Plugin.Type, language: Language): List<Plugin> =
             }
         }
         .sortedBy { it.displayedName.getCertain(language) }
+        .toList()
 
 private fun String.resolveRelativePath(parent: File): String {
     return parent.resolve(this).absolutePath
 }
 
-const val PluginInfoFileName = "plugin.json"
+const val PLUGIN_INFO_FILE_NAME = "plugin.json"

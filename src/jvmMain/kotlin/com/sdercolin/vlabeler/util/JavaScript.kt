@@ -37,6 +37,18 @@ class JavaScript(
     }
 
     /**
+     * Execute JavaScript code in a scope. The code will be wrapped in a function and executed immediately.
+     */
+    fun execInScope(source: String) {
+        val wrappedSource = """
+            (function() {
+                $source
+            })()
+        """.trimIndent()
+        eval(wrappedSource)
+    }
+
+    /**
      * Only for primitives. For other types, use [getJson]
      */
     fun <T : Any> getOrNull(name: String, ofClass: Class<T>): T? {

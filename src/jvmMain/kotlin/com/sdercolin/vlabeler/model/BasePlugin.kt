@@ -29,7 +29,9 @@ interface BasePlugin {
     val author: String
     val email: String
     val website: String
+    val directory: File?
     val parameterDefs: List<Parameter<*>>
+    val resourceFiles: List<String>
     val isSelfExecutable: Boolean
         get() = false
 
@@ -108,4 +110,9 @@ interface BasePlugin {
      * Get the [File] to save the parameters.
      */
     fun getSavedParamsFile(): File
+
+    /**
+     * Get resource file contents as a list of strings.
+     */
+    fun readResourceFiles() = resourceFiles.map { requireNotNull(directory).resolve(it).readText() }
 }

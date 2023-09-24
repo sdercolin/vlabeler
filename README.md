@@ -4,14 +4,14 @@
 
 Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | [日本語](readme/README-ja.md)
 
-`vLabeler` is an open-sourced voice labeling application, aiming:
+`vLabeler` is an open-source voice labeling application with the following objectives:
 
-- Modern and fluent UI/UX
-- Customizable labeling process, to be used by different types of voice generation software
-- High performance with multiplatform support
+- Delivering a modern and seamless UI/UX.
+- Offering a customizable labeling process suitable for various voice generation software.
+- Ensuring high performance and support across multiple platforms.
 
-**The project is now in Beta.
-For help, suggestions, issue reports, etc. please join our [Discord](https://discord.gg/yrTqG2SrRd).**
+**The project is currently in its Beta phase.
+For assistance, feedback, reporting issues, and more, please join our [Discord](https://discord.gg/yrTqG2SrRd).**
 
 Demo video (in English): [YouTube](https://youtu.be/xFX8SRrJEzM)
 | [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
@@ -360,8 +360,7 @@ You can find the settings in the `Settings` icon next to the labeler selector in
 If you want to edit the labels for a voice generation software that is not supported by `vLabeler`,
 instead of requesting development supporting that software, you can create a labeler to make it work. (it requires
 some knowledge of the coding though).
-Please check [LabelerConf.kt](src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) to understand how to
-develop a labeler.
+Please check [Develop Custom Labelers](docs/labeler-development.md) for details about labeler development.
 
 You can import your own labelers in `Settings` -> `Labelers...`.
 You can also distribute the labelers created by yourself to other users, or contact us for making them built-in.
@@ -403,7 +402,7 @@ You can import/delete/disable batch edit plugins in `Tools` -> `Batch Edit` -> `
 We welcome plugin development for the application.
 You can distribute your plugin anywhere, or create a pull request to make it built-in.
 
-See [Plugin API Document](docs/plugin-development.md) for details.
+See [Develop Plugins for vLabeler](docs/plugin-development.md) for details.
 
 ## Logs
 

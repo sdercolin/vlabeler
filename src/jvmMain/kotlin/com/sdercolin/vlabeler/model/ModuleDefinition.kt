@@ -41,4 +41,13 @@ data class ModuleDefinition(
     val sampleFiles: List<File>,
     val inputFiles: List<File>?,
     val labelFile: File?,
-)
+) {
+
+    fun toRawModuleDefinition(): RawModuleDefinition = RawModuleDefinition(
+        name,
+        sampleDirectory.absolutePath,
+        sampleFiles.map { it.name },
+        inputFiles?.map { it.absolutePath },
+        labelFile?.absolutePath,
+    )
+}

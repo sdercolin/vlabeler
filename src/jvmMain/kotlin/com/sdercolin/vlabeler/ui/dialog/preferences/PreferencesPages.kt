@@ -44,7 +44,7 @@ object PreferencesPages {
                     ) {
                         integer(
                             title = Strings.PreferencesChartsCanvasResolutionDefault,
-                            defaultValue = AppConf.CanvasResolution.DefaultDefault,
+                            defaultValue = AppConf.CanvasResolution.DEFAULT_DEFAULT,
                             min = AppConf.CanvasResolution.Min,
                             max = AppConf.CanvasResolution.Max,
                             select = { it.default },
@@ -52,7 +52,7 @@ object PreferencesPages {
                         )
                         integer(
                             title = Strings.PreferencesChartsCanvasResolutionStep,
-                            defaultValue = AppConf.CanvasResolution.DefaultStep,
+                            defaultValue = AppConf.CanvasResolution.DEFAULT_STEP,
                             min = 1,
                             select = { it.step },
                             update = { copy(step = it) },
@@ -66,9 +66,9 @@ object PreferencesPages {
                     integer(
                         title = Strings.PreferencesChartsMaxDataChunkSize,
                         description = Strings.PreferencesChartsMaxDataChunkSizeDescription,
-                        defaultValue = AppConf.CanvasResolution.DefaultStep,
-                        min = AppConf.Painter.MinMaxDataChunkSize,
-                        max = AppConf.Painter.MaxMaxDataChunkSize,
+                        defaultValue = AppConf.CanvasResolution.DEFAULT_STEP,
+                        min = AppConf.Painter.MIN_MAX_DATA_CHUNK_SIZE,
+                        max = AppConf.Painter.MAX_MAX_DATA_CHUNK_SIZE,
                         select = { it.maxDataChunkSize },
                         update = { copy(maxDataChunkSize = it) },
                     )
@@ -90,53 +90,53 @@ object PreferencesPages {
                     integer(
                         title = Strings.PreferencesChartsWaveformResampleDownTo,
                         description = Strings.PreferencesChartsWaveformResampleDownToDescription,
-                        defaultValue = AppConf.Amplitude.DefaultResampleDownToHz,
-                        min = AppConf.Amplitude.MinResampleDownToHz,
+                        defaultValue = AppConf.Amplitude.DEFAULT_RESAMPLE_DOWN_TO_HZ,
+                        min = AppConf.Amplitude.MIN_RESAMPLE_DOWN_TO_HZ,
                         select = { it.resampleDownToHz },
                         update = { copy(resampleDownToHz = it) },
                     )
                     switch(
                         title = Strings.PreferencesChartsWaveformNormalize,
                         description = Strings.PreferencesChartsWaveformNormalizeDescription,
-                        defaultValue = AppConf.Amplitude.DefaultNormalize,
+                        defaultValue = AppConf.Amplitude.DEFAULT_NORMALIZE,
                         select = { it.normalize },
                         update = { copy(normalize = it) },
                     )
                     integer(
                         title = Strings.PreferencesChartsWaveformUnitSize,
                         description = Strings.PreferencesChartsWaveformUnitSizeDescription,
-                        defaultValue = AppConf.Amplitude.DefaultUnitSize,
-                        min = AppConf.Amplitude.MinUnitSize,
-                        max = AppConf.Amplitude.MaxUnitSize,
+                        defaultValue = AppConf.Amplitude.DEFAULT_UNIT_SIZE,
+                        min = AppConf.Amplitude.MIN_UNIT_SIZE,
+                        max = AppConf.Amplitude.MAX_UNIT_SIZE,
                         select = { it.unitSize },
                         update = { copy(unitSize = it) },
                     )
                     integer(
                         title = Strings.PreferencesChartsWaveformIntensityAccuracy,
-                        defaultValue = AppConf.Amplitude.DefaultIntensityAccuracy,
-                        min = AppConf.Amplitude.MinIntensityAccuracy,
-                        max = AppConf.Amplitude.MaxIntensityAccuracy,
+                        defaultValue = AppConf.Amplitude.DEFAULT_INTENSITY_ACCURACY,
+                        min = AppConf.Amplitude.MIN_INTENSITY_ACCURACY,
+                        max = AppConf.Amplitude.MAX_INTENSITY_ACCURACY,
                         select = { it.intensityAccuracy },
                         update = { copy(intensityAccuracy = it) },
                     )
                     floatPercentage(
                         title = Strings.PreferencesChartsWaveformYAxisBlankRate,
-                        defaultValue = AppConf.Amplitude.DefaultYAxisBlankRate,
-                        min = AppConf.Amplitude.MinYAxisBlankRate,
-                        max = AppConf.Amplitude.MaxYAxisBlankRate,
+                        defaultValue = AppConf.Amplitude.DEFAULT_YAXIS_BLANK_RATE,
+                        min = AppConf.Amplitude.MIN_YAXIS_BLANK_RATE,
+                        max = AppConf.Amplitude.MAX_YAXIS_BLANK_RATE,
                         select = { it.yAxisBlankRate },
                         update = { copy(yAxisBlankRate = it) },
                     )
                     color(
                         title = Strings.PreferencesChartsWaveformColor,
-                        defaultValue = AppConf.Amplitude.DefaultColor,
+                        defaultValue = AppConf.Amplitude.DEFAULT_COLOR,
                         select = { it.color },
                         update = { copy(color = it) },
                         useAlpha = true,
                     )
                     color(
                         title = Strings.PreferencesChartsWaveformBackgroundColor,
-                        defaultValue = AppConf.Amplitude.DefaultBackgroundColor,
+                        defaultValue = AppConf.Amplitude.DEFAULT_BACKGROUND_COLOR,
                         select = { it.backgroundColor },
                         update = { copy(backgroundColor = it) },
                         useAlpha = true,
@@ -157,42 +157,42 @@ object PreferencesPages {
                 ) {
                     switch(
                         title = Strings.PreferencesChartsSpectrogramEnabled,
-                        defaultValue = AppConf.Spectrogram.DefaultEnabled,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_ENABLED,
                         select = { it.enabled },
                         update = { copy(enabled = it) },
                     )
                     floatPercentage(
                         title = Strings.PreferencesChartsSpectrogramHeight,
-                        defaultValue = AppConf.Spectrogram.DefaultHeightWeight,
-                        min = AppConf.Spectrogram.MinHeightWeight,
-                        max = AppConf.Spectrogram.MaxHeightWeight,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_HEIGHT_WEIGHT,
+                        min = AppConf.Spectrogram.MIN_HEIGHT_WEIGHT,
+                        max = AppConf.Spectrogram.MAX_HEIGHT_WEIGHT,
                         select = { it.heightWeight },
                         update = { copy(heightWeight = it) },
                     )
                     integer(
                         title = Strings.PreferencesChartsSpectrogramPointDensity,
                         description = Strings.PreferencesChartsSpectrogramPointDensityDescription,
-                        defaultValue = AppConf.Spectrogram.DefaultPointDensity,
-                        min = AppConf.Spectrogram.MinPointDensity,
-                        max = AppConf.Spectrogram.MaxPointDensity,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_POINT_DENSITY,
+                        min = AppConf.Spectrogram.MIN_POINT_DENSITY,
+                        max = AppConf.Spectrogram.MAX_POINT_DENSITY,
                         select = { it.pointDensity },
                         update = { copy(pointDensity = it) },
                     )
                     integer(
                         title = Strings.PreferencesChartsSpectrogramHopSize,
-                        defaultValue = AppConf.Spectrogram.DefaultStandardHopSize,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_STANDARD_HOP_SIZE,
                         description = Strings.PreferencesChartsSpectrogramHopSizeDescription,
-                        min = AppConf.Spectrogram.MinStandardHopSize,
-                        max = AppConf.Spectrogram.MaxStandardHopSize,
+                        min = AppConf.Spectrogram.MIN_STANDARD_HOP_SIZE,
+                        max = AppConf.Spectrogram.MAX_STANDARD_HOP_SIZE,
                         select = { it.standardHopSize },
                         update = { copy(standardHopSize = it) },
                     )
                     integer(
                         title = Strings.PreferencesChartsSpectrogramWindowSize,
                         description = Strings.PreferencesChartsSpectrogramWindowSizeDescription,
-                        defaultValue = AppConf.Spectrogram.DefaultStandardWindowSize,
-                        min = AppConf.Spectrogram.MinStandardWindowSize,
-                        max = AppConf.Spectrogram.MaxStandardWindowSize,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_STANDARD_WINDOW_SIZE,
+                        min = AppConf.Spectrogram.MIN_STANDARD_WINDOW_SIZE,
+                        max = AppConf.Spectrogram.MAX_STANDARD_WINDOW_SIZE,
                         select = { it.standardWindowSize },
                         update = { copy(standardWindowSize = it) },
                     )
@@ -205,23 +205,23 @@ object PreferencesPages {
                     )
                     integer(
                         title = Strings.PreferencesChartsSpectrogramMelScaleStep,
-                        defaultValue = AppConf.Spectrogram.DefaultMelScaleStep,
-                        min = AppConf.Spectrogram.MinMelScaleStep,
-                        max = AppConf.Spectrogram.MaxMelScaleStep,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_MEL_SCALE_STEP,
+                        min = AppConf.Spectrogram.MIN_MEL_SCALE_STEP,
+                        max = AppConf.Spectrogram.MAX_MEL_SCALE_STEP,
                         select = { it.melScaleStep },
                         update = { copy(melScaleStep = it) },
                     )
                     integer(
                         title = Strings.PreferencesChartsSpectrogramMaxFrequency,
-                        defaultValue = AppConf.Spectrogram.DefaultMaxFrequency,
-                        min = AppConf.Spectrogram.MinMaxFrequency,
-                        max = AppConf.Spectrogram.MaxMaxFrequency,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_MAX_FREQUENCY,
+                        min = AppConf.Spectrogram.MIN_MAX_FREQUENCY,
+                        max = AppConf.Spectrogram.MAX_MAX_FREQUENCY,
                         select = { it.maxFrequency },
                         update = { copy(maxFrequency = it) },
                     )
                     integer(
                         title = Strings.PreferencesChartsSpectrogramMinIntensity,
-                        defaultValue = AppConf.Spectrogram.DefaultMinIntensity,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_MIN_INTENSITY,
                         select = { it.minIntensity },
                         update = { copy(minIntensity = it) },
                         validationRules = listOf(
@@ -235,7 +235,7 @@ object PreferencesPages {
                     )
                     integer(
                         title = Strings.PreferencesChartsSpectrogramMaxIntensity,
-                        defaultValue = AppConf.Spectrogram.DefaultMaxIntensity,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_MAX_INTENSITY,
                         select = { it.maxIntensity },
                         update = { copy(maxIntensity = it) },
                         validationRules = listOf(
@@ -263,7 +263,7 @@ object PreferencesPages {
                     )
                     switch(
                         title = Strings.PreferencesChartsSpectrogramUseHighAlphaContrast,
-                        defaultValue = AppConf.Spectrogram.DefaultUseHighAlphaContrast,
+                        defaultValue = AppConf.Spectrogram.DEFAULT_USE_HIGH_ALPHA_CONTRAST,
                         description = Strings.PreferencesChartsSpectrogramUseHighAlphaContrastDescription,
                         select = { it.useHighAlphaContrast },
                         update = { copy(useHighAlphaContrast = it) },
@@ -284,30 +284,30 @@ object PreferencesPages {
                 ) {
                     switch(
                         title = Strings.PreferencesChartsPowerEnabled,
-                        defaultValue = AppConf.Power.DefaultEnabled,
+                        defaultValue = AppConf.Power.DEFAULT_ENABLED,
                         select = { it.enabled },
                         update = { copy(enabled = it) },
                     )
                     switch(
                         title = Strings.PreferencesChartsPowerMergeChannels,
-                        defaultValue = AppConf.Power.DefaultMergeChannels,
+                        defaultValue = AppConf.Power.DEFAULT_MERGE_CHANNELS,
                         select = { it.mergeChannels },
                         update = { copy(mergeChannels = it) },
                     )
                     floatPercentage(
                         title = Strings.PreferencesChartsPowerHeight,
-                        defaultValue = AppConf.Power.DefaultHeightWeight,
-                        min = AppConf.Power.MinHeightWeight,
-                        max = AppConf.Power.MaxHeightWeight,
+                        defaultValue = AppConf.Power.DEFAULT_HEIGHT_WEIGHT,
+                        min = AppConf.Power.MIN_HEIGHT_WEIGHT,
+                        max = AppConf.Power.MAX_HEIGHT_WEIGHT,
                         select = { it.heightWeight },
                         update = { copy(heightWeight = it) },
                     )
                     integer(
                         title = Strings.PreferencesChartsPowerUnitSize,
                         description = Strings.PreferencesChartsPowerUnitSizeDescription,
-                        defaultValue = AppConf.Power.DefaultUnitSize,
-                        min = AppConf.Power.MinUnitSize,
-                        max = AppConf.Power.MaxUnitSize,
+                        defaultValue = AppConf.Power.DEFAULT_UNIT_SIZE,
+                        min = AppConf.Power.MIN_UNIT_SIZE,
+                        max = AppConf.Power.MAX_UNIT_SIZE,
                         select = { it.unitSize },
                         update = { copy(unitSize = it) },
                         validationRules = listOf(
@@ -321,9 +321,9 @@ object PreferencesPages {
                     )
                     integer(
                         title = Strings.PreferencesChartsPowerWindowSize,
-                        defaultValue = AppConf.Power.DefaultWindowSize,
-                        min = AppConf.Power.MinWindowSize,
-                        max = AppConf.Power.MaxWindowSize,
+                        defaultValue = AppConf.Power.DEFAULT_WINDOW_SIZE,
+                        min = AppConf.Power.MIN_WINDOW_SIZE,
+                        max = AppConf.Power.MAX_WINDOW_SIZE,
                         select = { it.windowSize },
                         update = { copy(windowSize = it) },
                         validationRules = listOf(
@@ -337,9 +337,9 @@ object PreferencesPages {
                     )
                     float(
                         title = Strings.PreferencesChartsPowerMinPower,
-                        defaultValue = AppConf.Power.DefaultMinPower,
-                        min = AppConf.Power.MinMinPower,
-                        max = AppConf.Power.MaxMaxPower,
+                        defaultValue = AppConf.Power.DEFAULT_MIN_POWER,
+                        min = AppConf.Power.MIN_MIN_POWER,
+                        max = AppConf.Power.MAX_MAX_POWER,
                         select = { it.minPower },
                         update = { copy(minPower = it) },
                         validationRules = listOf(
@@ -353,9 +353,9 @@ object PreferencesPages {
                     )
                     float(
                         title = Strings.PreferencesChartsPowerMaxPower,
-                        defaultValue = AppConf.Power.DefaultMaxPower,
-                        min = AppConf.Power.MinMinPower,
-                        max = AppConf.Power.MaxMaxPower,
+                        defaultValue = AppConf.Power.DEFAULT_MAX_POWER,
+                        min = AppConf.Power.MIN_MIN_POWER,
+                        max = AppConf.Power.MAX_MAX_POWER,
                         select = { it.maxPower },
                         update = { copy(maxPower = it) },
                         validationRules = listOf(
@@ -369,22 +369,22 @@ object PreferencesPages {
                     )
                     integer(
                         title = Strings.PreferencesChartsPowerIntensityAccuracy,
-                        defaultValue = AppConf.Power.DefaultIntensityAccuracy,
-                        min = AppConf.Power.MinIntensityAccuracy,
-                        max = AppConf.Power.MaxIntensityAccuracy,
+                        defaultValue = AppConf.Power.DEFAULT_INTENSITY_ACCURACY,
+                        min = AppConf.Power.MIN_INTENSITY_ACCURACY,
+                        max = AppConf.Power.MAX_INTENSITY_ACCURACY,
                         select = { it.intensityAccuracy },
                         update = { copy(intensityAccuracy = it) },
                     )
                     color(
                         title = Strings.PreferencesChartsPowerColor,
-                        defaultValue = AppConf.Power.DefaultColor,
+                        defaultValue = AppConf.Power.DEFAULT_COLOR,
                         select = { it.color },
                         update = { copy(color = it) },
                         useAlpha = true,
                     )
                     color(
                         title = Strings.PreferencesChartsPowerBackgroundColor,
-                        defaultValue = AppConf.Power.DefaultBackgroundColor,
+                        defaultValue = AppConf.Power.DEFAULT_BACKGROUND_COLOR,
                         select = { it.backgroundColor },
                         update = { copy(backgroundColor = it) },
                         useAlpha = true,
@@ -406,7 +406,7 @@ object PreferencesPages {
                     text(
                         title = Strings.PreferencesChartsConversionFFmpegPath,
                         description = Strings.PreferencesChartsConversionFFmpegPathDescription,
-                        defaultValue = AppConf.Conversion.DefaultFFmpegPath,
+                        defaultValue = AppConf.Conversion.DEFAULT_FFMPEG_PATH,
                         clickableTags = listOf(
                             ClickableTag(
                                 tag = "open",
@@ -418,13 +418,13 @@ object PreferencesPages {
                     )
                     text(
                         title = Strings.PreferencesChartsConversionFFmpegArgs,
-                        defaultValue = AppConf.Conversion.DefaultFFmpegArgs,
+                        defaultValue = AppConf.Conversion.DEFAULT_FFMPEG_ARGS,
                         select = { it.ffmpegArgs },
                         update = { copy(ffmpegArgs = it) },
                     )
                     switch(
                         title = Strings.PreferencesChartsConversionFFmpegUseForWav,
-                        defaultValue = AppConf.Conversion.DefaultUseConversionForWav,
+                        defaultValue = AppConf.Conversion.DEFAULT_USE_CONVERSION_FOR_WAV,
                         select = { it.useConversionForWav },
                         update = { copy(useConversionForWav = it) },
                     )
@@ -526,20 +526,20 @@ object PreferencesPages {
                     )
                     switch(
                         title = Strings.PreferencesViewHideSampleExtension,
-                        defaultValue = AppConf.View.DefaultHideSampleExtension,
+                        defaultValue = AppConf.View.DEFAULT_HIDE_SAMPLE_EXTENSION,
                         select = { it.hideSampleExtension },
                         update = { copy(hideSampleExtension = it) },
                     )
                     color(
                         title = Strings.PreferencesViewAppAccentColor,
-                        defaultValue = AppConf.View.DefaultAccentColor,
+                        defaultValue = AppConf.View.DEFAULT_ACCENT_COLOR,
                         select = { it.accentColor },
                         update = { copy(accentColor = it) },
                         useAlpha = false,
                     )
                     color(
                         title = Strings.PreferencesViewAppAccentColorVariant,
-                        defaultValue = AppConf.View.DefaultAccentColorVariant,
+                        defaultValue = AppConf.View.DEFAULT_ACCENT_COLOR_VARIANT,
                         select = { it.accentColorVariant },
                         update = { copy(accentColorVariant = it) },
                         useAlpha = false,
@@ -584,13 +584,13 @@ object PreferencesPages {
                     switch(
                         title = Strings.PreferencesEditorLockedSettingParameterWithCursor,
                         description = Strings.PreferencesEditorLockedSettingParameterWithCursorDescription,
-                        defaultValue = AppConf.Editor.DefaultLockedSettingParameterWithCursor,
+                        defaultValue = AppConf.Editor.DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR,
                         select = { it.lockedSettingParameterWithCursor },
                         update = { copy(lockedSettingParameterWithCursor = it) },
                     )
                     color(
                         title = Strings.PreferencesEditorPlayerCursorColor,
-                        defaultValue = AppConf.Editor.DefaultPlayerCursorColor,
+                        defaultValue = AppConf.Editor.DEFAULT_PLAYER_CURSOR_COLOR,
                         useAlpha = false,
                         select = { it.playerCursorColor },
                         update = { copy(playerCursorColor = it) },
@@ -612,13 +612,13 @@ object PreferencesPages {
                     switch(
                         title = Strings.PreferencesEditorScissorsUseOnScreenScissors,
                         description = Strings.PreferencesEditorScissorsUseOnScreenScissorsDescription,
-                        defaultValue = AppConf.Editor.DefaultUseOnScreenScissors,
+                        defaultValue = AppConf.Editor.DEFAULT_USE_ON_SCREEN_SCISSORS,
                         select = { it.useOnScreenScissors },
                         update = { copy(useOnScreenScissors = it) },
                     )
                     color(
                         title = Strings.PreferencesEditorScissorsColor,
-                        defaultValue = AppConf.Editor.DefaultScissorsColor,
+                        defaultValue = AppConf.Editor.DEFAULT_SCISSORS_COLOR,
                         useAlpha = true,
                         select = { it.scissorsColor },
                         update = { copy(scissorsColor = it) },
@@ -665,26 +665,26 @@ object PreferencesPages {
                 ) {
                     switch(
                         title = Strings.PreferencesEditorShowDone,
-                        defaultValue = AppConf.Editor.DefaultShowDone,
+                        defaultValue = AppConf.Editor.DEFAULT_SHOW_DONE,
                         select = { it.showDone },
                         update = { copy(showDone = it) },
                     )
                     switch(
                         title = Strings.PreferencesEditorShowStarred,
-                        defaultValue = AppConf.Editor.DefaultShowStar,
+                        defaultValue = AppConf.Editor.DEFAULT_SHOW_STAR,
                         select = { it.showStar },
                         update = { copy(showStar = it) },
                     )
                     switch(
                         title = Strings.PreferencesEditorShowTag,
-                        defaultValue = AppConf.Editor.DefaultShowTag,
+                        defaultValue = AppConf.Editor.DEFAULT_SHOW_TAG,
                         select = { it.showTag },
                         update = { copy(showTag = it) },
                     )
                     switch(
                         title = Strings.PreferencesEditorShowExtra,
                         description = Strings.PreferencesEditorShowExtraDescription,
-                        defaultValue = AppConf.Editor.DefaultShowExtra,
+                        defaultValue = AppConf.Editor.DEFAULT_SHOW_EXTRA,
                         select = { it.showExtra },
                         update = { copy(showExtra = it) },
                     )
@@ -787,28 +787,28 @@ object PreferencesPages {
                 ) {
                     switch(
                         title = Strings.PreferencesEditorAutoScrollOnLoadedNewSample,
-                        defaultValue = AppConf.AutoScroll.DefaultOnLoadedNewSample,
+                        defaultValue = AppConf.AutoScroll.DEFAULT_ON_LOADED_NEW_SAMPLE,
                         select = { it.onLoadedNewSample },
                         update = { copy(onLoadedNewSample = it) },
                         enabled = { it.onSwitched.not() },
                     )
                     switch(
                         title = Strings.PreferencesEditorAutoScrollOnJumpedToEntry,
-                        defaultValue = AppConf.AutoScroll.DefaultOnJumpedToEntry,
+                        defaultValue = AppConf.AutoScroll.DEFAULT_ON_JUMPED_TO_ENTRY,
                         select = { it.onJumpedToEntry },
                         update = { copy(onJumpedToEntry = it) },
                         enabled = { it.onSwitched.not() },
                     )
                     switch(
                         title = Strings.PreferencesEditorAutoScrollOnSwitchedInMultipleEditMode,
-                        defaultValue = AppConf.AutoScroll.DefaultOnSwitchedInMultipleEditMode,
+                        defaultValue = AppConf.AutoScroll.DEFAULT_ON_SWITCHED_IN_MULTIPLE_EDIT_MODE,
                         select = { it.onSwitchedInMultipleEditMode },
                         update = { copy(onSwitchedInMultipleEditMode = it) },
                         enabled = { it.onSwitched.not() },
                     )
                     switch(
                         title = Strings.PreferencesEditorAutoScrollOnSwitched,
-                        defaultValue = AppConf.AutoScroll.DefaultOnSwitched,
+                        defaultValue = AppConf.AutoScroll.DEFAULT_ON_SWITCHED,
                         select = { it.onSwitched },
                         update = { copy(onSwitched = it) },
                     )
@@ -828,7 +828,7 @@ object PreferencesPages {
                 ) {
                     color(
                         title = Strings.PreferencesEditorContinuousLabelNamesColor,
-                        defaultValue = AppConf.ContinuousLabelNames.DefaultColor,
+                        defaultValue = AppConf.ContinuousLabelNames.DEFAULT_COLOR,
                         select = { it.color },
                         update = { copy(color = it) },
                         useAlpha = false,
@@ -865,23 +865,23 @@ object PreferencesPages {
                     ) {
                         switch(
                             title = Strings.PreferencesPlaybackPlayOnDraggingEnabled,
-                            defaultValue = AppConf.PlayOnDragging.DefaultPlayOnDraggingEnabled,
+                            defaultValue = AppConf.PlayOnDragging.DEFAULT_PLAY_ON_DRAGGING_ENABLED,
                             select = { it.enabled },
                             update = { copy(enabled = it) },
                         )
                         integer(
                             title = Strings.PreferencesPlaybackPlayOnDraggingRangeRadiusMillis,
-                            defaultValue = AppConf.PlayOnDragging.DefaultPlayOnDraggingRangeRadiusMillis,
-                            min = AppConf.PlayOnDragging.MinPlayOnDraggingRangeRadiusMillis,
-                            max = AppConf.PlayOnDragging.MaxPlayOnDraggingRangeRadiusMillis,
+                            defaultValue = AppConf.PlayOnDragging.DEFAULT_PLAY_ON_DRAGGING_RANGE_RADIUS_MILLIS,
+                            min = AppConf.PlayOnDragging.MIN_PLAY_ON_DRAGGING_RANGE_RADIUS_MILLIS,
+                            max = AppConf.PlayOnDragging.MAX_PLAY_ON_DRAGGING_RANGE_RADIUS_MILLIS,
                             select = { it.rangeRadiusMillis },
                             update = { copy(rangeRadiusMillis = it) },
                         )
                         integer(
                             title = Strings.PreferencesPlaybackPlayOnDraggingEventQueueSize,
-                            defaultValue = AppConf.PlayOnDragging.DefaultPlayOnDraggingEventQueueSize,
-                            min = AppConf.PlayOnDragging.MinPlayOnDraggingEventQueueSize,
-                            max = AppConf.PlayOnDragging.MaxPlayOnDraggingEventQueueSize,
+                            defaultValue = AppConf.PlayOnDragging.DEFAULT_PLAY_ON_DRAGGING_EVENT_QUEUE_SIZE,
+                            min = AppConf.PlayOnDragging.MIN_PLAY_ON_DRAGGING_EVENT_QUEUE_SIZE,
+                            max = AppConf.PlayOnDragging.MAX_PLAY_ON_DRAGGING_EVENT_QUEUE_SIZE,
                             select = { it.eventQueueSize },
                             update = { copy(eventQueueSize = it) },
                         )
@@ -906,8 +906,8 @@ object PreferencesPages {
                     )
                     integer(
                         title = Strings.PreferencesAutoSaveIntervalSec,
-                        defaultValue = AppConf.AutoSave.DefaultIntervalSec,
-                        min = AppConf.AutoSave.MinIntervalSec,
+                        defaultValue = AppConf.AutoSave.DEFAULT_INTERVAL_SEC,
+                        min = AppConf.AutoSave.MIN_INTERVAL_SEC,
                         select = { it.intervalSec },
                         update = { copy(intervalSec = it) },
                     )
@@ -924,15 +924,15 @@ object PreferencesPages {
                 ) {
                     integer(
                         title = Strings.PreferencesHistoryMaxSize,
-                        defaultValue = AppConf.History.DefaultMaxSize,
-                        min = AppConf.History.MinMaxSize,
+                        defaultValue = AppConf.History.DEFAULT_MAX_SIZE,
+                        min = AppConf.History.MIN_MAX_SIZE,
                         select = { it.maxSize },
                         update = { copy(maxSize = it) },
                     )
                     switch(
                         title = Strings.PreferencesHistorySquashIndex,
                         description = Strings.PreferencesHistorySquashIndexDescription,
-                        defaultValue = AppConf.History.DefaultSquashIndex,
+                        defaultValue = AppConf.History.DEFAULT_SQUASH_INDEX,
                         select = { it.squashIndex },
                         update = { copy(squashIndex = it) },
                     )
@@ -950,7 +950,7 @@ object PreferencesPages {
                     switch(
                         title = Strings.PreferencesMiscUseCustomFileDialog,
                         description = Strings.PreferencesMiscUseCustomFileDialogDescription,
-                        defaultValue = AppConf.Misc.DefaultUseCustomFileDialog,
+                        defaultValue = AppConf.Misc.DEFAULT_USE_CUSTOM_FILE_DIALOG,
                         select = { it.useCustomFileDialog },
                         update = { copy(useCustomFileDialog = it) },
                     )
