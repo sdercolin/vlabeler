@@ -1,73 +1,73 @@
 {
-  "name": "audacity2lab",
-  "version": 8,
-  "type": "template",
-  "displayedName": {
-    "en": "Audacity labels to Sinsy lab format",
-    "zh": "Audacity 标签转换为 Sinsy lab 格式",
-    "ja": "Audacity 式ラベルを Sinsy lab フォーマットに変換"
-  },
-  "author": "sdercolin",
-  "email": "sder.colin@gmail.com",
-  "description": {
-    "en": "Convert label file created by Audacity to Sinsy lab format. Can be used on other similar formats with configuration.",
-    "zh": "将 Audacity 创建的标签文件转换为 Sinsy lab 格式。可以通过修改配置用于其他类似的格式。",
-    "ja": "Audacity で作成されたラベルファイルを Sinsy lab フォーマットに変換します。設定を変更することで他の類似フォーマットにも変換できます。"
-  },
-  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/audacity2lab",
-  "supportedLabelFileExtension": "lab",
-  "outputRawEntry": true,
-  "parameters": {
-    "list": [
-      {
-        "type": "float",
-        "name": "unit",
-        "label": {
-          "en": "Time unit (s)",
-          "zh": "时间单位（秒）",
-          "ja": "時間単位（秒）"
-        },
-        "defaultValue": 1.0,
-        "min": 0
-      },
-      {
-        "type": "rawFile",
-        "name": "inputFile",
-        "label": {
-          "en": "Input file (.txt)",
-          "zh": "输入文件（.txt）",
-          "ja": "入力ファイル（.txt）"
-        },
-        "description": {
-          "en": "The input file. Only needed when the labeler creates single subproject.",
-          "zh": "输入文件。仅在标注器将创建单个子项目时需要。",
-          "ja": "入力ファイル。ラベラーが単一のサブプロジェクトを対応している場合にのみ必要になります。"
-        },
-        "defaultValue": "",
-        "optional": true,
-        "acceptExtensions": [
-          "txt"
+    "name": "audacity2lab",
+    "version": 8,
+    "type": "template",
+    "displayedName": {
+        "en": "Audacity labels to Sinsy lab format",
+        "zh": "Audacity 标签转换为 Sinsy lab 格式",
+        "ja": "Audacity 式ラベルを Sinsy lab フォーマットに変換"
+    },
+    "author": "sdercolin",
+    "email": "sder.colin@gmail.com",
+    "description": {
+        "en": "Convert label file created by Audacity to Sinsy lab format. Can be used on other similar formats with configuration.",
+        "zh": "将 Audacity 创建的标签文件转换为 Sinsy lab 格式。可以通过修改配置用于其他类似的格式。",
+        "ja": "Audacity で作成されたラベルファイルを Sinsy lab フォーマットに変換します。設定を変更することで他の類似フォーマットにも変換できます。"
+    },
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/audacity2lab",
+    "supportedLabelFileExtension": "lab",
+    "outputRawEntry": true,
+    "parameters": {
+        "list": [
+            {
+                "type": "float",
+                "name": "unit",
+                "label": {
+                    "en": "Time unit (s)",
+                    "zh": "时间单位（秒）",
+                    "ja": "時間単位（秒）"
+                },
+                "defaultValue": 1.0,
+                "min": 0
+            },
+            {
+                "type": "rawFile",
+                "name": "inputFile",
+                "label": {
+                    "en": "Input file (.txt)",
+                    "zh": "输入文件（.txt）",
+                    "ja": "入力ファイル（.txt）"
+                },
+                "description": {
+                    "en": "The input file. Only needed when the labeler creates single subproject.",
+                    "zh": "输入文件。仅在标注器将创建单个子项目时需要。",
+                    "ja": "入力ファイル。ラベラーが単一のサブプロジェクトを対応している場合にのみ必要になります。"
+                },
+                "defaultValue": "",
+                "optional": true,
+                "acceptExtensions": [
+                    "txt"
+                ]
+            },
+            {
+                "type": "string",
+                "name": "inputFolderName",
+                "label": {
+                    "en": "Input folder name",
+                    "zh": "输入文件夹名称",
+                    "ja": "入力フォルダ名"
+                },
+                "description": {
+                    "en": "The folder name of the input files. Only needed when the labeler creates multiple subprojects. Please put the input files in the folder with the same name as their corresponding wav files.",
+                    "zh": "输入文件的文件夹名称。仅在标注器将创建多个子项目时需要。请将输入文件的文件名设为与其对应的 wav 文件相同，并放在该文件夹中。",
+                    "ja": "入力ファイルのフォルダ名。ラベラーが複数のサブプロジェクトを対応している場合にのみ必要になります。入力ファイルのファイル名を対応する wav ファイルと同じ名前にして、指定したフォルダに入れてください。"
+                },
+                "defaultValue": "audacity"
+            }
         ]
-      },
-      {
-        "type": "string",
-        "name": "inputFolderName",
-        "label": {
-          "en": "Input folder name",
-          "zh": "输入文件夹名称",
-          "ja": "入力フォルダ名"
-        },
-        "description": {
-          "en": "The folder name of the input files. Only needed when the labeler creates multiple subprojects. Please put the input files in the folder with the same name as their corresponding wav files.",
-          "zh": "输入文件的文件夹名称。仅在标注器将创建多个子项目时需要。请将输入文件的文件名设为与其对应的 wav 文件相同，并放在该文件夹中。",
-          "ja": "入力ファイルのフォルダ名。ラベラーが複数のサブプロジェクトを対応している場合にのみ必要になります。入力ファイルのファイル名を対応する wav ファイルと同じ名前にして、指定したフォルダに入れてください。"
-        },
-        "defaultValue": "audacity"
-      }
-    ]
-  },
-  "scriptFiles": [
-    "audacity2lab.js"
-  ],
-  "inputFinderScriptFile": "find-input.js"
+    },
+    "scriptFiles": [
+        "audacity2lab.js"
+    ],
+    "inputFinderScriptFile": "find-input.js"
 }

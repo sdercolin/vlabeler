@@ -1,66 +1,66 @@
 {
-  "name": "generate-reclist",
-  "version": 1,
-  "type": "macro",
-  "displayedName": {
-    "en": "Generate reclist from samples",
-    "zh": "从采样文件生成录音表",
-    "ja": "サンプルから録音リストを生成する"
-  },
-  "author": "sdercolin",
-  "email": "sder.colin@gmail.com",
-  "description": {
-    "en": "List sample files and generate reclists from them.",
-    "zh": "列出采样文件并从中生成录音表。",
-    "ja": "サンプルファイルをリストアップし、それらから録音リストを生成します。"
-  },
-  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/generate-reclist",
-  "supportedLabelFileExtension": "ini",
-  "parameters": {
-    "list": [
-      {
-        "type": "rawFile",
-        "name": "outputFolder",
-        "label": {
-          "en": "Output folder",
-          "zh": "输出文件夹",
-          "ja": "出力フォルダ"
-        },
-        "defaultValue": "",
-        "optional": false,
-        "isFolder": true
-      },
-      {
-        "type": "string",
-        "name": "extensions",
-        "label": {
-          "en": "Extension(s) of sample files",
-          "zh": "采样文件的扩展名",
-          "ja": "サンプルファイルの拡張子"
-        },
-        "description": {
-          "en": "Separate multiple extensions with comma.",
-          "zh": "用逗号分隔多个扩展名。",
-          "ja": "複数の拡張子はカンマで区切ります。"
-        },
-        "defaultValue": "wav",
-        "optional": false
-      },
-      {
-        "type": "string",
-        "name": "encoding",
-        "label": {
-          "en": "Encoding",
-          "zh": "编码",
-          "ja": "エンコーディング"
-        },
-        "defaultValue": "UTF-8",
-        "optional": false
-      }
-    ]
-  },
-  "scriptFiles": [
-    "generate-reclist.js"
-  ],
-  "scope": "Project"
+    "name": "generate-reclist",
+    "version": 1,
+    "type": "macro",
+    "displayedName": {
+        "en": "Generate reclist from samples",
+        "zh": "从采样文件生成录音表",
+        "ja": "サンプルから録音リストを生成する"
+    },
+    "author": "sdercolin",
+    "email": "sder.colin@gmail.com",
+    "description": {
+        "en": "List sample files and generate reclists from them.",
+        "zh": "列出采样文件并从中生成录音表。",
+        "ja": "サンプルファイルをリストアップし、それらから録音リストを生成します。"
+    },
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/generate-reclist",
+    "supportedLabelFileExtension": "ini",
+    "parameters": {
+        "list": [
+            {
+                "type": "rawFile",
+                "name": "outputFolder",
+                "label": {
+                    "en": "Output folder",
+                    "zh": "输出文件夹",
+                    "ja": "出力フォルダ"
+                },
+                "defaultValue": "",
+                "optional": false,
+                "isFolder": true
+            },
+            {
+                "type": "string",
+                "name": "extensions",
+                "label": {
+                    "en": "Extension(s) of sample files",
+                    "zh": "采样文件的扩展名",
+                    "ja": "サンプルファイルの拡張子"
+                },
+                "description": {
+                    "en": "Separate multiple extensions with comma.",
+                    "zh": "用逗号分隔多个扩展名。",
+                    "ja": "複数の拡張子はカンマで区切ります。"
+                },
+                "defaultValue": "wav",
+                "optional": false
+            },
+            {
+                "type": "string",
+                "name": "encoding",
+                "label": {
+                    "en": "Encoding",
+                    "zh": "编码",
+                    "ja": "エンコーディング"
+                },
+                "defaultValue": "UTF-8",
+                "optional": false
+            }
+        ]
+    },
+    "scriptFiles": [
+        "generate-reclist.js"
+    ],
+    "scope": "Project"
 }

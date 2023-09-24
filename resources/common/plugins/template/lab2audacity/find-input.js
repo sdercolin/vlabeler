@@ -27,7 +27,7 @@ if (labeler.projectConstructor) {
     }
 
     let inputFile = File.fromPath(inputFilePath)
-    if(!inputFile.exists()) {
+    if (!inputFile.exists()) {
         notFoundError(inputFilePath)
     }
     inputFilePaths = [inputFilePath]

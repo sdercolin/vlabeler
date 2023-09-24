@@ -1,80 +1,80 @@
 {
-  "name": "mark-oto-entries-in-ust",
-  "version": 3,
-  "type": "macro",
-  "displayedName": {
-    "en": "Mark oto entries used in ust",
-    "zh": "标出 ust 中用到的 oto 条目",
-    "ja": "ust で使用されている oto エントリをマークする"
-  },
-  "author": "sdercolin",
-  "email": "sder.colin@gmail.com",
-  "description": {
-    "en": "Read a ust file and mark entries that are used in it.",
-    "zh": "读取 ust 文件，并标出其中用到的条目。",
-    "ja": "ust ファイルを読み込み、その中で使用されているエントリをマークします。"
-  },
-  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/mark-oto-entries-in-ust",
-  "supportedLabelFileExtension": "ini",
-  "scope": "Project",
-  "parameters": {
-    "list": [
-      {
-        "type": "boolean",
-        "name": "allModules",
-        "label": {
-          "en": "Apply to all subprojects",
-          "zh": "应用于所有子项目",
-          "ja": "すべてのサブプロジェクトに適用"
-        },
-        "defaultValue": false
-      },
-      {
-        "type": "file",
-        "name": "input",
-        "label": {
-          "en": "File (.ust)",
-          "zh": "文件 (.ust)",
-          "ja": "ファイル (.ust)"
-        },
-        "defaultValue": {},
-        "acceptExtensions": [
-          "ust"
+    "name": "mark-oto-entries-in-ust",
+    "version": 3,
+    "type": "macro",
+    "displayedName": {
+        "en": "Mark oto entries used in ust",
+        "zh": "标出 ust 中用到的 oto 条目",
+        "ja": "ust で使用されている oto エントリをマークする"
+    },
+    "author": "sdercolin",
+    "email": "sder.colin@gmail.com",
+    "description": {
+        "en": "Read a ust file and mark entries that are used in it.",
+        "zh": "读取 ust 文件，并标出其中用到的条目。",
+        "ja": "ust ファイルを読み込み、その中で使用されているエントリをマークします。"
+    },
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/mark-oto-entries-in-ust",
+    "supportedLabelFileExtension": "ini",
+    "scope": "Project",
+    "parameters": {
+        "list": [
+            {
+                "type": "boolean",
+                "name": "allModules",
+                "label": {
+                    "en": "Apply to all subprojects",
+                    "zh": "应用于所有子项目",
+                    "ja": "すべてのサブプロジェクトに適用"
+                },
+                "defaultValue": false
+            },
+            {
+                "type": "file",
+                "name": "input",
+                "label": {
+                    "en": "File (.ust)",
+                    "zh": "文件 (.ust)",
+                    "ja": "ファイル (.ust)"
+                },
+                "defaultValue": {},
+                "acceptExtensions": [
+                    "ust"
+                ]
+            },
+            {
+                "type": "file",
+                "name": "prefixMap",
+                "label": "Prefix map (.map)",
+                "description": {
+                    "en": "The \"prefix.map\" file used in your voice bank. If not given, lyrics are matched strictly with entry names.",
+                    "zh": "你的声库中使用的 \"prefix.map\" 文件。如果不给出，歌词将严格匹配条目名。",
+                    "ja": "ボイスバンクで使用されている \"prefix.map\" ファイル。指定しない場合、歌詞はエントリ名と完全一致でマッチします。"
+                },
+                "defaultValue": {},
+                "optional": true,
+                "acceptExtensions": [
+                    "map"
+                ]
+            },
+            {
+                "name": "mark",
+                "type": "string",
+                "label": {
+                    "en": "Mark",
+                    "zh": "标记符号",
+                    "ja": "マーク"
+                },
+                "description": {
+                    "en": "The text to be appended to the tags of the used entries.",
+                    "zh": "用于标记的文本，将被附加到已用到的条目的标签后。",
+                    "ja": "使用されているエントリのタグに追加されるテキストです。"
+                },
+                "defaultValue": "*"
+            }
         ]
-      },
-      {
-        "type": "file",
-        "name": "prefixMap",
-        "label": "Prefix map (.map)",
-        "description": {
-          "en": "The \"prefix.map\" file used in your voice bank. If not given, lyrics are matched strictly with entry names.",
-          "zh": "你的声库中使用的 \"prefix.map\" 文件。如果不给出，歌词将严格匹配条目名。",
-          "ja": "ボイスバンクで使用されている \"prefix.map\" ファイル。指定しない場合、歌詞はエントリ名と完全一致でマッチします。"
-        },
-        "defaultValue": {},
-        "optional": true,
-        "acceptExtensions": [
-          "map"
-        ]
-      },
-      {
-        "name": "mark",
-        "type": "string",
-        "label": {
-          "en": "Mark",
-          "zh": "标记符号",
-          "ja": "マーク"
-        },
-        "description": {
-          "en": "The text to be appended to the tags of the used entries.",
-          "zh": "用于标记的文本，将被附加到已用到的条目的标签后。",
-          "ja": "使用されているエントリのタグに追加されるテキストです。"
-        },
-        "defaultValue": "*"
-      }
+    },
+    "scriptFiles": [
+        "mark-oto-entries-in-ust.js"
     ]
-  },
-  "scriptFiles": [
-    "mark-oto-entries-in-ust.js"
-  ]
 }

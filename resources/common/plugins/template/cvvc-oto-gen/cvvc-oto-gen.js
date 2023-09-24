@@ -434,8 +434,8 @@ for (let sample of samples) {
 
 if (reorder) {
     let maps = reorderCVFirst
-        ? [outputSampleCVMap, outputSampleVCMap, outputSampleOtherMap]
-        : [outputSampleVCMap, outputSampleCVMap, outputSampleOtherMap]
+            ? [outputSampleCVMap, outputSampleVCMap, outputSampleOtherMap]
+            : [outputSampleVCMap, outputSampleCVMap, outputSampleOtherMap]
     if (reorderAcrossSample) {
 
         for (let map of maps) {

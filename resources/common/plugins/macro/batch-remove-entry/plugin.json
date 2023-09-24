@@ -1,43 +1,43 @@
 {
-  "name": "batch-remove-entry",
-  "version": 4,
-  "type": "macro",
-  "displayedName": {
-    "en": "Batch remove entry",
-    "zh": "批量删除条目",
-    "ja": "エントリを一括削除"
-  },
-  "author": "sdercolin",
-  "email": "sder.colin@gmail.com",
-  "description": {
-    "en": "Remove multiple entries at once.",
-    "zh": "一次性删除多个条目。",
-    "ja": "複数のエントリを一括削除します。"
-  },
-  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-remove-entry",
-  "supportedLabelFileExtension": "*",
-  "parameters": {
-    "list": [
-      {
-        "type": "entrySelector",
-        "name": "selector",
-        "label": {
-          "en": "Entry filters",
-          "zh": "条目筛选器",
-          "ja": "エントリフィルター"
-        },
-        "description": {
-          "en": "Add filters to select the entries to remove.",
-          "zh": "添加筛选器以选择要删除的条目。",
-          "ja": "削除するエントリを選択するフィルターを追加してください。"
-        },
-        "defaultValue": {
-          "filters": []
-        }
-      }
+    "name": "batch-remove-entry",
+    "version": 4,
+    "type": "macro",
+    "displayedName": {
+        "en": "Batch remove entry",
+        "zh": "批量删除条目",
+        "ja": "エントリを一括削除"
+    },
+    "author": "sdercolin",
+    "email": "sder.colin@gmail.com",
+    "description": {
+        "en": "Remove multiple entries at once.",
+        "zh": "一次性删除多个条目。",
+        "ja": "複数のエントリを一括削除します。"
+    },
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-remove-entry",
+    "supportedLabelFileExtension": "*",
+    "parameters": {
+        "list": [
+            {
+                "type": "entrySelector",
+                "name": "selector",
+                "label": {
+                    "en": "Entry filters",
+                    "zh": "条目筛选器",
+                    "ja": "エントリフィルター"
+                },
+                "description": {
+                    "en": "Add filters to select the entries to remove.",
+                    "zh": "添加筛选器以选择要删除的条目。",
+                    "ja": "削除するエントリを選択するフィルターを追加してください。"
+                },
+                "defaultValue": {
+                    "filters": []
+                }
+            }
+        ]
+    },
+    "scriptFiles": [
+        "batch-remove-entry.js"
     ]
-  },
-  "scriptFiles": [
-    "batch-remove-entry.js"
-  ]
 }

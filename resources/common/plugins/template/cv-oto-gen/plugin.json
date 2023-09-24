@@ -1,79 +1,79 @@
 {
-  "name": "cv-oto-gen",
-  "version": 6,
-  "type": "template",
-  "displayedName": {
-    "en": "CV oto generator",
-    "zh": "单独音 oto 生成器",
-    "ja": "単独音 oto 生成器"
-  },
-  "author": "sdercolin",
-  "email": "sder.colin@gmail.com",
-  "description": {
-    "en": "Generate template for CV oto.",
-    "zh": "生成单独音 oto 模板。",
-    "ja": "単独音 oto テンプレートを生成します。"
-  },
-  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/cv-oto-gen",
-  "supportedLabelFileExtension": "ini",
-  "parameters": {
-    "list": [
-      {
-        "type": "float",
-        "name": "offset",
-        "label": {
-          "en": "Offset (ms)",
-          "zh": "左边界（毫秒）",
-          "ja": "左ブランク（ミリ秒）"
-        },
-        "defaultValue": 100,
-        "min": 0
-      },
-      {
-        "type": "float",
-        "name": "overlap",
-        "label": {
-          "en": "Overlap (ms)",
-          "zh": "重叠（毫秒）",
-          "ja": "オーバーラップ（ミリ秒）"
-        },
-        "defaultValue": 30
-      },
-      {
-        "type": "float",
-        "name": "preutterance",
-        "label": {
-          "en": "Preutterance (ms)",
-          "zh": "先行发声（毫秒）",
-          "ja": "先行発声（ミリ秒）"
-        },
-        "defaultValue": 60,
-        "min": 0
-      },
-      {
-        "type": "float",
-        "name": "fixed",
-        "label": {
-          "en": "Fixed (ms)",
-          "zh": "固定（毫秒）",
-          "ja": "固定範囲（ミリ秒）"
-        },
-        "defaultValue": 100,
-        "min": 0
-      },
-      {
-        "type": "float",
-        "name": "cutoff",
-        "label": {
-          "en": "Cutoff (ms)",
-          "zh": "右边界（毫秒）",
-          "ja": "右ブランク（ミリ秒）"
-        },
-        "defaultValue": -1000
-      }
+    "name": "cv-oto-gen",
+    "version": 6,
+    "type": "template",
+    "displayedName": {
+        "en": "CV oto generator",
+        "zh": "单独音 oto 生成器",
+        "ja": "単独音 oto 生成器"
+    },
+    "author": "sdercolin",
+    "email": "sder.colin@gmail.com",
+    "description": {
+        "en": "Generate template for CV oto.",
+        "zh": "生成单独音 oto 模板。",
+        "ja": "単独音 oto テンプレートを生成します。"
+    },
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/cv-oto-gen",
+    "supportedLabelFileExtension": "ini",
+    "parameters": {
+        "list": [
+            {
+                "type": "float",
+                "name": "offset",
+                "label": {
+                    "en": "Offset (ms)",
+                    "zh": "左边界（毫秒）",
+                    "ja": "左ブランク（ミリ秒）"
+                },
+                "defaultValue": 100,
+                "min": 0
+            },
+            {
+                "type": "float",
+                "name": "overlap",
+                "label": {
+                    "en": "Overlap (ms)",
+                    "zh": "重叠（毫秒）",
+                    "ja": "オーバーラップ（ミリ秒）"
+                },
+                "defaultValue": 30
+            },
+            {
+                "type": "float",
+                "name": "preutterance",
+                "label": {
+                    "en": "Preutterance (ms)",
+                    "zh": "先行发声（毫秒）",
+                    "ja": "先行発声（ミリ秒）"
+                },
+                "defaultValue": 60,
+                "min": 0
+            },
+            {
+                "type": "float",
+                "name": "fixed",
+                "label": {
+                    "en": "Fixed (ms)",
+                    "zh": "固定（毫秒）",
+                    "ja": "固定範囲（ミリ秒）"
+                },
+                "defaultValue": 100,
+                "min": 0
+            },
+            {
+                "type": "float",
+                "name": "cutoff",
+                "label": {
+                    "en": "Cutoff (ms)",
+                    "zh": "右边界（毫秒）",
+                    "ja": "右ブランク（ミリ秒）"
+                },
+                "defaultValue": -1000
+            }
+        ]
+    },
+    "scriptFiles": [
+        "cv-oto-gen.js"
     ]
-  },
-  "scriptFiles": [
-    "cv-oto-gen.js"
-  ]
 }

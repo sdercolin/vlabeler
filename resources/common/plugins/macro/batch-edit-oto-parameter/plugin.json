@@ -1,118 +1,118 @@
 {
-  "name": "batch-edit-oto-parameter",
-  "version": 7,
-  "type": "macro",
-  "displayedName": {
-    "en": "Batch edit oto parameter",
-    "zh": "批量修改 oto 参数",
-    "ja": "oto パラメーターを一括編集"
-  },
-  "author": "sdercolin",
-  "email": "sder.colin@gmail.com",
-  "description": {
-    "en": "Edit the parameters of multiple entries in UTAU oto.ini at once.",
-    "zh": "一次性修改 UTAU oto.ini 中多个条目的参数。",
-    "ja": "UTAU oto.ini のパラメータを一括編集します。"
-  },
-  "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-oto-parameter",
-  "supportedLabelFileExtension": "ini",
-  "parameters": {
-    "list": [
-      {
-        "type": "entrySelector",
-        "name": "selector",
-        "label": {
-          "en": "Entry filters",
-          "zh": "条目筛选器",
-          "ja": "エントリフィルター"
-        },
-        "description": {
-          "en": "Add filters to select the entries to edit. Leave blank to edit all entries.",
-          "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。",
-          "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。"
-        },
-        "defaultValue": {
-          "filters": []
-        }
-      },
-      {
-        "type": "enum",
-        "name": "parameter",
-        "label": {
-          "en": "Parameter to edit",
-          "zh": "要编辑的参数",
-          "ja": "編集するパラメーター"
-        },
-        "defaultValue": "offset",
-        "options": [
-          "offset",
-          "overlap",
-          "preutterance",
-          "fixed",
-          "cutoff"
-        ],
-        "optionDisplayedNames": [
-          {
-            "en": "Offset",
-            "zh": "左边界",
-            "ja": "左ブランク"
-          },
-          {
-            "en": "Overlap",
-            "zh": "重叠",
-            "ja": "オーバーラップ"
-          },
-          {
-            "en": "Preutterance",
-            "zh": "先行发声",
-            "ja": "先行発声"
-          },
-          {
-            "en": "Fixed",
-            "zh": "固定",
-            "ja": "固定範囲"
-          },
-          {
-            "en": "Cutoff",
-            "zh": "右边界",
-            "ja": "右ブランク"
-          }
+    "name": "batch-edit-oto-parameter",
+    "version": 7,
+    "type": "macro",
+    "displayedName": {
+        "en": "Batch edit oto parameter",
+        "zh": "批量修改 oto 参数",
+        "ja": "oto パラメーターを一括編集"
+    },
+    "author": "sdercolin",
+    "email": "sder.colin@gmail.com",
+    "description": {
+        "en": "Edit the parameters of multiple entries in UTAU oto.ini at once.",
+        "zh": "一次性修改 UTAU oto.ini 中多个条目的参数。",
+        "ja": "UTAU oto.ini のパラメータを一括編集します。"
+    },
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-oto-parameter",
+    "supportedLabelFileExtension": "ini",
+    "parameters": {
+        "list": [
+            {
+                "type": "entrySelector",
+                "name": "selector",
+                "label": {
+                    "en": "Entry filters",
+                    "zh": "条目筛选器",
+                    "ja": "エントリフィルター"
+                },
+                "description": {
+                    "en": "Add filters to select the entries to edit. Leave blank to edit all entries.",
+                    "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。",
+                    "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。"
+                },
+                "defaultValue": {
+                    "filters": []
+                }
+            },
+            {
+                "type": "enum",
+                "name": "parameter",
+                "label": {
+                    "en": "Parameter to edit",
+                    "zh": "要编辑的参数",
+                    "ja": "編集するパラメーター"
+                },
+                "defaultValue": "offset",
+                "options": [
+                    "offset",
+                    "overlap",
+                    "preutterance",
+                    "fixed",
+                    "cutoff"
+                ],
+                "optionDisplayedNames": [
+                    {
+                        "en": "Offset",
+                        "zh": "左边界",
+                        "ja": "左ブランク"
+                    },
+                    {
+                        "en": "Overlap",
+                        "zh": "重叠",
+                        "ja": "オーバーラップ"
+                    },
+                    {
+                        "en": "Preutterance",
+                        "zh": "先行发声",
+                        "ja": "先行発声"
+                    },
+                    {
+                        "en": "Fixed",
+                        "zh": "固定",
+                        "ja": "固定範囲"
+                    },
+                    {
+                        "en": "Cutoff",
+                        "zh": "右边界",
+                        "ja": "右ブランク"
+                    }
+                ]
+            },
+            {
+                "type": "string",
+                "name": "expression",
+                "label": {
+                    "en": "Expression",
+                    "zh": "表达式",
+                    "ja": "計算式"
+                },
+                "description": {
+                    "en": "Expression to calculate the new value. Parameter placeholders such as \"${Offset}\", \"${Overlap} are available in the calculation.",
+                    "zh": "用于计算新值的表达式。可以在计算中使用参数占位符，例如 \"${左边界}\", \"${重叠}\"。",
+                    "ja": "新しい値を計算するための式。計算式中にパラメーターのプレースホルダー（例：\"${左ブランク}\", \"${Overlap}\"）を使用できます。"
+                },
+                "defaultValue": "",
+                "optional": false
+            },
+            {
+                "type": "boolean",
+                "name": "keepDistance",
+                "label": {
+                    "en": "Keep relative positions",
+                    "zh": "保持相对位置",
+                    "ja": "相対位置を保持"
+                },
+                "description": {
+                    "en": "Move all the other parameters to keep the distance with the edited parameter.",
+                    "zh": "移动所有其他参数以保持与编辑的参数的距离。",
+                    "ja": "編集したパラメーターとの距離を保持するように、他のすべてのパラメーターを移動します。"
+                },
+                "defaultValue": false
+            }
         ]
-      },
-      {
-        "type": "string",
-        "name": "expression",
-        "label": {
-          "en": "Expression",
-          "zh": "表达式",
-          "ja": "計算式"
-        },
-        "description": {
-          "en": "Expression to calculate the new value. Parameter placeholders such as \"${Offset}\", \"${Overlap} are available in the calculation.",
-          "zh": "用于计算新值的表达式。可以在计算中使用参数占位符，例如 \"${左边界}\", \"${重叠}\"。",
-          "ja": "新しい値を計算するための式。計算式中にパラメーターのプレースホルダー（例：\"${左ブランク}\", \"${Overlap}\"）を使用できます。"
-        },
-        "defaultValue": "",
-        "optional": false
-      },
-      {
-        "type": "boolean",
-        "name": "keepDistance",
-        "label": {
-          "en": "Keep relative positions",
-          "zh": "保持相对位置",
-          "ja": "相対位置を保持"
-        },
-        "description": {
-          "en": "Move all the other parameters to keep the distance with the edited parameter.",
-          "zh": "移动所有其他参数以保持与编辑的参数的距离。",
-          "ja": "編集したパラメーターとの距離を保持するように、他のすべてのパラメーターを移動します。"
-        },
-        "defaultValue": false
-      }
+    },
+    "scriptFiles": [
+        "batch-edit-oto-parameter.js"
     ]
-  },
-  "scriptFiles": [
-    "batch-edit-oto-parameter.js"
-  ]
 }
