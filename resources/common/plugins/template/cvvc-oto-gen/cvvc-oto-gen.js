@@ -141,47 +141,70 @@ function checkAliasCount(alias, isOther, isSingleC) {
     if (thisCount > 1) {
         thisAlias += repeatSuffix.replaceAll("{number}", thisCount)
     }
+    aliasCountMap.set(alias, count + 1)
     return thisAlias
 }
 
-function pushHeadCV() {
-    // to implement
-}
+function pushHeadCV(sample, alias, nextHasConsonant) {
+    let thisAlias = checkAliasCount(alias, false, false)
 
-function pushHeadV() {
-    // to implement
-}
-
-// to edit
-function pushCV(sample, index, alias, isSpecial, tag) {
-    // check alias count
-    let max = repeat
-    let count = aliasCountMap.get(alias) || 0
-    if (!isSpecial && count >= max) {
-        return
-    }
-
-    let thisCount = count + 1
-    let thisAlias = alias
-    if (thisCount > 1) {
-        thisAlias += repeatSuffix.replaceAll("{number}", thisCount)
-    }
-
-    let start = offset + index * beatLength - preuCV
-    let end = start - cutoffCV
-    let fixed = start + fixedCV
-    let preu = start + preuCV
-    let ovl = start + ovlCV
+    let start = offset - consLength - spacer
+    let ovl = offset - consLength
+    let preu = offset
+    let fixed = preu + fixBuffer
+    let cutoff = 0 - (spacer + consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
+    
+    let end = start - cutoff
     let points = [fixed, preu, ovl]
-    // for oto labeler plus, adding start again in the points
     points.push(start)
-    let extras = [cutoffCV.toString()]
+    let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
-        notes.tag = tag
+        notes.tag = "Head cv"
     }
     let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
-    aliasCountMap.set(alias, count + 1)
+    push(entry, "CV")
+}
+
+function pushHeadV(sample, alias, nextHasConsonant) {
+    let thisAlias = checkAliasCount(alias, false, false)
+
+    let start = offset - 2*spacer
+    let ovl = offset - spacer
+    let preu = offset
+    let fixed = preu + fixBuffer
+    let cutoff = 0 - (2*spacer + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
+    
+    let end = start - cutoff
+    let points = [fixed, preu, ovl]
+    points.push(start)
+    let extras = [cutoff.toString()]
+    let notes = new Notes()
+    if (appendTags) {
+        notes.tag = "Head V"
+    }
+    let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
+    push(entry, "CV")
+}
+
+function pushCV(sample, index, alias, nextHasConsonant) {
+    let thisAlias = checkAliasCount(alias, false, false)
+
+    let start = offset + index * beatLength - consLength
+    let ovl = start + (consLength/2)
+    let preu = start + consLength
+    let fixed = preu + fixBuffer
+    let cutoff = 0 - (consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
+    
+    let end = start - cutoff
+    let points = [fixed, preu, ovl]
+    points.push(start)
+    let extras = [cutoff.toString()]
+    let notes = new Notes()
+    if (appendTags) {
+        notes.tag = "CV"
+    }
+    let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
     push(entry, "CV")
 }
 
@@ -203,7 +226,6 @@ function pushVC(sample, index, alias) {
         notes.tag = "VC"
     }
     let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
-    aliasCountMap.set(alias, count + 1)
     push(entry, "VC")
 }
 
@@ -225,16 +247,49 @@ function pushSoloC(sample, index, alias) {
         notes.tag = "Solo C"
     }
     let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
-    aliasCountMap.set(alias, count + 1)
     push(entry, "VC")
 }
 
-function pushVV() {
-    // to implement
+function pushVV(sample, index, alias, nextHasConsonant) {
+    let thisAlias = checkAliasCount(alias, false, false)
+
+    let start = offset + index * beatLength - 2*ovlVC
+    let ovl = start + ovlVC
+    let preu = ovl + ovlVC
+    let fixed = preu + fixBuffer
+    let cutoff = 0 - (2*ovlVC + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
+    
+    let end = start - cutoff
+    let points = [fixed, preu, ovl]
+    points.push(start)
+    let extras = [cutoff.toString()]
+    let notes = new Notes()
+    if (appendTags) {
+        notes.tag = "VV"
+    }
+    let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
+    push(entry, "CV")
 }
 
-function pushVCV() {
-    // to implement
+function pushVCV(sample, index, alias, nextHasConsonant) {
+    let thisAlias = checkAliasCount(alias, false, false)
+
+    let start = offset + index * beatLength - consLength - 2*ovlVC
+    let ovl = start + ovlVC
+    let preu = ovl + ovlVC + consLength
+    let fixed = preu + fixBuffer
+    let cutoff = 0 - (2*ovlVC + consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
+    
+    let end = start - cutoff
+    let points = [fixed, preu, ovl]
+    points.push(start)
+    let extras = [cutoff.toString()]
+    let notes = new Notes()
+    if (appendTags) {
+        notes.tag = "vcv"
+    }
+    let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
+    push(entry, "other")
 }
 
 function pushTail(sample, index, alias) {
@@ -255,7 +310,6 @@ function pushTail(sample, index, alias) {
         notes.tag = "Tail"
     }
     let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
-    aliasCountMap.set(alias, count + 1)
     push(entry, "VC")
 }
 
@@ -277,7 +331,6 @@ function pushOther(sample) {
         notes.tag = "Others"
     }
     let entry = new Entry(sample, alias, start, end, points, extras, notes)
-    aliasCountMap.set(alias, count + 1)
     push(entry, "other")
 }
 
@@ -305,6 +358,19 @@ function parseSample(sample) {
             return
         }
 
+        let nextHasConsonant = false
+        let next = rest.slice(matched.length)
+        if (separator !== "" && next.startsWith(separator)){
+            next = next.slice(separator.length)
+        }
+        let nextMatched = texts.find(text => next.startsWith(text))
+        if (nextMatched !== undefined) {
+            let [nextCons, nextVowel] = map.get(nextMatched)
+            if (nextCons !== "") {
+                nextHasConsonant = true
+            }
+        }
+
         let [consonant, vowel] = map.get(matched)
 
         if (lastVowel !== "" && consonant !== "") {
@@ -317,19 +383,24 @@ function parseSample(sample) {
 
         if (index === 0) {
             let aliasHeadCV = "- " + matched
-            if (useHeadCV || consonant === "") {
-                pushCV(sample, index, aliasHeadCV, false, "Head")
+            if (consonant === "") {
+                pushHeadV(sample, aliasHeadCV, nextHasConsonant)
+            } else if (useHeadCV) {
+                pushHeadCV(sample, aliasHeadCV, nextHasConsonant)
             }
         }
 
         if (lastVowel !== "" && (useVCV || consonant === "")) {
             let aliasVCV = lastVowel + " " + matched
-            let tag = consonant === "" ? "VV" : "vcv"
-            pushCV(sample, index, aliasVCV, false, tag)
+            if (consonant === "") {
+                pushVV(sample, index, aliasVCV, nextHasConsonant)
+            } else if (useVCV) {
+                pushVCV(sample, index, aliasVCV, nextHasConsonant)
+            }
         }
 
         if (index === 0 || consonant !== "") {
-            pushCV(sample, index, matched, false, "CV")
+            pushCV(sample, index, matched, nextHasConsonant)
         }
 
         index++
