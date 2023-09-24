@@ -144,18 +144,6 @@
       },
       {
         "type": "float",
-        "name": "spacer",
-        "label": {
-          "en": "Timing spacer (ms)"
-        },
-        "description": {
-          "en": "Minimum distance between OTO parameters"
-        },
-        "defaultValue": 10,
-        "min": 0
-      },
-      {
-        "type": "float",
         "name": "fixBuffer",
         "label": {
           "en": "Initial vowel stabilization (ms)"
