@@ -1,13 +1,13 @@
 {
   "name": "vcv-oto-gen",
-  "version": 7,
+  "version": 8,
   "type": "template",
   "displayedName": {
     "en": "VCV oto generator",
     "zh": "连续音 oto 生成器",
     "ja": "連続音 oto 生成器"
   },
-  "author": "sdercolin",
+  "author": "sdercolin & KLAD",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Generate template for VCV oto.",
@@ -141,50 +141,6 @@
         "defaultValue": "",
         "multiLine": false,
         "optional": true
-      },
-      {
-        "type": "float",
-        "name": "preuDefault",
-        "label": {
-          "en": "Preutterance (ms)",
-          "zh": "先行发声（毫秒）",
-          "ja": "先行発声（ミリ秒）"
-        },
-        "defaultValue": 300,
-        "min": 0
-      },
-      {
-        "type": "float",
-        "name": "ovlDefault",
-        "label": {
-          "en": "Overlap (ms)",
-          "zh": "重叠（毫秒）",
-          "ja": "オーバーラップ（ミリ秒）"
-        },
-        "defaultValue": 100,
-        "min": 0
-      },
-      {
-        "type": "float",
-        "name": "cutoffDefault",
-        "label": {
-          "en": "Cutoff (ms)",
-          "zh": "右边界（毫秒）",
-          "ja": "右ブランク（ミリ秒）"
-        },
-        "defaultValue": -700,
-        "max": -1
-      },
-      {
-        "type": "float",
-        "name": "fixedDefault",
-        "label": {
-          "en": "Fixed (ms)",
-          "zh": "固定（毫秒）",
-          "ja": "固定範囲（ミリ秒）"
-        },
-        "defaultValue": 450,
-        "min": 0
       },
       {
         "type": "integer",

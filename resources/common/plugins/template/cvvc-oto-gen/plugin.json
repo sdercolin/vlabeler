@@ -1,13 +1,13 @@
 {
   "name": "cvvc-oto-gen",
-  "version": 8,
+  "version": 9,
   "type": "template",
   "displayedName": {
     "en": "CVVC oto generator",
     "zh": "CVVC oto 生成器",
     "ja": "CVVC oto 生成器"
   },
-  "author": "sdercolin",
+  "author": "sdercolin & KLAD",
   "email": "sder.colin@gmail.com",
   "description": {
     "en": "Generate template for CVVC oto.",
@@ -144,73 +144,34 @@
       },
       {
         "type": "float",
-        "name": "preuCV",
+        "name": "fixBuffer",
         "label": {
-          "en": "CV Preutterance (ms)",
-          "zh": "CV 的先行发声（毫秒）",
-          "ja": "CV の先行発声（ミリ秒）"
+          "en": "Initial vowel stabilization (ms)",
+          "ja": "母音の初期不安定の長さ（ミリ秒）",
+          "zh": ""
+        },
+        "description": {
+          "en": "Distance from start of vowel to end of fixed region. May get shortened by very fast tempo.",
+          "ja": "母音のはじめと固定範囲の終わりの間の距離。テンポが速すぎると、このパラメータが短くなります。",
+          "zh": ""
         },
         "defaultValue": 100,
         "min": 0
       },
       {
         "type": "float",
-        "name": "ovlCV",
-        "label": {
-          "en": "CV Overlap (ms)",
-          "zh": "CV 的重叠（毫秒）",
-          "ja": "CV の オーバーラップ（ミリ秒）"
-        },
-        "defaultValue": 50,
-        "min": 0
-      },
-      {
-        "type": "float",
-        "name": "cutoffCV",
-        "label": {
-          "en": "CV Cutoff (ms)",
-          "zh": "CV 的右边界（毫秒）",
-          "ja": "CV の右ブランク（ミリ秒）"
-        },
-        "defaultValue": -350,
-        "max": -1
-      },
-      {
-        "type": "float",
-        "name": "fixedCV",
-        "label": {
-          "en": "CV Fixed (ms)",
-          "zh": "CV 的固定（毫秒）",
-          "ja": "CV の固定範囲（ミリ秒）"
-        },
-        "defaultValue": 200,
-        "min": 0
-      },
-      {
-        "type": "float",
-        "name": "lengthVC",
+        "name": "consLength",
         "label": {
           "en": "Consonant length (ms)",
           "zh": "辅音长度（毫秒）",
           "ja": "子音の長さ（ミリ秒）"
         },
         "description": {
-          "en": "Distance between the preutterances of a VC and its next CV",
+          "en": "Distance between the preutterances of a VC and its next CV. May get shortened by very fast tempo.",
           "zh": "VC 的先行发声和其下一个 CV 的先行发声之间的距离",
-          "ja": "VC の先行発声とその次の CV の先行発声の間の距離"
+          "ja": "VC の先行発声とその次の CV の先行発声の間の距離。テンポが速すぎると、このパラメータが短くなります。"
         },
         "defaultValue": 100,
-        "min": 0
-      },
-      {
-        "type": "float",
-        "name": "preuVC",
-        "label": {
-          "en": "VC Preutterance (ms)",
-          "zh": "VC 的先行发声（毫秒）",
-          "ja": "VC の先行発声（ミリ秒）"
-        },
-        "defaultValue": 250,
         "min": 0
       },
       {
@@ -221,29 +182,12 @@
           "zh": "VC 的重叠（毫秒）",
           "ja": "VC の オーバーラップ（ミリ秒）"
         },
-        "defaultValue": 70,
-        "min": 0
-      },
-      {
-        "type": "float",
-        "name": "cutoffVC",
-        "label": {
-          "en": "VC Cutoff (ms)",
-          "zh": "VC 的右边界（毫秒）",
-          "ja": "VC の右ブランク（ミリ秒）"
+        "description": {
+          "en": "Overlap used for VC, VV, VCV, and Tail. May get shortened by very fast tempo.",
+          "jp": "VC、VV、VCVとTailのオーバーラップ。テンポが速すぎると、このパラメータが短くなります。",
+          "zh": ""
         },
-        "defaultValue": -350,
-        "max": -1
-      },
-      {
-        "type": "float",
-        "name": "fixedVC",
-        "label": {
-          "en": "VC Fixed (ms)",
-          "zh": "VC 的固定（毫秒）",
-          "ja": "VC の固定範囲（ミリ秒）"
-        },
-        "defaultValue": 250,
+        "defaultValue": 80,
         "min": 0
       },
       {

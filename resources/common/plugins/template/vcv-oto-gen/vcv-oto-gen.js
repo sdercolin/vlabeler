@@ -27,10 +27,10 @@ let suffixes = params["suffixes"].split(',')
 if (!suffixes.includes(appendSuffix)) {
     suffixes.push(appendSuffix)
 }
-let preuDefault = params["preuDefault"]
-let ovlDefault = params["ovlDefault"]
-let cutoffDefault = params["cutoffDefault"]
-let fixedDefault = params["fixedDefault"]
+let preuDefault = beatLength/2
+let ovlDefault = preuDefault/3
+let cutoffDefault = -7 * ovlDefault
+let fixedDefault = 4.5 * ovlDefault
 let repeatCV = params["repeatCV"]
 
 let vowelLineParsed = params["vowelMap"].split('\n').flatMap(line => {
@@ -100,7 +100,7 @@ function parseSample(sample) {
         return
     }
 
-    let rest = (sample + appendSuffix).slice(prefix.length)
+    let rest = (getNameWithoutExtension(sample) + appendSuffix).slice(prefix.length)
     let index = 0
     let lastVowel = "-"
 
