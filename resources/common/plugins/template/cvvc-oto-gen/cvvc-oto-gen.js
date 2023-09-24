@@ -28,9 +28,9 @@ if (!suffixes.includes(appendSuffix)) {
     suffixes.push(appendSuffix)
 }
 
-let fixBuffer = Math.min(params["fixBuffer"], beatLength/6)
-let consLength = Math.min(params["consLength"], beatLength/5)
-let ovlVC = Math.min(params["ovlVC"], beatLength/6)
+let fixBuffer = Math.min(params["fixBuffer"], beatLength / 6)
+let consLength = Math.min(params["consLength"], beatLength / 5)
+let ovlVC = Math.min(params["ovlVC"], beatLength / 6)
 
 let useHeadCV = params["useHeadCV"]
 let useVCV = params["useVCV"]
@@ -75,9 +75,9 @@ let consonantLineParsed = params["consonantMap"].split('\n').flatMap(line => {
     return texts.map(text => [text, consonant])
 })
 
-let map = new Map()
+let symbolPhonemeMap = new Map()
 for (let [text, consonant] of consonantLineParsed) {
-    if (map.has(text)) {
+    if (symbolPhonemeMap.has(text)) {
         error({
             en: `The consonant map contains duplicate entries for ${text}.`,
             zh: `辅音表中包含重复的项目 ${text}。`,
@@ -93,18 +93,18 @@ for (let [text, consonant] of consonantLineParsed) {
         })
     }
     let vowel = vowelItem[1]
-    map.set(text, [consonant, vowel])
+    symbolPhonemeMap.set(text, [consonant, vowel])
 }
 
 if (debug) {
-    console.log("Map:")
-    map.forEach((phonemes, text) => {
+    console.log("Symbol to phoneme map:")
+    symbolPhonemeMap.forEach((phonemes, text) => {
         console.log(`${text} -> ${phonemes[0]} ${phonemes[1]}`)
     })
 }
 
-let texts = Array.from(map.keys())
-texts.sort(function (a, b) {
+let symbols = Array.from(symbolPhonemeMap.keys())
+symbols.sort(function (a, b) {
     return b.length - a.length;
 });
 
@@ -128,7 +128,7 @@ function push(entry, type) {
     map.set(sample, list)
 }
 
-function checkAliasCount(alias, isOther, isSingleC) {
+function getAliasWithCount(alias, isOther, isSingleC) {
     let max = isSingleC ? repeatC : repeat
     let count = aliasCountMap.get(alias) || 0
     if (!isOther && count >= max) {
@@ -145,17 +145,16 @@ function checkAliasCount(alias, isOther, isSingleC) {
 }
 
 function pushHeadCV(sample, alias, nextHasConsonant) {
-    let thisAlias = checkAliasCount(alias, false, false)
+    let thisAlias = getAliasWithCount(alias, false, false)
 
     let start = offset - consLength - 10
     let ovl = offset - consLength
     let preu = offset
     let fixed = preu + fixBuffer
     let cutoff = 0 - (10 + consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
-    
+
     let end = start - cutoff
-    let points = [fixed, preu, ovl]
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
@@ -166,17 +165,16 @@ function pushHeadCV(sample, alias, nextHasConsonant) {
 }
 
 function pushHeadV(sample, alias, nextHasConsonant) {
-    let thisAlias = checkAliasCount(alias, false, false)
+    let thisAlias = getAliasWithCount(alias, false, false)
 
     let start = offset - 20
     let ovl = offset - 10
     let preu = offset
     let fixed = preu + fixBuffer
     let cutoff = 0 - (20 + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
-    
+
     let end = start - cutoff
-    let points = [fixed, preu, ovl]
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
@@ -187,17 +185,16 @@ function pushHeadV(sample, alias, nextHasConsonant) {
 }
 
 function pushCV(sample, index, alias, nextHasConsonant) {
-    let thisAlias = checkAliasCount(alias, false, false)
+    let thisAlias = getAliasWithCount(alias, false, false)
 
     let start = offset + index * beatLength - consLength
-    let ovl = start + (consLength/2)
+    let ovl = start + (consLength / 2)
     let preu = start + consLength
     let fixed = preu + fixBuffer
     let cutoff = 0 - (consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
-    
+
     let end = start - cutoff
-    let points = [fixed, preu, ovl]
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
@@ -208,17 +205,16 @@ function pushCV(sample, index, alias, nextHasConsonant) {
 }
 
 function pushVC(sample, index, alias) {
-    let thisAlias = checkAliasCount(alias, false, false)
+    let thisAlias = getAliasWithCount(alias, false, false)
 
-    let start = offset + index * beatLength - consLength - 2*ovlVC
+    let start = offset + index * beatLength - consLength - 2 * ovlVC
     let ovl = start + ovlVC
-    let preu = start + 2*ovlVC
-    let fixed = start + 2*ovlVC + 10
-    let cutoff = 0 - (2*ovlVC + consLength)
-    
+    let preu = start + 2 * ovlVC
+    let fixed = start + 2 * ovlVC + 10
+    let cutoff = 0 - (2 * ovlVC + consLength)
+
     let end = start - cutoff
-    let points = [fixed, preu, ovl]
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
@@ -229,17 +225,16 @@ function pushVC(sample, index, alias) {
 }
 
 function pushSoloC(sample, index, alias) {
-    let thisAlias = checkAliasCount(alias, false, true)
+    let thisAlias = getAliasWithCount(alias, false, true)
 
     let start = offset + index * beatLength - consLength
-    let ovl = start + consLength/2
-    let preu = start + consLength/2
+    let ovl = start + consLength / 2
+    let preu = start + consLength / 2
     let fixed = start
     let cutoff = 0 - (consLength)
-    
+
     let end = start - cutoff
-    let points = [fixed, preu, ovl]
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
@@ -250,17 +245,16 @@ function pushSoloC(sample, index, alias) {
 }
 
 function pushSoloV(sample, index, alias, nextHasConsonant) {
-    let thisAlias = checkAliasCount(alias, false, false)
+    let thisAlias = getAliasWithCount(alias, false, false)
 
     let start = offset + index * beatLength + fixBuffer
     let ovl = start + ovlVC
     let preu = start + ovlVC
     let fixed = start
     let cutoff = 0 - (beatLength - fixBuffer - ovlVC - (nextHasConsonant ? consLength : 0))
-    
+
     let end = start - cutoff
-    let points = [fixed, preu, ovl]
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
@@ -271,17 +265,16 @@ function pushSoloV(sample, index, alias, nextHasConsonant) {
 }
 
 function pushVV(sample, index, alias, nextHasConsonant) {
-    let thisAlias = checkAliasCount(alias, false, false)
+    let thisAlias = getAliasWithCount(alias, false, false)
 
-    let start = offset + index * beatLength - 2*ovlVC
+    let start = offset + index * beatLength - 2 * ovlVC
     let ovl = start + ovlVC
     let preu = ovl + ovlVC
     let fixed = preu + fixBuffer
-    let cutoff = 0 - (2*ovlVC + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
-    
+    let cutoff = 0 - (2 * ovlVC + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
+
     let end = start - cutoff
-    let points = [fixed, preu, ovl]
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
@@ -292,17 +285,16 @@ function pushVV(sample, index, alias, nextHasConsonant) {
 }
 
 function pushVCV(sample, index, alias, nextHasConsonant) {
-    let thisAlias = checkAliasCount(alias, false, false)
+    let thisAlias = getAliasWithCount(alias, false, false)
 
-    let start = offset + index * beatLength - consLength - 2*ovlVC
+    let start = offset + index * beatLength - consLength - 2 * ovlVC
     let ovl = start + ovlVC
     let preu = ovl + ovlVC + consLength
     let fixed = preu + fixBuffer
-    let cutoff = 0 - (2*ovlVC + consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
-    
+    let cutoff = 0 - (2 * ovlVC + consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
+
     let end = start - cutoff
-    let points = [fixed, preu, ovl]
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
@@ -313,17 +305,16 @@ function pushVCV(sample, index, alias, nextHasConsonant) {
 }
 
 function pushTail(sample, index, alias) {
-    let thisAlias = checkAliasCount(alias, false, false)
+    let thisAlias = getAliasWithCount(alias, false, false)
 
-    let start = offset + index * beatLength - 2*ovlVC
+    let start = offset + index * beatLength - 2 * ovlVC
     let ovl = start + ovlVC
-    let preu = start + 2*ovlVC
-    let fixed = start + 2*ovlVC + 10
-    let cutoff = 0 - (2*ovlVC + 20)
-    
+    let preu = start + 2 * ovlVC
+    let fixed = start + 2 * ovlVC + 10
+    let cutoff = 0 - (2 * ovlVC + 20)
+
     let end = start - cutoff
-    let points = [fixed, preu, ovl]
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
@@ -334,17 +325,16 @@ function pushTail(sample, index, alias) {
 }
 
 function pushOther(sample) {
-    let alias = checkAliasCount(sample, true, false)
+    let alias = getAliasWithCount(sample, true, false)
 
     let start = offset
     let ovl = start + 20
     let preu = start + 10
     let fixed = start + 30
     let cutoff = 0 - (40)
-    
+
     let end = start - cutoff
-    let points = [fixed, preu, ovl]
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoff.toString()]
     let notes = new Notes()
     if (appendTags) {
@@ -360,17 +350,16 @@ function parseSample(sample) {
         return
     }
 
-    // Remove ".wav" extension before appending suffix
-    let rest = (sample.slice(0,-4) + appendSuffix).slice(prefix.length)
+    let rest = (getNameWithoutExtension(sample) + appendSuffix).slice(prefix.length)
     let index = 0
     let lastVowel = ""
 
-    if(debug){
+    if (debug) {
         console.log('Sample: ' + rest)
     }
 
     while (rest !== "") {
-        let matched = texts.find(text => rest.startsWith(text))
+        let matched = symbols.find(text => rest.startsWith(text))
         if (matched === undefined) {
             // handle suffix
             let suffix = suffixes.find(suffix => rest === suffix)
@@ -385,18 +374,18 @@ function parseSample(sample) {
 
         let nextHasConsonant = false
         let next = rest.slice(matched.length)
-        if (separator !== "" && next.startsWith(separator)){
+        if (separator !== "" && next.startsWith(separator)) {
             next = next.slice(separator.length)
         }
-        let nextMatched = texts.find(text => next.startsWith(text))
+        let nextMatched = symbols.find(text => next.startsWith(text))
         if (nextMatched !== undefined) {
-            let nextCons = map.get(nextMatched)[0]
-            if (nextCons !== "") {
+            let nextCons = symbolPhonemeMap.get(nextMatched)[0]
+            if (nextCons) {
                 nextHasConsonant = true
             }
         }
 
-        let [consonant, vowel] = map.get(matched)
+        let [consonant, vowel] = symbolPhonemeMap.get(matched)
 
         if (lastVowel !== "" && consonant !== "") {
             let aliasVC = lastVowel + " " + consonant
@@ -445,8 +434,8 @@ for (let sample of samples) {
 
 if (reorder) {
     let maps = reorderCVFirst
-            ? [outputSampleCVMap, outputSampleVCMap, outputSampleOtherMap]
-            : [outputSampleVCMap, outputSampleCVMap, outputSampleOtherMap]
+        ? [outputSampleCVMap, outputSampleVCMap, outputSampleOtherMap]
+        : [outputSampleVCMap, outputSampleCVMap, outputSampleOtherMap]
     if (reorderAcrossSample) {
 
         for (map of maps) {

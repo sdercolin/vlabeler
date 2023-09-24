@@ -146,10 +146,14 @@
         "type": "float",
         "name": "fixBuffer",
         "label": {
-          "en": "Initial vowel stabilization (ms)"
+          "en": "Initial vowel stabilization (ms)",
+          "ja": "母音の初期不安定の長さ（ミリ秒）",
+          "zh": ""
         },
         "description": {
-          "en": "Distance from start of vowel to end of fixed region. May get shortened by very fast tempo."
+          "en": "Distance from start of vowel to end of fixed region. May get shortened by very fast tempo.",
+          "ja": "母音のはじめと固定範囲の終わりの間の距離。テンポが速すぎると、このパラメータが短くなります。",
+          "zh": ""
         },
         "defaultValue": 100,
         "min": 0
@@ -165,7 +169,7 @@
         "description": {
           "en": "Distance between the preutterances of a VC and its next CV. May get shortened by very fast tempo.",
           "zh": "VC 的先行发声和其下一个 CV 的先行发声之间的距离",
-          "ja": "VC の先行発声とその次の CV の先行発声の間の距離"
+          "ja": "VC の先行発声とその次の CV の先行発声の間の距離。テンポが速すぎると、このパラメータが短くなります。"
         },
         "defaultValue": 100,
         "min": 0
@@ -179,7 +183,9 @@
           "ja": "VC の オーバーラップ（ミリ秒）"
         },
         "description": {
-          "en": "Overlap used for VC, VV, VCV, and Tail. May get shortened by very fast tempo."
+          "en": "Overlap used for VC, VV, VCV, and Tail. May get shortened by very fast tempo.",
+          "jp": "VC、VV、VCVとTailのオーバーラップ。テンポが速すぎると、このパラメータが短くなります。",
+          "zh": ""
         },
         "defaultValue": 80,
         "min": 0
