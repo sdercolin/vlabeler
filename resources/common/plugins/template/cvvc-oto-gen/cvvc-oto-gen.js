@@ -121,7 +121,7 @@ function push(entry, type) {
     }
 
     let sample = entry.sample
-    let map = type == "CV" ? outputSampleCVMap : type == "VC" ? outputSampleVCMap : outputSampleOtherMap
+    let map = type === "CV" ? outputSampleCVMap : type === "VC" ? outputSampleVCMap : outputSampleOtherMap
 
     let list = map.get(sample) || []
     list.push(entry)
@@ -438,14 +438,14 @@ if (reorder) {
         : [outputSampleVCMap, outputSampleCVMap, outputSampleOtherMap]
     if (reorderAcrossSample) {
 
-        for (map of maps) {
+        for (let map of maps) {
             for (let list of map.values()) {
                 output.push(...list)
             }
         }
     } else {
-        for (sample of samples) {
-            for (map of maps) {
+        for (let sample of samples) {
+            for (let map of maps) {
                 let list = map.get(sample) || []
                 output.push(...list)
             }

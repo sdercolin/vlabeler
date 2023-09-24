@@ -27,8 +27,8 @@ let suffixes = params["suffixes"].split(',')
 if (!suffixes.includes(appendSuffix)) {
     suffixes.push(appendSuffix)
 }
-let preuDefault = beatLength/2
-let ovlDefault = preuDefault/3
+let preuDefault = beatLength / 2
+let ovlDefault = preuDefault / 3
 let cutoffDefault = -7 * ovlDefault
 let fixedDefault = 4.5 * ovlDefault
 let repeatCV = params["repeatCV"]
@@ -85,9 +85,7 @@ function push(sample, index, alias, isCV, isSpecial) {
     let fixed = start + fixedDefault
     let preu = start + preuDefault
     let ovl = start + ovlDefault
-    let points = [fixed, preu, ovl]
-    // for oto labeler plus, adding start again in the points
-    points.push(start)
+    let points = [fixed, preu, ovl, start]
     let extras = [cutoffDefault.toString()]
     let entry = new Entry(sample, thisAlias, start, end, points, extras)
     aliasCountMap.set(alias, count + 1)
