@@ -29,9 +29,9 @@ if (!suffixes.includes(appendSuffix)) {
 }
 
 let spacer = params["spacer"]
-let fixBuffer = Math.max(params["fixBuffer"], beatLength/6)
-let consLength = Math.max(params["consLength"], beatLength/6)
-let ovlVC = Math.max(params["ovlVC"], beatLength/6)
+let fixBuffer = Math.min(params["fixBuffer"], beatLength/6)
+let consLength = Math.min(params["consLength"], beatLength/5)
+let ovlVC = Math.min(params["ovlVC"], beatLength/6)
 
 let useHeadCV = params["useHeadCV"]
 let useVCV = params["useVCV"]
@@ -250,6 +250,27 @@ function pushSoloC(sample, index, alias) {
     push(entry, "VC")
 }
 
+function pushSoloV(sample, index, alias, nextHasConsonant) {
+    let thisAlias = checkAliasCount(alias, false, false)
+
+    let start = offset + index * beatLength + fixBuffer
+    let ovl = start + ovlVC - spacer/2
+    let preu = start + ovlVC + spacer/2
+    let fixed = start + spacer
+    let cutoff = 0 - (beatLength - fixBuffer - ovlVC - (nextHasConsonant ? consLength : 0))
+    
+    let end = start - cutoff
+    let points = [fixed, preu, ovl]
+    points.push(start)
+    let extras = [cutoff.toString()]
+    let notes = new Notes()
+    if (appendTags) {
+        notes.tag = "Solo V"
+    }
+    let entry = new Entry(sample, thisAlias, start, end, points, extras, notes)
+    push(entry, "CV")
+}
+
 function pushVV(sample, index, alias, nextHasConsonant) {
     let thisAlias = checkAliasCount(alias, false, false)
 
@@ -340,9 +361,14 @@ function parseSample(sample) {
         return
     }
 
-    let rest = (sample + appendSuffix).slice(prefix.length)
+    // Remove ".wav" extension before appending suffix
+    let rest = (sample.slice(0,-4) + appendSuffix).slice(prefix.length)
     let index = 0
     let lastVowel = ""
+
+    if(debug){
+        console.log('Sample: ' + rest)
+    }
 
     while (rest !== "") {
         let matched = texts.find(text => rest.startsWith(text))
@@ -365,7 +391,7 @@ function parseSample(sample) {
         }
         let nextMatched = texts.find(text => next.startsWith(text))
         if (nextMatched !== undefined) {
-            let [nextCons, nextVowel] = map.get(nextMatched)
+            let nextCons = map.get(nextMatched)[0]
             if (nextCons !== "") {
                 nextHasConsonant = true
             }
@@ -399,8 +425,10 @@ function parseSample(sample) {
             }
         }
 
-        if (index === 0 || consonant !== "") {
+        if (consonant !== "") {
             pushCV(sample, index, matched, nextHasConsonant)
+        } else {
+            pushSoloV(sample, index, matched, nextHasConsonant)
         }
 
         index++
