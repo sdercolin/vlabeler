@@ -12,7 +12,8 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
-import com.sdercolin.vlabeler.ui.dialog.EditEntryExtraDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogTarget
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogRequest
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
@@ -90,6 +91,7 @@ interface AppDialogState {
     fun openEditEntryNameDialog(index: Int, purpose: InputEntryNameDialogPurpose)
     fun openMoveCurrentEntryDialog(appConf: AppConf)
     fun openEditEntryExtraDialog(index: Int)
+    fun openEditModuleExtraDialog()
     fun askIfSaveBeforeExit()
     fun confirmIfRemoveCurrentEntry(isLastEntry: Boolean)
     fun confirmIfLoadAutoSavedProject(file: File)
@@ -342,10 +344,27 @@ class AppDialogStateImpl(
         val project = projectStore.requireProject()
         val entry = project.currentModule.entries[index]
         openEmbeddedDialog(
-            EditEntryExtraDialogArgs(
+            EditExtraDialogArgs(
                 index = index,
                 initial = entry.extras,
                 extraFields = project.labelerConf.extraFields,
+                target = EditExtraDialogTarget.EditEntry,
+            ),
+        )
+    }
+
+    override fun openEditModuleExtraDialog() {
+        val project = projectStore.requireProject()
+        val module = project.currentModule
+        val initial = project.labelerConf.moduleExtraFields.map {
+            if (module.extras.containsKey(it.name)) module.extras[it.name] else null
+        }
+        openEmbeddedDialog(
+            EditExtraDialogArgs(
+                index = project.currentModuleIndex, // it is not used because we always know the currentModuleIndex
+                initial = initial,
+                extraFields = project.labelerConf.moduleExtraFields,
+                target = EditExtraDialogTarget.EditModule,
             ),
         )
     }

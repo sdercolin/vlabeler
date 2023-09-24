@@ -118,8 +118,8 @@ fun Labeler(
             isEditingTag = editorState.isEditingTag,
             setEditingTag = { editorState.isEditingTag = it },
             tagOptions = editorState.tagOptions,
-            hasExtra = appState.canEditCurrentEntryExtra,
-            editExtra = { editorState.editEntryExtra(editorState.project.currentModule.currentIndex) },
+            entryHasExtra = appState.canEditCurrentEntryExtra,
+            editEntryExtra = { editorState.editEntryExtra(editorState.project.currentModule.currentIndex) },
             openEditEntryNameDialog = openEditEntryNameDialog,
         )
         if (appState.isTimescaleBarDisplayed) {
@@ -256,8 +256,8 @@ private fun EntryTitleBar(
     isEditingTag: Boolean,
     setEditingTag: (Boolean) -> Unit,
     tagOptions: List<String>,
-    hasExtra: Boolean,
-    editExtra: () -> Unit,
+    entryHasExtra: Boolean,
+    editEntryExtra: () -> Unit,
     openEditEntryNameDialog: () -> Unit,
 ) {
     Surface {
@@ -319,9 +319,9 @@ private fun EntryTitleBar(
                                 StarIcon(star)
                             }
                         }
-                        if (appConf.editor.showExtra && hasExtra) {
+                        if (appConf.editor.showExtra && entryHasExtra) {
                             FreeSizedIconButton(
-                                onClick = editExtra,
+                                onClick = editEntryExtra,
                                 modifier = Modifier.padding(8.dp),
                             ) {
                                 ExtraIcon()

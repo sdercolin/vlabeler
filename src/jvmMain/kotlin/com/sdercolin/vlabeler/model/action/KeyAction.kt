@@ -143,14 +143,19 @@ enum class KeyAction(
         KeySet(Key.L),
         true,
     ),
-    EditExtra(
-        listOf(Strings.MenuEdit, Strings.MenuEditEditExtra),
+    EditEntryExtra(
+        listOf(Strings.MenuEdit, Strings.MenuEditEditEntryExtra),
         null,
         true,
     ),
     ToggleMultipleEditMode(
         listOf(Strings.MenuEdit, Strings.MenuEditMultipleEditMode),
         KeySet(Key.M, setOf(Key.Ctrl)),
+        true,
+    ),
+    EditModuleExtra(
+        listOf(Strings.MenuEdit, Strings.MenuEditEditModuleExtra),
+        null,
         true,
     ),
     ToggleMarker(
