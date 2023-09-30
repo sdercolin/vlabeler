@@ -31,7 +31,7 @@ import com.sdercolin.vlabeler.ui.dialog.updater.UpdaterDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
-import com.sdercolin.vlabeler.ui.string.LocalLanguage
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.getLocalizedMessage
 import com.sdercolin.vlabeler.video.Video
 import kotlinx.coroutines.CancellationException
@@ -67,6 +67,7 @@ fun App(
                     activeLabelerConfs = appState.activeLabelerConfs,
                     activeTemplatePlugins = appState.getActivePlugins(Plugin.Type.Template),
                     appRecordStore = appState.appRecordStore,
+                    initialFile = screen.initialFile,
                 )
 
             is Screen.Editor -> Editor(screen.state, appState)

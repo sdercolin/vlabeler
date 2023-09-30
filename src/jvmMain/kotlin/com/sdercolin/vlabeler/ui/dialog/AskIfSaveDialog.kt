@@ -28,10 +28,10 @@ sealed class AskIfSaveDialogPurpose(
     object IsOpening :
         AskIfSaveDialogPurpose(Strings.AskIfSaveBeforeOpenDialogDescription, AppState.PendingActionAfterSaved.Open)
 
-    class IsOpeningRecent(val file: File) :
+    class IsOpeningCertain(val file: File) :
         AskIfSaveDialogPurpose(
             Strings.AskIfSaveBeforeOpenDialogDescription,
-            AppState.PendingActionAfterSaved.OpenRecent(file),
+            AppState.PendingActionAfterSaved.OpenCertain(file),
         )
 
     object IsExporting :

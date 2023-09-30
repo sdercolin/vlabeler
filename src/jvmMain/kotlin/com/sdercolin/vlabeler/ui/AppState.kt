@@ -21,6 +21,7 @@ import com.sdercolin.vlabeler.ipc.IpcState
 import com.sdercolin.vlabeler.ipc.request.OpenOrCreateRequest
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.model.Arguments
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.MacroPluginExecutionListener
 import com.sdercolin.vlabeler.model.Plugin
@@ -78,6 +79,7 @@ class AppState(
     appConf: MutableState<AppConf>,
     availableLabelerConfs: List<LabelerConf>,
     plugins: List<Plugin>,
+    launchArguments: Arguments,
     progressState: AppProgressState = AppProgressStateImpl(),
     errorState: AppErrorState = AppErrorStateImpl(),
     viewState: AppViewState = AppViewStateImpl(appRecordStore),
@@ -106,6 +108,7 @@ class AppState(
 
     init {
         initDialogState(this)
+        consumeArguments(launchArguments)
     }
 
     var appConf: AppConf by appConf
@@ -200,9 +203,9 @@ class AppState(
 
     fun requestOpenProjectCreator() = if (hasUnsavedChanges) askIfSaveBeforeCreateProject() else openProjectCreator()
     private fun askIfSaveBeforeCreateProject() = openEmbeddedDialog(AskIfSaveDialogPurpose.IsCreatingNew)
-    private fun openProjectCreator() {
+    private fun openProjectCreator(initialFile: File? = null) {
         reset()
-        changeScreen(Screen.ProjectCreator)
+        changeScreen(Screen.ProjectCreator(initialFile))
     }
 
     fun closeProjectCreator() = reset()
@@ -315,7 +318,7 @@ class AppState(
         is PendingActionAfterSaved.CreatingNew -> openProjectCreator()
         is PendingActionAfterSaved.ClearCaches -> clearCachesAndReopen(mainScope)
         is PendingActionAfterSaved.Exit -> exit()
-        is PendingActionAfterSaved.OpenRecent -> loadProject(mainScope, action.file, this)
+        is PendingActionAfterSaved.OpenCertain -> loadProject(mainScope, action.file, this)
         null -> Unit
     }
 
@@ -491,6 +494,23 @@ class AppState(
         trackMacroPluginExecution(plugin, params, quickLaunch = slot != null)
     }
 
+    private fun consumeArguments(arguments: Arguments) {
+        if (arguments.file != null) {
+            val file = arguments.file
+            val isExisting = file.exists()
+            val isProjectFile = file.extension == Project.PROJECT_FILE_EXTENSION
+            val isFolder = file.isDirectory
+            mainScope.launch {
+                when {
+                    isExisting && isProjectFile -> requestOpenCertainProject(mainScope, file)
+                    isProjectFile || isFolder -> if (awaitAskIfSaveDialog(AskIfSaveDialogPurpose.IsCreatingNew)) {
+                        openProjectCreator(file)
+                    }
+                }
+            }
+        }
+    }
+
     fun consumeOpenOrCreateIpcRequest(request: OpenOrCreateRequest) = runCatching {
         mainScope.launch {
             // check if the project is already opened
@@ -500,22 +520,13 @@ class AppState(
                 val isProjectExisting = request.projectFile.toFile().exists()
 
                 // save current project if it is not saved
-                if (project != null && hasUnsavedChanges) {
+                if (hasUnsavedChanges) {
                     val purpose = if (isProjectExisting) {
                         AskIfSaveDialogPurpose.IsOpening
                     } else {
                         AskIfSaveDialogPurpose.IsCreatingNew
                     }
-                    val result = awaitEmbeddedDialog(purpose) as AskIfSaveDialogResult?
-                    when {
-                        result == null -> {
-                            // canceled, the request is discarded
-                            return@launch
-                        }
-                        result.save -> {
-                            saveProjectFile(project)
-                        }
-                    }
+                    if (!awaitAskIfSaveDialog(purpose)) return@launch
                 }
                 if (isProjectExisting) {
                     // load the project
@@ -548,6 +559,21 @@ class AppState(
         showError(it, pendingAction = AppErrorState.ErrorPendingAction.ExitProject)
     }
 
+    private suspend fun awaitAskIfSaveDialog(purpose: AskIfSaveDialogPurpose): Boolean {
+        val project = project ?: return true
+        val result = awaitEmbeddedDialog(purpose) as AskIfSaveDialogResult?
+        when {
+            result == null -> {
+                // canceled the process
+                return false
+            }
+            result.save -> {
+                saveProjectFile(project)
+            }
+        }
+        return true
+    }
+
     fun onCreateProject(project: Project, plugin: Plugin?, pluginParams: ParamMap?) {
         trackProjectCreation(project, byIpcRequest = false)
         if (plugin != null) {
@@ -560,7 +586,7 @@ class AppState(
 
     sealed class PendingActionAfterSaved {
         object Open : PendingActionAfterSaved()
-        class OpenRecent(val file: File) : PendingActionAfterSaved()
+        class OpenCertain(val file: File) : PendingActionAfterSaved()
         object Export : PendingActionAfterSaved()
         class ExportOverwrite(val all: Boolean) : PendingActionAfterSaved()
         object Close : PendingActionAfterSaved()

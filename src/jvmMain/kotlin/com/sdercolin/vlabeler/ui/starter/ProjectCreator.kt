@@ -76,14 +76,13 @@ import com.sdercolin.vlabeler.ui.dialog.plugin.LabelerPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.TemplatePluginDialog
 import com.sdercolin.vlabeler.ui.starter.ProjectCreatorState.ContentType
 import com.sdercolin.vlabeler.ui.starter.ProjectCreatorState.Page
-import com.sdercolin.vlabeler.ui.string.LocalLanguage
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.ui.theme.White
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import kotlinx.coroutines.CoroutineScope
+import java.io.File
 
 @Composable
 fun ProjectCreator(
@@ -92,6 +91,7 @@ fun ProjectCreator(
     activeLabelerConfs: List<LabelerConf>,
     activeTemplatePlugins: List<Plugin>,
     appRecordStore: AppRecordStore,
+    initialFile: File? = null,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     state: ProjectCreatorState = rememberProjectCreatorState(
         appState,
@@ -99,6 +99,7 @@ fun ProjectCreator(
         activeLabelerConfs,
         activeTemplatePlugins,
         appRecordStore,
+        initialFile,
     ),
 ) {
     Surface(Modifier.fillMaxSize()) {

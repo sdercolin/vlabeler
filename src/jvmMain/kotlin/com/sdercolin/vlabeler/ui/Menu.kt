@@ -73,7 +73,7 @@ fun FrameWindowScope.Menu(
                         appRecord.recentProjectPathsWithDisplayNames.forEach { (path, displayName) ->
                             Item(
                                 text = displayName,
-                                onClick = { appState.requestOpenRecentProject(mainScope, File(path)) },
+                                onClick = { appState.requestOpenCertainProject(mainScope, File(path)) },
                             )
                         }
                         Separator()

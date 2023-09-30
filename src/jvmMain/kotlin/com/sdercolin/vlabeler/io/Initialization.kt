@@ -6,13 +6,14 @@ import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Locale
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.Arguments
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.ColorPaletteRepository
 import com.sdercolin.vlabeler.tracking.TrackingService
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
-import com.sdercolin.vlabeler.ui.string.Language
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.CustomAppConfFile
 import com.sdercolin.vlabeler.util.CustomLabelerDir
@@ -87,6 +88,7 @@ suspend fun produceAppState(
     mainScope: CoroutineScope,
     appConf: MutableState<AppConf>,
     appRecordStore: AppRecordStore,
+    arguments: Arguments,
 ): AppState {
     val availableLabelerConfs = loadAvailableLabelerConfs()
     val plugins = loadPlugins(appConf.value.view.language)
@@ -107,5 +109,6 @@ suspend fun produceAppState(
         appConf,
         availableLabelerConfs,
         plugins,
+        arguments,
     )
 }

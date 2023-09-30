@@ -16,9 +16,7 @@ import com.sdercolin.vlabeler.model.Project.Companion.getDefaultCacheDirectory
 import com.sdercolin.vlabeler.model.projectOf
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.string.Language
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.HomeDir
 import com.sdercolin.vlabeler.util.ParamMap
@@ -41,6 +39,7 @@ class ProjectCreatorState(
     private val labelerConfs: List<LabelerConf>,
     private val templatePlugins: List<Plugin>,
     val appRecordStore: AppRecordStore,
+    initialFile: File?,
 ) {
 
     val appConf get() = appState.appConf
@@ -103,6 +102,17 @@ class ProjectCreatorState(
     var currentPathPicker: PathPicker? by mutableStateOf(null)
         private set
 
+    init {
+        if (initialFile != null) {
+            val isProjectFile = initialFile.extension == Project.PROJECT_FILE_EXTENSION
+            val directory = if (isProjectFile) initialFile.parentFile else initialFile
+            updateSampleDirectory(directory?.absolutePath ?: HomeDir.absolutePath)
+            if (isProjectFile) {
+                updateProjectName(initialFile.nameWithoutExtension, byUser = false)
+            }
+        }
+    }
+
     fun updateSampleDirectory(path: String) {
         sampleDirectory = path
         if (!projectNameEdited) {
@@ -116,8 +126,10 @@ class ProjectCreatorState(
         }
     }
 
-    fun updateProjectName(name: String) {
-        projectNameEdited = true
+    fun updateProjectName(name: String, byUser: Boolean = true) {
+        if (byUser) {
+            projectNameEdited = true
+        }
         projectName = name
 
         if (!cacheDirectoryEdited) {
@@ -564,8 +576,16 @@ fun rememberProjectCreatorState(
     activeLabelerConfs: List<LabelerConf>,
     activeTemplatePlugins: List<Plugin>,
     appRecordStore: AppRecordStore,
+    initialFile: File? = null,
 ) = remember(appRecordStore) {
-    ProjectCreatorState(appState, coroutineScope, activeLabelerConfs, activeTemplatePlugins, appRecordStore)
+    ProjectCreatorState(
+        appState,
+        coroutineScope,
+        activeLabelerConfs,
+        activeTemplatePlugins,
+        appRecordStore,
+        initialFile,
+    )
 }
 
 enum class PathPicker {

@@ -74,7 +74,7 @@ interface AppDialogState {
     fun requestOpenProject()
     fun openOpenProjectDialog()
     fun closeOpenProjectDialog()
-    fun requestOpenRecentProject(scope: CoroutineScope, file: File)
+    fun requestOpenCertainProject(scope: CoroutineScope, file: File)
     fun openSaveAsProjectDialog()
     fun closeSaveAsProjectDialog()
     fun requestExport(overwrite: Boolean, all: Boolean = false)
@@ -214,15 +214,15 @@ class AppDialogStateImpl(
         isShowingOpenProjectDialog = false
     }
 
-    override fun requestOpenRecentProject(scope: CoroutineScope, file: File) =
+    override fun requestOpenCertainProject(scope: CoroutineScope, file: File) =
         if (hasUnsavedChanges) {
-            askIfSaveBeforeOpenRecentProject(file)
+            askIfSaveBeforeOpenCertainProject(file)
         } else {
             loadProject(scope, file, state)
         }
 
-    private fun askIfSaveBeforeOpenRecentProject(file: File) =
-        openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpeningRecent(file))
+    private fun askIfSaveBeforeOpenCertainProject(file: File) =
+        openEmbeddedDialog(AskIfSaveDialogPurpose.IsOpeningCertain(file))
 
     override fun openSaveAsProjectDialog() {
         closeAllDialogs()

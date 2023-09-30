@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.ui.editor.EditorState
+import java.io.File
 
 interface AppScreenState {
     var screen: Screen
@@ -12,7 +13,7 @@ interface AppScreenState {
 
 sealed class Screen {
     object Starter : Screen()
-    object ProjectCreator : Screen()
+    class ProjectCreator(val initialFile: File? = null) : Screen()
     class Editor(val state: EditorState) : Screen()
 }
 

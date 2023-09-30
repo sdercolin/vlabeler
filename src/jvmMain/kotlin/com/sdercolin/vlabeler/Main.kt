@@ -42,6 +42,7 @@ import com.sdercolin.vlabeler.io.loadAppConf
 import com.sdercolin.vlabeler.io.produceAppState
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.action.KeyAction
+import com.sdercolin.vlabeler.model.parseArgs
 import com.sdercolin.vlabeler.tracking.event.LaunchEvent
 import com.sdercolin.vlabeler.ui.App
 import com.sdercolin.vlabeler.ui.AppRecordStore
@@ -51,9 +52,7 @@ import com.sdercolin.vlabeler.ui.ProjectChangesListener
 import com.sdercolin.vlabeler.ui.ProjectWriter
 import com.sdercolin.vlabeler.ui.Splash
 import com.sdercolin.vlabeler.ui.dialog.StandaloneDialogs
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.currentLanguage
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.util.AppRecordFile
 import com.sdercolin.vlabeler.util.MemoryUsageMonitor
@@ -67,7 +66,7 @@ var hasUncaughtError = false
 
 val UseCustomFileDialog = compositionLocalOf { false }
 
-fun main() = application {
+fun main(vararg args: String) = application {
     remember { Log.init() }
     remember { ensureDirectories() }
     remember { initializeGlobalRepositories() }
@@ -82,7 +81,7 @@ fun main() = application {
     currentLanguage = appConf.value.view.language
 
     val appState by produceState(null as AppState?) {
-        value = produceAppState(mainScope, appConf, appRecordStore)
+        value = produceAppState(mainScope, appConf, appRecordStore, parseArgs(args.toList()))
     }
     val onCloseRequest = {
         if (hasUncaughtError) {
