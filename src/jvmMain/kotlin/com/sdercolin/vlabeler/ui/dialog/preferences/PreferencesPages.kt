@@ -832,6 +832,20 @@ object PreferencesPages {
                         update = { copy(color = it) },
                         useAlpha = false,
                     )
+                    color(
+                        title = Strings.PreferencesEditorContinuousLabelNamesBackgroundColor,
+                        defaultValue = AppConf.ContinuousLabelNames.DEFAULT_BACKGROUND_COLOR,
+                        select = { it.backgroundColor },
+                        update = { copy(backgroundColor = it) },
+                        useAlpha = true,
+                    )
+                    color(
+                        title = Strings.PreferencesEditorContinuousLabelNamesEditableBackgroundColor,
+                        defaultValue = AppConf.ContinuousLabelNames.DEFAULT_EDITABLE_BACKGROUND_COLOR,
+                        select = { it.editableBackgroundColor },
+                        update = { copy(editableBackgroundColor = it) },
+                        useAlpha = true,
+                    )
                     selection(
                         title = Strings.PreferencesEditorContinuousLabelNamesSize,
                         defaultValue = AppConf.ContinuousLabelNames.DEFAULT_SIZE,

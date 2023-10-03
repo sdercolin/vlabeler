@@ -50,6 +50,8 @@ import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.theme.Black
 import com.sdercolin.vlabeler.util.getNextOrNull
 import com.sdercolin.vlabeler.util.getPreviousOrNull
+import com.sdercolin.vlabeler.util.toColor
+import com.sdercolin.vlabeler.util.toColorOrNull
 import com.sdercolin.vlabeler.util.toRgbColor
 import com.sdercolin.vlabeler.util.toRgbColorOrNull
 import com.sdercolin.vlabeler.util.updateNonNull
@@ -171,6 +173,7 @@ private fun NameLabel(
     index: Int,
     name: String,
     color: Color,
+    backgroundColor: Color,
     fontSize: AppConf.FontSize,
     clickable: Boolean,
     requestRename: (Int) -> Unit,
@@ -181,6 +184,7 @@ private fun NameLabel(
     Text(
         modifier = Modifier.widthIn(max = 100.dp)
             .wrapContentSize()
+            .background(color = backgroundColor, shape = MaterialTheme.shapes.small)
             .combinedClickable(
                 enabled = clickable,
                 onClick = { requestRename(index) },
@@ -249,9 +253,11 @@ private fun EditableNameLabel(
                 singleLine = true,
                 cursorBrush = SolidColor(color),
                 decorationBox = {
+                    val backgroundColor = appConf.editor.continuousLabelNames.editableBackgroundColor.toColorOrNull()
+                        ?: AppConf.ContinuousLabelNames.DEFAULT_EDITABLE_BACKGROUND_COLOR.toColor()
                     Box(
                         modifier = Modifier.widthIn(min = 20.dp, max = 100.dp)
-                            .background(color = Color.White.copy(alpha = 0.1f))
+                            .background(color = backgroundColor, shape = MaterialTheme.shapes.small)
                             .padding(vertical = 5.dp, horizontal = 5.dp),
                         contentAlignment = Alignment.Center,
                     ) {
@@ -296,6 +302,14 @@ private fun NameLabelsChunk(
             entryChunk.entries.map { activeColor } +
             listOfNotNull(entryChunk.rightEntry).map { inactiveColor }
     }
+    val activeBackgroundColor = appConf.editor.continuousLabelNames.backgroundColor.toColorOrNull()
+        ?: AppConf.ContinuousLabelNames.DEFAULT_BACKGROUND_COLOR.toColor()
+    val inactiveBackgroundColor = Color.Transparent
+    val backgroundColors = remember(entryChunk, activeBackgroundColor, inactiveBackgroundColor) {
+        listOfNotNull(entryChunk.leftEntry).map { inactiveBackgroundColor } +
+            entryChunk.entries.map { activeBackgroundColor } +
+            listOfNotNull(entryChunk.rightEntry).map { inactiveBackgroundColor }
+    }
 
     Layout(
         modifier = modifier,
@@ -303,10 +317,12 @@ private fun NameLabelsChunk(
             items.indices.forEach { itemIndex ->
                 val item = items[itemIndex]
                 val color = colors[itemIndex]
+                val backgroundColor = backgroundColors[itemIndex]
                 NameLabel(
                     index = item.index,
                     name = item.name,
                     color = color,
+                    backgroundColor = backgroundColor,
                     fontSize = appConf.editor.continuousLabelNames.size,
                     clickable = clickable,
                     requestRename = requestRename,

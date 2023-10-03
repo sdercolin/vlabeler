@@ -416,6 +416,8 @@ enum class Strings {
     PreferencesEditorContinuousLabelNames,
     PreferencesEditorContinuousLabelNamesDescription,
     PreferencesEditorContinuousLabelNamesColor,
+    PreferencesEditorContinuousLabelNamesBackgroundColor,
+    PreferencesEditorContinuousLabelNamesEditableBackgroundColor,
     PreferencesEditorContinuousLabelNamesSize,
     PreferencesEditorContinuousLabelNamesPosition,
     PreferencesPlayback,

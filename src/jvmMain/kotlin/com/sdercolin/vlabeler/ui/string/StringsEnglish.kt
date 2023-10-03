@@ -498,6 +498,8 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorContinuousLabelNamesDescription ->
         "Customize appearance of entry name texts shown in the editor, when using a continuous labeler."
     PreferencesEditorContinuousLabelNamesColor -> "Color"
+    PreferencesEditorContinuousLabelNamesBackgroundColor -> "Background color"
+    PreferencesEditorContinuousLabelNamesEditableBackgroundColor -> "Background color (editing)"
     PreferencesEditorContinuousLabelNamesSize -> "Size"
     PreferencesEditorContinuousLabelNamesPosition -> "Position"
     PreferencesPlayback -> "Playback"

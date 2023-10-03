@@ -444,6 +444,8 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorContinuousLabelNames -> "标签名（连续）"
     PreferencesEditorContinuousLabelNamesDescription -> "编辑在使用连续的标注器时，显示在编辑器中的标签名的外观。"
     PreferencesEditorContinuousLabelNamesColor -> "颜色"
+    PreferencesEditorContinuousLabelNamesBackgroundColor -> "背景色"
+    PreferencesEditorContinuousLabelNamesEditableBackgroundColor -> "背景色（编辑中）"
     PreferencesEditorContinuousLabelNamesSize -> "大小"
     PreferencesEditorContinuousLabelNamesPosition -> "位置"
     PreferencesPlayback -> "播放"

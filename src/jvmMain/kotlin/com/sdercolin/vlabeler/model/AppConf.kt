@@ -394,6 +394,8 @@ data class AppConf(
      * @param color Color hex string of the label names.
      * @param size Font size of the label names.
      * @param position Position of the label names at corners. `Bottom` here means the bottom of waveforms.
+     * @param backgroundColor Background color of the label names.
+     * @param editableBackgroundColor Background color of the label names when editing.
      */
     @Serializable
     @Immutable
@@ -401,12 +403,16 @@ data class AppConf(
         val color: String = DEFAULT_COLOR,
         val size: FontSize = DEFAULT_SIZE,
         val position: ViewPosition = DEFAULT_POSITION,
+        val backgroundColor: String = DEFAULT_BACKGROUND_COLOR,
+        val editableBackgroundColor: String = DEFAULT_EDITABLE_BACKGROUND_COLOR,
     ) {
 
         companion object {
             const val DEFAULT_COLOR = "#E89F17"
             val DEFAULT_SIZE = FontSize.Small
             val DEFAULT_POSITION = ViewPosition.TopRight
+            const val DEFAULT_BACKGROUND_COLOR = "#00000000"
+            const val DEFAULT_EDITABLE_BACKGROUND_COLOR = "#19FFFFFF"
         }
     }
 

@@ -467,6 +467,8 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorContinuousLabelNames -> "ラベル名（連続）"
     PreferencesEditorContinuousLabelNamesDescription -> "連続のラベラーを使用している時にエディタに表示されるラベル名のスタイルをカスタマイズします。"
     PreferencesEditorContinuousLabelNamesColor -> "色"
+    PreferencesEditorContinuousLabelNamesBackgroundColor -> "背景の色"
+    PreferencesEditorContinuousLabelNamesEditableBackgroundColor -> "編集時の背景の色"
     PreferencesEditorContinuousLabelNamesSize -> "サイズ"
     PreferencesEditorContinuousLabelNamesPosition -> "位置"
     PreferencesPlayback -> "再生"
