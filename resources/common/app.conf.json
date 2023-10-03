@@ -1,120 +1,124 @@
 {
-  "painter": {
-    "canvasResolution": {
-      "default": 40,
-      "step": 20
+    "painter": {
+        "canvasResolution": {
+            "default": 40,
+            "step": 20
+        },
+        "maxDataChunkSize": 441000,
+        "amplitude": {
+            "resampleDownToHz": 44100,
+            "normalize": false,
+            "unitSize": 60,
+            "intensityAccuracy": 1000,
+            "yAxisBlankRate": 0.1,
+            "color": "#FFF2F2F2",
+            "backgroundColor": "#00000000"
+        },
+        "spectrogram": {
+            "enabled": true,
+            "heightWeight": 0.75,
+            "pointDensity": 2,
+            "standardHopSize": 110,
+            "standardWindowSize": 512,
+            "windowType": "BlackmanHarris",
+            "melScaleStep": 10,
+            "maxFrequency": 20000,
+            "minIntensity": -20,
+            "maxIntensity": 55,
+            "colorPalette": "Plain",
+            "useHighAlphaContrast": true
+        },
+        "power": {
+            "enabled": false,
+            "mergeChannels": true,
+            "heightWeight": 0.5,
+            "unitSize": 60,
+            "windowSize": 300,
+            "minPower": -48.0,
+            "maxPower": 0.0,
+            "intensityAccuracy": 200,
+            "color": "#FFF2F2F2",
+            "backgroundColor": "#00000000"
+        },
+        "conversion": {
+            "ffmpegPath": "ffmpeg",
+            "ffmpegArgs": "-acodec pcm_s16le -ac 1 -ar 44100",
+            "useConversionForWav": false
+        }
     },
-    "maxDataChunkSize": 441000,
-    "amplitude": {
-      "resampleDownToHz": 44100,
-      "normalize": false,
-      "unitSize": 60,
-      "intensityAccuracy": 1000,
-      "yAxisBlankRate": 0.1,
-      "color": "#FFF2F2F2",
-      "backgroundColor": "#00000000"
+    "editor": {
+        "playerCursorColor": "#FFFF00",
+        "scissorsColor": "#FFFFFF00",
+        "scissorsActions": {
+            "goTo": "Former",
+            "askForName": "Former",
+            "play": "Former"
+        },
+        "useOnScreenScissors": true,
+        "autoScroll": {
+            "onLoadedNewSample": true,
+            "onJumpedToEntry": true,
+            "onSwitchedInMultipleEditMode": true,
+            "onSwitched": false
+        },
+        "lockedDrag": "Labeler",
+        "lockedSettingParameterWithCursor": true,
+        "showDone": true,
+        "showStar": true,
+        "showTag": true,
+        "showExtra": true,
+        "continuousLabelNames": {
+            "color": "#E89F17",
+            "size": "Small",
+            "position": "TopRight",
+            "backgroundColor": "#00000000",
+            "editableBackgroundColor": "#19FFFFFF"
+        },
+        "postEditNext": {
+            "enabled": false,
+            "field": "Labeler",
+            "useDragging": true,
+            "useCursorSet": true
+        },
+        "postEditDone": {
+            "enabled": true,
+            "field": "Any",
+            "useDragging": true,
+            "useCursorSet": true
+        }
     },
-    "spectrogram": {
-      "enabled": true,
-      "heightWeight": 0.75,
-      "pointDensity": 2,
-      "standardHopSize": 110,
-      "standardWindowSize": 512,
-      "windowType": "BlackmanHarris",
-      "melScaleStep": 10,
-      "maxFrequency": 20000,
-      "minIntensity": -20,
-      "maxIntensity": 55,
-      "colorPalette": "Plain",
-      "useHighAlphaContrast": true
+    "view": {
+        "language": "English",
+        "hideSampleExtension": true,
+        "accentColor": "#F48FB1",
+        "accentColorVariant": "#AD375F",
+        "pinnedEntryListPosition": "Right"
     },
-    "power": {
-      "enabled": false,
-      "mergeChannels": true,
-      "heightWeight": 0.5,
-      "unitSize": 60,
-      "windowSize": 300,
-      "minPower": -48.0,
-      "maxPower": 0.0,
-      "intensityAccuracy": 200,
-      "color": "#FFF2F2F2",
-      "backgroundColor": "#00000000"
+    "autoSave": {
+        "target": "record",
+        "intervalSec": 30
     },
-    "conversion": {
-      "ffmpegPath": "ffmpeg",
-      "ffmpegArgs": "-acodec pcm_s16le -ac 1 -ar 44100",
-      "useConversionForWav": false
+    "playback": {
+        "playOnDragging": {
+            "enabled": true,
+            "rangeRadiusMillis": 10,
+            "eventQueueSize": 5
+        }
+    },
+    "keymaps": {
+        "keyActionMap": {
+        },
+        "mouseClickActionMap": {
+        },
+        "mouseScrollActionMap": {
+        }
+    },
+    "history": {
+        "maxSize": 100,
+        "squashIndex": true
+    },
+    "misc": {
+        "updateChannel": "Stable",
+        "useCustomFileDialog": false
     }
-  },
-  "editor": {
-    "playerCursorColor": "#FFFF00",
-    "scissorsColor": "#FFFFFF00",
-    "scissorsActions": {
-      "goTo": "Former",
-      "askForName": "Former",
-      "play": "Former"
-    },
-    "useOnScreenScissors": true,
-    "autoScroll": {
-      "onLoadedNewSample": true,
-      "onJumpedToEntry": true,
-      "onSwitchedInMultipleEditMode": true,
-      "onSwitched": false
-    },
-    "lockedDrag": "Labeler",
-    "lockedSettingParameterWithCursor": true,
-    "showDone": true,
-    "showStar": true,
-    "showTag": true,
-    "continuousLabelNames": {
-      "color": "#E89F17",
-      "size": "Small",
-      "position": "TopRight"
-    },
-    "postEditNext": {
-      "enabled": false,
-      "field": "Labeler",
-      "useDragging": true,
-      "useCursorSet": true
-    },
-    "postEditDone": {
-      "enabled": true,
-      "field": "Any",
-      "useDragging": true,
-      "useCursorSet": true
-    }
-  },
-  "view": {
-    "language": "English",
-    "hideSampleExtension": true,
-    "accentColor": "#F48FB1",
-    "accentColorVariant": "#AD375F",
-    "pinnedEntryListPosition": "Right"
-  },
-  "autoSave": {
-    "target": "record",
-    "intervalSec": 30
-  },
-  "playback": {
-    "playOnDragging": {
-      "enabled": true,
-      "rangeRadiusMillis": 10,
-      "eventQueueSize": 5
-    }
-  },
-  "keymaps": {
-    "keyActionMap": {
-    },
-    "mouseClickActionMap": {
-    },
-    "mouseScrollActionMap": {
-    }
-  },
-  "history": {
-    "maxSize": 100,
-    "squashIndex": true
-  },
-  "misc": {
-    "useCustomFileDialog": false
-  }
 }
