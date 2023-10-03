@@ -6,11 +6,12 @@ import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.model.AppConf
-import com.sdercolin.vlabeler.ui.string.Language
-import com.sdercolin.vlabeler.ui.string.LocalLanguage
+import com.sdercolin.vlabeler.repository.FontRepository
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.toColorOrNull
 
 private val colors = darkColors(
@@ -25,7 +26,8 @@ private val colors = darkColors(
     onError = Black,
 )
 
-private val typography = Typography(
+private fun getTypography(defaultFontFamily: FontFamily?) = Typography(
+    defaultFontFamily = defaultFontFamily ?: FontFamily.Default,
     button = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 13.sp,
@@ -56,7 +58,11 @@ fun AppTheme(viewConf: AppConf.View? = null, content: @Composable () -> Unit) {
                 primary = viewConf?.accentColor?.toColorOrNull() ?: colors.primary,
                 primaryVariant = viewConf?.accentColorVariant?.toColorOrNull() ?: colors.primaryVariant,
             ),
-            typography = typography,
+            typography = getTypography(
+                FontRepository.getFontFamily(
+                    viewConf?.fontFamilyName ?: AppConf.View.DEFAULT_FONT_FAMILY_NAME,
+                ),
+            ),
             content = content,
         )
     }

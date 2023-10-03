@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.model.action.MouseClickAction
 import com.sdercolin.vlabeler.model.action.MouseScrollAction
 import com.sdercolin.vlabeler.model.key.KeySet
 import com.sdercolin.vlabeler.model.palette.ColorPaletteDefinition
+import com.sdercolin.vlabeler.repository.FontRepository
 import com.sdercolin.vlabeler.repository.update.model.UpdateChannel
 import com.sdercolin.vlabeler.ui.string.*
 import kotlinx.serialization.SerialName
@@ -479,6 +480,7 @@ data class AppConf(
      * Configurations about views.
      *
      * @param language Language of the app.
+     * @param fontFamilyName Name of the font family used in the app.
      * @param hideSampleExtension When true, the extension of sample file names is hidden in the editor and entry lists.
      * @param accentColor Color hex string of the accent color.
      * @param accentColorVariant Color hex string of the accent color variant.
@@ -488,6 +490,7 @@ data class AppConf(
     @Immutable
     data class View(
         val language: Language = DEFAULT_LANGUAGE,
+        val fontFamilyName: String = DEFAULT_FONT_FAMILY_NAME,
         val hideSampleExtension: Boolean = DEFAULT_HIDE_SAMPLE_EXTENSION,
         val accentColor: String = DEFAULT_ACCENT_COLOR,
         val accentColorVariant: String = DEFAULT_ACCENT_COLOR_VARIANT,
@@ -498,6 +501,8 @@ data class AppConf(
 
             val DEFAULT_LANGUAGE = Language.English
             const val DEFAULT_HIDE_SAMPLE_EXTENSION = true
+
+            val DEFAULT_FONT_FAMILY_NAME = FontRepository.FontOption.BuiltIn.Default.name
 
             /**
              * Equals to [com.sdercolin.vlabeler.ui.theme.Pink]

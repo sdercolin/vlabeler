@@ -370,6 +370,13 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesView -> "视图"
     PreferencesViewDescription -> "编辑视图的外观。"
     PreferencesViewLanguage -> "语言"
+    PreferencesViewFontFamily -> "字体"
+    PreferencesViewFontFamilyDescription ->
+        "应用程序中使用的字体。\n" +
+            "除了现有的选项，您还可以在@edit{这个文件夹}中添加字体。" +
+            "目前不支持包含复数个样式的 ttc 字体。" +
+            "要使用 ttc 字体的所有样式，请先将其转换为 ttf/otf 文件。\n" +
+            "您需要重新打开偏好设置对话框才能使更改生效。"
     PreferencesViewHideSampleExtension -> "隐藏采样文件扩展名"
     PreferencesViewAppAccentColor -> "应用程序主题色（亮色）"
     PreferencesViewAppAccentColorVariant -> "应用程序主题色（暗色）"

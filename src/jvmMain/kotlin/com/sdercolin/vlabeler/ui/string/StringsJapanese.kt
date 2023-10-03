@@ -390,6 +390,13 @@ fun Strings.ja(): String? = when (this) {
     PreferencesView -> "表示"
     PreferencesViewDescription -> "アプリケーションの表示をカスタマイズします。"
     PreferencesViewLanguage -> "言語"
+    PreferencesViewFontFamily -> "フォント"
+    PreferencesViewFontFamilyDescription ->
+        "アプリケーションで使用するフォントです。\n" +
+            "既存のオプションに加えて、@edit{このフォルダ}にフォントを追加することができます。" +
+            "現在、ttc フォントは完全にサポートされていません。" +
+            "ttc フォントのすべてのスタイルを使用するには、事前に ttf/otf ファイルに変換してください。\n" +
+            "変更を反映するには、このダイアログを再度開く必要があります。"
     PreferencesViewHideSampleExtension -> "サンプル名の拡張子を表示しない"
     PreferencesViewAppAccentColor -> "アプリケーションのアクセント色（ライト）"
     PreferencesViewAppAccentColorVariant -> "アプリケーションのアクセント色（ダーク）"

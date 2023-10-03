@@ -412,6 +412,13 @@ fun Strings.en(): String = when (this) {
     PreferencesView -> "View"
     PreferencesViewDescription -> "Customize view appearances"
     PreferencesViewLanguage -> "Language"
+    PreferencesViewFontFamily -> "Font"
+    PreferencesViewFontFamilyDescription ->
+        "Font (family) used in the app.\n" +
+            "Besides the existing options, you can add fonts in @edit{this folder}. " +
+            "Currently ttc fonts are not fully supported. " +
+            "To use all styles of a ttc font, please convert it to ttf/otf files beforehand.\n" +
+            "You need to reopen the preferences dialog to reload the added fonts."
     PreferencesViewHideSampleExtension -> "Hide sample file extension"
     PreferencesViewAppAccentColor -> "Accent color (light) of the app"
     PreferencesViewAppAccentColorVariant -> "Accent color (dark) of the app"

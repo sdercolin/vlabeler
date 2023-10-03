@@ -20,9 +20,7 @@ import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.editor.Tool
-import com.sdercolin.vlabeler.ui.string.LocalLanguage
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.Clipboard
 import com.sdercolin.vlabeler.util.CustomAppConfFile
@@ -608,6 +606,10 @@ fun FrameWindowScope.Menu(
                                         .onFailure { Log.error(it) }
                                 }
                             },
+                        )
+                        Item(
+                            "Show Font Preview Dialog",
+                            onClick = { DebugState.isShowingFontPreviewDialog = true },
                         )
                     }
                 }

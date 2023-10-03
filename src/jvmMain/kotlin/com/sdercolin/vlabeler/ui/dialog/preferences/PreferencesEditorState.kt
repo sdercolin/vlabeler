@@ -11,8 +11,8 @@ import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
 import com.sdercolin.vlabeler.repository.ColorPaletteRepository
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.stringStatic
+import com.sdercolin.vlabeler.repository.FontRepository
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
 import java.io.File
@@ -28,6 +28,7 @@ class PreferencesEditorState(
 ) {
     init {
         ColorPaletteRepository.load()
+        FontRepository.load()
     }
 
     var savedConf: AppConf by mutableStateOf(initConf)
@@ -103,6 +104,14 @@ class PreferencesEditorState(
                     spectrogram = _conf.painter.spectrogram.copy(
                         colorPalette = AppConf.Spectrogram.DEFAULT_COLOR_PALETTE,
                     ),
+                ),
+            )
+        }
+        if (FontRepository.hasFontFamily(_conf.view.fontFamilyName).not()) {
+            Log.debug("Missing font family ${_conf.view.fontFamilyName}, fix to default.")
+            _conf = _conf.copy(
+                view = _conf.view.copy(
+                    fontFamilyName = AppConf.View.DEFAULT_FONT_FAMILY_NAME,
                 ),
             )
         }

@@ -353,7 +353,7 @@
         {
             "moduleName": "org.apache.pdfbox:fontbox",
             "moduleUrl": "http://pdfbox.apache.org/",
-            "moduleVersion": "2.0.22",
+            "moduleVersion": "2.0.24",
             "moduleLicense": "Apache License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },

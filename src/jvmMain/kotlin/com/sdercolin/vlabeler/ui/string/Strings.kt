@@ -347,6 +347,8 @@ enum class Strings {
     PreferencesView,
     PreferencesViewDescription,
     PreferencesViewLanguage,
+    PreferencesViewFontFamily,
+    PreferencesViewFontFamilyDescription,
     PreferencesViewHideSampleExtension,
     PreferencesViewAppAccentColor,
     PreferencesViewAppAccentColorVariant,

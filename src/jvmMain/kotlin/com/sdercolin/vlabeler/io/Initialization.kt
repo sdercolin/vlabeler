@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Arguments
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.ColorPaletteRepository
+import com.sdercolin.vlabeler.repository.FontRepository
 import com.sdercolin.vlabeler.tracking.TrackingService
 import com.sdercolin.vlabeler.ui.AppRecordStore
 import com.sdercolin.vlabeler.ui.AppState
@@ -86,6 +87,7 @@ fun ensureDirectories() {
 
 fun initializeGlobalRepositories() {
     ColorPaletteRepository.initialize()
+    FontRepository.initialize()
 }
 
 suspend fun produceAppState(

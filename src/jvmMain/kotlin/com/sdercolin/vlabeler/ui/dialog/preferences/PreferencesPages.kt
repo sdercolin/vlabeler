@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.model.action.KeyActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseClickActionKeyBind
 import com.sdercolin.vlabeler.model.action.MouseScrollActionKeyBind
 import com.sdercolin.vlabeler.repository.ColorPaletteRepository
+import com.sdercolin.vlabeler.repository.FontRepository
 import com.sdercolin.vlabeler.repository.update.model.UpdateChannel
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.Url
@@ -522,6 +523,20 @@ object PreferencesPages {
                         select = { it.language },
                         update = { copy(language = it) },
                         options = Language.values(),
+                    )
+                    selection(
+                        title = Strings.PreferencesViewFontFamily,
+                        defaultValue = AppConf.View.DEFAULT_FONT_FAMILY_NAME,
+                        description = Strings.PreferencesViewFontFamilyDescription,
+                        clickableTags = listOf(
+                            ClickableTag(
+                                tag = "edit",
+                                onClick = { Desktop.getDesktop().open(FontRepository.fontDirectory) },
+                            ),
+                        ),
+                        select = { it.fontFamilyName },
+                        update = { copy(fontFamilyName = it) },
+                        options = FontRepository.listAllNames().toTypedArray(),
                     )
                     switch(
                         title = Strings.PreferencesViewHideSampleExtension,

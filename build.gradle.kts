@@ -63,6 +63,7 @@ kotlin {
                 implementation("com.segment.analytics.kotlin:core:1.9.1")
                 implementation("uk.co.caprica:vlcj:4.7.0")
                 implementation("cafe.adriel.bonsai:bonsai-core:1.2.0")
+                implementation("org.apache.pdfbox:fontbox:2.0.24")
 
                 val lwjglVersion = "3.3.1"
                 listOf("lwjgl", "lwjgl-nfd").forEach { lwjglDep ->

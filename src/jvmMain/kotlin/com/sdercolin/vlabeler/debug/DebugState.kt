@@ -8,4 +8,5 @@ object DebugState {
     var isShowingChunkBorder: Boolean by mutableStateOf(false)
     var printMemoryUsage: Boolean by mutableStateOf(false)
     var forceUseCustomFileDialog: Boolean by mutableStateOf(false)
+    var isShowingFontPreviewDialog: Boolean by mutableStateOf(false)
 }
