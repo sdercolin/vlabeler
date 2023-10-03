@@ -543,6 +543,7 @@ data class AppConf(
         Small(Strings.PreferencesFontSizeSmall),
         Medium(Strings.PreferencesFontSizeMedium),
         Large(Strings.PreferencesFontSizeLarge),
+        ExtraLarge(Strings.PreferencesFontSizeExtraLarge),
     }
 
     /**

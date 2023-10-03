@@ -407,6 +407,7 @@ fun Strings.ja(): String? = when (this) {
     PreferencesFontSizeSmall -> "小"
     PreferencesFontSizeMedium -> "中"
     PreferencesFontSizeLarge -> "大"
+    PreferencesFontSizeExtraLarge -> "特大"
     PreferencesEditor -> "エディタ"
     PreferencesEditorDescription -> "エディタの表示と動作をカスタマイズします。"
     PreferencesEditorPlayerCursorColor -> "再生カーソルの色"

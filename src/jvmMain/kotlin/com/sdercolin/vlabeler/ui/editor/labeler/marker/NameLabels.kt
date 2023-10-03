@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.isReleased
@@ -176,11 +177,7 @@ private fun NameLabel(
     jumpToEntry: (Int) -> Unit,
     onHovered: (Int, Boolean) -> Unit,
 ) {
-    val fontSizeSp = when (fontSize) {
-        AppConf.FontSize.Small -> 12.sp
-        AppConf.FontSize.Medium -> 14.sp
-        AppConf.FontSize.Large -> 16.sp
-    }
+    val fontSizeSp = getNameLabelFontSize(fontSize)
     Text(
         modifier = Modifier.widthIn(max = 100.dp)
             .wrapContentSize()
@@ -215,11 +212,7 @@ private fun EditableNameLabel(
     commit: () -> Unit,
     cancel: () -> Unit,
 ) {
-    val fontSizeSp = when (appConf.editor.continuousLabelNames.size) {
-        AppConf.FontSize.Small -> 12.sp
-        AppConf.FontSize.Medium -> 14.sp
-        AppConf.FontSize.Large -> 16.sp
-    }
+    val fontSizeSp = getNameLabelFontSize(appConf.editor.continuousLabelNames.size)
     val placeAtLeft = appConf.editor.scissorsActions.askForName == AppConf.ScissorsActions.Target.Former
     Layout(
         modifier = modifier,
@@ -353,6 +346,13 @@ private fun NameLabelsChunk(
             }
         }
     }
+}
+
+private fun getNameLabelFontSize(fontSize: AppConf.FontSize): TextUnit = when (fontSize) {
+    AppConf.FontSize.Small -> 12.sp
+    AppConf.FontSize.Medium -> 14.sp
+    AppConf.FontSize.Large -> 16.sp
+    AppConf.FontSize.ExtraLarge -> 18.sp
 }
 
 private fun getNameLabelYPosition(appConf: AppConf, constraints: Constraints, placeable: Placeable): Int {

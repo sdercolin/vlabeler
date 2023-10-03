@@ -387,6 +387,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesFontSizeSmall -> "小"
     PreferencesFontSizeMedium -> "中"
     PreferencesFontSizeLarge -> "大"
+    PreferencesFontSizeExtraLarge -> "特大"
     PreferencesEditor -> "编辑器"
     PreferencesEditorDescription -> "编辑编辑器的外观与行为。"
     PreferencesEditorPlayerCursorColor -> "音频播放光标颜色"

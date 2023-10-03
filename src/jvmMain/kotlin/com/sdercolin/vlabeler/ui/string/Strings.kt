@@ -364,6 +364,7 @@ enum class Strings {
     PreferencesFontSizeSmall,
     PreferencesFontSizeMedium,
     PreferencesFontSizeLarge,
+    PreferencesFontSizeExtraLarge,
     PreferencesEditor,
     PreferencesEditorDescription,
     PreferencesEditorPlayerCursorColor,

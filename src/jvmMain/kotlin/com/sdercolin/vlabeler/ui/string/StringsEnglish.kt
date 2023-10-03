@@ -429,6 +429,7 @@ fun Strings.en(): String = when (this) {
     PreferencesFontSizeSmall -> "Small"
     PreferencesFontSizeMedium -> "Medium"
     PreferencesFontSizeLarge -> "Large"
+    PreferencesFontSizeExtraLarge -> "Extra large"
     PreferencesEditor -> "Editor"
     PreferencesEditorDescription -> "Customize the editor's appearance and behavior."
     PreferencesEditorPlayerCursorColor -> "Player cursor color"
