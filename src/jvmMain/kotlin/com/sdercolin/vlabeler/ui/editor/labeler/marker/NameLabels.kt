@@ -35,9 +35,11 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sdercolin.vlabeler.env.isReleased
@@ -273,12 +275,7 @@ private fun EditableNameLabel(
             } else {
                 cutPosition.toInt() - offset
             }
-            val y = if (appConf.editor.continuousLabelNames.position.top) {
-                0
-            } else {
-                val heightRatio = appConf.painter.amplitudeHeightRatio
-                (constraints.maxHeight * heightRatio).toInt() - placeable.height
-            }
+            val y = getNameLabelYPosition(appConf, constraints, placeable)
             placeable.place(x.toInt(), y)
         }
     }
@@ -351,14 +348,22 @@ private fun NameLabelsChunk(
                         items[index].end - offset - placeable.width
                     }
                 }
-                val y = if (position.top) {
-                    0
-                } else {
-                    val heightRatio = appConf.painter.amplitudeHeightRatio
-                    (constraints.maxHeight * heightRatio).toInt() - placeable.height
-                }
+                val y = getNameLabelYPosition(appConf, constraints, placeable)
                 placeable.place(x.toInt(), y)
             }
+        }
+    }
+}
+
+private fun getNameLabelYPosition(appConf: AppConf, constraints: Constraints, placeable: Placeable): Int {
+    val position = appConf.editor.continuousLabelNames.position
+    val heightRatio = appConf.painter.amplitudeHeightRatio
+    return when {
+        position.top -> 0
+        position.bottom -> (constraints.maxHeight * heightRatio).toInt() - placeable.height
+        else -> {
+            // vertical center
+            (constraints.maxHeight * heightRatio).toInt() / 2 - placeable.height / 2
         }
     }
 }

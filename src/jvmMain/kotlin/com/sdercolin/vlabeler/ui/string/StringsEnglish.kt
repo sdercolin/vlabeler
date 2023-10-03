@@ -422,6 +422,8 @@ fun Strings.en(): String = when (this) {
     PreferencesViewPositionBottom -> "Bottom"
     PreferencesViewCornerPositionTopLeft -> "Top left"
     PreferencesViewCornerPositionTopRight -> "Top right"
+    PreferencesViewCornerPositionCenterLeft -> "Center left"
+    PreferencesViewCornerPositionCenterRight -> "Center right"
     PreferencesViewCornerPositionBottomLeft -> "Bottom left"
     PreferencesViewCornerPositionBottomRight -> "Bottom right"
     PreferencesFontSizeSmall -> "Small"

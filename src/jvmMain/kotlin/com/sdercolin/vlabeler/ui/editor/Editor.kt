@@ -116,8 +116,8 @@ fun Editor(state: EditorState, appState: AppState) {
     }
 
     val position = appState.appConf.view.pinnedEntryListPosition
-    val isHorizontal = position == AppConf.ViewPosition.Right || position == AppConf.ViewPosition.Left
-    val isLabelerFirst = position == AppConf.ViewPosition.Right || position == AppConf.ViewPosition.Bottom
+    val isHorizontal = position == AppConf.ViewSidePosition.Right || position == AppConf.ViewSidePosition.Left
+    val isLabelerFirst = position == AppConf.ViewSidePosition.Right || position == AppConf.ViewSidePosition.Bottom
     val appRecord = appState.appRecordFlow.collectAsState().value
     val locked = appRecord.pinnedEntryListSplitPanePositionLocked
     val splitPaneState = remember(locked, position, appState.isEntryListPinned) {

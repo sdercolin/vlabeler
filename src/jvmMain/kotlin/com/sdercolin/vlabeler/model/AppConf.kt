@@ -400,13 +400,13 @@ data class AppConf(
     data class ContinuousLabelNames(
         val color: String = DEFAULT_COLOR,
         val size: FontSize = DEFAULT_SIZE,
-        val position: ViewCornerPosition = DEFAULT_POSITION,
+        val position: ViewPosition = DEFAULT_POSITION,
     ) {
 
         companion object {
             const val DEFAULT_COLOR = "#E89F17"
             val DEFAULT_SIZE = FontSize.Small
-            val DEFAULT_POSITION = ViewCornerPosition.TopRight
+            val DEFAULT_POSITION = ViewPosition.TopRight
         }
     }
 
@@ -485,7 +485,7 @@ data class AppConf(
         val hideSampleExtension: Boolean = DEFAULT_HIDE_SAMPLE_EXTENSION,
         val accentColor: String = DEFAULT_ACCENT_COLOR,
         val accentColorVariant: String = DEFAULT_ACCENT_COLOR_VARIANT,
-        val pinnedEntryListPosition: ViewPosition = DEFAULT_PINNED_ENTRY_LIST_POSITION,
+        val pinnedEntryListPosition: ViewSidePosition = DEFAULT_PINNED_ENTRY_LIST_POSITION,
     ) {
 
         companion object {
@@ -502,15 +502,15 @@ data class AppConf(
              * Equals to [com.sdercolin.vlabeler.ui.theme.DarkPink]
              */
             const val DEFAULT_ACCENT_COLOR_VARIANT = "#AD375F"
-            val DEFAULT_PINNED_ENTRY_LIST_POSITION = ViewPosition.Right
+            val DEFAULT_PINNED_ENTRY_LIST_POSITION = ViewSidePosition.Right
         }
     }
 
     /**
-     * Position options of views.
+     * Position options of views that are attached to the sides of the window.
      */
     @Immutable
-    enum class ViewPosition(override val stringKey: Strings) : LocalizedText {
+    enum class ViewSidePosition(override val stringKey: Strings) : LocalizedText {
         Left(Strings.PreferencesViewPositionLeft),
         Right(Strings.PreferencesViewPositionRight),
         Top(Strings.PreferencesViewPositionTop),
@@ -518,18 +518,21 @@ data class AppConf(
     }
 
     /**
-     * Position options of views at corners.
+     * Position options of views.
      */
     @Immutable
-    enum class ViewCornerPosition(
+    enum class ViewPosition(
         override val stringKey: Strings,
         val left: Boolean,
         val top: Boolean,
+        val bottom: Boolean,
     ) : LocalizedText {
-        TopLeft(Strings.PreferencesViewCornerPositionTopLeft, left = true, top = true),
-        TopRight(Strings.PreferencesViewCornerPositionTopRight, left = false, top = true),
-        BottomLeft(Strings.PreferencesViewCornerPositionBottomLeft, left = true, top = false),
-        BottomRight(Strings.PreferencesViewCornerPositionBottomRight, left = false, top = false),
+        TopLeft(Strings.PreferencesViewCornerPositionTopLeft, left = true, top = true, bottom = false),
+        TopRight(Strings.PreferencesViewCornerPositionTopRight, left = false, top = true, bottom = false),
+        CenterLeft(Strings.PreferencesViewCornerPositionCenterLeft, left = true, top = false, bottom = false),
+        CenterRight(Strings.PreferencesViewCornerPositionCenterRight, left = false, top = false, bottom = false),
+        BottomLeft(Strings.PreferencesViewCornerPositionBottomLeft, left = true, top = false, bottom = true),
+        BottomRight(Strings.PreferencesViewCornerPositionBottomRight, left = false, top = false, bottom = true),
     }
 
     /**

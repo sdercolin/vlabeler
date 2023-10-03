@@ -400,6 +400,8 @@ fun Strings.ja(): String? = when (this) {
     PreferencesViewPositionBottom -> "下部"
     PreferencesViewCornerPositionTopLeft -> "左上"
     PreferencesViewCornerPositionTopRight -> "右上"
+    PreferencesViewCornerPositionCenterLeft -> "左中央"
+    PreferencesViewCornerPositionCenterRight -> "右中央"
     PreferencesViewCornerPositionBottomLeft -> "左下"
     PreferencesViewCornerPositionBottomRight -> "右下"
     PreferencesFontSizeSmall -> "小"

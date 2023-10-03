@@ -380,6 +380,8 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesViewPositionBottom -> "底部"
     PreferencesViewCornerPositionTopLeft -> "左上角"
     PreferencesViewCornerPositionTopRight -> "右上角"
+    PreferencesViewCornerPositionCenterLeft -> "左侧中间"
+    PreferencesViewCornerPositionCenterRight -> "右侧中间"
     PreferencesViewCornerPositionBottomLeft -> "左下角"
     PreferencesViewCornerPositionBottomRight -> "右下角"
     PreferencesFontSizeSmall -> "小"

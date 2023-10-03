@@ -548,7 +548,7 @@ object PreferencesPages {
                         defaultValue = AppConf.View.DEFAULT_PINNED_ENTRY_LIST_POSITION,
                         select = { it.pinnedEntryListPosition },
                         update = { copy(pinnedEntryListPosition = it) },
-                        options = AppConf.ViewPosition.values(),
+                        options = AppConf.ViewSidePosition.values(),
                     )
                 }
             }
@@ -844,7 +844,7 @@ object PreferencesPages {
                         defaultValue = AppConf.ContinuousLabelNames.DEFAULT_POSITION,
                         select = { it.position },
                         update = { copy(position = it) },
-                        options = AppConf.ViewCornerPosition.values(),
+                        options = AppConf.ViewPosition.values(),
                     )
                 }
             }

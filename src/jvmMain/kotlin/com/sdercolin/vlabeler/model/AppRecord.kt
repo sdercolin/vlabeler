@@ -22,11 +22,11 @@ data class AppRecord(
     val isPropertyViewDisplayed: Boolean = false,
     val isEntryListPinned: Boolean = true,
     val pinnedEntryListSplitPanePositionLocked: Boolean = false,
-    val pinnedEntryListSplitPanePositions: Map<AppConf.ViewPosition, Float> = mapOf(
-        AppConf.ViewPosition.Left to 0.3f,
-        AppConf.ViewPosition.Right to 0.7f,
-        AppConf.ViewPosition.Top to 0.3f,
-        AppConf.ViewPosition.Bottom to 0.7f,
+    val pinnedEntryListSplitPanePositions: Map<AppConf.ViewSidePosition, Float> = mapOf(
+        AppConf.ViewSidePosition.Left to 0.3f,
+        AppConf.ViewSidePosition.Right to 0.7f,
+        AppConf.ViewSidePosition.Top to 0.3f,
+        AppConf.ViewSidePosition.Bottom to 0.7f,
     ),
     val isToolboxDisplayed: Boolean = false,
     val sampleDirectory: String? = null,
@@ -65,13 +65,13 @@ data class AppRecord(
         disabledPluginNames = if (disabled) disabledPluginNames + name else disabledPluginNames - name,
     )
 
-    fun setPinnedEntryListSplitPanePosition(position: AppConf.ViewPosition, positionPercentage: Float) = copy(
+    fun setPinnedEntryListSplitPanePosition(position: AppConf.ViewSidePosition, positionPercentage: Float) = copy(
         pinnedEntryListSplitPanePositions = pinnedEntryListSplitPanePositions.toMutableMap().apply {
             this[position] = positionPercentage
         }.toMap(),
     )
 
-    fun getPinnedEntryListSplitPanePosition(position: AppConf.ViewPosition) =
+    fun getPinnedEntryListSplitPanePosition(position: AppConf.ViewSidePosition) =
         pinnedEntryListSplitPanePositions[position] ?: 0.5f
 
     fun isUpdateIgnored(version: Version) = ignoredUpdateVersions.contains(version.toString())

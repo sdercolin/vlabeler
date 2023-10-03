@@ -357,6 +357,8 @@ enum class Strings {
     PreferencesViewPositionBottom,
     PreferencesViewCornerPositionTopLeft,
     PreferencesViewCornerPositionTopRight,
+    PreferencesViewCornerPositionCenterLeft,
+    PreferencesViewCornerPositionCenterRight,
     PreferencesViewCornerPositionBottomLeft,
     PreferencesViewCornerPositionBottomRight,
     PreferencesFontSizeSmall,
