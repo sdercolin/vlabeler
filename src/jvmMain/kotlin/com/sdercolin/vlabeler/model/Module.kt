@@ -74,6 +74,12 @@ data class Module(
         entries.indices.filter { entryFilter?.matches(entries[it]) ?: true }
 
     @Transient
+    val filteredEntryCount: Int = filteredEntryIndexes.size
+
+    @Transient
+    val currentIndexInFiltered: Int = filteredEntryIndexes.indexOf(currentIndex)
+
+    @Transient
     private val entryIndexGroups: List<Pair<String, List<Int>>> = entries.indexGroupsConnected()
 
     @Transient
