@@ -178,9 +178,9 @@ private fun RowScope.PageList(state: PreferencesEditorState) {
                 ) {
                     if (page.canExpand) {
                         val icon = if (page.isExpanded) {
-                            Icons.Default.KeyboardArrowRight
-                        } else {
                             Icons.Default.KeyboardArrowDown
+                        } else {
+                            Icons.Default.KeyboardArrowRight
                         }
                         Icon(
                             imageVector = icon,
