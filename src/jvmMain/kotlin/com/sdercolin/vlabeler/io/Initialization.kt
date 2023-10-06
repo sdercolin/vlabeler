@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Locale
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.isFileSystemCaseSensitive
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Arguments
 import com.sdercolin.vlabeler.model.Plugin
@@ -78,6 +79,9 @@ fun ensureDirectories() {
             Log.info("$it created")
         }
     }
+
+    // check case sensitivity
+    Log.info("isFileSystemCaseSensitive: $isFileSystemCaseSensitive")
 }
 
 fun initializeGlobalRepositories() {

@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.ui.editor.ChartStore
+import com.sdercolin.vlabeler.util.asNormalizedFileName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,7 +56,7 @@ class ChartPrerenderer(
             }
             progress = progress.copy(finishedModules = moduleIndex)
             val module = project.modules[moduleIndex]
-            val allSamples = module.entries.map { it.sample }.distinct()
+            val allSamples = module.entries.map { it.sample }.distinctBy { it.asNormalizedFileName() }
                 .map { module.getSampleFile(project, it) }
             val totalFiles = allSamples.size
             progress = progress.copy(totalFiles = totalFiles)

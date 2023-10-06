@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.io.Sample
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
+import com.sdercolin.vlabeler.util.asNormalizedFileName
+import com.sdercolin.vlabeler.util.equalsAsFileName
 import com.sdercolin.vlabeler.util.getDirectory
 import java.awt.Desktop
 import java.io.File
@@ -53,18 +55,22 @@ class SampleListDialogState(
         )
             .map { it.name }
 
-    private fun getProjectSampleFilesWithEntries() = currentModule.entries
-        .groupBy { it.sample }
+    private fun getProjectSampleFilesWithEntries(existingSampleFileNames: List<String>) = currentModule.entries
+        .groupBy { it.sample.asNormalizedFileName() }
+        .map { (sampleName, entries) ->
+            val actualSampleName = existingSampleFileNames.find { it.equalsAsFileName(sampleName) } ?: sampleName
+            actualSampleName to entries.map { IndexedEntry(it, currentModule.entries.indexOf(it)) }
+        }
 
     private fun fetch() {
         val existing = getExistingSampleFileNames()
-        val projectSamplesWithEntries = getProjectSampleFilesWithEntries()
-        val projectSamples = projectSamplesWithEntries.map { it.key }
+        val projectSamplesWithEntries = getProjectSampleFilesWithEntries(existing)
+        val projectSamples = projectSamplesWithEntries.map { it.first }
         includedSampleItems = projectSamplesWithEntries.map {
             SampleListDialogItem.IncludedSample(
-                name = it.key,
-                valid = it.key in existing,
-                entryCount = it.value.size,
+                name = it.first,
+                valid = it.first in existing,
+                entryCount = it.second.size,
             )
         }
         excludedSampleItems = (existing - projectSamples.toSet())
@@ -80,7 +86,7 @@ class SampleListDialogState(
 
     fun selectSample(name: String) {
         val entries = currentModule.entries
-        entryItems = entries.indices.filter { entries[it].sample == name }.map {
+        entryItems = entries.indices.filter { entries[it].sample.equalsAsFileName(name) }.map {
             val indexedEntry = IndexedEntry(entries[it], it)
             SampleListDialogItem.Entry(name = indexedEntry.name, entry = indexedEntry)
         }

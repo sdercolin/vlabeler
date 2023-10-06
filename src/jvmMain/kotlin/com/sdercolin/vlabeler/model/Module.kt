@@ -5,6 +5,8 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
+import com.sdercolin.vlabeler.util.asNormalizedFileName
+import com.sdercolin.vlabeler.util.equalsAsFileName
 import com.sdercolin.vlabeler.util.groupContinuouslyBy
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.serialization.SerialName
@@ -142,7 +144,7 @@ data class Module(
         val entries = entries.toMutableList()
         Log.info("Updating entries on loaded sample: $sampleInfo")
         val changedEntries = entries.withIndex()
-            .filter { it.value.sample == sampleInfo.name }
+            .filter { it.value.sample.equalsAsFileName(sampleInfo.name) }
             .filter { entry ->
                 (entry.value.needSync && entry.value.end == 0f) || (entry.value.end < 0f)
             }
@@ -163,20 +165,20 @@ data class Module(
         }
         if (labelerConf.continuous) {
             val groups = editedEntries
-                .groupBy { it.sample }.values
+                .groupBy { it.sample.asNormalizedFileName() }.values
                 .flatMap { it.groupContinuouslyBy { index } }
                 .toList()
             for (group in groups) {
                 val first = group.first()
                 val previousIndex = first.index - 1
                 entries.getOrNull(previousIndex)
-                    ?.takeIf { it.sample == first.sample }
+                    ?.takeIf { it.sample.equalsAsFileName(first.sample) }
                     ?.copy(end = first.start)
                     ?.let { entries[previousIndex] = it }
                 val last = group.last()
                 val nextIndex = last.index + 1
                 entries.getOrNull(nextIndex)
-                    ?.takeIf { it.sample == last.sample }
+                    ?.takeIf { it.sample.equalsAsFileName(last.sample) }
                     ?.copy(start = last.end)
                     ?.let { entries[nextIndex] = it }
             }
@@ -263,7 +265,7 @@ data class Module(
         if (labelerConf.continuous) {
             val previousIndex = index - 1
             entries.getOrNull(previousIndex)
-                ?.takeIf { it.sample == removed.sample }
+                ?.takeIf { it.sample.equalsAsFileName(removed.sample) }
                 ?.copy(end = removed.end)
                 ?.let { entries[previousIndex] = it }
         }
@@ -455,7 +457,7 @@ fun List<Entry>.postApplyLabelerConf(
 private fun List<Entry>.indexGroupsConnected(): List<Pair<String, List<Int>>> = withIndex()
     .fold(listOf<Pair<String, MutableList<IndexedValue<Entry>>>>()) { acc, entry ->
         val lastGroup = acc.lastOrNull()
-        if (lastGroup == null || lastGroup.first != entry.value.sample) {
+        if (lastGroup == null || lastGroup.first.equalsAsFileName(entry.value.sample)) {
             acc.plus(entry.value.sample to mutableListOf(entry))
         } else {
             lastGroup.second.add(entry)

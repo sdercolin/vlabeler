@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.ui.ProjectStore
+import com.sdercolin.vlabeler.util.asNormalizedFileName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,7 +46,7 @@ class EntrySampleSyncer(
             val module = project.modules[moduleIndex]
             val allSamples = module.entries.filter { it.needSyncCompatibly }
                 .map { it.sample }
-                .distinct()
+                .distinctBy { it.asNormalizedFileName() }
                 .map { module.getSampleFile(project, it) }
             val totalFiles = allSamples.size
             progress = progress.copy(totalFiles = totalFiles)

@@ -24,6 +24,7 @@ import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.Resources
+import com.sdercolin.vlabeler.util.equalsAsFileName
 import com.sdercolin.vlabeler.util.execResource
 import com.sdercolin.vlabeler.util.getChildren
 import com.sdercolin.vlabeler.util.parseJson
@@ -435,7 +436,7 @@ class ProjectStoreImpl(
 
     override fun isCurrentEntryTheLast(): Boolean {
         val project = requireProject()
-        return project.currentModule.entries.count { it.sample == project.currentSampleName } == 1
+        return project.currentModule.entries.count { it.sample.equalsAsFileName(project.currentSampleName) } == 1
     }
 
     override fun toggleMultipleEditMode(on: Boolean) = editProject { copy(multipleEditMode = on) }

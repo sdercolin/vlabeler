@@ -30,6 +30,7 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.editor.labeler.Labeler
+import com.sdercolin.vlabeler.util.asNormalizedFileName
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -45,7 +46,7 @@ fun Editor(state: EditorState, appState: AppState) {
 
     LaunchedEffect(
         state.project.currentModuleIndex,
-        state.project.currentSampleName,
+        state.project.currentSampleName.asNormalizedFileName(),
         state.project.currentModule.sampleDirectoryPath,
         state.project.rootSampleDirectory,
         appState.isShowingPrerenderDialog,

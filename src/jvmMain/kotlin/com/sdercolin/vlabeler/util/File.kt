@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.util
 
+import com.sdercolin.vlabeler.env.isFileSystemCaseSensitive
 import java.io.File
 import java.io.FilenameFilter
 import java.nio.charset.Charset
@@ -98,4 +99,22 @@ fun File.removeDirectoryIfEmpty() {
             delete()
         }
     }
+}
+
+/**
+ * Compare file names with case sensitivity handled.
+ */
+fun String.equalsAsFileName(other: String): Boolean = if (isFileSystemCaseSensitive) {
+    this == other
+} else {
+    this.equals(other, ignoreCase = true)
+}
+
+/**
+ * Normalize file names with case sensitivity handled.
+ */
+fun String.asNormalizedFileName(): String = if (isFileSystemCaseSensitive) {
+    this
+} else {
+    this.lowercase()
 }
