@@ -75,6 +75,7 @@ import com.sdercolin.vlabeler.ui.theme.DarkGray
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
+import com.sdercolin.vlabeler.util.removeControlCharacters
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -397,7 +398,7 @@ private fun TagRegion(
                         isTextFieldFocused = it.hasFocus
                     },
                 value = editingTag,
-                onValueChange = { editingTag = it },
+                onValueChange = { editingTag = it.copy(text = it.text.removeControlCharacters()) },
                 textStyle = textStyle,
                 cursorBrush = SolidColor(LightGray),
                 maxLines = 1,

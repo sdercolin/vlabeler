@@ -20,3 +20,8 @@ private fun BigDecimal.toStringTrimmed(): String {
     str = str.trim('.')
     return str
 }
+
+/**
+ * Removes the control characters from a [String].
+ */
+fun String.removeControlCharacters(): String = this.filterNot { it in '\u0000'..'\u001f' }

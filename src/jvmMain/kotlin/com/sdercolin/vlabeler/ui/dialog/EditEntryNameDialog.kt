@@ -32,9 +32,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.ui.string.stringStatic
+import com.sdercolin.vlabeler.ui.string.*
+import com.sdercolin.vlabeler.util.removeControlCharacters
 
 data class InputEntryNameDialogArgs(
     val index: Int,
@@ -108,7 +107,7 @@ fun InputEntryNameDialog(
             value = input,
             singleLine = true,
             isError = args.invalidOptions.contains(input.text) || input.text.isBlank(),
-            onValueChange = { input = it },
+            onValueChange = { input = it.copy(text = it.text.removeControlCharacters()) },
         )
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
