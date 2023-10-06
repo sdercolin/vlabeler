@@ -790,7 +790,7 @@ private fun MarkerState.editEntryIfNeeded(
                 entry.index,
                 entryInMillis.entry,
                 fieldNames = listOf(editedFieldName),
-                method = Edition.Method.Dragging,
+                method = method,
             )
         }.toMutableList()
 
