@@ -26,10 +26,9 @@ See [Releases](https://github.com/sdercolin/vlabeler/releases).
 
 Packaged application for the following platforms are provided in the releases.
 
-- Windows: `~win64.zip`
-- macOS (Intel): `~mac-x64.dmg`
-- macOS (Apple Silicon): `~mac-arm64.dmg`
-- Ubuntu: `~amd64.deb`
+- Windows (.zip/.exe)
+- macOS (Intel, compatible with Apple Silicon) (.dmg)
+- Ubuntu (.deb)
 
 For other types of Linux os, you may have to build it by yourself.
 
