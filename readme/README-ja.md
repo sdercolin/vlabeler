@@ -23,9 +23,10 @@
 
 Releases では、次のプラットフォーム用のアプリケーションパッケージが提供されます。
 
-- Windows (.zip/.exe)
-- Mac (Intel）（Apple Silicon互換性あり) (.dmg)
-- Ubuntu (.deb)
+- Windows: `~win64.zip`
+- macOS (Intel): `~mac-x64.dmg`
+- macOS (Apple Silicon): `~mac-arm64.dmg`
+- Ubuntu: `~amd64.deb`
 
 その他の種類の Linux OS の場合は、自分でビルドする必要がある場合があります。
 

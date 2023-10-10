@@ -21,9 +21,10 @@ Demo 视频（英语）：[YouTube](https://youtu.be/xFX8SRrJEzM) | [bilibili](h
 
 Releases 中提供了适用于以下平台的应用程序包。
 
-- Windows (.zip/.exe)
-- macOS（Intel，兼容 Apple Silicon）（.dmg）
-- Ubuntu (.deb)
+- Windows: `~win64.zip`
+- macOS (Intel): `~mac-x64.dmg`
+- macOS (Apple Silicon): `~mac-arm64.dmg`
+- Ubuntu: `~amd64.deb`
 
 对于其他类型的 Linux 操作系统，您可能需要自己进行构建。
 

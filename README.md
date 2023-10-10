@@ -10,11 +10,15 @@ Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | 
 - Offering a customizable labeling process suitable for various voice generation software.
 - Ensuring high performance and support across multiple platforms.
 
-**The project is currently in its Beta phase.
-For assistance, feedback, reporting issues, and more, please join our [Discord](https://discord.gg/yrTqG2SrRd).**
+**For assistance, feedback, reporting issues, and more, please join our [Discord](https://discord.gg/yrTqG2SrRd).**
 
-Demo video (in English): [YouTube](https://youtu.be/xFX8SRrJEzM)
-| [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
+<details>
+<summary>Demo video (in English)</summary>
+Please not that this demo video is a bit outdated (1.0.0-beta1).
+Some UI elements may be different in the latest version.
+
+[YouTube](https://youtu.be/xFX8SRrJEzM) | [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
+</details>
 
 ## Download
 
@@ -22,9 +26,10 @@ See [Releases](https://github.com/sdercolin/vlabeler/releases).
 
 Packaged application for the following platforms are provided in the releases.
 
-- Windows (.zip/.exe)
-- macOS (Intel, compatible with Apple Silicon) (.dmg)
-- Ubuntu (.deb)
+- Windows: `~win64.zip`
+- macOS (Intel): `~mac-x64.dmg`
+- macOS (Apple Silicon): `~mac-arm64.dmg`
+- Ubuntu: `~amd64.deb`
 
 For other types of Linux os, you may have to build it by yourself.
 
