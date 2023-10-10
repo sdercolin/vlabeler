@@ -1,0 +1,66 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Release Mac ARM
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+
+    runs-on: macos-latest-xlarge
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Prepare signing
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+        run: |
+          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+          security create-keychain -p vlabeler2022 build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p vlabeler2022 build.keychain
+          security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+          security find-identity -v
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k vlabeler2022 build.keychain
+          echo $'compose.desktop.mac.sign=true\ncompose.desktop.mac.signing.identity=${{ secrets.MACOS_CERTIFICATE_IDENTITY }}\ncompose.desktop.mac.notarization.appleID=${{ secrets.APPLE_ID }}\ncompose.desktop.mac.notarization.password=${{ secrets.MACOS_APP_PWD }}' >local.properties
+          cat local.properties
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: packageDmg
+
+      - name: Rename and notarize
+        run: |
+          VERSION=${{ github.ref_name }}
+          echo $VERSION
+          PREFIX=$(echo $VERSION | cut -d'-' -f 1)
+          echo $PREFIX
+          mv ./build/compose/binaries/main/dmg/vLabeler-$PREFIX.dmg ./vlabeler-$VERSION-mac-arm64.dmg
+          xcrun notarytool submit vlabeler-$VERSION-mac-arm64.dmg --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.MACOS_APP_PWD }} --team-id ${{ secrets.APPLE_TEAM_ID }} --wait
+          xcrun stapler staple vlabeler-$VERSION-mac-arm64.dmg
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: true
+          files: vlabeler-${{ github.ref_name }}-mac-arm64.dmg
