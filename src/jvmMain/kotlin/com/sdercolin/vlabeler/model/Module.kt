@@ -140,7 +140,7 @@ data class Module(
 
     fun updateOnLoadedSample(sampleInfo: SampleInfo): Module {
         val entries = entries.toMutableList()
-        Log.info("Updating entries on loaded sample: $sampleInfo, entries: $entries")
+        Log.info("Updating entries on loaded sample: $sampleInfo")
         val changedEntries = entries.withIndex()
             .filter { it.value.sample == sampleInfo.name }
             .filter { entry ->
