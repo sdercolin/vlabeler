@@ -55,12 +55,12 @@ jobs:
           echo $VERSION
           PREFIX=$(echo $VERSION | cut -d'-' -f 1)
           echo $PREFIX
-          mv ./build/compose/binaries/main/dmg/vLabeler-$PREFIX.dmg ./vlabeler-$VERSION-mac.dmg
-          xcrun notarytool submit vlabeler-$VERSION-mac.dmg --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.MACOS_APP_PWD }} --team-id ${{ secrets.APPLE_TEAM_ID }} --wait
-          xcrun stapler staple vlabeler-$VERSION-mac.dmg
+          mv ./build/compose/binaries/main/dmg/vLabeler-$PREFIX.dmg ./vlabeler-$VERSION-mac-x64.dmg
+          xcrun notarytool submit vlabeler-$VERSION-mac-x64.dmg --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.MACOS_APP_PWD }} --team-id ${{ secrets.APPLE_TEAM_ID }} --wait
+          xcrun stapler staple vlabeler-$VERSION-mac-x64.dmg
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true
-          files: vlabeler-${{ github.ref_name }}-mac.dmg
+          files: vlabeler-${{ github.ref_name }}-mac-x64.dmg
