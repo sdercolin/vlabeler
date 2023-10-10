@@ -76,6 +76,7 @@ import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
 import com.sdercolin.vlabeler.util.removeControlCharacters
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -92,6 +93,7 @@ fun Labeler(
     LaunchedEffect(editorState) {
         editorState.scrollFitViewModel.eventFlow.collectLatest {
             if (appState.isScrollFitEnabled.not()) return@collectLatest
+            delay(100) // sometimes the scroll request doesn't work if it's too fast
             horizontalScrollState.animateScrollTo(it)
         }
     }
