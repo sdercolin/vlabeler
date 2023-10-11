@@ -240,7 +240,7 @@ from [here](https://www.videolan.org/vlc/index.html).
 Note that even on an Apple Silicon mac, you will need a `macOS` version instead of a `macOS (AppleSilicon)` version if
 you are using the application downloaded from `Release` page of this repository.
 
-Use shortcut `V` or `Shift` + `V` to open the attached video in the left-bottom corner or in a new window.
+Use shortcut `Ctrl` + `V` or `Ctrl` + `Shift` + `V` to open the attached video in the left-bottom corner or in a new window.
 The video will be played silently along with the sample file.
 
 ## Browse and filter entries
