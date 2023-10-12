@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Version
+import com.sdercolin.vlabeler.env.appVersion
 import com.sdercolin.vlabeler.ui.starter.ProjectCreatorState
 import com.sdercolin.vlabeler.util.DefaultDownloadDir
 import com.sdercolin.vlabeler.util.asPathRelativeToHome
@@ -47,6 +48,7 @@ data class AppRecord(
     val showDisabledMacroPluginItems: Boolean = false,
     val isTimescaleBarDisplayed: Boolean = false,
     val includeInfoLog: Boolean = false,
+    val appVersionLastLaunchedRaw: String? = null,
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(
@@ -105,6 +107,10 @@ data class AppRecord(
             this[index] = !currentValue
         },
     )
+
+    val appVersionLastLaunched: Version get() = appVersionLastLaunchedRaw?.let { Version.from(it) } ?: Version.zero
+
+    fun onAppVersionLaunched() = copy(appVersionLastLaunchedRaw = appVersion.toString())
 }
 
 private const val MAX_RECENT_PROJECT_COUNT = 10

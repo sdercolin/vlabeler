@@ -85,9 +85,16 @@ fun ensureDirectories() {
     Log.info("isFileSystemCaseSensitive: $isFileSystemCaseSensitive")
 }
 
-fun initializeGlobalRepositories() {
-    ColorPaletteRepository.initialize()
-    FontRepository.initialize()
+fun initializeGlobalRepositories(appRecordStore: AppRecordStore) {
+    ColorPaletteRepository.initialize(appRecordStore.value)
+    FontRepository.initialize(appRecordStore.value)
+}
+
+fun runMigration(appRecordStore: AppRecordStore) {
+    // Migrations
+    // ...
+    // end of migrations
+    appRecordStore.update { onAppVersionLaunched() }
 }
 
 suspend fun produceAppState(

@@ -2,6 +2,8 @@ package com.sdercolin.vlabeler.repository
 
 import androidx.compose.ui.res.useResource
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.appVersion
+import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.palette.ColorPaletteDefinition
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.Resources
@@ -20,21 +22,28 @@ object ColorPaletteRepository {
 
     private val items = mutableMapOf<String, ColorPaletteDefinition>()
 
-    fun initialize() {
+    fun initialize(appRecord: AppRecord) {
         if (directory.isFile) {
             directory.delete()
         }
         directory.mkdirs()
         if (directory.isDirectory.not()) return
 
+        val isNewVersion = appRecord.appVersionLastLaunched < appVersion
+
         ColorPaletteDefinition.presets.forEach { definition ->
             val file = directory.resolve("${definition.name}.example.json")
-            file.writeText(definition.stringifyJson())
+            if (file.exists().not() || isNewVersion) {
+                file.writeText(definition.stringifyJson())
+            }
         }
 
-        useResource(Resources.colorPaletteReadme) {
-            val readme = it.bufferedReader().readText()
-            directory.resolve(README_FILE_NAME).writeText(readme)
+        val readmeFile = directory.resolve(README_FILE_NAME)
+        if (readmeFile.exists().not() || isNewVersion) {
+            useResource(Resources.colorPaletteReadme) {
+                val readme = it.bufferedReader().readText()
+                readmeFile.writeText(readme)
+            }
         }
 
         load()

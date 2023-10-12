@@ -61,6 +61,8 @@ data class Version(
 
     companion object {
 
+        val zero = Version(0, 0, 0)
+
         fun from(versionText: String): Version? = runCatching {
             val sections = versionText.split(".", "-")
             val major = sections[0].toInt()

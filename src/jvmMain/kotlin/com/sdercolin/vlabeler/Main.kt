@@ -40,6 +40,7 @@ import com.sdercolin.vlabeler.io.ensureDirectories
 import com.sdercolin.vlabeler.io.initializeGlobalRepositories
 import com.sdercolin.vlabeler.io.loadAppConf
 import com.sdercolin.vlabeler.io.produceAppState
+import com.sdercolin.vlabeler.io.runMigration
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.parseArgs
@@ -69,10 +70,11 @@ val UseCustomFileDialog = compositionLocalOf { false }
 fun main(vararg args: String) = application {
     remember { Log.init() }
     remember { ensureDirectories() }
-    remember { initializeGlobalRepositories() }
 
     val mainScope = rememberCoroutineScope()
     val appRecordStore = rememberAppRecordStore(mainScope)
+    remember { initializeGlobalRepositories(appRecordStore) }
+    remember { runMigration(appRecordStore) }
 
     val appRecord = appRecordStore.stateFlow.collectAsState()
     val windowState = rememberResizableWindowState(appRecord)

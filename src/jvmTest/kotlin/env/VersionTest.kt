@@ -3,6 +3,7 @@ package env
 import com.sdercolin.vlabeler.env.Version
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class VersionTest {
 
@@ -24,6 +25,14 @@ class VersionTest {
         val sorted = versions.sortedBy { it }
 
         assertEquals(versions, sorted)
+    }
+
+    @Test
+    fun testVersionZero() {
+        val nonZero = Version(1, 0, 0)
+        val zero = Version.zero
+
+        assertTrue { zero < nonZero }
     }
 
     @Test

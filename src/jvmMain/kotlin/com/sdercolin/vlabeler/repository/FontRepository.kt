@@ -8,6 +8,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.platform.Font
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.appVersion
+import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.parseJson
@@ -160,15 +162,18 @@ object FontRepository {
 
     private var loadedFonts: List<FontOption>? = null
 
-    fun initialize() {
+    fun initialize(appRecord: AppRecord) {
         fontDirectory.apply {
             if (exists().not()) {
                 mkdirs()
             }
         }
-        useResource(Resources.customFontReadme) {
-            val readme = it.bufferedReader().readText()
-            fontDirectory.resolve(README_FILE_NAME).writeText(readme)
+        val readmeFile = fontDirectory.resolve(README_FILE_NAME)
+        if (appRecord.appVersionLastLaunched < appVersion || readmeFile.exists().not()) {
+            useResource(Resources.customFontReadme) {
+                val readme = it.bufferedReader().readText()
+                readmeFile.writeText(readme)
+            }
         }
         load()
     }
