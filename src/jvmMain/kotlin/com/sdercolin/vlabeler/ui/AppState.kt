@@ -58,7 +58,9 @@ import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.editor.labeler.marker.MarkerState
 import com.sdercolin.vlabeler.ui.string.*
+import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.ParamMap
+import com.sdercolin.vlabeler.util.RecordDir
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFrame
@@ -362,6 +364,14 @@ class AppState(
                 is CommonConfirmationDialogAction.RemoveCustomizableItem -> {
                     action.state.removeItem(action.item)
                 }
+                is CommonConfirmationDialogAction.ClearAppData -> {
+                    AppDir.deleteRecursively()
+                    exit()
+                }
+                is CommonConfirmationDialogAction.ClearAppRecord -> {
+                    RecordDir.deleteRecursively()
+                    exit()
+                }
             }
             is EditExtraDialogResult -> when (result.target) {
                 EditExtraDialogTarget.EditEntry -> updateEntryExtra(result.index, result.extras)
@@ -583,6 +593,14 @@ class AppState(
     }
 
     fun track(event: TrackingEvent) = trackingService.track(event)
+
+    fun requestClearAppRecordAndExit() {
+        openEmbeddedDialog(CommonConfirmationDialogAction.ClearAppRecord)
+    }
+
+    fun requestClearAppDataAndExit() {
+        openEmbeddedDialog(CommonConfirmationDialogAction.ClearAppData)
+    }
 
     sealed class PendingActionAfterSaved {
         object Open : PendingActionAfterSaved()

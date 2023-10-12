@@ -12,12 +12,14 @@ import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.getConflictingKeyBinds
 import com.sdercolin.vlabeler.repository.ColorPaletteRepository
 import com.sdercolin.vlabeler.repository.FontRepository
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
 import java.io.File
 
 class PreferencesEditorState(
+    val appState: AppState,
     initConf: AppConf,
     private val submit: (AppConf?) -> Unit,
     private val apply: (AppConf) -> Unit,

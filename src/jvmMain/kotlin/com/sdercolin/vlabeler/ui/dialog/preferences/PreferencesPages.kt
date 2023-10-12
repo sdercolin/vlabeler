@@ -10,6 +10,7 @@ import com.sdercolin.vlabeler.model.action.MouseScrollActionKeyBind
 import com.sdercolin.vlabeler.repository.ColorPaletteRepository
 import com.sdercolin.vlabeler.repository.FontRepository
 import com.sdercolin.vlabeler.repository.update.model.UpdateChannel
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.Url
 import com.sdercolin.vlabeler.util.divideWithBigDecimal
@@ -990,6 +991,22 @@ object PreferencesPages {
                         select = { it.useCustomFileDialog },
                         update = { copy(useCustomFileDialog = it) },
                     )
+                    group(name = Strings.PreferencesMiscDangerZone) {
+                        button(
+                            title = Strings.PreferencesMiscClearRecord,
+                            description = Strings.PreferencesMiscClearRecordDescription,
+                            buttonText = Strings.PreferencesMiscClearRecordButton,
+                            onClick = { requestClearAppRecordAndExit() },
+                            isDangerous = true,
+                        )
+                        button(
+                            title = Strings.PreferencesMiscClearAppData,
+                            description = Strings.PreferencesMiscClearAppDataDescription,
+                            buttonText = Strings.PreferencesMiscClearAppDataButton,
+                            onClick = { requestClearAppDataAndExit() },
+                            isDangerous = true,
+                        )
+                    }
                 }
             }
     }
@@ -1208,6 +1225,26 @@ private class PreferencesItemContext<P>(
             defaultValue = defaultValue,
             select = selectWithContext(select),
             update = updateWithContext(update),
+        ),
+    )
+
+    fun button(
+        title: Strings,
+        description: Strings? = null,
+        clickableTags: List<ClickableTag> = listOf(),
+        buttonText: Strings,
+        onClick: AppState.() -> Unit,
+        isDangerous: Boolean = false,
+        enabled: (P) -> Boolean = { true },
+    ) = builder.item(
+        PreferencesItem.Button(
+            title = title,
+            description = description,
+            clickableTags = clickableTags,
+            buttonText = buttonText,
+            onClick = onClick,
+            isDangerous = isDangerous,
+            enabled = selectWithContext(enabled),
         ),
     )
 }

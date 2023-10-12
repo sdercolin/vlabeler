@@ -28,6 +28,7 @@ fun PreferencesDialog(appState: AppState) {
     val coroutineScope = rememberCoroutineScope()
     LargeDialogContainer {
         PreferencesEditor(
+            appState = appState,
             currentConf = currentConf,
             submit = finish,
             apply = apply,

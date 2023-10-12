@@ -23,6 +23,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -52,6 +54,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ColorHexInputBox
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
@@ -82,6 +85,7 @@ import com.sdercolin.vlabeler.util.toColor
 
 @Composable
 private fun rememberPreferencesEditorState(
+    appState: AppState,
     currentConf: AppConf,
     submit: (AppConf?) -> Unit,
     apply: (AppConf) -> Unit,
@@ -92,6 +96,7 @@ private fun rememberPreferencesEditorState(
 ) =
     remember(currentConf, submit, initialPage, onViewPage) {
         PreferencesEditorState(
+            appState = appState,
             initConf = currentConf,
             submit = submit,
             apply = apply,
@@ -104,6 +109,7 @@ private fun rememberPreferencesEditorState(
 
 @Composable
 fun PreferencesEditor(
+    appState: AppState,
     currentConf: AppConf,
     submit: (AppConf?) -> Unit,
     apply: (AppConf) -> Unit,
@@ -112,6 +118,7 @@ fun PreferencesEditor(
     showSnackbar: (String) -> Unit,
     launchArgs: PreferencesEditorState.LaunchArgs?,
     state: PreferencesEditorState = rememberPreferencesEditorState(
+        appState,
         currentConf,
         submit,
         apply,
@@ -343,6 +350,7 @@ private fun Item(item: PreferencesItem, state: PreferencesEditorState) {
         is PreferencesItem.ColorStringInput -> ColorStringInputItem(item, state)
         is PreferencesItem.Selection<*> -> SelectionItem(item, state)
         is PreferencesItem.Keymap<*> -> Keymap(item, state)
+        is PreferencesItem.Button -> PreferenceButton(item, state)
     }
 }
 
@@ -520,6 +528,20 @@ private fun <K : Action> Keymap(
             }
             VerticalScrollbar(rememberScrollbarAdapter(lazyListState), Modifier.width(15.dp).align(Alignment.CenterEnd))
         }
+    }
+}
+
+@Composable
+private fun PreferenceButton(item: PreferencesItem.Button, state: PreferencesEditorState) {
+    Button(
+        enabled = item.enabled(state.conf),
+        onClick = { item.onClick(state.appState) },
+        colors = if (item.isDangerous) ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.error,
+            contentColor = MaterialTheme.colors.onError,
+        ) else ButtonDefaults.buttonColors(),
+    ) {
+        Text(string(item.buttonText).runIf(item.isDangerous) { uppercase() })
     }
 }
 

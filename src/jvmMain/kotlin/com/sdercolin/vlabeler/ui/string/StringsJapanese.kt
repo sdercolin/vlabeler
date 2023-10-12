@@ -512,6 +512,25 @@ fun Strings.ja(): String? = when (this) {
         "有効にすると、OS のファイルダイアログではなく、独自のファイルダイアログを使用します。" +
             "これは、デフォルトのファイルダイアログに問題がある場合や、OSによってはファイルダイアログがサポートされていない場合に" +
             "ご利用ください。この設定の変更を反映するには、アプリケーションを再起動する必要がある場合があります。"
+    PreferencesMiscDangerZone -> "危険領域"
+    PreferencesMiscClearRecord -> "アプリケーション使用履歴をクリア"
+    PreferencesMiscClearRecordDescription ->
+        "ウィンドウのサイズ、スキップされたアップデートバージョン、保存されたプラグインのスロット設定など、" +
+            "環境設定で管理されていないすべてのアプリケーション使用履歴を削除します。"
+    PreferencesMiscClearRecordButton -> "クリア"
+    PreferencesMiscClearRecordConfirmation ->
+        "アプリケーション使用履歴をクリアしますか？\n" +
+            "この操作は取り消せません。\n" +
+            "クリア後、アプリケーションはすぐに終了します。現在開いているプロジェクトは保存されません。"
+    PreferencesMiscClearAppData -> "すべてのアプリケーションデータを削除"
+    PreferencesMiscClearAppDataDescription ->
+        "環境設定、使用履歴、インストールされたプラグインなど、すべてのアプリケーションデータを削除します。"
+    PreferencesMiscClearAppDataButton -> "すべて削除"
+    PreferencesMiscClearAppDataConfirmation ->
+        "すべてのアプリケーションデータを削除しますか？\n" +
+            "この操作は取り消せません。プロジェクト関連のファイルなど明示的に作成されたファイルを除き、" +
+            "デバイスから vLabeler に関するすべてのデータを削除します。\n" +
+            "削除後、アプリケーションはすぐに終了します。現在開いているプロジェクトは保存されません。"
     ActionToggleSamplePlayback -> "現在のサンプルの再生/停止"
     ActionToggleEntryPlayback -> "現在のエントリの再生/停止"
     ActionToggleScreenRangePlayback -> "現在の画面範囲の再生/停止"

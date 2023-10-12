@@ -545,6 +545,25 @@ fun Strings.en(): String = when (this) {
         "When enabled, the file dialogs will be replaced by the custom ones. " +
             "This may be useful if you are using a desktop environment that doesn't support " +
             "the system file dialogs. You might need to restart the app to apply this setting."
+    PreferencesMiscDangerZone -> "Danger Zone"
+    PreferencesMiscClearRecord -> "Clear application usage history"
+    PreferencesMiscClearRecordDescription ->
+        "Delete all application usage data not managed by preferences, " +
+            "such as window sizes, skipped update versions, saved plugin slot settings, etc."
+    PreferencesMiscClearRecordButton -> "Clear"
+    PreferencesMiscClearRecordConfirmation ->
+        "Are you sure you want to clear all application usage history data?\n" +
+            "This action cannot be undone.\n" +
+            "The application will exit immediately after clearing, without saving the project currently open."
+    PreferencesMiscClearAppData -> "Erase all application data"
+    PreferencesMiscClearAppDataDescription ->
+        "Delete all application data, including preferences, usage history, installed plugins, etc."
+    PreferencesMiscClearAppDataButton -> "Erase all data"
+    PreferencesMiscClearAppDataConfirmation ->
+        "Are you sure you want to erase all application data?\n" +
+            "This action cannot be undone and will remove all data related to vLabeler from your device, " +
+            "except for the files you've explicitly created, such as project-related files.\n" +
+            "The application will exit immediately after erasing, without saving the project currently open."
     ActionToggleSamplePlayback -> "Toggle Playback of Current Sample"
     ActionToggleEntryPlayback -> "Toggle Playback of Current Entry"
     ActionToggleScreenRangePlayback -> "Toggle Playback of Current Screen Range"

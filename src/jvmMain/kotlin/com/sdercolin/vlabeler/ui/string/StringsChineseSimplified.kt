@@ -487,6 +487,23 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesMiscUseCustomFileDialogDescription ->
         "启用后，文件对话框将会被自定义的对话框所代替。" +
             "这可能会在您使用不支持系统文件对话框的桌面环境时有所帮助。您可能需要重启应用才能使该设置生效。"
+    PreferencesMiscDangerZone -> "危险区域"
+    PreferencesMiscClearRecord -> "清除应用使用历史"
+    PreferencesMiscClearRecordDescription ->
+        "删除不受偏好设置管理的所有应用使用数据，如窗口大小、跳过的更新版本、保存的插件槽位设置等。"
+    PreferencesMiscClearRecordButton -> "清除"
+    PreferencesMiscClearRecordConfirmation ->
+        "您确定要清除所有应用使用历史数据吗？\n" +
+            "此操作不能撤销。\n" +
+            "应用程序将在清除后立即退出，请提前保存当前打开的项目。"
+    PreferencesMiscClearAppData -> "删除所有应用数据"
+    PreferencesMiscClearAppDataDescription -> "删除所有应用数据，包括偏好设置、使用历史、已安装的插件等。"
+    PreferencesMiscClearAppDataButton -> "删除所有数据"
+    PreferencesMiscClearAppDataConfirmation ->
+        "您确定要删除所有应用数据吗？\n" +
+            "此操作不能撤销，并将从您的设备中删除与 vLabeler 相关的所有数据，" +
+            "除了您明确创建的文件，例如与项目相关的文件。\n" +
+            "应用程序将在删除后立即退出，请提前保存当前打开的项目。"
     ActionToggleSamplePlayback -> "播放/暂停当前采样"
     ActionToggleEntryPlayback -> "播放/暂停当前条目"
     ActionToggleScreenRangePlayback -> "播放/暂停当前屏幕范围"

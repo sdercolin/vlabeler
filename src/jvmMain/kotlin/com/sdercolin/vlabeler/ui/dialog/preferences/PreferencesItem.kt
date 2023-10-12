@@ -4,6 +4,7 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.ActionType
+import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.string.*
 
 sealed class PreferencesItem(
@@ -13,6 +14,21 @@ sealed class PreferencesItem(
     val columnStyle: Boolean,
     val enabled: (AppConf) -> Boolean,
 ) {
+    class Button(
+        title: Strings,
+        description: Strings?,
+        val buttonText: Strings,
+        val onClick: (AppState) -> Unit,
+        val isDangerous: Boolean,
+        clickableTags: List<ClickableTag>,
+        enabled: (AppConf) -> Boolean,
+    ) : PreferencesItem(
+        title,
+        description,
+        clickableTags,
+        columnStyle = false,
+        enabled,
+    )
 
     sealed class Valued<T>(
         title: Strings?,
