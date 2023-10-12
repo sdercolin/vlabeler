@@ -122,7 +122,7 @@ data class AppConf(
             const val DEFAULT_UNIT_SIZE = 60
             const val MAX_UNIT_SIZE = DEFAULT_UNIT_SIZE * 10
             const val MIN_UNIT_SIZE = 1
-            const val DEFAULT_INTENSITY_ACCURACY = 1000
+            const val DEFAULT_INTENSITY_ACCURACY = 500
             const val MAX_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY * 5
             const val MIN_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY / 5
             const val DEFAULT_YAXIS_BLANK_RATE = 0.1f
