@@ -35,9 +35,9 @@ val isWindows by lazy { osName.toLowerCase(Locale.current).contains("windows") }
 val isMacOS by lazy { osName.toLowerCase(Locale.current).contains("mac") }
 val isMacOSWithArm: Boolean by lazy {
     try {
-        val process = ProcessBuilder("uname", "-m").start()
+        val process = ProcessBuilder("sysctl", "-n", "hw.optional.arm64").start()
         val reader = BufferedReader(InputStreamReader(process.inputStream))
-        reader.readLine() == "arm64"
+        reader.readLine() == "1"
     } catch (e: Exception) {
         e.printStackTrace()
         false
