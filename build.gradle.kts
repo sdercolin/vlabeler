@@ -14,7 +14,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization") version "1.8.10"
     id("org.jetbrains.compose")
-    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
+    id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
     id("com.github.jk1.dependency-license-report") version "2.0"
 }
 
