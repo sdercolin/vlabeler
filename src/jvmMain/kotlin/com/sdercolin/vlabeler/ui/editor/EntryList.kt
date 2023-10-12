@@ -72,13 +72,11 @@ class EntryListState(
 ) : NavigatorListState<Entry> {
     var entries = project.currentModule.entries.withIndex().toList()
         private set
-    override var currentIndex = project.currentModule.currentIndex
+    override var currentIndex = 0
         private set
 
     override var searchResult: List<IndexedValue<Entry>> by mutableStateOf(calculateResult())
-    override var selectedIndex: Int? by mutableStateOf(
-        searchResult.indexOfFirst { it.index == currentIndex }.takeIf { it >= 0 },
-    )
+    override var selectedIndex: Int? by mutableStateOf(null)
 
     override var hasFocus: Boolean by mutableStateOf(false)
     var isFilterExpanded: Boolean by mutableStateOf(

@@ -30,14 +30,12 @@ class ModuleListState(
 ) : NavigatorListState<Module> {
     var modules = project.modules.withIndex().toList()
         private set
-    override var currentIndex = project.currentModuleIndex
+    override var currentIndex = 0
         private set
 
     var searchText: String by mutableStateOf("")
     override var searchResult: List<IndexedValue<Module>> by mutableStateOf(calculateResult())
-    override var selectedIndex: Int? by mutableStateOf(
-        searchResult.indexOfFirst { it.index == currentIndex }.takeIf { it >= 0 },
-    )
+    override var selectedIndex: Int? by mutableStateOf(null)
 
     override var hasFocus: Boolean by mutableStateOf(false)
 
