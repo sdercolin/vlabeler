@@ -3,8 +3,11 @@ package com.sdercolin.vlabeler.env
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 import com.sdercolin.vlabeler.util.AppDir
+import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
+import java.io.InputStreamReader
+
 
 /**
  * Information about the current operating system.
@@ -12,10 +15,34 @@ import java.io.IOException
 
 val osName by lazy { System.getProperty("os.name").toString() }
 val osNameWithVersion by lazy { osName + " " + System.getProperty("os.version") }
-val osInfo by lazy { osNameWithVersion + " " + System.getProperty("os.arch") }
+val osArch by lazy {
+    val arch = System.getProperty("os.arch").toString()
+    if (isMacOS) {
+        val systemIsArm = isMacOSWithArm
+        val jvmIsArm = arch == "aarch64"
+        when {
+            systemIsArm && jvmIsArm -> "arm64"
+            systemIsArm && !jvmIsArm -> "x86_64 (Rosetta)"
+            !systemIsArm && jvmIsArm -> "arm64"// This is not possible
+            else -> arch
+        }
+    } else {
+        arch
+    }
+}
+val osInfo by lazy { "$osNameWithVersion $osArch" }
 val isWindows by lazy { osName.toLowerCase(Locale.current).contains("windows") }
 val isMacOS by lazy { osName.toLowerCase(Locale.current).contains("mac") }
-val isMacOSWithArm by lazy { isMacOS && System.getProperty("os.arch") in listOf("aarch64", "arm64") }
+val isMacOSWithArm: Boolean by lazy {
+    try {
+        val process = ProcessBuilder("uname", "-m").start()
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        reader.readLine() == "arm64"
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}
 val isLinux by lazy { osName.toLowerCase(Locale.current).contains("linux") }
 
 val isFileSystemCaseSensitive: Boolean by lazy {
