@@ -10,10 +10,15 @@
 - 可定制的标注流程，以供多个语音合成软件使用
 - 高性能的多平台支持
 
-**该项目现在处于 Beta 阶段。
 如需帮助、建议、问题报告等，请加入我们的 [Discord](https://discord.gg/yrTqG2SrRd)。**
 
-Demo 视频（英语）：[YouTube](https://youtu.be/xFX8SRrJEzM) | [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
+<details>
+<summary>Demo 视频（英语）</summary>
+
+请注意，由于此演示视频基于1.0.0-beta1，部分UI可能与最新版本不同。
+
+[YouTube](https://youtu.be/xFX8SRrJEzM) | [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
+</details>
 
 ## 下载
 

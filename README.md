@@ -14,7 +14,7 @@ Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | 
 
 <details>
 <summary>Demo video (in English)</summary>
-Please not that this demo video is a bit outdated (1.0.0-beta1).
+Please note that this demo video is a bit outdated (1.0.0-beta1).
 Some UI elements may be different in the latest version.
 
 [YouTube](https://youtu.be/xFX8SRrJEzM) | [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
