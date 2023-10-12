@@ -14,7 +14,7 @@ Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | 
 
 <details>
 <summary>Demo video (in English)</summary>
-Please not that this demo video is a bit outdated (1.0.0-beta1).
+Please note that this demo video is a bit outdated (1.0.0-beta1).
 Some UI elements may be different in the latest version.
 
 [YouTube](https://youtu.be/xFX8SRrJEzM) | [bilibili](https://www.bilibili.com/video/BV1Ve4y1S7FF)
@@ -240,7 +240,7 @@ from [here](https://www.videolan.org/vlc/index.html).
 Note that even on an Apple Silicon mac, you will need a `macOS` version instead of a `macOS (AppleSilicon)` version if
 you are using the application downloaded from `Release` page of this repository.
 
-Use shortcut `V` or `Shift` + `V` to open the attached video in the left-bottom corner or in a new window.
+Use shortcut `Ctrl` + `V` or `Ctrl` + `Shift` + `V` to open the attached video in the left-bottom corner or in a new window.
 The video will be played silently along with the sample file.
 
 ## Browse and filter entries
