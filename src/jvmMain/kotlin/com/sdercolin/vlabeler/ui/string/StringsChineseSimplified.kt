@@ -325,7 +325,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesChartsSpectrogramUseHighAlphaContrast -> "提高透明度的对比度"
     PreferencesChartsSpectrogramUseHighAlphaContrastDescription -> "该选项只对使用了透明度的配色方案有效。"
     PreferencesChartsPower -> "功率图"
-    PreferencesChartsPowerDescription -> "编辑功率图的渲染设置"
+    PreferencesChartsPowerDescription -> "编辑功率图的渲染设置。"
     PreferencesChartsPowerEnabled -> "启用功率图"
     PreferencesChartsPowerMergeChannels -> "合并通道"
     PreferencesChartsPowerHeight -> "相对于波形图的高度（%%）"
