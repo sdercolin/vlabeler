@@ -14,8 +14,9 @@ import java.io.InputStreamReader
 
 val osName by lazy { System.getProperty("os.name").toString() }
 val osNameWithVersion by lazy { osName + " " + System.getProperty("os.version") }
+val osRawArch by lazy { System.getProperty("os.arch").toString() }
 val osArch by lazy {
-    val arch = System.getProperty("os.arch").toString()
+    val arch = osRawArch
     if (isMacOS) {
         val systemIsArm = isMacOSWithArm
         val jvmIsArm = arch == "aarch64"

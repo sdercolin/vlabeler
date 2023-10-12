@@ -72,6 +72,8 @@ object Log {
             "appDir" to AppDir,
             "locale" to Locale,
             "flags" to flags,
+            "isMacOSWithArm" to isMacOSWithArm,
+            "rawArch" to osRawArch,
         )
         debug("Launched in $osInfo, ${launchInfo.entries.joinToString(", ") { "${it.key}=${it.value}" }}")
     }
