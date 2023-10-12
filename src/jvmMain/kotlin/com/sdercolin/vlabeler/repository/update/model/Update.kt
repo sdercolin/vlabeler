@@ -6,6 +6,7 @@ import com.sdercolin.vlabeler.env.appVersion
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.env.isLinux
 import com.sdercolin.vlabeler.env.isMacOS
+import com.sdercolin.vlabeler.env.isMacOSWithArm
 import com.sdercolin.vlabeler.env.isWindows
 import com.sdercolin.vlabeler.util.getLocalDate
 import com.sdercolin.vlabeler.util.parseIsoTime
@@ -63,7 +64,8 @@ data class Update(
 
             val suffix = when {
                 isWindows -> "-win64.zip"
-                isMacOS -> "-mac.dmg"
+                isMacOSWithArm -> "-mac-arm64.dmg"
+                isMacOS -> "-mac-x64.dmg"
                 isLinux -> "-amd64.deb"
                 else -> return null
             }
