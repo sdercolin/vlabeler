@@ -40,7 +40,7 @@ jobs:
             security create-keychain -p vlabeler2022 build.keychain
             security default-keychain -s build.keychain
             security unlock-keychain -p vlabeler2022 build.keychain
-            security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+            security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign -T /usr/bin/productsign -T /System/Library/PrivateFrameworks/AOSKit.framework/Versions/A/XPCServices/com.apple.iCloudHelper.xpc/Contents/MacOS/com.apple.iCloudHelper
             security find-identity -v
             security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k vlabeler2022 build.keychain
           else
