@@ -34,6 +34,8 @@ jobs:
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
           MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
         run: |
+          CERTIFICATE_EXISTS=$(security find-identity -v build.keychain | grep -c "${{ secrets.MACOS_CERTIFICATE_IDENTITY }}")
+          if [ "$CERTIFICATE_EXISTS" -eq "0" ]; then
           echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
           security create-keychain -p vlabeler2022 build.keychain
           security default-keychain -s build.keychain
@@ -41,6 +43,7 @@ jobs:
           security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
           security find-identity -v
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k vlabeler2022 build.keychain
+          fi
           echo $'compose.desktop.mac.sign=true\ncompose.desktop.mac.signing.identity=${{ secrets.MACOS_CERTIFICATE_IDENTITY }}\ncompose.desktop.mac.notarization.appleID=${{ secrets.APPLE_ID }}\ncompose.desktop.mac.notarization.password=${{ secrets.MACOS_APP_PWD }}' >local.properties
           cat local.properties
 
