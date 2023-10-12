@@ -334,14 +334,14 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
 }
 
 @Composable
-private fun Item(item: PreferencesItem<*>, state: PreferencesEditorState) {
+private fun Item(item: PreferencesItem, state: PreferencesEditorState) {
     when (item) {
         is PreferencesItem.Switch -> SwitchItem(item, state)
         is PreferencesItem.IntegerInput -> IntegerInputItem(item, state)
         is PreferencesItem.FloatInput -> FloatInputItem(item, state)
         is PreferencesItem.StringInput -> TextInputItem(item, state)
         is PreferencesItem.ColorStringInput -> ColorStringInputItem(item, state)
-        is PreferencesItem.Selection -> SelectionItem(item, state)
+        is PreferencesItem.Selection<*> -> SelectionItem(item, state)
         is PreferencesItem.Keymap<*> -> Keymap(item, state)
     }
 }

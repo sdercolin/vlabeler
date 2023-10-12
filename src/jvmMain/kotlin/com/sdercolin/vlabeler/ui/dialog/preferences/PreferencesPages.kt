@@ -1214,7 +1214,7 @@ private class PreferencesItemContext<P>(
 
 private class PageContentBuilder {
     private val content = mutableListOf<PreferencesGroup>()
-    private var currentGroup = mutableListOf<PreferencesItem<*>>()
+    private var currentGroup = mutableListOf<PreferencesItem>()
 
     fun <P> withContext(
         selector: (AppConf) -> P,
@@ -1224,7 +1224,7 @@ private class PageContentBuilder {
         PreferencesItemContext(this, selector, updater).block()
     }
 
-    fun item(item: PreferencesItem<*>) {
+    fun item(item: PreferencesItem) {
         currentGroup.add(item)
     }
 

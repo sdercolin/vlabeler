@@ -4,26 +4,41 @@ import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.action.Action
 import com.sdercolin.vlabeler.model.action.ActionKeyBind
 import com.sdercolin.vlabeler.model.action.ActionType
-import com.sdercolin.vlabeler.ui.string.ClickableTag
-import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.*
 
-sealed class PreferencesItem<T>(
+sealed class PreferencesItem(
     val title: Strings?,
     val description: Strings?,
     val clickableTags: List<ClickableTag>,
     val columnStyle: Boolean,
-    val defaultValue: T,
-    val select: (AppConf) -> T,
-    val update: AppConf.(T) -> AppConf,
     val enabled: (AppConf) -> Boolean,
-    val validationRules: List<PreferencesItemValidationRule>,
 ) {
-    fun getInvalidPrompt(conf: AppConf, newValue: T): Strings? {
-        val updated = conf.update(newValue)
-        return validationRules.firstOrNull { !it.validate(updated) }?.prompt
-    }
 
-    fun reset(conf: AppConf) = update(conf, defaultValue)
+    sealed class Valued<T>(
+        title: Strings?,
+        description: Strings?,
+        clickableTags: List<ClickableTag>,
+        columnStyle: Boolean,
+        val defaultValue: T,
+        val select: (AppConf) -> T,
+        val update: AppConf.(T) -> AppConf,
+        enabled: (AppConf) -> Boolean,
+        val validationRules: List<PreferencesItemValidationRule>,
+    ) : PreferencesItem(
+        title,
+        description,
+        clickableTags,
+        columnStyle,
+        enabled,
+    ) {
+
+        fun getInvalidPrompt(conf: AppConf, newValue: T): Strings? {
+            val updated = conf.update(newValue)
+            return validationRules.firstOrNull { !it.validate(updated) }?.prompt
+        }
+
+        fun reset(conf: AppConf) = update(conf, defaultValue)
+    }
 
     class Switch(
         title: Strings,
@@ -34,7 +49,7 @@ sealed class PreferencesItem<T>(
         select: (AppConf) -> Boolean,
         update: AppConf.(Boolean) -> AppConf,
         enabled: (AppConf) -> Boolean,
-    ) : PreferencesItem<Boolean>(
+    ) : Valued<Boolean>(
         title,
         description,
         clickableTags,
@@ -58,7 +73,7 @@ sealed class PreferencesItem<T>(
         validationRules: List<PreferencesItemValidationRule>,
         val min: Int?,
         val max: Int?,
-    ) : PreferencesItem<Int>(
+    ) : Valued<Int>(
         title,
         description,
         clickableTags,
@@ -82,7 +97,7 @@ sealed class PreferencesItem<T>(
         validationRules: List<PreferencesItemValidationRule>,
         val min: Float?,
         val max: Float?,
-    ) : PreferencesItem<Float>(
+    ) : Valued<Float>(
         title,
         description,
         clickableTags,
@@ -104,7 +119,7 @@ sealed class PreferencesItem<T>(
         update: AppConf.(String) -> AppConf,
         enabled: (AppConf) -> Boolean,
         validationRules: List<PreferencesItemValidationRule>,
-    ) : PreferencesItem<String>(
+    ) : Valued<String>(
         title,
         description,
         clickableTags,
@@ -126,7 +141,7 @@ sealed class PreferencesItem<T>(
         update: AppConf.(String) -> AppConf,
         enabled: (AppConf) -> Boolean,
         val useAlpha: Boolean,
-    ) : PreferencesItem<String>(
+    ) : Valued<String>(
         title,
         description,
         clickableTags,
@@ -148,7 +163,7 @@ sealed class PreferencesItem<T>(
         update: AppConf.(T) -> AppConf,
         enabled: (AppConf) -> Boolean,
         val options: Array<T>,
-    ) : PreferencesItem<T>(
+    ) : Valued<T>(
         title,
         description,
         clickableTags,
@@ -165,7 +180,7 @@ sealed class PreferencesItem<T>(
         defaultValue: List<ActionKeyBind<K>>,
         select: (AppConf) -> List<ActionKeyBind<K>>,
         update: AppConf.(List<ActionKeyBind<K>>) -> AppConf,
-    ) : PreferencesItem<List<ActionKeyBind<K>>>(
+    ) : Valued<List<ActionKeyBind<K>>>(
         title = null,
         description = null,
         clickableTags = listOf(),

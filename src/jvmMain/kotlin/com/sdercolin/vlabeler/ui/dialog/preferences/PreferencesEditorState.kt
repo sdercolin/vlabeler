@@ -133,6 +133,7 @@ class PreferencesEditorState(
     fun resetPage() {
         _conf = selectedPage.model.content
             .flatMap { it.items }
+            .filterIsInstance<PreferencesItem.Valued<*>>()
             .fold(conf) { acc, item ->
                 item.reset(acc)
             }
@@ -185,7 +186,7 @@ class PreferencesEditorState(
     private fun PreferencesPageListItem.createChildren() =
         model.children.map { PreferencesPageListItem(it, level + 1) }
 
-    fun <T> update(item: PreferencesItem<T>, newValue: T) {
+    fun <T> update(item: PreferencesItem.Valued<T>, newValue: T) {
         _conf = item.update(conf, newValue)
     }
 
