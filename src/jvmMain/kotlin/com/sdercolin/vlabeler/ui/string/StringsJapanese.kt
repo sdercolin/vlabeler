@@ -310,7 +310,8 @@ fun Strings.ja(): String? = when (this) {
         "この値より大きいサンプリングレートの音声ファイルを読み込むときは、" +
             "この値にリサンプリングしてから行います（元のファイルは編集されません）。0に設定すると、リサンプリングは行われません。"
     PreferencesChartsWaveformNormalize -> "音声正規化"
-    PreferencesChartsWaveformNormalizeDescription -> "正規化を有効にすると、最初にサンプルを読み込むときに時間がかかります。"
+    PreferencesChartsWaveformNormalizeDescription ->
+        "正規化を有効にすると、最初にサンプルを読み込むときに時間がかかります。\n有効にしても、音声ファイルは編集されません。"
     PreferencesChartsWaveformUnitSize -> "データポイント/ピクセル"
     PreferencesChartsWaveformUnitSizeDescription -> "この値を大きくすると、グラフの描画は高速になりますが、品質は低下します。"
     PreferencesChartsWaveformIntensityAccuracy -> "波形の高さ（ピクセル）"

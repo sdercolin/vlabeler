@@ -294,7 +294,8 @@ fun Strings.zhHans(): String? = when (this) {
         "超过该采样率的音频文件将被降采样至该数值(原文件不会被更改)。" +
             "您可以将其设为0来禁止降采样。"
     PreferencesChartsWaveformNormalize -> "音频标准化"
-    PreferencesChartsWaveformNormalizeDescription -> "标准化将增加首次读取采样文件时的耗时，"
+    PreferencesChartsWaveformNormalizeDescription ->
+        "标准化将增加首次读取采样文件时的耗时。\n该操作不会更改原文件。"
     PreferencesChartsWaveformUnitSize -> "点数/像素"
     PreferencesChartsWaveformUnitSizeDescription -> "该数值与图像质量成反比。"
     PreferencesChartsWaveformIntensityAccuracy -> "图像高度（像素）"

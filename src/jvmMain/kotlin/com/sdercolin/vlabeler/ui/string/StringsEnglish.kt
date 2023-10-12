@@ -326,7 +326,8 @@ fun Strings.en(): String = when (this) {
             "Set to 0 to disable resampling."
     PreferencesChartsWaveformNormalize -> "Normalize audio"
     PreferencesChartsWaveformNormalizeDescription ->
-        "Normalization takes extra time when loading samples for the first time."
+        "Normalization takes extra time when loading samples for the first time.\n" +
+            "The audio files are not edited during normalization."
     PreferencesChartsWaveformUnitSize -> "Points per pixel"
     PreferencesChartsWaveformUnitSizeDescription -> "Increase for lower image quality."
     PreferencesChartsWaveformIntensityAccuracy -> "Bitmap height (px)"
