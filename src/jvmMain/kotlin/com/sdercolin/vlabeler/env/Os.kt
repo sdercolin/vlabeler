@@ -8,7 +8,6 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
 
-
 /**
  * Information about the current operating system.
  */
@@ -23,7 +22,7 @@ val osArch by lazy {
         when {
             systemIsArm && jvmIsArm -> "arm64"
             systemIsArm && !jvmIsArm -> "x86_64 (Rosetta)"
-            !systemIsArm && jvmIsArm -> "arm64"// This is not possible
+            !systemIsArm && jvmIsArm -> "arm64" // This is not possible
             else -> arch
         }
     } else {
