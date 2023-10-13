@@ -150,7 +150,7 @@ enum class KeyAction(
     ),
     ToggleMultipleEditMode(
         listOf(Strings.MenuEdit, Strings.MenuEditMultipleEditMode),
-        KeySet(Key.M, setOf(Key.Ctrl)),
+        null,
         true,
     ),
     EditModuleExtra(
