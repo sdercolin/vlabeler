@@ -1,6 +1,6 @@
 {
     "name": "sort-entries",
-    "version": 7,
+    "version": 8,
     "type": "macro",
     "displayedName": {
         "en": "Reorder entries",
@@ -10,9 +10,9 @@
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
-        "en": "Reorder all entries by entry name, sample name or tag",
-        "zh": "根据条目名，采样名或标签来重新排序所有条目",
-        "ja": "エントリ名、サンプル名、またはタグによってエントリを並び替えます"
+        "en": "Reorder all entries by entry name, sample name, start time, or tag",
+        "zh": "根据条目名，采样名，开始时间或标签来重新排序所有条目",
+        "ja": "エントリ名、サンプル名、開始位置、またはタグによってエントリを並び替えます"
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/sort-entries",
     "supportedLabelFileExtension": "*",
@@ -50,14 +50,36 @@
                 "defaultValue": true
             },
             {
-                "type": "boolean",
-                "name": "prioritizeEntryName",
+                "type": "enum",
+                "name": "priority",
                 "label": {
-                    "en": "Prioritize entry name over sample name",
-                    "zh": "根据条目名 > 采样名的顺序排序",
-                    "ja": "エントリ名 > サンプル名の順で並び替える"
+                    "en": "Sort entries by",
+                    "zh": "排序方式",
+                    "ja": "並び替えの方法"
                 },
-                "defaultValue": false
+                "defaultValue": "sampleStart",
+                "options": [
+                    "sampleStart",
+                    "sampleName",
+                    "name"
+                ],
+                "optionDisplayedNames": [
+                    {
+                        "en": "Sample -> Start time",
+                        "zh": "采样名 -> 开始时间",
+                        "jp": "サンプル名 -> 開始位置"
+                    },
+                    {
+                        "en": "Sample -> Entry name",
+                        "zh": "采样名 -> 条目名",
+                        "jp": "サンプル名 -> エントリ名"
+                    },
+                    {
+                        "en": "Entry name only",
+                        "zh": "仅条目名",
+                        "jp": "エントリ名のみ"
+                    }
+                ]
             }
         ]
     },

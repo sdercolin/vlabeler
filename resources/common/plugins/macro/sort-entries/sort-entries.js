@@ -1,7 +1,7 @@
 let descending = params["descending"]
-let prioritizeEntryName = params["prioritizeEntryName"]
 let useTag = params["useTag"]
 let prioritizeTag = params["prioritizeTag"]
+let priority = params["priority"]
 
 if (labeler.continuous) {
     error({
@@ -16,17 +16,30 @@ entries.sort((a, b) => {
     let entryNameResult = descendingFactor * a.name.localeCompare(b.name)
     let sampleNameResult = descendingFactor * a.sample.localeCompare(b.sample)
     let tagResult = descendingFactor * a.notes.tag.localeCompare(b.notes.tag)
+    let chronologicalResult = descendingFactor * (a.start - b.start)
     if (useTag && prioritizeTag) {
         if (tagResult !== 0) {
             return tagResult
         }
     }
-    if (prioritizeEntryName) {
+    if (priority === "name") {
         if (entryNameResult !== 0) {
             return entryNameResult
         }
         if (sampleNameResult !== 0) {
             return sampleNameResult
+        }
+        if (useTag) {
+            return tagResult
+        } else {
+            return 0
+        }
+    } else if (priority === "sampleStart") {
+        if (sampleNameResult !== 0) {
+            return sampleNameResult
+        }
+        if (chronologicalResult !== 0) {
+            return chronologicalResult
         }
         if (useTag) {
             return tagResult
