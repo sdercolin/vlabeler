@@ -11,7 +11,7 @@
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Reorder all entries by entry name, sample name, start time, or tag",
-        "zh": "根据条目名，采样名或标签来重新排序所有条目",
+        "zh": "根据条目名，采样名，开始时间或标签来重新排序所有条目",
         "ja": "エントリ名、サンプル名、開始位置、またはタグによってエントリを並び替えます"
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/sort-entries",
@@ -50,12 +50,12 @@
                 "defaultValue": true
             },
             {
-                "type":"enum",
-                "name":"priority",
+                "type": "enum",
+                "name": "priority",
                 "label": {
-                    "en":"Sort entries by",
-                    "zh": "",
-                    "ja": ""
+                    "en": "Sort entries by",
+                    "zh": "排序方式",
+                    "ja": "並び替えの方法"
                 },
                 "defaultValue": "sampleStart",
                 "options": [
@@ -66,18 +66,18 @@
                 "optionDisplayedNames": [
                     {
                         "en": "Sample -> Start time",
-                        "zh": "",
-                        "jp": "サンプル名と開始位置で並び変える"
+                        "zh": "采样名 -> 开始时间",
+                        "jp": "サンプル名 -> 開始位置"
                     },
                     {
                         "en": "Sample -> Entry name",
-                        "zh": "",
-                        "jp": "サンプル名とエントリ名で並び変える"
+                        "zh": "采样名 -> 条目名",
+                        "jp": "サンプル名 -> エントリ名"
                     },
                     {
                         "en": "Entry name only",
-                        "zh": "",
-                        "jp": "エントリ名のみで並び替える"
+                        "zh": "仅条目名",
+                        "jp": "エントリ名のみ"
                     }
                 ]
             }
