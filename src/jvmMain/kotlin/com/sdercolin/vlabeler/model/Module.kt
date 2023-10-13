@@ -457,7 +457,7 @@ fun List<Entry>.postApplyLabelerConf(
 private fun List<Entry>.indexGroupsConnected(): List<Pair<String, List<Int>>> = withIndex()
     .fold(listOf<Pair<String, MutableList<IndexedValue<Entry>>>>()) { acc, entry ->
         val lastGroup = acc.lastOrNull()
-        if (lastGroup == null || lastGroup.first.equalsAsFileName(entry.value.sample)) {
+        if (lastGroup == null || !lastGroup.first.equalsAsFileName(entry.value.sample)) {
             acc.plus(entry.value.sample to mutableListOf(entry))
         } else {
             lastGroup.second.add(entry)
