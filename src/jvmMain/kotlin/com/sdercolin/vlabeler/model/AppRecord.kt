@@ -49,6 +49,7 @@ data class AppRecord(
     val isTimescaleBarDisplayed: Boolean = false,
     val includeInfoLog: Boolean = false,
     val appVersionLastLaunchedRaw: String? = null,
+    val hasCheckedRosettaCompatibleMode: Boolean = false,
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(

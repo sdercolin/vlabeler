@@ -18,12 +18,9 @@ val osRawArch by lazy { System.getProperty("os.arch").toString() }
 val osArch by lazy {
     val arch = osRawArch
     if (isMacOS) {
-        val systemIsArm = isMacOSWithArm
-        val jvmIsArm = arch == "aarch64"
         when {
-            systemIsArm && jvmIsArm -> "arm64"
-            systemIsArm && !jvmIsArm -> "x86_64 (Rosetta)"
-            !systemIsArm && jvmIsArm -> "arm64" // This is not possible
+            isRunningOnRosetta -> "x86_64 (Rosetta)"
+            isMacOSWithArm -> "arm64"
             else -> arch
         }
     } else {
@@ -42,6 +39,10 @@ val isMacOSWithArm: Boolean by lazy {
         e.printStackTrace()
         false
     }
+}
+val isRunningOnRosetta by lazy {
+    val jvmIsArm = osRawArch == "aarch64"
+    isMacOSWithArm && !jvmIsArm
 }
 val isLinux by lazy { osName.toLowerCase(Locale.current).contains("linux") }
 

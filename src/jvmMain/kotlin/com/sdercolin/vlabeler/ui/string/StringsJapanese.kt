@@ -664,5 +664,8 @@ fun Strings.ja(): String? = when (this) {
         "サンプルファイルの読み込みに失敗しました。wav 以外のフォーマットを使用している場合は、" +
             "FFmpeg をインストールし、`設定` -> `グラフ` -> `オーディオフォーマットのサポート`でパスを設定してください。" +
             "すでに FFmpeg をインストールして設定している場合は、ログを確認してください。"
+    AppRunningOnCompatibilityModeWarning ->
+        "vLabeler は Rosetta 2 互換モードで実行されています。\n" +
+            "パフォーマンスを向上させるには、Apple Silicon 用のビルド（~mac-arm64.dmg）をお試しください。"
     else -> null
 }

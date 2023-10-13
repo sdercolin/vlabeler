@@ -54,6 +54,14 @@ data class Version(
     val isAlpha: Boolean
         get() = stage == VersionStage.Alpha
 
+    fun isMajorNewerThan(other: Version): Boolean = major > other.major
+
+    fun isMinorNewerThan(other: Version): Boolean =
+        isMajorNewerThan(other) || (major == other.major && minor > other.minor)
+
+    fun isPatchNewerThan(other: Version): Boolean =
+        isMinorNewerThan(other) || (major == other.major && minor == other.minor && patch > other.patch)
+
     fun isInChannel(channel: UpdateChannel): Boolean = when (channel) {
         UpdateChannel.Stable -> isStable
         UpdateChannel.Preview -> isBeta

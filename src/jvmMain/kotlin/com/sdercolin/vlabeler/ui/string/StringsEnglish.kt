@@ -703,4 +703,7 @@ fun Strings.en(): String = when (this) {
         "Failed to load the sample file. To load formats other than wav, " +
             "please install FFmpeg and configure its path in `Preferences` -> `Charts` -> `Audio Format Support`. " +
             "If you have already installed and configured FFmpeg, please check the log for more details."
+    AppRunningOnCompatibilityModeWarning ->
+        "vLabeler is running on Rosetta 2 compatibility mode.\n" +
+            "For better performance, please try the build for Apple Silicon (~mac-arm64.dmg)."
 }

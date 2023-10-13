@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -9,6 +10,7 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.audio.Player
 import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
+import com.sdercolin.vlabeler.env.isRunningOnRosetta
 import com.sdercolin.vlabeler.exception.InvalidOpenedProjectException
 import com.sdercolin.vlabeler.io.awaitLoadProject
 import com.sdercolin.vlabeler.io.awaitOpenCreatedProject
@@ -600,6 +602,18 @@ class AppState(
 
     fun requestClearAppDataAndExit() {
         openEmbeddedDialog(CommonConfirmationDialogAction.ClearAppData)
+    }
+
+    fun showCompatibleModeWarningIfNeeded() {
+        appRecordStore.update { copy(hasCheckedRosettaCompatibleMode = true) }
+        mainScope.launch {
+            if (isRunningOnRosetta) {
+                showSnackbar(
+                    stringStatic(Strings.AppRunningOnCompatibilityModeWarning),
+                    duration = SnackbarDuration.Indefinite,
+                )
+            }
+        }
     }
 
     sealed class PendingActionAfterSaved {

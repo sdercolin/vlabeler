@@ -50,8 +50,13 @@ fun App(
     LaunchedEffect(appState) {
         appState.checkAutoSavedProject()
     }
-    LaunchedEffect(appState) {
-        appState.checkTrackingPermissionSettings()
+    LaunchedEffect(appState, appState.anyDialogOpening()) {
+        if (appState.anyDialogOpening()) return@LaunchedEffect
+        if (appState.trackingState.hasNotAskedForTrackingPermission()) {
+            appState.openTrackingSettingsDialog()
+        } else if (appState.appRecordStore.value.hasCheckedRosettaCompatibleMode.not()) {
+            appState.showCompatibleModeWarningIfNeeded()
+        }
     }
     LaunchedEffect(appState.appConf.autoSave) {
         appState.enableAutoSaveProject(appState.appConf.autoSave, appState)

@@ -27,7 +27,7 @@ import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDia
 import com.sdercolin.vlabeler.ui.dialog.importentries.ImportEntriesDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesEditorState
-import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.clearCache
 import com.sdercolin.vlabeler.util.runIf
@@ -60,7 +60,7 @@ interface AppDialogState {
     val isShowingLicenseDialog: Boolean
     val isShowingQuickLaunchManagerDialog: Boolean
     val isShowingTrackingSettingsDialog: Boolean
-    val isShowingVideo: Boolean // strictly speaking not a dialog but whatever
+    val isShowingVideo: Boolean // Video is not a dialog, so it is not included in anyDialogOpening()
     val updaterDialogContent: Update?
     val importEntriesDialogArgs: ImportEntriesDialogArgs?
     val macroPluginShownInDialog: MacroPluginDialogArgs?
@@ -135,23 +135,32 @@ interface AppDialogState {
     fun closeEmbeddedDialog()
     fun closeAllDialogs()
 
-    fun anyDialogOpening() =
-        isShowingProjectSettingDialog || isShowingExportDialog || isShowingImportDialog ||
-            isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
-            isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
-            isShowingEntrySampleSyncDialog || macroPluginShownInDialog != null || macroPluginReport != null ||
-            isShowingQuickLaunchManagerDialog || customizableItemManagerTypeShownInDialog != null ||
-            embeddedDialog != null
+    fun anyDialogOpening() = anyDialogOpeningExceptMacroPluginManager() ||
+        customizableItemManagerTypeShownInDialog == CustomizableItem.Type.MacroPlugin
 
     fun anyDialogOpeningExceptMacroPluginManager() =
-        isShowingProjectSettingDialog || isShowingExportDialog || isShowingImportDialog ||
-            isShowingSaveAsProjectDialog || isShowingExportDialog || isShowingPreferencesDialog ||
-            isShowingSampleListDialog || isShowingSampleDirectoryRedirectDialog || isShowingPrerenderDialog ||
-            isShowingEntrySampleSyncDialog || macroPluginShownInDialog != null || macroPluginReport != null ||
-            isShowingQuickLaunchManagerDialog || (
-            customizableItemManagerTypeShownInDialog != null &&
-                customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
-            ) || embeddedDialog != null
+        isShowingOpenProjectDialog ||
+            isShowingSaveAsProjectDialog ||
+            isShowingExportDialog ||
+            isShowingImportDialog ||
+            isShowingPreferencesDialog ||
+            preferencesDialogArgs != null ||
+            isShowingProjectSettingDialog ||
+            isShowingSampleListDialog ||
+            isShowingSampleDirectoryRedirectDialog ||
+            isShowingPrerenderDialog ||
+            isShowingEntrySampleSyncDialog ||
+            isShowingAboutDialog ||
+            isShowingLicenseDialog ||
+            isShowingQuickLaunchManagerDialog ||
+            isShowingTrackingSettingsDialog ||
+            updaterDialogContent != null ||
+            importEntriesDialogArgs != null ||
+            macroPluginShownInDialog != null ||
+            macroPluginReport != null ||
+            customizableItemManagerTypeShownInDialog != null ||
+            pendingActionAfterSaved != null ||
+            embeddedDialog != null
 }
 
 class AppDialogStateImpl(

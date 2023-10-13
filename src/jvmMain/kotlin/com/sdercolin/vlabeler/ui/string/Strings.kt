@@ -573,6 +573,7 @@ enum class Strings {
     EntrySampleSyncerSampleText,
     EntrySampleSyncerSampleTextFinished,
     FFmpegConverterException,
+    AppRunningOnCompatibilityModeWarning,
     ;
 
     fun get(language: Language): String = when (language) {

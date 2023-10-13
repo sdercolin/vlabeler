@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.Locale
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.env.appVersion
 import com.sdercolin.vlabeler.env.isFileSystemCaseSensitive
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Arguments
@@ -91,8 +92,12 @@ fun initializeGlobalRepositories(appRecordStore: AppRecordStore) {
 }
 
 fun runMigration(appRecordStore: AppRecordStore) {
+    val previousVersion = appRecordStore.value.appVersionLastLaunched
     // Migrations
-    // ...
+    if (appVersion.isMinorNewerThan(previousVersion)) {
+        // Check if the app is compatible with Rosetta every minor version
+        appRecordStore.update { copy(hasCheckedRosettaCompatibleMode = false) }
+    }
     // end of migrations
     appRecordStore.update { onAppVersionLaunched() }
 }

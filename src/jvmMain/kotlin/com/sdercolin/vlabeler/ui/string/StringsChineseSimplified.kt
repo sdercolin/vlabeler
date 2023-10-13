@@ -630,5 +630,7 @@ fun Strings.zhHans(): String? = when (this) {
         "读取采样文件失败。如果您需要读取 wav 以外的音频格式，" +
             "请安装 FFmpeg 并在 `偏好设置` -> `图表` -> `音频格式支持` 中配置程序路径。" +
             "如果您已经安装并配置了 FFmpeg，请检查日志以获取更多详细信息。"
+    AppRunningOnCompatibilityModeWarning ->
+        "vLabeler 正在运行在 Rosetta 2 兼容模式下。\n为了获得更好的性能，请尝试使用 Apple Silicon 架构的版本（~mac-arm64.dmg）。"
     else -> null
 }
