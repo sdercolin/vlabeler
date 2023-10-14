@@ -38,7 +38,8 @@
             "maxPower": 0.0,
             "intensityAccuracy": 200,
             "color": "#FFF2F2F2",
-            "backgroundColor": "#00000000"
+            "backgroundColor": "#00000000",
+            "drawLine":  true
         },
         "conversion": {
             "ffmpegPath": "ffmpeg",

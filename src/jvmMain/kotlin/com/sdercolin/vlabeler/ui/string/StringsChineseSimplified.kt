@@ -341,6 +341,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesChartsPowerIntensityAccuracy -> "图像高度（像素）"
     PreferencesChartsPowerColor -> "前景色"
     PreferencesChartsPowerBackgroundColor -> "背景色"
+    PreferencesChartsPowerDrawLine -> "以线条绘制"
     PreferencesChartsConversion -> "音频格式支持"
     PreferencesChartsConversionDescription -> "配置除 wav 以外的音频格式支持。"
     PreferencesChartsConversionFFmpegPath -> "FFmpeg 可执行文件路径"

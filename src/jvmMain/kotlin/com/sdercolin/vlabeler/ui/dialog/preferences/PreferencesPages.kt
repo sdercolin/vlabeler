@@ -390,6 +390,12 @@ object PreferencesPages {
                         update = { copy(backgroundColor = it) },
                         useAlpha = true,
                     )
+                    switch(
+                        title = Strings.PreferencesChartsPowerDrawLine,
+                        defaultValue = AppConf.Power.DEFAULT_DRAW_LINE,
+                        select = { it.drawLine },
+                        update = { copy(drawLine = it) },
+                    )
                 }
             }
     }
