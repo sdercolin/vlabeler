@@ -375,7 +375,6 @@ fun Strings.en(): String = when (this) {
     PreferencesChartsPowerIntensityAccuracy -> "Bitmap height (px)"
     PreferencesChartsPowerColor -> "Color"
     PreferencesChartsPowerBackgroundColor -> "Background color"
-    PreferencesChartsPowerDrawLine -> "Draw by lines"
     PreferencesChartsConversion -> "Audio Format Support"
     PreferencesChartsConversionDescription -> "Configure support for audio formats other than wav."
     PreferencesChartsConversionFFmpegPath -> "FFmpeg executable path"

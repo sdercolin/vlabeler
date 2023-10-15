@@ -211,7 +211,6 @@ data class AppConf(
      * @param intensityAccuracy Height of the container bitmap in pixel.
      * @param color Color of the power graph.
      * @param backgroundColor Background color of the power graph.
-     * @param drawLine True if the power graph is drawn by lines. Otherwise it is drawn by points.
      */
     @Serializable
     @Immutable
@@ -226,7 +225,6 @@ data class AppConf(
         val intensityAccuracy: Int = DEFAULT_INTENSITY_ACCURACY,
         val color: String = DEFAULT_COLOR,
         val backgroundColor: String = DEFAULT_BACKGROUND_COLOR,
-        val drawLine: Boolean = DEFAULT_DRAW_LINE,
     ) {
         companion object {
             const val DEFAULT_ENABLED = false
@@ -249,7 +247,6 @@ data class AppConf(
             const val MIN_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY / 5
             const val DEFAULT_COLOR = "#FFF2F2F2"
             const val DEFAULT_BACKGROUND_COLOR = "#00000000"
-            const val DEFAULT_DRAW_LINE = true
         }
     }
 

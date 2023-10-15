@@ -323,7 +323,6 @@ enum class Strings {
     PreferencesChartsPowerIntensityAccuracy,
     PreferencesChartsPowerColor,
     PreferencesChartsPowerBackgroundColor,
-    PreferencesChartsPowerDrawLine,
     PreferencesChartsConversion,
     PreferencesChartsConversionDescription,
     PreferencesChartsConversionFFmpegPath,
