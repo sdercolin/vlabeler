@@ -426,14 +426,22 @@ class ChartStore {
         val imageData = ByteArray(width * height * 4)
         // draw
         val color = appConf.painter.power.color.toColorOrNull() ?: AppConf.Power.DEFAULT_COLOR.toColor()
-        data.forEachIndexed { index, value ->
+        val yArray = data.map { value ->
             val valueInRange = maxOf(minValue, minOf(maxValue, value))
-            val y = (height - 1 - (valueInRange - minValue) / (maxValue - minValue) * (height - 1)).toInt()
-            val offset = (y * width + index) * 4
-            imageData[offset] = (color.blue * 255).toInt().toByte()
-            imageData[offset + 1] = (color.green * 255).toInt().toByte()
-            imageData[offset + 2] = (color.red * 255).toInt().toByte()
-            imageData[offset + 3] = (color.alpha * 255).toInt().toByte()
+            (height - 1 - (valueInRange - minValue) / (maxValue - minValue) * (height - 1)).toInt()
+        }
+        yArray.forEachIndexed { index, y ->
+            val before = if (index == 0) y else (yArray[index - 1] + y) / 2
+            val after = if (index == yArray.lastIndex) y else (yArray[index + 1] + y) / 2
+            val start = minOf(before, after)
+            val end = maxOf(before, after)
+            for (i in start..end) {
+                val offset = (i * width + index) * 4
+                imageData[offset] = (color.blue * 255).toInt().toByte()
+                imageData[offset + 1] = (color.green * 255).toInt().toByte()
+                imageData[offset + 2] = (color.red * 255).toInt().toByte()
+                imageData[offset + 3] = (color.alpha * 255).toInt().toByte()
+            }
         }
         val imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
         val image = Image.Companion.makeRaster(imageInfo, imageData, width * 4)
