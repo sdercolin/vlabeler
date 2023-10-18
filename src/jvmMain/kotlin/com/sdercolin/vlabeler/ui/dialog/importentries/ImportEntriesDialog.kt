@@ -1,7 +1,5 @@
 package com.sdercolin.vlabeler.ui.dialog.importentries
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,9 +42,8 @@ import com.sdercolin.vlabeler.io.ImportedModule
 import com.sdercolin.vlabeler.ui.ProjectStore
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.LargeDialogContainer
-import com.sdercolin.vlabeler.ui.common.Tooltip
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.common.WithTooltip
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.getCheckboxColors
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 
@@ -207,7 +204,6 @@ private fun Item(item: ImportEntriesDialogState.Item, targetModuleNames: List<St
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ButtonBar(state: ImportEntriesDialogState) {
     Row(
@@ -215,11 +211,11 @@ private fun ButtonBar(state: ImportEntriesDialogState) {
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        TooltipArea(
-            tooltip = {
-                if (state.forceReplaceContent) {
-                    Tooltip(string(Strings.ImportEntriesDialogReplaceContentDisabledDescription))
-                }
+        WithTooltip(
+            if (state.forceReplaceContent) {
+                string(Strings.ImportEntriesDialogReplaceContentDisabledDescription)
+            } else {
+                null
             },
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {

@@ -574,6 +574,13 @@ enum class Strings {
     EntrySampleSyncerSampleTextFinished,
     FFmpegConverterException,
     AppRunningOnCompatibilityModeWarning,
+    EntryFilterSetterDialogTitle,
+    EntryFilterSetterDialogHeaderAny,
+    EntryFilterSetterDialogHeaderName,
+    EntryFilterSetterDialogHeaderSample,
+    EntryFilterSetterDialogHeaderTag,
+    EntryFilterSetterDialogHeaderStar,
+    EntryFilterSetterDialogHeaderDone,
     ;
 
     fun get(language: Language): String = when (language) {

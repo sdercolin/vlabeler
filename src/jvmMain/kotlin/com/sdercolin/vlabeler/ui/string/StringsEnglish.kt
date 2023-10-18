@@ -706,4 +706,11 @@ fun Strings.en(): String = when (this) {
     AppRunningOnCompatibilityModeWarning ->
         "vLabeler is running on Rosetta 2 compatibility mode.\n" +
             "For better performance, please try the build for Apple Silicon (~mac-arm64.dmg)."
+    EntryFilterSetterDialogTitle -> "Filter Settings"
+    EntryFilterSetterDialogHeaderAny -> "Any text contains"
+    EntryFilterSetterDialogHeaderName -> "Entry name contains"
+    EntryFilterSetterDialogHeaderSample -> "Sample name contains"
+    EntryFilterSetterDialogHeaderTag -> "Tag contains"
+    EntryFilterSetterDialogHeaderStar -> "Starred"
+    EntryFilterSetterDialogHeaderDone -> "Done"
 }

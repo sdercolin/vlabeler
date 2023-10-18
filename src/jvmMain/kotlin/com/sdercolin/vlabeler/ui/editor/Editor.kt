@@ -111,6 +111,7 @@ fun Editor(state: EditorState, appState: AppState) {
                     project = state.project,
                     jumpToEntry = jumpToEntry,
                     onFocusedChanged = onFocusedChanged,
+                    dialogState = appState,
                 )
             }
         }

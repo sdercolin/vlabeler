@@ -614,9 +614,9 @@ fun Strings.ja(): String? = when (this) {
     FilterStarred -> "スターマークのあるエントリのみ表示"
     FilterUnstarred -> "スターマークのないエントリのみ表示"
     FilterStarIgnored -> "スターマークでフィルターしない"
-    FilterDone -> "完成したエントリのみ表示"
-    FilterUndone -> "未完成のエントリのみ表示"
-    FilterDoneIgnored -> "完成状態でフィルターしない"
+    FilterDone -> "完了したエントリのみ表示"
+    FilterUndone -> "未完了のエントリのみ表示"
+    FilterDoneIgnored -> "完了状態でフィルターしない"
     FilterLink -> "フィルターをプロジェクトのナビゲーションにも使う"
     FilterLinked -> "フィルターはプロジェクトのナビゲーションにも使かわれている"
     ColorPickerDialogTitle -> "vLabeler - カラーピッカー"
@@ -667,5 +667,12 @@ fun Strings.ja(): String? = when (this) {
     AppRunningOnCompatibilityModeWarning ->
         "vLabeler は Rosetta 2 互換モードで実行されています。\n" +
             "パフォーマンスを向上させるには、Apple Silicon 用のビルド（~mac-arm64.dmg）をお試しください。"
+    EntryFilterSetterDialogTitle -> "フィルターの設定"
+    EntryFilterSetterDialogHeaderAny -> "任意のテキストに"
+    EntryFilterSetterDialogHeaderName -> "エントリ名に"
+    EntryFilterSetterDialogHeaderSample -> "サンプル名に"
+    EntryFilterSetterDialogHeaderTag -> "タグに"
+    EntryFilterSetterDialogHeaderStar -> "スターマーク"
+    EntryFilterSetterDialogHeaderDone -> "完了"
     else -> null
 }

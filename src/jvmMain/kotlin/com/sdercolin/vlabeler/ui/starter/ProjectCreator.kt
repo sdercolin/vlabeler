@@ -4,7 +4,6 @@ package com.sdercolin.vlabeler.ui.starter
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.HorizontalScrollbar
-import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -68,8 +67,8 @@ import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
-import com.sdercolin.vlabeler.ui.common.Tooltip
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
+import com.sdercolin.vlabeler.ui.common.WithTooltip
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.WarningDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.LabelerPluginDialog
@@ -198,8 +197,8 @@ private fun DirectoryPageBasic(state: ProjectCreatorState) {
         )
         if (state.isProjectFileExisting()) {
             Spacer(Modifier.width(15.dp))
-            TooltipArea(
-                tooltip = { Tooltip(string(Strings.StarterNewProjectNameWarning)) },
+            WithTooltip(
+                tooltip = string(Strings.StarterNewProjectNameWarning),
             ) {
                 Icon(Icons.Default.Warning, null, tint = DarkYellow, modifier = Modifier.size(20.dp))
             }

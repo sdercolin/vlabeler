@@ -21,26 +21,17 @@ data class EntryFilter(
         return searchText.isEmpty() && star == null && done == null
     }
 
-    @Transient
-    private var searchAny: String? = null
-
-    @Transient
-    private var searchName: String? = null
-
-    @Transient
-    private var searchSample: String? = null
-
-    @Transient
-    private var searchTag: String? = null
-
-    init {
-
+    fun parse(): Args {
+        var name: String? = null
+        var sample: String? = null
+        var tag: String? = null
+        var any: String? = null
         fun String.getValue() = split(":")[1]
         fun String.trimValue() = if (startsWith("\"") && endsWith("\"") && length > 1) {
             substring(1, length - 1)
         } else {
             this
-        }
+        }.ifEmpty { null }
 
         val sections = searchText.split(";")
         for (section in sections) {
@@ -48,16 +39,50 @@ data class EntryFilter(
             if (trimmed.isEmpty()) continue
 
             when {
-                trimmed.startsWith("name:") -> searchName = trimmed.getValue().trimValue()
-                trimmed.startsWith("sample:") -> searchSample = trimmed.getValue().trimValue()
-                trimmed.startsWith("tag:") -> searchTag = trimmed.getValue().trimValue()
-                else -> searchAny = trimmed.trimValue()
+                trimmed.startsWith("name:") -> name = trimmed.getValue().trimValue()
+                trimmed.startsWith("sample:") -> sample = trimmed.getValue().trimValue()
+                trimmed.startsWith("tag:") -> tag = trimmed.getValue().trimValue()
+                else -> any = trimmed.trimValue()
             }
+        }
+        return Args(any, name, sample, tag, star, done)
+    }
+
+    data class Args(
+        val any: String? = null,
+        val name: String? = null,
+        val sample: String? = null,
+        val tag: String? = null,
+        val star: Boolean? = null,
+        val done: Boolean? = null,
+    ) {
+        fun toEntryFilter(): EntryFilter {
+            val text = buildString {
+                if (any.isNullOrEmpty().not()) {
+                    append(any)
+                }
+                if (name.isNullOrEmpty().not()) {
+                    if (isNotEmpty()) append(";")
+                    append("name:$name")
+                }
+                if (sample.isNullOrEmpty().not()) {
+                    if (isNotEmpty()) append(";")
+                    append("sample:$sample")
+                }
+                if (tag.isNullOrEmpty().not()) {
+                    if (isNotEmpty()) append(";")
+                    append("tag:$tag")
+                }
+            }
+            return EntryFilter(text, star, done)
         }
     }
 
+    @Transient
+    private val args = parse()
+
     fun matches(entry: Entry): Boolean {
-        searchAny?.let {
+        args.any?.let {
             if (!entry.name.contains(it) &&
                 !entry.sampleNameWithoutExtension.contains(it) &&
                 !entry.notes.tag.contains(it)
@@ -65,17 +90,17 @@ data class EntryFilter(
                 return false
             }
         }
-        searchName?.let {
+        args.name?.let {
             if (!entry.name.contains(it)) {
                 return false
             }
         }
-        searchSample?.let {
+        args.sample?.let {
             if (!entry.sampleNameWithoutExtension.contains(it)) {
                 return false
             }
         }
-        searchTag?.let {
+        args.tag?.let {
             if (!entry.notes.tag.contains(it)) {
                 return false
             }

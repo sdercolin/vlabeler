@@ -1,9 +1,5 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.sdercolin.vlabeler.ui.editor
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,18 +21,17 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.LinkOff
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarOutline
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +44,9 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.ui.AppDialogState
 import com.sdercolin.vlabeler.ui.common.DoneIcon
+import com.sdercolin.vlabeler.ui.common.DoneTriStateIcon
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.NavigatorItemSummary
 import com.sdercolin.vlabeler.ui.common.NavigatorListBody
@@ -57,20 +54,22 @@ import com.sdercolin.vlabeler.ui.common.NavigatorListItemNumber
 import com.sdercolin.vlabeler.ui.common.NavigatorListState
 import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.StarIcon
-import com.sdercolin.vlabeler.ui.common.Tooltip
+import com.sdercolin.vlabeler.ui.common.StarTriStateIcon
+import com.sdercolin.vlabeler.ui.common.WithTooltip
 import com.sdercolin.vlabeler.ui.common.onPreviewKeyEvent
 import com.sdercolin.vlabeler.ui.common.plainClickable
+import com.sdercolin.vlabeler.ui.dialog.EntryFilterSetterDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.EntryFilterSetterDialogResult
 import com.sdercolin.vlabeler.ui.string.*
-import com.sdercolin.vlabeler.ui.theme.DarkGreen
-import com.sdercolin.vlabeler.ui.theme.DarkYellow
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
-import com.sdercolin.vlabeler.ui.theme.White80
+import kotlinx.coroutines.launch
 
 class EntryListState(
     private val filterState: EntryListFilterState,
     project: Project,
     private val jumpToEntry: (Int) -> Unit,
+    private val dialogState: AppDialogState?,
 ) : NavigatorListState<Entry> {
     var entries = project.currentModule.entries.withIndex().toList()
         private set
@@ -96,6 +95,14 @@ class EntryListState(
         currentIndex = project.currentModule.currentIndex
         updateSearch()
     }
+
+    suspend fun editFilterInDialog() {
+        val args = EntryFilterSetterDialogArgs(filterState.filter)
+        val result = dialogState?.awaitEmbeddedDialog(args) ?: return
+        val newValue = (result as? EntryFilterSetterDialogResult)?.value ?: return
+        filterState.editFilter { newValue }
+        updateSearch()
+    }
 }
 
 @Composable
@@ -107,11 +114,13 @@ fun EntryList(
     project: Project,
     jumpToEntry: (Int) -> Unit,
     onFocusedChanged: (Boolean) -> Unit,
+    dialogState: AppDialogState?,
     state: EntryListState = remember(editorConf, filterState, jumpToEntry) {
         EntryListState(
             filterState,
             project,
             jumpToEntry,
+            dialogState,
         )
     },
 ) {
@@ -181,7 +190,11 @@ fun EntryList(
             modifier = Modifier.padding(top = if (state.hasFocus) 0.dp else 1.dp),
         )
         if (filterShown) {
-            FilterRow(filterState as LinkableEntryListFilterState, state::updateSearch)
+            FilterRow(
+                filterState = filterState as LinkableEntryListFilterState,
+                updateSearch = state::updateSearch,
+                editInDialog = state::editFilterInDialog,
+            )
         }
 
         NavigatorListBody(
@@ -192,17 +205,21 @@ fun EntryList(
 }
 
 @Composable
-private fun FilterRow(filterState: LinkableEntryListFilterState, updateSearch: () -> Unit) {
+private fun FilterRow(
+    filterState: LinkableEntryListFilterState,
+    updateSearch: () -> Unit,
+    editInDialog: suspend () -> Unit,
+) {
+    val coroutineScope = rememberCoroutineScope()
     Row(modifier = Modifier.padding(horizontal = 5.dp)) {
-        TooltipArea(
-            tooltip = {
-                val strings = when (filterState.filter.done) {
+        WithTooltip(
+            tooltip = string(
+                when (filterState.filter.done) {
                     true -> Strings.FilterDone
                     false -> Strings.FilterUndone
                     null -> Strings.FilterDoneIgnored
-                }
-                Tooltip(string(strings))
-            },
+                },
+            ),
         ) {
             FreeSizedIconButton(
                 onClick = {
@@ -211,28 +228,17 @@ private fun FilterRow(filterState: LinkableEntryListFilterState, updateSearch: (
                 },
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
             ) {
-                val tint = when (filterState.filter.done) {
-                    true -> DarkGreen
-                    false -> White80
-                    null -> White20
-                }
-                Icon(
-                    imageVector = Icons.Default.Done,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = tint,
-                )
+                DoneTriStateIcon(filterState.filter.done, modifier = Modifier.size(20.dp))
             }
         }
-        TooltipArea(
-            tooltip = {
-                val strings = when (filterState.filter.star) {
+        WithTooltip(
+            tooltip = string(
+                when (filterState.filter.star) {
                     true -> Strings.FilterStarred
                     false -> Strings.FilterUnstarred
                     null -> Strings.FilterStarIgnored
-                }
-                Tooltip(string(strings))
-            },
+                },
+            ),
         ) {
             FreeSizedIconButton(
                 onClick = {
@@ -241,33 +247,18 @@ private fun FilterRow(filterState: LinkableEntryListFilterState, updateSearch: (
                 },
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
             ) {
-                val icon = when (filterState.filter.star) {
-                    true -> Icons.Default.Star
-                    else -> Icons.Default.StarOutline
-                }
-                val tint = when (filterState.filter.star) {
-                    true -> DarkYellow
-                    false -> White80
-                    null -> White20
-                }
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = tint,
-                )
+                StarTriStateIcon(filterState.filter.star, modifier = Modifier.size(20.dp))
             }
         }
         Spacer(modifier = Modifier.weight(1f))
-        TooltipArea(
-            tooltip = {
-                val strings = if (filterState.linked) {
+        WithTooltip(
+            tooltip = string(
+                if (filterState.linked) {
                     Strings.FilterLinked
                 } else {
                     Strings.FilterLink
-                }
-                Tooltip(string(strings))
-            },
+                },
+            ),
         ) {
             FreeSizedIconButton(
                 onClick = { filterState.toggleLinked() },
@@ -292,6 +283,20 @@ private fun FilterRow(filterState: LinkableEntryListFilterState, updateSearch: (
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+        }
+        FreeSizedIconButton(
+            onClick = {
+                coroutineScope.launch {
+                    editInDialog()
+                }
+            },
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.MoreHoriz,
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
             )

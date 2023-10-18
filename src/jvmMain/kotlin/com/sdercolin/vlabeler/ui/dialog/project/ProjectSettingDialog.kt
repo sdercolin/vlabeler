@@ -1,7 +1,5 @@
 package com.sdercolin.vlabeler.ui.dialog.project
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,12 +40,11 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.MediumDialogContainer
 import com.sdercolin.vlabeler.ui.common.SelectionBox
-import com.sdercolin.vlabeler.ui.common.Tooltip
+import com.sdercolin.vlabeler.ui.common.WithTooltip
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.LabelerPluginDialog
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.AvailableEncodings
 import com.sdercolin.vlabeler.util.getDirectory
@@ -249,7 +246,6 @@ private fun ColumnScope.Content(state: ProjectSettingDialogState) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ItemRow(title: Strings, helperText: Strings?, item: @Composable () -> Unit) {
     Row(Modifier.padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -262,9 +258,7 @@ private fun ItemRow(title: Strings, helperText: Strings?, item: @Composable () -
             )
             if (helperText != null) {
                 Spacer(Modifier.width(10.dp))
-                TooltipArea(
-                    tooltip = { Tooltip(string(helperText)) },
-                ) {
+                WithTooltip(string(helperText)) {
                     Icon(
                         imageVector = Icons.Outlined.HelpOutline,
                         contentDescription = null,

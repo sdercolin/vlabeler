@@ -35,5 +35,6 @@ fun JumpToEntryDialog(
         project = args.project,
         jumpToEntry = { index -> finish(JumpToEntryDialogResult(index)) },
         onFocusedChanged = {},
+        dialogState = null,
     )
 }

@@ -632,5 +632,12 @@ fun Strings.zhHans(): String? = when (this) {
             "如果您已经安装并配置了 FFmpeg，请检查日志以获取更多详细信息。"
     AppRunningOnCompatibilityModeWarning ->
         "vLabeler 正在运行在 Rosetta 2 兼容模式下。\n为了获得更好的性能，请尝试使用 Apple Silicon 架构的版本（~mac-arm64.dmg）。"
+    EntryFilterSetterDialogTitle -> "筛选设置"
+    EntryFilterSetterDialogHeaderAny -> "任何文字包含"
+    EntryFilterSetterDialogHeaderName -> "条目名包含"
+    EntryFilterSetterDialogHeaderSample -> "采样名包含"
+    EntryFilterSetterDialogHeaderTag -> "标签包含"
+    EntryFilterSetterDialogHeaderStar -> "星标"
+    EntryFilterSetterDialogHeaderDone -> "完成"
     else -> null
 }

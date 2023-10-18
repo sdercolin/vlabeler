@@ -1,9 +1,5 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.sdercolin.vlabeler.ui.dialog.customization
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,11 +42,10 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.LargeDialogContainer
-import com.sdercolin.vlabeler.ui.common.Tooltip
+import com.sdercolin.vlabeler.ui.common.WithTooltip
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.launch
@@ -262,9 +257,7 @@ fun Item(index: Int, item: CustomizableItem, state: CustomizableItemManagerDialo
         }
         if (item.canRemove.not()) {
             Spacer(Modifier.width(10.dp))
-            TooltipArea(
-                tooltip = { Tooltip(string(Strings.CustomizableItemManagerLockedDescription)) },
-            ) {
+            WithTooltip(string(Strings.CustomizableItemManagerLockedDescription)) {
                 Icon(
                     imageVector = Icons.Default.Lock,
                     contentDescription = null,

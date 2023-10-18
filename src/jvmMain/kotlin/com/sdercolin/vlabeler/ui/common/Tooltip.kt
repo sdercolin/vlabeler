@@ -1,5 +1,7 @@
 package com.sdercolin.vlabeler.ui.common
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -12,7 +14,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Tooltip(text: String) {
+private fun Tooltip(text: String) {
     Box(
         Modifier.background(
             color = MaterialTheme.colors.background,
@@ -25,5 +27,24 @@ fun Tooltip(text: String) {
             text = text,
             style = MaterialTheme.typography.caption,
         )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun WithTooltip(
+    tooltip: String?,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    if (tooltip != null) {
+        TooltipArea(
+            modifier = modifier,
+            tooltip = { Tooltip(text = tooltip) },
+        ) {
+            content()
+        }
+    } else {
+        content()
     }
 }

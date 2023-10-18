@@ -69,6 +69,7 @@ private fun <T : EmbeddedDialogArgs> TypedDialog(
             MoveEntryDialog(args, (request as EmbeddedDialogRequest<MoveEntryDialogArgs>).onResult)
         is EditExtraDialogArgs ->
             EditExtraDialog(args, (request as EmbeddedDialogRequest<EditExtraDialogArgs>).onResult)
-        else -> throw NotImplementedError("Dialog args handler is not implemented")
+        is EntryFilterSetterDialogArgs ->
+            EntryFilterSetterDialog(args, (request as EmbeddedDialogRequest<EntryFilterSetterDialogArgs>).onResult)
     }
 }
