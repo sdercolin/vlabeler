@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
@@ -37,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -142,12 +144,28 @@ fun EntryList(
             onPreviewKeyEvent = state::onPreviewKeyEvent,
             trailingContent = {
                 if (pinned) {
-                    FreeSizedIconButton(
-                        onClick = { state.isFilterExpanded = !state.isFilterExpanded },
-                        modifier = Modifier.padding(8.dp),
-                    ) {
-                        val icon = if (state.isFilterExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore
-                        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(24.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        val countText = "${state.searchResult.size} / ${state.entries.size}"
+                        val isFiltered = state.searchResult.size != state.entries.size
+                        val alpha = if (isFiltered) 0.8f else 0.4f
+                        val color = MaterialTheme.colors.onSurface.copy(alpha)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = countText,
+                            modifier = Modifier.background(color = White20, shape = RoundedCornerShape(12.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            color = color,
+                            style = MaterialTheme.typography.caption,
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        FreeSizedIconButton(
+                            onClick = { state.isFilterExpanded = !state.isFilterExpanded },
+                            modifier = Modifier.padding(8.dp),
+                        ) {
+                            val icon =
+                                if (state.isFilterExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore
+                            Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(24.dp))
+                        }
                     }
                 }
             },
