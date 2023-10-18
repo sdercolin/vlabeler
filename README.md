@@ -241,10 +241,11 @@ from [here](https://www.videolan.org/vlc/index.html).
 Note that even on an Apple Silicon mac, you will need a `macOS` version instead of a `macOS (AppleSilicon)` version if
 you are using the application downloaded from `Release` page of this repository.
 
-Use shortcut `Ctrl` + `V` or `Ctrl` + `Shift` + `V` to open the attached video in the left-bottom corner or in a new window.
+Use shortcut `Ctrl` + `V` or `Ctrl` + `Shift` + `V` to open the attached video in the left-bottom corner or in a new
+window.
 The video will be played silently along with the sample file.
 
-## Browse and filter entries
+## Browsing entries
 
 There are two components showing an entry list:
 
@@ -253,7 +254,7 @@ There are two components showing an entry list:
 2. The `Go to entry...` dialog: shown when you press `Ctrl` + `G` or click the entry number button in the bottom bar.
    It provides a simple entry filter.
 
-### Advanced search
+### Searching and filtering entries
 
 In both types of entry list, you can use the following syntax to search entries:
 
@@ -272,14 +273,14 @@ The following condition keys (the part left to `:`) are supported:
 
 The match type for this search is `contains`.
 
-### Expanded filter
-
 In the pinned entry list, you can click the `Expand` button to show more options.
 
 For the `Done` filter and `Star` filter, clicking will switch them between `Do not filter`, `Show only starred/done`
 and `Show only unstarred/undone`.
 
-These filters are combined with the search text with `AND` logic.
+You can click the `More` button to open a dialog for setting conditions separately.
+
+All these filters are combined with `AND` logic.
 
 ### Linking filter to editor
 
