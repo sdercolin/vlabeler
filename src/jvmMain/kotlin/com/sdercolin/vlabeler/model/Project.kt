@@ -125,7 +125,7 @@ data class Project(
         return currentModule.hasSwitchedSample(previous.currentModule)
     }
 
-    fun validate() = this.apply {
+    fun validate() = this.run {
         require(rootSampleDirectory.isAbsolute) {
             "rootSampleDirectory must not be relative."
         }
@@ -144,7 +144,8 @@ data class Project(
                 }
             }
         }
-        modules.forEach { it.validate(multipleEditMode, labelerConf) }
+        val modules = modules.map { it.validate(multipleEditMode, labelerConf) }
+        copy(modules = modules)
     }
 
     fun makeRelativePathsIfPossible(): Project {
