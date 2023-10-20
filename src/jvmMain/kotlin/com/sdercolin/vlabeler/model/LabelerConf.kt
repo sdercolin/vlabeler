@@ -426,6 +426,22 @@ data class LabelerConf(
     val useImplicitEnd: Boolean
         get() = fields.any { it.replaceEnd }
 
+    fun getActualStart(entry: Entry): Float = fields.indexOfFirst { it.replaceStart }.let { index ->
+        if (index == -1) {
+            entry.start
+        } else {
+            entry.points[index]
+        }
+    }
+
+    fun getActualEnd(entry: Entry): Float = fields.indexOfFirst { it.replaceEnd }.let { index ->
+        if (index == -1) {
+            entry.end
+        } else {
+            entry.points[index]
+        }
+    }
+
     override fun getSavedParamsFile(): File = RecordDir.resolve(name + LABELER_SAVED_PARAMS_FILE_EXTENSION)
 
     /**

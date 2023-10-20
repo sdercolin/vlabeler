@@ -202,7 +202,7 @@ class Player(
     }
 
     private fun playSection(frameRange: FloatRange) {
-        playSection(frameRange.start, frameRange.endInclusive)
+        playSection(frameRange.start.coerceAtLeast(0f), frameRange.endInclusive)
     }
 
     override fun playSection(startFrame: Float, endFrame: Float?, repeat: Boolean) {

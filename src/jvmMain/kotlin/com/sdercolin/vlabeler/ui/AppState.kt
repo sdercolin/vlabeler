@@ -397,7 +397,10 @@ class AppState(
         when (action) {
             KeyAction.ToggleEntryPlayback -> {
                 val sampleRate = sampleInfo.sampleRate
-                val range = requireProject().currentEntry.run {
+                val project = requireProject()
+                val range = project.currentEntry.run {
+                    val start = project.labelerConf.getActualStart(this)
+                    val end = project.labelerConf.getActualEnd(this)
                     toFrame(start, sampleRate)..toFrame(end, sampleRate)
                 }
                 player.toggle(range)
