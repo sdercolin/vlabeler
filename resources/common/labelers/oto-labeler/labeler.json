@@ -1,6 +1,6 @@
 {
     "name": "oto-plus.default",
-    "version": 26,
+    "version": 27,
     "serialVersion": 2,
     "singleFile": false,
     "extension": "ini",
@@ -118,7 +118,7 @@
         "useDragBase": true,
         "useStart": false
     },
-    "overflowBeforeStart": "AdjustPoint",
+    "overflowBeforeStart": "AdjustBorder",
     "overflowAfterEnd": "AdjustBorder",
     "postEditDoneTrigger": {
         "useStart": true,
