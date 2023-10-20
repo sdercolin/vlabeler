@@ -239,6 +239,10 @@ fun Strings.ja(): String? = when (this) {
     PluginEntrySelectorPreviewSummaryInitializing -> "初期化中..."
     PluginEntrySelectorPreviewSummary -> "選択中 %d/%d"
     PluginEntrySelectorPlaceholder -> "フィルターがないため、全てのエントリが選択されます"
+    PluginEntrySelectorExpressionTitle -> "論理式"
+    PluginEntrySelectorExpressionDescription ->
+        "上記で設定したフィルターを組み合わせる論理式です。\n" +
+            "使用可能なトークン：`and`, `or`, `not`, `xor`, `(`, `)`, `#1`, `#2` など。"
     EditorSubTitleMultiple -> "サンプル %2\$s の中の%1\$dエントリを編集"
     FailedToLoadSampleFileError ->
         "サンプルファイルを読み込めませんでした。存在しないか、サポートされていないフォーマットの可能性があります。"

@@ -230,6 +230,9 @@ fun Strings.zhHans(): String? = when (this) {
     PluginEntrySelectorPreviewSummaryInitializing -> "正在初始化..."
     PluginEntrySelectorPreviewSummary -> "已选中 %d/%d"
     PluginEntrySelectorPlaceholder -> "无筛选条件，将选中所有条目"
+    PluginEntrySelectorExpressionTitle -> "表达式"
+    PluginEntrySelectorExpressionDescription ->
+        "用于组合上述筛选条件的逻辑表达式。\n可用的记号有：`and`，`or`，`not`，`xor`，`(`，`)`，`#1`，`#2`，等等。"
     EditorSubTitleMultiple -> "编辑采样 %2\$s 中的%1\$d个条目"
     FailedToLoadSampleFileError -> "无法读取该采样文件。它可能不存在，或是不支持的格式。"
     PluginRuntimeUnexpectedException -> "插件执行过程中发生了意外的错误。请联系插件作者以获取更多信息。"

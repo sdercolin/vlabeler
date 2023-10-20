@@ -1,7 +1,7 @@
 package com.sdercolin.vlabeler.model
 
 import androidx.compose.runtime.Immutable
-import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -93,8 +93,8 @@ sealed class Parameter<T : Any> {
         override val description: LocalizedJsonString? = null,
         override val enableIf: String? = null,
         /**
-         * The default value could be a file reference, e.g. `file::default.txt`.
-         * See the overriding logic in [src/jvmMain/kotlin/com/sdercolin/vlabeler/io/Plugin.kt].
+         * The default value could be a file reference, e.g. `file::default.txt`. See the overriding logic in
+         * [src/jvmMain/kotlin/com/sdercolin/vlabeler/io/Plugin.kt].
          */
         override val defaultValue: String,
         val multiLine: Boolean = false,
@@ -163,8 +163,8 @@ sealed class Parameter<T : Any> {
         override val description: LocalizedJsonString? = null,
         override val enableIf: String? = null,
         /**
-         * The `file` field of the default value may be resolved to be relative to the plugin directory.
-         * See the overriding logic in [src/jvmMain/kotlin/com/sdercolin/vlabeler/io/Plugin.kt].
+         * The `file` field of the default value may be resolved to be relative to the plugin directory. See the
+         * overriding logic in [src/jvmMain/kotlin/com/sdercolin/vlabeler/io/Plugin.kt].
          */
         override val defaultValue: FileWithEncoding,
         val optional: Boolean = false,
@@ -189,8 +189,8 @@ sealed class Parameter<T : Any> {
         override val description: LocalizedJsonString? = null,
         override val enableIf: String? = null,
         /**
-         * The default value may be resolved to be relative to the plugin directory.
-         * See the overriding logic in [src/jvmMain/kotlin/com/sdercolin/vlabeler/io/Plugin.kt].
+         * The default value may be resolved to be relative to the plugin directory. See the overriding logic in
+         * [src/jvmMain/kotlin/com/sdercolin/vlabeler/io/Plugin.kt].
          */
         override val defaultValue: String,
         val optional: Boolean = false,
@@ -229,7 +229,7 @@ sealed class Parameter<T : Any> {
                 }
             } == true
             is EntrySelectorParam -> (value as? EntrySelector)?.let { selector ->
-                selector.filters.all { if (labelerConf != null) it.isValid(labelerConf) else false }
+                if (labelerConf != null) selector.isValid(labelerConf) else false
             } == true
             is FileParam -> (value as? FileWithEncoding)?.let {
                 if (optional && it.file.isNullOrEmpty()) return true

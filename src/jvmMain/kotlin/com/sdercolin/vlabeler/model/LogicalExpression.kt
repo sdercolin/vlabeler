@@ -3,18 +3,21 @@ package com.sdercolin.vlabeler.model
 /**
  * Model for a logical expression used in an [EntrySelector].
  */
-data class LogicalExpression(val root: LogicalNode) {
+data class LogicalExpression(val root: LogicalNode, val requiredPlaceholderCount: Int) {
+
+    private constructor(root: LogicalNode) : this(root, root.getMaxPlaceholderIndex() + 1)
 
     fun evaluate(placeholderValues: List<Boolean>): Boolean = root.evaluate(placeholderValues)
 
     companion object {
-        fun parse(expression: String): LogicalExpression = LogicalExpression(parseNode(expression).toNode())
+        fun parse(expression: String): Result<LogicalExpression> =
+            runCatching { LogicalExpression(parseNode(expression).toNode()) }
 
         fun default(count: Int): LogicalExpression? = (0 until count).fold<Int, LogicalNode?>(
             null,
         ) { acc, index ->
             if (acc == null) LogicalNode.Leaf(index) else LogicalNode.And(acc, LogicalNode.Leaf(index))
-        }?.let { LogicalExpression(it) }
+        }?.let { LogicalExpression(it, count) }
     }
 }
 
@@ -26,6 +29,14 @@ sealed class LogicalNode {
         is Not -> !node.evaluate(placeholderValues)
         is Xor -> left.evaluate(placeholderValues) xor right.evaluate(placeholderValues)
         is Leaf -> placeholderValues[placeholderIndex]
+    }
+
+    fun getMaxPlaceholderIndex(): Int = when (this) {
+        is And -> maxOf(left.getMaxPlaceholderIndex(), right.getMaxPlaceholderIndex())
+        is Or -> maxOf(left.getMaxPlaceholderIndex(), right.getMaxPlaceholderIndex())
+        is Not -> node.getMaxPlaceholderIndex()
+        is Xor -> maxOf(left.getMaxPlaceholderIndex(), right.getMaxPlaceholderIndex())
+        is Leaf -> placeholderIndex
     }
 
     data class And(val left: LogicalNode, val right: LogicalNode) : LogicalNode()

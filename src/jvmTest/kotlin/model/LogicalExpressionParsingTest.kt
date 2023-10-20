@@ -132,13 +132,13 @@ class LogicalExpressionParsingTest {
     fun testEmptyParentheses() = error("#1 and ()")
 
     private fun match(expression: String, expected: LogicalNode) {
-        val parsed = LogicalExpression.parse(expression)
+        val parsed = LogicalExpression.parse(expression).getOrThrow()
         assertEquals(expected, parsed.root)
     }
 
     private fun error(expression: String) {
         assertThrows<Throwable> {
-            LogicalExpression.parse(expression)
+            LogicalExpression.parse(expression).getOrThrow()
         }
     }
 

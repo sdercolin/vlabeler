@@ -1,26 +1,53 @@
 package com.sdercolin.vlabeler.model
 
 import com.sdercolin.vlabeler.io.getPropertyMap
-import com.sdercolin.vlabeler.ui.string.Strings
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.JavaScript
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * Model for an entry selector used in a [Plugin.Type.Macro] plugin.
  *
- * @param filters the filters to apply to the entry selector.
+ * @property filters the filters to apply to the entry selector.
+ * @property rawExpression the raw expression of the entry selector, if null, all filters are combined with `and`.
  */
 @Serializable
 data class EntrySelector(
     val filters: List<FilterItem>,
+    @SerialName("expression") val rawExpression: String? = null,
 ) {
 
-    fun select(entries: List<Entry>, labelerConf: LabelerConf, js: JavaScript) = filters
-        .fold(entries.withIndex().toList()) { acc, filter ->
-            filter.filter(acc, labelerConf, js)
+    @Transient
+    private var _expression: LogicalExpression? = null
+
+    private val expression: LogicalExpression?
+        get() {
+            if (rawExpression == null) return null
+            if (_expression == null) {
+                _expression = LogicalExpression.parse(rawExpression).getOrThrow()
+            }
+            return _expression
         }
-        .map { it.index }
+
+    fun isValid(labelerConf: LabelerConf): Boolean {
+        if (rawExpression != null) {
+            if (runCatching { expression }.isFailure) return false
+            if ((expression?.requiredPlaceholderCount ?: 0) > filters.size) return false
+        }
+        return filters.all { it.isValid(labelerConf) }
+    }
+
+    fun select(
+        entries: List<Entry>,
+        labelerConf: LabelerConf,
+        js: JavaScript,
+    ): List<Int> = entries.withIndex().filter { (_, entry) ->
+        val filterResults = filters.map { it.accept(entry, labelerConf, js) }
+        val expression = expression ?: LogicalExpression.default(filterResults.size)
+        expression?.evaluate(filterResults) ?: true
+    }.map { it.index }
 
     /**
      * Model for an item in the entry selector.
@@ -29,12 +56,6 @@ data class EntrySelector(
     sealed class FilterItem {
 
         abstract fun isValid(labelerConf: LabelerConf): Boolean
-
-        fun filter(
-            entries: List<IndexedValue<Entry>>,
-            labelerConf: LabelerConf,
-            js: JavaScript,
-        ): List<IndexedValue<Entry>> = entries.filter { accept(it.value, labelerConf, js) }
 
         abstract fun accept(entry: Entry, labelerConf: LabelerConf, js: JavaScript): Boolean
 

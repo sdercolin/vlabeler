@@ -243,6 +243,10 @@ fun Strings.en(): String = when (this) {
     PluginEntrySelectorPreviewSummaryInitializing -> "Initializing..."
     PluginEntrySelectorPreviewSummary -> "Selecting %d/%d"
     PluginEntrySelectorPlaceholder -> "No filters, selecting all entries."
+    PluginEntrySelectorExpressionTitle -> "Expression"
+    PluginEntrySelectorExpressionDescription ->
+        "The logical expression to combine the filters configured above.\n" +
+            "Available tokens: `and`, `or`, `not`, `xor`, `(`, `)`, `#1`, `#2`, etc."
     EditorSubTitleMultiple -> "editing %1\$d entries in sample %2\$s"
     FailedToLoadSampleFileError -> "Could not load the sample file.\nIt may not exist or is not a supported format."
     PluginRuntimeUnexpectedException ->

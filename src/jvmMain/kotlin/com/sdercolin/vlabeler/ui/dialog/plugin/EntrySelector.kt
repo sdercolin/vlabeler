@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
@@ -41,15 +42,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.LogicalExpression
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.InputBox
 import com.sdercolin.vlabeler.ui.common.SelectionBox
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.common.WithTooltip
+import com.sdercolin.vlabeler.ui.string.*
+import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.ui.theme.White50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.JavaScript
@@ -73,7 +77,7 @@ fun ParamEntrySelector(
     val parseErrors = remember(value) { mutableStateListOf(*Array(value.filters.size) { false }) }
     val verticalScrollState = rememberLazyListState()
     Column(
-        Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
             .background(MaterialTheme.colors.background),
     ) {
         Row(Modifier.height(160.dp).fillMaxWidth()) {
@@ -86,7 +90,7 @@ fun ParamEntrySelector(
                             filter,
                             onValueChange = {
                                 filters[index] = it
-                                onValueChange(EntrySelector(filters.toList()))
+                                onValueChange(value.copy(filters = filters.toList()))
                             },
                             onParseErrorChange = { isError ->
                                 parseErrors[index] = isError
@@ -112,6 +116,7 @@ fun ParamEntrySelector(
         Row(
             modifier = Modifier.fillMaxWidth().background(MaterialTheme.colors.surface).padding(10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 modifier = Modifier.size(18.dp).clickable(enabled = enabled) {
@@ -120,7 +125,7 @@ fun ParamEntrySelector(
                         matchType = EntrySelector.TextMatchType.values().first(),
                         matcherText = "",
                     )
-                    onValueChange(EntrySelector(filters.toList().plus(newItem)))
+                    onValueChange(value.copy(filters = filters.toList().plus(newItem)))
                 },
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
@@ -129,11 +134,68 @@ fun ParamEntrySelector(
             val minusButtonEnabled = enabled && filters.isNotEmpty()
             Icon(
                 modifier = Modifier.size(18.dp).clickable(enabled = minusButtonEnabled) {
-                    onValueChange(EntrySelector(filters.toList().dropLast(1)))
+                    onValueChange(value.copy(filters = filters.toList().dropLast(1)))
                 },
                 imageVector = Icons.Default.Remove,
                 contentDescription = null,
                 tint = MaterialTheme.colors.onSurface.runIf(minusButtonEnabled.not()) { copy(alpha = 0.2f) },
+            )
+            val defaultExpressionInput by remember(value.filters.size) {
+                mutableStateOf(value.filters.indices.joinToString(" and ") { "#${it + 1}" })
+            }
+            var expressionInputChanged by remember(value.rawExpression) {
+                mutableStateOf(value.rawExpression != defaultExpressionInput)
+            }
+            var expressionInput by remember(value.rawExpression) {
+                mutableStateOf(value.rawExpression ?: defaultExpressionInput)
+            }
+
+            fun isExpressionValid(expression: String): Boolean {
+                val parsed = LogicalExpression.parse(expression).getOrNull() ?: return false
+                return parsed.requiredPlaceholderCount <= filters.size
+            }
+
+            var expressionInputError by remember(value.rawExpression) {
+                mutableStateOf(value.rawExpression?.let { isExpressionValid(it).not() } ?: false)
+            }
+            LaunchedEffect(value.filters.size) {
+                if (expressionInputChanged.not()) {
+                    expressionInput = value.rawExpression ?: defaultExpressionInput
+                }
+                expressionInputError = isExpressionValid(expressionInput).not()
+            }
+            Spacer(Modifier.width(20.dp))
+            WithTooltip(string(Strings.PluginEntrySelectorExpressionDescription)) {
+                Row {
+                    Text(string(Strings.PluginEntrySelectorExpressionTitle), style = MaterialTheme.typography.caption)
+                    Spacer(Modifier.width(5.dp))
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Default.HelpOutline,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onSurface,
+                    )
+                }
+            }
+            BasicTextField(
+                modifier = Modifier.width(350.dp)
+                    .background(White20, MaterialTheme.shapes.small)
+                    .padding(vertical = 4.dp, horizontal = 10.dp),
+                value = expressionInput,
+                onValueChange = {
+                    expressionInput = it
+                    val valid = isExpressionValid(it)
+                    expressionInputError = !valid
+                    if (valid) {
+                        onValueChange(value.copy(rawExpression = expressionInput))
+                    }
+                    expressionInputChanged = true
+                },
+                singleLine = true,
+                textStyle = MaterialTheme.typography.caption.copy(
+                    color = if (expressionInputError) MaterialTheme.colors.error else MaterialTheme.colors.onSurface,
+                ),
+                cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
             )
             Spacer(Modifier.weight(1f))
             if (isError || parseErrors.any { it }) {
@@ -143,13 +205,13 @@ fun ParamEntrySelector(
                     color = MaterialTheme.colors.error,
                 )
             } else {
-                key(filters) {
+                key(filters, value.rawExpression) {
                     var filterError = false
                     val text = if (js == null) {
                         string(Strings.PluginEntrySelectorPreviewSummaryInitializing)
                     } else if (entries != null && labelerConf != null) {
                         val selectedCount = runCatching {
-                            EntrySelector(filters.toList()).select(entries, labelerConf, js).size
+                            EntrySelector(filters.toList(), value.rawExpression).select(entries, labelerConf, js).size
                         }
                             .onFailure {
                                 if (hasClickedApply.value) {

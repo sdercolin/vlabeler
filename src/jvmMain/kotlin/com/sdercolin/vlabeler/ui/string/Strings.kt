@@ -224,6 +224,8 @@ enum class Strings {
     PluginEntrySelectorPreviewSummaryInitializing,
     PluginEntrySelectorPreviewSummary,
     PluginEntrySelectorPlaceholder,
+    PluginEntrySelectorExpressionTitle,
+    PluginEntrySelectorExpressionDescription,
     EditorSubTitleMultiple,
     FailedToLoadSampleFileError,
     PluginRuntimeUnexpectedException,

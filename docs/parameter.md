@@ -144,7 +144,8 @@ A sample `entrySelector` parameter is provided below:
                 "comparerName": "offset"
                 // nullable, `name` of any property defined in the labeler
             }
-        ]
+        ],
+        "expression": "#1 or #2" // optional, default to null, which combines all filters with `and` operator
     },
     // ...
 }
