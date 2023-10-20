@@ -126,9 +126,17 @@ class MarkerState(
         forcedDrag: Boolean,
     ): List<EntryInPixel> {
         if (pointIndex == MarkerCursorState.NONE_POINT_INDEX) return entriesInPixel
+        val minPixel = entriesInPixel.first().let {
+            // use the min among all values
+            minOf(it.start, it.points.minOrNull() ?: it.start)
+        }
+        val maxPixel = entriesInPixel.last().let {
+            // use the max among all values
+            maxOf(it.end, it.points.maxOrNull() ?: it.end)
+        }
         return if (!forcedDrag) {
-            val dxMin = leftBorder - startInPixel
-            val dxMax = (rightBorder - endInPixel - 1).coerceAtLeast(0f)
+            val dxMin = leftBorder - minPixel
+            val dxMax = (rightBorder - maxPixel - 1).coerceAtLeast(0f)
             val dx = (x - getPointPosition(pointIndex)).coerceIn(dxMin, dxMax)
             entriesInPixel.map { it.moved(dx).validateImplicit(labelerConf) }
         } else {
