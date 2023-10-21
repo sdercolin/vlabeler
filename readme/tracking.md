@@ -45,10 +45,9 @@ You can check the detailed event definitions in the
 ## How data is used
 
 The data is firstly sent to [Segment](https://segment.com/), which is a data collection service.
-Segment will then send the data to the [Google Analytics](https://analytics.google.com/) account that we manage.
+Segment will then send the data to the [Mixpanel](https://mixpanel.com/) account that we manage.
 
-See the following links for the privacy policy of Segment and Google Analytics:
+See the following links for the privacy policy of Segment and Mixpanel:
 
 - [Segment Privacy Policy](https://segment.com/legal/privacy/)
-- [Google Analytics Privacy Policy](https://policies.google.com/privacy)
-- [Google Analytics Terms of Service](https://policies.google.com/terms)
+- [Mixpanel Privacy Policy](https://mixpanel.com/legal/privacy-policy)
