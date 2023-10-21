@@ -31,6 +31,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.UnfoldLess
+import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -76,11 +78,13 @@ fun ParamEntrySelector(
     val filters = remember(value) { mutableStateListOf(*value.filters.toTypedArray()) }
     val parseErrors = remember(value) { mutableStateListOf(*Array(value.filters.size) { false }) }
     val verticalScrollState = rememberLazyListState()
+    var isExpanded by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier.fillMaxWidth()
             .background(MaterialTheme.colors.background),
     ) {
-        Row(Modifier.height(160.dp).fillMaxWidth()) {
+        val height = if (isExpanded) 500.dp else 160.dp
+        Row(Modifier.height(height).fillMaxWidth()) {
             Box(Modifier.weight(1f).fillMaxHeight()) {
                 LazyColumn(state = verticalScrollState, modifier = Modifier.padding(15.dp)) {
                     itemsIndexed(filters) { index, filter ->
@@ -139,6 +143,13 @@ fun ParamEntrySelector(
                 imageVector = Icons.Default.Remove,
                 contentDescription = null,
                 tint = MaterialTheme.colors.onSurface.runIf(minusButtonEnabled.not()) { copy(alpha = 0.2f) },
+            )
+            Icon(
+                modifier = Modifier.size(18.dp).clickable {
+                    isExpanded = !isExpanded
+                },
+                imageVector = if (isExpanded) Icons.Default.UnfoldLess else Icons.Default.UnfoldMore,
+                contentDescription = null,
             )
             val defaultExpressionInput by remember(value.filters.size) {
                 mutableStateOf(value.filters.indices.joinToString(" and ") { "#${it + 1}" })
