@@ -23,6 +23,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Check version
+        run: |
+          $TAG = "${{ github.ref_name }}"
+          $PROPERTIES_PATH = "gradle.properties"
+          $APP_VERSION = (Select-String -Path $PROPERTIES_PATH -Pattern "^app\.version=" | ForEach-Object { $_.ToString().Split("=")[1] }).Trim()
+          if ($TAG -ne $APP_VERSION) {
+            Write-Output "Tag $TAG does not match app version $APP_VERSION"
+            exit 1
+          }
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
