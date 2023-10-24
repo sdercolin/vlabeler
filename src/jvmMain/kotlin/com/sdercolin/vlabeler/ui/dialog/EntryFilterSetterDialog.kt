@@ -1,13 +1,11 @@
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.LocalContentColor
@@ -27,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.DoneTriStateIcon
+import com.sdercolin.vlabeler.ui.common.HeaderFooterColumn
 import com.sdercolin.vlabeler.ui.common.StarTriStateIcon
 import com.sdercolin.vlabeler.ui.common.ToggleButtonGroup
 import com.sdercolin.vlabeler.ui.common.WithTooltip
@@ -48,19 +47,24 @@ fun EntryFilterSetterDialog(
     var value by remember { mutableStateOf(args.value.parse()) }
     val dismiss = { finish(null) }
     val submit = { finish(EntryFilterSetterDialogResult(value.toEntryFilter())) }
-    Column(modifier = Modifier.fillMaxWidth(0.6f)) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = string(Strings.EntryFilterSetterDialogTitle),
-            style = MaterialTheme.typography.h5,
-        )
-        Spacer(modifier = Modifier.height(25.dp))
+    HeaderFooterColumn(
+        modifier = Modifier.fillMaxWidth(0.6f).padding(top = 20.dp),
+        header = {
+            Text(
+                text = string(Strings.EntryFilterSetterDialogTitle),
+                style = MaterialTheme.typography.h5,
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+        },
+        footer = {
+            Spacer(modifier = Modifier.height(25.dp))
+            ButtonBar(submit, dismiss)
+        },
+    ) {
         Content(
             value = value,
             setValue = { value = it },
         )
-        Spacer(modifier = Modifier.height(25.dp))
-        ButtonBar(submit, dismiss)
     }
 }
 
@@ -151,7 +155,7 @@ private fun TextItemRow(headerText: String, value: String, setValue: (String) ->
 @Composable
 private fun ItemRow(headerText: String, hasValue: Boolean, content: @Composable RowScope.() -> Unit) {
     Row(
-        modifier = Modifier.padding(vertical = 10.dp).heightIn(min = 60.dp),
+        modifier = Modifier.padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ItemRowHeaderText(text = headerText, isActive = hasValue)
