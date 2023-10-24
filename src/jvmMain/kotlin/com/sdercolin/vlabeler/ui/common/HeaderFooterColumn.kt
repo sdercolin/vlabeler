@@ -12,6 +12,8 @@ import androidx.compose.ui.unit.dp
  * A column divided into three parts: header, content, and footer. When the height is not enough, the content part will
  * be folded, leaving the header and footer visible.
  *
+ * When using this layout, the parent layout should wrap content height.
+ *
  * @param modifier Modifier to be applied to the root layout.
  * @param contentScrollable Whether the content part should be scrollable when the height is not enough.
  * @param header The header part.
@@ -57,7 +59,12 @@ fun HeaderFooterColumn(
         remainingHeight -= headerPlaceable.height.coerceAtMost(remainingHeight)
         val footerPlaceable = measurables[2].measure(baseConstraints.copy(maxHeight = remainingHeight))
         remainingHeight -= footerPlaceable.height.coerceAtMost(remainingHeight)
-        val contentPlaceable = measurables[1].measure(baseConstraints.copy(maxHeight = remainingHeight))
+        val contentPlaceable = measurables[1].measure(
+            baseConstraints.copy(
+                maxHeight = remainingHeight,
+                minHeight = constraints.minHeight.coerceAtMost(remainingHeight),
+            ),
+        )
 
         val width = maxOf(headerPlaceable.width, footerPlaceable.width, contentPlaceable.width)
         val height = headerPlaceable.height + contentPlaceable.height + footerPlaceable.height
