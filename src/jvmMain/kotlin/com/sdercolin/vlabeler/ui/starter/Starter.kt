@@ -28,8 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
@@ -41,7 +40,8 @@ fun BoxScope.Starter(
     Surface(Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.wrapContentSize()
-                .padding(150.dp)
+                .padding(50.dp)
+                .size(800.dp, 450.dp)
                 .align(Alignment.Center),
         ) {
             Text(
@@ -51,7 +51,7 @@ fun BoxScope.Starter(
             )
             Spacer(Modifier.height(50.dp))
 
-            Row(Modifier.weight(2f)) {
+            Row {
                 Column(Modifier.weight(1f)) {
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
@@ -103,7 +103,6 @@ fun BoxScope.Starter(
                     }
                 }
             }
-            Spacer(Modifier.weight(1f))
         }
     }
 }
