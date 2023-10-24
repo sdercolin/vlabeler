@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 /**
  * A column divided into three parts: header, content, and footer. When the height is not enough, the content part will
@@ -20,6 +22,8 @@ import androidx.compose.ui.layout.Layout
 fun HeaderFooterColumn(
     modifier: Modifier = Modifier,
     contentScrollable: Boolean = true,
+    scrollbarWidth: Dp = 15.dp,
+    scrollbarSpacing: Dp = 10.dp,
     header: @Composable ColumnScope.() -> Unit = {},
     footer: @Composable ColumnScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
@@ -30,7 +34,10 @@ fun HeaderFooterColumn(
                 header()
             }
             if (contentScrollable) {
-                AutoWrapScrollableColumn {
+                AutoWrapScrollableColumn(
+                    scrollbarWidth = scrollbarWidth,
+                    scrollbarSpacing = scrollbarSpacing,
+                ) {
                     content()
                 }
             } else {

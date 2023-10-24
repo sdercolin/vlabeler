@@ -1,20 +1,13 @@
 package com.sdercolin.vlabeler.ui.dialog
 
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -41,12 +34,12 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.PluginQuickLaunch
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
+import com.sdercolin.vlabeler.ui.common.HeaderFooterColumn
 import com.sdercolin.vlabeler.ui.common.LargeDialogContainer
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesEditorState
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.ParamTypedMap
@@ -118,64 +111,68 @@ class QuickLaunchManagerDialogState(val appState: AppState) {
 
 @Composable
 fun QuickLaunchManagerDialog(appState: AppState, state: QuickLaunchManagerDialogState = rememberState(appState)) {
-    LargeDialogContainer {
-        Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 40.dp)) {
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = string(Strings.QuickLaunchManagerDialogTitle),
-                style = MaterialTheme.typography.h5,
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Text(
-                text = string(Strings.QuickLaunchManagerDialogDescription),
-                style = MaterialTheme.typography.body2,
-            )
-            Spacer(modifier = Modifier.height(25.dp))
+    LargeDialogContainer(wrapHeight = true) {
+        HeaderFooterColumn(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp, horizontal = 40.dp),
+            scrollbarWidth = 15.dp,
+            scrollbarSpacing = (-15).dp,
+            header = {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = string(Strings.QuickLaunchManagerDialogTitle),
+                    style = MaterialTheme.typography.h5,
+                )
+                Spacer(modifier = Modifier.height(15.dp))
+                Text(
+                    text = string(Strings.QuickLaunchManagerDialogDescription),
+                    style = MaterialTheme.typography.body2,
+                )
+                Spacer(modifier = Modifier.height(25.dp))
+                TableHeaderRow()
+            },
+            footer = {
+                Spacer(modifier = Modifier.height(25.dp))
+                BottomButtonBar(state)
+            },
+        ) {
             Content(state)
-            Spacer(modifier = Modifier.height(25.dp))
-            BottomButtonBar(state)
         }
     }
 }
 
 @Composable
-private fun ColumnScope.Content(state: QuickLaunchManagerDialogState) {
-    Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
-        val scrollState = rememberScrollState()
-        Column(modifier = Modifier.weight(1f).verticalScroll(scrollState)) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(modifier = Modifier.width(100.dp)) {
-                    Text(
-                        text = string(Strings.QuickLaunchManagerDialogHeaderTitle),
-                        style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold),
-                    )
-                }
-                Spacer(modifier = Modifier.width(20.dp))
-                Box(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = string(Strings.QuickLaunchManagerDialogHeaderPlugin),
-                        style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold),
-                    )
-                }
-                Spacer(modifier = Modifier.width(20.dp))
-                Box(modifier = Modifier.width(150.dp)) {
-                    Text(
-                        text = string(Strings.QuickLaunchManagerDialogHeaderForceAskParams),
-                        style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
-                    )
-                }
-            }
-            repeat(PluginQuickLaunch.SLOT_COUNT) { index ->
-                Item(index, state)
-            }
+private fun TableHeaderRow() {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(modifier = Modifier.width(100.dp)) {
+            Text(
+                text = string(Strings.QuickLaunchManagerDialogHeaderTitle),
+                style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold),
+            )
         }
-        VerticalScrollbar(
-            modifier = Modifier.align(Alignment.CenterVertically).width(15.dp),
-            adapter = rememberScrollbarAdapter(scrollState),
-        )
+        Spacer(modifier = Modifier.width(20.dp))
+        Box(modifier = Modifier.weight(1f)) {
+            Text(
+                text = string(Strings.QuickLaunchManagerDialogHeaderPlugin),
+                style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold),
+            )
+        }
+        Spacer(modifier = Modifier.width(20.dp))
+        Box(modifier = Modifier.width(150.dp)) {
+            Text(
+                text = string(Strings.QuickLaunchManagerDialogHeaderForceAskParams),
+                style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
+            )
+        }
+    }
+}
+
+@Composable
+private fun Content(state: QuickLaunchManagerDialogState) {
+    repeat(PluginQuickLaunch.SLOT_COUNT) { index ->
+        Item(index, state)
     }
 }
 
