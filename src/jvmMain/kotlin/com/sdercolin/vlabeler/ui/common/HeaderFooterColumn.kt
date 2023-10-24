@@ -6,6 +6,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 
+/**
+ * A column divided into three parts: header, content, and footer. When the height is not enough, the content part will
+ * be folded, leaving the header and footer visible.
+ *
+ * @param modifier Modifier to be applied to the root layout.
+ * @param contentScrollable Whether the content part should be scrollable when the height is not enough.
+ * @param header The header part.
+ * @param footer The footer part.
+ * @param content The content part.
+ */
 @Composable
 fun HeaderFooterColumn(
     modifier: Modifier = Modifier,
@@ -34,13 +44,13 @@ fun HeaderFooterColumn(
         },
         modifier = modifier,
     ) { measurables, constraints ->
-
+        val baseConstraints = constraints.copy(minHeight = 0)
         var remainingHeight = constraints.maxHeight
-        val headerPlaceable = measurables[0].measure(constraints)
-        remainingHeight -= headerPlaceable.height
-        val footerPlaceable = measurables[2].measure(constraints.copy(maxHeight = remainingHeight))
-        remainingHeight -= footerPlaceable.height
-        val contentPlaceable = measurables[1].measure(constraints.copy(maxHeight = remainingHeight))
+        val headerPlaceable = measurables[0].measure(baseConstraints)
+        remainingHeight -= headerPlaceable.height.coerceAtMost(remainingHeight)
+        val footerPlaceable = measurables[2].measure(baseConstraints.copy(maxHeight = remainingHeight))
+        remainingHeight -= footerPlaceable.height.coerceAtMost(remainingHeight)
+        val contentPlaceable = measurables[1].measure(baseConstraints.copy(maxHeight = remainingHeight))
 
         val width = maxOf(headerPlaceable.width, footerPlaceable.width, contentPlaceable.width)
         val height = headerPlaceable.height + contentPlaceable.height + footerPlaceable.height

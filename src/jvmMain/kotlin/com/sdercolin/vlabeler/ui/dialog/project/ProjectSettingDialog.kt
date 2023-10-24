@@ -1,21 +1,15 @@
 package com.sdercolin.vlabeler.ui.dialog.project
 
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
@@ -38,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
+import com.sdercolin.vlabeler.ui.common.HeaderFooterColumn
 import com.sdercolin.vlabeler.ui.common.MediumDialogContainer
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.WithTooltip
@@ -58,22 +53,28 @@ fun rememberProjectSettingDialogState(appState: AppState, finish: () -> Unit) =
     }
 
 @Composable
-fun ProjectListDialog(
+fun ProjectSettingDialog(
     appState: AppState,
     finish: () -> Unit,
     state: ProjectSettingDialogState = rememberProjectSettingDialogState(appState, finish),
 ) {
-    MediumDialogContainer {
-        Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp, horizontal = 45.dp)) {
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = string(Strings.ProjectSettingDialogTitle),
-                style = MaterialTheme.typography.h5,
-            )
-            Spacer(modifier = Modifier.height(25.dp))
+    MediumDialogContainer(wrapHeight = true) {
+        HeaderFooterColumn(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp, horizontal = 45.dp),
+            header = {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = string(Strings.ProjectSettingDialogTitle),
+                    style = MaterialTheme.typography.h5,
+                )
+                Spacer(modifier = Modifier.height(25.dp))
+            },
+            footer = {
+                Spacer(modifier = Modifier.height(25.dp))
+                ButtonBar(state)
+            },
+        ) {
             Content(state)
-            Spacer(modifier = Modifier.height(25.dp))
-            ButtonBar(state)
         }
     }
     if (state.isShowingLabelerDialog) {
@@ -140,109 +141,99 @@ fun ProjectListDialog(
 
 @Composable
 private fun ColumnScope.Content(state: ProjectSettingDialogState) {
-    Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
-        val scrollState = rememberScrollState()
-        Column(modifier = Modifier.weight(1f).verticalScroll(scrollState)) {
-            ItemRow(
-                title = Strings.StarterNewSampleDirectory,
-                helperText = null,
-            ) {
-                TextField(
-                    modifier = Modifier.weight(1f),
-                    value = state.rootDirectory,
-                    onValueChange = { state.updateRootDirectory(it) },
-                    singleLine = true,
-                    isError = state.isRootDirectoryValid.not(),
-                    trailingIcon = {
-                        IconButton(
-                            onClick = { state.isShowingRootDirectoryDialog = true },
-                        ) {
-                            Icon(Icons.Default.FolderOpen, null)
-                        }
-                    },
-                )
-            }
-            ItemRow(
-                title = Strings.StarterNewCacheDirectory,
-                helperText = null,
-            ) {
-                TextField(
-                    modifier = Modifier.weight(1f),
-                    value = state.cacheDirectory,
-                    onValueChange = { state.updateCacheDirectory(it) },
-                    singleLine = true,
-                    isError = state.isCacheDirectoryValid.not(),
-                    trailingIcon = {
-                        IconButton(
-                            onClick = { state.isShowingCacheDirectoryDialog = true },
-                        ) {
-                            Icon(Icons.Default.FolderOpen, null)
-                        }
-                    },
-                )
-            }
-            ItemRow(
-                title = Strings.ProjectSettingOutputFileLabel,
-                helperText = Strings.ProjectSettingOutputFileHelperText,
-            ) {
-                TextField(
-                    modifier = Modifier.weight(1f),
-                    value = state.outputFile ?: string(Strings.ProjectSettingOutputFileDisabledPlaceholder),
-                    onValueChange = { state.updateOutputFile(it) },
-                    singleLine = true,
-                    isError = state.isOutputFileValid.not(),
-                    enabled = state.isOutputFileEditable,
-                    trailingIcon = {
-                        IconButton(
-                            onClick = { state.isShowingOutputFileDialog = true },
-                            enabled = state.isOutputFileEditable,
-                        ) {
-                            Icon(Icons.Default.FolderOpen, null)
-                        }
-                    },
-                )
-            }
-            ItemRow(title = Strings.StarterNewEncoding, helperText = null) {
-                SelectionBox(
-                    value = state.encoding,
-                    onSelect = { state.encoding = it },
-                    options = AvailableEncodings,
-                    getText = { it },
-                )
-            }
-            ItemRow(title = Strings.StarterNewAutoExport, helperText = Strings.ProjectSettingAutoExportHelperText) {
-                Switch(
-                    enabled = state.canChangeAutoExport,
-                    checked = state.autoExport,
-                    onCheckedChange = { state.autoExport = it },
-                    colors = getSwitchColors(),
-                )
-            }
-            ItemRow(title = Strings.StarterNewLabeler, helperText = null) {
-                SelectionBox(
-                    value = state.project.labelerConf,
-                    onSelect = { },
-                    options = listOf(state.project.labelerConf),
-                    getText = { it.displayedName.get() },
-                    enabled = false,
-                    showIcon = false,
-                )
-                Spacer(Modifier.width(10.dp))
-                IconButton(onClick = { state.isShowingLabelerDialog = true }) {
-                    val color = if (state.labelerError) {
-                        MaterialTheme.colors.error
-                    } else {
-                        LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
-                    }
-                    Icon(Icons.Default.Settings, null, tint = color)
+    ItemRow(
+        title = Strings.StarterNewSampleDirectory,
+        helperText = null,
+    ) {
+        TextField(
+            modifier = Modifier.weight(1f),
+            value = state.rootDirectory,
+            onValueChange = { state.updateRootDirectory(it) },
+            singleLine = true,
+            isError = state.isRootDirectoryValid.not(),
+            trailingIcon = {
+                IconButton(
+                    onClick = { state.isShowingRootDirectoryDialog = true },
+                ) {
+                    Icon(Icons.Default.FolderOpen, null)
                 }
-            }
-        }
-
-        VerticalScrollbar(
-            adapter = rememberScrollbarAdapter(scrollState),
-            modifier = Modifier.align(Alignment.CenterVertically).width(15.dp),
+            },
         )
+    }
+    ItemRow(
+        title = Strings.StarterNewCacheDirectory,
+        helperText = null,
+    ) {
+        TextField(
+            modifier = Modifier.weight(1f),
+            value = state.cacheDirectory,
+            onValueChange = { state.updateCacheDirectory(it) },
+            singleLine = true,
+            isError = state.isCacheDirectoryValid.not(),
+            trailingIcon = {
+                IconButton(
+                    onClick = { state.isShowingCacheDirectoryDialog = true },
+                ) {
+                    Icon(Icons.Default.FolderOpen, null)
+                }
+            },
+        )
+    }
+    ItemRow(
+        title = Strings.ProjectSettingOutputFileLabel,
+        helperText = Strings.ProjectSettingOutputFileHelperText,
+    ) {
+        TextField(
+            modifier = Modifier.weight(1f),
+            value = state.outputFile ?: string(Strings.ProjectSettingOutputFileDisabledPlaceholder),
+            onValueChange = { state.updateOutputFile(it) },
+            singleLine = true,
+            isError = state.isOutputFileValid.not(),
+            enabled = state.isOutputFileEditable,
+            trailingIcon = {
+                IconButton(
+                    onClick = { state.isShowingOutputFileDialog = true },
+                    enabled = state.isOutputFileEditable,
+                ) {
+                    Icon(Icons.Default.FolderOpen, null)
+                }
+            },
+        )
+    }
+    ItemRow(title = Strings.StarterNewEncoding, helperText = null) {
+        SelectionBox(
+            value = state.encoding,
+            onSelect = { state.encoding = it },
+            options = AvailableEncodings,
+            getText = { it },
+        )
+    }
+    ItemRow(title = Strings.StarterNewAutoExport, helperText = Strings.ProjectSettingAutoExportHelperText) {
+        Switch(
+            enabled = state.canChangeAutoExport,
+            checked = state.autoExport,
+            onCheckedChange = { state.autoExport = it },
+            colors = getSwitchColors(),
+        )
+    }
+    ItemRow(title = Strings.StarterNewLabeler, helperText = null) {
+        SelectionBox(
+            value = state.project.labelerConf,
+            onSelect = { },
+            options = listOf(state.project.labelerConf),
+            getText = { it.displayedName.get() },
+            enabled = false,
+            showIcon = false,
+        )
+        Spacer(Modifier.width(10.dp))
+        IconButton(onClick = { state.isShowingLabelerDialog = true }) {
+            val color = if (state.labelerError) {
+                MaterialTheme.colors.error
+            } else {
+                LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+            }
+            Icon(Icons.Default.Settings, null, tint = color)
+        }
     }
 }
 
