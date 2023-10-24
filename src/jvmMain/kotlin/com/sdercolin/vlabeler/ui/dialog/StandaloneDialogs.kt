@@ -1,14 +1,15 @@
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.runtime.Composable
+import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.exportProjectModule
 import com.sdercolin.vlabeler.io.importProjectFile
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.dialog.updater.UpdaterDialog
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.moveCacheDirTo
@@ -111,16 +112,43 @@ fun StandaloneDialogs(
                 }
             }
         }
-        appState.isShowingImportDialog -> {
-            OpenFileDialog(
-                title = string(Strings.ImportDialogTitle),
-                extensions = listOf(Project.PROJECT_FILE_EXTENSION),
-            ) { parent, name ->
-                appState.closeImportDialog()
-                if (parent != null && name != null) {
-                    importProjectFile(mainScope, File(parent, name), appState)
-                }
+        appState.isShowingImportDialog -> OpenFileDialog(
+            title = string(Strings.ImportDialogTitle),
+            extensions = listOf(Project.PROJECT_FILE_EXTENSION),
+        ) { parent, name ->
+            appState.closeImportDialog()
+            if (parent != null && name != null) {
+                importProjectFile(mainScope, File(parent, name), appState)
             }
         }
+        appState.isShowingAboutDialog -> AboutDialog(
+            appRecord = appState.appRecordFlow.value,
+            appConf = appState.appConf,
+            showLicenses = {
+                appState.closeAboutDialog()
+                appState.openLicenseDialog()
+            },
+            finish = { appState.closeAboutDialog() },
+        )
+        appState.isShowingLicenseDialog -> LicenseDialog(
+            appConf = appState.appConf,
+            finish = { appState.closeLicenseDialog() },
+        )
+        appState.updaterDialogContent != null -> {
+            UpdaterDialog(
+                appConf = appState.appConf,
+                update = appState.updaterDialogContent,
+                appRecordStore = appState.appRecordStore,
+                onError = {
+                    appState.closeUpdaterDialog()
+                    appState.showError(it)
+                },
+                finish = { appState.closeUpdaterDialog() },
+            )
+        }
+        DebugState.isShowingFontPreviewDialog -> FontPreviewDialog(
+            appState.appConf,
+            finish = { DebugState.isShowingFontPreviewDialog = false },
+        )
     }
 }

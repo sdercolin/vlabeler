@@ -9,14 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
-import com.sdercolin.vlabeler.ui.dialog.AboutDialog
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
-import com.sdercolin.vlabeler.ui.dialog.FontPreviewDialog
-import com.sdercolin.vlabeler.ui.dialog.LicenseDialog
 import com.sdercolin.vlabeler.ui.dialog.QuickLaunchManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.TrackingSettingsDialog
 import com.sdercolin.vlabeler.ui.dialog.WarningDialog
@@ -29,7 +25,6 @@ import com.sdercolin.vlabeler.ui.dialog.prerender.PrerenderDialog
 import com.sdercolin.vlabeler.ui.dialog.project.ProjectSettingDialog
 import com.sdercolin.vlabeler.ui.dialog.sample.SampleListDialog
 import com.sdercolin.vlabeler.ui.dialog.syncsample.EntrySampleSyncDialog
-import com.sdercolin.vlabeler.ui.dialog.updater.UpdaterDialog
 import com.sdercolin.vlabeler.ui.editor.Editor
 import com.sdercolin.vlabeler.ui.starter.ProjectCreator
 import com.sdercolin.vlabeler.ui.starter.Starter
@@ -106,32 +101,6 @@ fun App(
         }
         if (appState.isShowingPreferencesDialog) {
             PreferencesDialog(appState)
-        }
-        if (appState.isShowingAboutDialog) {
-            AboutDialog(
-                appRecord = appState.appRecordFlow.value,
-                appConf = appState.appConf,
-                showLicenses = {
-                    appState.closeAboutDialog()
-                    appState.openLicenseDialog()
-                },
-                finish = { appState.closeAboutDialog() },
-            )
-        }
-        if (appState.isShowingLicenseDialog) {
-            LicenseDialog(appState.appConf, finish = { appState.closeLicenseDialog() })
-        }
-        appState.updaterDialogContent?.let { update ->
-            UpdaterDialog(
-                appConf = appState.appConf,
-                update = update,
-                appRecordStore = appState.appRecordStore,
-                onError = {
-                    appState.closeUpdaterDialog()
-                    appState.showError(it)
-                },
-                finish = { appState.closeUpdaterDialog() },
-            )
         }
         appState.macroPluginShownInDialog?.let { args ->
             val snackbarHostState = remember { SnackbarHostState() }
@@ -224,9 +193,6 @@ fun App(
                 },
                 style = WarningTextStyle.Error,
             )
-        }
-        if (DebugState.isShowingFontPreviewDialog) {
-            FontPreviewDialog(appState.appConf, finish = { DebugState.isShowingFontPreviewDialog = false })
         }
     }
     if (appState.isBusy) {
