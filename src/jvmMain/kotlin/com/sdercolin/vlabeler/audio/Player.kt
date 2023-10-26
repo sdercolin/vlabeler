@@ -269,18 +269,26 @@ class Player(
     fun close() {
         Log.info("Player.close()")
         openJob?.cancel()
+        openJob = null
         countingJob?.cancel()
+        countingJob = null
+        writingJob?.cancel()
+        writingJob = null
         line?.run {
             stop()
             flush()
             close()
         }
+        line = null
         extraLine?.run {
             stop()
             flush()
             close()
         }
         extraLine = null
+        format = null
+        data = null
+        file = null
     }
 
     fun loadNewConfIfNeeded(appConf: AppConf) {
