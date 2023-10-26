@@ -50,7 +50,6 @@ interface AppDialogState {
     val isShowingImportDialog: Boolean
     val isShowingPreferencesDialog: Boolean
     val preferencesDialogArgs: PreferencesEditorState.LaunchArgs?
-
     val isShowingProjectSettingDialog: Boolean
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
@@ -60,14 +59,15 @@ interface AppDialogState {
     val isShowingLicenseDialog: Boolean
     val isShowingQuickLaunchManagerDialog: Boolean
     val isShowingTrackingSettingsDialog: Boolean
-    val isShowingVideo: Boolean // Video is not a dialog, so it is not included in anyDialogOpening()
     val updaterDialogContent: Update?
     val importEntriesDialogArgs: ImportEntriesDialogArgs?
     val macroPluginShownInDialog: MacroPluginDialogArgs?
     val macroPluginReport: LocalizedJsonString?
     val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
-    val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
     val embeddedDialog: EmbeddedDialogRequest<*>?
+
+    val isShowingVideo: Boolean // Video is not a dialog, so it is not included in anyDialogOpening()
+    val pendingActionAfterSaved: AppState.PendingActionAfterSaved?
 
     fun openProjectSettingDialog()
     fun closeProjectSettingDialog()
@@ -159,7 +159,6 @@ interface AppDialogState {
             macroPluginShownInDialog != null ||
             macroPluginReport != null ||
             customizableItemManagerTypeShownInDialog != null ||
-            pendingActionAfterSaved != null ||
             embeddedDialog != null
 }
 
@@ -197,8 +196,9 @@ class AppDialogStateImpl(
     override var macroPluginShownInDialog: MacroPluginDialogArgs? by mutableStateOf(null)
     override var macroPluginReport: LocalizedJsonString? by mutableStateOf(null)
     override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
-    override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
     override var embeddedDialog: EmbeddedDialogRequest<*>? by mutableStateOf(null)
+
+    override var pendingActionAfterSaved: AppState.PendingActionAfterSaved? by mutableStateOf(null)
 
     private val hasUnsavedChanges get() = appUnsavedChangesState.hasUnsavedChanges
 
