@@ -1,6 +1,6 @@
 {
     "name": "ust2lab-any",
-    "version": 5,
+    "version": 6,
     "type": "template",
     "displayedName": {
         "en": "Lab generator with ust and custom dictionary",
@@ -90,6 +90,34 @@
                 "defaultValue": "file::dict-ja-kana.txt",
                 "multiLine": true,
                 "optional": false
+            },
+            {
+                "type": "enum",
+                "name": "encoding",
+                "label": {
+                    "en": "Encoding",
+                    "zh": "编码",
+                    "ja": "エンコーディング"
+                },
+                "defaultValue": "Shift-JIS",
+                "options": [
+                    "inherit",
+                    "Shift-JIS",
+                    "UTF-8"
+                ],
+                "optionDisplayedNames": [
+                    {
+                        "en": "Inherit from project",
+                        "zh": "继承项目设置",
+                        "ja": "プロジェクト設定値"
+                    },
+                    {
+                        "en": "Shift-JIS"
+                    },
+                    {
+                        "en": "UTF-8"
+                    }
+                ]
             }
         ]
     },

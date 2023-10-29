@@ -1,6 +1,6 @@
 {
     "name": "ust2lab-ja-kana",
-    "version": 11,
+    "version": 12,
     "type": "template",
     "displayedName": {
         "en": "Lab generator with ust (ja-kana)",
@@ -73,6 +73,34 @@
                     "ja": "入力ファイルのフォルダ名。ラベラーが複数のサブプロジェクトを対応している場合にのみ必要になります。入力ファイルのファイル名を対応する wav ファイルと同じ名前にして、指定したフォルダに入れてください。"
                 },
                 "defaultValue": "ust"
+            },
+            {
+                "type": "enum",
+                "name": "encoding",
+                "label": {
+                    "en": "Encoding",
+                    "zh": "编码",
+                    "ja": "エンコーディング"
+                },
+                "defaultValue": "Shift-JIS",
+                "options": [
+                    "inherit",
+                    "Shift-JIS",
+                    "UTF-8"
+                ],
+                "optionDisplayedNames": [
+                    {
+                        "en": "Inherit from project",
+                        "zh": "继承项目设置",
+                        "ja": "プロジェクト設定値"
+                    },
+                    {
+                        "en": "Shift-JIS"
+                    },
+                    {
+                        "en": "UTF-8"
+                    }
+                ]
             }
         ]
     },

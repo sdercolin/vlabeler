@@ -32,4 +32,7 @@ if (labeler.projectConstructor) {
     }
     inputFilePaths = [inputFilePath]
 }
-encoding = "UTF-8"
+encoding = params["encoding"]
+if (encoding === "inherit") {
+    encoding = undefined
+}
