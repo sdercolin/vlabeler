@@ -338,7 +338,7 @@ aaa;name:bbb;sample:ccc;tag:ddd
 您可以点击 `新建项目` 页面的 `标注器` 选择框右边的 `齿轮` 按钮来打开标注器设置对话框。
 
 如果你想编辑一个 `vLabeler` 暂不支持的语音合成软件的标注文件，您可以自己编写一个标注器配置文件来实现它，而无需等待我们的开发（尽管需要一定的编程知识）。
-请查看 [Developer Custom Labelers](../docs/labeler-development.md) （英文）来了解如何开发一个标注器。
+请查看 [Develop Custom Labelers](../docs/labeler-development.md) （英文）来了解如何开发一个标注器。
 
 您可以在 `设置` -> `标注器...` 中导入自己的标注器。您也可以将自己编写的标注器分发给其他用户，或联系我们将其内置。
 
