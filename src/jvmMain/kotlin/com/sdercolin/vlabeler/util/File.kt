@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.util
 
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isFileSystemCaseSensitive
 import java.io.File
 import java.io.FilenameFilter
@@ -84,6 +85,17 @@ fun File.containsFileRecursively(file: File): Boolean {
         if (sections[i] != childSections[i]) return false
     }
     return true
+}
+
+/**
+ * Execute [File.deleteRecursively] and log if success.
+ */
+fun File.deleteRecursivelyLogged() {
+    if (exists().not()) return
+    val result = deleteRecursively()
+    if (result) {
+        Log.debug("Deleted recursively: $absolutePath")
+    }
 }
 
 /**

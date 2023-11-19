@@ -3,7 +3,8 @@ package com.sdercolin.vlabeler.ui.dialog.customization
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.sdercolin.vlabeler.ui.string.*
+import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
 import com.sdercolin.vlabeler.util.Url
 import java.awt.Desktop
 import java.io.File
@@ -21,7 +22,11 @@ abstract class CustomizableItem(
     disabled: Boolean,
 ) {
 
-    fun remove(): Boolean = rootFile.deleteRecursively()
+    fun remove(): Boolean = rootFile.deleteRecursively().also {
+        if (it) {
+            Log.debug("Removed CustomizableItem $rootFile")
+        }
+    }
 
     fun revealInExplorer() {
         val file = if (rootFile.isDirectory) rootFile else rootFile.parentFile

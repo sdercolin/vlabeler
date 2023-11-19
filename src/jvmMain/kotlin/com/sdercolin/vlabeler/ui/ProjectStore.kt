@@ -476,7 +476,7 @@ class ProjectStoreImpl(
     override fun getAutoSavedProjectFile(): File? = listAutoSavedProjectFiles().firstOrNull()
 
     override fun discardAutoSavedProjects() {
-        listAutoSavedProjectFiles().forEach { it.delete() }
+        listAutoSavedProjectFiles().forEach { discardAutoSavedProjectFile(it) }
     }
 
     override suspend fun terminateAutoSaveProject() {
@@ -485,7 +485,13 @@ class ProjectStoreImpl(
     }
 
     private fun discardAutoSavedProject(project: Project) {
-        RecordDir.resolve("_" + project.projectFile.name).takeIf { it.exists() }?.delete()
+        val file = RecordDir.resolve("_" + project.projectFile.name).takeIf { it.exists() } ?: return
+        discardAutoSavedProjectFile(file)
+    }
+
+    private fun discardAutoSavedProjectFile(file: File) {
+        Log.debug("Discarding auto saved project: ${file.absolutePath}")
+        file.delete()
     }
 
     private var autoSaveJob: Job? = null

@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
+import com.sdercolin.vlabeler.util.deleteRecursivelyLogged
 import com.sdercolin.vlabeler.util.findUnusedFile
 import com.sdercolin.vlabeler.util.getCacheDir
 import com.sdercolin.vlabeler.util.parseJson
@@ -99,17 +100,18 @@ object SampleInfoRepository {
     fun clear(project: Project) {
         infoMap.clear()
         cacheMap.clear()
-        project.getCacheDir().resolve(SAMPLE_INFO_CACHE_FOLDER_NAME).deleteRecursively()
+        project.getCacheDir().resolve(SAMPLE_INFO_CACHE_FOLDER_NAME).deleteRecursivelyLogged()
     }
 
     /**
      * Move the cache from the old cache directory to the new cache directory.
      */
     fun moveTo(oldCacheDirectory: File, newCacheDirectory: File, clearOld: Boolean) {
+        Log.debug("Moving cache from $oldCacheDirectory to $newCacheDirectory")
         val oldDirectory = oldCacheDirectory.resolve(SAMPLE_INFO_CACHE_FOLDER_NAME)
         if (oldDirectory.isDirectory.not()) return
         oldDirectory.copyRecursively(newCacheDirectory.resolve(SAMPLE_INFO_CACHE_FOLDER_NAME), overwrite = true)
-        if (clearOld) oldDirectory.deleteRecursively()
+        if (clearOld) oldDirectory.deleteRecursivelyLogged()
     }
 
     private const val SAMPLE_INFO_CACHE_FOLDER_NAME = "sample-info"
