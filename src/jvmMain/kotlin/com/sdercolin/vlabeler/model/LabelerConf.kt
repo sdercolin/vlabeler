@@ -50,6 +50,7 @@ import java.io.File
  * @property continuous Whether the entries are continuous, i.e. the end time of an entry is the start time of the next
  *     entry.
  * @property allowSameNameEntry Whether a module can contain entries with the same name.
+ * @property defaultEntryName Default name of the entry. If null, sample file name without extension will be used.
  * @property defaultValues Default value listed as [start, *fields, end] in milliseconds.
  * @property defaultExtras (Deprecated) Use [extraFields] instead.
  * @property fields [Field] definitions containing data used in the label files, except for built-in "start" and "end".
@@ -90,6 +91,7 @@ data class LabelerConf(
     val displayOrder: Int = 0,
     val continuous: Boolean = false,
     val allowSameNameEntry: Boolean = false,
+    val defaultEntryName: String? = null,
     val defaultValues: List<Float>,
     val defaultExtras: List<String>? = null,
     val fields: List<Field> = listOf(),

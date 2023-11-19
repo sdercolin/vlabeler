@@ -73,10 +73,10 @@ data class Entry(
     val needSyncCompatibly get() = (needSync && end == 0f) || end < 0
 
     companion object {
-        fun fromDefaultValues(sample: String, name: String, labelerConf: LabelerConf) =
+        fun fromDefaultValues(sample: String, labelerConf: LabelerConf) =
             Entry(
                 sample = sample,
-                name = name,
+                name = labelerConf.defaultEntryName ?: sample.substringBeforeLast('.'),
                 start = labelerConf.defaultValues.first(),
                 end = labelerConf.defaultValues.last(),
                 points = labelerConf.defaultValues.drop(1).dropLast(1),

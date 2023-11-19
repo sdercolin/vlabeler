@@ -1,6 +1,6 @@
 {
     "name": "audacity.default",
-    "version": 10,
+    "version": 11,
     "serialVersion": 2,
     "singleFile": false,
     "extension": "txt",
@@ -69,5 +69,22 @@
     "writer": {
         "scope": "Entry",
         "scripts": "writer.js"
-    }
+    },
+    "parameters": [
+        {
+            "parameter": {
+                "name": "defaultEntryName",
+                "type": "string",
+                "label": {
+                    "en": "Default entry name",
+                    "zh": "默认条目名称",
+                    "ja": "デフォルトエントリ名"
+                },
+                "defaultValue": "pau",
+                "optional": true
+            },
+            "injector": "defaultEntryName-injector.js",
+            "changeable": true
+        }
+    ]
 }

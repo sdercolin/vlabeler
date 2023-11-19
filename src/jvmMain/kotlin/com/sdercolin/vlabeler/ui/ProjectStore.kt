@@ -416,7 +416,7 @@ class ProjectStoreImpl(
     override fun createDefaultEntries(moduleName: String, sampleNames: List<String>) {
         val project = requireProject()
         val newEntries = sampleNames.map {
-            Entry.fromDefaultValues(it, it.substringBeforeLast('.'), project.labelerConf)
+            Entry.fromDefaultValues(it, project.labelerConf)
         }
         editProjectModule(moduleName) { copy(entries = entries + newEntries) }
     }
