@@ -73,6 +73,7 @@ fun Strings.ja(): String? = when (this) {
     MenuToolsPrerender -> "すべてのグラフをプリレンダリング..."
     MenuToolsSyncSample -> "サンプルの末尾に対する相対値をすべて変換..."
     MenuToolsRecycleMemory -> "メモリを解放"
+    MenuToolsFileNameNormalizer -> "ファイル名を正規化..."
     MenuSettings -> "設定"
     MenuSettingsPreferences -> "環境設定..."
     MenuSettingsLabelers -> "ラベラー..."
@@ -678,5 +679,19 @@ fun Strings.ja(): String? = when (this) {
     EntryFilterSetterDialogHeaderTag -> "タグに"
     EntryFilterSetterDialogHeaderStar -> "スターマーク"
     EntryFilterSetterDialogHeaderDone -> "完了"
+    FileNameNormalizerDialogTitle -> "vLabeler - ファイル名の正規化"
+    FileNameNormalizerTitle -> "ファイル名の正規化"
+    FileNameNormalizerDescription ->
+        "このツールは、NFD（macOS で使用される）から NFC（Windows で使用される）エンコーディングに" +
+            "ファイル名を変換するためのものです。" +
+            "フォルダを選択すると、そのフォルダ以下のすべてのファイル名を再帰的に変換します。" +
+            "ファイルを選択すると、そのファイルの内容を変換します。\n" +
+            "すでにサンプルファイルを使用してプロジェクトを作成している場合は、" +
+            "サンプルファイル名とプロジェクトファイルの内容の両方を変換する必要があります。"
+    FileNameNormalizerHandleFolderButton -> "フォルダを選択"
+    FileNameNormalizerHandleFileContentButton -> "ファイルを選択"
+    FileNameNormalizerHandleFolderSuccess -> "スキャンした %d 個のファイルのうち、%d 個のファイル名を変換しました。"
+    FileNameNormalizerHandleFileSuccess -> "ファイルの内容を変換しました。"
+    FileNameNormalizerHandleFileNoChange -> "ファイルに変換が必要な内容はありませんでした。"
     else -> null
 }

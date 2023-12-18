@@ -71,6 +71,7 @@ fun Strings.en(): String = when (this) {
     MenuToolsPrerender -> "Prerender All Charts..."
     MenuToolsSyncSample -> "Convert all values relative to the end of sample..."
     MenuToolsRecycleMemory -> "Recycle Memory"
+    MenuToolsFileNameNormalizer -> "File Name Normalizer..."
     MenuSettings -> "Settings"
     MenuSettingsPreferences -> "Preferences..."
     MenuSettingsLabelers -> "Labelers..."
@@ -717,4 +718,18 @@ fun Strings.en(): String = when (this) {
     EntryFilterSetterDialogHeaderTag -> "Tag contains"
     EntryFilterSetterDialogHeaderStar -> "Starred"
     EntryFilterSetterDialogHeaderDone -> "Done"
+    FileNameNormalizerDialogTitle -> "vLabeler - File Name Normalizer"
+    FileNameNormalizerTitle -> "File Name Normalizer"
+    FileNameNormalizerDescription ->
+        "This tool is for convert file names from NFD(usually used on macOS) to " +
+            "NFC(usually used on Windows) encoding." +
+            "Select a folder to convert all the file names under it recursively, " +
+            "or select a file to convert its content.\n" +
+            "If you have already created a project based on sample files, make sure you convert both the sample file " +
+            "names and the content of the project file."
+    FileNameNormalizerHandleFolderButton -> "Pick a folder"
+    FileNameNormalizerHandleFileContentButton -> "Pick a file"
+    FileNameNormalizerHandleFolderSuccess -> "Scanned %d files, converted %d files."
+    FileNameNormalizerHandleFileSuccess -> "Successfully converted the file content."
+    FileNameNormalizerHandleFileNoChange -> "No conversion needed for the file content."
 }

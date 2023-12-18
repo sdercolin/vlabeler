@@ -59,6 +59,7 @@ interface AppDialogState {
     val isShowingLicenseDialog: Boolean
     val isShowingQuickLaunchManagerDialog: Boolean
     val isShowingTrackingSettingsDialog: Boolean
+    val isShowingFileNameNormalizerDialog: Boolean
     val updaterDialogContent: Update?
     val importEntriesDialogArgs: ImportEntriesDialogArgs?
     val macroPluginShownInDialog: MacroPluginDialogArgs?
@@ -132,6 +133,8 @@ interface AppDialogState {
     fun toggleVideoPopup(on: Boolean)
     fun openImportEntriesDialog(args: ImportEntriesDialogArgs)
     fun closeImportEntriesDialog()
+    fun openFileNameNormalizerDialog()
+    fun closeFileNameNormalizerDialog()
     fun closeEmbeddedDialog()
     fun closeAllDialogs()
 
@@ -190,6 +193,7 @@ class AppDialogStateImpl(
     override var isShowingLicenseDialog: Boolean by mutableStateOf(false)
     override var isShowingQuickLaunchManagerDialog: Boolean by mutableStateOf(false)
     override var isShowingTrackingSettingsDialog: Boolean by mutableStateOf(false)
+    override var isShowingFileNameNormalizerDialog: Boolean by mutableStateOf(false)
     override var isShowingVideo: Boolean by mutableStateOf(false)
     override var updaterDialogContent: Update? by mutableStateOf(null)
     override var importEntriesDialogArgs: ImportEntriesDialogArgs? by mutableStateOf(null)
@@ -547,6 +551,14 @@ class AppDialogStateImpl(
 
     override fun closeImportEntriesDialog() {
         importEntriesDialogArgs = null
+    }
+
+    override fun openFileNameNormalizerDialog() {
+        isShowingFileNameNormalizerDialog = true
+    }
+
+    override fun closeFileNameNormalizerDialog() {
+        isShowingFileNameNormalizerDialog = false
     }
 
     override fun closeEmbeddedDialog() {
