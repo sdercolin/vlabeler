@@ -54,7 +54,7 @@ jobs:
         with:
           arguments: notarizeDmg
 
-      - name: Rename and notarize
+      - name: Rename
         run: |
           VERSION=${{ github.ref_name }}
           echo $VERSION
