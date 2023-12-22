@@ -383,7 +383,7 @@ data class AppConf(
         }
 
         companion object {
-            val DEFAULT_GO_TO = Target.Former
+            val DEFAULT_GO_TO = Target.Latter
             val DEFAULT_ASK_FOR_NAME = Target.Former
             val DEFAULT_PLAY = Target.Former
         }

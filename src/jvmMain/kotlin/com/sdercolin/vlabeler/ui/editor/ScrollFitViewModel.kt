@@ -11,11 +11,38 @@ import kotlinx.coroutines.launch
 @Stable
 class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
 
-    private val _eventFlow = MutableSharedFlow<Int>(replay = 0)
+    private val _eventFlow = MutableSharedFlow<Event>(replay = 0)
     val eventFlow = _eventFlow.asSharedFlow()
 
     private var pendingValue: Int = 0
     private var waitingNext = false
+
+    data class Event(val value: Int, val mode: Mode)
+
+    /**
+     * Fitting mode
+     */
+    enum class Mode {
+        /**
+         * Normal mode, place the entry in the center of the screen. If the entry is too long, place the specified side
+         * of the entry on the same side of the screen with some margin.
+         */
+        NORMAL,
+
+        /**
+         * Forward mode, place the entry's start in the center of the screen. Only forward (right) movement is emitted.
+         */
+        FORWARD,
+    }
+
+    private var mode: Mode = Mode.NORMAL
+
+    /**
+     * Set the fitting mode before calling [update]. Any [emit] call will reset the mode to [Mode.NORMAL].
+     */
+    fun setMode(mode: Mode) {
+        this.mode = mode
+    }
 
     fun update(
         showLeftSide: Boolean,
@@ -38,8 +65,11 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
                 end - screenLength / 2 + screenLength / MIN_SCREEN_RATIO_OFFSET
             }
         }
-        val target = (center - screenLength / 2).toInt().coerceAtMost(scrollMax).coerceAtLeast(0)
-        update(target)
+        val target = when (mode) {
+            Mode.NORMAL -> center - screenLength / 2
+            Mode.FORWARD -> start - screenLength / 2
+        }
+        update(target.toInt().coerceAtMost(scrollMax).coerceAtLeast(0))
     }
 
     private fun update(value: Int) {
@@ -51,8 +81,10 @@ class ScrollFitViewModel(private val coroutineScope: CoroutineScope) {
     }
 
     fun emit() {
+        val eventMode = mode
+        mode = Mode.NORMAL
         coroutineScope.launch {
-            _eventFlow.emit(pendingValue)
+            _eventFlow.emit(Event(pendingValue, eventMode))
         }
     }
 

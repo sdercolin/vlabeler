@@ -238,6 +238,7 @@ class ProjectStoreImpl(
         if (autoScrollConf.onSwitched ||
             (autoScrollConf.onSwitchedInMultipleEditMode && targetEntryIndex != project?.currentModule?.currentIndex)
         ) {
+            scrollFitViewModel.setMode(ScrollFitViewModel.Mode.FORWARD)
             scrollFitViewModel.emitNext()
         }
         editCurrentProjectModule { cutEntry(index, position, rename, newName, targetEntryIndex) }
@@ -250,6 +251,13 @@ class ProjectStoreImpl(
         target: AppConf.ScissorsActions.Target,
         targetEntryIndex: Int?,
     ) {
+        val autoScrollConf = appConf.value.editor.autoScroll
+        if (autoScrollConf.onSwitched ||
+            (autoScrollConf.onSwitchedInMultipleEditMode && targetEntryIndex != project?.currentModule?.currentIndex)
+        ) {
+            scrollFitViewModel.setMode(ScrollFitViewModel.Mode.FORWARD)
+            scrollFitViewModel.emitNext()
+        }
         editCurrentProjectModule {
             val rename = if (target != AppConf.ScissorsActions.Target.Former) null else name
             val newName = if (target != AppConf.ScissorsActions.Target.Former) name else entries[index].name
