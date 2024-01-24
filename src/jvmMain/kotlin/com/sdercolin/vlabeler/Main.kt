@@ -157,7 +157,7 @@ private fun SnackbarBox(state: AppState) {
 @Composable
 private fun rememberAppRecordStore(scope: CoroutineScope) = remember {
     val recordText = AppRecordFile.takeIf { it.exists() }?.readText()
-    val appRecord = recordText?.parseJson() ?: AppRecord()
+    val appRecord = runCatching { recordText?.parseJson<AppRecord>() }.getOrNull() ?: AppRecord()
     AppRecordStore(appRecord, scope)
 }
 
