@@ -22,8 +22,10 @@ class ScreenRangeHelper {
 
     fun get(canvasLength: Float, scrollState: ScrollState): FloatRange? {
         if (canvasLength != this.canvasLength) {
-            if (scrollState.value to scrollState.maxValue == valuePair) {
-                // scroll state is not up-to-date, return previous value
+            if (scrollState.value to scrollState.maxValue == valuePair && valuePair != 0 to 0) {
+                // if valuePair is 0 to 0, it means the data is too short to enable scrolling,
+                // so it never changes.
+                // in other cases, when it's not changing, it means scrollState has not been updated.
                 return getRange(this.canvasLength, scrollState.value, scrollState.maxValue)
             }
             this.canvasLength = canvasLength
