@@ -464,6 +464,9 @@ fun Strings.ja(): String? = when (this) {
         "有効にすると、はさみでクリックした時に、エディタ上に新しいエントリ名の入力欄が表示されます。" +
             "Enterキーを押すか、クリック位置からカーソルを離すことで、カットアクションを確定できます。" +
             "Escキーを押すことで、アクションをキャンセルできます。この設定は、複数エントリ編集モードでのみ有効です。"
+    PreferencesEditorScissorsScissorsSubmitThreshold -> "アクション確定閾値（DP）"
+    PreferencesEditorScissorsScissorsSubmitThresholdDescription ->
+        "はさみでクリックした後、カーソルを移動してからアクションを確定するまでの距離の閾値です。"
     PreferencesEditorScissorsColor -> "色"
     PreferencesEditorScissorsActionTargetNone -> "なし"
     PreferencesEditorScissorsActionTargetFormer -> "前のエントリ"

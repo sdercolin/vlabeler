@@ -290,6 +290,8 @@ data class AppConf(
      * @param scissorsActions Actions taken with a successful scissors click.
      * @param useOnScreenScissors When true, the scissors process is handled on screen. Otherwise, it is handled in a
      *     dialog. Only effective when [Project.multipleEditMode] is true.
+     * @param scissorsSubmitThreshold The dp number of the threshold to submit the scissors' cut after a click, when
+     *     [useOnScreenScissors] is true.
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted.
      * @param showDone When true, the done button/icon is shown in the editor and entry lists.
      * @param showStar When true, the star button/icon is shown in the editor and entry lists.
@@ -304,6 +306,7 @@ data class AppConf(
         val scissorsColor: String = DEFAULT_SCISSORS_COLOR,
         val scissorsActions: ScissorsActions = ScissorsActions(),
         val useOnScreenScissors: Boolean = DEFAULT_USE_ON_SCREEN_SCISSORS,
+        val scissorsSubmitThreshold: Int = DEFAULT_SCISSORS_SUBMIT_THRESHOLD,
         val autoScroll: AutoScroll = AutoScroll(),
         val lockedDrag: LockedDrag = DEFAULT_LOCKED_DRAG,
         val lockedSettingParameterWithCursor: Boolean = DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR,
@@ -336,6 +339,9 @@ data class AppConf(
             const val DEFAULT_PLAYER_CURSOR_COLOR = "#FFFF00"
             const val DEFAULT_SCISSORS_COLOR = "#FFFFFF00"
             const val DEFAULT_USE_ON_SCREEN_SCISSORS = true
+            const val DEFAULT_SCISSORS_SUBMIT_THRESHOLD = 10
+            const val MIN_SCISSORS_SUBMIT_THRESHOLD = 1
+            const val MAX_SCISSORS_SUBMIT_THRESHOLD = 50
             val DEFAULT_LOCKED_DRAG = LockedDrag.UseLabeler
             const val DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR = true
             const val DEFAULT_SHOW_DONE = true

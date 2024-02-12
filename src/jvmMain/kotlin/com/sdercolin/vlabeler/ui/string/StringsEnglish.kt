@@ -492,6 +492,10 @@ fun Strings.en(): String = when (this) {
             "with the scissors. You can confirm the cutting action by pressing Enter or moving the cursor away " +
             "from the clicked position. You can also cancel the action by pressing Esc. This is only available " +
             "in multiple edit mode."
+    PreferencesEditorScissorsScissorsSubmitThreshold -> "Threshold of action submission (DP)"
+    PreferencesEditorScissorsScissorsSubmitThresholdDescription ->
+        "After clicking with scissors, when you move the cursor away from the clicked position and the distance " +
+            "exceeds the threshold, the scissors action will be submitted."
     PreferencesEditorScissorsColor -> "Color"
     PreferencesEditorScissorsActionTargetNone -> "None"
     PreferencesEditorScissorsActionTargetFormer -> "The former entry"

@@ -631,6 +631,16 @@ object PreferencesPages {
                         select = { it.useOnScreenScissors },
                         update = { copy(useOnScreenScissors = it) },
                     )
+                    integer(
+                        title = Strings.PreferencesEditorScissorsScissorsSubmitThreshold,
+                        description = Strings.PreferencesEditorScissorsScissorsSubmitThresholdDescription,
+                        defaultValue = AppConf.Editor.DEFAULT_SCISSORS_SUBMIT_THRESHOLD,
+                        min = AppConf.Editor.MIN_SCISSORS_SUBMIT_THRESHOLD,
+                        max = AppConf.Editor.MAX_SCISSORS_SUBMIT_THRESHOLD,
+                        enabled = { it.useOnScreenScissors },
+                        select = { it.scissorsSubmitThreshold },
+                        update = { copy(scissorsSubmitThreshold = it) },
+                    )
                     color(
                         title = Strings.PreferencesEditorScissorsColor,
                         defaultValue = AppConf.Editor.DEFAULT_SCISSORS_COLOR,

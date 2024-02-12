@@ -70,7 +70,6 @@ const val STROKE_WIDTH = 2f
 val LabelSize = DpSize(45.dp, 25.dp)
 val LabelShiftUp = 11.dp
 const val LABEL_MAX_CHUNK_LENGTH = 5000
-val OnScreenScissorDistanceThreshold = 10.dp
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -122,6 +121,7 @@ fun MarkerPointEventContainer(
                     coroutineScope,
                     editorState::commitEntryCut,
                     density,
+                    appState.appConf,
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
@@ -473,11 +473,12 @@ private fun MarkerState.handleMouseMove(
     scope: CoroutineScope,
     commitEntryCut: () -> Unit,
     density: Density,
+    appConf: AppConf,
 ) {
     screenRange ?: return
     when (tool) {
         Tool.Cursor -> handleCursorMove(event, editions, screenRange, playByCursor, density)
-        Tool.Scissors -> handleScissorsMove(event, screenRange, commitEntryCut, density)
+        Tool.Scissors -> handleScissorsMove(event, screenRange, commitEntryCut, density, appConf)
         Tool.Pan -> handlePanMove(event, scrollState, scope)
         Tool.Playback -> handlePlaybackMove(event, screenRange)
     }
@@ -535,13 +536,14 @@ private fun MarkerState.handleScissorsMove(
     screenRange: FloatRange,
     commitEntryCut: () -> Unit,
     density: Density,
+    appConf: AppConf,
 ) {
     val scissorsStateValue = scissorsState.value
     val x = event.changes.first().position.x + screenRange.start
     if (scissorsStateValue?.locked == true) {
         val lockedPosition = scissorsStateValue.position ?: return
         val distance = abs(x - lockedPosition)
-        val threshold = with(density) { OnScreenScissorDistanceThreshold.toPx() }
+        val threshold = with(density) { appConf.editor.scissorsSubmitThreshold.dp.toPx() }
         if (distance > threshold) {
             scissorsState.updateNonNull { copy(locked = false) }
             commitEntryCut()
