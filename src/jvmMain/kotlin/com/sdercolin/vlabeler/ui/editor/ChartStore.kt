@@ -515,17 +515,18 @@ class ChartStore {
         }
         // get data
         val data = requireNotNull(chunk.fundamental).data
-        val minDisplayFrequency = 0.0f
-        val maxDisplayFrequency = appConf.painter.spectrogram.maxFrequency.toFloat()
+        val minDisplayMel = MelScale.toMel(0.0)
+        val maxDisplayMel = MelScale.toMel(appConf.painter.spectrogram.maxFrequency.toDouble())
         // image size
         val width = data.size
         val height = appConf.painter.fundamental.intensityAccuracy
         val imageData = ByteArray(width * height * 4)
         // draw
         val color = appConf.painter.fundamental.color.toColorOrNull() ?: AppConf.Fundamental.DEFAULT_COLOR.toColor()
-        val yArray = data.map { value ->
-            val valueInRange = maxOf(minDisplayFrequency, minOf(maxDisplayFrequency, value))
-            val relativeValue = (valueInRange - minDisplayFrequency) / (maxDisplayFrequency - minDisplayFrequency)
+        val yArray = data.map { freq ->
+            val mel = MelScale.toMel(freq.toDouble())
+            val valueInRange = maxOf(minDisplayMel, minOf(maxDisplayMel, mel))
+            val relativeValue = (valueInRange - minDisplayMel) / (maxDisplayMel - minDisplayMel)
             (height - 1 - relativeValue * (height - 1)).toInt()
         }
         yArray.forEachIndexed { index, y ->
