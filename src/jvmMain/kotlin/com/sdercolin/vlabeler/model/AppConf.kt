@@ -53,13 +53,15 @@ data class AppConf(
         val amplitude: Amplitude = Amplitude(),
         val spectrogram: Spectrogram = Spectrogram(),
         val power: Power = Power(),
+        val fundamental: Fundamental = Fundamental(),
         val conversion: Conversion = Conversion(),
     ) {
         val amplitudeHeightRatio: Float
             get() = 1f /
                 (
                     1f + (if (spectrogram.enabled) spectrogram.heightWeight else 0f) +
-                        (if (power.enabled) power.heightWeight else 0f)
+                        (if (power.enabled) power.heightWeight else 0f) +
+                        (if (fundamental.enabled && spectrogram.enabled) fundamental.heightWeight else 0f)
                     )
 
         companion object {
@@ -243,6 +245,28 @@ data class AppConf(
             const val MIN_MIN_POWER = -192.66f
             const val MAX_MAX_POWER = 0.0f
             const val DEFAULT_INTENSITY_ACCURACY = 200
+            const val MAX_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY * 5
+            const val MIN_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY / 5
+            const val DEFAULT_COLOR = "#FFF2F2F2"
+            const val DEFAULT_BACKGROUND_COLOR = "#00000000"
+        }
+    }
+
+    @Serializable
+    @Immutable
+    data class Fundamental(
+        val enabled: Boolean = DEFAULT_ENABLED,
+        val heightWeight: Float = DEFAULT_HEIGHT_WEIGHT,
+        val intensityAccuracy: Int = DEFAULT_INTENSITY_ACCURACY,
+        val color: String = DEFAULT_COLOR,
+        val backgroundColor: String = DEFAULT_BACKGROUND_COLOR,
+    ) {
+        companion object {
+            const val DEFAULT_ENABLED = false
+            const val DEFAULT_HEIGHT_WEIGHT = 0.5f
+            const val MAX_HEIGHT_WEIGHT = 5f
+            const val MIN_HEIGHT_WEIGHT = 0.1f
+            const val DEFAULT_INTENSITY_ACCURACY = 100
             const val MAX_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY * 5
             const val MIN_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY / 5
             const val DEFAULT_COLOR = "#FFF2F2F2"

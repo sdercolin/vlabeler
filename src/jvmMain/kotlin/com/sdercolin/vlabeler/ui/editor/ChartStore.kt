@@ -48,12 +48,14 @@ class ChartStore {
     private val waveformStatusList = mutableStateMapOf<Pair<Int, Int>, ChartLoadingStatus>()
     private val spectrogramStatusList = mutableStateMapOf<Int, ChartLoadingStatus>()
     private val powerGraphStatusList = mutableStateMapOf<Pair<Int, Int>, ChartLoadingStatus>()
+    private val fundamentalGraphStatusList = mutableStateMapOf<Int, ChartLoadingStatus>()
 
     private var job: Job? = null
 
     fun getWaveformStatus(channelIndex: Int, chunkIndex: Int) = waveformStatusList[channelIndex to chunkIndex]
     fun getSpectrogramStatus(chunkIndex: Int) = spectrogramStatusList[chunkIndex]
     fun getPowerGraphStatus(channelIndex: Int, chunkIndex: Int) = powerGraphStatusList[channelIndex to chunkIndex]
+    fun getFundamentalGraphStatus(chunkIndex: Int) = fundamentalGraphStatusList[chunkIndex]
 
     fun clear() {
         Log.info("ChartStore clear()")
@@ -62,6 +64,7 @@ class ChartStore {
         waveformStatusList.clear()
         spectrogramStatusList.clear()
         powerGraphStatusList.clear()
+        fundamentalGraphStatusList.clear()
         launchGcDelayed()
     }
 
@@ -139,6 +142,15 @@ class ChartStore {
                         )
                     }
                 }
+                if (sampleInfo.hasFundamental && sampleInfo.hasSpectrogram && appConf.painter.fundamental.enabled) {
+                    renderFundamentalGraph(
+                        sampleInfo,
+                        chunk,
+                        chunkIndex,
+                        appConf,
+                        onRenderProgress,
+                    )
+                }
             }
             launchGcDelayed()
         }
@@ -195,6 +207,10 @@ class ChartStore {
             repeat(sampleInfo.powerChannels) { channelIndex ->
                 if (!hasCachedPowerGraph(sampleInfo, channelIndex, chunkIndex)) return false
             }
+        }
+
+        if (sampleInfo.hasFundamental) {
+            if (!hasCachedFundamentalGraph(sampleInfo, chunkIndex)) return false
         }
 
         return true
@@ -453,6 +469,85 @@ class ChartStore {
         ChartRepository.putPowerGraph(sampleInfo, channelIndex, chunkIndex, bitmap)
         yield()
         powerGraphStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loaded
+        onRenderProgress()
+        System.gc()
+    }
+
+    private fun hasCachedFundamentalGraph(
+        sampleInfo: SampleInfo,
+        chunkIndex: Int,
+    ): Boolean {
+        val targetFile = ChartRepository.getFundamentalGraphImageFile(sampleInfo, chunkIndex)
+        if (targetFile.exists()) {
+            if (targetFile.lastModified() > sampleInfo.lastModified) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun deleteCachedFundamentalGraph(
+        sampleInfo: SampleInfo,
+        chunkIndex: Int,
+    ) {
+        val targetFile = ChartRepository.getFundamentalGraphImageFile(sampleInfo, chunkIndex)
+        if (targetFile.exists()) {
+            targetFile.delete()
+        }
+    }
+
+    private suspend fun renderFundamentalGraph(
+        sampleInfo: SampleInfo,
+        chunk: SampleChunk?,
+        chunkIndex: Int,
+        appConf: AppConf,
+        onRenderProgress: suspend () -> Unit,
+    ) {
+        if (hasCachedFundamentalGraph(sampleInfo, chunkIndex)) {
+            fundamentalGraphStatusList[chunkIndex] = ChartLoadingStatus.Loaded
+            onRenderProgress()
+            return
+        } else {
+            deleteCachedFundamentalGraph(sampleInfo, chunkIndex)
+        }
+        requireNotNull(chunk) {
+            "Chunk $chunkIndex is required. However it's not loaded."
+        }
+        // get data
+        val data = requireNotNull(chunk.fundamental).data
+        val minDisplayFrequency = 0.0f
+        val maxDisplayFrequency = appConf.painter.spectrogram.maxFrequency.toFloat()
+        // image size
+        val width = data.size
+        val height = appConf.painter.fundamental.intensityAccuracy
+        val imageData = ByteArray(width * height * 4)
+        // draw
+        val color = appConf.painter.fundamental.color.toColorOrNull() ?: AppConf.Fundamental.DEFAULT_COLOR.toColor()
+        val yArray = data.map { value ->
+            val valueInRange = maxOf(minDisplayFrequency, minOf(maxDisplayFrequency, value))
+            val relativeValue = (valueInRange - minDisplayFrequency) / (maxDisplayFrequency - minDisplayFrequency)
+            (height - 1 - relativeValue * (height - 1)).toInt()
+        }
+        yArray.forEachIndexed { index, y ->
+            val before = if (index == 0) y else (yArray[index - 1] + y) / 2
+            val after = if (index == yArray.lastIndex) y else (yArray[index + 1] + y) / 2
+            val start = minOf(before, after)
+            val end = maxOf(before, after)
+            for (i in start..end) {
+                val offset = (i * width + index) * 4
+                imageData[offset] = (color.blue * 255).toInt().toByte()
+                imageData[offset + 1] = (color.green * 255).toInt().toByte()
+                imageData[offset + 2] = (color.red * 255).toInt().toByte()
+                imageData[offset + 3] = (color.alpha * 255).toInt().toByte()
+            }
+        }
+        val imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
+        val image = Image.Companion.makeRaster(imageInfo, imageData, width * 4)
+        val bitmap = Bitmap.makeFromImage(image).asComposeImageBitmap()
+        yield()
+        ChartRepository.putFundamentalGraph(sampleInfo, chunkIndex, bitmap)
+        yield()
+        fundamentalGraphStatusList[chunkIndex] = ChartLoadingStatus.Loaded
         onRenderProgress()
         System.gc()
     }

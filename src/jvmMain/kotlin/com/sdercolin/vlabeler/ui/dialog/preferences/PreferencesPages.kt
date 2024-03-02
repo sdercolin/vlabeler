@@ -27,6 +27,7 @@ object PreferencesPages {
                 ChartsWaveform,
                 ChartsSpectrogram,
                 ChartsPower,
+                ChartsFundamental,
                 ChartsConversion,
             )
     }
@@ -386,6 +387,57 @@ object PreferencesPages {
                     color(
                         title = Strings.PreferencesChartsPowerBackgroundColor,
                         defaultValue = AppConf.Power.DEFAULT_BACKGROUND_COLOR,
+                        select = { it.backgroundColor },
+                        update = { copy(backgroundColor = it) },
+                        useAlpha = true,
+                    )
+                }
+            }
+    }
+
+    object ChartsFundamental : PreferencesPage(
+        Strings.PreferencesChartsFundamental,
+        Strings.PreferencesChartsFundamentalDescription,
+    ) {
+        override val content: List<PreferencesGroup>
+            get() = buildPageContent {
+                withContext(
+                    selector = { it.painter.fundamental },
+                    updater = { copy(painter = painter.copy(fundamental = it)) },
+                ) {
+                    switch(
+                        // TODO: only enable when spectrogram is enabled
+                        title = Strings.PreferencesChartsFundamentalEnabled,
+                        defaultValue = AppConf.Fundamental.DEFAULT_ENABLED,
+                        select = { it.enabled },
+                        update = { copy(enabled = it) },
+                    )
+                    floatPercentage(
+                        title = Strings.PreferencesChartsFundamentalHeight,
+                        defaultValue = AppConf.Fundamental.DEFAULT_HEIGHT_WEIGHT,
+                        min = AppConf.Fundamental.MIN_HEIGHT_WEIGHT,
+                        max = AppConf.Fundamental.MAX_HEIGHT_WEIGHT,
+                        select = { it.heightWeight },
+                        update = { copy(heightWeight = it) },
+                    )
+                    integer(
+                        title = Strings.PreferencesChartsFundamentalIntensityAccuracy,
+                        defaultValue = AppConf.Fundamental.DEFAULT_INTENSITY_ACCURACY,
+                        min = AppConf.Fundamental.MIN_INTENSITY_ACCURACY,
+                        max = AppConf.Fundamental.MAX_INTENSITY_ACCURACY,
+                        select = { it.intensityAccuracy },
+                        update = { copy(intensityAccuracy = it) },
+                    )
+                    color(
+                        title = Strings.PreferencesChartsFundamentalColor,
+                        defaultValue = AppConf.Fundamental.DEFAULT_COLOR,
+                        select = { it.color },
+                        update = { copy(color = it) },
+                        useAlpha = true,
+                    )
+                    color(
+                        title = Strings.PreferencesChartsFundamentalBackgroundColor,
+                        defaultValue = AppConf.Fundamental.DEFAULT_BACKGROUND_COLOR,
                         select = { it.backgroundColor },
                         update = { copy(backgroundColor = it) },
                         useAlpha = true,

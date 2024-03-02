@@ -96,6 +96,15 @@ object ChartRepository {
         return file.inputStream().buffered().use(::loadImageBitmap)
     }
 
+    /**
+     * Get the fundamental image of a chunk
+     */
+    suspend fun getFundamentalGraph(sampleInfo: SampleInfo, chunkIndex: Int): ImageBitmap {
+        val file = getFundamentalGraphImageFile(sampleInfo, chunkIndex)
+        waitingFile(file)
+        return file.inputStream().buffered().use(::loadImageBitmap)
+    }
+
     private suspend fun waitingFile(file: File) {
         while (file.exists().not()) {
             Log.info("Waiting for $file to be created")
@@ -135,6 +144,14 @@ object ChartRepository {
     ) {
         val file = getPowerGraphImageFile(sampleInfo, channelIndex, chunkIndex)
         saveImage(powerGraph, file, sampleInfo.getCacheKey(KEY_POWER_GRAPH, channelIndex, chunkIndex))
+    }
+
+    /**
+     * Put the fundamental graph image of a chunk.
+     */
+    fun putFundamentalGraph(sampleInfo: SampleInfo, chunkIndex: Int, fundamentalGraph: ImageBitmap) {
+        val file = getFundamentalGraphImageFile(sampleInfo, chunkIndex)
+        saveImage(fundamentalGraph, file, sampleInfo.getCacheKey(KEY_FUNDAMENTAL_GRAPH, chunkIndex))
     }
 
     private fun saveImage(image: ImageBitmap, file: File, cacheKey: String) {
@@ -200,7 +217,26 @@ object ChartRepository {
         ?.let { cacheDirectory.resolve(it) }
         ?.takeIf { it.isFile }
         ?: run {
+            // TODO: modulePrefix?
             val baseFileName = "${sampleInfo.name}_${KEY_POWER_GRAPH}_${channelIndex}_$chunkIndex.$EXTENSION"
+            cacheDirectory.findUnusedFile(
+                base = baseFileName,
+                existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
+            )
+        }
+
+    /**
+     * Get the target [File] for the fundamental graph image of a chunk.
+     */
+    fun getFundamentalGraphImageFile(
+        sampleInfo: SampleInfo,
+        chunkIndex: Int,
+    ) = cacheMap[sampleInfo.getCacheKey(KEY_FUNDAMENTAL_GRAPH, chunkIndex)]
+        ?.let { cacheDirectory.resolve(it) }
+        ?.takeIf { it.isFile }
+        ?: run {
+            val modulePrefix = sampleInfo.moduleName.let { "${it}_" }
+            val baseFileName = "${modulePrefix}${sampleInfo.name}_${KEY_FUNDAMENTAL_GRAPH}_$chunkIndex.$EXTENSION"
             cacheDirectory.findUnusedFile(
                 base = baseFileName,
                 existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
@@ -231,6 +267,7 @@ object ChartRepository {
     private const val KEY_WAVEFORM = "waveform"
     private const val KEY_SPECTROGRAM = "spectrogram"
     private const val KEY_POWER_GRAPH = "power_graph"
+    private const val KEY_FUNDAMENTAL_GRAPH = "fundamental_graph"
     private const val EXTENSION = "png"
 }
 
