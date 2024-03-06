@@ -704,10 +704,10 @@ fun Strings.en(): String = when (this) {
     ImportEntriesDialogItemSummaryTitle -> "%d Entries"
     ImportEntriesDialogItemTargetLabel -> "Target"
     ImportEntriesDialogItemIncompatible -> "Incompatible with current project"
-    ImportEntriesDialogReplaceContent -> "Replace current content"
+    ImportEntriesDialogReplaceContent -> "Remove current entries"
     ImportEntriesDialogReplaceContentDisabledDescription ->
         "The current project doesn't support appending entries, " +
-            "so all the current entries will be replaced by imported ones."
+            "so all the current entries will be removed before importing."
     EntrySampleSyncerModuleText -> "Handling subprojects %d/%d..."
     EntrySampleSyncerModuleTextFinished -> "Handling subprojects %d/%d... Done"
     EntrySampleSyncerSampleText -> "Handling sample files %d/%d..."

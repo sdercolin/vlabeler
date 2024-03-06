@@ -665,9 +665,9 @@ fun Strings.ja(): String? = when (this) {
     ImportEntriesDialogItemSummaryTitle -> "%d 個のエントリ"
     ImportEntriesDialogItemTargetLabel -> "インポート先："
     ImportEntriesDialogItemIncompatible -> "互換性がありません"
-    ImportEntriesDialogReplaceContent -> "すべてのエントリを上書きする"
+    ImportEntriesDialogReplaceContent -> "既存のエントリを削除"
     ImportEntriesDialogReplaceContentDisabledDescription ->
-        "このプロジェクトは、エントリの追加をサポートしていないため、すべてのエントリがインポートされたエントリで上書きされます。"
+        "このプロジェクトは、エントリの追加をサポートしていないため、インポートした場合、既存のすべてのエントリが削除されます。"
     EntrySampleSyncerModuleText -> "サブプロジェクトを処理中 %d/%d..."
     EntrySampleSyncerModuleTextFinished -> "サブプロジェクトを処理中 %d/%d... 完了"
     EntrySampleSyncerSampleText -> "サンプルファイルを処理中 %d/%d..."
