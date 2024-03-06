@@ -101,11 +101,34 @@ fun FrameWindowScope.Menu(
                         enabled = appState.hasProject,
                     )
                     Item(
-                        string(Strings.MenuFileImport),
+                        string(Strings.MenuFileImportProject),
                         onClick = { appState.openImportDialog() },
                         shortcut = KeyAction.ImportProject.getKeyShortCut(),
                         enabled = appState.hasProject,
                     )
+                    Menu(
+                        string(Strings.MenuFileReloadLabelFile),
+                        enabled = appState.hasProject,
+                    ) {
+                        Item(
+                            string(Strings.MenuFileReloadLabelFilePickFile),
+                            onClick = { },
+                            shortcut = KeyAction.ReloadLabelFilePickFile.getKeyShortCut(),
+                            enabled = appState.hasProject,
+                        )
+                        Item(
+                            string(Strings.MenuFileReloadLabelFileDefault),
+                            onClick = { },
+                            shortcut = KeyAction.ReloadLabelFileDefault.getKeyShortCut(),
+                            enabled = appState.hasProject && appState.hasRawLabelFileForCurrentModule(),
+                        )
+                        Item(
+                            string(Strings.MenuFileReloadLabelFileDefaultWithoutConfirmation),
+                            onClick = { },
+                            shortcut = KeyAction.ReloadLabelFileDefaultWithoutConfirmation.getKeyShortCut(),
+                            enabled = appState.hasProject && appState.hasRawLabelFileForCurrentModule(),
+                        )
+                    }
                     Item(
                         string(Strings.MenuFileExport),
                         onClick = { appState.requestExport(overwrite = false) },
@@ -116,7 +139,7 @@ fun FrameWindowScope.Menu(
                         string(Strings.MenuFileExportOverwrite),
                         onClick = { appState.requestExport(overwrite = true) },
                         shortcut = KeyAction.ExportProjectOverwrite.getKeyShortCut(),
-                        enabled = appState.hasProject && appState.canOverwriteExportCurrentModule(),
+                        enabled = appState.hasProject && appState.hasRawLabelFileForCurrentModule(),
                     )
                     if (appState.shouldShowOverwriteExportAllModules()) {
                         Item(

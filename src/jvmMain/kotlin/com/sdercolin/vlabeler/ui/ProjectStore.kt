@@ -113,7 +113,7 @@ interface ProjectStore {
     fun previousModule()
     fun jumpToModule(index: Int, targetEntryIndex: Int? = null)
 
-    fun canOverwriteExportCurrentModule(): Boolean
+    fun hasRawLabelFileForCurrentModule(): Boolean
     fun shouldShowOverwriteExportAllModules(): Boolean
     fun canOverwriteExportAllModules(): Boolean
     fun overwriteExportCurrentModule()
@@ -602,7 +602,7 @@ class ProjectStoreImpl(
         }
     }
 
-    override fun canOverwriteExportCurrentModule(): Boolean {
+    override fun hasRawLabelFileForCurrentModule(): Boolean {
         val project = project ?: return false
         val module = project.currentModule
         return module.rawFilePath != null
