@@ -450,11 +450,11 @@ private fun parseSingleModule(
         }
         existingSingleInputFile != null -> {
             moduleFromRawLabels(
-                existingSingleInputFile.readTextByEncoding(encoding).lines(),
-                existingSingleInputFile,
-                labelerConf,
-                labelerParams,
-                def.sampleFiles,
+                sources = existingSingleInputFile.readTextByEncoding(encoding).lines(),
+                inputFile = existingSingleInputFile,
+                labelerConf = labelerConf,
+                labelerParams = labelerParams,
+                sampleFiles = def.sampleFiles,
                 encoding = encoding,
             )
         }
@@ -487,7 +487,13 @@ private fun parseModuleGroup(
     // TODO: pluginParams: ParamMap?,
     encoding: String,
 ): List<Module> {
-    val results = moduleGroupFromRawLabels(moduleDefinitionGroup, labelerConf, labelerParams, encoding)
+    val results = moduleGroupFromRawLabels(
+        definitionGroup = moduleDefinitionGroup,
+        labelerConf = labelerConf,
+        labelerParams = labelerParams,
+        labelerTypedParams = null,
+        encoding = encoding,
+    )
     require(moduleDefinitionGroup.size == results.size) {
         "Module group size mismatch: ${moduleDefinitionGroup.size} != ${results.size}"
     }

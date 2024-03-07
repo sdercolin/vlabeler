@@ -14,7 +14,9 @@ import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.io.install
+import com.sdercolin.vlabeler.io.reloadLabelFile
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
@@ -106,27 +108,38 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.ImportProject.getKeyShortCut(),
                         enabled = appState.hasProject,
                     )
+                    val canReloadLabelFile = appState.project?.labelerConf?.parser?.scope == LabelerConf.Scope.Entry
                     Menu(
                         string(Strings.MenuFileReloadLabelFile),
-                        enabled = appState.hasProject,
+                        enabled = canReloadLabelFile,
                     ) {
                         Item(
                             string(Strings.MenuFileReloadLabelFilePickFile),
                             onClick = { },
                             shortcut = KeyAction.ReloadLabelFilePickFile.getKeyShortCut(),
-                            enabled = appState.hasProject,
+                            enabled = canReloadLabelFile,
                         )
                         Item(
                             string(Strings.MenuFileReloadLabelFileDefault),
-                            onClick = { },
+                            onClick = {
+                                appState.reloadLabelFile(
+                                    file = null,
+                                    skipConfirmation = false,
+                                )
+                            },
                             shortcut = KeyAction.ReloadLabelFileDefault.getKeyShortCut(),
-                            enabled = appState.hasProject && appState.hasRawLabelFileForCurrentModule(),
+                            enabled = canReloadLabelFile && appState.hasRawLabelFileForCurrentModule(),
                         )
                         Item(
                             string(Strings.MenuFileReloadLabelFileDefaultWithoutConfirmation),
-                            onClick = { },
+                            onClick = {
+                                appState.reloadLabelFile(
+                                    file = null,
+                                    skipConfirmation = true,
+                                )
+                            },
                             shortcut = KeyAction.ReloadLabelFileDefaultWithoutConfirmation.getKeyShortCut(),
-                            enabled = appState.hasProject && appState.hasRawLabelFileForCurrentModule(),
+                            enabled = canReloadLabelFile && appState.hasRawLabelFileForCurrentModule(),
                         )
                     }
                     Item(
