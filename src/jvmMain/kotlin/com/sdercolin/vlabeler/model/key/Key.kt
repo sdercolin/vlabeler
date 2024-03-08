@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package com.sdercolin.vlabeler.model.key
 
-import androidx.compose.ui.ExperimentalComposeUiApi
 import com.sdercolin.vlabeler.env.isMacOS
 import com.sdercolin.vlabeler.model.action.ActionType
 

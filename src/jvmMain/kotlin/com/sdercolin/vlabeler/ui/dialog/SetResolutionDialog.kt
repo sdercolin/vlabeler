@@ -18,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -30,14 +29,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 
 data class SetResolutionDialogArgs(val current: Int, val min: Int, val max: Int) : EmbeddedDialogArgs
 
 data class SetResolutionDialogResult(val newValue: Int) : EmbeddedDialogResult<SetResolutionDialogArgs>
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SetResolutionDialog(
     args: SetResolutionDialogArgs,
