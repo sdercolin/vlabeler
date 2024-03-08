@@ -1,8 +1,12 @@
 package com.sdercolin.vlabeler.io
 
 import com.sdercolin.vlabeler.model.Entry
+import com.sdercolin.vlabeler.model.EntryListDiff
+import com.sdercolin.vlabeler.model.EntryListDiffItem
 import com.sdercolin.vlabeler.model.Project
+import com.sdercolin.vlabeler.model.computeEntryListDiff
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.dialog.ReloadLabelDialogArgs
 import com.sdercolin.vlabeler.util.readTextByEncoding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,38 +24,52 @@ fun AppState.reloadLabelFile(file: File?, skipConfirmation: Boolean) {
     val labelFile = file ?: project.currentModule.getRawFile(project) ?: return
     mainScope.launch {
         showProgress()
-        val result = withContext(Dispatchers.IO) { project.reloadEntriesFromLabelFile(labelFile) }
+        val result = withContext(Dispatchers.IO) { reloadEntriesFromLabelFile(project, labelFile) }
             .getOrElse {
                 showError(it, null)
                 hideProgress()
                 return@launch
             }
-        // TODO: use skipConfirmation
-        if (skipConfirmation) {
-            editProject { applyReloadedEntries(result) }
-        }
         hideProgress()
+        if (skipConfirmation) {
+            editProject { applyReloadedEntries(result.first, result.second) }
+        } else {
+            openReloadLabelDialog(ReloadLabelDialogArgs(project.currentModule.name, result.first, result.second))
+        }
     }
 }
 
-private fun Project.reloadEntriesFromLabelFile(file: File): Result<List<Entry>> = runCatching {
-    val sampleFiles = currentModule.entries.map { it.sample }.distinct().sorted()
-        .map { currentModule.getSampleFile(this, it) }
+private fun AppState.reloadEntriesFromLabelFile(
+    project: Project,
+    file: File,
+): Result<Pair<List<Entry>, EntryListDiff>> = runCatching {
+    val sampleFiles = project.currentModule.entries.map { it.sample }.distinct().sorted()
+        .map { project.currentModule.getSampleFile(project, it) }
 
     val entries = moduleFromRawLabels(
-        sources = file.readTextByEncoding(encoding).lines(),
+        sources = file.readTextByEncoding(project.encoding).lines(),
         inputFile = file,
-        labelerConf = labelerConf,
+        labelerConf = project.labelerConf,
         labelerParams = null,
-        labelerTypedParams = labelerParams,
+        labelerTypedParams = project.labelerParams,
         sampleFiles = sampleFiles,
-        encoding = encoding,
+        encoding = project.encoding,
     )
-    // TODO: match entries and copy notes
-    entries
+    val diff = computeEntryListDiff(project.currentModule.entries, entries)
+    entries to diff
 }
 
-private fun Project.applyReloadedEntries(entries: List<Entry>): Project {
-    val newModule = currentModule.copy(entries = entries, currentIndex = 0, entryFilter = null)
-    return copy(modules = modules.map { if (it == currentModule) newModule else it })
+fun mergeEntryLists(newList: List<Entry>, oldList: List<Entry>, diff: EntryListDiff): List<Entry> {
+    val merged = newList.toMutableList()
+    val indexPairs = diff.items.filterIsInstance<EntryListDiffItem.Edit>().map { it.oldIndex to it.newIndex } +
+        diff.unchangedIndexMap.toList()
+    indexPairs.forEach { (oldIndex, newIndex) ->
+        val entry = merged[newIndex]
+        val oldEntry = oldList[oldIndex]
+        val tag = entry.notes.tag
+        val newTag = tag.ifEmpty { oldEntry.notes.tag }
+        val newNotes = oldEntry.notes.copy(tag = newTag)
+        merged[newIndex] = entry.copy(notes = newNotes)
+    }
+    return merged
 }

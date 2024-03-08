@@ -7,6 +7,7 @@ import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
 import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectConstructorRuntimeException
 import com.sdercolin.vlabeler.io.Sample
+import com.sdercolin.vlabeler.io.mergeEntryLists
 import com.sdercolin.vlabeler.io.moduleFromRawLabels
 import com.sdercolin.vlabeler.io.moduleGroupFromRawLabels
 import com.sdercolin.vlabeler.model.Project.Companion.PROJECT_VERSION
@@ -123,6 +124,12 @@ data class Project(
     fun hasSwitchedSample(previous: Project?): Boolean {
         if (previous?.currentModuleIndex != currentModuleIndex) return true
         return currentModule.hasSwitchedSample(previous.currentModule)
+    }
+
+    fun applyReloadedEntries(entries: List<Entry>, diff: EntryListDiff): Project {
+        val mergedEntries = mergeEntryLists(entries, currentModule.entries, diff)
+        val newModule = currentModule.copy(entries = mergedEntries, currentIndex = 0, entryFilter = null)
+        return copy(modules = modules.map { if (it == currentModule) newModule else it })
     }
 
     fun validate() = this.run {
