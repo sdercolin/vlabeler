@@ -63,6 +63,11 @@ interface NavigatorListState<T : Any> {
             newResults.indexOfFirst { it.index == currentIndex }.takeIf { it >= 0 }
         }
     }
+
+    fun submitCurrent() {
+        val index = selectedIndex ?: return
+        searchResult[index].index.let(::submit)
+    }
 }
 
 fun <T : Any> NavigatorListState<T>.onPreviewKeyEvent(event: KeyEvent): Boolean {
@@ -75,10 +80,6 @@ fun <T : Any> NavigatorListState<T>.onPreviewKeyEvent(event: KeyEvent): Boolean 
         }
         event.isReleased(Key.DirectionUp) -> {
             selectedIndex = index.minus(1).coerceAtLeast(0)
-            true
-        }
-        event.isReleased(Key.Enter) -> {
-            searchResult[index].index.let(::submit)
             true
         }
         else -> false

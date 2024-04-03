@@ -84,6 +84,7 @@ fun ModuleList(
                 state.hasFocus = it
             },
             onPreviewKeyEvent = state::onPreviewKeyEvent,
+            onSubmit = state::submitCurrent,
         )
 
         NavigatorListBody(

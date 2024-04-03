@@ -151,6 +151,7 @@ fun EntryList(
                 onFocusedChanged(it)
             },
             onPreviewKeyEvent = state::onPreviewKeyEvent,
+            onSubmit = state::submitCurrent,
             trailingContent = {
                 if (pinned) {
                     Row(verticalAlignment = Alignment.CenterVertically) {

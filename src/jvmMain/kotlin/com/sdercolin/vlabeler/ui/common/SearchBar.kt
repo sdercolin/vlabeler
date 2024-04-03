@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
@@ -20,6 +22,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.util.runIfHave
 
@@ -30,6 +33,7 @@ fun SearchBar(
     focusRequester: FocusRequester? = null,
     onFocusedChanged: ((Boolean) -> Unit)? = null,
     onPreviewKeyEvent: ((KeyEvent) -> Boolean)? = null,
+    onSubmit: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     trailingContent: @Composable () -> Unit = {},
 ) {
@@ -50,6 +54,8 @@ fun SearchBar(
             textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
             cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
             singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { onSubmit?.invoke() }),
         )
         trailingContent()
     }

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -21,13 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.*
 
@@ -66,16 +66,7 @@ fun SetResolutionDialog(
         )
         Spacer(Modifier.height(20.dp))
         OutlinedTextField(
-            modifier = Modifier.width(150.dp)
-                .focusRequester(focusRequester)
-                .onKeyEvent { event ->
-                    if (event.isReleased(Key.Enter)) {
-                        submitIfValid()
-                        true
-                    } else {
-                        false
-                    }
-                },
+            modifier = Modifier.width(150.dp).focusRequester(focusRequester),
             value = input,
             singleLine = true,
             onValueChange = {
@@ -87,6 +78,10 @@ fun SetResolutionDialog(
                     null
                 }
             },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = { submitIfValid() },
+            ),
         )
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {

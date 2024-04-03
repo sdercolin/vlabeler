@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +40,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.TextUnit
@@ -225,16 +228,13 @@ private fun EditableNameLabel(
             val focusRequester = remember { FocusRequester() }
             LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
+                focusRequester.captureFocus()
             }
             BasicTextField(
                 modifier = Modifier.width(IntrinsicSize.Min)
                     .focusRequester(focusRequester)
                     .onKeyEvent { event ->
                         when {
-                            event.isReleased(Key.Enter) -> {
-                                commit()
-                                true
-                            }
                             event.isReleased(Key.Escape) -> {
                                 cancel()
                                 true
@@ -264,6 +264,10 @@ private fun EditableNameLabel(
                         it()
                     }
                 },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = { commit() },
+                ),
             )
         },
     ) { measurables, constraints ->
