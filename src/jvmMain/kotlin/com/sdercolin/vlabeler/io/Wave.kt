@@ -87,8 +87,8 @@ suspend fun loadSampleChunk(
         val power = if (appConf.painter.power.enabled) {
             wave.toPower(appConf.painter.power)
         } else null
-        val fundamental = if (appConf.painter.fundamental.enabled && spectrogram != null) {
-            spectrogram.toFundamental(appConf.painter.fundamental, sampleInfo.sampleRate)
+        val fundamental = if (appConf.painter.fundamental.enabled) {
+            wave.toFundamental(appConf.painter.fundamental, sampleInfo.sampleRate)
         } else null
         SampleChunk(
             info = sampleInfo,

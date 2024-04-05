@@ -368,7 +368,7 @@ fun Strings.ja(): String? = when (this) {
     PreferencesChartsPowerBackgroundColor -> "背景の色"
     PreferencesChartsFundamental -> "基本周波数"
     PreferencesChartsFundamentalDescription -> "基本周波数の描画設定をカスタマイズします。"
-    PreferencesChartsFundamentalEnabled -> "基本周波数を表示（スペクトログラムの表示は必要）"
+    PreferencesChartsFundamentalEnabled -> "基本周波数を表示"
     PreferencesChartsFundamentalHeight -> "波形グラフの高さに対する高さの割合（%%）"
     PreferencesChartsFundamentalIntensityAccuracy -> "基本周波数の高さ（ピクセル）"
     PreferencesChartsFundamentalColor -> "基本周波数の色"

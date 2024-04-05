@@ -258,6 +258,11 @@ data class AppConf(
         val enabled: Boolean = DEFAULT_ENABLED,
         val heightWeight: Float = DEFAULT_HEIGHT_WEIGHT,
         val intensityAccuracy: Int = DEFAULT_INTENSITY_ACCURACY,
+        val minFundamental: Float = DEFAULT_MIN_FUNDAMENTAL,
+        val maxFundamental: Float = DEFAULT_MAX_FUNDAMENTAL,
+        val fundamentalStepNum: Int = DEFAULT_FUNDAMENTAL_STEP_NUM,
+        val maxHarmonicFrequency: Float = DEFAULT_MAX_HARMONIC_FREQUENCY,
+        val erbsStep: Float = DEFAULT_ERBS_STEP,
         val color: String = DEFAULT_COLOR,
         val backgroundColor: String = DEFAULT_BACKGROUND_COLOR,
     ) {
@@ -269,6 +274,11 @@ data class AppConf(
             const val DEFAULT_INTENSITY_ACCURACY = 100
             const val MAX_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY * 5
             const val MIN_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY / 5
+            const val DEFAULT_MIN_FUNDAMENTAL = 220.0f
+            const val DEFAULT_MAX_FUNDAMENTAL = 880.0f
+            const val DEFAULT_FUNDAMENTAL_STEP_NUM = 25
+            const val DEFAULT_MAX_HARMONIC_FREQUENCY = 5000.0f
+            const val DEFAULT_ERBS_STEP = 0.1f
             const val DEFAULT_COLOR = "#FFF2F2F2"
             const val DEFAULT_BACKGROUND_COLOR = "#00000000"
         }

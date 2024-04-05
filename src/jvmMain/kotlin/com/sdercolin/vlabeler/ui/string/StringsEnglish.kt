@@ -382,7 +382,7 @@ fun Strings.en(): String = when (this) {
     PreferencesChartsPowerBackgroundColor -> "Background color"
     PreferencesChartsFundamental -> "Fundamental"
     PreferencesChartsFundamentalDescription -> "Customize the fundamental chart."
-    PreferencesChartsFundamentalEnabled -> "Show fundamental chart (spectrogram should be enabled)"
+    PreferencesChartsFundamentalEnabled -> "Show fundamental chart"
     PreferencesChartsFundamentalHeight -> "Height relative to waveforms (%%)"
     PreferencesChartsFundamentalIntensityAccuracy -> "Bitmap height (px)"
     PreferencesChartsFundamentalColor -> "Color"

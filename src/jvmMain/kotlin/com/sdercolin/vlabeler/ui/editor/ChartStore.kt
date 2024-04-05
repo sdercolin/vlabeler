@@ -36,6 +36,7 @@ import org.jetbrains.skia.ColorType
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.ImageInfo
 import kotlin.math.pow
+import kotlin.math.roundToInt
 
 class ChartStore {
 
@@ -447,7 +448,7 @@ class ChartStore {
         val color = appConf.painter.power.color.toColorOrNull() ?: AppConf.Power.DEFAULT_COLOR.toColor()
         val yArray = data.map { value ->
             val valueInRange = maxOf(minValue, minOf(maxValue, value))
-            (height - 1 - (valueInRange - minValue) / (maxValue - minValue) * (height - 1)).toInt()
+            (height - 1 - (valueInRange - minValue) / (maxValue - minValue) * (height - 1)).roundToInt()
         }
         yArray.forEachIndexed { index, y ->
             val before = if (index == 0) y else (yArray[index - 1] + y) / 2
@@ -518,7 +519,7 @@ class ChartStore {
         val minDisplayMel = MelScale.toMel(0.0)
         val maxDisplayMel = MelScale.toMel(appConf.painter.spectrogram.maxFrequency.toDouble())
         // image size
-        val width = data.size
+        val width = maxOf(data.size, 1)
         val height = appConf.painter.fundamental.intensityAccuracy
         val imageData = ByteArray(width * height * 4)
         // draw
@@ -527,7 +528,7 @@ class ChartStore {
             val mel = MelScale.toMel(freq.toDouble())
             val valueInRange = maxOf(minDisplayMel, minOf(maxDisplayMel, mel))
             val relativeValue = (valueInRange - minDisplayMel) / (maxDisplayMel - minDisplayMel)
-            (height - 1 - relativeValue * (height - 1)).toInt()
+            (height - 1 - relativeValue * (height - 1)).roundToInt()
         }
         yArray.forEachIndexed { index, y ->
             val before = if (index == 0) y else (yArray[index - 1] + y) / 2

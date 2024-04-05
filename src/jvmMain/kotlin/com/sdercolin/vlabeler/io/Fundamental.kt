@@ -12,14 +12,9 @@ import com.sdercolin.vlabeler.model.AppConf
 data class Fundamental(val data: List<Float>)
 
 /**
- * Convert a spectrogram to fundamental.
+ * Convert a wave to fundamental.
  */
-fun Spectrogram.toFundamental(funConf: AppConf.Fundamental, sampleRate: Float): Fundamental {
-    val maxFrequency = sampleRate / 2
-    val data = this.data.map { frame ->
-        val maxIndex = frame.withIndex().maxByOrNull { it.value }?.index ?: 0
-        val fundamental = maxIndex.toFloat() * maxFrequency / frame.size
-        fundamental
-    }
-    return Fundamental(data)
+fun Wave.toFundamental(funConf: AppConf.Fundamental, sampleRate: Float): Fundamental {
+    // maybe add other algorithms in the future
+    return this.toFundamentalSWIPEPrime(funConf, sampleRate)
 }

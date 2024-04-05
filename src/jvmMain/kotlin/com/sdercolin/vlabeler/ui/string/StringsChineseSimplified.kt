@@ -347,7 +347,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesChartsPowerBackgroundColor -> "背景色"
     PreferencesChartsFundamental -> "基频图"
     PreferencesChartsFundamentalDescription -> "编辑基频图的渲染设置。"
-    PreferencesChartsFundamentalEnabled -> "启用基频图（需启动频谱图）"
+    PreferencesChartsFundamentalEnabled -> "启用基频图"
     PreferencesChartsFundamentalHeight -> "相对于波形图的高度（%%）"
     PreferencesChartsFundamentalIntensityAccuracy -> "图像高度（像素）"
     PreferencesChartsFundamentalColor -> "前景色"
