@@ -1,9 +1,11 @@
 package com.sdercolin.vlabeler.model
 
+import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.EntryListDiffItem.Add
 import com.sdercolin.vlabeler.model.EntryListDiffItem.Edit
 import com.sdercolin.vlabeler.model.EntryListDiffItem.Remove
 import com.sdercolin.vlabeler.model.EntryListDiffItem.Unchanged
+import kotlinx.serialization.Serializable
 
 /**
  * Represents a change in an entry list.
@@ -30,12 +32,14 @@ data class EntryListDiff(val items: List<EntryListDiffItem>)
  * @param start Weight for the [Entry.start] property.
  * @param end Weight for the [Entry.end] property.
  * @param points Weights for the [Entry.points] property. The size of the list should match the size of the points list.
- *     If empty, the points will not be considered in the similarity score.
+ *     If this array is empty or shorter than the points list, the missing weights will be considered as 0.
  * @param extras Weights for the [Entry.extras] property. The size of the list should match the size of the extras list.
- *     If empty, the extras will not be considered in the similarity score.
+ *     If this array is empty or shorter than the points list, the missing weights will be considered as 0.
  * @param tag Weight for the [EntryNotes.tag] property.
  * @param threshold The minimum similarity score for two entries to be considered as the same entry.
  */
+@Serializable
+@Immutable
 data class EntrySimilarityWeights(
     val name: Double = 0.5,
     val sample: Double = 0.3,

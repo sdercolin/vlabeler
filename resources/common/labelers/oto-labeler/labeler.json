@@ -1,6 +1,6 @@
 {
     "name": "oto-plus.default",
-    "version": 27,
+    "version": 28,
     "serialVersion": 2,
     "singleFile": false,
     "extension": "ini",
@@ -123,6 +123,23 @@
     "postEditDoneTrigger": {
         "useStart": true,
         "useEnd": true
+    },
+    "entrySimilarityWeights": {
+        "name": 6,
+        "sample": 12,
+        "start": 1,
+        "end": 1,
+        "points": [
+            1,
+            1,
+            1,
+            1
+        ],
+        "extras": [
+            0
+        ],
+        "tag": 0,
+        "threshold": 0.75
     },
     "properties": [
         {

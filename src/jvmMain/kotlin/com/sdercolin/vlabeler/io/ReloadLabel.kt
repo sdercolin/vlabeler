@@ -57,7 +57,11 @@ private fun AppState.reloadEntriesFromLabelFile(
         sampleFiles = sampleFiles,
         encoding = project.encoding,
     )
-    val diff = computeEntryListDiff(project.currentModule.entries, entries)
+    val diff = computeEntryListDiff(
+        list1 = project.currentModule.entries,
+        list2 = entries,
+        weights = project.labelerConf.entrySimilarityWeights,
+    )
     entries to diff
 }
 

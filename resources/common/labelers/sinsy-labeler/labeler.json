@@ -1,6 +1,6 @@
 {
     "name": "sinsy.default",
-    "version": 14,
+    "version": 15,
     "serialVersion": 2,
     "singleFile": false,
     "extension": "lab",
@@ -31,6 +31,16 @@
         "useStart": false
     },
     "decimalDigit": 4,
+    "entrySimilarityWeights": {
+        "name": 0,
+        "sample": 0.5,
+        "start": 0.25,
+        "end": 0.25,
+        "points": [],
+        "extras": [],
+        "tag": 0,
+        "threshold": 0.75
+    },
     "properties": [
         {
             "name": "start",
