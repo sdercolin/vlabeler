@@ -178,7 +178,7 @@ private fun ResultView(entries: List<Entry>, oldIndex: Int, newIndex: Int, viewC
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 NavigatorListItemNumber(entry.newIndex)
-                NavigatorItemSummary(entry.entry.name, entry.entry.sample, viewConf, isEntry = true)
+                NavigatorItemSummary(entry.entry.name, entry.entry.sample, viewConf.hideSampleExtension, isEntry = true)
             }
         }
     }

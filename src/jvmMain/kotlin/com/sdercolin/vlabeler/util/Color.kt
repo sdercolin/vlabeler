@@ -12,6 +12,7 @@ fun String.toRgbColor() = toColor().copy(alpha = 1f)
 fun String.toColorOrNull() = runCatching { toColor() }.getOrNull()
 fun String.toRgbColorOrNull() = runCatching { toRgbColor() }.getOrNull()
 
+fun Color.alpha(alpha: Float) = copy(alpha = alpha)
 val Color.rgbHexString get() = String.format("#%06X", 0xffffff and toArgb())
 val Color.argbHexString get() = String.format("#%08X", 0xffffffff and toArgb().toLong())
 

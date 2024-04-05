@@ -700,5 +700,16 @@ fun Strings.ja(): String? = when (this) {
     FileNameNormalizerHandleFolderSuccess -> "スキャンした %d 個のファイルのうち、%d 個のファイル名を変換しました。"
     FileNameNormalizerHandleFileSuccess -> "ファイルの内容を変換しました。"
     FileNameNormalizerHandleFileNoChange -> "ファイルに変換が必要な内容はありませんでした。"
+    ReloadLabelDialogTitle -> "ラベルファイルを再読み込み"
+    ReloadLabelDialogModuleNameTemplate -> "サブプロジェクト：%s"
+    ReloadLabelDialogShowUnchanged -> "変更がないエントリも表示"
+    ReloadLabelDialogNotice ->
+        "この差分プレビューは、現在のラベラーの設定に基づいて計算されているため、すべての細かい違いを表示できない場合があります。" +
+            "再読み込み後、実際の内容を確認してください。"
+    ReloadLabelDialogNoDiff -> "差分はありません"
+    ReloadLabelDialogInheritNotes -> "備考を引き継ぐ"
+    ReloadLabelDialogInheritNotesDescription ->
+        "有効にすると、古いエントリと新しいエントリのすべての対応するエントリペアについて、" +
+            "古いエントリの備考が新しいエントリにコピーされます。"
     else -> null
 }

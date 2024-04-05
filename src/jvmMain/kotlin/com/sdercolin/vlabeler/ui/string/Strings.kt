@@ -598,6 +598,13 @@ enum class Strings {
     FileNameNormalizerHandleFolderSuccess,
     FileNameNormalizerHandleFileSuccess,
     FileNameNormalizerHandleFileNoChange,
+    ReloadLabelDialogTitle,
+    ReloadLabelDialogModuleNameTemplate,
+    ReloadLabelDialogShowUnchanged,
+    ReloadLabelDialogNotice,
+    ReloadLabelDialogNoDiff,
+    ReloadLabelDialogInheritNotes,
+    ReloadLabelDialogInheritNotesDescription,
     ;
 
     fun get(language: Language): String = when (language) {

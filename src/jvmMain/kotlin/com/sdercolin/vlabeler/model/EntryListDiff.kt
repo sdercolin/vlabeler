@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.model
 import com.sdercolin.vlabeler.model.EntryListDiffItem.Add
 import com.sdercolin.vlabeler.model.EntryListDiffItem.Edit
 import com.sdercolin.vlabeler.model.EntryListDiffItem.Remove
+import com.sdercolin.vlabeler.model.EntryListDiffItem.Unchanged
 
 /**
  * Represents a change in an entry list.
@@ -11,19 +12,15 @@ sealed class EntryListDiffItem {
     data class Add(val newIndex: Int, val new: Entry) : EntryListDiffItem()
     data class Remove(val oldIndex: Int, val old: Entry) : EntryListDiffItem()
     data class Edit(val oldIndex: Int, val old: Entry, val newIndex: Int, val new: Entry) : EntryListDiffItem()
+    data class Unchanged(val oldIndex: Int, val old: Entry, val newIndex: Int, val new: Entry) : EntryListDiffItem() {
+        constructor(oldIndex: Int, newIndex: Int, entry: Entry) : this(oldIndex, entry, newIndex, entry)
+    }
 }
 
 /**
  * Represents the difference between two entry lists.
- *
- * @param items The list of changes.
- * @param unchangedIndexMap A map from the index of an unchanged entry in the first list to the index of the same entry
- *     in the second list.
  */
-data class EntryListDiff(
-    val items: List<EntryListDiffItem>,
-    val unchangedIndexMap: Map<Int, Int>,
-)
+data class EntryListDiff(val items: List<EntryListDiffItem>)
 
 /**
  * Configuration for the weights of different properties in the similarity score calculation.
@@ -129,22 +126,29 @@ fun computeEntryListDiff(
     // Determine adds
     list2.withIndex().filterNot { it in matched }.forEach { diffs.add(Add(it.index, it.value)) }
 
+    // Add unchanged items
+    unchangedMap.forEach { (oldIndex, newIndex) ->
+        diffs.add(Unchanged(oldIndex, list1[oldIndex], newIndex, list2[newIndex]))
+    }
+
     val sortedDiffs = diffs.sortedWith(
         compareBy<EntryListDiffItem> { diff ->
             // Primary sorting by the relevant index
             when (diff) {
                 is Add -> diff.newIndex
                 is Remove -> diff.oldIndex
-                is Edit -> diff.oldIndex
+                is Edit -> diff.newIndex
+                is Unchanged -> diff.newIndex
             }
         }.thenComparing { diff ->
             // Secondary sorting to prioritize removes over adds/edits at the same index
             when (diff) {
                 is Remove -> 0
-                is Edit -> 1 // You might choose to prioritize edits in a specific way, if at all.
+                is Edit -> 1
                 is Add -> 2
+                is Unchanged -> 3
             }
         },
     )
-    return EntryListDiff(sortedDiffs, unchangedMap)
+    return EntryListDiff(sortedDiffs)
 }

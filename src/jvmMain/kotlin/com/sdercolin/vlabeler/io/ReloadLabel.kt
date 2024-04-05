@@ -3,9 +3,11 @@ package com.sdercolin.vlabeler.io
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.EntryListDiff
 import com.sdercolin.vlabeler.model.EntryListDiffItem
+import com.sdercolin.vlabeler.model.EntryNotes
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.computeEntryListDiff
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.dialog.ReloadLabelConfigs
 import com.sdercolin.vlabeler.ui.dialog.ReloadLabelDialogArgs
 import com.sdercolin.vlabeler.util.readTextByEncoding
 import kotlinx.coroutines.Dispatchers
@@ -59,16 +61,37 @@ private fun AppState.reloadEntriesFromLabelFile(
     entries to diff
 }
 
-fun mergeEntryLists(newList: List<Entry>, oldList: List<Entry>, diff: EntryListDiff): List<Entry> {
+fun mergeEntryLists(
+    newList: List<Entry>,
+    oldList: List<Entry>,
+    diff: EntryListDiff,
+    configs: ReloadLabelConfigs,
+): List<Entry> {
+    if (configs.inheritTag.not() && configs.inheritDone.not() && configs.inheritStar.not()) {
+        return newList
+    }
     val merged = newList.toMutableList()
     val indexPairs = diff.items.filterIsInstance<EntryListDiffItem.Edit>().map { it.oldIndex to it.newIndex } +
-        diff.unchangedIndexMap.toList()
+        diff.items.filterIsInstance<EntryListDiffItem.Unchanged>().map { it.oldIndex to it.newIndex }
     indexPairs.forEach { (oldIndex, newIndex) ->
         val entry = merged[newIndex]
         val oldEntry = oldList[oldIndex]
-        val tag = entry.notes.tag
-        val newTag = tag.ifEmpty { oldEntry.notes.tag }
-        val newNotes = oldEntry.notes.copy(tag = newTag)
+        val newTag = if (configs.inheritTag) {
+            oldEntry.notes.tag
+        } else {
+            entry.notes.tag
+        }
+        val newStar = if (configs.inheritStar) {
+            oldEntry.notes.star
+        } else {
+            entry.notes.star
+        }
+        val newDone = if (configs.inheritDone) {
+            oldEntry.notes.done
+        } else {
+            entry.notes.done
+        }
+        val newNotes = EntryNotes(done = newDone, star = newStar, tag = newTag)
         merged[newIndex] = entry.copy(notes = newNotes)
     }
     return merged

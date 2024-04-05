@@ -740,4 +740,15 @@ fun Strings.en(): String = when (this) {
     FileNameNormalizerHandleFolderSuccess -> "Scanned %d files, converted %d files."
     FileNameNormalizerHandleFileSuccess -> "Successfully converted the file content."
     FileNameNormalizerHandleFileNoChange -> "No conversion needed for the file content."
+    ReloadLabelDialogTitle -> "Reload Label File"
+    ReloadLabelDialogModuleNameTemplate -> "Subproject: %s"
+    ReloadLabelDialogShowUnchanged -> "Show unchanged"
+    ReloadLabelDialogNotice ->
+        "This difference preview is calculated based on settings of the current labeler, " +
+            "so it may not show all minor differences. Please check the actual content after reloading to make sure " +
+            "everything is correct."
+    ReloadLabelDialogNoDiff -> "No difference found."
+    ReloadLabelDialogInheritNotes -> "Inherit notes"
+    ReloadLabelDialogInheritNotesDescription ->
+        "If enabled, the notes on old entries will be copied to the new entries for all matched entry pairs."
 }

@@ -188,10 +188,10 @@ fun App(
         appState.reloadLabelDialogArgs?.let { args ->
             ReloadLabelDialog(
                 args = args,
-                finish = {
+                finish = { result ->
                     appState.closeReloadLabelDialog()
-                    if (it) {
-                        appState.editProject { applyReloadedEntries(args.entries, args.diff) }
+                    if (result != null) {
+                        appState.editProject { applyReloadedEntries(args.entries, args.diff, result) }
                     }
                 },
             )

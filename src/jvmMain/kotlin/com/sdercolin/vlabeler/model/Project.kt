@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.io.moduleFromRawLabels
 import com.sdercolin.vlabeler.io.moduleGroupFromRawLabels
 import com.sdercolin.vlabeler.model.Project.Companion.PROJECT_VERSION
 import com.sdercolin.vlabeler.model.filter.EntryFilter
+import com.sdercolin.vlabeler.ui.dialog.ReloadLabelConfigs
 import com.sdercolin.vlabeler.util.DefaultEncoding
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
@@ -126,8 +127,12 @@ data class Project(
         return currentModule.hasSwitchedSample(previous.currentModule)
     }
 
-    fun applyReloadedEntries(entries: List<Entry>, diff: EntryListDiff): Project {
-        val mergedEntries = mergeEntryLists(entries, currentModule.entries, diff)
+    fun applyReloadedEntries(
+        entries: List<Entry>,
+        diff: EntryListDiff,
+        configs: ReloadLabelConfigs = ReloadLabelConfigs(),
+    ): Project {
+        val mergedEntries = mergeEntryLists(entries, currentModule.entries, diff, configs)
         val newModule = currentModule.copy(entries = mergedEntries, currentIndex = 0, entryFilter = null)
         return copy(modules = modules.map { if (it == currentModule) newModule else it })
     }

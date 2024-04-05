@@ -661,5 +661,13 @@ fun Strings.zhHans(): String? = when (this) {
     FileNameNormalizerHandleFolderSuccess -> "扫描的 %d 个文件中有 %d 个文件名被成功转换。"
     FileNameNormalizerHandleFileSuccess -> "成功转换了文件内容。"
     FileNameNormalizerHandleFileNoChange -> "文件内容中没有发现需要转换的内容。"
+    ReloadLabelDialogTitle -> "重新加载标注文件"
+    ReloadLabelDialogModuleNameTemplate -> "子项目：%s"
+    ReloadLabelDialogShowUnchanged -> "显示未更改的条目"
+    ReloadLabelDialogNotice ->
+        "此差异预览是基于当前标注器的设置计算的，因此可能不会显示所有细微差异。请在重新加载后检查实际内容，以确保一切正确。"
+    ReloadLabelDialogNoDiff -> "没有发现差异。"
+    ReloadLabelDialogInheritNotes -> "继承备注"
+    ReloadLabelDialogInheritNotesDescription -> "如果启用，对于所有匹配的条目对，旧条目的备注将被复制到对应的新条目中。"
     else -> null
 }

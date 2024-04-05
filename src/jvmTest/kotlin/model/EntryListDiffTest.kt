@@ -4,10 +4,10 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.EntryListDiffItem.Add
 import com.sdercolin.vlabeler.model.EntryListDiffItem.Edit
 import com.sdercolin.vlabeler.model.EntryListDiffItem.Remove
+import com.sdercolin.vlabeler.model.EntryListDiffItem.Unchanged
 import com.sdercolin.vlabeler.model.computeEntryListDiff
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
 
 class EntryListDiffTest {
 
@@ -25,13 +25,19 @@ class EntryListDiffTest {
         val diff = computeEntryListDiff(old, new)
         assertContentEquals(
             listOf(
+                Unchanged(0, 0, old[0]),
+                Unchanged(1, 1, old[1]),
+                Unchanged(2, 2, old[2]),
+                Unchanged(3, 3, old[3]),
+                Unchanged(4, 4, old[4]),
+                Unchanged(5, 5, old[5]),
+                Unchanged(6, 6, old[6]),
+                Unchanged(7, 7, old[7]),
+                Unchanged(8, 8, old[8]),
+                Unchanged(9, 9, old[9]),
                 Add(10, new[10]),
             ),
             diff.items,
-        )
-        assertEquals(
-            BasicUnchangedMap,
-            diff.unchangedIndexMap,
         )
     }
 
@@ -75,26 +81,20 @@ class EntryListDiffTest {
         assertContentEquals(
             listOf(
                 Add(0, new[0]),
+                Unchanged(0, 1, old[0]),
+                Unchanged(1, 2, old[1]),
+                Unchanged(2, 3, old[2]),
+                Unchanged(3, 4, old[3]),
+                Unchanged(4, 5, old[4]),
+                Unchanged(5, 6, old[5]),
+                Unchanged(6, 7, old[6]),
                 Add(8, new[8]),
+                Unchanged(7, 9, old[7]),
+                Unchanged(8, 10, old[8]),
+                Unchanged(9, 11, old[9]),
                 Add(12, new[12]),
             ),
             diff.items,
-        )
-        val unchangedMap = mapOf(
-            0 to 1,
-            1 to 2,
-            2 to 3,
-            3 to 4,
-            4 to 5,
-            5 to 6,
-            6 to 7,
-            7 to 9,
-            8 to 10,
-            9 to 11,
-        )
-        assertEquals(
-            unchangedMap,
-            diff.unchangedIndexMap,
         )
     }
 
@@ -106,23 +106,17 @@ class EntryListDiffTest {
         assertContentEquals(
             listOf(
                 Remove(0, old[0]),
+                Unchanged(1, 0, old[1]),
+                Unchanged(2, 1, old[2]),
+                Unchanged(3, 2, old[3]),
+                Unchanged(4, 3, old[4]),
+                Unchanged(5, 4, old[5]),
+                Unchanged(6, 5, old[6]),
+                Unchanged(7, 6, old[7]),
+                Unchanged(8, 7, old[8]),
+                Unchanged(9, 8, old[9]),
             ),
             diff.items,
-        )
-        val unchangedMap = mapOf(
-            1 to 0,
-            2 to 1,
-            3 to 2,
-            4 to 3,
-            5 to 4,
-            6 to 5,
-            7 to 6,
-            8 to 7,
-            9 to 8,
-        )
-        assertEquals(
-            unchangedMap,
-            diff.unchangedIndexMap,
         )
     }
 
@@ -137,23 +131,17 @@ class EntryListDiffTest {
         assertContentEquals(
             listOf(
                 Remove(0, old[0]),
+                Unchanged(1, 0, old[1]),
+                Unchanged(2, 1, old[2]),
+                Unchanged(3, 2, old[3]),
+                Unchanged(4, 3, old[4]),
+                Unchanged(5, 4, old[5]),
+                Unchanged(6, 5, old[6]),
+                Unchanged(7, 6, old[7]),
                 Remove(8, old[8]),
                 Remove(9, old[9]),
             ),
             diff.items,
-        )
-        val unchangedMap = mapOf(
-            1 to 0,
-            2 to 1,
-            3 to 2,
-            4 to 3,
-            5 to 4,
-            6 to 5,
-            7 to 6,
-        )
-        assertEquals(
-            unchangedMap,
-            diff.unchangedIndexMap,
         )
     }
 
@@ -196,25 +184,19 @@ class EntryListDiffTest {
             listOf(
                 Remove(0, old[0]),
                 Add(0, newEntries[0]),
+                Unchanged(1, 1, old[1]),
+                Unchanged(2, 2, old[2]),
                 Remove(3, old[3]),
+                Unchanged(4, 3, old[4]),
+                Unchanged(5, 4, old[5]),
                 Add(5, newEntries[1]),
                 Remove(6, old[6]),
+                Unchanged(7, 6, old[7]),
+                Unchanged(8, 7, old[8]),
+                Unchanged(9, 8, old[9]),
                 Add(9, newEntries[2]),
             ),
             diff.items,
-        )
-        val unchangedMap = mapOf(
-            1 to 1,
-            2 to 2,
-            4 to 3,
-            5 to 4,
-            7 to 6,
-            8 to 7,
-            9 to 8,
-        )
-        assertEquals(
-            unchangedMap,
-            diff.unchangedIndexMap,
         )
     }
 
@@ -228,14 +210,17 @@ class EntryListDiffTest {
         assertContentEquals(
             listOf(
                 Edit(0, old[0], 0, new[0]),
+                Unchanged(1, 1, old[1]),
+                Unchanged(2, 2, old[2]),
+                Unchanged(3, 3, old[3]),
+                Unchanged(4, 4, old[4]),
+                Unchanged(5, 5, old[5]),
                 Edit(6, old[6], 6, new[6]),
+                Unchanged(7, 7, old[7]),
+                Unchanged(8, 8, old[8]),
+                Unchanged(9, 9, old[9]),
             ),
             diff.items,
-        )
-        val unchangedMap = BasicUnchangedMap - 0 - 6
-        assertEquals(
-            unchangedMap,
-            diff.unchangedIndexMap,
         )
     }
 
@@ -250,20 +235,17 @@ class EntryListDiffTest {
         assertContentEquals(
             listOf(
                 Edit(0, old[0], 0, new[0]),
+                Unchanged(1, 1, old[1]),
+                Unchanged(2, 2, old[2]),
+                Unchanged(3, 3, old[3]),
+                Unchanged(4, 4, old[4]),
+                Unchanged(5, 5, old[5]),
+                Unchanged(7, 6, old[7]),
+                Unchanged(8, 7, old[8]),
+                Unchanged(9, 8, old[9]),
                 Edit(6, old[6], 9, new[9]),
             ),
             diff.items,
-        )
-        val unchangedMap = BasicUnchangedMap.toMutableMap().apply {
-            remove(0)
-            remove(6)
-            put(7, 6)
-            put(8, 7)
-            put(9, 8)
-        }
-        assertEquals(
-            unchangedMap,
-            diff.unchangedIndexMap,
         )
     }
 }
@@ -350,5 +332,3 @@ private val BasicEntryList = listOf(
         extras = listOf(),
     ),
 )
-
-private val BasicUnchangedMap = BasicEntryList.indices.associateWith { it }
