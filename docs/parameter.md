@@ -13,14 +13,14 @@ both.
 
 Each parameter is framed as a JSON object encompassing the subsequent standard fields:
 
-| Key          | Type                           | Default value | Description                                                                                                |
-|--------------|--------------------------------|---------------|------------------------------------------------------------------------------------------------------------|
-| type         | String                         | (Required)    | Types: `integer`, `float`, `boolean`, `string`, `enum`, etc.                                               |
-| name         | String                         | (Required)    | A distinct parameter name for referencing within your scripts.                                             |
-| label        | String (Localized)             | (Required)    | The display name for the parameter in the configuration dialog.                                            |
-| description  | String (Localized) &#124; null | null          | A brief note displayed adjacent to the label.                                                              |
-| enableIf     | String &#124; null             | null          | Activates this parameter only if the specified parameter has a value that equals to the JavaScript `true`. |
-| defaultValue | (Dependent on `type`)          | (Required)    | The parameter's default value.                                                                             |
+| Key          | Type                           | Default value | Description                                                                                                                                        |
+|--------------|--------------------------------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| type         | String                         | (Required)    | Types: `integer`, `float`, `boolean`, `string`, `enum`, etc.                                                                                       |
+| name         | String                         | (Required)    | A distinct parameter name for referencing within your scripts.                                                                                     |
+| label        | String (Localized)             | (Required)    | The display name for the parameter in the configuration dialog.                                                                                    |
+| description  | String (Localized) &#124; null | null          | A brief note displayed adjacent to the label.                                                                                                      |
+| enableIf     | String &#124; null             | null          | Activates this parameter only if the specified condition is met. See [Configure Enabled Condition](#configure-enabled-condition) for more details. |
+| defaultValue | (Dependent on `type`)          | (Required)    | The parameter's default value.                                                                                                                     |
 
 Note that the `label` and `description` fields can be [Localized strings in vLabeler](localized-string.md).
 
@@ -145,7 +145,8 @@ A sample `entrySelector` parameter is provided below:
                 // nullable, `name` of any property defined in the labeler
             }
         ],
-        "expression": "#1 or #2" // optional, default to null, which combines all filters with `and` operator
+        "expression": "#1 or #2"
+        // optional, default to null, which combines all filters with `and` operator
     },
     // ...
 }
@@ -192,3 +193,37 @@ the file's content.
 
 In addition to standard fields and the `file` type fields, `rawFile` has the `isFolder` field. When set to `true`,
 only folder selection will be allowed through the input box.
+
+## Configure Enabled Condition
+
+The `enableIf` field allows you to conditionally enable a parameter based on the value of another parameter. Any of the
+following formats are accepted:
+
+- `<paramName>`:
+  In this case, the parameter will be enabled if the specified parameter named `paramName` is equal to
+  JavaScript `true`.
+- `<paramName>=<value1>|<value2>|...`:
+  In this case, the parameter will be enabled if the specified parameter named `paramName` is equal to any of the
+  specified values.
+
+### Examples
+
+The following `enableIf` field will enable the parameter if the `param1` parameter is set to `true`.
+
+```json5
+{
+    // ...,
+    "enableIf": "param1"
+    // ...
+}
+```
+
+The following `enableIf` field will enable the parameter if the `param1` parameter is set to either `a` or `b`.
+
+```json5
+{
+    // ...,
+    "enableIf": "param1=a|b"
+    // ...
+}
+```
