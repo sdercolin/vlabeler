@@ -293,7 +293,7 @@ data class AppConf(
             const val DEFAULT_MIN_DISPLAY_CORR = 0.0f
             const val DEFAULT_MAX_DISPLAY_CORR = 0.5f
             const val DEFAULT_DRAW_REFERENCE_LINE = true
-            const val DEFAULT_COLOR = "#FFF2F200"
+            const val DEFAULT_COLOR = "#FFFFC500"
             const val DEFAULT_REFERENCE_LINE_COLOR = "#FF555555"
             const val DEFAULT_BACKGROUND_COLOR = "#00000000"
         }
