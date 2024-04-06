@@ -253,6 +253,19 @@ private fun Chunk(
                     }
                 }
             }
+            if (sampleInfo.hasFundamental && appState.appConf.painter.fundamental.enabled) {
+                val fundamentalBackgroundColor = appState.appConf.painter.fundamental.backgroundColor.toColorOrNull()
+                    ?: AppConf.Fundamental.DEFAULT_BACKGROUND_COLOR.toColor()
+                Box(
+                    Modifier.weight(appState.appConf.painter.fundamental.heightWeight)
+                        .fillMaxWidth(),
+                ) {
+                    val imageStatus = editorState.chartStore.getFundamentalGraphStatus(chunkIndex)
+                    if (imageStatus == ChartStore.ChartLoadingStatus.Loaded) {
+                        FundamentalGraphChunk(sampleInfo, chunkIndex, fundamentalBackgroundColor)
+                    }
+                }
+            }
         }
     }
 }
@@ -287,6 +300,17 @@ private fun PowerGraphChunk(sampleInfo: SampleInfo, channelIndex: Int, chunkInde
             load = { ChartRepository.getPowerGraph(sampleInfo, channelIndex, chunkIndex) },
             sampleInfo,
             channelIndex,
+            chunkIndex,
+        )
+    }
+}
+
+@Composable
+private fun FundamentalGraphChunk(sampleInfo: SampleInfo, chunkIndex: Int, backgroundColor: Color) {
+    Box(Modifier.fillMaxSize().background(backgroundColor)) {
+        ChunkAsyncImage(
+            load = { ChartRepository.getFundamentalGraph(sampleInfo, chunkIndex) },
+            sampleInfo,
             chunkIndex,
         )
     }

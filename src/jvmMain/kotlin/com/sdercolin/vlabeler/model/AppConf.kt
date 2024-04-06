@@ -53,13 +53,15 @@ data class AppConf(
         val amplitude: Amplitude = Amplitude(),
         val spectrogram: Spectrogram = Spectrogram(),
         val power: Power = Power(),
+        val fundamental: Fundamental = Fundamental(),
         val conversion: Conversion = Conversion(),
     ) {
         val amplitudeHeightRatio: Float
             get() = 1f /
                 (
                     1f + (if (spectrogram.enabled) spectrogram.heightWeight else 0f) +
-                        (if (power.enabled) power.heightWeight else 0f)
+                        (if (power.enabled) power.heightWeight else 0f) +
+                        (if (fundamental.enabled) fundamental.heightWeight else 0f)
                     )
 
         companion object {
@@ -246,6 +248,52 @@ data class AppConf(
             const val MAX_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY * 5
             const val MIN_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY / 5
             const val DEFAULT_COLOR = "#FFF2F2F2"
+            const val DEFAULT_BACKGROUND_COLOR = "#00000000"
+        }
+    }
+
+    @Serializable
+    @Immutable
+    data class Fundamental(
+        val enabled: Boolean = DEFAULT_ENABLED,
+        val heightWeight: Float = DEFAULT_HEIGHT_WEIGHT,
+        val semitoneResolution: Int = DEFAULT_SEMITONE_RESOLUTION,
+        val minFundamental: Float = DEFAULT_MIN_FUNDAMENTAL,
+        val maxFundamental: Float = DEFAULT_MAX_FUNDAMENTAL,
+        val semitoneSampleNum: Int = DEFAULT_SEMITONE_SAMPLE_NUM,
+        val maxHarmonicFrequency: Float = DEFAULT_MAX_HARMONIC_FREQUENCY,
+        val erbsStep: Float = DEFAULT_ERBS_STEP,
+        val minDisplayCorr: Float = DEFAULT_MIN_DISPLAY_CORR,
+        val maxDisplayCorr: Float = DEFAULT_MAX_DISPLAY_CORR,
+        val drawReferenceLine: Boolean = DEFAULT_DRAW_REFERENCE_LINE,
+        val color: String = DEFAULT_COLOR,
+        val referenceLineColor: String = DEFAULT_REFERENCE_LINE_COLOR,
+        val backgroundColor: String = DEFAULT_BACKGROUND_COLOR,
+    ) {
+        companion object {
+            const val DEFAULT_ENABLED = false
+            const val DEFAULT_HEIGHT_WEIGHT = 0.5f
+            const val MAX_HEIGHT_WEIGHT = 5f
+            const val MIN_HEIGHT_WEIGHT = 0.1f
+            const val DEFAULT_SEMITONE_RESOLUTION = 8
+            const val MIN_SEMITONE_RESOLUTION = 1
+            const val MAX_SEMITONE_RESOLUTION = 64
+            const val DEFAULT_MIN_FUNDAMENTAL = 220.0f
+            const val DEFAULT_MAX_FUNDAMENTAL = 880.0f
+            const val MIN_FUNDAMENTAL = 16.351f // C0
+            const val MAX_FUNDAMENTAL = 8372.0f // C9
+            const val DEFAULT_SEMITONE_SAMPLE_NUM = 8
+            const val MAX_SEMITONE_SAMPLE_NUM = 16
+            const val DEFAULT_MAX_HARMONIC_FREQUENCY = 5000.0f
+            const val MAX_MAX_HARMONIC_FREQUENCY = 22050.0f
+            const val DEFAULT_ERBS_STEP = 0.1f
+            const val MIN_ERBS_STEP = 0.01f
+            const val MAX_ERBS_STEP = 1.0f
+            const val DEFAULT_MIN_DISPLAY_CORR = 0.0f
+            const val DEFAULT_MAX_DISPLAY_CORR = 0.5f
+            const val DEFAULT_DRAW_REFERENCE_LINE = true
+            const val DEFAULT_COLOR = "#FFF2F200"
+            const val DEFAULT_REFERENCE_LINE_COLOR = "#FF555555"
             const val DEFAULT_BACKGROUND_COLOR = "#00000000"
         }
     }

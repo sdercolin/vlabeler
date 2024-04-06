@@ -27,6 +27,7 @@ object PreferencesPages {
                 ChartsWaveform,
                 ChartsSpectrogram,
                 ChartsPower,
+                ChartsFundamental,
                 ChartsConversion,
             )
     }
@@ -386,6 +387,165 @@ object PreferencesPages {
                     color(
                         title = Strings.PreferencesChartsPowerBackgroundColor,
                         defaultValue = AppConf.Power.DEFAULT_BACKGROUND_COLOR,
+                        select = { it.backgroundColor },
+                        update = { copy(backgroundColor = it) },
+                        useAlpha = true,
+                    )
+                }
+            }
+    }
+
+    object ChartsFundamental : PreferencesPage(
+        Strings.PreferencesChartsFundamental,
+        Strings.PreferencesChartsFundamentalDescription,
+    ) {
+        override val content: List<PreferencesGroup>
+            get() = buildPageContent {
+                withContext(
+                    selector = { it.painter.fundamental },
+                    updater = { copy(painter = painter.copy(fundamental = it)) },
+                ) {
+                    switch(
+                        title = Strings.PreferencesChartsFundamentalEnabled,
+                        defaultValue = AppConf.Fundamental.DEFAULT_ENABLED,
+                        select = { it.enabled },
+                        update = { copy(enabled = it) },
+                    )
+                    floatPercentage(
+                        title = Strings.PreferencesChartsFundamentalHeight,
+                        defaultValue = AppConf.Fundamental.DEFAULT_HEIGHT_WEIGHT,
+                        min = AppConf.Fundamental.MIN_HEIGHT_WEIGHT,
+                        max = AppConf.Fundamental.MAX_HEIGHT_WEIGHT,
+                        select = { it.heightWeight },
+                        update = { copy(heightWeight = it) },
+                    )
+                    integer(
+                        title = Strings.PreferencesChartsFundamentalSemitoneResolution,
+                        defaultValue = AppConf.Fundamental.DEFAULT_SEMITONE_RESOLUTION,
+                        min = AppConf.Fundamental.MIN_SEMITONE_RESOLUTION,
+                        max = AppConf.Fundamental.MAX_SEMITONE_RESOLUTION,
+                        select = { it.semitoneResolution },
+                        update = { copy(semitoneResolution = it) },
+                    )
+                    float(
+                        title = Strings.PreferencesChartsFundamentalMinFundamental,
+                        defaultValue = AppConf.Fundamental.DEFAULT_MIN_FUNDAMENTAL,
+                        min = AppConf.Fundamental.MIN_FUNDAMENTAL,
+                        max = AppConf.Fundamental.MAX_FUNDAMENTAL,
+                        select = { it.minFundamental },
+                        update = { copy(minFundamental = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.fundamental.let { it.minFundamental < it.maxFundamental }
+                                },
+                                prompt = Strings.PreferencesChartsFundamentalMinFundamentalInvalid,
+                            ),
+                        ),
+                    )
+                    float(
+                        title = Strings.PreferencesChartsFundamentalMaxFundamental,
+                        defaultValue = AppConf.Fundamental.DEFAULT_MAX_FUNDAMENTAL,
+                        min = AppConf.Fundamental.MIN_FUNDAMENTAL,
+                        max = AppConf.Fundamental.MAX_FUNDAMENTAL,
+                        select = { it.maxFundamental },
+                        update = { copy(maxFundamental = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.fundamental.let { it.minFundamental < it.maxFundamental }
+                                },
+                                prompt = Strings.PreferencesChartsFundamentalMaxFundamentalInvalid,
+                            ),
+                        ),
+                    )
+                    integer(
+                        title = Strings.PreferencesChartsFundamentalSemitoneSampleNum,
+                        defaultValue = AppConf.Fundamental.DEFAULT_SEMITONE_SAMPLE_NUM,
+                        min = 1,
+                        max = AppConf.Fundamental.MAX_SEMITONE_SAMPLE_NUM,
+                        select = { it.semitoneSampleNum },
+                        update = { copy(semitoneSampleNum = it) },
+                    )
+                    float(
+                        title = Strings.PreferencesChartsFundamentalMaxHarmonicFrequency,
+                        defaultValue = AppConf.Fundamental.DEFAULT_MAX_HARMONIC_FREQUENCY,
+                        max = AppConf.Fundamental.MAX_MAX_HARMONIC_FREQUENCY,
+                        select = { it.maxHarmonicFrequency },
+                        update = { copy(maxHarmonicFrequency = it) },
+                        validationRules = listOf(
+                            PreferencesItemValidationRule(
+                                validate = { appConf ->
+                                    appConf.painter.fundamental.let { it.maxHarmonicFrequency >= it.maxFundamental }
+                                },
+                                prompt = Strings.PreferencesChartsFundamentalMaxHarmonicFrequencyInvalid,
+                            ),
+                        ),
+                    )
+//                    float(
+//                        title = Strings.PreferencesChartsFundamentalErbsStep,
+//                        defaultValue = AppConf.Fundamental.DEFAULT_ERBS_STEP,
+//                        min = AppConf.Fundamental.MIN_ERBS_STEP,
+//                        max = AppConf.Fundamental.MAX_ERBS_STEP,
+//                        select = { it.erbsStep },
+//                        update = { copy(erbsStep = it) },
+//                    )
+//                    float(
+//                        title = Strings.PreferencesChartsFundamentalMinDisplayCorr,
+//                        defaultValue = AppConf.Fundamental.DEFAULT_MIN_DISPLAY_CORR,
+//                        min = 0.0f,
+//                        max = 1.0f,
+//                        select = { it.minDisplayCorr },
+//                        update = { copy(minDisplayCorr = it) },
+//                        validationRules = listOf(
+//                            PreferencesItemValidationRule(
+//                                validate = { appConf ->
+//                                    appConf.painter.fundamental.let { it.minDisplayCorr < it.maxDisplayCorr }
+//                                },
+//                                prompt = Strings.PreferencesChartsFundamentalMinDisplayCorrInvalid,
+//                            ),
+//                        ),
+//                    )
+//                    float(
+//                        title = Strings.PreferencesChartsFundamentalMaxDisplayCorr,
+//                        defaultValue = AppConf.Fundamental.DEFAULT_MAX_DISPLAY_CORR,
+//                        min = 0.0f,
+//                        max = 1.0f,
+//                        select = { it.maxDisplayCorr },
+//                        update = { copy(maxDisplayCorr = it) },
+//                        validationRules = listOf(
+//                            PreferencesItemValidationRule(
+//                                validate = { appConf ->
+//                                    appConf.painter.fundamental.let { it.minDisplayCorr < it.maxDisplayCorr }
+//                                },
+//                                prompt = Strings.PreferencesChartsFundamentalMaxDisplayCorrInvalid,
+//                            ),
+//                        ),
+//                    )
+                    color(
+                        title = Strings.PreferencesChartsFundamentalColor,
+                        defaultValue = AppConf.Fundamental.DEFAULT_COLOR,
+                        select = { it.color },
+                        update = { copy(color = it) },
+                        useAlpha = true,
+                    )
+                    switch(
+                        title = Strings.PreferencesChartsFundamentalDrawReferenceLine,
+                        defaultValue = AppConf.Fundamental.DEFAULT_DRAW_REFERENCE_LINE,
+                        select = { it.drawReferenceLine },
+                        update = { copy(drawReferenceLine = it) },
+                    )
+                    color(
+                        title = Strings.PreferencesChartsFundamentalReferenceLineColor,
+                        defaultValue = AppConf.Fundamental.DEFAULT_REFERENCE_LINE_COLOR,
+                        select = { it.referenceLineColor },
+                        update = { copy(referenceLineColor = it) },
+                        useAlpha = true,
+                        enabled = { it.drawReferenceLine },
+                    )
+                    color(
+                        title = Strings.PreferencesChartsFundamentalBackgroundColor,
+                        defaultValue = AppConf.Fundamental.DEFAULT_BACKGROUND_COLOR,
                         select = { it.backgroundColor },
                         update = { copy(backgroundColor = it) },
                         useAlpha = true,
