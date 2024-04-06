@@ -80,7 +80,6 @@ object SWIPEKernel {
         }
 
         // Calculate the candidate fundamental frequency.
-        // TODO: if conf.semitoneSampleNum > 8, calculate kernel by conf.semitoneSampleNum == 8, then interpolate.
         val startSemitone = round(Semitone.fromFrequency(conf.minFundamental))
         val endSemitone = round(Semitone.fromFrequency(conf.maxFundamental))
         val semitoneStep = 1f / conf.semitoneSampleNum.toFloat()
@@ -275,6 +274,7 @@ fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): 
     }
 
     // Calculate the fundamental frequency.
+    // TODO: According to 3.10.2, we can interpolate the result to get a continuous frequency output.
     val length = convResults.minOfOrNull { it.size } ?: 0
     val fundamental = List(length) { i ->
         val maxIdx = convResults.indices.maxByOrNull { j -> convResults[j][i] } ?: 0
@@ -349,9 +349,5 @@ fun Wave.fastFourierTransformSWIPE(
         magnitude.copyOf((magnitude.size * maxFrequencyRate).toInt())
     }
 
-    return if (absoluteSpectrogram.isEmpty()) {
-        listOf()
-    } else {
-        absoluteSpectrogram.toList()
-    }
+    return absoluteSpectrogram.toList()
 }

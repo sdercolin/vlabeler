@@ -61,7 +61,7 @@ data class AppConf(
                 (
                     1f + (if (spectrogram.enabled) spectrogram.heightWeight else 0f) +
                         (if (power.enabled) power.heightWeight else 0f) +
-                        (if (fundamental.enabled && spectrogram.enabled) fundamental.heightWeight else 0f)
+                        (if (fundamental.enabled) fundamental.heightWeight else 0f)
                     )
 
         companion object {

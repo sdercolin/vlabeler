@@ -146,7 +146,7 @@ class ChartStore {
                         )
                     }
                 }
-                if (sampleInfo.hasFundamental && sampleInfo.hasSpectrogram && appConf.painter.fundamental.enabled) {
+                if (sampleInfo.hasFundamental && appConf.painter.fundamental.enabled) {
                     renderFundamentalGraph(
                         sampleInfo,
                         chunk,

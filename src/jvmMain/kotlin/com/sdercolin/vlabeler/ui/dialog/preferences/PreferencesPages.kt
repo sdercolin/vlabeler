@@ -522,12 +522,6 @@ object PreferencesPages {
                             ),
                         ),
                     )
-                    switch(
-                        title = Strings.PreferencesChartsFundamentalDrawReferenceLine,
-                        defaultValue = AppConf.Fundamental.DEFAULT_DRAW_REFERENCE_LINE,
-                        select = { it.drawReferenceLine },
-                        update = { copy(drawReferenceLine = it) },
-                    )
                     color(
                         title = Strings.PreferencesChartsFundamentalColor,
                         defaultValue = AppConf.Fundamental.DEFAULT_COLOR,
@@ -535,12 +529,19 @@ object PreferencesPages {
                         update = { copy(color = it) },
                         useAlpha = true,
                     )
+                    switch(
+                        title = Strings.PreferencesChartsFundamentalDrawReferenceLine,
+                        defaultValue = AppConf.Fundamental.DEFAULT_DRAW_REFERENCE_LINE,
+                        select = { it.drawReferenceLine },
+                        update = { copy(drawReferenceLine = it) },
+                    )
                     color(
                         title = Strings.PreferencesChartsFundamentalReferenceLineColor,
                         defaultValue = AppConf.Fundamental.DEFAULT_REFERENCE_LINE_COLOR,
                         select = { it.referenceLineColor },
                         update = { copy(referenceLineColor = it) },
                         useAlpha = true,
+                        enabled = { it.drawReferenceLine },
                     )
                     color(
                         title = Strings.PreferencesChartsFundamentalBackgroundColor,

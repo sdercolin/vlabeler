@@ -8,7 +8,8 @@ import kotlin.math.pow
 /**
  * Data class to represent a fundamental.
  *
- * @param data A list of fundamental data. Each element is a fundamental data.
+ * @param freq A list of fundamental data.
+ * @param corr A list of correlation data.
  */
 @Immutable
 data class Fundamental(

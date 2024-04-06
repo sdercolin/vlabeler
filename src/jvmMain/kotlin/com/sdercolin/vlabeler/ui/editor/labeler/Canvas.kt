@@ -253,9 +253,7 @@ private fun Chunk(
                     }
                 }
             }
-            if (sampleInfo.hasSpectrogram && sampleInfo.hasSpectrogram &&
-                appState.appConf.painter.fundamental.enabled
-            ) {
+            if (sampleInfo.hasFundamental && appState.appConf.painter.fundamental.enabled) {
                 val fundamentalBackgroundColor = appState.appConf.painter.fundamental.backgroundColor.toColorOrNull()
                     ?: AppConf.Fundamental.DEFAULT_BACKGROUND_COLOR.toColor()
                 Box(

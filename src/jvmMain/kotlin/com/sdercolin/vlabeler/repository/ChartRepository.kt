@@ -217,8 +217,9 @@ object ChartRepository {
         ?.let { cacheDirectory.resolve(it) }
         ?.takeIf { it.isFile }
         ?: run {
-            // TODO: modulePrefix?
-            val baseFileName = "${sampleInfo.name}_${KEY_POWER_GRAPH}_${channelIndex}_$chunkIndex.$EXTENSION"
+            val modulePrefix = sampleInfo.moduleName.let { "${it}_" }
+            val baseFileName =
+                "${modulePrefix}${sampleInfo.name}_${KEY_POWER_GRAPH}_${channelIndex}_$chunkIndex.$EXTENSION"
             cacheDirectory.findUnusedFile(
                 base = baseFileName,
                 existingAbsolutePaths = cacheMap.values.map { cacheDirectory.resolve(it).absolutePath }.toSet(),
@@ -266,8 +267,8 @@ object ChartRepository {
     private const val CHARTS_CACHE_FOLDER_NAME = "charts"
     private const val KEY_WAVEFORM = "waveform"
     private const val KEY_SPECTROGRAM = "spectrogram"
-    private const val KEY_POWER_GRAPH = "power_graph"
-    private const val KEY_FUNDAMENTAL_GRAPH = "fundamental_graph"
+    private const val KEY_POWER_GRAPH = "power"
+    private const val KEY_FUNDAMENTAL_GRAPH = "fundamental"
     private const val EXTENSION = "png"
 }
 
