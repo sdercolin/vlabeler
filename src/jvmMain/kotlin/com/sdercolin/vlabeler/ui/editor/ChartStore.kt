@@ -514,33 +514,75 @@ class ChartStore {
         requireNotNull(chunk) {
             "Chunk $chunkIndex is required. However it's not loaded."
         }
-        // get data
-        val data = requireNotNull(chunk.fundamental).data
-        val minDisplayMel = MelScale.toMel(0.0)
-        val maxDisplayMel = MelScale.toMel(appConf.painter.spectrogram.maxFrequency.toDouble())
+        // get fundamental data
+        val freqData = requireNotNull(chunk.fundamental).freq
+        val minDisplayFreq = appConf.painter.fundamental.minFundamental
+        val maxDisplayFreq = appConf.painter.fundamental.maxFundamental
+        // get corr data
+        val corrData = requireNotNull(chunk.fundamental).corr
+        val minDisplayCorr = appConf.painter.fundamental.minDisplayCorr
+        val maxDisplayCorr = appConf.painter.fundamental.maxDisplayCorr
         // image size
-        val width = maxOf(data.size, 1)
+        val width = maxOf(freqData.size, 1)
         val height = appConf.painter.fundamental.intensityAccuracy
         val imageData = ByteArray(width * height * 4)
-        // draw
-        val color = appConf.painter.fundamental.color.toColorOrNull() ?: AppConf.Fundamental.DEFAULT_COLOR.toColor()
-        val yArray = data.map { freq ->
-            val mel = MelScale.toMel(freq.toDouble())
-            val valueInRange = maxOf(minDisplayMel, minOf(maxDisplayMel, mel))
-            val relativeValue = (valueInRange - minDisplayMel) / (maxDisplayMel - minDisplayMel)
+        // function to convert frequency to y index
+        val freqToYIndex: (Float) -> Int = { freq ->
+            val valueInRange = maxOf(minDisplayFreq, minOf(maxDisplayFreq, freq))
+            val relativeValue = (valueInRange - minDisplayFreq) / (maxDisplayFreq - minDisplayFreq)
             (height - 1 - relativeValue * (height - 1)).roundToInt()
         }
+        // draw reference lines
+        if (appConf.painter.fundamental.drawReferenceLine) {
+            val middleCFreq = 2f.pow(-9f / 12f) * 440f
+            // get reference frequencies between minDisplayFreq and maxDisplayFreq
+            val refFreqList = mutableListOf<Float>()
+            var refFreq = middleCFreq
+            while (refFreq >= minDisplayFreq && refFreq >= 1f) {
+                if (refFreq <= maxDisplayFreq) refFreqList.add(refFreq)
+                refFreq /= 2f
+            }
+            refFreq = middleCFreq * 2f
+            while (refFreq <= maxDisplayFreq && refFreq <= sampleInfo.sampleRate / 2) {
+                if (refFreq >= minDisplayFreq) refFreqList.add(refFreq)
+                refFreq *= 2f
+            }
+            // draw reference lines
+            val refColor = appConf.painter.fundamental.referenceLineColor.toColorOrNull()
+                ?: AppConf.Fundamental.DEFAULT_REFERENCE_LINE_COLOR.toColor()
+            refFreqList.forEach { freq ->
+                val y = freqToYIndex(freq)
+                for (x in 0 until width) {
+                    val offset = (y * width + x) * 4
+                    imageData[offset] = (refColor.blue * 255).toInt().toByte()
+                    imageData[offset + 1] = (refColor.green * 255).toInt().toByte()
+                    imageData[offset + 2] = (refColor.red * 255).toInt().toByte()
+                    imageData[offset + 3] = (refColor.alpha * 255).toInt().toByte()
+                }
+            }
+        }
+        // draw fundamental graph
+        val color = appConf.painter.fundamental.color.toColorOrNull() ?: AppConf.Fundamental.DEFAULT_COLOR.toColor()
+        val yArray = freqData.map { freqToYIndex(it) }
         yArray.forEachIndexed { index, y ->
+            // calculate start and end of the line
             val before = if (index == 0) y else (yArray[index - 1] + y) / 2
             val after = if (index == yArray.lastIndex) y else (yArray[index + 1] + y) / 2
             val start = minOf(before, after)
             val end = maxOf(before, after)
-            for (i in start..end) {
-                val offset = (i * width + index) * 4
-                imageData[offset] = (color.blue * 255).toInt().toByte()
-                imageData[offset + 1] = (color.green * 255).toInt().toByte()
-                imageData[offset + 2] = (color.red * 255).toInt().toByte()
-                imageData[offset + 3] = (color.alpha * 255).toInt().toByte()
+            // calculate intensity
+            val corr = corrData.getOrElse(index) { 0f }
+            val relaCorr = (corr - minDisplayCorr) / (maxDisplayCorr - minDisplayCorr)
+            val intensity = maxOf(0f, minOf(255f, relaCorr * 255f))
+            // draw line
+            if (intensity > 0) {
+                for (i in start..end) {
+                    val offset = (i * width + index) * 4
+                    imageData[offset] = (color.blue * intensity).toInt().toByte()
+                    imageData[offset + 1] = (color.green * intensity).toInt().toByte()
+                    imageData[offset + 2] = (color.red * intensity).toInt().toByte()
+                    imageData[offset + 3] = (color.alpha * intensity).toInt().toByte()
+                }
             }
         }
         val imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)

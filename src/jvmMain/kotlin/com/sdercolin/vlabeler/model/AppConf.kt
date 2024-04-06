@@ -263,7 +263,11 @@ data class AppConf(
         val fundamentalStepNum: Int = DEFAULT_FUNDAMENTAL_STEP_NUM,
         val maxHarmonicFrequency: Float = DEFAULT_MAX_HARMONIC_FREQUENCY,
         val erbsStep: Float = DEFAULT_ERBS_STEP,
+        val minDisplayCorr: Float = DEFAULT_MIN_DISPLAY_CORR,
+        val maxDisplayCorr: Float = DEFAULT_MAX_DISPLAY_CORR,
+        val drawReferenceLine: Boolean = DEFAULT_DRAW_REFERENCE_LINE,
         val color: String = DEFAULT_COLOR,
+        val referenceLineColor: String = DEFAULT_REFERENCE_LINE_COLOR,
         val backgroundColor: String = DEFAULT_BACKGROUND_COLOR,
     ) {
         companion object {
@@ -276,10 +280,19 @@ data class AppConf(
             const val MIN_INTENSITY_ACCURACY = DEFAULT_INTENSITY_ACCURACY / 5
             const val DEFAULT_MIN_FUNDAMENTAL = 220.0f
             const val DEFAULT_MAX_FUNDAMENTAL = 880.0f
+            const val MIN_FUNDAMENTAL = 20.0f
+            const val MAX_FUNDAMENTAL = 3520.0f
             const val DEFAULT_FUNDAMENTAL_STEP_NUM = 25
             const val DEFAULT_MAX_HARMONIC_FREQUENCY = 5000.0f
+            const val MAX_MAX_HARMONIC_FREQUENCY = 22050.0f
             const val DEFAULT_ERBS_STEP = 0.1f
-            const val DEFAULT_COLOR = "#FFF2F2F2"
+            const val MIN_ERBS_STEP = 0.01f
+            const val MAX_ERBS_STEP = 1.0f
+            const val DEFAULT_MIN_DISPLAY_CORR = 0.0f
+            const val DEFAULT_MAX_DISPLAY_CORR = 0.5f
+            const val DEFAULT_DRAW_REFERENCE_LINE = true
+            const val DEFAULT_COLOR = "#FFF2F200"
+            const val DEFAULT_REFERENCE_LINE_COLOR = "#FF777777"
             const val DEFAULT_BACKGROUND_COLOR = "#00000000"
         }
     }

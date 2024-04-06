@@ -167,7 +167,10 @@ object SWIPEKernel {
  */
 fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): Fundamental {
     if (conf.maxFundamental == conf.minFundamental || conf.fundamentalStepNum < 2) {
-        return Fundamental(List(1) { conf.minFundamental })
+        return Fundamental(
+            List(1) { conf.minFundamental },
+            List(1) { 0.0f }
+        )
     }
 
     // Calculate kernel of each candidateFreq.
@@ -233,8 +236,8 @@ fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): 
         val kernel = kernelData.kernels[candidateIdx]
         val kernelNorm = kernelData.kernelNorm[candidateIdx]
         // Calculate convolution of the kernel and the FFT results of intFFTIndex.
-        var conv = erbsFFTResults[intFFTIndex].mapIndexed { pos, listOfResults ->
-            listOfResults.mapIndexed { i, value ->
+        var conv = erbsFFTResults[intFFTIndex].mapIndexed { pos, fft ->
+            fft.mapIndexed { i, value ->
                 if (kernelData.frequencyXAxis[i] == 0.0f) {
                     0.0f
                 } else {
@@ -244,8 +247,8 @@ fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): 
         }
         // Calculate convolution of the kernel and the FFT result of intFFTIndex + 1.
         if (fracWindowSizeLog2 > 0 && intFFTIndex + 1 < erbsFFTResults.size) {
-            val nextConv = erbsFFTResults[intFFTIndex + 1].mapIndexed { pos, listOfResults ->
-                listOfResults.mapIndexed { i, value ->
+            val nextConv = erbsFFTResults[intFFTIndex + 1].mapIndexed { pos, fft ->
+                fft.mapIndexed { i, value ->
                     if (kernelData.frequencyXAxis[i] == 0.0f) {
                         0.0f
                     } else {
@@ -265,13 +268,16 @@ fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): 
     }
 
     // Calculate the fundamental frequency.
-    val length = convResults.first().size
+    val length = convResults.minOfOrNull { it.size } ?: 0
     val fundamental = List(length) { i ->
         val maxIdx = convResults.indices.maxByOrNull { j -> convResults[j][i] } ?: 0
         kernelData.candidateFrequency[maxIdx]
     }
+    val corr = List(length) { i ->
+        convResults.indices.maxOfOrNull { j -> convResults[j][i] } ?: 0.0f
+    }
 
-    return Fundamental(fundamental)
+    return Fundamental(fundamental, corr)
 }
 
 /**

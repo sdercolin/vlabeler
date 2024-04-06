@@ -9,7 +9,10 @@ import com.sdercolin.vlabeler.model.AppConf
  * @param data A list of fundamental data. Each element is a fundamental data.
  */
 @Immutable
-data class Fundamental(val data: List<Float>)
+data class Fundamental(
+    val freq: List<Float>,
+    val corr: List<Float>,
+)
 
 /**
  * Convert a wave to fundamental.
