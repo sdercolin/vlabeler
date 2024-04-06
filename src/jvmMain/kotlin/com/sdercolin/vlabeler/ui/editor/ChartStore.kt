@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.MelScale
 import com.sdercolin.vlabeler.io.NORMALIZED_SAMPLE_SIZE_IN_BITS
+import com.sdercolin.vlabeler.io.Semitone
 import com.sdercolin.vlabeler.io.loadSampleChunk
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
@@ -35,7 +36,9 @@ import org.jetbrains.skia.ColorAlphaType
 import org.jetbrains.skia.ColorType
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.ImageInfo
+import kotlin.math.floor
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.roundToInt
 
 class ChartStore {
@@ -516,42 +519,39 @@ class ChartStore {
         }
         // get fundamental data
         val freqData = requireNotNull(chunk.fundamental).freq
-        val minDisplayFreq = appConf.painter.fundamental.minFundamental
-        val maxDisplayFreq = appConf.painter.fundamental.maxFundamental
+        val minDisplaySemitone = Semitone.fromFrequency(appConf.painter.fundamental.minFundamental)
+        val maxDisplaySemitone = Semitone.fromFrequency(appConf.painter.fundamental.maxFundamental)
         // get corr data
         val corrData = requireNotNull(chunk.fundamental).corr
         val minDisplayCorr = appConf.painter.fundamental.minDisplayCorr
         val maxDisplayCorr = appConf.painter.fundamental.maxDisplayCorr
         // image size
         val width = maxOf(freqData.size, 1)
-        val height = appConf.painter.fundamental.intensityAccuracy
+        val height = round((maxDisplaySemitone - minDisplaySemitone) *
+            appConf.painter.fundamental.semitoneResolution).toInt()
         val imageData = ByteArray(width * height * 4)
         // function to convert frequency to y index
-        val freqToYIndex: (Float) -> Int = { freq ->
-            val valueInRange = maxOf(minDisplayFreq, minOf(maxDisplayFreq, freq))
-            val relativeValue = (valueInRange - minDisplayFreq) / (maxDisplayFreq - minDisplayFreq)
+        val semitoneToYIndex: (Float) -> Int = { semitone ->
+            val valueInRange = maxOf(minDisplaySemitone, minOf(maxDisplaySemitone, semitone))
+            val relativeValue = (valueInRange - minDisplaySemitone) / (maxDisplaySemitone - minDisplaySemitone)
             (height - 1 - relativeValue * (height - 1)).roundToInt()
         }
         // draw reference lines
         if (appConf.painter.fundamental.drawReferenceLine) {
-            val middleCFreq = 2f.pow(-9f / 12f) * 440f
             // get reference frequencies between minDisplayFreq and maxDisplayFreq
-            val refFreqList = mutableListOf<Float>()
-            var refFreq = middleCFreq
-            while (refFreq >= minDisplayFreq && refFreq >= 1f) {
-                if (refFreq <= maxDisplayFreq) refFreqList.add(refFreq)
-                refFreq /= 2f
-            }
-            refFreq = middleCFreq * 2f
-            while (refFreq <= maxDisplayFreq && refFreq <= sampleInfo.sampleRate / 2) {
-                if (refFreq >= minDisplayFreq) refFreqList.add(refFreq)
-                refFreq *= 2f
+            val startCSemitone = (floor(minDisplaySemitone) / 12).toInt()
+            val endCSemitone = (floor(maxDisplaySemitone) / 12 + 1).toInt()
+            val refSemitoneList = mutableListOf<Float>()
+            for (i in startCSemitone until endCSemitone) {
+                if (minDisplaySemitone <= i * 12 && i * 12 <= maxDisplaySemitone) {
+                    refSemitoneList.add((i * 12).toFloat())
+                }
             }
             // draw reference lines
             val refColor = appConf.painter.fundamental.referenceLineColor.toColorOrNull()
                 ?: AppConf.Fundamental.DEFAULT_REFERENCE_LINE_COLOR.toColor()
-            refFreqList.forEach { freq ->
-                val y = freqToYIndex(freq)
+            refSemitoneList.forEach { semitone ->
+                val y = semitoneToYIndex(semitone)
                 for (x in 0 until width) {
                     val offset = (y * width + x) * 4
                     imageData[offset] = (refColor.blue * 255).toInt().toByte()
@@ -563,7 +563,7 @@ class ChartStore {
         }
         // draw fundamental graph
         val color = appConf.painter.fundamental.color.toColorOrNull() ?: AppConf.Fundamental.DEFAULT_COLOR.toColor()
-        val yArray = freqData.map { freqToYIndex(it) }
+        val yArray = freqData.map { semitoneToYIndex(Semitone.fromFrequency(it)) }
         yArray.forEachIndexed { index, y ->
             // calculate start and end of the line
             val before = if (index == 0) y else (yArray[index - 1] + y) / 2

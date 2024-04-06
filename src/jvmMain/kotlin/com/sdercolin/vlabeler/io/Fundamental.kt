@@ -2,6 +2,8 @@ package com.sdercolin.vlabeler.io
 
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.model.AppConf
+import kotlin.math.log2
+import kotlin.math.pow
 
 /**
  * Data class to represent a fundamental.
@@ -20,4 +22,17 @@ data class Fundamental(
 fun Wave.toFundamental(funConf: AppConf.Fundamental, sampleRate: Float): Fundamental {
     // maybe add other algorithms in the future
     return this.toFundamentalSWIPEPrime(funConf, sampleRate)
+}
+
+/**
+ * Convert frequency to semitone.
+ */
+object Semitone {
+    fun fromFrequency(freq: Float): Float {
+        return 12f * (log2(freq / 440f)) + 69f
+    }
+
+    fun toFrequency(semitone: Float): Float {
+        return 440f * 2f.pow((semitone - 69f) / 12f)
+    }
 }

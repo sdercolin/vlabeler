@@ -8,9 +8,10 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.floor
-import kotlin.math.ln
 import kotlin.math.log10
+import kotlin.math.log2
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.sqrt
 
 /**
@@ -73,13 +74,19 @@ object SWIPEKernel {
      * @param conf The configuration of the fundamental frequency.
      * @param sampleRate The sample rate of the wave.
      */
-    private fun updateKernel(conf: AppConf.Fundamental, sampleRate: Float): SWIPEKernelData {
+    private fun updateKernel(conf: AppConf.Fundamental, sampleRate: Float): SWIPEKernelData? {
+        if (conf.semitoneSampleNum < 1 || conf.maxFundamental < conf.minFundamental) {
+            return null
+        }
+
         // Calculate the candidate fundamental frequency.
-        // We didn't use the original implementation of SWIPE' in 3.10.2
-        // because we only calculate the fundamental at specific frequency.
-        val freqStep = (conf.maxFundamental / conf.minFundamental).pow(1.0f / (conf.fundamentalStepNum - 1))
-        val candidateFrequency = List(conf.fundamentalStepNum) { i ->
-            conf.minFundamental * (freqStep.pow(i.toFloat()))
+        // TODO: if conf.semitoneSampleNum > 8, calculate kernel by conf.semitoneSampleNum == 8, then interpolate.
+        val startSemitone = round(Semitone.fromFrequency(conf.minFundamental))
+        val endSemitone = round(Semitone.fromFrequency(conf.maxFundamental))
+        val semitoneStep = 1f / conf.semitoneSampleNum.toFloat()
+        val candidateLength = floor((endSemitone - startSemitone) / semitoneStep + 1).toInt()
+        val candidateFrequency = List(candidateLength) { i ->
+            Semitone.toFrequency(startSemitone + i * semitoneStep)
         }
 
         // Calculate the sample frequency axis by ERBs.
@@ -148,9 +155,12 @@ object SWIPEKernel {
      * @param sampleRate The sample rate of the wave.
      */
     @Synchronized
-    fun getKernel(conf: AppConf.Fundamental, sampleRate: Float): SWIPEKernelData {
+    fun getKernel(conf: AppConf.Fundamental, sampleRate: Float): SWIPEKernelData? {
         if (kernelData == null || currentConf != conf || currentSampleRate != sampleRate) {
             kernelData = updateKernel(conf, sampleRate)
+            if (kernelData == null) {
+                return null
+            }
             currentConf = conf
             currentSampleRate = sampleRate
         }
@@ -166,23 +176,20 @@ object SWIPEKernel {
  * @param sampleRate The sample rate of the wave.
  */
 fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): Fundamental {
-    if (conf.maxFundamental == conf.minFundamental || conf.fundamentalStepNum < 2) {
-        return Fundamental(
+    // Calculate kernel of each candidateFreq.
+    val kernelData = SWIPEKernel.getKernel(conf, sampleRate)
+        ?: return Fundamental(
             List(1) { conf.minFundamental },
             List(1) { 0.0f }
         )
-    }
-
-    // Calculate kernel of each candidateFreq.
-    val kernelData = SWIPEKernel.getKernel(conf, sampleRate)
 
     // Calculate the window size according to the 3.7.
     // Always use the Hanning window which has k=2. So T = 4k/f = 8/f.
     // Then N = T / (1/sampleRate) = 8 * sampleRate / f.
     val fftBestWindowSize = kernelData.candidateFrequency.map { 8.0f * sampleRate / it }
     // According to 3.12.1.2, use only power-of-two window size.
-    val minWindowSizeLog2 = floor(ln(fftBestWindowSize.min()) / ln(2.0f)).toInt()
-    val maxWindowSizeLog2 = ceil(ln(fftBestWindowSize.max()) / ln(2.0f)).toInt()
+    val minWindowSizeLog2 = floor(log2(fftBestWindowSize.min())).toInt()
+    val maxWindowSizeLog2 = ceil(log2(fftBestWindowSize.max())).toInt()
     val windowSizeList = (minWindowSizeLog2..maxWindowSizeLog2).map { 2.0.pow(it).toInt() }
 
     // FFT by windowSizeList.
@@ -228,7 +235,7 @@ fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): 
     // For each candidate frequency, calculate the convolution of its kernel and the FFT result
     // of the nearest 2 window sizes, then merge the result at the lower window size.
     val convResults = fftBestWindowSize.mapIndexed { candidateIdx, bestWindowSize ->
-        val bestWindowSizeLog2 = ln(bestWindowSize) / ln(2.0f)
+        val bestWindowSizeLog2 = log2(bestWindowSize)
         val intWindowSizeLog2 = floor(bestWindowSizeLog2).toInt()
         val fracWindowSizeLog2 = bestWindowSizeLog2 - intWindowSizeLog2
         val intFFTIndex = windowSizeList.indexOf(2.0.pow(intWindowSizeLog2).toInt())

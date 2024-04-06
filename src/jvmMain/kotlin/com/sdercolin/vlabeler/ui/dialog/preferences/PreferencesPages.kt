@@ -420,12 +420,12 @@ object PreferencesPages {
                         update = { copy(heightWeight = it) },
                     )
                     integer(
-                        title = Strings.PreferencesChartsFundamentalIntensityAccuracy,
-                        defaultValue = AppConf.Fundamental.DEFAULT_INTENSITY_ACCURACY,
-                        min = AppConf.Fundamental.MIN_INTENSITY_ACCURACY,
-                        max = AppConf.Fundamental.MAX_INTENSITY_ACCURACY,
-                        select = { it.intensityAccuracy },
-                        update = { copy(intensityAccuracy = it) },
+                        title = Strings.PreferencesChartsFundamentalSemitoneResolution,
+                        defaultValue = AppConf.Fundamental.DEFAULT_SEMITONE_RESOLUTION,
+                        min = AppConf.Fundamental.MIN_SEMITONE_RESOLUTION,
+                        max = AppConf.Fundamental.MAX_SEMITONE_RESOLUTION,
+                        select = { it.semitoneResolution },
+                        update = { copy(semitoneResolution = it) },
                     )
                     float(
                         title = Strings.PreferencesChartsFundamentalMinFundamental,
@@ -460,12 +460,12 @@ object PreferencesPages {
                         ),
                     )
                     integer(
-                        title = Strings.PreferencesChartsFundamentalStepNum,
-                        defaultValue = AppConf.Fundamental.DEFAULT_FUNDAMENTAL_STEP_NUM,
-                        min = 2,
-                        max = (AppConf.Fundamental.MAX_FUNDAMENTAL - AppConf.Fundamental.MIN_FUNDAMENTAL + 1).toInt(),
-                        select = { it.fundamentalStepNum },
-                        update = { copy(fundamentalStepNum = it) },
+                        title = Strings.PreferencesChartsFundamentalSemitoneSampleNum,
+                        defaultValue = AppConf.Fundamental.DEFAULT_SEMITONE_SAMPLE_NUM,
+                        min = 1,
+                        max = AppConf.Fundamental.MAX_SEMITONE_SAMPLE_NUM,
+                        select = { it.semitoneSampleNum },
+                        update = { copy(semitoneSampleNum = it) },
                     )
                     float(
                         title = Strings.PreferencesChartsFundamentalMaxHarmonicFrequency,
