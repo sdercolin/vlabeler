@@ -281,8 +281,8 @@ data class AppConf(
             const val DEFAULT_SEMITONE_RESOLUTION = 8
             const val MIN_SEMITONE_RESOLUTION = 1
             const val MAX_SEMITONE_RESOLUTION = 64
-            const val DEFAULT_MIN_FUNDAMENTAL = 220.0f
-            const val DEFAULT_MAX_FUNDAMENTAL = 880.0f
+            const val DEFAULT_MIN_FUNDAMENTAL = 130.0f // C3
+            const val DEFAULT_MAX_FUNDAMENTAL = 880.0f // A5
             const val MIN_FUNDAMENTAL = 16.351f // C0
             const val MAX_FUNDAMENTAL = 8372.0f // C9
             const val DEFAULT_SEMITONE_SAMPLE_NUM = 8
