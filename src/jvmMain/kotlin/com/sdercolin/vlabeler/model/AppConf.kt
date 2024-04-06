@@ -262,8 +262,11 @@ data class AppConf(
         val maxFundamental: Float = DEFAULT_MAX_FUNDAMENTAL,
         val semitoneSampleNum: Int = DEFAULT_SEMITONE_SAMPLE_NUM,
         val maxHarmonicFrequency: Float = DEFAULT_MAX_HARMONIC_FREQUENCY,
+        // hidden to users
         val erbsStep: Float = DEFAULT_ERBS_STEP,
+        // hidden to users
         val minDisplayCorr: Float = DEFAULT_MIN_DISPLAY_CORR,
+        // hidden to users
         val maxDisplayCorr: Float = DEFAULT_MAX_DISPLAY_CORR,
         val drawReferenceLine: Boolean = DEFAULT_DRAW_REFERENCE_LINE,
         val color: String = DEFAULT_COLOR,
@@ -287,8 +290,6 @@ data class AppConf(
             const val DEFAULT_MAX_HARMONIC_FREQUENCY = 5000.0f
             const val MAX_MAX_HARMONIC_FREQUENCY = 22050.0f
             const val DEFAULT_ERBS_STEP = 0.1f
-            const val MIN_ERBS_STEP = 0.01f
-            const val MAX_ERBS_STEP = 1.0f
             const val DEFAULT_MIN_DISPLAY_CORR = 0.0f
             const val DEFAULT_MAX_DISPLAY_CORR = 0.5f
             const val DEFAULT_DRAW_REFERENCE_LINE = true
