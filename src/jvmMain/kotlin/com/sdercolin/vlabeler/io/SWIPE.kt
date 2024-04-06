@@ -170,6 +170,16 @@ object SWIPEKernel {
 /**
  * Convert a wave to fundamental frequency using SWIPE'.
  * Reference: A sawtooth waveform inspired pitch estimator for speech and music
+ * @article{camacho2008sawtooth,
+ *   title={A sawtooth waveform inspired pitch estimator for speech and music},
+ *   author={Camacho, Arturo and Harris, John G},
+ *   journal={The Journal of the Acoustical Society of America},
+ *   volume={124},
+ *   number={3},
+ *   pages={1638--1652},
+ *   year={2008},
+ *   publisher={AIP Publishing}
+ * }
  *
  * @param conf The configuration of the fundamental frequency.
  * @param sampleRate The sample rate of the wave.
