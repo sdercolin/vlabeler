@@ -24,7 +24,7 @@ import kotlin.math.sqrt
  * @property kernelNorm The norm of each kernel.
  */
 @Immutable
-data class SWIPEKernelData(
+private data class SwipeKernelData(
     val candidateFrequency: List<Float>,
     val maxHarmonicFrequency: Float,
     val frequencyXAxis: List<Float>,
@@ -32,13 +32,13 @@ data class SWIPEKernelData(
     val kernelNorm: List<Float>,
 )
 
-const val EPS = 1e-8f
+private const val EPS = 1e-8f
 
 /**
  * Data class to represent SWIPE kernels.
  */
-object SWIPEKernel {
-    private var kernelData: SWIPEKernelData? = null
+private object SwipeKernel {
+    private var kernelData: SwipeKernelData? = null
     private var currentConf: AppConf.Fundamental? = null
     private var currentSampleRate: Float? = null
 
@@ -74,7 +74,7 @@ object SWIPEKernel {
      * @param conf The configuration of the fundamental frequency.
      * @param sampleRate The sample rate of the wave.
      */
-    private fun updateKernel(conf: AppConf.Fundamental, sampleRate: Float): SWIPEKernelData? {
+    private fun updateKernel(conf: AppConf.Fundamental, sampleRate: Float): SwipeKernelData? {
         if (conf.semitoneSampleNum < 1 || conf.maxFundamental < conf.minFundamental) {
             return null
         }
@@ -138,7 +138,7 @@ object SWIPEKernel {
             }.sum().let { maxOf(sqrt(it), EPS) }
         }
 
-        return SWIPEKernelData(
+        return SwipeKernelData(
             candidateFrequency = candidateFrequency,
             maxHarmonicFrequency = maxHarmonicFrequency,
             frequencyXAxis = frequencyXAxis,
@@ -154,7 +154,7 @@ object SWIPEKernel {
      * @param sampleRate The sample rate of the wave.
      */
     @Synchronized
-    fun getKernel(conf: AppConf.Fundamental, sampleRate: Float): SWIPEKernelData? {
+    fun getKernel(conf: AppConf.Fundamental, sampleRate: Float): SwipeKernelData? {
         if (kernelData == null || currentConf != conf || currentSampleRate != sampleRate) {
             kernelData = updateKernel(conf, sampleRate)
             if (kernelData == null) {
@@ -168,25 +168,17 @@ object SWIPEKernel {
 }
 
 /**
- * Convert a wave to fundamental frequency using SWIPE'.
- * Reference: A sawtooth waveform inspired pitch estimator for speech and music
- * @article{camacho2008sawtooth,
- *   title={A sawtooth waveform inspired pitch estimator for speech and music},
- *   author={Camacho, Arturo and Harris, John G},
- *   journal={The Journal of the Acoustical Society of America},
- *   volume={124},
- *   number={3},
- *   pages={1638--1652},
- *   year={2008},
- *   publisher={AIP Publishing}
- * }
+ * Convert a wave to fundamental frequency using SWIPE'. Reference: A sawtooth waveform inspired pitch estimator for
+ * speech and music @article{camacho2008sawtooth, title={A sawtooth waveform inspired pitch estimator for speech and
+ * music}, author={Camacho, Arturo and Harris, John G}, journal={The Journal of the Acoustical Society of America},
+ * volume={124}, number={3}, pages={1638--1652}, year={2008}, publisher={AIP Publishing} }
  *
  * @param conf The configuration of the fundamental frequency.
  * @param sampleRate The sample rate of the wave.
  */
-fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): Fundamental {
+fun Wave.toFundamentalSwipePrime(conf: AppConf.Fundamental, sampleRate: Float): Fundamental {
     // Calculate kernel of each candidateFreq.
-    val kernelData = SWIPEKernel.getKernel(conf, sampleRate)
+    val kernelData = SwipeKernel.getKernel(conf, sampleRate)
         ?: return Fundamental(
             List(1) { conf.minFundamental },
             List(1) { 0.0f },
@@ -205,7 +197,7 @@ fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): 
     // rawFFTResult[i][j] is the FFT result of the i-th window size and the j-th window.
     val rawFFTResults = windowSizeList.map { windowSize ->
         // Convert FFT result to sqrt(|X(f)|)
-        this.fastFourierTransformSWIPE(windowSize, sampleRate, kernelData.maxHarmonicFrequency)
+        this.fastFourierTransformSwipe(windowSize, sampleRate, kernelData.maxHarmonicFrequency)
             .map { it.map { value -> value.toFloat() } }
     }
 
@@ -298,10 +290,9 @@ fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): 
 }
 
 /**
- * Convert frequency to ERBs and vice versa.
- * ERBs = 21.4 * log10(1 + f / 229).
+ * Convert frequency to ERBs and vice versa. ERBs = 21.4 * log10(1 + f / 229).
  */
-object ERBs {
+private object ERBs {
     /**
      * Convert frequency to ERBs.
      *
@@ -328,7 +319,7 @@ object ERBs {
  * @param sampleRate The sample rate of the wave.
  * @param maxHarmonicFrequency The maximum harmonic frequency to be returned.
  */
-fun Wave.fastFourierTransformSWIPE(
+private fun Wave.fastFourierTransformSwipe(
     windowSize: Int,
     sampleRate: Float,
     maxHarmonicFrequency: Float,

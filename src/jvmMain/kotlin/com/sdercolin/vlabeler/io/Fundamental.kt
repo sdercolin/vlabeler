@@ -22,7 +22,7 @@ data class Fundamental(
  */
 fun Wave.toFundamental(funConf: AppConf.Fundamental, sampleRate: Float): Fundamental {
     // maybe add other algorithms in the future
-    return this.toFundamentalSWIPEPrime(funConf, sampleRate)
+    return this.toFundamentalSwipePrime(funConf, sampleRate)
 }
 
 /**
