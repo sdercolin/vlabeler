@@ -482,46 +482,46 @@ object PreferencesPages {
                             ),
                         ),
                     )
-                    float(
-                        title = Strings.PreferencesChartsFundamentalErbsStep,
-                        defaultValue = AppConf.Fundamental.DEFAULT_ERBS_STEP,
-                        min = AppConf.Fundamental.MIN_ERBS_STEP,
-                        max = AppConf.Fundamental.MAX_ERBS_STEP,
-                        select = { it.erbsStep },
-                        update = { copy(erbsStep = it) },
-                    )
-                    float(
-                        title = Strings.PreferencesChartsFundamentalMinDisplayCorr,
-                        defaultValue = AppConf.Fundamental.DEFAULT_MIN_DISPLAY_CORR,
-                        min = 0.0f,
-                        max = 1.0f,
-                        select = { it.minDisplayCorr },
-                        update = { copy(minDisplayCorr = it) },
-                        validationRules = listOf(
-                            PreferencesItemValidationRule(
-                                validate = { appConf ->
-                                    appConf.painter.fundamental.let { it.minDisplayCorr < it.maxDisplayCorr }
-                                },
-                                prompt = Strings.PreferencesChartsFundamentalMinDisplayCorrInvalid,
-                            ),
-                        ),
-                    )
-                    float(
-                        title = Strings.PreferencesChartsFundamentalMaxDisplayCorr,
-                        defaultValue = AppConf.Fundamental.DEFAULT_MAX_DISPLAY_CORR,
-                        min = 0.0f,
-                        max = 1.0f,
-                        select = { it.maxDisplayCorr },
-                        update = { copy(maxDisplayCorr = it) },
-                        validationRules = listOf(
-                            PreferencesItemValidationRule(
-                                validate = { appConf ->
-                                    appConf.painter.fundamental.let { it.minDisplayCorr < it.maxDisplayCorr }
-                                },
-                                prompt = Strings.PreferencesChartsFundamentalMaxDisplayCorrInvalid,
-                            ),
-                        ),
-                    )
+//                    float(
+//                        title = Strings.PreferencesChartsFundamentalErbsStep,
+//                        defaultValue = AppConf.Fundamental.DEFAULT_ERBS_STEP,
+//                        min = AppConf.Fundamental.MIN_ERBS_STEP,
+//                        max = AppConf.Fundamental.MAX_ERBS_STEP,
+//                        select = { it.erbsStep },
+//                        update = { copy(erbsStep = it) },
+//                    )
+//                    float(
+//                        title = Strings.PreferencesChartsFundamentalMinDisplayCorr,
+//                        defaultValue = AppConf.Fundamental.DEFAULT_MIN_DISPLAY_CORR,
+//                        min = 0.0f,
+//                        max = 1.0f,
+//                        select = { it.minDisplayCorr },
+//                        update = { copy(minDisplayCorr = it) },
+//                        validationRules = listOf(
+//                            PreferencesItemValidationRule(
+//                                validate = { appConf ->
+//                                    appConf.painter.fundamental.let { it.minDisplayCorr < it.maxDisplayCorr }
+//                                },
+//                                prompt = Strings.PreferencesChartsFundamentalMinDisplayCorrInvalid,
+//                            ),
+//                        ),
+//                    )
+//                    float(
+//                        title = Strings.PreferencesChartsFundamentalMaxDisplayCorr,
+//                        defaultValue = AppConf.Fundamental.DEFAULT_MAX_DISPLAY_CORR,
+//                        min = 0.0f,
+//                        max = 1.0f,
+//                        select = { it.maxDisplayCorr },
+//                        update = { copy(maxDisplayCorr = it) },
+//                        validationRules = listOf(
+//                            PreferencesItemValidationRule(
+//                                validate = { appConf ->
+//                                    appConf.painter.fundamental.let { it.minDisplayCorr < it.maxDisplayCorr }
+//                                },
+//                                prompt = Strings.PreferencesChartsFundamentalMaxDisplayCorrInvalid,
+//                            ),
+//                        ),
+//                    )
                     color(
                         title = Strings.PreferencesChartsFundamentalColor,
                         defaultValue = AppConf.Fundamental.DEFAULT_COLOR,
