@@ -180,7 +180,7 @@ fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): 
     val kernelData = SWIPEKernel.getKernel(conf, sampleRate)
         ?: return Fundamental(
             List(1) { conf.minFundamental },
-            List(1) { 0.0f }
+            List(1) { 0.0f },
         )
 
     // Calculate the window size according to the 3.7.
@@ -197,7 +197,7 @@ fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): 
     val rawFFTResults = windowSizeList.map { windowSize ->
         // Convert FFT result to sqrt(|X(f)|)
         this.fastFourierTransformSWIPE(windowSize, sampleRate, kernelData.maxHarmonicFrequency)
-            .map { it.map { value -> value.toFloat() }}
+            .map { it.map { value -> value.toFloat() } }
     }
 
     // Interpolate the FFT result by ERBs and convert to sqrt(|X(e)|).
@@ -225,7 +225,7 @@ fun Wave.toFundamentalSWIPEPrime(conf: AppConf.Fundamental, sampleRate: Float): 
 
     // Calculate signal norm.
     val fftResultNorm = erbsFFTResults.map { listOfResults ->
-        listOfResults.map { result ->   // result is the FFT result of a window.
+        listOfResults.map { result -> // result is the FFT result of a window.
             result.map {
                 it * it
             }.sum().let { maxOf(sqrt(it), EPS) }

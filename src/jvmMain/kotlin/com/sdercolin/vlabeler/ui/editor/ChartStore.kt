@@ -527,8 +527,10 @@ class ChartStore {
         val maxDisplayCorr = appConf.painter.fundamental.maxDisplayCorr
         // image size
         val width = maxOf(freqData.size, 1)
-        val height = round((maxDisplaySemitone - minDisplaySemitone) *
-            appConf.painter.fundamental.semitoneResolution).toInt()
+        val height = round(
+            (maxDisplaySemitone - minDisplaySemitone) *
+                appConf.painter.fundamental.semitoneResolution,
+        ).toInt()
         val imageData = ByteArray(width * height * 4)
         // function to convert frequency to y index
         val semitoneToYIndex: (Float) -> Int = { semitone ->
