@@ -26,16 +26,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.io.getPropertyMap
 import com.sdercolin.vlabeler.model.Project
-import com.sdercolin.vlabeler.ui.string.LocalLanguage
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.Black80
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.roundToDecimalDigit
 import com.sdercolin.vlabeler.util.runIf
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.withContext
 
-@OptIn(DelicateCoroutinesApi::class)
+@OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun BoxScope.PropertyView(project: Project, requestInputProperty: (index: Int, value: Float) -> Unit) {
     val context = remember { newSingleThreadContext("JavaScript-PropertyView") }

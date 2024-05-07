@@ -35,6 +35,7 @@ import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Palette
@@ -69,13 +70,7 @@ import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 import com.sdercolin.vlabeler.ui.dialog.ColorPickerDialog
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
-import com.sdercolin.vlabeler.ui.string.Language
-import com.sdercolin.vlabeler.ui.string.LocalLanguage
-import com.sdercolin.vlabeler.ui.string.LocalizedText
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.Text
-import com.sdercolin.vlabeler.ui.string.extractClickables
-import com.sdercolin.vlabeler.ui.string.string
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.argbHexString
@@ -187,7 +182,7 @@ private fun RowScope.PageList(state: PreferencesEditorState) {
                         val icon = if (page.isExpanded) {
                             Icons.Default.KeyboardArrowDown
                         } else {
-                            Icons.Default.KeyboardArrowRight
+                            Icons.AutoMirrored.Filled.KeyboardArrowRight
                         }
                         Icon(
                             imageVector = icon,

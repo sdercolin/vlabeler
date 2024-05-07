@@ -27,7 +27,7 @@ import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.NewLabel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -262,7 +262,7 @@ private fun ButtonBar(finish: (ReloadLabelConfigs?) -> Unit) {
             WithTooltip(string(Strings.ReloadLabelDialogInheritNotesDescription)) {
                 Icon(
                     modifier = Modifier.size(16.dp),
-                    imageVector = Icons.Default.HelpOutline,
+                    imageVector = Icons.AutoMirrored.Filled.HelpOutline,
                     contentDescription = null,
                     tint = MaterialTheme.colors.onSurface,
                 )
