@@ -24,6 +24,7 @@ import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mail
@@ -173,7 +174,7 @@ private fun MiddleButtonBar(state: CustomizableItemManagerDialogState<*>) {
                 onClick = { state.executeSelectedItem() },
             ) {
                 Icon(
-                    imageVector = Icons.Default.OpenInNew,
+                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                     contentDescription = null,
                     tint = getTint(canExecute),
                     modifier = Modifier.size(22.dp),
