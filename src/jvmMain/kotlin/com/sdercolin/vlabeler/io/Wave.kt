@@ -55,7 +55,7 @@ suspend fun loadSampleChunk(
         val isBigEndian = stream.format.isBigEndian
         val channels = List(channelCount) { mutableListOf<Float>() }
         val buffer = ByteArray(chunkSize * frameSize)
-        stream.skipNBytes(offset * frameSize)
+        stream.skip(offset * frameSize)
         Log.debug("Loading chunk $chunkIndex: offset=$offset")
         val readSize = stream.readNBytes(buffer, 0, chunkSize * frameSize)
         yield()
