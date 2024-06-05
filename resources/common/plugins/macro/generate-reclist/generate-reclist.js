@@ -4,7 +4,8 @@ if (!folder.exists() || !folder.isDirectory()) {
     error({
         en: `Folder ${folderPath} does not exist.`,
         zh: `文件夹 ${folderPath} 不存在。`,
-        ja: `フォルダ ${folderPath} が見つかりません。`
+        ja: `フォルダ ${folderPath} が見つかりません。`,
+        ko: `폴더 ${folderPath} 가 존재하지 않습니다.`
     })
 }
 
@@ -26,5 +27,6 @@ for (let module of modules) {
 report({
     en: `Generated reclists:\n${outputPaths.join("\n")}`,
     zh: `已生成录音表：\n${outputPaths.join("\n")}`,
-    ja: `録音リストを生成しました：\n${outputPaths.join("\n")}`
+    ja: `録音リストを生成しました：\n${outputPaths.join("\n")}`,
+    ko: `녹음 리스트를 생성했어요: \n${outputPaths.join("\n")}`
 })

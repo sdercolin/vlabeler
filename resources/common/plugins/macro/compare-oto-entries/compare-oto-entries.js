@@ -73,7 +73,8 @@ let baseEntries = base.split("\n").map(line => line.trim()).filter(line => line 
         error({
             en: `Invalid input line: ${line}`,
             zh: `无效的输入行：${line}`,
-            ja: `無効な入力行：${line}`
+            ja: `無効な入力行：${line}`,
+            ko: `잘못된 입력 행: ${line}`
         })
     }
 })
@@ -156,8 +157,24 @@ if (jaReport === "") {
     jaReport += "プロジェクトと入力の oto ファイルとは一致しています。"
 }
 
+let koReport = ""
+if (entriesOnlyInBaseText.length > 0) {
+    if (!append) {
+        koReport += `프로젝트에 다음 엔트리들이 누락되어 있어요:\n${entriesOnlyInBaseText.join("")}\n`
+    } else {
+        koReport += `프로젝트에 다음 엔트리들이 누락되어 추가를 진행했어요:\n${entriesOnlyInBaseText.join("")}\n`
+    }
+}
+if (entriesOnlyInProjectText.length > 0) {
+    koReport += `프로젝트에만 존재하는 다음 엔트리들이 있어요:\n${entriesOnlyInProjectText.join("")}\n`
+}
+if (koReport === "") {
+    koReport += "프로젝트와 입력 oto 파일이 동일해요."
+}
+
 report({
     en: enReport,
     zh: zhReport,
-    ja: jaReport
+    ja: jaReport,
+    ko: koReport
 })

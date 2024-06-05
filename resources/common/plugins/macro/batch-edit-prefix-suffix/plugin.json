@@ -1,18 +1,20 @@
 {
     "name": "batch-edit-prefix-suffix",
-    "version": 4,
+    "version": 5,
     "type": "macro",
     "displayedName": {
         "en": "Batch edit entry prefix/suffix",
         "zh": "批量编辑条目前缀/后缀",
-        "ja": "エントリの接頭辞/接尾辞を一括編集"
+        "ja": "エントリの接頭辞/接尾辞を一括編集",
+        "ko": "엔트리 접두사/접미사 일괄 편집"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Add or remove prefix/suffix to entry names in batch.",
         "zh": "批量对条目名添加或删除前缀/后缀。",
-        "ja": "エントリ名の接頭辞/接尾辞を一括で追加または削除します。"
+        "ja": "エントリ名の接頭辞/接尾辞を一括で追加または削除します。",
+        "ko": "엔트리 이름에 접두사/접미사를 일괄적으로 붙이거나 제거해 줘요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-prefix-suffix",
     "supportedLabelFileExtension": "*",
@@ -24,12 +26,14 @@
                 "label": {
                     "en": "Entry filters",
                     "zh": "条目筛选器",
-                    "ja": "エントリフィルター"
+                    "ja": "エントリフィルター",
+                    "ko": "엔트리 필터"
                 },
                 "description": {
                     "en": "Add filters to select the entries to edit. Leave blank to edit all entries.",
                     "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。",
-                    "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。"
+                    "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。",
+                    "ko": "편집할 엔트리들의 선택에 사용할 필터를 추가해 주세요. 모든 엔트리를 선택하려면 이 칸을 비워 두세요."
                 },
                 "defaultValue": {
                     "filters": []
@@ -41,7 +45,8 @@
                 "label": {
                     "en": "Position to process",
                     "zh": "操作位置",
-                    "ja": "処理する位置"
+                    "ja": "処理する位置",
+                    "ko": "처리할 위치"
                 },
                 "defaultValue": "suffix",
                 "options": [
@@ -52,12 +57,14 @@
                     {
                         "en": "Prefix",
                         "zh": "前缀",
-                        "ja": "接頭辞"
+                        "ja": "接頭辞",
+                        "ko": "접두사"
                     },
                     {
                         "en": "Suffix",
                         "zh": "后缀",
-                        "ja": "接尾辞"
+                        "ja": "接尾辞",
+                        "ko": "접미사"
                     }
                 ]
             },
@@ -67,7 +74,8 @@
                 "label": {
                     "en": "Process",
                     "zh": "操作",
-                    "ja": "処理"
+                    "ja": "処理",
+                    "ko": "처리"
                 },
                 "defaultValue": "add",
                 "options": [
@@ -78,12 +86,14 @@
                     {
                         "en": "Add",
                         "zh": "添加",
-                        "ja": "追加"
+                        "ja": "追加",
+                        "ko": "추가"
                     },
                     {
                         "en": "Remove",
                         "zh": "删除",
-                        "ja": "削除"
+                        "ja": "削除",
+                        "ko": "제거"
                     }
                 ]
             },
@@ -93,7 +103,8 @@
                 "label": {
                     "en": "Text to add/remove",
                     "zh": "要添加/删除的文本",
-                    "ja": "追加/削除するテキスト"
+                    "ja": "追加/削除するテキスト",
+                    "ko": "추가/제거할 텍스트"
                 },
                 "defaultValue": "",
                 "optional": false

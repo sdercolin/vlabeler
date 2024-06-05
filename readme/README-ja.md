@@ -2,7 +2,7 @@
 
 [![Discord](https://img.shields.io/discord/984044285584359444?style=for-the-badge&label=discord&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/yrTqG2SrRd)
 
-言語を選択: [English](../README.md) | [简体中文](README-zhCN.md) | [日本語](README-ja.md)
+言語を選択: [English](../README.md) | [简体中文](README-zhCN.md) | [日本語](README-ja.md) | [한국어](README-ko.md)
 
 **（このページは Google 翻訳により作成されたものをベースとしています。）**
 
