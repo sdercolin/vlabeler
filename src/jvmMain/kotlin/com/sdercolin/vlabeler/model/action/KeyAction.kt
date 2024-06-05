@@ -271,6 +271,7 @@ enum class KeyAction(
     PrerenderAll(listOf(Strings.MenuTools, Strings.MenuToolsPrerender), null, true),
     SyncSample(listOf(Strings.MenuTools, Strings.MenuToolsSyncSample), null, true),
     RecycleMemory(listOf(Strings.MenuTools, Strings.MenuToolsRecycleMemory), null, true),
+    FileNameNormalizer(listOf(Strings.MenuTools, Strings.MenuToolsFileNameNormalizer), null, true),
     ManageTemplatePlugins(
         listOf(Strings.MenuSettings, Strings.MenuSettingsTemplatePlugins),
         KeySet(Key.Apostrophe, setOf(Key.Ctrl)),

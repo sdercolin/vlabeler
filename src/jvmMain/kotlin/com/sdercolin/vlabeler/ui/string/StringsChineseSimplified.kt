@@ -73,6 +73,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuToolsPrerender -> "预渲染所有图表..."
     MenuToolsSyncSample -> "转换所有相对于采样文件尾的数值..."
     MenuToolsRecycleMemory -> "回收内存"
+    MenuToolsFileNameNormalizer -> "文件名规范化..."
     MenuSettings -> "设置"
     MenuSettingsPreferences -> "偏好设置..."
     MenuSettingsLabelers -> "标注器..."
@@ -642,5 +643,16 @@ fun Strings.zhHans(): String? = when (this) {
     EntryFilterSetterDialogHeaderTag -> "标签包含"
     EntryFilterSetterDialogHeaderStar -> "星标"
     EntryFilterSetterDialogHeaderDone -> "完成"
+    FileNameNormalizerDialogTitle -> "vLabeler - 文件名规范化"
+    FileNameNormalizerTitle -> "文件名规范化"
+    FileNameNormalizerDescription ->
+        "该工具用于将文件名从 NFD（通常用于 macOS）编码转换为 NFC（通常用于 Windows）。" +
+            "选择一个文件夹以递归地转换其下所有文件的文件名，或选择一个文件以转换其内容。\n" +
+            "如果您已经创建了一个基于采样文件的项目，请确保您同时转换采样文件的文件名和项目文件的内容。"
+    FileNameNormalizerHandleFolderButton -> "处理文件夹"
+    FileNameNormalizerHandleFileContentButton -> "处理文件"
+    FileNameNormalizerHandleFolderSuccess -> "扫描的 %d 个文件中有 %d 个文件名被成功转换。"
+    FileNameNormalizerHandleFileSuccess -> "成功转换了文件内容。"
+    FileNameNormalizerHandleFileNoChange -> "文件内容中没有发现需要转换的内容。"
     else -> null
 }

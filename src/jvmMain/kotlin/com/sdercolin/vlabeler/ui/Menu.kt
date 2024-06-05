@@ -477,6 +477,11 @@ fun FrameWindowScope.Menu(
                         onClick = { System.gc() },
                         shortcut = KeyAction.RecycleMemory.getKeyShortCut(),
                     )
+                    Item(
+                        string(Strings.MenuToolsFileNameNormalizer),
+                        onClick = { appState.openFileNameNormalizerDialog() },
+                        shortcut = KeyAction.FileNameNormalizer.getKeyShortCut(),
+                    )
                 }
             }
             Menu(string(Strings.MenuSettings), mnemonic = 'S') {

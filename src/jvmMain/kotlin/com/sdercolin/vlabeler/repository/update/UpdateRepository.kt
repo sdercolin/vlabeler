@@ -93,6 +93,7 @@ class UpdateRepository {
                         onProgress(1f)
                         return@execute
                     } else {
+                        Log.debug("Deleting outdated update file: ${file.absolutePath}")
                         file.delete()
                     }
                 }
