@@ -25,16 +25,19 @@ if (params["showReport"]) {
         let enReport = "Illegal entries:\n" + reportBody
         let zhReport = "非法条目:\n" + reportBody
         let jaReport = "不正なエントリ:\n" + reportBody
+        let koReport = "올바르지 않은 엔트리:\n" + reportBody
         report({
             en: enReport,
             zh: zhReport,
-            ja: jaReport
+            ja: jaReport,
+            ko: koReport
         })
     } else {
         report({
             en: "No illegal entries found.",
             zh: "未发现非法条目。",
-            ja: "不正なエントリは見つかりませんでした。"
+            ja: "不正なエントリは見つかりませんでした。",
+            ko: "올바르지 않은 엔트리가 없어요."
         })
     }
 }

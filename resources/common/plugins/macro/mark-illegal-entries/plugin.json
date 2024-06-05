@@ -1,18 +1,20 @@
 {
     "name": "mark-illegal-entries",
-    "version": 4,
+    "version": 5,
     "type": "macro",
     "displayedName": {
         "en": "Mark illegal entries",
         "zh": "标出非法条目",
-        "ja": "不正なエントリをマークする"
+        "ja": "不正なエントリをマークする",
+        "ko": "올바르지 않은 엔트리 표시"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Given a list of legal labels, mark the entries that have names not in the list.",
         "zh": "给定一个合法标记列表，标出不在列表中的条目。",
-        "ja": "合法なラベルのリストが与えられたとき、リストにない名前のエントリをマークします。"
+        "ja": "合法なラベルのリストが与えられたとき、リストにない名前のエントリをマークします。",
+        "ko": "올바른 라벨명 목록이 주어졌을 때, 목록에 없는 이름을 가진 엔트리를 표시해 줘요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/mark-illegal-entries",
     "supportedLabelFileExtension": "*",
@@ -24,12 +26,14 @@
                 "label": {
                     "en": "Legal label list",
                     "zh": "合法的标记列表",
-                    "ja": "合法なラベルのリスト"
+                    "ja": "合法なラベルのリスト",
+                    "ko": "올바른 라벨 목록"
                 },
                 "description": {
                     "en": "A list of legal labels of your dataset, separated by the `Separator` given below",
                     "zh": "你的数据集中合法的标记列表，用下面给定的`分隔符`分隔",
-                    "ja": "データセットの合法なラベルのリスト。下の`セパレータ`で区切られています"
+                    "ja": "データセットの合法なラベルのリスト。下の`セパレータ`で区切られています",
+                    "ko": "데이터셋의 올바른 라벨 목록이에요. 각 라벨은 하단의 `구분자`로 분리되요."
                 },
                 "defaultValue": "",
                 "multiLine": true
@@ -40,12 +44,14 @@
                 "label": {
                     "en": "Separator",
                     "zh": "分隔符",
-                    "ja": "セパレータ"
+                    "ja": "セパレータ",
+                    "ko": "구분자"
                 },
                 "description": {
                     "en": "The separator used to separate the labels in the `Legal label list`. `\\n` and '\\t' are supported.",
                     "zh": "用来分隔`合法的标记列表`中标记的分隔符。支持`\\n`和`\\t`。",
-                    "ja": "`合法なラベルのリスト`のラベルを区切るのに使われるセパレータ。`\\n`と`\\t`は使えます。"
+                    "ja": "`合法なラベルのリスト`のラベルを区切るのに使われるセパレータ。`\\n`と`\\t`は使えます。",
+                    "ko": "`올바른 라벨 목록`의 라벨 분리에 사용되는 구분자입니다. `\\n`과 `\\t`를 지원하고 있어요."
                 },
                 "defaultValue": ","
             },
@@ -55,7 +61,8 @@
                 "label": {
                     "en": "Mark illegal entries in their tags",
                     "zh": "在非法条目的标签中标出",
-                    "ja": "不正なエントリのタグにマークをつける"
+                    "ja": "不正なエントリのタグにマークをつける",
+                    "ko": "올바르지 않은 엔트리를 태그에 표시"
                 },
                 "defaultValue": true
             },
@@ -65,12 +72,14 @@
                 "label": {
                     "en": "Illegal mark",
                     "zh": "非法标记符号",
-                    "ja": "不正マーク"
+                    "ja": "不正マーク",
+                    "ko": "올바르지 않음 표시"
                 },
                 "description": {
                     "en": "The text to be appended to the tags of illegal entries",
                     "zh": "附加在非法条目的标签后的文本",
-                    "ja": "不正なエントリのタグに追加するテキスト"
+                    "ja": "不正なエントリのタグに追加するテキスト",
+                    "ko": "올바르지 않은 엔트리들의 태그 뒤에 붙일 텍스트에요."
                 },
                 "enableIf": "markInTag",
                 "defaultValue": "*"
@@ -81,7 +90,8 @@
                 "label": {
                     "en": "Show report of the result",
                     "zh": "显示结果报告",
-                    "ja": "結果のレポートを表示する"
+                    "ja": "結果のレポートを表示する",
+                    "ko": "결과 보고서 표시하기"
                 },
                 "defaultValue": true
             }

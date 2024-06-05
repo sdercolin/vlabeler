@@ -1,18 +1,20 @@
 {
     "name": "compare-oto-entries",
-    "version": 7,
+    "version": 8,
     "type": "macro",
     "displayedName": {
         "en": "Compare oto entries",
         "zh": "比较 oto 条目",
-        "ja": "oto エントリを比較する"
+        "ja": "oto エントリを比較する",
+        "ko": "oto 엔트리 대조"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Compare current project entries with another oto.ini file. Can also insert missing entries in the current project.",
         "zh": "比较当前项目和另一个 oto.ini 文件中的条目。也可以在当前项目中插入缺失的条目。",
-        "ja": "現在のプロジェクトのエントリを別の oto.ini ファイルと比較します。また、現在のプロジェクトに欠落しているエントリを挿入することもできます。"
+        "ja": "現在のプロジェクトのエントリを別の oto.ini ファイルと比較します。また、現在のプロジェクトに欠落しているエントリを挿入することもできます。",
+        "ko": "현재 프로젝트의 엔트리들을 다른 oto.ini의 엔트리들과 대조해요. 현재 프로젝트에서 누락된 엔트리를 삽입할 수도 있답니다."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/compare-oto-entries",
     "supportedLabelFileExtension": "ini",
@@ -24,7 +26,8 @@
                 "label": {
                     "en": "File (oto.ini) for comparison",
                     "zh": "用于比较的 oto 文件",
-                    "ja": "比較する oto ファイル"
+                    "ja": "比較する oto ファイル",
+                    "ko": "대조에 사용할 파일 (oto.ini)"
                 },
                 "defaultValue": {},
                 "acceptExtensions": [
@@ -37,12 +40,14 @@
                 "label": {
                     "en": "Input suffix",
                     "zh": "输入后缀",
-                    "ja": "入力接尾辞"
+                    "ja": "入力接尾辞",
+                    "ko": "입력 접미사"
                 },
                 "description": {
                     "en": "Suffix of alias in the input oto file. Aliases are compared with the suffix removed.",
                     "zh": "输入 oto 文件中别名的后缀。别名将在去除后缀后进行比较。",
-                    "ja": "比較用の oto ファイルのエイリアスの接尾辞。エイリアスは接尾辞を削除してから比較されます。"
+                    "ja": "比較用の oto ファイルのエイリアスの接尾辞。エイリアスは接尾辞を削除してから比較されます。",
+                    "ko": "입력된 oto 파일에 속한 에일리어스들의 접미사입니다. 해당 접미사를 제거한 채로 대조를 진행합니다."
                 },
                 "defaultValue": "",
                 "optional": true
@@ -53,12 +58,14 @@
                 "label": {
                     "en": "Current suffix",
                     "zh": "当前后缀",
-                    "ja": "現在の接尾辞"
+                    "ja": "現在の接尾辞",
+                    "ko": "현재 접미사"
                 },
                 "description": {
                     "en": "Suffix of entry names in the current project. Aliases are compared with the suffix removed.",
                     "zh": "当前项目中条目名的后缀。别名将在去除后缀后进行比较。",
-                    "ja": "現在のプロジェクトのエントリ名の接尾辞。エイリアスは接尾辞を削除してから比較されます。"
+                    "ja": "現在のプロジェクトのエントリ名の接尾辞。エイリアスは接尾辞を削除してから比較されます。",
+                    "ko": "현재 프로젝트에 속한 엔트리 이름들의 접미사입니다. 해당 접미사를 제거한 채로 대조를 진행합니다."
                 },
                 "defaultValue": "",
                 "optional": true
@@ -69,12 +76,14 @@
                 "label": {
                     "en": "Append missing entries",
                     "zh": "追加缺失的条目",
-                    "ja": "欠落しているエントリを追加する"
+                    "ja": "欠落しているエントリを追加する",
+                    "ko": "누락된 엔트리 추가하기"
                 },
                 "description": {
                     "en": "If the input oto file contains entries that are not included in the current project, append them to project.",
                     "zh": "如果输入 oto 文件包含当前项目中未包含的条目，则将它们追加到项目中。",
-                    "ja": "現在のプロジェクトに含まれていないエントリが比較用の oto ファイルにある場合は、それらをプロジェクトに追加します。"
+                    "ja": "現在のプロジェクトに含まれていないエントリが比較用の oto ファイルにある場合は、それらをプロジェクトに追加します。",
+                    "ko": "입력된 oto 파일의 엔트리들 중 현재 프로젝트에 없는 엔트리가 있으면, 해당 엔트리들을 프로젝트에 추가합니다."
                 },
                 "defaultValue": false
             }

@@ -2,7 +2,7 @@
 
 [![Discord](https://img.shields.io/discord/984044285584359444?style=for-the-badge&label=discord&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/yrTqG2SrRd)
 
-Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | [日本語](readme/README-ja.md)
+Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | [日本語](readme/README-ja.md) | [한국어](readme/README-ko.md)
 
 `vLabeler` is an open-source voice labeling application with the following objectives:
 

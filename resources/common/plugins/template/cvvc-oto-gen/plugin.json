@@ -1,18 +1,20 @@
 {
     "name": "cvvc-oto-gen",
-    "version": 9,
+    "version": 10,
     "type": "template",
     "displayedName": {
         "en": "CVVC oto generator",
         "zh": "CVVC oto 生成器",
-        "ja": "CVVC oto 生成器"
+        "ja": "CVVC oto 生成器",
+        "ko": "CVVC oto 생성기"
     },
     "author": "sdercolin & KLAD",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Generate template for CVVC oto.",
         "zh": "生成 CVVC oto 模板。",
-        "ja": "CVVC oto テンプレートを生成します。"
+        "ja": "CVVC oto テンプレートを生成します。",
+        "ko": "CVVC oto 템플릿을 생성해 줘요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/cvvc-oto-gen",
     "supportedLabelFileExtension": "ini",
@@ -31,12 +33,14 @@
                 "label": {
                     "en": "Offset (ms)",
                     "zh": "前置偏移（毫秒）",
-                    "ja": "オフセット（ミリ秒）"
+                    "ja": "オフセット（ミリ秒）",
+                    "ko": "오프셋 (밀리초)"
                 },
                 "description": {
                     "en": "Absolute time of the first preutterance",
                     "zh": "第一个先行发声的绝对时间",
-                    "ja": "最初の先行発声の絶対時間"
+                    "ja": "最初の先行発声の絶対時間",
+                    "ko": "첫 번째 선행자음부의 절대 시간"
                 },
                 "defaultValue": 500,
                 "min": 0
@@ -47,12 +51,14 @@
                 "label": {
                     "en": "Max repeated",
                     "zh": "最大重复个数",
-                    "ja": "最大リピート数"
+                    "ja": "最大リピート数",
+                    "ko": "최대 반복 횟수"
                 },
                 "description": {
                     "en": "Maximum number of the created entries with the same phonemes",
                     "zh": "保留使用相同音素的条目的最大数量",
-                    "ja": "同じ音素を使用したエントリの最大作成数"
+                    "ja": "同じ音素を使用したエントリの最大作成数",
+                    "ko": "동일한 음소로 생성된 엔트리의 최대 개수"
                 },
                 "defaultValue": 2,
                 "min": 1
@@ -63,12 +69,14 @@
                 "label": {
                     "en": "Repeat suffix template",
                     "zh": "重复后缀模板",
-                    "ja": "リピート接尾辞テンプレート"
+                    "ja": "リピート接尾辞テンプレート",
+                    "ko": "반복 접미사 템플릿"
                 },
                 "description": {
                     "en": "The suffix template added to the repeated entries. \"{number}\" will be replaced by the number of the repeated alias.",
                     "zh": "添加到重复条目的后缀模板。\"{number}\" 将被该重复的条目的编号替换。",
-                    "ja": "リピートしたエントリに追加される接尾辞テンプレート。「{number}」は、エイリアスの番号に置き換えられます。"
+                    "ja": "リピートしたエントリに追加される接尾辞テンプレート。「{number}」は、エイリアスの番号に置き換えられます。",
+                    "ko": "반복된 엔트리에 추가되는 접미사 템플릿이에요. \"{number}\"에는 에일리어스의 반복 횟수가 들어갑니다."
                 },
                 "defaultValue": "{number}",
                 "multiLine": false,
@@ -80,12 +88,14 @@
                 "label": {
                     "en": "Prefix",
                     "zh": "前缀",
-                    "ja": "接頭辞"
+                    "ja": "接頭辞",
+                    "ko": "접두사"
                 },
                 "description": {
                     "en": "Prefix of normal sample's file name. Leave empty if you don't use a prefix.",
                     "zh": "常规采样的文件名前缀。如果没有前缀，请留空。",
-                    "ja": "通常のサンプルファイル名の接頭辞。接頭辞を使用していない場合は空にしくてださい。"
+                    "ja": "通常のサンプルファイル名の接頭辞。接頭辞を使用していない場合は空にしくてださい。",
+                    "ko": "일반적인 샘플의 파일 이름에 붙는 접두사에요. 접두사를 사용하지 않으면 이 칸은 비워도 됩니다."
                 },
                 "defaultValue": "_",
                 "multiLine": false,
@@ -97,12 +107,14 @@
                 "label": {
                     "en": "Separator",
                     "zh": "分隔符",
-                    "ja": "区切り文字"
+                    "ja": "区切り文字",
+                    "ko": "구분자"
                 },
                 "description": {
                     "en": "Separator of syllables in the normal file names. e.g. enter \"_\" for file names like \"_あ_あ_い_あ_う_え_あ\", and leave empty for \"_ああいあうえあ\".",
                     "zh": "常规采样的文件名中音节之间的分隔符。例如，输入 \"_\" 以匹配类似 \"_あ_あ_い_あ_う_え_あ\" 的文件名，留空以匹配 \"_ああいあうえあ\"。",
-                    "ja": "通常のサンプルファイル名の音節間の区切り文字。e.g. \"_あ_あ_い_あ_う_え_あ\"のようなファイル名には\"_\"を入力し、\"_ああいあうえあ\"のようであれば空にしてください。"
+                    "ja": "通常のサンプルファイル名の音節間の区切り文字。e.g. \"_あ_あ_い_あ_う_え_あ\"のようなファイル名には\"_\"を入力し、\"_ああいあうえあ\"のようであれば空にしてください。",
+                    "ko": "일반적인 파일 이름에 쓰이는 음절 사이의 구분자에요. (예시: 파일 이름이 \"_あ_あ_い_あ_う_え_あ\"와 같을 경우 \"_\"를 입력하고, \"_ああいあうえあ\"와 같을 경우 이 칸을 비워 주세요."
                 },
                 "defaultValue": "",
                 "multiLine": false,
@@ -114,12 +126,14 @@
                 "label": {
                     "en": "Available suffixes",
                     "zh": "可用的后缀列表",
-                    "ja": "使用可能な接尾辞"
+                    "ja": "使用可能な接尾辞",
+                    "ko": "사용 가능한 접미사"
                 },
                 "description": {
                     "en": "Suffixes that should be used to create the last entry in a file. Use \",\" to separate multiple items.",
                     "zh": "需要被用来创建一条采样中最后一个条目的后缀。使用 \",\" 分隔多个后缀。",
-                    "ja": "ファイルの最後のエントリを作成するために使用する接尾辞。複数の項目を区切るには「,」を使用してください。"
+                    "ja": "ファイルの最後のエントリを作成するために使用する接尾辞。複数の項目を区切るには「,」を使用してください。",
+                    "ko": "파일에서 끝음 엔트리를 생성할 때 사용할 접미사에요. 여러 개의 항목을 구분하려면 \",\"를 사용해 주세요."
                 },
                 "defaultValue": "R,L,B,息,吸",
                 "multiLine": false,
@@ -131,12 +145,14 @@
                 "label": {
                     "en": "Append suffix",
                     "zh": "添加后缀",
-                    "ja": "接尾辞を追加"
+                    "ja": "接尾辞を追加",
+                    "ko": "접미사 추가"
                 },
                 "description": {
                     "en": "Append a suffix to all normal file names. e.g. If given \"R\", a \"a R\" will be created from `_ああいあうえあ.wav`.",
                     "zh": "添加一个后缀到所有常规采样。例如，如果给定 \"R\"，则将在 `_ああいあうえあ.wav` 的最后创建一个 \"a R\" 条目。",
-                    "ja": "すべての通常のサンプルファイル名に接尾辞を追加します。e.g. \"R\"が与えられた場合、`_ああいあうえあ.wav`から「a R」が作成されます。"
+                    "ja": "すべての通常のサンプルファイル名に接尾辞を追加します。e.g. \"R\"が与えられた場合、`_ああいあうえあ.wav`から「a R」が作成されます。",
+                    "ko": "모든 일반적인 샘플 파일의 끝에서 접미사가 붙은 끝음을 만들어요. (예시: \"R\"을 입력하면 \"_ああいあうえあ.wav\"에서 \"a R\"이 생성되요.)"
                 },
                 "defaultValue": "",
                 "multiLine": false,
@@ -148,12 +164,14 @@
                 "label": {
                     "en": "Initial vowel stabilization (ms)",
                     "ja": "母音固定範囲（ミリ秒）",
-                    "zh": "元音固定范围（毫秒）"
+                    "zh": "元音固定范围（毫秒）",
+                    "ko": "초기 모음 안정화 (밀리초)"
                 },
                 "description": {
                     "en": "Distance from start of vowel to end of fixed region. May get shortened by very fast tempo.",
                     "zh": "从元音开始到固定区域结束的距离。如果速度过快，可能会缩短此参数。",
-                    "ja": "母音のはじめと固定範囲の終わりの間の距離。速すぎるテンポには、設定より小さい値が適用される場合があります。"
+                    "ja": "母音のはじめと固定範囲の終わりの間の距離。速すぎるテンポには、設定より小さい値が適用される場合があります。",
+                    "ko": "모음 시작 위치부터 고정자음부 끝까지의 길이에요. (녹음 템포가 매우 빠를 경우 이 값이 줄어들 수 있어요.)"
                 },
                 "defaultValue": 100,
                 "min": 0
@@ -164,12 +182,14 @@
                 "label": {
                     "en": "Consonant length (ms)",
                     "zh": "辅音长度（毫秒）",
-                    "ja": "子音の長さ（ミリ秒）"
+                    "ja": "子音の長さ（ミリ秒）",
+                    "ko": "자음 길이 (밀리초)"
                 },
                 "description": {
                     "en": "Distance between the preutterances of a VC and its next CV. May get shortened by very fast tempo.",
                     "zh": "VC 的先行发声和其下一个 CV 的先行发声之间的距离。如果速度过快，可能会缩短此参数。",
-                    "ja": "VC の先行発声とその次の CV の先行発声の間の距離。速すぎるテンポには、設定より小さい値が適用される場合があります。"
+                    "ja": "VC の先行発声とその次の CV の先行発声の間の距離。速すぎるテンポには、設定より小さい値が適用される場合があります。",
+                    "ko": "VC의 선행자음부와 다음 CV의 선행자음부 사이의 길이에요. (녹음 템포가 매우 빠를 경우 이 값이 줄어들 수 있어요.)"
                 },
                 "defaultValue": 100,
                 "min": 0
@@ -180,12 +200,14 @@
                 "label": {
                     "en": "VC Overlap (ms)",
                     "zh": "VC 的重叠（毫秒）",
-                    "ja": "VC の オーバーラップ（ミリ秒）"
+                    "ja": "VC の オーバーラップ（ミリ秒）",
+                    "ko": "VC의 오버랩 (밀리초)"
                 },
                 "description": {
                     "en": "Overlap used for VC, VV, VCV, and Tail. May get shortened by very fast tempo.",
                     "zh": "VC、VV、VCV 和 Tail 的重叠。如果速度过快，可能会缩短此参数。",
-                    "jp": "VC、VV、VCV と Tail のオーバーラップ。速すぎるテンポには、設定より小さい値が適用される場合があります。"
+                    "jp": "VC、VV、VCV と Tail のオーバーラップ。速すぎるテンポには、設定より小さい値が適用される場合があります。",
+                    "ko": "VC, VV, VCV, Tail에 사용되는 오버랩이에요. (녹음 템포가 매우 빠를 경우 이 값이 줄어들 수 있어요.)"
                 },
                 "defaultValue": 80,
                 "min": 0
@@ -196,12 +218,14 @@
                 "label": {
                     "en": "Head-style CV entries",
                     "zh": "创建起始 CV 条目",
-                    "ja": "先頭 CV エントリを作成"
+                    "ja": "先頭 CV エントリを作成",
+                    "ko": "첫소리 CV의 엔트리 설정"
                 },
                 "description": {
                     "en": "Whether to create entries like \"- か\" from the file head. Head style V entries such as \"- あ\" are created even if this is turned off.",
                     "zh": "是否从文件头创建类似 \"- か\" 的条目。即使关闭此选项，也会创建起始 V 条目，例如 \"- あ\"。",
-                    "ja": "ファイルの先頭から \"- か\" のようなエントリを作成します。このオプションがオフの場合でも、先頭 V エントリ（例：\"- あ\"）は作成されます。"
+                    "ja": "ファイルの先頭から \"- か\" のようなエントリを作成します。このオプションがオフの場合でも、先頭 V エントリ（例：\"- あ\"）は作成されます。",
+                    "ko": "파일의 맨 앞에서 첫소리 CV 엔트리(예시: \"- か\")를 생성할지 결정해요. 이 옵션을 끄더라도 첫소리 V 엔트리(예시: \"- あ\")는 계속 생성되요."
                 },
                 "defaultValue": true
             },
@@ -211,12 +235,14 @@
                 "label": {
                     "en": "VCV entries",
                     "zh": "创建 VCV 条目",
-                    "ja": "VCV エントリを作成"
+                    "ja": "VCV エントリを作成",
+                    "ko": "VCV 엔트리 설정"
                 },
                 "description": {
                     "en": "Whether to duplicate VCV entries from CV. VV entries such as \"a い\" are created even if this is turned off.",
                     "zh": "是否根据 CV 条目创建对应的 VCV 条目。即使关闭此选项，也会创建 VV 条目，例如 \"a い\"。",
-                    "ja": "CV エントリから VCV エントリを作成します。このオプションがオフの場合でも、VV エントリ（例：\"a い\"）は作成されます。"
+                    "ja": "CV エントリから VCV エントリを作成します。このオプションがオフの場合でも、VV エントリ（例：\"a い\"）は作成されます。",
+                    "ko": "CV 엔트리로부터 VCV 엔트리를 복제할지 결정해요. 이 옵션을 끄더라도 VV 엔트리(예시: \"a い\")는 계속 생성되요."
                 },
                 "defaultValue": false
             },
@@ -226,12 +252,14 @@
                 "label": {
                     "en": "Max repeated entry count of Consonant-only entries",
                     "zh": "纯辅音条目的最大重复个数",
-                    "ja": "子音エントリの最大リピート数"
+                    "ja": "子音エントリの最大リピート数",
+                    "ko": "순수 자음 엔트리의 최대 반복 횟수"
                 },
                 "description": {
                     "en": "Maximum number of the created Consonant-only entries with the same phonemes. e.g. \"k\" is duplicated from \"a k\" if set other than 0.",
                     "zh": "保留使用相同音素的纯辅音条目的最大个数。如果设置为非 0 值，则会根据 \"a k\" 创建名为 \"k\" 的副本。",
-                    "ja": "同じ音素を使用した子音エントリの最大作成数。e.g. 1 以上に設定すると、\"a k\" から \"k\" が作成されます。"
+                    "ja": "同じ音素を使用した子音エントリの最大作成数。e.g. 1 以上に設定すると、\"a k\" から \"k\" が作成されます。",
+                    "ko": "동일한 음소로 생성된 순수 자음 엔트리의 최대 개수에요. (예시: 0 이상의 값으로 설정할 경우, \"a k\"에서 \"k\"가 복제되요.)"
                 },
                 "defaultValue": 0,
                 "min": 0
@@ -242,12 +270,14 @@
                 "label": {
                     "en": "Entry order",
                     "zh": "条目顺序",
-                    "ja": "エントリの並べ替え"
+                    "ja": "エントリの並べ替え",
+                    "ko": "엔트리 순서"
                 },
                 "description": {
                     "en": "Choose options to rearrange the entries by putting entries with same type (CV/VC) together.",
                     "zh": "选择选项以将具有相同类型 (CV/VC) 的条目放在一起",
-                    "ja": "オプションによって、同じタイプ（CV/VC）のエントリをまとめます。"
+                    "ja": "オプションによって、同じタイプ（CV/VC）のエントリをまとめます。",
+                    "ko": "같은 타입(CV/VC)의 엔트리를 모아 재정렬할 방식을 설정해요."
                 },
                 "defaultValue": "Default order",
                 "options": [
@@ -261,27 +291,32 @@
                     {
                         "en": "Default order",
                         "zh": "默认顺序",
-                        "ja": "並べ替えをしない"
+                        "ja": "並べ替えをしない",
+                        "ko": "기본 순서"
                     },
                     {
                         "en": "VCs -> CVs; within sample",
                         "zh": "VCs -> CVs; 仅在采样内",
-                        "ja": "VCs -> CVs; サンプル内"
+                        "ja": "VCs -> CVs; サンプル内",
+                        "ko": "VC들 -> CV들; 샘플 내에서"
                     },
                     {
                         "en": "CVs -> VCs; within sample",
                         "zh": "CVs -> VCs; 仅在采样内",
-                        "ja": "CVs -> VCs; サンプル内"
+                        "ja": "CVs -> VCs; サンプル内",
+                        "ko": "CV들 -> VC들; 샘플 내에서"
                     },
                     {
                         "en": "VCs -> CVs; across sample",
                         "zh": "VCs -> CVs; 跨采样",
-                        "ja": "VCs -> CVs; サンプル間"
+                        "ja": "VCs -> CVs; サンプル間",
+                        "ko": "VC들 -> CV들; 샘플 간"
                     },
                     {
                         "en": "CVs -> VCs; across sample",
                         "zh": "CVs -> VCs; 跨采样",
-                        "ja": "CVs -> VCs; サンプル間"
+                        "ja": "CVs -> VCs; サンプル間",
+                        "ko": "CV들 -> VC들; 샘플 간"
                     }
                 ]
             },
@@ -291,12 +326,14 @@
                 "label": {
                     "en": "Append tags",
                     "zh": "添加标签",
-                    "ja": "タグを追加"
+                    "ja": "タグを追加",
+                    "ko": "태그 추가"
                 },
                 "description": {
                     "en": "Whether to append types as tags to the entries",
                     "zh": "是否在条目上添加标签以区分条目的种类",
-                    "ja": "エントリにタイプをタグとして追加します"
+                    "ja": "エントリにタイプをタグとして追加します",
+                    "ko": "엔트리의 타입을 태그로 추가할지 결정해요."
                 },
                 "defaultValue": true
             },
@@ -306,12 +343,14 @@
                 "label": {
                     "en": "Vowel map",
                     "zh": "元音表",
-                    "ja": "母音マップ"
+                    "ja": "母音マップ",
+                    "ko": "모음 맵"
                 },
                 "description": {
                     "en": "Search is applied with suffix matching.",
                     "zh": "搜索时使用后缀匹配。",
-                    "ja": "後方一致で検索します。"
+                    "ja": "後方一致で検索します。",
+                    "ko": "검색은 접미사 일치 방식으로 이루어져요."
                 },
                 "defaultValue": "file::vowel-map-ja.txt",
                 "multiLine": true,
@@ -323,12 +362,14 @@
                 "label": {
                     "en": "Consonant map",
                     "zh": "辅音表",
-                    "ja": "子音マップ"
+                    "ja": "子音マップ",
+                    "ko": "자음 맵"
                 },
                 "description": {
                     "en": "Search is applied with exact matching. A line with no-consonant \"\" is required.",
                     "zh": "搜索时使用精确匹配。必须包含一行以 \"\" 开头的纯元音。",
-                    "ja": "完全一致で検索します。子音が空の行が必要です。"
+                    "ja": "完全一致で検索します。子音が空の行が必要です。",
+                    "ko": "검색은 정확한 일치 방식으로 이루어져요. 자음이 없는 줄은 \"\"가 반드시 필요해요."
                 },
                 "defaultValue": "file::consonant-map-ja.txt",
                 "multiLine": true,

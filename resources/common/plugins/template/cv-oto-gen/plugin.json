@@ -1,18 +1,20 @@
 {
     "name": "cv-oto-gen",
-    "version": 6,
+    "version": 7,
     "type": "template",
     "displayedName": {
         "en": "CV oto generator",
         "zh": "单独音 oto 生成器",
-        "ja": "単独音 oto 生成器"
+        "ja": "単独音 oto 生成器",
+        "ko": "단독음 oto 생성기"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Generate template for CV oto.",
         "zh": "生成单独音 oto 模板。",
-        "ja": "単独音 oto テンプレートを生成します。"
+        "ja": "単独音 oto テンプレートを生成します。",
+        "ko": "단독음 oto 템플릿을 생성해 줘요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/cv-oto-gen",
     "supportedLabelFileExtension": "ini",
@@ -24,7 +26,8 @@
                 "label": {
                     "en": "Offset (ms)",
                     "zh": "左边界（毫秒）",
-                    "ja": "左ブランク（ミリ秒）"
+                    "ja": "左ブランク（ミリ秒）",
+                    "ko": "왼쪽 여백 (밀리초)"
                 },
                 "defaultValue": 100,
                 "min": 0
@@ -35,7 +38,8 @@
                 "label": {
                     "en": "Overlap (ms)",
                     "zh": "重叠（毫秒）",
-                    "ja": "オーバーラップ（ミリ秒）"
+                    "ja": "オーバーラップ（ミリ秒）",
+                    "ko": "오버랩 (밀리초)"
                 },
                 "defaultValue": 30
             },
@@ -45,7 +49,8 @@
                 "label": {
                     "en": "Preutterance (ms)",
                     "zh": "先行发声（毫秒）",
-                    "ja": "先行発声（ミリ秒）"
+                    "ja": "先行発声（ミリ秒）",
+                    "ko": "선행자음부 (밀리초)"
                 },
                 "defaultValue": 60,
                 "min": 0
@@ -56,7 +61,8 @@
                 "label": {
                     "en": "Fixed (ms)",
                     "zh": "固定（毫秒）",
-                    "ja": "固定範囲（ミリ秒）"
+                    "ja": "固定範囲（ミリ秒）",
+                    "ko": "고정자음부 (밀리초)"
                 },
                 "defaultValue": 100,
                 "min": 0
@@ -67,7 +73,8 @@
                 "label": {
                     "en": "Cutoff (ms)",
                     "zh": "右边界（毫秒）",
-                    "ja": "右ブランク（ミリ秒）"
+                    "ja": "右ブランク（ミリ秒）",
+                    "ko": "컷오프 (밀리초)"
                 },
                 "defaultValue": -1000
             }

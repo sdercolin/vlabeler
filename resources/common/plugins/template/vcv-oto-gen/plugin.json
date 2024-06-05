@@ -1,18 +1,20 @@
 {
     "name": "vcv-oto-gen",
-    "version": 8,
+    "version": 9,
     "type": "template",
     "displayedName": {
         "en": "VCV oto generator",
         "zh": "连续音 oto 生成器",
-        "ja": "連続音 oto 生成器"
+        "ja": "連続音 oto 生成器",
+        "ko": "연속음 oto 생성기"
     },
     "author": "sdercolin & KLAD",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Generate template for VCV oto.",
         "zh": "生成连续音 oto 的模板。",
-        "ja": "連続音 oto のテンプレートを生成します。"
+        "ja": "連続音 oto のテンプレートを生成します。",
+        "ko": "연속음 oto 템플릿을 생성해 줘요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/vcv-oto-gen",
     "supportedLabelFileExtension": "ini",
@@ -31,12 +33,14 @@
                 "label": {
                     "en": "Offset (ms)",
                     "zh": "前置偏移（毫秒）",
-                    "ja": "オフセット（ミリ秒）"
+                    "ja": "オフセット（ミリ秒）",
+                    "ko": "오프셋 (밀리초)"
                 },
                 "description": {
                     "en": "Absolute time of the first preutterance",
                     "zh": "第一个先行发声的绝对时间",
-                    "ja": "最初の先行発声の絶対時間"
+                    "ja": "最初の先行発声の絶対時間",
+                    "ko": "첫 번째 선행자음부의 절대 시간"
                 },
                 "defaultValue": 500,
                 "min": 0
@@ -47,12 +51,14 @@
                 "label": {
                     "en": "Max repeated",
                     "zh": "最大重复个数",
-                    "ja": "最大リピート数"
+                    "ja": "最大リピート数",
+                    "ko": "최대 반복 횟수"
                 },
                 "description": {
                     "en": "Maximum number of the created entries with the same phonemes",
                     "zh": "保留使用相同音素的条目的最大数量",
-                    "ja": "同じ音素を使用したエントリの最大作成数"
+                    "ja": "同じ音素を使用したエントリの最大作成数",
+                    "ko": "동일한 음소로 생성된 엔트리의 최대 개수"
                 },
                 "defaultValue": 2,
                 "min": 1
@@ -63,12 +69,14 @@
                 "label": {
                     "en": "Repeat suffix template",
                     "zh": "重复后缀模板",
-                    "ja": "リピート接尾辞テンプレート"
+                    "ja": "リピート接尾辞テンプレート",
+                    "ko": "반복 접미사 템플릿"
                 },
                 "description": {
                     "en": "The suffix template added to the repeated entries. \"{number}\" will be replaced by the number of the repeated alias.",
                     "zh": "添加到重复条目的后缀模板。\"{number}\" 将被该重复的条目的编号替换。",
-                    "ja": "リピートしたエントリに追加される接尾辞テンプレート。「{number}」は、エイリアスの番号に置き換えられます。"
+                    "ja": "リピートしたエントリに追加される接尾辞テンプレート。「{number}」は、エイリアスの番号に置き換えられます。",
+                    "ko": "반복된 엔트리에 추가되는 접미사 템플릿이에요. \"{number}\"에는 에일리어스의 반복 횟수가 들어갑니다."
                 },
                 "defaultValue": "{number}",
                 "multiLine": false,
@@ -80,12 +88,14 @@
                 "label": {
                     "en": "Prefix",
                     "zh": "前缀",
-                    "ja": "接頭辞"
+                    "ja": "接頭辞",
+                    "ko": "접두사"
                 },
                 "description": {
                     "en": "Prefix of normal sample's file name. Leave empty if you don't use a prefix.",
                     "zh": "常规采样的文件名前缀。如果没有前缀，请留空。",
-                    "ja": "通常のサンプルファイル名の接頭辞。接頭辞を使用していない場合は空にしくてださい。"
+                    "ja": "通常のサンプルファイル名の接頭辞。接頭辞を使用していない場合は空にしくてださい。",
+                    "ko": "일반적인 샘플의 파일 이름에 붙는 접두사에요. 접두사를 사용하지 않으면 이 칸은 비워도 됩니다."
                 },
                 "defaultValue": "_",
                 "multiLine": false,
@@ -97,12 +107,14 @@
                 "label": {
                     "en": "Separator",
                     "zh": "分隔符",
-                    "ja": "区切り文字"
+                    "ja": "区切り文字",
+                    "ko": "구분자"
                 },
                 "description": {
                     "en": "Separator of syllables in the normal file names. e.g. enter \"_\" for file names like \"_あ_あ_い_あ_う_え_あ\", and leave empty for \"_ああいあうえあ\".",
                     "zh": "常规采样的文件名中音节之间的分隔符。例如，输入 \"_\" 以匹配类似 \"_あ_あ_い_あ_う_え_あ\" 的文件名，留空以匹配 \"_ああいあうえあ\"。",
-                    "ja": "通常のサンプルファイル名の音節間の区切り文字。e.g. \"_あ_あ_い_あ_う_え_あ\"のようなファイル名には\"_\"を入力し、\"_ああいあうえあ\"のようであれば空にしてください。"
+                    "ja": "通常のサンプルファイル名の音節間の区切り文字。e.g. \"_あ_あ_い_あ_う_え_あ\"のようなファイル名には\"_\"を入力し、\"_ああいあうえあ\"のようであれば空にしてください。",
+                    "ko": "일반적인 파일 이름에 쓰이는 음절 사이의 구분자에요. (예시: 파일 이름이 \"_あ_あ_い_あ_う_え_あ\"와 같을 경우 \"_\"를 입력하고, \"_ああいあうえあ\"와 같을 경우 이 칸을 비워 주세요."
                 },
                 "defaultValue": "",
                 "multiLine": false,
@@ -114,12 +126,14 @@
                 "label": {
                     "en": "Available suffixes",
                     "zh": "可用的后缀列表",
-                    "ja": "使用可能な接尾辞"
+                    "ja": "使用可能な接尾辞",
+                    "ko": "사용 가능한 접미사"
                 },
                 "description": {
                     "en": "Suffixes that should be used to create the last entry in a file. Use \",\" to separate multiple items.",
                     "zh": "需要被用来创建一条采样中最后一个条目的后缀。使用 \",\" 分隔多个后缀。",
-                    "ja": "ファイルの最後のエントリを作成するために使用する接尾辞。複数の項目を区切るには「,」を使用してください。"
+                    "ja": "ファイルの最後のエントリを作成するために使用する接尾辞。複数の項目を区切るには「,」を使用してください。",
+                    "ko": "파일에서 끝음 엔트리를 생성할 때 사용할 접미사에요. 여러 개의 항목을 구분하려면 \",\"를 사용해 주세요."
                 },
                 "defaultValue": "R,L,B,息,吸",
                 "multiLine": false,
@@ -131,12 +145,14 @@
                 "label": {
                     "en": "Append suffix",
                     "zh": "附加后缀",
-                    "ja": "接尾辞を追加"
+                    "ja": "接尾辞を追加",
+                    "ko": "접미사 붙이기"
                 },
                 "description": {
                     "en": "Append a suffix to all normal file names. e.g. If given \"R\", a \"a R\" will be created from `_ああいあうえあ.wav`.",
                     "zh": "附加一个后缀到所有常规采样。例如，如果给定 \"R\"，则将在 `_ああいあうえあ.wav` 的最后创建一个 \"a R\" 条目。",
-                    "ja": "すべての通常のサンプルファイル名に接尾辞を追加します。e.g. \"R\"が与えられた場合、`_ああいあうえあ.wav`から「a R」が作成されます。"
+                    "ja": "すべての通常のサンプルファイル名に接尾辞を追加します。e.g. \"R\"が与えられた場合、`_ああいあうえあ.wav`から「a R」が作成されます。",
+                    "ko": "모든 일반적인 샘플 파일의 끝에서 접미사가 붙은 끝음을 만들어요. (예시: \"R\"을 입력하면 \"_ああいあうえあ.wav\"에서 \"a R\"이 생성되요.)"
                 },
                 "defaultValue": "",
                 "multiLine": false,
@@ -148,12 +164,14 @@
                 "label": {
                     "en": "Max repeated entry count of CV",
                     "zh": "CV 的最大重复个数",
-                    "ja": "CV の最大リピート数"
+                    "ja": "CV の最大リピート数",
+                    "ko": "CV의 최대 반복 횟수"
                 },
                 "description": {
                     "en": "Maximum number of the created CV entries with the same phonemes. e.g. \"あ\" is duplicated from \"- あ\" if set other than 0.",
                     "zh": "保留使用相同音素的 CV 条目的最大个数。如果设置为非 0 值，则会根据 \"- あ\" 创建名为 \"あ\" 的副本。",
-                    "ja": "同じ音素を使用した CV エントリの最大作成数。e.g. 1 以上に設定すると、\"- あ\" から \"あ\" が作成されます。"
+                    "ja": "同じ音素を使用した CV エントリの最大作成数。e.g. 1 以上に設定すると、\"- あ\" から \"あ\" が作成されます。",
+                    "ko": "동일한 음소로 생성된 CV 엔트리의 최대 개수에요. (예시: 0 이상의 값으로 설정할 경우, \"- あ\" 에서 \"あ\" 가 생성되요.)"
                 },
                 "defaultValue": 0,
                 "min": 0
@@ -164,7 +182,8 @@
                 "label": {
                     "en": "Vowel map",
                     "zh": "元音表",
-                    "ja": "母音マップ"
+                    "ja": "母音マップ",
+                    "ko": "모음 맵"
                 },
                 "defaultValue": "file::vowel-map-ja.txt",
                 "multiLine": true,

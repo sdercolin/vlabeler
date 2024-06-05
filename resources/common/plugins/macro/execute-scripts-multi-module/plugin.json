@@ -1,18 +1,20 @@
 {
     "name": "execute-scripts-multi-module",
-    "version": 2,
+    "version": 3,
     "type": "macro",
     "displayedName": {
         "en": "Execute Scripts (Multi-subproject)",
         "zh": "执行脚本（多子项目）",
-        "ja": "スクリプトを実行（マルチサブプロジェクト）"
+        "ja": "スクリプトを実行（マルチサブプロジェクト）",
+        "ko": "스크립트 실행 (다중 하위 프로젝트)"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Execute scripts from input to edit modules (subprojects).",
         "zh": "执行输入的脚本来编辑 module（子项目）。",
-        "ja": "入力されたスクリプトを実行して modules（サブプロジェクト）を編集します。"
+        "ja": "入力されたスクリプトを実行して modules（サブプロジェクト）を編集します。",
+        "ko": "모듈(하위 프로젝트) 편집용 스크립트를 입력받아 실행해요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/execute-scripts-multi-module",
     "supportedLabelFileExtension": "*",
@@ -25,12 +27,14 @@
                 "label": {
                     "en": "Scripts",
                     "zh": "脚本",
-                    "ja": "スクリプト"
+                    "ja": "スクリプト",
+                    "ko": "스크립트"
                 },
                 "description": {
                     "en": "Edit the array named `modules` directly in JavaScript to have your project updated. Note that this plugin is more of a plugin for development, which requires you understand vLabeler's `Module`, `Entry` and `LabelerConf` definitions.",
                     "zh": "直接在 JavaScript 中编辑名为 `modules` 的数组以更新您的项目。请注意，此插件主要用于开发用途，需要您了解 vLabeler 的 `Module`、`Entry` 和 `LabelerConf` 定义。",
-                    "ja": "プロジェクトを更新するために、JavaScript で `modules` という名前の配列を直接編集してください。このプラグインは主に開発用のプラグインであり、使用するにあたって、vLabeler の `Module`、`Entry` と `LabelerConf` の定義を理解する必要があることに注意してください。"
+                    "ja": "プロジェクトを更新するために、JavaScript で `modules` という名前の配列を直接編集してください。このプラグインは主に開発用のプラグインであり、使用するにあたって、vLabeler の `Module`、`Entry` と `LabelerConf` の定義を理解する必要があることに注意してください。",
+                    "ko": "JavaScript에서 `modules` 배열을 직접 편집하면 현재 하위 프로젝트를 업데이트할 수 있습니다. 거의 개발 용도의 플러그인이며, vLabeler의 `Module`, `Entry` 및 `LabelerConf`의 정의를 알아야만 사용할 수 있어요."
                 },
                 "defaultValue": "",
                 "multiLine": true,
