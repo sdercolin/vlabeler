@@ -498,11 +498,8 @@ private fun MarkerState.handleCursorMove(
     val y = eventChange.position.y.coerceIn(0f, canvasHeightState.value.coerceAtLeast(0f))
     if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
         val forcedDrag = cursorState.value.forcedDrag
-        val updated = if (cursorState.value.lockedDrag) {
-            getLockedDraggedEntries(cursorState.value.pointIndex, actualX, forcedDrag)
-        } else {
-            getDraggedEntries(cursorState.value.pointIndex, actualX, forcedDrag)
-        }
+        val lockedDrag = cursorState.value.lockedDrag
+        val updated = getDraggedEntries(cursorState.value.pointIndex, actualX, lockedDrag, forcedDrag)
         editEntryIfNeeded(
             updated = updated,
             editEntries = editions,
@@ -603,7 +600,9 @@ private fun MarkerState.handleCursorPress(
         val cursorStateValue = cursorState.value
         if (cursorStateValue.mouse == MarkerCursorState.Mouse.Hovering) {
             val invertLockedDrag = action == MouseClickAction.MoveParameterInvertingPrimary
-            val lockedDrag = when (appConf.editor.lockedDrag) {
+            val forceLockedDrag = action == MouseClickAction.MoveParameterLockedForward ||
+                action == MouseClickAction.MoveParameterLockedBackward
+            val useLockedDrag = forceLockedDrag || when (appConf.editor.lockedDrag) {
                 AppConf.Editor.LockedDrag.UseLabeler -> {
                     val lockedDragByBaseField =
                         labelerConf.lockedDrag.useDragBase &&
@@ -615,6 +614,13 @@ private fun MarkerState.handleCursorPress(
                 AppConf.Editor.LockedDrag.UseStart -> cursorStateValue.usingStartPoint
                 else -> false
             } xor invertLockedDrag
+            val lockedDrag = if (useLockedDrag) {
+                when (action) {
+                    MouseClickAction.MoveParameterLockedForward -> MarkerCursorState.LockedDrag.Forward
+                    MouseClickAction.MoveParameterLockedBackward -> MarkerCursorState.LockedDrag.Backward
+                    else -> MarkerCursorState.LockedDrag.All
+                }
+            } else null
             val withPreview = action == MouseClickAction.MoveParameterWithPlaybackPreview
             val forcedDrag = action == MouseClickAction.MoveParameterIgnoringConstraints
             cursorState.update { startDragging(lockedDrag, withPreview, forcedDrag) }

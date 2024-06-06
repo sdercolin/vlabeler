@@ -636,6 +636,8 @@ fun Strings.en(): String = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "Drag Parameter Line with Playback Preview"
     ActionMoveParameterIgnoringConstraints -> "Drag Parameter Line Ignoring Constraints"
     ActionMoveParameterInvertingLocked -> "Drag Parameter Line with Fixed-drag Settings Inverted"
+    ActionMoveParameterLockedForward -> "Drag Parameter Line with Fixed-drag for later parameters"
+    ActionMoveParameterLockedBackward -> "Drag Parameter Line with Fixed-drag for former parameters"
     ActionPlayAudioSection -> "Play the Clicked Audio Part"
     ActionPlayAudioUntilEnd -> "Play the Audio from Clicked Position until the End"
     ActionPlayAudioUntilScreenEnd -> "Play the Audio from Clicked Position until the End of the Screen"

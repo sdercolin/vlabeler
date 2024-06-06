@@ -573,6 +573,8 @@ fun Strings.zhHans(): String? = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "拖动参数线并执行预览播放"
     ActionMoveParameterIgnoringConstraints -> "拖动参数线（忽略约束）"
     ActionMoveParameterInvertingLocked -> "拖动参数线（反转锁定拖动）"
+    ActionMoveParameterLockedForward -> "锁定拖动前方的参数线"
+    ActionMoveParameterLockedBackward -> "锁定拖动后方的参数线"
     ActionPlayAudioSection -> "播放点击位置的音频片段"
     ActionPlayAudioUntilEnd -> "播放点击位置到结尾的音频"
     ActionPlayAudioUntilScreenEnd -> "播放点击位置到屏幕右端位置的音频"

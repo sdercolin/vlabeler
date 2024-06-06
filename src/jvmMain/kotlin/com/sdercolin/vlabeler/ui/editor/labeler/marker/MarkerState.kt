@@ -123,6 +123,7 @@ class MarkerState(
     fun getLockedDraggedEntries(
         pointIndex: Int,
         x: Float,
+        lockedDrag: MarkerCursorState.LockedDrag,
         forcedDrag: Boolean,
     ): List<EntryInPixel> {
         if (pointIndex == MarkerCursorState.NONE_POINT_INDEX) return entriesInPixel
@@ -139,8 +140,15 @@ class MarkerState(
             val dxMax = (rightBorder - maxPixel - 1).coerceAtLeast(0f)
             if (dxMax <= dxMin) return entriesInPixel
             val dx = (x - getPointPosition(pointIndex)).coerceIn(dxMin, dxMax)
-            entriesInPixel.map { it.moved(dx).validateImplicit(labelerConf) }
+            when (lockedDrag) {
+                MarkerCursorState.LockedDrag.Forward -> TODO()
+                MarkerCursorState.LockedDrag.Backward -> TODO()
+                MarkerCursorState.LockedDrag.All -> {
+                    entriesInPixel.map { it.moved(dx).validateImplicit(labelerConf) }
+                }
+            }
         } else {
+            // ignore lockedDrag here, because we don't expect forceDrag and lockedDrag to be true at the same time
             val currentX = getPointPosition(pointIndex)
             val dxMin = leftBorder - currentX
             val dxMax = (rightBorder - currentX - 1).coerceAtLeast(0f)
@@ -153,6 +161,7 @@ class MarkerState(
     fun getDraggedEntries(
         pointIndex: Int,
         x: Float,
+        lockedDrag: MarkerCursorState.LockedDrag?,
         forcedDrag: Boolean,
     ): List<EntryInPixel> {
         val entries = entriesInPixel.toMutableList()
@@ -160,7 +169,7 @@ class MarkerState(
         when {
             pointIndex == MarkerCursorState.NONE_POINT_INDEX -> Unit
             pointIndex == MarkerCursorState.START_POINT_INDEX -> {
-                val max = if (!labelerConf.useImplicitStart) {
+                var max = if (!labelerConf.useImplicitStart) {
                     if (forcedDrag) rightBorder - 1 else middlePointsInPixelSorted.firstOrNull() ?: endInPixel
                 } else {
                     val replacedStartIndex = labelerConf.fields.indexOfFirst { it.replaceStart }
@@ -168,6 +177,18 @@ class MarkerState(
                         .filter { it.first == replacedStartIndex }
                         .minOfOrNull { entries.first().points[it.second] }
                         ?: endInPixel
+                }
+                val dxMaxForLockedDrag = when (lockedDrag) {
+                    MarkerCursorState.LockedDrag.Forward,
+                    MarkerCursorState.LockedDrag.All,
+-> entriesInPixel.last().let {
+                        // use the max among all values
+                        maxOf(it.end, it.points.maxOrNull() ?: it.end)
+                    }.let { (rightBorder - it - 1).coerceAtLeast(0f) }
+                    else -> null
+                }
+                if (dxMaxForLockedDrag != null) {
+                    max = max.coerceAtMost(x + dxMaxForLockedDrag)
                 }
                 val start = x.coerceIn(leftBorder, max).runIf(!forcedDrag) {
                     snapDrag.update(current = currentEntries.first().getActualStart(labelerConf), max = max)
@@ -177,7 +198,7 @@ class MarkerState(
                 entries[0] = firstUpdated
             }
             pointIndex == MarkerCursorState.END_POINT_INDEX -> {
-                val min = if (!labelerConf.useImplicitEnd) {
+                var min = if (!labelerConf.useImplicitEnd) {
                     if (forcedDrag) leftBorder else middlePointsInPixelSorted.lastOrNull() ?: startInPixel
                 } else {
                     val replacedEndIndex = labelerConf.fields.indexOfFirst { it.replaceEnd }
@@ -185,6 +206,18 @@ class MarkerState(
                         .filter { it.second == replacedEndIndex }
                         .maxOfOrNull { entries.last().points[it.first] }
                         ?: startInPixel
+                }
+                val dxMinForLockedDrag = when (lockedDrag) {
+                    MarkerCursorState.LockedDrag.Backward,
+                    MarkerCursorState.LockedDrag.All,
+-> entriesInPixel.last().let {
+                        // use the min among all values
+                        minOf(it.start, it.points.minOrNull() ?: it.start)
+                    }.let { (leftBorder - it).coerceAtMost(0f) }
+                    else -> null
+                }
+                if (dxMinForLockedDrag != null) {
+                    min = min.coerceAtLeast(x + dxMinForLockedDrag)
                 }
                 val max = (rightBorder - 1).coerceAtLeast(min)
                 val end = x.coerceIn(min, max).runIf(!forcedDrag) {
@@ -476,11 +509,12 @@ class MarkerState(
                 AppConf.Editor.LockedDrag.UseStart -> pointIndex == MarkerCursorState.START_POINT_INDEX
                 else -> false
             }
-        val entries = if (lockDrag) {
-            getLockedDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
-        } else {
-            getDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
-        }
+        val entries = getDraggedEntries(
+            pointIndex,
+            cursorPosition,
+            lockedDrag = MarkerCursorState.LockedDrag.All,
+            forcedDrag = false,
+        )
         return entries to pointIndex
     }
 
@@ -488,7 +522,7 @@ class MarkerState(
         get() = scissorsState.value == null && panState.value == null && playbackState.value == null
 
     fun switchTool(tool: Tool) {
-        Tool.values().forEach {
+        Tool.entries.forEach {
             if (it == tool) {
                 createToolStateIfNeeded(it)
             } else {

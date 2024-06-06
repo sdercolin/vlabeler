@@ -601,6 +601,8 @@ fun Strings.ja(): String? = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "パラメータラインをドラッグ（プレビュー再生）"
     ActionMoveParameterIgnoringConstraints -> "パラメータラインをドラッグ（制約を無視）"
     ActionMoveParameterInvertingLocked -> "パラメータラインをドラッグ（連動ドラグ設定を反転）"
+    ActionMoveParameterLockedForward -> "前方のパラメータラインを連動ドラッグ"
+    ActionMoveParameterLockedBackward -> "後方のパラメータラインを連動ドラッグ"
     ActionPlayAudioSection -> "クリック位置の部分の音声を再生"
     ActionPlayAudioUntilEnd -> "クリック位置から最後までの音声を再生"
     ActionPlayAudioUntilScreenEnd -> "クリック位置から画面の最後までの音声を再生"

@@ -525,6 +525,8 @@ enum class Strings {
     ActionMoveParameterWithPlaybackPreview,
     ActionMoveParameterIgnoringConstraints,
     ActionMoveParameterInvertingLocked,
+    ActionMoveParameterLockedForward,
+    ActionMoveParameterLockedBackward,
     ActionPlayAudioSection,
     ActionPlayAudioUntilEnd,
     ActionPlayAudioUntilScreenEnd,

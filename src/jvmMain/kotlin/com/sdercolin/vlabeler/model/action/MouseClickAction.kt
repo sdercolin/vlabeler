@@ -41,6 +41,16 @@ enum class MouseClickAction(
         KeySet(Key.MouseLeftClick, setOf(Key.Shift)),
         PointerEventType.Press,
     ),
+    MoveParameterLockedForward(
+        Strings.ActionMoveParameterLockedForward,
+        KeySet(Key.MouseLeftClick, setOf(Key.Ctrl, Key.Shift)),
+        PointerEventType.Press,
+    ),
+    MoveParameterLockedBackward(
+        Strings.ActionMoveParameterLockedBackward,
+        null,
+        PointerEventType.Press,
+    ),
     PlayAudioSection(Strings.ActionPlayAudioSection, KeySet(Key.MouseRightClick), PointerEventType.Release),
     PlayAudioUntilEnd(
         Strings.ActionPlayAudioUntilEnd,
@@ -105,4 +115,6 @@ fun MouseClickAction?.canMoveParameter(): Boolean =
         MouseClickAction.MoveParameterWithPlaybackPreview,
         MouseClickAction.MoveParameterInvertingPrimary,
         MouseClickAction.MoveParameterIgnoringConstraints,
+        MouseClickAction.MoveParameterLockedForward,
+        MouseClickAction.MoveParameterLockedBackward,
     )
