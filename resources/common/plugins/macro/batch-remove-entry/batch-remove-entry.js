@@ -10,6 +10,7 @@ if (selectedEntryIndexes.length === entries.length) {
         en: "Could not remove all entries.",
         zh: "不能删除所有条目。",
         ja: "すべてのエントリを削除できません。",
+        ko: "모든 엔트리를 삭제할 수 없습니다."
     })
 }
 

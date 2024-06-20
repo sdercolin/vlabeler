@@ -11,7 +11,9 @@ class LanguageDetectTest {
 
     @Test
     fun testDetection() {
-        val languageTags = listOf("en", "en-US", "zh", "zh-CN", "zh-Hans", "zh-TW", "ja", "ja-JP-AAA", "XXX")
+        val languageTags = listOf(
+            "en", "en-US", "zh", "zh-CN", "zh-Hans", "zh-TW", "ja", "ja-JP-AAA", "ko", "ko-KR", "XXX",
+        )
         val expected = listOf(
             Language.English,
             Language.English,
@@ -21,6 +23,8 @@ class LanguageDetectTest {
             Language.ChineseSimplified,
             Language.Japanese,
             Language.Japanese,
+            Language.Korean,
+            Language.Korean,
             null,
         )
         val actual = languageTags.map { Language.find(it) }

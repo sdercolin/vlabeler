@@ -1,18 +1,20 @@
 {
     "name": "batch-edit-entry-meta",
-    "version": 7,
+    "version": 8,
     "type": "macro",
     "displayedName": {
         "en": "Batch edit entry notes",
         "zh": "批量编辑条目备注",
-        "ja": "エントリの備考を一括編集"
+        "ja": "エントリの備考を一括編集",
+        "ko": "엔트리 상태 일괄 편집"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Edit the notes (starred, done, tag) of multiple entries at once.",
         "zh": "一次性编辑多个条目的备注（星标状态、完成状态、标签等）。",
-        "ja": "複数のエントリの備考（スターマーク状態、完了状態、タグなど）を一括編集します。"
+        "ja": "複数のエントリの備考（スターマーク状態、完了状態、タグなど）を一括編集します。",
+        "ko": "여러 엔트리의 상태(중요, 완료, 태그)를 한 번에 편집해 줘요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-entry-meta",
     "supportedLabelFileExtension": "*",
@@ -24,12 +26,14 @@
                 "label": {
                     "en": "Entry filters",
                     "zh": "条目筛选器",
-                    "ja": "エントリフィルター"
+                    "ja": "エントリフィルター",
+                    "ko": "엔트리 필터"
                 },
                 "description": {
                     "en": "Add filters to select the entries to edit. Leave blank to edit all entries.",
                     "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。",
-                    "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。"
+                    "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。",
+                    "ko": "편집할 엔트리들의 선택에 사용할 필터를 추가해 주세요. 모든 엔트리를 선택하려면 이 칸을 비워 두세요."
                 },
                 "defaultValue": {
                     "filters": []
@@ -41,7 +45,8 @@
                 "label": {
                     "en": "Set Starred",
                     "zh": "设置星标状态",
-                    "ja": "スターマーク付与の設定"
+                    "ja": "スターマーク付与の設定",
+                    "ko": "\"중요\" 표시 설정"
                 },
                 "defaultValue": "keep",
                 "options": [
@@ -53,17 +58,20 @@
                     {
                         "en": "Do not change",
                         "zh": "不更改",
-                        "ja": "変更しない"
+                        "ja": "変更しない",
+                        "ko": "그대로 유지"
                     },
                     {
                         "en": "Starred",
                         "zh": "添加星标",
-                        "ja": "スターマークをつける"
+                        "ja": "スターマークをつける",
+                        "ko": "\"중요\" 표시함"
                     },
                     {
                         "en": "Unstarred",
                         "zh": "移除星标",
-                        "ja": "スターマークを外す"
+                        "ja": "スターマークを外す",
+                        "ko": "\"중요\" 표시 안함"
                     }
                 ]
             },
@@ -73,7 +81,9 @@
                 "label": {
                     "en": "Set Done",
                     "zh": "设置完成状态",
-                    "ja": "完了状態の設定"
+                    "ja": "完了状態の設定",
+                    "ko": "\"완료\" 표시 설정"
+                    
                 },
                 "defaultValue": "keep",
                 "options": [
@@ -85,17 +95,20 @@
                     {
                         "en": "Do not change",
                         "zh": "不更改",
-                        "ja": "変更しない"
+                        "ja": "変更しない",
+                        "ko": "그대로 유지"
                     },
                     {
                         "en": "Done",
                         "zh": "设为完成",
-                        "ja": "完了にする"
+                        "ja": "完了にする",
+                        "ko": "\"완료\" 표시함"
                     },
                     {
                         "en": "Undone",
                         "zh": "设为未完成",
-                        "ja": "未完了にする"
+                        "ja": "未完了にする",
+                        "ko": "\"완료\" 표시 안함"
                     }
                 ]
             },
@@ -105,7 +118,9 @@
                 "label": {
                     "en": "Set Tag",
                     "zh": "设置标签",
-                    "ja": "タグの設定"
+                    "ja": "タグの設定",
+                    "ko": "태그 설정"
+                    
                 },
                 "defaultValue": false
             },
@@ -115,14 +130,16 @@
                 "label": {
                     "en": "Tag",
                     "zh": "标签",
-                    "ja": "タグ"
+                    "ja": "タグ",
+                    "ko": "태그"
                 },
                 "defaultValue": "",
                 "optional": true,
                 "description": {
                     "en": "Leave blank to remove the tag.",
                     "zh": "留空以删除标签。",
-                    "ja": "空にしておくことで、タグを削除できます。"
+                    "ja": "空にしておくことで、タグを削除できます。",
+                    "ko": "태그를 제거하려면 이 칸을 비워 두세요."
                 },
                 "enableIf": "tag"
             }

@@ -1,18 +1,20 @@
 {
     "name": "batch-edit-entry-name",
-    "version": 3,
+    "version": 4,
     "type": "macro",
     "displayedName": {
         "en": "Batch edit entry name",
         "zh": "批量编辑条目名",
-        "ja": "エントリ名を一括編集"
+        "ja": "エントリ名を一括編集",
+        "ko": "엔트리 이름 일괄 편집"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Use regex to edit the name of multiple entries at once.",
         "zh": "使用正则表达式来一次性编辑多个条目的名称。",
-        "ja": "正規表現を使用して、複数のエントリの名前を一括編集します。"
+        "ja": "正規表現を使用して、複数のエントリの名前を一括編集します。",
+        "ko": "정규표현식을 사용해 여러 엔트리의 이름을 한 번에 바꿔 줘요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-entry-name",
     "supportedLabelFileExtension": "*",
@@ -24,12 +26,14 @@
                 "label": {
                     "en": "Entry filters",
                     "zh": "条目筛选器",
-                    "ja": "エントリフィルター"
+                    "ja": "エントリフィルター",
+                    "ko": "엔트리 필터"
                 },
                 "description": {
                     "en": "Add filters to select the entries to edit. Leave blank to edit all entries.",
                     "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。",
-                    "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。"
+                    "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。",
+                    "ko": "편집할 엔트리들의 선택에 사용할 필터를 추가해 주세요. 모든 엔트리를 선택하려면 이 칸을 비워 두세요."
                 },
                 "defaultValue": {
                     "filters": []
@@ -41,12 +45,14 @@
                 "label": {
                     "en": "From",
                     "zh": "原名称",
-                    "ja": "元の名前"
+                    "ja": "元の名前",
+                    "ko": "원래 이름"
                 },
                 "description": {
                     "en": "Regex is available. e.g. \"(.*)\" can match and catch the whole name.",
                     "zh": "可使用正则表达式。例如，\"(.*)\" 可以匹配并捕获整个名称。",
-                    "ja": "正規表現が使用できます。e.g. \"(.*)\" は名前全体にマッチし、キャッチできます。"
+                    "ja": "正規表現が使用できます。e.g. \"(.*)\" は名前全体にマッチし、キャッチできます。",
+                    "ko": "정규표현식을 사용할 수 있어요. (예: 엔트리 이름의 전체 부분을 매칭하려면 -> \"(.*)\")"
                 },
                 "defaultValue": "(.*)",
                 "optional": false
@@ -57,12 +63,14 @@
                 "label": {
                     "en": "To",
                     "zh": "新名称",
-                    "ja": "新しい名前"
+                    "ja": "新しい名前",
+                    "ko": "바꿀 이름"
                 },
                 "description": {
                     "en": "Regex captured group placeholders ($1, $2, etc.) are available. e.g. if \"From\" is set to \"(.*)\" and this is set to \"$1_new\", \"_new\" is appended to the new names.",
                     "zh": "可使用正则表达式捕获组占位符（$1、$2 等）。例如，如果“原名称”设置为“(.*)”，“新名称”设置为“$1_new”，则副本的名称将为“<原条目名>_new”。",
-                    "ja": "正規表現のキャプチャグループのプレースホルダー（$1、$2 など）が使用できます。e.g. 「元の名前」が \"(.*)\" に設定されており、「新しい名前」が \"$1_new\" に設定されている場合、新しい名前は \"<元のエントリ名>_new\" になります。"
+                    "ja": "正規表現のキャプチャグループのプレースホルダー（$1、$2 など）が使用できます。e.g. 「元の名前」が \"(.*)\" に設定されており、「新しい名前」が \"$1_new\" に設定されている場合、新しい名前は \"<元のエントリ名>_new\" になります。",
+                    "ko": "정규표현식의 캡쳐링 그룹 표시자 ($1, $2 등) 를 사용할 수 있어요. (예: \"원래 이름\" 이 \"(.*)\"으로, \"바꿀 이름\"이 \"$1_copy\"로 설정되어 있으면, 새 엔트리 이름은 \"<원래 이름>_copy\" 가 됩니다."
                 },
                 "defaultValue": "$1",
                 "optional": false

@@ -1,18 +1,20 @@
 {
     "name": "ust2lab-any",
-    "version": 6,
+    "version": 7,
     "type": "template",
     "displayedName": {
         "en": "Lab generator with ust and custom dictionary",
         "zh": "基于 ust 文件及自定义字典的 lab 生成器",
-        "ja": "ust とカスタム辞書による lab 生成器"
+        "ja": "ust とカスタム辞書による lab 生成器",
+        "ko": "ust 및 커스텀 사전을 사용한 lab 생성기"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Parse ust to sinsy lab style entries using a customizable dictionary from input.",
         "zh": "基于输入的自定义词典来解析 ust 文件并生成 sinsy lab 格式的条目。",
-        "ja": "入力したカスタム辞書によって ust ファイルを解析して、sinsy lab のエントリを生成します。"
+        "ja": "入力したカスタム辞書によって ust ファイルを解析して、sinsy lab のエントリを生成します。",
+        "ko": "커스텀 사전을 입력받아 ust 파일을 읽고, sinsy lab 형식 엔트리들을 생성합니다."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/ust2lab-any",
     "supportedLabelFileExtension": "lab",
@@ -24,7 +26,8 @@
                 "label": {
                     "en": "Overlap (ms)",
                     "zh": "重叠（毫秒）",
-                    "ja": "オーバーラップ（ミリ秒）"
+                    "ja": "オーバーラップ（ミリ秒）",
+                    "ko": "오버랩 (밀리초)"
                 },
                 "defaultValue": 50,
                 "min": 10
@@ -35,7 +38,8 @@
                 "label": {
                     "en": "Vowel delay when semivowel exists (ms)",
                     "zh": "存在半元音时的元音延迟（毫秒）",
-                    "ja": "半母音が存在する場合の母音の遅延（ミリ秒）"
+                    "ja": "半母音が存在する場合の母音の遅延（ミリ秒）",
+                    "ko": "반모음이 존재할 때의 모음 지연 (밀리초)"
                 },
                 "defaultValue": 30,
                 "min": 10
@@ -46,12 +50,14 @@
                 "label": {
                     "en": "Input file (.ust)",
                     "zh": "输入文件（.ust）",
-                    "ja": "入力ファイル（.ust）"
+                    "ja": "入力ファイル（.ust）",
+                    "ko": "입력 파일 (.ust)"
                 },
                 "description": {
                     "en": "The input file. Only needed when the labeler creates single subproject.",
                     "zh": "输入文件。仅在标注器将创建单个子项目时需要。",
-                    "ja": "入力ファイル。ラベラーが単一のサブプロジェクトを対応している場合にのみ必要になります。"
+                    "ja": "入力ファイル。ラベラーが単一のサブプロジェクトを対応している場合にのみ必要になります。",
+                    "ko": "입력 파일이에요. 라벨러가 하나의 하위 프로젝트를 생성할 때에만 필요해요."
                 },
                 "defaultValue": "",
                 "optional": true,
@@ -65,12 +71,14 @@
                 "label": {
                     "en": "Input folder name",
                     "zh": "输入文件夹名称",
-                    "ja": "入力フォルダ名"
+                    "ja": "入力フォルダ名",
+                    "ko": "입력 폴더 이름"
                 },
                 "description": {
                     "en": "The folder name of the input files. Only needed when the labeler multiplies subprojects. Please put the input files in the folder with the same name as their corresponding wav files.",
                     "zh": "输入文件的文件夹名称。仅在标注器将创建多个子项目时需要。请将输入文件的文件名设为与其对应的 wav 文件相同，并放在该文件夹中。",
-                    "ja": "入力ファイルのフォルダ名。ラベラーが複数のサブプロジェクトを対応している場合にのみ必要になります。入力ファイルのファイル名を対応する wav ファイルと同じ名前にして、指定したフォルダに入れてください。"
+                    "ja": "入力ファイルのフォルダ名。ラベラーが複数のサブプロジェクトを対応している場合にのみ必要になります。入力ファイルのファイル名を対応する wav ファイルと同じ名前にして、指定したフォルダに入れてください。",
+                    "ko": "입력 파일의 폴더 이름이에요. 라벨러가 여러 하위 프로젝트를 생성할 때에만 필요해요. 폴더 이름을 상응하는 wav 파일들과 같게 설정한 후, 입력 파일들을 해당 폴더에 넣어주세요."
                 },
                 "defaultValue": "ust"
             },
@@ -80,12 +88,14 @@
                 "label": {
                     "en": "Dictionary",
                     "zh": "词典",
-                    "ja": "辞書"
+                    "ja": "辞書",
+                    "ko": "사전"
                 },
                 "description": {
                     "en": "Dictionary for parsing lyrics to phonemes. Every line should be in the format \"word phoneme1 phoneme2 ...\". Default value is the dictionary for Japanese Kana.",
                     "zh": "将歌词解析为音素的词典。每一行应该是 \"word phoneme1 phoneme2 ...\" 的格式。默认值为日语假名的词典。",
-                    "ja": "歌詞を音素に解析するための辞書。各行は \"word phoneme1 phoneme2 ...\" の形式でなければなりません。デフォルト値は日本語の仮名の辞書です。"
+                    "ja": "歌詞を音素に解析するための辞書。各行は \"word phoneme1 phoneme2 ...\" の形式でなければなりません。デフォルト値は日本語の仮名の辞書です。",
+                    "ko": "가사를 음소로 변환하기 위한 사전이에요. 각 줄의 형식은 \"단어  음소1 음소2 ...\"이에요. 사전의 기본값은 일본어 가나로 되어 있어요."
                 },
                 "defaultValue": "file::dict-ja-kana.txt",
                 "multiLine": true,
@@ -97,7 +107,8 @@
                 "label": {
                     "en": "Encoding",
                     "zh": "编码",
-                    "ja": "エンコーディング"
+                    "ja": "エンコーディング",
+                    "ko": "인코딩"
                 },
                 "defaultValue": "Shift-JIS",
                 "options": [
@@ -109,7 +120,8 @@
                     {
                         "en": "Inherit from project",
                         "zh": "继承项目设置",
-                        "ja": "プロジェクト設定値"
+                        "ja": "プロジェクト設定値",
+                        "ko": "프로젝트로부터 물려받기"
                     },
                     {
                         "en": "Shift-JIS"

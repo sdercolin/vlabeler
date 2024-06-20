@@ -50,7 +50,8 @@ class LocalizedJsonStringTest {
         val localizedStringMissingDefault = """
             {
                 "zh": "你好，世界",
-                "ja": "こんにちは世界"
+                "ja": "こんにちは世界",
+                "ko": "안녕 세상"
             }
         """.trimIndent()
 

@@ -1,18 +1,20 @@
 {
     "name": "execute-scripts",
-    "version": 4,
+    "version": 5,
     "type": "macro",
     "displayedName": {
         "en": "Execute Scripts",
         "zh": "执行脚本",
-        "ja": "スクリプトを実行"
+        "ja": "スクリプトを実行",
+        "ko": "스크립트 실행"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Execute scripts from input to edit entries.",
         "zh": "执行输入的脚本来编辑条目。",
-        "ja": "入力されたスクリプトを実行してエントリを編集します。"
+        "ja": "入力されたスクリプトを実行してエントリを編集します。",
+        "ko": "엔트리 편집용 스크립트를 입력받아 실행해요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/execute-scripts",
     "supportedLabelFileExtension": "*",
@@ -24,12 +26,14 @@
                 "label": {
                     "en": "Scripts",
                     "zh": "脚本",
-                    "ja": "スクリプト"
+                    "ja": "スクリプト",
+                    "ko": "스크립트 목록"
                 },
                 "description": {
                     "en": "Edit the array named `entries` directly in JavaScript to have the current subproject updated. Note that this plugin is more of a plugin for development, which requires you understand vLabeler's `Entry` and `LabelerConf` definitions.",
                     "zh": "直接在 JavaScript 中编辑名为 `entries` 的数组以更新当前的子项目。请注意，此插件主要用于开发用途，需要您了解 vLabeler 的 `Entry` 和 `LabelerConf` 定义。",
-                    "ja": "現在のサブプロジェクトを更新するために、JavaScript で `entries` という名前の配列を直接編集してください。このプラグインは主に開発用のプラグインであり、使用するにあたって、vLabeler の `Entry` と `LabelerConf` の定義を理解する必要があることに注意してください。"
+                    "ja": "現在のサブプロジェクトを更新するために、JavaScript で `entries` という名前の配列を直接編集してください。このプラグインは主に開発用のプラグインであり、使用するにあたって、vLabeler の `Entry` と `LabelerConf` の定義を理解する必要があることに注意してください。",
+                    "ko": "JavaScript에서 `entries` 배열을 직접 편집하면 현재 하위 프로젝트를 업데이트할 수 있습니다. 거의 개발 용도의 플러그인이며, vLabeler의 `Entry` 및 `LabelerConf`의 정의를 알아야만 사용할 수 있어요."
                 },
                 "defaultValue": "",
                 "multiLine": true,

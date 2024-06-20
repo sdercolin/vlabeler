@@ -39,6 +39,7 @@ if (modules.length === 0) {
     error({
         en: 'No sample files found. Please check the labeler settings to ensure your sample folders are included.',
         zh: '未找到采样文件。请检查标注器设置以确保您的采样文件夹被包括在内。',
-        ja: 'サンプルファイルが見つかりませんでした。ラベラーの設定でサンプルフォルダーが含まれていることを確認してください。'
+        ja: 'サンプルファイルが見つかりませんでした。ラベラーの設定でサンプルフォルダーが含まれていることを確認してください。',
+        ko: '샘플 파일을 찾지 못했습니다. 라벨러 설정에서 샘플 폴더가 잘 포함되어 있는지 확인해 주세요.'
     })
 }

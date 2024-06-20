@@ -1,18 +1,20 @@
 {
     "name": "batch-edit-oto-parameter",
-    "version": 7,
+    "version": 8,
     "type": "macro",
     "displayedName": {
         "en": "Batch edit oto parameter",
         "zh": "批量修改 oto 参数",
-        "ja": "oto パラメーターを一括編集"
+        "ja": "oto パラメーターを一括編集",
+        "ko": "오토 파라미터 일괄 편집"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Edit the parameters of multiple entries in UTAU oto.ini at once.",
         "zh": "一次性修改 UTAU oto.ini 中多个条目的参数。",
-        "ja": "UTAU oto.ini のパラメータを一括編集します。"
+        "ja": "UTAU oto.ini のパラメータを一括編集します。",
+        "ko": "UTAU oto.ini의 파라미터들을 한 번에 편집해 줘요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-oto-parameter",
     "supportedLabelFileExtension": "ini",
@@ -24,12 +26,14 @@
                 "label": {
                     "en": "Entry filters",
                     "zh": "条目筛选器",
-                    "ja": "エントリフィルター"
+                    "ja": "エントリフィルター",
+                    "ko": "엔트리 필터"
                 },
                 "description": {
                     "en": "Add filters to select the entries to edit. Leave blank to edit all entries.",
                     "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。",
-                    "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。"
+                    "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。",
+                    "ko": "편집할 엔트리들의 선택에 사용할 필터를 추가해 주세요. 모든 엔트리를 선택하려면 이 칸을 비워 두세요."
                 },
                 "defaultValue": {
                     "filters": []

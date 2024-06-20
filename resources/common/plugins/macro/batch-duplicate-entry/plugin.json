@@ -1,18 +1,20 @@
 {
     "name": "batch-duplicate-entry",
-    "version": 4,
+    "version": 5,
     "type": "macro",
     "displayedName": {
         "en": "Batch Duplicate Entry",
         "zh": "批量创建条目副本",
-        "ja": "エントリの一括複製"
+        "ja": "エントリの一括複製",
+        "ko": "엔트리 일괄 복제"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Duplicate multiple entries at once, using regex to set names of new entries.",
         "zh": "一次性创建多个条目的副本，并使用正则表达式来设置新条目的名称。",
-        "ja": "複数のエントリを一度に複製し、正規表現を使用して新しいエントリの名前を設定します。"
+        "ja": "複数のエントリを一度に複製し、正規表現を使用して新しいエントリの名前を設定します。",
+        "ko": "여러 엔트리를 한 번에 복제해 줘요. 신규 엔트리의 이름 설정에 정규표현식을 사용할 수 있어요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-duplicate-entry",
     "supportedLabelFileExtension": "*",
@@ -24,12 +26,14 @@
                 "label": {
                     "en": "Entry filters",
                     "zh": "条目筛选器",
-                    "ja": "エントリフィルター"
+                    "ja": "エントリフィルター",
+                    "ko": "엔트리 필터"
                 },
                 "description": {
                     "en": "Add filters to select the entries to duplicate. Leave blank to duplicate all entries.",
                     "zh": "添加筛选器以选择要创建的条目。留空则创建所有条目的副本。",
-                    "ja": "複製するエントリを選択するためのフィルターを追加してください。空にしておくことで、すべてのエントリを複製できます。"
+                    "ja": "複製するエントリを選択するためのフィルターを追加してください。空にしておくことで、すべてのエントリを複製できます。",
+                    "ko": "복제할 엔트리들의 선택에 사용할 필터를 추가해 주세요. 모든 엔트리를 선택하려면 이 칸을 비워 두세요."
                 },
                 "defaultValue": {
                     "filters": []
@@ -41,12 +45,14 @@
                 "label": {
                     "en": "Rename from",
                     "zh": "原名称",
-                    "ja": "元の名前"
+                    "ja": "元の名前",
+                    "ko": "원래 이름"
                 },
                 "description": {
                     "en": "Regex is available. e.g. \"(.*)\" can match and catch the whole name.",
                     "zh": "可使用正则表达式。例如，\"(.*)\" 可以匹配并捕获整个名称。",
-                    "ja": "正規表現が使用できます。e.g. \"(.*)\" は名前全体にマッチし、キャッチできます。"
+                    "ja": "正規表現が使用できます。e.g. \"(.*)\" は名前全体にマッチし、キャッチできます。",
+                    "ko": "정규표현식을 사용할 수 있어요. (예: 엔트리 이름의 전체 부분을 매칭하려면 -> \"(.*)\")"
                 },
                 "defaultValue": "(.*)",
                 "optional": false
@@ -57,12 +63,14 @@
                 "label": {
                     "en": "Rename to",
                     "zh": "新名称",
-                    "ja": "新しい名前"
+                    "ja": "新しい名前",
+                    "ko": "바꿀 이름"
                 },
                 "description": {
                     "en": "Regex captured group placeholders ($1, $2, etc.) are available. e.g. if \"Rename from\" is set to \"(.*)\" and this is set to \"$1_copy\", \"_copy\" is appended to the new names.",
                     "zh": "可使用正则表达式捕获组占位符（$1、$2 等）。例如，如果“原名称”设置为“(.*)”，“新名称”设置为“$1_copy”，则副本的名称将为“<原条目名>_copy”。",
-                    "ja": "正規表現のキャプチャグループのプレースホルダー（$1、$2 など）が使用できます。e.g. 「元の名前」が \"(.*)\" に設定されており、「新しい名前」が \"$1_copy\" に設定されている場合、新しい名前は \"<元のエントリ名>_copy\" になります。"
+                    "ja": "正規表現のキャプチャグループのプレースホルダー（$1、$2 など）が使用できます。e.g. 「元の名前」が \"(.*)\" に設定されており、「新しい名前」が \"$1_copy\" に設定されている場合、新しい名前は \"<元のエントリ名>_copy\" になります。",
+                    "ko": "정규표현식의 캡쳐링 그룹 표시자 ($1, $2 등) 를 사용할 수 있어요. (예: \"원래 이름\" 이 \"(.*)\"으로, \"바꿀 이름\"이 \"$1_copy\"로 설정되어 있으면, 새 엔트리 이름은 \"<원래 이름>_copy\" 가 됩니다."
                 },
                 "defaultValue": "$1",
                 "optional": false

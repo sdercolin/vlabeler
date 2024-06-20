@@ -1,18 +1,20 @@
 {
     "name": "generate-reclist",
-    "version": 1,
+    "version": 2,
     "type": "macro",
     "displayedName": {
         "en": "Generate reclist from samples",
         "zh": "从采样文件生成录音表",
-        "ja": "サンプルから録音リストを生成する"
+        "ja": "サンプルから録音リストを生成する",
+        "ko": "샘플에서 녹음 리스트 생성"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "List sample files and generate reclists from them.",
         "zh": "列出采样文件并从中生成录音表。",
-        "ja": "サンプルファイルをリストアップし、それらから録音リストを生成します。"
+        "ja": "サンプルファイルをリストアップし、それらから録音リストを生成します。",
+        "ko": "샘플 파일들을 목록화해서 녹음 리스트를 생성해 줘요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/generate-reclist",
     "supportedLabelFileExtension": "ini",
@@ -24,7 +26,8 @@
                 "label": {
                     "en": "Output folder",
                     "zh": "输出文件夹",
-                    "ja": "出力フォルダ"
+                    "ja": "出力フォルダ",
+                    "ko": "출력 폴더"
                 },
                 "defaultValue": "",
                 "optional": false,
@@ -36,12 +39,14 @@
                 "label": {
                     "en": "Extension(s) of sample files",
                     "zh": "采样文件的扩展名",
-                    "ja": "サンプルファイルの拡張子"
+                    "ja": "サンプルファイルの拡張子",
+                    "ko": "샘플 파일의 확장자"
                 },
                 "description": {
                     "en": "Separate multiple extensions with comma.",
                     "zh": "用逗号分隔多个扩展名。",
-                    "ja": "複数の拡張子はカンマで区切ります。"
+                    "ja": "複数の拡張子はカンマで区切ります。",
+                    "ko": "여러 확장자는 쉼표로 구분해 주세요."
                 },
                 "defaultValue": "wav",
                 "optional": false
@@ -52,7 +57,8 @@
                 "label": {
                     "en": "Encoding",
                     "zh": "编码",
-                    "ja": "エンコーディング"
+                    "ja": "エンコーディング",
+                    "ko": "인코딩"
                 },
                 "defaultValue": "UTF-8",
                 "optional": false

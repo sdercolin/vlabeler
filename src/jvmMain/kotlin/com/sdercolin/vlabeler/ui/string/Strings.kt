@@ -627,6 +627,7 @@ enum class Strings {
         English -> en()
         ChineseSimplified -> zhHans()
         Japanese -> ja()
+        Korean -> ko()
     } ?: en()
 }
 

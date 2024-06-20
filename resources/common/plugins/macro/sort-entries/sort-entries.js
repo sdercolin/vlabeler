@@ -8,6 +8,7 @@ if (labeler.continuous) {
         en: "Cannot sort continuous label data.",
         zh: "无法对连续的标注数据进行排序。",
         ja: "連続したラベルデータを並べ替えることはできません。",
+        ko: "연속 편집용 라벨을 정렬하지 못했습니다."
     })
 }
 
