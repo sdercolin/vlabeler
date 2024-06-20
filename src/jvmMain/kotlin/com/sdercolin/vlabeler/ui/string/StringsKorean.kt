@@ -14,10 +14,14 @@ fun Strings.ko(): String? = when (this) {
     MenuFileSave -> "저장"
     MenuFileSaveAs -> "다른 이름으로 저장..."
     MenuFileProjectSetting -> "프로젝트 설정..."
-    MenuFileImport -> "불러오기..."
-    MenuFileExport -> "내보내기..."
-    MenuFileExportOverwrite -> "덮어씌워 내보내기"
-    MenuFileExportOverwriteAll -> "덮어씌워 내보내기 (모두)"
+    MenuFileImportProject -> "프로젝트 불러오기..."
+    MenuFileReloadLabelFile -> "라벨 파일 새로 고침"
+    MenuFileReloadLabelFilePickFile -> "파일에서 불러오기..."
+    MenuFileReloadLabelFileDefault -> "출력 파일에서 불러오기..."
+    MenuFileReloadLabelFileDefaultWithoutConfirmation -> "출력 파일에서 불러오기 (확인 없이)"
+    MenuFileExport -> "라벨 파일 내보내기..."
+    MenuFileExportOverwrite -> "덮어씌워 라벨 파일 내보내기"
+    MenuFileExportOverwriteAll -> "덮어씌워 모든 라벨 파일 내보내기"
     MenuFileInvalidateCaches -> "캐시 정리"
     MenuFileClose -> "닫기"
     MenuEdit -> "편집"
@@ -390,6 +394,23 @@ fun Strings.ko(): String? = when (this) {
             "오류가 발생할 경우, 서명되지 않은 실행 파일 혹은 접근 권한과 관련되어 있을 확률이 높습니다."
     PreferencesChartsConversionFFmpegArgs -> "입력값과 출력값 이외의 FFmpeg 인수"
     PreferencesChartsConversionFFmpegUseForWav -> "wav 파일들에 FFmpeg 변환 사용"
+    PreferencesChartsFundamental -> "F0"
+    PreferencesChartsFundamentalDescription -> "F0 차트를 커스텀합니다."
+    PreferencesChartsFundamentalEnabled -> "F0 차트 보이기"
+    PreferencesChartsFundamentalHeight -> "파형에 상대적인 높이 (%%)(%%)"
+    PreferencesChartsFundamentalSemitoneResolution -> "이미지에서의 반음 해상도"
+    PreferencesChartsFundamentalMinFundamental -> "보여질 최소 주파수 (Hz)"
+    PreferencesChartsFundamentalMinFundamentalInvalid -> "최소 주파수는 최대 주파수보다 작은 값이어야 해요."
+    PreferencesChartsFundamentalMaxFundamental -> "보여질 최대 주파수 (Hz)"
+    PreferencesChartsFundamentalMaxFundamentalInvalid -> "최대 주파수는 최소 주파수보다 큰 값이어야 해요."
+    PreferencesChartsFundamentalSemitoneSampleNum -> "반음 당 샘플 수"
+    PreferencesChartsFundamentalMaxHarmonicFrequency -> "보여질 최대 고조파 주파수 (Hz)"
+    PreferencesChartsFundamentalMaxHarmonicFrequencyInvalid ->
+        "최대 고조파 주파수는 최대 주파수보다 큰 값이어야 해요."
+    PreferencesChartsFundamentalDrawReferenceLine -> "도(C) 키 위치에 참조선 그리기"
+    PreferencesChartsFundamentalColor -> "색"
+    PreferencesChartsFundamentalReferenceLineColor -> "참조선 색상"
+    PreferencesChartsFundamentalBackgroundColor -> "배경 색상"
     PreferencesKeymap -> "단축키"
     PreferencesKeymapDescription -> "키보드/마우스 입력 시 동작을 커스텀합니다."
     PreferencesKeymapKeyAction -> "키보드 입력"
@@ -492,6 +513,10 @@ fun Strings.ko(): String? = when (this) {
             "이 기능은 다중 편집 모드에서만 사용 가능합니다."
     PreferencesEditorScissorsColor -> "색상"
     PreferencesEditorScissorsActionTargetNone -> "미설정"
+    PreferencesEditorScissorsScissorsSubmitThreshold -> "입력 인식의 문턱값 (DP)"
+    PreferencesEditorScissorsScissorsSubmitThresholdDescription ->
+        "가위 도구로 클릭했을 때, 클릭된 위치로부터 문턱값 이상으로 커서가 이동해야" +
+        "입력이 인식됩니다."
     PreferencesEditorScissorsActionTargetFormer -> "이전 엔트리로"
     PreferencesEditorScissorsActionTargetLatter -> "다음 엔트리로"
     PreferencesEditorScissorsActionGoTo -> "자른 후 엔트리 이동"
@@ -692,9 +717,9 @@ fun Strings.ko(): String? = when (this) {
     ImportEntriesDialogItemSummaryTitle -> "엔트리 총 %d개"
     ImportEntriesDialogItemTargetLabel -> "타겟"
     ImportEntriesDialogItemIncompatible -> "현재 프로젝트와 호환되지 않음"
-    ImportEntriesDialogReplaceContent -> "현재 내용 교체"
+    ImportEntriesDialogReplaceContent -> "현재 엔트리 제거"
     ImportEntriesDialogReplaceContentDisabledDescription ->
-        "현재 프로젝트에서는 엔트리 추가를 지원하지 않아요. " +
+        "현재 프로젝트에서는 엔트리 목록 이어 붙이기를 지원하지 않아요. " +
             "불러온 엔트리들로 모든 현재 엔트리들을 대체합니다."
     EntrySampleSyncerModuleText -> "하위 프로젝트 처리 중이에요 %d/%d..."
     EntrySampleSyncerModuleTextFinished -> "하위 프로젝트 처리 중이에요 %d/%d... 완료"
@@ -714,5 +739,16 @@ fun Strings.ko(): String? = when (this) {
     EntryFilterSetterDialogHeaderTag -> "다음을 포함하는 태그"
     EntryFilterSetterDialogHeaderStar -> "중요"
     EntryFilterSetterDialogHeaderDone -> "완료"
+    ReloadLabelDialogTitle -> "라벨 파일 새로고침"
+    ReloadLabelDialogModuleNameTemplate -> "하위 프로젝트: %s"
+    ReloadLabelDialogShowUnchanged -> "변경되지 않은 상태로 표시"
+    ReloadLabelDialogNotice ->
+        "미리보기에 표시되는 차이점들은 현재 라벨러의 설정을 기반으로 계산된 것들이에요. " + 
+            "표시에 누락되는 작은 차이점들이 있을 수 있으니, 추후 새로고침을 통해 " +
+            "실제 내용이 이상이 없는지 확인해 주세요."
+    ReloadLabelDialogNoDiff -> "차이점이 발견되지 않았어요."
+    ReloadLabelDialogInheritNotes -> "노트들 상속하기"
+    ReloadLabelDialogInheritNotesDescription ->
+        "활성화 시, 해당하는 모든 엔트리 쌍에 대해 이전 엔트리의 노트들이 새 엔트리로 복사됩니다."
     else -> null
 }
