@@ -81,7 +81,7 @@ class OpenOrCreateRequest(
                 workingDirectory = workingDirectory,
                 projectName = projectName,
                 cacheDirectory = cacheDirectory,
-                rawLabelerConf = labelerConf,
+                labelerConf = labelerConf,
                 labelerParams = labelerParams?.toParamTypedMap().resolve(labelerConf),
                 plugin = plugin,
                 pluginParams = plugin?.let { pluginParams?.toParamTypedMap().resolve(it) },

@@ -318,16 +318,14 @@ suspend fun projectOf(
     workingDirectory: String,
     projectName: String,
     cacheDirectory: String,
-    rawLabelerConf: LabelerConf,
+    labelerConf: LabelerConf,
     labelerParams: ParamMap,
     plugin: Plugin?,
     pluginParams: ParamMap?,
     inputFilePath: String?,
     encoding: String,
     autoExport: Boolean,
-): Result<Project> = runCatching {
-    val labelerTypedParams = labelerParams.let { ParamTypedMap.from(it, rawLabelerConf.parameterDefs) }
-    val labelerConf = labelerParams.let { rawLabelerConf.injectLabelerParams(it) }
+): Result<Project> {
     val moduleDefinitions = if (labelerConf.projectConstructor != null) {
         val js = JavaScript()
         js.set("debug", isDebug)
@@ -343,9 +341,9 @@ suspend fun projectOf(
         ).forEach { js.execResource(it) }
         js.eval("root = new File(root)")
         labelerParams.resolve(project = null, js = js).let { js.setJson("params", it) }
-        runCatching {
+        try {
             labelerConf.projectConstructor.scripts.getScripts(labelerConf.directory).let { js.eval(it) }
-        }.onFailure { t ->
+        } catch (t: Throwable) {
             val expected = js.getOrNull("expectedError") ?: false
             js.close()
             return if (expected) {
@@ -373,28 +371,37 @@ suspend fun projectOf(
         )
     }
 
-    val modules =
+    val modules = runCatching {
         parseModule(moduleDefinitions, plugin, sampleDirectory, labelerConf, labelerParams, pluginParams, encoding)
-
-    require(modules.isNotEmpty()) {
-        "No entries were found for any module"
+    }.getOrElse {
+        return Result.failure(InvalidCreatedProjectException(it))
     }
-    Project(
-        version = PROJECT_VERSION,
-        rootSampleDirectoryPath = sampleDirectory,
-        workingDirectoryPath = workingDirectory,
-        projectName = projectName,
-        cacheDirectoryPath = cacheDirectory,
-        labelerConf = labelerConf,
-        originalLabelerConf = rawLabelerConf,
-        labelerParams = labelerTypedParams,
-        encoding = encoding,
-        modules = modules,
-        currentModuleIndex = 0,
-        autoExport = autoExport,
-    ).validate().makeRelativePathsIfPossible()
-}.onFailure {
-    return Result.failure(InvalidCreatedProjectException(it))
+
+    val labelerTypedParams = labelerParams.let { ParamTypedMap.from(it, labelerConf.parameterDefs) }
+
+    return runCatching {
+        val injectedLabelerConf = labelerParams.let { labelerConf.injectLabelerParams(it) }
+
+        require(modules.isNotEmpty()) {
+            "No entries were found for any module"
+        }
+        Project(
+            version = PROJECT_VERSION,
+            rootSampleDirectoryPath = sampleDirectory,
+            workingDirectoryPath = workingDirectory,
+            projectName = projectName,
+            cacheDirectoryPath = cacheDirectory,
+            labelerConf = injectedLabelerConf,
+            originalLabelerConf = labelerConf,
+            labelerParams = labelerTypedParams,
+            encoding = encoding,
+            modules = modules,
+            currentModuleIndex = 0,
+            autoExport = autoExport,
+        ).validate().makeRelativePathsIfPossible()
+    }.onFailure {
+        return Result.failure(InvalidCreatedProjectException(it))
+    }
 }
 
 private fun parseModule(
@@ -460,7 +467,7 @@ private fun parseSingleModule(
         }
         else -> {
             def.sampleFiles.map {
-                Entry.fromDefaultValues(it.name, labelerConf)
+                Entry.fromDefaultValues(it.name, it.nameWithoutExtension, labelerConf)
             }
         }
     }

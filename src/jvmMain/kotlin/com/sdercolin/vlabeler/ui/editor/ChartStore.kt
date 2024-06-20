@@ -221,7 +221,6 @@ class ChartStore {
     ) {
         val targetFile = ChartRepository.getWaveformImageFile(sampleInfo, channelIndex, chunkIndex)
         if (targetFile.exists()) {
-            Log.debug("Deleting outdated cache: ${targetFile.absolutePath}")
             targetFile.delete()
         }
     }
@@ -295,7 +294,6 @@ class ChartStore {
     ) {
         val targetFile = ChartRepository.getSpectrogramImageFile(sampleInfo, chunkIndex)
         if (targetFile.exists()) {
-            Log.debug("Deleting outdated cache: ${targetFile.absolutePath}")
             targetFile.delete()
         }
     }
@@ -396,7 +394,6 @@ class ChartStore {
     ) {
         val targetFile = ChartRepository.getPowerGraphImageFile(sampleInfo, channelIndex, chunkIndex)
         if (targetFile.exists()) {
-            Log.debug("Deleting outdated cache: ${targetFile.absolutePath}")
             targetFile.delete()
         }
     }

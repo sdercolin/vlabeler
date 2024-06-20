@@ -63,7 +63,6 @@ import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.AppDir
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.RecordDir
-import com.sdercolin.vlabeler.util.deleteRecursivelyLogged
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFrame
@@ -368,11 +367,11 @@ class AppState(
                     action.state.removeItem(action.item)
                 }
                 is CommonConfirmationDialogAction.ClearAppData -> {
-                    AppDir.deleteRecursivelyLogged()
+                    AppDir.deleteRecursively()
                     exit()
                 }
                 is CommonConfirmationDialogAction.ClearAppRecord -> {
-                    RecordDir.deleteRecursivelyLogged()
+                    RecordDir.deleteRecursively()
                     exit()
                 }
             }

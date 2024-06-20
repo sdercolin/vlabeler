@@ -1,7 +1,6 @@
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.exportProjectModule
@@ -25,7 +24,7 @@ import java.io.File
 fun StandaloneDialogs(
     mainScope: CoroutineScope,
     appState: AppState,
-) = CompositionLocalProvider(LocalLanguage.provides(appState.appConf.view.language)) {
+) {
     when {
         appState.isShowingOpenProjectDialog -> OpenFileDialog(
             title = string(Strings.OpenProjectDialogTitle),
@@ -150,10 +149,6 @@ fun StandaloneDialogs(
         DebugState.isShowingFontPreviewDialog -> FontPreviewDialog(
             appState.appConf,
             finish = { DebugState.isShowingFontPreviewDialog = false },
-        )
-        appState.isShowingFileNameNormalizerDialog -> FileNameNormalizerDialog(
-            appConf = appState.appConf,
-            finish = { appState.closeFileNameNormalizerDialog() },
         )
     }
 }

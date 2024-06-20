@@ -109,8 +109,8 @@ fun moduleGroupFromRawLabels(
         // No input files, fallback to default values
         return definitionGroup.map {
             ModuleParseResult(
-                entries = sampleFileNames.map {
-                    Entry.fromDefaultValues(it, labelerConf)
+                entries = sampleFileNames.map { sampleName ->
+                    Entry.fromDefaultValues(sampleName, sampleName.substringBeforeLast('.'), labelerConf)
                 },
                 extras = labelerConf.moduleExtraFields.mapNotNull { field ->
                     field.default?.let { field.name to it }

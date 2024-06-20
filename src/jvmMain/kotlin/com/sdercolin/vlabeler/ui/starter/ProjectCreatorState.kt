@@ -551,7 +551,7 @@ class ProjectCreatorState(
                 workingDirectory = workingDirectory,
                 projectName = projectName,
                 cacheDirectory = cacheDirectory,
-                rawLabelerConf = labeler,
+                labelerConf = labeler,
                 labelerParams = labelerParams,
                 plugin = templatePlugin?.takeIf { usePlugin },
                 pluginParams = templatePluginParams?.takeIf { usePlugin },

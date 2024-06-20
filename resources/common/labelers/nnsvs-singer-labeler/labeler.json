@@ -100,21 +100,6 @@
                 },
                 "defaultValue": "lab"
             }
-        },
-        {
-            "parameter": {
-                "name": "defaultEntryName",
-                "type": "string",
-                "label": {
-                    "en": "Default entry name",
-                    "zh": "默认条目名称",
-                    "ja": "デフォルトエントリ名"
-                },
-                "defaultValue": "pau",
-                "optional": true
-            },
-            "injector": "defaultEntryName-injector.js",
-            "changeable": true
         }
     ],
     "projectConstructor": {

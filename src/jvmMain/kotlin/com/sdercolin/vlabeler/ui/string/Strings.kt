@@ -72,7 +72,6 @@ enum class Strings {
     MenuToolsPrerender,
     MenuToolsSyncSample,
     MenuToolsRecycleMemory,
-    MenuToolsFileNameNormalizer,
     MenuSettings,
     MenuSettingsPreferences,
     MenuSettingsLabelers,
@@ -584,14 +583,6 @@ enum class Strings {
     EntryFilterSetterDialogHeaderTag,
     EntryFilterSetterDialogHeaderStar,
     EntryFilterSetterDialogHeaderDone,
-    FileNameNormalizerDialogTitle,
-    FileNameNormalizerTitle,
-    FileNameNormalizerDescription,
-    FileNameNormalizerHandleFolderButton,
-    FileNameNormalizerHandleFileContentButton,
-    FileNameNormalizerHandleFolderSuccess,
-    FileNameNormalizerHandleFileSuccess,
-    FileNameNormalizerHandleFileNoChange,
     ;
 
     fun get(language: Language): String = when (language) {
