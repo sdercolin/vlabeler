@@ -84,6 +84,7 @@ fun ModuleList(
                 state.hasFocus = it
             },
             onPreviewKeyEvent = state::onPreviewKeyEvent,
+            onSubmit = state::submitCurrent,
         )
 
         NavigatorListBody(
@@ -104,6 +105,6 @@ private fun ItemContent(viewConf: AppConf.View, item: IndexedValue<Module>) {
     }
     Row(modifier = Modifier.fillMaxWidth()) {
         NavigatorListItemNumber(item.index)
-        NavigatorItemSummary(item.value.name, subtext, viewConf)
+        NavigatorItemSummary(item.value.name, subtext, viewConf.hideSampleExtension)
     }
 }

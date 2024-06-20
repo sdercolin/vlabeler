@@ -19,11 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.ui.common.CancelButton
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
@@ -144,15 +141,7 @@ private fun Content(
                 )
                 Spacer(Modifier.width(25.dp))
                 TextField(
-                    modifier = Modifier.weight(1f)
-                        .onKeyEvent {
-                            if (it.isReleased(Key.Enter)) {
-                                state.trySubmit()
-                                true
-                            } else {
-                                false
-                            }
-                        },
+                    modifier = Modifier.weight(1f),
                     value = state.getNotNull(index),
                     onValueChange = { state.update(index, it.ifBlank { null }) },
                     singleLine = true,

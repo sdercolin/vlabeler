@@ -1,6 +1,6 @@
 {
     "name": "audacity.default",
-    "version": 11,
+    "version": 12,
     "serialVersion": 2,
     "singleFile": false,
     "extension": "txt",
@@ -33,6 +33,16 @@
         "useStart": false
     },
     "decimalDigit": 4,
+    "entrySimilarityWeights": {
+        "name": 0,
+        "sample": 0.5,
+        "start": 0.25,
+        "end": 0.25,
+        "points": [],
+        "extras": [],
+        "tag": 0,
+        "threshold": 0.75
+    },
     "properties": [
         {
             "name": "start",

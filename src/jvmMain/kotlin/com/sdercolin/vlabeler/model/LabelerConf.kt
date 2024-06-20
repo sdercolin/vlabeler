@@ -64,6 +64,8 @@ import java.io.File
  * @property postEditNextTrigger Trigger settings of `Go to next entry after editing` on start and end.
  * @property postEditDoneTrigger Trigger settings of `Mark as done after editing` on start and end.
  * @property decimalDigit Decimal digit count used in [properties] and [writer].
+ * @property entrySimilarityWeights Configuration for the weights of different properties in the similarity score
+ *     calculation. See [EntrySimilarityWeights].
  * @property properties Properties that are used in the following procedures. See [Property].
  * @property parser Defines how data from the original label format are parsed.
  * @property writer Defines how to write content in the original label format.
@@ -104,6 +106,7 @@ data class LabelerConf(
     val postEditNextTrigger: PostEditTrigger = PostEditTrigger(),
     val postEditDoneTrigger: PostEditTrigger = PostEditTrigger(),
     val decimalDigit: Int? = 2,
+    val entrySimilarityWeights: EntrySimilarityWeights = EntrySimilarityWeights(),
     val properties: List<Property> = listOf(),
     val parser: Parser,
     val writer: Writer,

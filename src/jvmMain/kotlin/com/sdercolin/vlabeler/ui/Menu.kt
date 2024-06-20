@@ -14,7 +14,9 @@ import com.sdercolin.vlabeler.debug.DebugState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.io.install
+import com.sdercolin.vlabeler.io.reloadLabelFile
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
@@ -101,11 +103,45 @@ fun FrameWindowScope.Menu(
                         enabled = appState.hasProject,
                     )
                     Item(
-                        string(Strings.MenuFileImport),
+                        string(Strings.MenuFileImportProject),
                         onClick = { appState.openImportDialog() },
                         shortcut = KeyAction.ImportProject.getKeyShortCut(),
                         enabled = appState.hasProject,
                     )
+                    val canReloadLabelFile = appState.project?.labelerConf?.parser?.scope == LabelerConf.Scope.Entry
+                    Menu(
+                        string(Strings.MenuFileReloadLabelFile),
+                        enabled = canReloadLabelFile,
+                    ) {
+                        Item(
+                            string(Strings.MenuFileReloadLabelFilePickFile),
+                            onClick = { },
+                            shortcut = KeyAction.ReloadLabelFilePickFile.getKeyShortCut(),
+                            enabled = canReloadLabelFile,
+                        )
+                        Item(
+                            string(Strings.MenuFileReloadLabelFileDefault),
+                            onClick = {
+                                appState.reloadLabelFile(
+                                    file = null,
+                                    skipConfirmation = false,
+                                )
+                            },
+                            shortcut = KeyAction.ReloadLabelFileDefault.getKeyShortCut(),
+                            enabled = canReloadLabelFile && appState.hasRawLabelFileForCurrentModule(),
+                        )
+                        Item(
+                            string(Strings.MenuFileReloadLabelFileDefaultWithoutConfirmation),
+                            onClick = {
+                                appState.reloadLabelFile(
+                                    file = null,
+                                    skipConfirmation = true,
+                                )
+                            },
+                            shortcut = KeyAction.ReloadLabelFileDefaultWithoutConfirmation.getKeyShortCut(),
+                            enabled = canReloadLabelFile && appState.hasRawLabelFileForCurrentModule(),
+                        )
+                    }
                     Item(
                         string(Strings.MenuFileExport),
                         onClick = { appState.requestExport(overwrite = false) },
@@ -116,7 +152,7 @@ fun FrameWindowScope.Menu(
                         string(Strings.MenuFileExportOverwrite),
                         onClick = { appState.requestExport(overwrite = true) },
                         shortcut = KeyAction.ExportProjectOverwrite.getKeyShortCut(),
-                        enabled = appState.hasProject && appState.canOverwriteExportCurrentModule(),
+                        enabled = appState.hasProject && appState.hasRawLabelFileForCurrentModule(),
                     )
                     if (appState.shouldShowOverwriteExportAllModules()) {
                         Item(

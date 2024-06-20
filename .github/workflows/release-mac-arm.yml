@@ -40,39 +40,27 @@ jobs:
           distribution: 'corretto'
 
       - name: Prepare signing
-        env:
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
         run: |
-          CERTIFICATE_EXISTS=$(security find-identity -v build.keychain | grep -c "${{ secrets.MACOS_CERTIFICATE_IDENTITY }}")
-          if [ "$CERTIFICATE_EXISTS" -eq "0" ]; then
-            echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-            security create-keychain -p vlabeler2022 build.keychain
-            security default-keychain -s build.keychain
-            security unlock-keychain -p vlabeler2022 build.keychain
-            security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign -T /usr/bin/productsign -T /System/Library/PrivateFrameworks/AOSKit.framework/Versions/A/XPCServices/com.apple.iCloudHelper.xpc/Contents/MacOS/com.apple.iCloudHelper
-            security find-identity -v
-            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k vlabeler2022 build.keychain
-          else
-            security unlock-keychain -p vlabeler2022 build.keychain
-          fi
-          echo $'compose.desktop.mac.sign=true\ncompose.desktop.mac.signing.identity=${{ secrets.MACOS_CERTIFICATE_IDENTITY }}\ncompose.desktop.mac.notarization.appleID=${{ secrets.APPLE_ID }}\ncompose.desktop.mac.notarization.password=${{ secrets.MACOS_APP_PWD }}' >local.properties
+          # Configure the local.properties file with the necessary information for signing
+          echo "compose.desktop.mac.sign=true" > local.properties
+          echo "compose.desktop.mac.signing.identity=${{ secrets.MACOS_CERTIFICATE_IDENTITY }}" >> local.properties
+          echo "compose.desktop.mac.notarization.appleID=${{ secrets.APPLE_ID }}" >> local.properties
+          echo "compose.desktop.mac.notarization.password=${{ secrets.MACOS_APP_PWD }}" >> local.properties
+          echo "compose.desktop.mac.notarization.teamID=${{ secrets.APPLE_TEAM_ID }}" >> local.properties
           cat local.properties
 
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: packageDmg
+          arguments: notarizeDmg
 
-      - name: Rename and notarize
+      - name: Rename
         run: |
           VERSION=${{ github.ref_name }}
           echo $VERSION
           PREFIX=$(echo $VERSION | cut -d'-' -f 1)
           echo $PREFIX
           mv ./build/compose/binaries/main/dmg/vLabeler-$PREFIX.dmg ./vlabeler-$VERSION-mac-arm64.dmg
-          xcrun notarytool submit vlabeler-$VERSION-mac-arm64.dmg --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.MACOS_APP_PWD }} --team-id ${{ secrets.APPLE_TEAM_ID }} --wait
-          xcrun stapler staple vlabeler-$VERSION-mac-arm64.dmg
 
       - name: Release
         uses: softprops/action-gh-release@v1

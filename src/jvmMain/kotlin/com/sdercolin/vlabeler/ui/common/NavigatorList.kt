@@ -38,7 +38,6 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
-import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
@@ -63,6 +62,11 @@ interface NavigatorListState<T : Any> {
             newResults.indexOfFirst { it.index == currentIndex }.takeIf { it >= 0 }
         }
     }
+
+    fun submitCurrent() {
+        val index = selectedIndex ?: return
+        searchResult[index].index.let(::submit)
+    }
 }
 
 fun <T : Any> NavigatorListState<T>.onPreviewKeyEvent(event: KeyEvent): Boolean {
@@ -75,10 +79,6 @@ fun <T : Any> NavigatorListState<T>.onPreviewKeyEvent(event: KeyEvent): Boolean 
         }
         event.isReleased(Key.DirectionUp) -> {
             selectedIndex = index.minus(1).coerceAtLeast(0)
-            true
-        }
-        event.isReleased(Key.Enter) -> {
-            searchResult[index].index.let(::submit)
             true
         }
         else -> false
@@ -156,7 +156,7 @@ fun NavigatorListItemNumber(index: Int) {
 }
 
 @Composable
-fun NavigatorItemSummary(name: String, subtext: String, viewConf: AppConf.View, isEntry: Boolean = false) {
+fun NavigatorItemSummary(name: String, subtext: String, hideSampleExtension: Boolean, isEntry: Boolean = false) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         BasicText(
             text = name,
@@ -165,7 +165,7 @@ fun NavigatorItemSummary(name: String, subtext: String, viewConf: AppConf.View, 
             style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
         )
         BasicText(
-            text = subtext.runIf(isEntry && viewConf.hideSampleExtension) {
+            text = subtext.runIf(isEntry && hideSampleExtension) {
                 substringBeforeLast('.')
             },
             modifier = Modifier.padding(start = 10.dp, top = 3.dp),

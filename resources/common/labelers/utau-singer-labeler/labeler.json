@@ -127,6 +127,23 @@
         "useEnd": true
     },
     "decimalDigit": 2,
+    "entrySimilarityWeights": {
+        "name": 6,
+        "sample": 12,
+        "start": 1,
+        "end": 1,
+        "points": [
+            1,
+            1,
+            1,
+            1
+        ],
+        "extras": [
+            0
+        ],
+        "tag": 0,
+        "threshold": 0.75
+    },
     "properties": [
         {
             "name": "left",

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -20,17 +20,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.removeControlCharacters
@@ -94,20 +91,15 @@ fun InputEntryNameDialog(
         )
         Spacer(Modifier.height(20.dp))
         OutlinedTextField(
-            modifier = Modifier.width(150.dp)
-                .focusRequester(focusRequester)
-                .onKeyEvent {
-                    if (it.isReleased(Key.Enter)) {
-                        trySubmit()
-                        true
-                    } else {
-                        false
-                    }
-                },
+            modifier = Modifier.width(150.dp).focusRequester(focusRequester),
             value = input,
             singleLine = true,
             isError = args.invalidOptions.contains(input.text) || input.text.isBlank(),
             onValueChange = { input = it.copy(text = it.text.removeControlCharacters()) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = { trySubmit() },
+            ),
         )
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {

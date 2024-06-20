@@ -7,10 +7,12 @@ import com.sdercolin.vlabeler.exception.InvalidCreatedProjectException
 import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectConstructorRuntimeException
 import com.sdercolin.vlabeler.io.Sample
+import com.sdercolin.vlabeler.io.mergeEntryLists
 import com.sdercolin.vlabeler.io.moduleFromRawLabels
 import com.sdercolin.vlabeler.io.moduleGroupFromRawLabels
 import com.sdercolin.vlabeler.model.Project.Companion.PROJECT_VERSION
 import com.sdercolin.vlabeler.model.filter.EntryFilter
+import com.sdercolin.vlabeler.ui.dialog.ReloadLabelConfigs
 import com.sdercolin.vlabeler.util.DefaultEncoding
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.ParamMap
@@ -123,6 +125,16 @@ data class Project(
     fun hasSwitchedSample(previous: Project?): Boolean {
         if (previous?.currentModuleIndex != currentModuleIndex) return true
         return currentModule.hasSwitchedSample(previous.currentModule)
+    }
+
+    fun applyReloadedEntries(
+        entries: List<Entry>,
+        diff: EntryListDiff,
+        configs: ReloadLabelConfigs = ReloadLabelConfigs(),
+    ): Project {
+        val mergedEntries = mergeEntryLists(entries, currentModule.entries, diff, configs)
+        val newModule = currentModule.copy(entries = mergedEntries, currentIndex = 0, entryFilter = null)
+        return copy(modules = modules.map { if (it == currentModule) newModule else it })
     }
 
     fun validate() = this.run {
@@ -450,11 +462,11 @@ private fun parseSingleModule(
         }
         existingSingleInputFile != null -> {
             moduleFromRawLabels(
-                existingSingleInputFile.readTextByEncoding(encoding).lines(),
-                existingSingleInputFile,
-                labelerConf,
-                labelerParams,
-                def.sampleFiles,
+                sources = existingSingleInputFile.readTextByEncoding(encoding).lines(),
+                inputFile = existingSingleInputFile,
+                labelerConf = labelerConf,
+                labelerParams = labelerParams,
+                sampleFiles = def.sampleFiles,
                 encoding = encoding,
             )
         }
@@ -487,7 +499,13 @@ private fun parseModuleGroup(
     // TODO: pluginParams: ParamMap?,
     encoding: String,
 ): List<Module> {
-    val results = moduleGroupFromRawLabels(moduleDefinitionGroup, labelerConf, labelerParams, encoding)
+    val results = moduleGroupFromRawLabels(
+        definitionGroup = moduleDefinitionGroup,
+        labelerConf = labelerConf,
+        labelerParams = labelerParams,
+        labelerTypedParams = null,
+        encoding = encoding,
+    )
     require(moduleDefinitionGroup.size == results.size) {
         "Module group size mismatch: ${moduleDefinitionGroup.size} != ${results.size}"
     }

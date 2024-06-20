@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package com.sdercolin.vlabeler.ui.dialog
 
 import androidx.compose.foundation.background
@@ -13,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -29,17 +29,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
@@ -112,19 +109,14 @@ fun MoveEntryDialog(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             OutlinedTextField(
-                modifier = Modifier.width(150.dp)
-                    .focusRequester(focusRequester)
-                    .onKeyEvent { event ->
-                        if (event.isReleased(Key.Enter)) {
-                            submitIfValid()
-                            true
-                        } else {
-                            false
-                        }
-                    },
+                modifier = Modifier.width(150.dp).focusRequester(focusRequester),
                 value = input,
                 singleLine = true,
                 onValueChange = { updateInput(it) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = { submitIfValid() },
+                ),
             )
             IconButton(
                 enabled = validIndex > 0,
@@ -186,7 +178,7 @@ private fun ResultView(entries: List<Entry>, oldIndex: Int, newIndex: Int, viewC
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 NavigatorListItemNumber(entry.newIndex)
-                NavigatorItemSummary(entry.entry.name, entry.entry.sample, viewConf, isEntry = true)
+                NavigatorItemSummary(entry.entry.name, entry.entry.sample, viewConf.hideSampleExtension, isEntry = true)
             }
         }
     }

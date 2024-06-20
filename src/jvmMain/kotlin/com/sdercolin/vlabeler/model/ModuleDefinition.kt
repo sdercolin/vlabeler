@@ -51,3 +51,11 @@ data class ModuleDefinition(
         labelFile?.absolutePath,
     )
 }
+
+fun Module.getDefinition(project: Project, inputFiles: List<File>?): ModuleDefinition = ModuleDefinition(
+    name,
+    getSampleDirectory(project),
+    entries.map { it.sample }.distinct().sorted().map { getSampleFile(project, it) },
+    inputFiles,
+    getRawFile(project),
+)

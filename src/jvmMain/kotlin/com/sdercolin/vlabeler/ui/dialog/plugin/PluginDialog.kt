@@ -80,10 +80,7 @@ import com.sdercolin.vlabeler.ui.common.ReversedRow
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
-import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
-import com.sdercolin.vlabeler.ui.string.Strings
-import com.sdercolin.vlabeler.ui.string.string
-import com.sdercolin.vlabeler.ui.string.toLocalized
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.AppTheme
 import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
@@ -450,10 +447,15 @@ private fun Params(state: BasePluginDialogState, js: JavaScript?, coroutineScope
     ) {
         state.params.indices.map { i ->
             if (state.isChangeable(state.paramDefs[i].name).not()) return@map i to false
-            val dependingParamName = state.paramDefs[i].enableIf ?: return@map i to true
+            val dependingParamName = state.paramDefs[i].enableIf?.split("=")?.first() ?: return@map i to true
             val dependingParam = state.paramDefs.firstOrNull { it.name == dependingParamName } ?: return@map i to false
             val dependingParamValue = state.params[state.paramDefs.indexOf(dependingParam)]
-            i to dependingParam.eval(dependingParamValue)
+            val dependingParamTrueValues = state.paramDefs[i].enableIf?.split("=")?.getOrNull(1)?.split("|")
+            if (dependingParamTrueValues != null) {
+                i to dependingParamTrueValues.contains(dependingParamValue.toString())
+            } else {
+                i to dependingParam.eval(dependingParamValue)
+            }
         }.forEach { (i, enabled) ->
             val labelInRow = state.isParamInRow(i)
             Column(Modifier.heightIn(min = 60.dp)) {

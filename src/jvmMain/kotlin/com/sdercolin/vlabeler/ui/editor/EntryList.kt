@@ -151,6 +151,7 @@ fun EntryList(
                 onFocusedChanged(it)
             },
             onPreviewKeyEvent = state::onPreviewKeyEvent,
+            onSubmit = state::submitCurrent,
             trailingContent = {
                 if (pinned) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -309,7 +310,7 @@ private fun ItemContent(editorConf: AppConf.Editor, viewConf: AppConf.View, item
     Layout(
         content = {
             NavigatorListItemNumber(item.index)
-            NavigatorItemSummary(item.value.name, item.value.sample, viewConf, isEntry = true)
+            NavigatorItemSummary(item.value.name, item.value.sample, viewConf.hideSampleExtension, isEntry = true)
             Row {
                 if (item.value.notes.tag.isNotEmpty() && editorConf.showTag) {
                     Spacer(modifier = Modifier.width(12.dp))

@@ -7,14 +7,17 @@ import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowScope
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -62,6 +66,8 @@ import com.sdercolin.vlabeler.util.parseJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.awt.event.WindowEvent
+import java.awt.event.WindowFocusListener
 
 var hasUncaughtError = false
 
@@ -113,6 +119,7 @@ fun main(vararg args: String) = application {
             onCloseRequest = onCloseRequest,
             onKeyEvent = onKeyEvent,
         ) {
+            LaunchWindowFocusListener(appState)
             LaunchSaveWindowSize(windowState, appRecordStore)
             Menu(mainScope, appState, appConf.value.view)
 
@@ -157,7 +164,7 @@ private fun SnackbarBox(state: AppState) {
 @Composable
 private fun rememberAppRecordStore(scope: CoroutineScope) = remember {
     val recordText = AppRecordFile.takeIf { it.exists() }?.readText()
-    val appRecord = recordText?.parseJson() ?: AppRecord()
+    val appRecord = runCatching { recordText?.parseJson<AppRecord>() }.getOrNull() ?: AppRecord()
     AppRecordStore(appRecord, scope)
 }
 
@@ -189,6 +196,27 @@ private fun LaunchSaveWindowSize(
         snapshotFlow { windowState.size }
             .onEach(appRecordStore::saveWindowSize)
             .launchIn(this)
+    }
+}
+
+@Composable
+private fun WindowScope.LaunchWindowFocusListener(appState: AppState?) {
+    var added by remember { mutableStateOf(false) }
+    DisposableEffect(appState) {
+        if (appState != null && !added) {
+            added = true
+            window.addWindowFocusListener(
+                object : WindowFocusListener {
+                    override fun windowGainedFocus(e: WindowEvent) {
+                    }
+
+                    override fun windowLostFocus(e: WindowEvent) {
+                        appState.keyboardViewModel.clear()
+                    }
+                },
+            )
+        }
+        onDispose {}
     }
 }
 
