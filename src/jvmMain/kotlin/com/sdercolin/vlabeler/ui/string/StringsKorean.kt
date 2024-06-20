@@ -516,7 +516,7 @@ fun Strings.ko(): String? = when (this) {
     PreferencesEditorScissorsScissorsSubmitThreshold -> "입력 인식의 문턱값 (DP)"
     PreferencesEditorScissorsScissorsSubmitThresholdDescription ->
         "가위 도구로 클릭했을 때, 클릭된 위치로부터 문턱값 이상으로 커서가 이동해야" +
-        "입력이 인식됩니다."
+            "입력이 인식됩니다."
     PreferencesEditorScissorsActionTargetFormer -> "이전 엔트리로"
     PreferencesEditorScissorsActionTargetLatter -> "다음 엔트리로"
     PreferencesEditorScissorsActionGoTo -> "자른 후 엔트리 이동"
@@ -743,8 +743,7 @@ fun Strings.ko(): String? = when (this) {
     ReloadLabelDialogModuleNameTemplate -> "하위 프로젝트: %s"
     ReloadLabelDialogShowUnchanged -> "변경되지 않은 상태로 표시"
     ReloadLabelDialogNotice ->
-        "미리보기에 표시되는 차이점들은 현재 라벨러의 설정을 기반으로 계산된 것들이에요. " + 
-            "표시에 누락되는 작은 차이점들이 있을 수 있으니, 추후 새로고침을 통해 " +
+        "미리보기에 표시되는 차이점들은 현재 라벨러의 설정을 기반으로 계산된 것들이에요. " + "표시에 누락되는 작은 차이점들이 있을 수 있으니, 추후 새로고침을 통해 " +
             "실제 내용이 이상이 없는지 확인해 주세요."
     ReloadLabelDialogNoDiff -> "차이점이 발견되지 않았어요."
     ReloadLabelDialogInheritNotes -> "노트들 상속하기"
