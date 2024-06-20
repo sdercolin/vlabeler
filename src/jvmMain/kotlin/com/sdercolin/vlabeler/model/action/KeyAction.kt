@@ -49,22 +49,7 @@ enum class KeyAction(
         true,
     ),
     ImportProject(
-        listOf(Strings.MenuFile, Strings.MenuFileImportProject),
-        null,
-        true,
-    ),
-    ReloadLabelFilePickFile(
-        listOf(Strings.MenuFile, Strings.MenuFileReloadLabelFilePickFile),
-        null,
-        true,
-    ),
-    ReloadLabelFileDefault(
-        listOf(Strings.MenuFile, Strings.MenuFileReloadLabelFileDefault),
-        null,
-        true,
-    ),
-    ReloadLabelFileDefaultWithoutConfirmation(
-        listOf(Strings.MenuFile, Strings.MenuFileReloadLabelFileDefaultWithoutConfirmation),
+        listOf(Strings.MenuFile, Strings.MenuFileImport),
         null,
         true,
     ),

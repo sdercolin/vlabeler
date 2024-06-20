@@ -49,9 +49,7 @@ let entries = samples.map(sample => {
     let start = defaultValues[0]
     let end = defaultValues[defaultValues.length - 1]
     let points = defaultValues.slice(1, defaultValues.length - 1)
-    let extras = labeler.extraFields
-            ? labeler.extraFields.map((field) => field.default)
-            : labeler.defaultExtras
+    let extras = labeler.defaultExtras
     return new Entry(path, name, start, end, points, extras, new Notes(), true)
 })
 

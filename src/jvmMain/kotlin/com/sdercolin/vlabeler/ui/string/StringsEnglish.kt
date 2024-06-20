@@ -12,14 +12,10 @@ fun Strings.en(): String = when (this) {
     MenuFileSave -> "Save"
     MenuFileSaveAs -> "Save As..."
     MenuFileProjectSetting -> "Project Settings..."
-    MenuFileImportProject -> "Import Project..."
-    MenuFileReloadLabelFile -> "Reload Label File"
-    MenuFileReloadLabelFilePickFile -> "From File..."
-    MenuFileReloadLabelFileDefault -> "From Output File..."
-    MenuFileReloadLabelFileDefaultWithoutConfirmation -> "From Output File (without confirmation)"
-    MenuFileExport -> "Export Label File..."
-    MenuFileExportOverwrite -> "Export Label File Overwriting"
-    MenuFileExportOverwriteAll -> "Export All Label Files Overwriting"
+    MenuFileImport -> "Import..."
+    MenuFileExport -> "Export..."
+    MenuFileExportOverwrite -> "Export Overwriting"
+    MenuFileExportOverwriteAll -> "Export Overwriting All"
     MenuFileInvalidateCaches -> "Invalidate Caches"
     MenuFileClose -> "Close"
     MenuEdit -> "Edit"
@@ -384,23 +380,6 @@ fun Strings.en(): String = when (this) {
     PreferencesChartsPowerIntensityAccuracy -> "Bitmap height (px)"
     PreferencesChartsPowerColor -> "Color"
     PreferencesChartsPowerBackgroundColor -> "Background color"
-    PreferencesChartsFundamental -> "F0"
-    PreferencesChartsFundamentalDescription -> "Customize the F0 chart."
-    PreferencesChartsFundamentalEnabled -> "Show F0 chart"
-    PreferencesChartsFundamentalHeight -> "Height relative to waveforms (%%)"
-    PreferencesChartsFundamentalSemitoneResolution -> "Semitone resolution in image"
-    PreferencesChartsFundamentalMinFundamental -> "Min displayed frequency (Hz)"
-    PreferencesChartsFundamentalMinFundamentalInvalid -> "Min frequency must be less than max frequency."
-    PreferencesChartsFundamentalMaxFundamental -> "Max displayed frequency (Hz)"
-    PreferencesChartsFundamentalMaxFundamentalInvalid -> "Max frequency must be greater than min frequency."
-    PreferencesChartsFundamentalSemitoneSampleNum -> "Sample number for each semitone"
-    PreferencesChartsFundamentalMaxHarmonicFrequency -> "Max harmonic frequency (Hz)"
-    PreferencesChartsFundamentalMaxHarmonicFrequencyInvalid ->
-        "Max harmonic frequency must be greater than max frequency."
-    PreferencesChartsFundamentalDrawReferenceLine -> "Draw reference lines on C keys"
-    PreferencesChartsFundamentalColor -> "Color"
-    PreferencesChartsFundamentalReferenceLineColor -> "Reference line color"
-    PreferencesChartsFundamentalBackgroundColor -> "Background color"
     PreferencesChartsConversion -> "Audio Format Support"
     PreferencesChartsConversionDescription -> "Configure support for audio formats other than wav."
     PreferencesChartsConversionFFmpegPath -> "FFmpeg executable path"
@@ -513,10 +492,6 @@ fun Strings.en(): String = when (this) {
             "with the scissors. You can confirm the cutting action by pressing Enter or moving the cursor away " +
             "from the clicked position. You can also cancel the action by pressing Esc. This is only available " +
             "in multiple edit mode."
-    PreferencesEditorScissorsScissorsSubmitThreshold -> "Threshold of action submission (DP)"
-    PreferencesEditorScissorsScissorsSubmitThresholdDescription ->
-        "After clicking with scissors, when you move the cursor away from the clicked position and the distance " +
-            "exceeds the threshold, the scissors action will be submitted."
     PreferencesEditorScissorsColor -> "Color"
     PreferencesEditorScissorsActionTargetNone -> "None"
     PreferencesEditorScissorsActionTargetFormer -> "The former entry"
@@ -721,10 +696,10 @@ fun Strings.en(): String = when (this) {
     ImportEntriesDialogItemSummaryTitle -> "%d Entries"
     ImportEntriesDialogItemTargetLabel -> "Target"
     ImportEntriesDialogItemIncompatible -> "Incompatible with current project"
-    ImportEntriesDialogReplaceContent -> "Remove current entries"
+    ImportEntriesDialogReplaceContent -> "Replace current content"
     ImportEntriesDialogReplaceContentDisabledDescription ->
         "The current project doesn't support appending entries, " +
-            "so all the current entries will be removed before importing."
+            "so all the current entries will be replaced by imported ones."
     EntrySampleSyncerModuleText -> "Handling subprojects %d/%d..."
     EntrySampleSyncerModuleTextFinished -> "Handling subprojects %d/%d... Done"
     EntrySampleSyncerSampleText -> "Handling sample files %d/%d..."
@@ -757,15 +732,4 @@ fun Strings.en(): String = when (this) {
     FileNameNormalizerHandleFolderSuccess -> "Scanned %d files, converted %d files."
     FileNameNormalizerHandleFileSuccess -> "Successfully converted the file content."
     FileNameNormalizerHandleFileNoChange -> "No conversion needed for the file content."
-    ReloadLabelDialogTitle -> "Reload Label File"
-    ReloadLabelDialogModuleNameTemplate -> "Subproject: %s"
-    ReloadLabelDialogShowUnchanged -> "Show unchanged"
-    ReloadLabelDialogNotice ->
-        "This difference preview is calculated based on settings of the current labeler, " +
-            "so it may not show all minor differences. Please check the actual content after reloading to make sure " +
-            "everything is correct."
-    ReloadLabelDialogNoDiff -> "No difference found."
-    ReloadLabelDialogInheritNotes -> "Inherit notes"
-    ReloadLabelDialogInheritNotesDescription ->
-        "If enabled, the notes on old entries will be copied to the new entries for all matched entry pairs."
 }

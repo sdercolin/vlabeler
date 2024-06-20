@@ -89,15 +89,6 @@ class KeyboardViewModel(private val coroutineScope: CoroutineScope, keymaps: App
         return caughtKeyAction != null && shouldBlockEvent
     }
 
-    /**
-     * Should be called when the window loses focus.
-     */
-    fun clear() {
-        coroutineScope.launch {
-            emitState(getIdleState())
-        }
-    }
-
     private fun List<Pair<KeySet, MouseClickAction>>.associateWithTool(): Map<Pair<KeySet, Tool>, MouseClickAction> {
         return associate { (keySet, action) -> (keySet to action.tool) to action }
     }

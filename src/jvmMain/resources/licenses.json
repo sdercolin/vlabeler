@@ -408,210 +408,210 @@
         },
         {
             "moduleName": "org.jetbrains.compose.animation:animation",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.animation:animation-core",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.animation:animation-core-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.animation:animation-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.components:components-splitpane-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.desktop:desktop",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.desktop:desktop-jvm",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.desktop:desktop-jvm-macos-arm64",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.foundation:foundation",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.foundation:foundation-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.foundation:foundation-layout",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.foundation:foundation-layout-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.material:material",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.material:material-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.material:material-icons-core",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.material:material-icons-core-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.material:material-icons-extended",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.material:material-icons-extended-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.material:material-ripple",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.material:material-ripple-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.runtime:runtime",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.runtime:runtime-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.runtime:runtime-saveable",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.runtime:runtime-saveable-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-geometry",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-geometry-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-graphics",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-graphics-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-text",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-text-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-tooling-preview",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-tooling-preview-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-unit",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-unit-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-util",
-            "moduleVersion": "1.5.10"
+            "moduleVersion": "1.5.2"
         },
         {
             "moduleName": "org.jetbrains.compose.ui:ui-util-desktop",
             "moduleUrl": "https://github.com/JetBrains/compose-jb",
-            "moduleVersion": "1.5.10",
+            "moduleVersion": "1.5.2",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
@@ -667,30 +667,30 @@
         },
         {
             "moduleName": "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
-            "moduleVersion": "1.7.3"
+            "moduleVersion": "1.7.0"
         },
         {
             "moduleName": "org.jetbrains.kotlinx:kotlinx-coroutines-core",
-            "moduleVersion": "1.7.3"
+            "moduleVersion": "1.7.0"
         },
         {
             "moduleName": "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm",
             "moduleUrl": "https://github.com/Kotlin/kotlinx.coroutines",
-            "moduleVersion": "1.7.3",
+            "moduleVersion": "1.7.0",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8",
             "moduleUrl": "https://github.com/Kotlin/kotlinx.coroutines",
-            "moduleVersion": "1.7.3",
+            "moduleVersion": "1.7.0",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j",
             "moduleUrl": "https://github.com/Kotlin/kotlinx.coroutines",
-            "moduleVersion": "1.7.3",
+            "moduleVersion": "1.7.0",
             "moduleLicense": "The Apache Software License, Version 2.0",
             "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0.txt"
         },
@@ -722,19 +722,19 @@
         },
         {
             "moduleName": "org.jetbrains.skiko:skiko",
-            "moduleVersion": "0.7.85"
+            "moduleVersion": "0.7.77"
         },
         {
             "moduleName": "org.jetbrains.skiko:skiko-awt",
             "moduleUrl": "https://www.github.com/JetBrains/skiko",
-            "moduleVersion": "0.7.85",
+            "moduleVersion": "0.7.77",
             "moduleLicense": "The Apache License, Version 2.0",
             "moduleLicenseUrl": "http://www.apache.org/licenses/LICENSE-2.0.txt"
         },
         {
             "moduleName": "org.jetbrains.skiko:skiko-awt-runtime-macos-arm64",
             "moduleUrl": "https://www.github.com/JetBrains/skiko",
-            "moduleVersion": "0.7.85",
+            "moduleVersion": "0.7.77",
             "moduleLicense": "The Apache License, Version 2.0",
             "moduleLicenseUrl": "http://www.apache.org/licenses/LICENSE-2.0.txt"
         },

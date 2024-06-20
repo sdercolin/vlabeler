@@ -10,18 +10,9 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.internal.utils.localPropertiesFile
 import java.util.Properties
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-    }
-}
-
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization") version "1.9.23"
+    kotlin("plugin.serialization") version "1.8.10"
     id("org.jetbrains.compose")
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
     id("com.github.jk1.dependency-license-report") version "2.0"
@@ -118,20 +109,27 @@ compose.desktop {
                 bundleID = "com.sdercolin.vlabeler"
 
                 if (project.localPropertiesFile.exists()) {
-                    val properties = Properties().apply { load(project.localPropertiesFile.inputStream()) }
+                    val localProperties = Properties().apply { load(project.localPropertiesFile.inputStream()) }
+
                     signing {
-                        properties.getOrDefault("compose.desktop.mac.sign", "false").toString().toBoolean()
-                            .let { sign.set(it) }
-                        properties.getOrDefault("compose.desktop.mac.signing.identity", "").toString()
-                            .let { identity.set(it) }
+                        sign.set(
+                            localProperties
+                                .getOrDefault("compose.desktop.mac.sign", "false").toString().toBoolean(),
+                        )
+                        identity.set(
+                            localProperties
+                                .getOrDefault("compose.desktop.mac.signing.identity", "").toString(),
+                        )
                     }
                     notarization {
-                        properties.getOrDefault("compose.desktop.mac.notarization.appleID", "").toString()
-                            .let { appleID.set(it) }
-                        properties.getOrDefault("compose.desktop.mac.notarization.password", "").toString()
-                            .let { password.set(it) }
-                        properties.getOrDefault("compose.desktop.mac.notarization.teamID", "").toString()
-                            .let { teamID.set(it) }
+                        appleID.set(
+                            localProperties
+                                .getOrDefault("compose.desktop.mac.notarization.appleID", "").toString(),
+                        )
+                        password.set(
+                            localProperties
+                                .getOrDefault("compose.desktop.mac.notarization.password", "").toString(),
+                        )
                     }
                 }
             }

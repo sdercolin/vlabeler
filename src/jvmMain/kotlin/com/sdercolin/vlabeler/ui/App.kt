@@ -14,7 +14,6 @@ import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.QuickLaunchManagerDialog
-import com.sdercolin.vlabeler.ui.dialog.ReloadLabelDialog
 import com.sdercolin.vlabeler.ui.dialog.TrackingSettingsDialog
 import com.sdercolin.vlabeler.ui.dialog.WarningDialog
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialog
@@ -183,17 +182,6 @@ fun App(
                 finish = { appState.closeImportEntriesDialog() },
                 projectStore = appState,
                 args = it,
-            )
-        }
-        appState.reloadLabelDialogArgs?.let { args ->
-            ReloadLabelDialog(
-                args = args,
-                finish = { result ->
-                    appState.closeReloadLabelDialog()
-                    if (result != null) {
-                        appState.editProject { applyReloadedEntries(args.entries, args.diff, result) }
-                    }
-                },
             )
         }
         appState.error?.let { error ->

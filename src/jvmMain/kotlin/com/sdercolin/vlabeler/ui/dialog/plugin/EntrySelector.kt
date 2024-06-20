@@ -28,8 +28,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.material.icons.filled.UnfoldMore
@@ -182,7 +182,7 @@ fun ParamEntrySelector(
                     Spacer(Modifier.width(5.dp))
                     Icon(
                         modifier = Modifier.size(16.dp),
-                        imageVector = Icons.AutoMirrored.Filled.HelpOutline,
+                        imageVector = Icons.Default.HelpOutline,
                         contentDescription = null,
                         tint = MaterialTheme.colors.onSurface,
                     )
@@ -485,7 +485,7 @@ private fun FilterRow(
                         Url.open(Url.ENTRY_SELECTOR_SCRIPT_DOCUMENT)
                     },
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null, tint = White50)
+                    Icon(Icons.Default.HelpOutline, contentDescription = null, tint = White50)
                 }
             }
         }

@@ -40,7 +40,6 @@ import kotlin.math.pow
  * @property hasSpectrogram Whether spectrogram is loaded for the sample file.
  * @property hasPower Whether power is loaded for the sample file.
  * @property powerChannels The number of power channels.
- * @property hasFundamental Whether fundamental is loaded for the sample file.
  * @property lastModified The last modified time of the sample file.
  * @property algorithmVersion The version of the algorithm used to load the sample file.
  */
@@ -63,18 +62,13 @@ data class SampleInfo(
     val hasSpectrogram: Boolean,
     val hasPower: Boolean,
     val powerChannels: Int,
-    val hasFundamental: Boolean,
     val lastModified: Long,
     val algorithmVersion: Int,
 ) {
 
     val totalChartCount: Int
         get() = chunkCount *
-            (
-                channels + (if (hasSpectrogram) 1 else 0) +
-                    (if (hasPower) powerChannels else 0) +
-                    (if (hasFundamental) 1 else 0)
-                )
+            (channels + (if (hasSpectrogram) 1 else 0) + (if (hasPower) powerChannels else 0))
 
     fun getFile(project: Project): File = project.rootSampleDirectory.resolve(convertedFile ?: file)
 
@@ -83,7 +77,6 @@ data class SampleInfo(
         val appNormalize = appConf.painter.amplitude.normalize
         val appHasSpectrogram = appConf.painter.spectrogram.enabled
         val appHasPower = appConf.painter.power.enabled
-        val appHasFundamental = appConf.painter.fundamental.enabled
         val correctPowerChannels = if (appConf.painter.power.mergeChannels) {
             powerChannels == 1
         } else {
@@ -95,7 +88,6 @@ data class SampleInfo(
             hasSpectrogram != appHasSpectrogram ||
             hasPower != appHasPower ||
             !correctPowerChannels ||
-            hasFundamental != appHasFundamental ||
             algorithmVersion != WAVE_LOADING_ALGORITHM_VERSION ||
             !getFile(project).exists() ||
             lastModified != sampleFile.lastModified() ||
@@ -169,7 +161,6 @@ data class SampleInfo(
                     hasSpectrogram = appConf.painter.spectrogram.enabled,
                     hasPower = appConf.painter.power.enabled,
                     powerChannels = powerChannels,
-                    hasFundamental = appConf.painter.fundamental.enabled,
                     lastModified = file.lastModified(),
                     algorithmVersion = WAVE_LOADING_ALGORITHM_VERSION,
                 )

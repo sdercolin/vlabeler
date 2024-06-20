@@ -67,7 +67,6 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.editor.RenderStatusLabel
-import com.sdercolin.vlabeler.ui.editor.ScrollFitViewModel
 import com.sdercolin.vlabeler.ui.editor.ToolboxView
 import com.sdercolin.vlabeler.ui.editor.labeler.timescale.TimescaleBar
 import com.sdercolin.vlabeler.ui.string.*
@@ -92,14 +91,10 @@ fun Labeler(
     val horizontalScrollState = rememberScrollState(0)
 
     LaunchedEffect(editorState) {
-        editorState.scrollFitViewModel.eventFlow.collectLatest { (value, mode) ->
+        editorState.scrollFitViewModel.eventFlow.collectLatest {
             if (appState.isScrollFitEnabled.not()) return@collectLatest
             delay(100) // sometimes the scroll request doesn't work if it's too fast
-            when (mode) {
-                ScrollFitViewModel.Mode.NORMAL -> Unit
-                ScrollFitViewModel.Mode.FORWARD -> if (horizontalScrollState.value > value) return@collectLatest
-            }
-            horizontalScrollState.animateScrollTo(value)
+            horizontalScrollState.animateScrollTo(it)
         }
     }
 

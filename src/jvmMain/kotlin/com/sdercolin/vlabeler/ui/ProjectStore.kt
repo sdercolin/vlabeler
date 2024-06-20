@@ -113,7 +113,7 @@ interface ProjectStore {
     fun previousModule()
     fun jumpToModule(index: Int, targetEntryIndex: Int? = null)
 
-    fun hasRawLabelFileForCurrentModule(): Boolean
+    fun canOverwriteExportCurrentModule(): Boolean
     fun shouldShowOverwriteExportAllModules(): Boolean
     fun canOverwriteExportAllModules(): Boolean
     fun overwriteExportCurrentModule()
@@ -238,7 +238,6 @@ class ProjectStoreImpl(
         if (autoScrollConf.onSwitched ||
             (autoScrollConf.onSwitchedInMultipleEditMode && targetEntryIndex != project?.currentModule?.currentIndex)
         ) {
-            scrollFitViewModel.setMode(ScrollFitViewModel.Mode.FORWARD)
             scrollFitViewModel.emitNext()
         }
         editCurrentProjectModule { cutEntry(index, position, rename, newName, targetEntryIndex) }
@@ -251,13 +250,6 @@ class ProjectStoreImpl(
         target: AppConf.ScissorsActions.Target,
         targetEntryIndex: Int?,
     ) {
-        val autoScrollConf = appConf.value.editor.autoScroll
-        if (autoScrollConf.onSwitched ||
-            (autoScrollConf.onSwitchedInMultipleEditMode && targetEntryIndex != project?.currentModule?.currentIndex)
-        ) {
-            scrollFitViewModel.setMode(ScrollFitViewModel.Mode.FORWARD)
-            scrollFitViewModel.emitNext()
-        }
         editCurrentProjectModule {
             val rename = if (target != AppConf.ScissorsActions.Target.Former) null else name
             val newName = if (target != AppConf.ScissorsActions.Target.Former) name else entries[index].name
@@ -602,7 +594,7 @@ class ProjectStoreImpl(
         }
     }
 
-    override fun hasRawLabelFileForCurrentModule(): Boolean {
+    override fun canOverwriteExportCurrentModule(): Boolean {
         val project = project ?: return false
         val module = project.currentModule
         return module.rawFilePath != null
