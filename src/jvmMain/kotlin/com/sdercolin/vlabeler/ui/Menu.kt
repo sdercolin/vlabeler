@@ -182,13 +182,13 @@ fun FrameWindowScope.Menu(
                         string(Strings.MenuEditUndo),
                         onClick = { appState.undo() },
                         shortcut = KeyAction.Undo.getKeyShortCut(),
-                        enabled = appState.history.canUndo,
+                        enabled = appState.history.canUndo && appState.isEditorActive,
                     )
                     Item(
                         string(Strings.MenuEditRedo),
                         onClick = { appState.redo() },
                         shortcut = KeyAction.Redo.getKeyShortCut(),
-                        enabled = appState.history.canRedo,
+                        enabled = appState.history.canRedo && appState.isEditorActive,
                     )
                     Menu(string(Strings.MenuEditTools)) {
                         Tool.values().forEach { tool ->
