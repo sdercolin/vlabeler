@@ -253,7 +253,7 @@ fun Strings.ko(): String? = when (this) {
     PluginEntrySelectorExpressionDescription ->
         "위에 명시된 필터들을 조합하는 논리 표현식이에요. \n" +
             "사용 가능한 표기: `and`, `or`, `not`, `xor`, `(`, `)`, `#1`, `#2`, 등..."
-    EditorSubTitleMultiple -> "샘플 %2\$의 엔트리 %1\$d개 편집 중 "
+    EditorSubTitleMultiple -> "샘플 %2s\$의 엔트리 %1d\$개 편집 중 "
     FailedToLoadSampleFileError -> "샘플 파일을 불러오지 못했습니다.\n존재하지 않는 파일이거나 지원되지 않는 형식일 수 있습니다."
     PluginRuntimeUnexpectedException ->
         "플러그인 실행 도중 예상치 못한 오류가 발생했어요.\n" +
