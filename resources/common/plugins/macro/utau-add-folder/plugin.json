@@ -1,6 +1,6 @@
 {
     "name": "utau-add-foler",
-    "version": 2,
+    "version": 3,
     "type": "macro",
     "displayedName": {
         "en": "Add folder as sub-project for UTAU singer",
