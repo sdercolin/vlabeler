@@ -4,7 +4,8 @@ if (bpm <= 0) {
     error({
         en: "BPM must be greater than 0",
         zh: "BPM 必须大于0",
-        ja: "BPMは0より大きくなければなりません"
+        ja: "BPMは0より大きくなければなりません",
+        ko: "BPM은 0보다 큰 값이어야 합니다."
     })
 }
 
@@ -16,7 +17,8 @@ if (repeatSuffix.indexOf("{number}") < 0) {
     error({
         en: "The `repeat suffix template` parameter must contain placeholder \"{number}\".",
         zh: "`重复后缀模板` 参数必须包含占位符 \"{number}\"。",
-        ja: "`リピート接尾辞テンプレート`パラメータには、プレースホルダー\"{number}\"が含まれている必要があります。"
+        ja: "`リピート接尾辞テンプレート`パラメータには、プレースホルダー\"{number}\"が含まれている必要があります。",
+        ko: "`반복 접미사 템플릿`의 매개변수에는 \"{number}\" 표시자가 있어야만 합니다."
     })
 }
 
@@ -60,7 +62,8 @@ for (let [text, vowel] of vowelLineParsed) {
         error({
             en: `The vowel map contains duplicate entries for ${text}.`,
             zh: `元音表中包含重复的项目 ${text}。`,
-            ja: `母音マップには、複数回 ${text} が含まれています。`
+            ja: `母音マップには、複数回 ${text} が含まれています。`,
+            ko: `모음 맵에 중복 항목 ${text} 이 있습니다.`
         })
     }
     vowelMap.set(text, vowel)
@@ -81,7 +84,8 @@ for (let [text, consonant] of consonantLineParsed) {
         error({
             en: `The consonant map contains duplicate entries for ${text}.`,
             zh: `辅音表中包含重复的项目 ${text}。`,
-            ja: `子音マップには、複数回 ${text} が含まれています。`
+            ja: `子音マップには、複数回 ${text} が含まれています。`,
+            ko: `자음 맵에 중복 항목 ${text} 이 있습니다.`
         })
     }
     let vowelItem = vowelList.find(vowel => text.endsWith(vowel[0]))
@@ -89,7 +93,8 @@ for (let [text, consonant] of consonantLineParsed) {
         error({
             en: `Could not find matched item in the vowel map for ${text}.`,
             zh: `无法在元音表中找到与 ${text} 匹配的项目。`,
-            ja: `母音マップに ${text} とマッチする項目が見つかりませんでした。`
+            ja: `母音マップに ${text} とマッチする項目が見つかりませんでした。`,
+            ko: `${text} 와 일치하는 항목이 모음 맵에 없습니다.`
         })
     }
     let vowel = vowelItem[1]

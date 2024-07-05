@@ -1,18 +1,20 @@
 {
     "name": "batch-remove-entry",
-    "version": 4,
+    "version": 5,
     "type": "macro",
     "displayedName": {
         "en": "Batch remove entry",
         "zh": "批量删除条目",
-        "ja": "エントリを一括削除"
+        "ja": "エントリを一括削除",
+        "ko": "엔트리 일괄 제거"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
     "description": {
         "en": "Remove multiple entries at once.",
         "zh": "一次性删除多个条目。",
-        "ja": "複数のエントリを一括削除します。"
+        "ja": "複数のエントリを一括削除します。",
+        "ko": "여러 엔트리를 한 번에 제거해 줘요."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-remove-entry",
     "supportedLabelFileExtension": "*",
@@ -24,12 +26,14 @@
                 "label": {
                     "en": "Entry filters",
                     "zh": "条目筛选器",
-                    "ja": "エントリフィルター"
+                    "ja": "エントリフィルター",
+                    "ko": "엔트리 필터"
                 },
                 "description": {
                     "en": "Add filters to select the entries to remove.",
                     "zh": "添加筛选器以选择要删除的条目。",
-                    "ja": "削除するエントリを選択するフィルターを追加してください。"
+                    "ja": "削除するエントリを選択するフィルターを追加してください。",
+                    "ko": "제거할 엔트리들의 선택에 사용할 필터를 추가해 주세요."
                 },
                 "defaultValue": {
                     "filters": []
