@@ -1,6 +1,8 @@
 package com.sdercolin.vlabeler.ui.starter
 
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
@@ -97,9 +102,18 @@ fun BoxScope.Starter(
                         style = MaterialTheme.typography.h5,
                     )
                     Spacer(Modifier.height(11.dp))
-                    getQuickProjectBuilders(appState).forEach {
-                        Spacer(Modifier.height(4.dp))
-                        QuickEditButton(it, appState)
+                    Box {
+                        val scrollState = rememberScrollState()
+                        Column(modifier = Modifier.verticalScroll(scrollState)) {
+                            getQuickProjectBuilders(appState).forEach {
+                                Spacer(Modifier.height(4.dp))
+                                QuickEditButton(it, appState)
+                            }
+                        }
+                        VerticalScrollbar(
+                            adapter = rememberScrollbarAdapter(scrollState),
+                            modifier = Modifier.align(Alignment.CenterEnd),
+                        )
                     }
                 }
                 Spacer(Modifier.widthIn(min = 50.dp))
@@ -115,13 +129,22 @@ fun BoxScope.Starter(
                     if (recentFiles.isEmpty()) {
                         Text(text = string(Strings.StarterRecentEmpty), style = MaterialTheme.typography.body2)
                     } else {
-                        recentFiles.forEachIndexed { index, file ->
-                            SingleClickableText(
-                                modifier = Modifier.padding(bottom = 15.dp),
-                                text = recentPaths[index].second,
-                                onClick = {
-                                    loadProject(mainScope, file, appState)
-                                },
+                        val scrollState = rememberScrollState()
+                        Box {
+                            Column(modifier = Modifier.verticalScroll(scrollState)) {
+                                recentFiles.forEachIndexed { index, file ->
+                                    SingleClickableText(
+                                        modifier = Modifier.padding(bottom = 15.dp),
+                                        text = recentPaths[index].second,
+                                        onClick = {
+                                            loadProject(mainScope, file, appState)
+                                        },
+                                    )
+                                }
+                            }
+                            VerticalScrollbar(
+                                adapter = rememberScrollbarAdapter(scrollState),
+                                modifier = Modifier.align(Alignment.CenterEnd),
                             )
                         }
                     }
