@@ -191,7 +191,7 @@ fun FrameWindowScope.Menu(
                         enabled = appState.history.canRedo && appState.isEditorActive,
                     )
                     Menu(string(Strings.MenuEditTools)) {
-                        Tool.values().forEach { tool ->
+                        Tool.entries.forEach { tool ->
                             CheckboxItem(
                                 string(tool.stringKey),
                                 checked = appState.editor?.let { it.tool == tool } ?: false,

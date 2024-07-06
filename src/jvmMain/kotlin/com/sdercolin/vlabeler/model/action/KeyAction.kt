@@ -463,14 +463,14 @@ enum class KeyAction(
     ;
 
     override val displayOrder: Int
-        get() = values().indexOf(this)
+        get() = entries.indexOf(this)
 
     override fun getTitle(language: Language): String =
         displayedNameSections.joinToString(" > ") { stringCertain(it, language) }
 
     companion object {
 
-        fun getNonMenuKeySets(keymaps: AppConf.Keymaps): List<Pair<KeySet, KeyAction>> = values()
+        fun getNonMenuKeySets(keymaps: AppConf.Keymaps): List<Pair<KeySet, KeyAction>> = entries
             .filter { !it.isInMenu }
             .mapNotNull { action ->
                 val keySet = keymaps.keyActionMap.getNullableOrElse(action) { action.defaultKeySet }
@@ -479,6 +479,6 @@ enum class KeyAction(
             .groupBy { it.first.mainKey }
             .flatMap { map -> map.value.sortedByDescending { it.first.subKeys.count() } }
 
-        fun getQuickLaunchAction(index: Int) = values().first { it.name == "QuickLaunch${index + 1}" }
+        fun getQuickLaunchAction(index: Int) = entries.first { it.name == "QuickLaunch${index + 1}" }
     }
 }

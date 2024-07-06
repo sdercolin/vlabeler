@@ -14,8 +14,8 @@ class StringFormatTest {
 
     @Test
     fun test() {
-        Language.values().forEach { language ->
-            Strings.values().forEach { key ->
+        Language.entries.forEach { language ->
+            Strings.entries.forEach { key ->
                 stringCertain(key, language, *Array(maxParamCount) { it })
             }
         }

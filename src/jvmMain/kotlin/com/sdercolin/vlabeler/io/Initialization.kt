@@ -73,7 +73,7 @@ suspend fun loadPlugins(language: Language): List<Plugin> = withContext(Dispatch
 
 fun ensureDirectories() {
     val directories = listOf(AppDir, CustomLabelerDir, CustomPluginDir, RecordDir) +
-        Plugin.Type.values().map { CustomPluginDir.resolve(it.directoryName) }
+        Plugin.Type.entries.map { CustomPluginDir.resolve(it.directoryName) }
 
     directories.forEach {
         if (it.exists().not()) {

@@ -50,7 +50,7 @@ data class KeySet(
     val displayedKeyName: String
         get() {
             val names = mutableListOf<String>()
-            names += subKeys.toList().sortedBy { Key.values().indexOf(it) }.map { it.displayedName }
+            names += subKeys.toList().sortedBy { Key.entries.indexOf(it) }.map { it.displayedName }
             if (mainKey != null) names += mainKey.displayedName
             return names.joinToString(if (isMacOS) "" else "+")
         }
@@ -106,7 +106,7 @@ data class KeySet(
 
         override fun serialize(encoder: Encoder, value: KeySet) {
             val subKeysText = value.subKeys.toList()
-                .sortedBy { Key.values().indexOf(it) }
+                .sortedBy { Key.entries.indexOf(it) }
                 .joinToString("+") { it.name }
                 .ifEmpty { null }
             val mainKeyText = value.mainKey?.name?.ifEmpty { null }

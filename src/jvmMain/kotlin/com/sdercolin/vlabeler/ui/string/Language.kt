@@ -21,7 +21,7 @@ enum class Language(val code: String, private val displayName: String) : Text {
         val default = English
 
         fun find(languageTag: String): Language? {
-            for (value in values()) {
+            for (value in entries) {
                 val codeLevels = value.code.split("-").scan("") { acc, s ->
                     if (acc.isEmpty()) s else "$acc-$s"
                 }.filter { it.isNotEmpty() }

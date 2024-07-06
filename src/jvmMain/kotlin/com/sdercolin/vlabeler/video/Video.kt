@@ -47,7 +47,7 @@ fun Video(
             VideoState.Mode.Embedded -> EmbeddedVideo(videoState)
             VideoState.Mode.NewWindow -> NewWindowVideo(videoState, appConf)
             null -> throw UninitializedPropertyAccessException(
-                "Video mode not chosen, available ones: ${VideoState.Mode.values().toList()}",
+                "Video mode not chosen, available ones: ${VideoState.Mode.entries.toList()}",
             )
         }
 

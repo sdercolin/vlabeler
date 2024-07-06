@@ -81,7 +81,7 @@ enum class MouseClickAction(
     ;
 
     override val displayOrder: Int
-        get() = values().indexOf(this)
+        get() = entries.indexOf(this)
 
     override fun getTitle(language: Language): String = stringCertain(displayedName, language)
 
@@ -89,7 +89,7 @@ enum class MouseClickAction(
 
     companion object {
 
-        fun getKeySets(keymaps: AppConf.Keymaps): List<Pair<KeySet, MouseClickAction>> = MouseClickAction.values()
+        fun getKeySets(keymaps: AppConf.Keymaps): List<Pair<KeySet, MouseClickAction>> = MouseClickAction.entries
             .mapNotNull { action ->
                 val keySet = keymaps.mouseClickActionMap.getNullableOrElse(action) { action.defaultKeySet }
                 keySet?.let { it to action }

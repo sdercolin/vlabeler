@@ -41,11 +41,11 @@ class PreferencesKeymapState<K : Action>(private val item: PreferencesItem.Keyma
         val customKeyBinds: List<ActionKeyBind<K>> = item.select(conf)
         val customActions: List<K> = customKeyBinds.map { it.action }
         return when (item.actionType) {
-            ActionType.Key -> KeyAction.values().filterNot { customActions.contains(it as Action) }
+            ActionType.Key -> KeyAction.entries.filterNot { customActions.contains(it as Action) }
                 .map { KeyActionKeyBind(it, it.defaultKeySet) }
-            ActionType.MouseClick -> MouseClickAction.values().filterNot { customActions.contains(it as Action) }
+            ActionType.MouseClick -> MouseClickAction.entries.filterNot { customActions.contains(it as Action) }
                 .map { MouseClickActionKeyBind(it, it.defaultKeySet) }
-            ActionType.MouseScroll -> MouseScrollAction.values().filterNot { customActions.contains(it as Action) }
+            ActionType.MouseScroll -> MouseScrollAction.entries.filterNot { customActions.contains(it as Action) }
                 .map { MouseScrollActionKeyBind(it, it.defaultKeySet) }
         }
             .filterIsInstance<ActionKeyBind<K>>()

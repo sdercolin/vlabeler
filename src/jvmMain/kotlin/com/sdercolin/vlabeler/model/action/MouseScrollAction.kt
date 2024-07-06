@@ -31,13 +31,13 @@ enum class MouseScrollAction(
     ;
 
     override val displayOrder: Int
-        get() = values().indexOf(this)
+        get() = entries.indexOf(this)
 
     override fun getTitle(language: Language): String = stringCertain(displayedName, language)
 
     companion object {
 
-        fun getKeySets(keymaps: AppConf.Keymaps): List<Pair<KeySet, MouseScrollAction>> = MouseScrollAction.values()
+        fun getKeySets(keymaps: AppConf.Keymaps): List<Pair<KeySet, MouseScrollAction>> = MouseScrollAction.entries
             .mapNotNull { action ->
                 val keySet = keymaps.mouseScrollActionMap.getNullableOrElse(action) { action.defaultKeySet }
                 keySet?.let { it to action }

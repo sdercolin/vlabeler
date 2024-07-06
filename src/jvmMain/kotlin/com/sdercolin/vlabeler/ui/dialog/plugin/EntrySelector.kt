@@ -126,7 +126,7 @@ fun ParamEntrySelector(
                 modifier = Modifier.size(18.dp).clickable(enabled = enabled) {
                     val newItem = EntrySelector.TextFilterItem(
                         subject = EntrySelector.textItemSubjects.first().first,
-                        matchType = EntrySelector.TextMatchType.values().first(),
+                        matchType = EntrySelector.TextMatchType.entries.first(),
                         matcherText = "",
                     )
                     onValueChange(value.copy(filters = filters.toList().plus(newItem)))
@@ -276,7 +276,7 @@ private fun FilterRow(
     var textMatchType by remember(value) {
         mutableStateOf(
             (value as? EntrySelector.TextFilterItem)?.matchType
-                ?: EntrySelector.TextMatchType.values().first(),
+                ?: EntrySelector.TextMatchType.entries.first(),
         )
     }
     var textMatchValue by remember(value) {
@@ -287,7 +287,7 @@ private fun FilterRow(
     var numberMatchType by remember(value) {
         mutableStateOf(
             (value as? EntrySelector.NumberFilterItem)?.matchType
-                ?: EntrySelector.NumberMatchType.values().first(),
+                ?: EntrySelector.NumberMatchType.entries.first(),
         )
     }
     var numberComparerValue by remember {
@@ -395,7 +395,7 @@ private fun FilterRow(
                         numberMatchType = it
                         trySubmit()
                     },
-                    options = EntrySelector.NumberMatchType.values().toList(),
+                    options = EntrySelector.NumberMatchType.entries,
                     getText = { string(it.strings) },
                     modifier = Modifier.width(60.dp),
                     fixedWidth = true,
@@ -434,7 +434,7 @@ private fun FilterRow(
                         textMatchType = it
                         trySubmit()
                     },
-                    options = EntrySelector.TextMatchType.values().toList(),
+                    options = EntrySelector.TextMatchType.entries,
                     getText = { string(it.strings) },
                     modifier = Modifier.width(120.dp),
                     fixedWidth = true,

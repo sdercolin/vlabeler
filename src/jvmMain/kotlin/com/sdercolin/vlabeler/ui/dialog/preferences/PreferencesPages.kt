@@ -203,7 +203,7 @@ object PreferencesPages {
                         defaultValue = AppConf.Spectrogram.DEFAULT_WINDOW_TYPE,
                         select = { it.windowType },
                         update = { copy(windowType = it) },
-                        options = AppConf.WindowType.values(),
+                        options = AppConf.WindowType.entries.toTypedArray(),
                     )
                     integer(
                         title = Strings.PreferencesChartsSpectrogramMelScaleStep,
@@ -643,7 +643,7 @@ object PreferencesPages {
                         defaultValue = AppConf.View.DEFAULT_LANGUAGE,
                         select = { it.language },
                         update = { copy(language = it) },
-                        options = Language.values(),
+                        options = Language.entries.toTypedArray(),
                     )
                     selection(
                         title = Strings.PreferencesViewFontFamily,
@@ -684,7 +684,7 @@ object PreferencesPages {
                         defaultValue = AppConf.View.DEFAULT_PINNED_ENTRY_LIST_POSITION,
                         select = { it.pinnedEntryListPosition },
                         update = { copy(pinnedEntryListPosition = it) },
-                        options = AppConf.ViewSidePosition.values(),
+                        options = AppConf.ViewSidePosition.entries.toTypedArray(),
                     )
                 }
             }
@@ -714,7 +714,7 @@ object PreferencesPages {
                         defaultValue = AppConf.Editor.DEFAULT_LOCKED_DRAG,
                         select = { it.lockedDrag },
                         update = { copy(lockedDrag = it) },
-                        options = AppConf.Editor.LockedDrag.values(),
+                        options = AppConf.Editor.LockedDrag.entries.toTypedArray(),
                     )
                     switch(
                         title = Strings.PreferencesEditorLockedSettingParameterWithCursor,
@@ -778,21 +778,21 @@ object PreferencesPages {
                         defaultValue = AppConf.ScissorsActions.DEFAULT_GO_TO,
                         select = { it.goTo },
                         update = { copy(goTo = it) },
-                        options = AppConf.ScissorsActions.Target.values(),
+                        options = AppConf.ScissorsActions.Target.entries.toTypedArray(),
                     )
                     selection(
                         title = Strings.PreferencesEditorScissorsActionAskForName,
                         defaultValue = AppConf.ScissorsActions.DEFAULT_ASK_FOR_NAME,
                         select = { it.askForName },
                         update = { copy(askForName = it) },
-                        options = AppConf.ScissorsActions.Target.values(),
+                        options = AppConf.ScissorsActions.Target.entries.toTypedArray(),
                     )
                     selection(
                         title = Strings.PreferencesEditorScissorsActionPlay,
                         defaultValue = AppConf.ScissorsActions.DEFAULT_PLAY,
                         select = { it.play },
                         update = { copy(play = it) },
-                        options = AppConf.ScissorsActions.Target.values(),
+                        options = AppConf.ScissorsActions.Target.entries.toTypedArray(),
                     )
                 }
             }
@@ -857,7 +857,7 @@ object PreferencesPages {
                         selection(
                             title = Strings.PreferencesEditorPostEditActionTrigger,
                             defaultValue = AppConf.PostEditAction.DEFAULT_DONE.field,
-                            options = AppConf.PostEditAction.TriggerField.values(),
+                            options = AppConf.PostEditAction.TriggerField.entries.toTypedArray(),
                             select = { it.field },
                             update = { copy(field = it) },
                             enabled = { it.enabled },
@@ -894,7 +894,7 @@ object PreferencesPages {
                         selection(
                             title = Strings.PreferencesEditorPostEditActionTrigger,
                             defaultValue = AppConf.PostEditAction.DEFAULT_NEXT.field,
-                            options = AppConf.PostEditAction.TriggerField.values(),
+                            options = AppConf.PostEditAction.TriggerField.entries.toTypedArray(),
                             select = { it.field },
                             update = { copy(field = it) },
                             enabled = { it.enabled },
@@ -997,14 +997,14 @@ object PreferencesPages {
                         defaultValue = AppConf.ContinuousLabelNames.DEFAULT_SIZE,
                         select = { it.size },
                         update = { copy(size = it) },
-                        options = AppConf.FontSize.values(),
+                        options = AppConf.FontSize.entries.toTypedArray(),
                     )
                     selection(
                         title = Strings.PreferencesEditorContinuousLabelNamesPosition,
                         defaultValue = AppConf.ContinuousLabelNames.DEFAULT_POSITION,
                         select = { it.position },
                         update = { copy(position = it) },
-                        options = AppConf.ViewPosition.values(),
+                        options = AppConf.ViewPosition.entries.toTypedArray(),
                     )
                 }
             }
@@ -1061,7 +1061,7 @@ object PreferencesPages {
                         defaultValue = AppConf.AutoSave.DEFAULT_TARGET,
                         select = { it.target },
                         update = { copy(target = it) },
-                        options = AppConf.AutoSave.Target.values(),
+                        options = AppConf.AutoSave.Target.entries.toTypedArray(),
                     )
                     integer(
                         title = Strings.PreferencesAutoSaveIntervalSec,
@@ -1110,7 +1110,7 @@ object PreferencesPages {
                         title = Strings.PreferencesMiscUpdateChannel,
                         description = Strings.PreferencesMiscUpdateChannelDescription,
                         defaultValue = AppConf.Misc.DEFAULT_UPDATE_CHANNEL,
-                        options = UpdateChannel.values(),
+                        options = UpdateChannel.entries.toTypedArray(),
                         select = { it.updateChannel },
                         update = { copy(updateChannel = it) },
                     )

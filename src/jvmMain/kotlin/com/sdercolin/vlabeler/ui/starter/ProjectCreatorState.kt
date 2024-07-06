@@ -53,8 +53,8 @@ class ProjectCreatorState(
         DataSource(Strings.StarterNewDataSourcePage),
         ;
 
-        fun next() = values().getOrNull(ordinal + 1)
-        fun previous() = values().getOrNull(ordinal - 1)
+        fun next() = entries.getOrNull(ordinal + 1)
+        fun previous() = entries.getOrNull(ordinal - 1)
     }
 
     var page: Page by mutableStateOf(Page.Directory)
@@ -72,7 +72,7 @@ class ProjectCreatorState(
     }
 
     private val detailExpandedOnPages = mutableStateListOf(
-        *Page.values().map {
+        *Page.entries.map {
             appRecord.projectCreatorDetailsExpanded.getOrNull(it.ordinal) ?: false
         }.toTypedArray(),
     )
@@ -307,7 +307,7 @@ class ProjectCreatorState(
         get() = if (labeler.isSelfConstructed) {
             listOf(ContentType.Default, ContentType.Plugin)
         } else {
-            ContentType.values().toList()
+            ContentType.entries.toList()
         }
     var contentType: ContentType by mutableStateOf(
         appRecord.projectContentType?.takeIf { it in selectableContentTypes }

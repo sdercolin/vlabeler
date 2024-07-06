@@ -217,6 +217,6 @@ enum class Key(
     val isMainKey = mainKeyActionType != null
 
     companion object {
-        fun fromActualKey(actualKey: ActualKey): Key? = values().find { it.isKey(actualKey) }
+        fun fromActualKey(actualKey: ActualKey): Key? = entries.find { it.isKey(actualKey) }
     }
 }

@@ -30,7 +30,7 @@ fun BoxScope.ToolboxView(selectedTool: Tool, select: (Tool) -> Unit) {
             .background(color = Black80, shape = RoundedCornerShape(5.dp))
             .align(Alignment.BottomEnd),
     ) {
-        Tool.values().forEach { tool ->
+        Tool.entries.forEach { tool ->
             val checked = selectedTool == tool
             val backgroundColor = if (!checked) Color.Transparent else White20
             Box(

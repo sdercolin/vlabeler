@@ -488,7 +488,7 @@ class MarkerState(
         get() = scissorsState.value == null && panState.value == null && playbackState.value == null
 
     fun switchTool(tool: Tool) {
-        Tool.values().forEach {
+        Tool.entries.forEach {
             if (it == tool) {
                 createToolStateIfNeeded(it)
             } else {
