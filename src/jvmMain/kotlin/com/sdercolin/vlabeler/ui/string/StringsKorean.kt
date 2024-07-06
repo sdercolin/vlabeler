@@ -11,6 +11,7 @@ fun Strings.ko(): String? = when (this) {
     MenuFileOpen -> "열기..."
     MenuFileOpenRecent -> "최근 파일"
     MenuFileOpenRecentClear -> "최근 파일 목록 초기화"
+    MenuFileQuickEdit -> "빠른 편집"
     MenuFileSave -> "저장"
     MenuFileSaveAs -> "다른 이름으로 저장..."
     MenuFileProjectSetting -> "프로젝트 설정..."

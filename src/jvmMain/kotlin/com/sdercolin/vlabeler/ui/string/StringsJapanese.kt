@@ -11,6 +11,7 @@ fun Strings.ja(): String? = when (this) {
     MenuFileOpen -> "開く..."
     MenuFileOpenRecent -> "最近開いたプロジェクト"
     MenuFileOpenRecentClear -> "履歴をクリア"
+    MenuFileQuickEdit -> "クイック編集"
     MenuFileSave -> "保存"
     MenuFileSaveAs -> "名前を付けて保存..."
     MenuFileProjectSetting -> "プロジェクト設定..."

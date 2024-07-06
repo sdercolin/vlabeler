@@ -9,6 +9,7 @@ fun Strings.en(): String = when (this) {
     MenuFileOpen -> "Open..."
     MenuFileOpenRecent -> "Open Recent"
     MenuFileOpenRecentClear -> "Clear Recently Opened"
+    MenuFileQuickEdit -> "Quick Edit"
     MenuFileSave -> "Save"
     MenuFileSaveAs -> "Save As..."
     MenuFileProjectSetting -> "Project Settings..."

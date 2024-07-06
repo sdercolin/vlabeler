@@ -11,6 +11,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuFileOpen -> "打开..."
     MenuFileOpenRecent -> "打开最近使用"
     MenuFileOpenRecentClear -> "清除最近使用记录"
+    MenuFileQuickEdit -> "快捷编辑"
     MenuFileSave -> "保存"
     MenuFileSaveAs -> "另存为..."
     MenuFileProjectSetting -> "项目设置..."

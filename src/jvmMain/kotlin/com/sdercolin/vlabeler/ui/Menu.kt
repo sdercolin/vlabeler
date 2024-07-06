@@ -84,6 +84,16 @@ fun FrameWindowScope.Menu(
                             enabled = appRecord.recentProjects.isNotEmpty(),
                         )
                     }
+                    Menu(string(Strings.MenuFileQuickEdit)) {
+                        appState.activeLabelerConfs
+                            .flatMap { labeler -> labeler.quickProjectBuilders.map { labeler to it } }
+                            .forEach {
+                                Item(
+                                    text = it.second.getDisplayedName() + "...",
+                                    onClick = { appState.openQuickEditFileDialog(it) },
+                                )
+                            }
+                    }
                     Item(
                         string(Strings.MenuFileSave),
                         onClick = { appState.requestSave() },

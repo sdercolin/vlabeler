@@ -10,6 +10,7 @@ enum class Strings {
     MenuFileOpen,
     MenuFileOpenRecent,
     MenuFileOpenRecentClear,
+    MenuFileQuickEdit,
     MenuFileSave,
     MenuFileSaveAs,
     MenuFileProjectSetting,
