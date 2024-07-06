@@ -174,7 +174,7 @@ class ProjectCreatorState(
     fun isWorkingDirectoryValid(): Boolean {
         val file = File(workingDirectory)
         if (file.parentFile?.exists() == false) return false
-        return file.name.isValidFileName() && file.isDirectory && Files.isWritable(file.toPath())
+        return file.name.isValidFileName() && file.isDirectory
     }
 
     fun isProjectFileExisting(): Boolean {
@@ -187,7 +187,6 @@ class ProjectCreatorState(
         val file = File(cacheDirectory)
         val parent = file.parent.orEmpty()
         if (parent != workingDirectory && parent.toFile().exists().not()) return false
-        if (Files.isWritable(parent.toFile().toPath()).not()) return false
         if (file.isFile) return false
         return file.name.isValidFileName()
     }

@@ -13,7 +13,6 @@ import com.sdercolin.vlabeler.util.resolve
 import com.sdercolin.vlabeler.util.toFile
 import kotlinx.coroutines.launch
 import java.nio.file.Files
-import kotlin.io.path.Path
 
 class ProjectSettingDialogState(
     val appState: AppState,
@@ -50,7 +49,7 @@ class ProjectSettingDialogState(
         get() {
             val cacheDirectory = cacheDirectory.toFile()
             val parent = cacheDirectory.parentFile ?: return false
-            return parent.isDirectory && Files.isWritable(parent.toPath()) && cacheDirectory.isFile.not()
+            return parent.isDirectory && cacheDirectory.isFile.not()
         }
 
     val isOutputFileEditable: Boolean
@@ -70,7 +69,7 @@ class ProjectSettingDialogState(
     val isOutputFileValid: Boolean
         get() {
             val outputFile = outputFile ?: return true
-            return Files.isWritable(Path(outputFile))
+            return outputFile.toFile().parentFile.isDirectory
         }
 
     val canChangeAutoExport: Boolean
