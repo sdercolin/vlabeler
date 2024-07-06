@@ -530,7 +530,6 @@ class AppState(
 
     fun consumeOpenOrCreateIpcRequest(request: OpenOrCreateRequest) = mainScope.launch {
         runCatching {
-
             // check if the project is already opened
             val isProjectAlreadyOpened = request.projectFile.toFile().absolutePath == project?.projectFile?.absolutePath
             if (!isProjectAlreadyOpened) {

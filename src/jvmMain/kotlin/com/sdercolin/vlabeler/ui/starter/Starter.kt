@@ -134,7 +134,7 @@ fun BoxScope.Starter(
 @Composable
 private fun QuickEditButton(
     it: Pair<LabelerConf, LabelerConf.QuickProjectBuilder>,
-    appState: AppState
+    appState: AppState,
 ) {
     WithTooltip(tooltip = it.second.description?.get()) {
         CompositionLocalProvider(
