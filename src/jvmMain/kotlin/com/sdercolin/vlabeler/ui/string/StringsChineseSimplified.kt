@@ -116,6 +116,7 @@ fun Strings.zhHans(): String? = when (this) {
     StarterStart -> "开始"
     StarterNewProject -> "新建项目..."
     StarterOpen -> "打开..."
+    StarterQuickEdit -> "快捷编辑"
     StarterRecent -> "最近使用"
     StarterRecentEmpty -> "最近使用的项目将会显示在这里。"
     StarterRecentDeleted -> "该项目已被删除。"
@@ -254,6 +255,7 @@ fun Strings.zhHans(): String? = when (this) {
     CustomizableItemRemovingException -> "无法删除该自定义组件。"
     PluginRuntimeExceptionTemplate -> "插件运行时错误：%s"
     ProjectConstructorRuntimeExceptionTemplate -> "构建项目时的标注器运行时错误：%s"
+    QuickProjectBuilderRuntimeExceptionTemplate -> "构建快捷编辑项目时的标注器运行时错误：%s"
     PropertySetterRuntimeExceptionTemplate -> "设置属性时的标注器运行时错误：%s"
     PropertySetterUnexpectedRuntimeException -> "设置属性时发生了意外的错误。请联系标注器作者以获取更多信息。"
     VideoComponentInitializationException ->

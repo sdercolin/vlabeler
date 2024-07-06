@@ -20,6 +20,15 @@ class File {
         return new File(new JavaFile(path, childPath))
     }
 
+    getParentFile() {
+        let parentJavaFile = this.javaFile.getParentFile()
+        if (parentJavaFile) {
+            return new File(parentJavaFile)
+        } else {
+            return null
+        }
+    }
+
     listChildren() {
         let arrayList = this.javaFile.listFiles()
         if (!arrayList) {

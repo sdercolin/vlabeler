@@ -50,6 +50,7 @@ data class AppRecord(
     val includeInfoLog: Boolean = false,
     val appVersionLastLaunchedRaw: String? = null,
     val hasCheckedRosettaCompatibleMode: Boolean = false,
+    val recentQuickProjectBuilderNames: List<Pair<String, String>> = listOf(),
 ) {
     val recentProjectPathsWithDisplayNames
         get() = recentProjects.zip(
@@ -107,6 +108,11 @@ data class AppRecord(
             val currentValue = this.getOrNull(index) ?: return@apply
             this[index] = !currentValue
         },
+    )
+
+    fun addRecentQuickProjectBuilder(labelerName: String, name: String) = copy(
+        recentQuickProjectBuilderNames = (listOf(labelerName to name) + recentQuickProjectBuilderNames)
+            .distinct(),
     )
 
     val appVersionLastLaunched: Version get() = appVersionLastLaunchedRaw?.let { Version.from(it) } ?: Version.zero

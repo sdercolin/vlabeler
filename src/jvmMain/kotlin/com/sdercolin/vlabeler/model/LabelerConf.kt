@@ -2,6 +2,7 @@
 
 package com.sdercolin.vlabeler.model
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.LabelerConf.ExtraField
@@ -112,6 +113,7 @@ data class LabelerConf(
     val writer: Writer,
     val parameters: List<ParameterHolder> = listOf(),
     val projectConstructor: ProjectConstructor? = null,
+    val quickProjectBuilders: List<QuickProjectBuilder> = listOf(),
     override val resourceFiles: List<String> = listOf(),
     @Transient override val directory: File? = null,
     @Transient val builtIn: Boolean = false,
@@ -439,6 +441,30 @@ data class LabelerConf(
         }
     }
 
+    /**
+     * A quick project builder that can be used to create a project with the labeler.
+     *
+     * @property name Name of the quick project builder.
+     * @property displayedName Displayed name of the quick project builder (localized).
+     * @property description Description of the quick project builder (localized), to be displayed in a tooltip.
+     * @property extension File extension of the input file. Use "" to select folder.
+     * @property scripts JavaScript code that creates the project. See the "Quick Project Builder" section of
+     *     [docs/labeler-development.md] for details.
+     */
+    @Serializable
+    @Immutable
+    data class QuickProjectBuilder(
+        val name: String,
+        val displayedName: LocalizedJsonString? = null,
+        val description: LocalizedJsonString? = null,
+        val extension: String,
+        val scripts: EmbeddedScripts,
+    ) {
+
+        @Composable
+        fun getDisplayedName(): String = displayedName?.get() ?: name
+    }
+
     fun getActualEnd(entry: Entry): Float = fields.indexOfFirst { it.replaceEnd }.let { index ->
         if (index == -1) {
             entry.end
@@ -458,6 +484,9 @@ data class LabelerConf(
             parser = parser.copy(scripts = parser.scripts.preload()),
             writer = writer.copy(scripts = writer.scripts?.preload()),
             projectConstructor = projectConstructor?.copy(scripts = projectConstructor.scripts.preload()),
+            quickProjectBuilders = quickProjectBuilders.map {
+                it.copy(scripts = it.scripts.preload())
+            },
             properties = properties.map {
                 it.copy(
                     valueGetter = it.valueGetter.preload(),
@@ -481,6 +510,11 @@ data class LabelerConf(
                 require(Parameter.StringParam.DefaultValueFileReferencePattern.matches(it.defaultValue).not()) {
                     "Default value of string parameter in a labeler cannot be a file reference"
                 }
+            }
+        }
+        if (quickProjectBuilders.isNotEmpty()) {
+            require(projectConstructor != null || defaultInputFilePath != null) {
+                "Quick project builders are defined but either projectConstructor or defaultInputFilePath is missing"
             }
         }
     }

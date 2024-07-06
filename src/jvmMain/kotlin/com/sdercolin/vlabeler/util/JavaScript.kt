@@ -98,8 +98,7 @@ class JavaScript(
      * Receive object from JavaScript via JSON deserialization
      */
     inline fun <reified T : @Serializable Any> getJsonOrNull(name: String): T? {
-        val undefined = eval("typeof($name) == \"undefined\" || $name == null")?.asBoolean() != false
-        if (undefined) return null
+        if (!hasValue(name)) return null
         return getJson(name)
     }
 
@@ -136,6 +135,13 @@ class JavaScript(
         val array = eval("[]")!!
         list.forEachIndexed { index, value -> array.setArrayElement(index.toLong(), value) }
         bindings.putMember(name, array)
+    }
+
+    /**
+     * Check if a variable is defined in JavaScript
+     */
+    fun hasValue(name: String): Boolean {
+        return eval("typeof($name) == \"undefined\" || $name == null")?.asBoolean() == false
     }
 
     override fun close() {

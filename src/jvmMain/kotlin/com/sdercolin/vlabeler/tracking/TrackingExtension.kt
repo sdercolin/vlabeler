@@ -15,13 +15,14 @@ import com.sdercolin.vlabeler.util.orEmpty
 import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.serialization.encodeToString
 
-fun AppState.trackProjectCreation(project: Project, byIpcRequest: Boolean) {
+fun AppState.trackProjectCreation(project: Project, byIpcRequest: Boolean = false, byQuickEdit: Boolean = false) {
     val createProjectEvent = CreateProjectEvent(
         labelerName = project.labelerConf.name,
         labelerNameVer = "${project.labelerConf.name} ${project.labelerConf.version}",
         params = project.labelerParams.orEmpty().stripFilePaths().stringifyJson(),
         autoExport = project.autoExport,
         byIpcRequest = byIpcRequest,
+        byQuickEdit = byQuickEdit,
     )
     track(createProjectEvent)
 }

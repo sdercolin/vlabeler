@@ -116,6 +116,7 @@ fun Strings.ja(): String? = when (this) {
     StarterStart -> "はじめる"
     StarterNewProject -> "新規プロジェクト..."
     StarterOpen -> "開く..."
+    StarterQuickEdit -> "クイック編集"
     StarterRecent -> "最近開いたプロジェクト"
     StarterRecentEmpty -> "最近開いたプロジェクトはありません。"
     StarterRecentDeleted -> "このプロジェクトはすでに削除されています。"
@@ -275,6 +276,7 @@ fun Strings.ja(): String? = when (this) {
         "ファイル名が「%s」で、拡張子が「%s」の動画は見つかりませんでした。"
     PluginRuntimeExceptionTemplate -> "プラグインの実行中にエラーが発生しました：%s"
     ProjectConstructorRuntimeExceptionTemplate -> "プロジェクトの作成中にエラーが発生しました：%s"
+    QuickProjectBuilderRuntimeExceptionTemplate -> "クイック編集プロジェクトの作成中にエラーが発生しました：%s"
     PropertySetterRuntimeExceptionTemplate -> "プロパティの設定中にエラーが発生しました：%s"
     PropertySetterUnexpectedRuntimeException ->
         "プロパティの設定中に予期しないエラーが発生しました。ラベラーの作者に連絡してください。"

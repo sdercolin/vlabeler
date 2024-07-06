@@ -1,9 +1,10 @@
 package com.sdercolin.vlabeler.model
 
 import com.sdercolin.vlabeler.env.Log
-import com.sdercolin.vlabeler.ui.string.LocalizedJsonString
+import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.json
+import com.sdercolin.vlabeler.util.stringifyJson
 import com.sdercolin.vlabeler.util.toParamMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -39,6 +40,15 @@ interface BasePlugin {
      * Save the given [paramMap] to the given [file].
      */
     suspend fun saveParams(paramMap: ParamMap, file: File) = withContext(Dispatchers.IO) {
+        val contentText = stringifyParams(paramMap)
+        Log.debug("Saving params to ${file.absolutePath}")
+        file.writeText(contentText)
+    }
+
+    /**
+     * Stringify the given [paramMap] to a JSON string.
+     */
+    fun stringifyParams(paramMap: ParamMap): String {
         val content = paramMap.mapValues { (_, value) ->
             when (value) {
                 is Number -> JsonPrimitive(value)
@@ -49,9 +59,7 @@ interface BasePlugin {
                 else -> throw IllegalArgumentException("`$value` is not a supported value")
             }
         }
-        val contentText = JsonObject(content).toString()
-        Log.debug("Saving params to ${file.absolutePath}")
-        file.writeText(contentText)
+        return JsonObject(content).toString()
     }
 
     /**
@@ -68,33 +76,47 @@ interface BasePlugin {
         runCatching {
             file.takeIf { it.exists() }
                 ?.readText()
-                ?.let { contentText ->
-                    val jsonObject = json.parseToJsonElement(contentText).jsonObject
-                    parameterDefs.associate {
-                        val value = jsonObject[it.name]
-                            ?.let { element ->
-                                when (it) {
-                                    is Parameter.IntParam -> element.jsonPrimitive.int
-                                    is Parameter.FloatParam -> element.jsonPrimitive.float
-                                    is Parameter.BooleanParam -> element.jsonPrimitive.boolean
-                                    is Parameter.EntrySelectorParam -> json.decodeFromJsonElement<EntrySelector>(
-                                        element,
-                                    )
-                                    is Parameter.EnumParam -> element.jsonPrimitive.content
-                                    is Parameter.FileParam -> json.decodeFromJsonElement<FileWithEncoding>(element)
-                                    is Parameter.StringParam -> element.jsonPrimitive.content
-                                    is Parameter.RawFileParam -> element.jsonPrimitive.content
-                                }
-                            }
-                            ?: requireNotNull(it.defaultValue)
-                        it.name to value
-                    }
-                }
-                ?.toParamMap()
+                ?.let { parseParamMap(it) }
                 ?: getDefaultParams()
         }
             .onFailure { Log.debug("Failed to load saved params from file ${file.absolutePath}") }
             .getOrElse { getDefaultParams() }
+    }
+
+    suspend fun loadSavedParamsJson(file: File): String = withContext(Dispatchers.IO) {
+        runCatching {
+            file.takeIf { it.exists() }
+                ?.readText()
+                ?: stringifyParams(getDefaultParams())
+        }
+            .onFailure { Log.debug("Failed to load saved params from file ${file.absolutePath}") }
+            .getOrElse { stringifyParams(getDefaultParams()) }
+    }
+
+    /**
+     * Parse Json content to a [ParamMap].
+     */
+    fun parseParamMap(contentText: String): ParamMap {
+        val jsonObject = json.parseToJsonElement(contentText).jsonObject
+        return parameterDefs.associate {
+            val value = jsonObject[it.name]
+                ?.let { element ->
+                    when (it) {
+                        is Parameter.IntParam -> element.jsonPrimitive.int
+                        is Parameter.FloatParam -> element.jsonPrimitive.float
+                        is Parameter.BooleanParam -> element.jsonPrimitive.boolean
+                        is Parameter.EntrySelectorParam -> json.decodeFromJsonElement<EntrySelector>(
+                            element,
+                        )
+                        is Parameter.EnumParam -> element.jsonPrimitive.content
+                        is Parameter.FileParam -> json.decodeFromJsonElement<FileWithEncoding>(element)
+                        is Parameter.StringParam -> element.jsonPrimitive.content
+                        is Parameter.RawFileParam -> element.jsonPrimitive.content
+                    }
+                }
+                ?: requireNotNull(it.defaultValue)
+            it.name to value
+        }.toParamMap()
     }
 
     /**

@@ -12,6 +12,7 @@ import com.sdercolin.vlabeler.audio.PlayerState
 import com.sdercolin.vlabeler.env.KeyboardViewModel
 import com.sdercolin.vlabeler.env.isRunningOnRosetta
 import com.sdercolin.vlabeler.exception.InvalidOpenedProjectException
+import com.sdercolin.vlabeler.io.QuickEditRequest
 import com.sdercolin.vlabeler.io.awaitLoadProject
 import com.sdercolin.vlabeler.io.awaitOpenCreatedProject
 import com.sdercolin.vlabeler.io.loadAvailableLabelerConfs
@@ -527,8 +528,9 @@ class AppState(
         }
     }
 
-    fun consumeOpenOrCreateIpcRequest(request: OpenOrCreateRequest) = runCatching {
-        mainScope.launch {
+    fun consumeOpenOrCreateIpcRequest(request: OpenOrCreateRequest) = mainScope.launch {
+        runCatching {
+
             // check if the project is already opened
             val isProjectAlreadyOpened = request.projectFile.toFile().absolutePath == project?.projectFile?.absolutePath
             if (!isProjectAlreadyOpened) {
@@ -570,10 +572,22 @@ class AppState(
             request.gotoEntryByName?.let {
                 jumpToModuleByNameAndEntryName(it.parentFolderName, it.entryName)
             }
+        }.onFailure {
+            showError(it, pendingAction = AppErrorState.ErrorPendingAction.ExitProject)
         }
-    }.onFailure {
-        showError(it, pendingAction = AppErrorState.ErrorPendingAction.ExitProject)
     }
+
+    fun consumeQuickEditRequest(request: QuickEditRequest) =
+        mainScope.launch {
+            runCatching {
+                val newProject = request.create().getOrThrow()
+                trackProjectCreation(newProject)
+                appRecordStore.update { addRecentQuickProjectBuilder(request.labelerConf.name, request.builder.name) }
+                awaitOpenCreatedProject(newProject, this@AppState)
+            }.onFailure {
+                showError(it)
+            }
+        }
 
     private suspend fun awaitAskIfSaveDialog(purpose: AskIfSaveDialogPurpose): Boolean {
         val project = project ?: return true
@@ -591,7 +605,7 @@ class AppState(
     }
 
     fun onCreateProject(project: Project, plugin: Plugin?, pluginParams: ParamMap?) {
-        trackProjectCreation(project, byIpcRequest = false)
+        trackProjectCreation(project)
         if (plugin != null) {
             trackTemplateGeneration(plugin, pluginParams)
         }

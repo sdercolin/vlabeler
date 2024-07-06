@@ -10,6 +10,7 @@ data class CreateProjectEvent(
     val params: String,
     val autoExport: Boolean,
     val byIpcRequest: Boolean,
+    val byQuickEdit: Boolean,
 ) : TrackingEvent() {
 
     @Transient

@@ -2,7 +2,8 @@
 
 [![Discord](https://img.shields.io/discord/984044285584359444?style=for-the-badge&label=discord&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/yrTqG2SrRd)
 
-Select Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | [日本語](readme/README-ja.md) | [한국어](readme/README-ko.md)
+Select
+Language: [English](README.md) | [简体中文](readme/README-zhCN.md) | [日本語](readme/README-ja.md) | [한국어](readme/README-ko.md)
 
 `vLabeler` is an open-source voice labeling application with the following objectives:
 
@@ -127,6 +128,21 @@ For label files used in NNSVS/ENUNU and similar systems, the following options a
 
 There are more settings folded as `Advanced settings`, or provided by the labelers/plugins, please check them out if you
 need more customization.
+
+## Start quick edit
+
+Some labelers support the `Quick edit` feature, which allows you to start editing with only single file or folder
+as input. The other settings are automatically set by the labeler.
+
+You can click the item in the `Quick Edit` list in the start page and select the file or folder to start quick edit.
+
+In a project that is created through quick edit:
+
+- auto export is enabled by default, means when you save the project, the label file is saved automatically
+- when you start quick edit repeatedly, project file might be silently overwritten
+- the saved labeler settings are used, except for some items that are configured to certain values for quick edit by the
+  author of the labeler
+- you may still change some of the settings in `File` -> `Project settings...`
 
 ## Available keyboard/mouse actions
 

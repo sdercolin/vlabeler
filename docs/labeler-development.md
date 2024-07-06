@@ -213,6 +213,7 @@ code [LabelerConf.kt](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/Labeler
 | writer                 | Writer                         | (Required)     | The definition of the writer. See [Writer](#writer) for details.                                                                                                                      |
 | parameters             | ParameterHolder[]              | []             | The definitions of parameters. See [Parameters](#parameters) for details.                                                                                                             |
 | projectConstructor     | ProjectConstructor &#124; null | null           | The definition of the project constructor. See [Project Constructor](#project-constructor) for details.                                                                               |
+| quickProjectBuilders   | QuickProjectBuilder[]          | []             | The definitions of quick project builders. See [Quick Project Builder](#quick-project-builder) for details.                                                                           |
 | resourceFiles          | String[]                       | []             | Files utilized as resources in your scripts. Their contents are fed into your scripts as string values in the order listed.                                                           |
 
 We will explain some of the fields in the following sections.
@@ -580,7 +581,21 @@ The object only contain a field `scripts` in `EmbeddedScripts` type, e.g.
 }
 ```
 
-See the [Construct a Project] section for details about the scripts.
+See the [Constructing a Project](#constructing-a-project) section for details about the scripts.
+
+### Quick Project Builder
+
+The array contains `QuickProjectBuilder` objects, which have the following fields:
+
+| Key           | Type                           | Default value | Description                                                              |
+|---------------|--------------------------------|---------------|--------------------------------------------------------------------------|
+| name          | String                         | (Required)    | The name of the quick project builder that is unique within the labeler. |
+| displayedName | String (Localized)             | `name` value  | The displayed name of the quick project builder in the UI.               |
+| description   | String (Localized) &#124; null | null          | The description of the quick project builder to show a tooltip.          |
+| extension     | String                         | (Required)    | The extension of the input file. Empty string "" means folder.           |
+| scripts       | EmbeddedScripts                | (Required)    | The scripts to create a quick edit project.                              |
+
+See the [Enable Quick Edit](#enable-quick-edit) section for details about the feature and the scripts.
 
 ## Scripting in a Labeler
 
@@ -704,6 +719,40 @@ Each module will have:
 
 At last, we recommend checking if there are modules created. If not, throw an error with customized message to help
 users to check their settings.
+
+### Enable Quick Edit
+
+Quick Edit is a feature that allows users to quickly create a project with a single file or a folder as input.
+The feature is available in the start page of the application, and the user can select a quick project builder that is
+defined in the labeler to create a project.
+
+To enable the Quick Edit feature, you need to define a `QuickProjectBuilder` object in the `quickProjectBuilders` field,
+as introduced in the [Quick Project Builder](#quick-project-builder) section.
+
+Note that Quick Edit is only available when the project constructor is available or when the `defaultInputFilePath` is
+set in the labeler. This is because the `Auto Export` feature needs to be supported by the labeler to provide a better
+user experience.
+
+The `scripts` field in the `QuickProjectBuilder` object should refer to a JavaScript code snippet that determine
+how to create a project from the input file or folder.
+
+#### Input
+
+- `input`: The [File](file-api.md) object of the input file or folder.
+- `savedParams`: The saved parameters of the labeler. You can get values using their `name` as the key. Compared to
+  other cases where `params` are provided, here the `savedParams` are provided with their raw values. Please log the
+  values to before using them to check the actual values.
+
+#### Output
+
+- `projectFile`: The [File](file-api.md) object of the project file that will be created. The file should be a `.vlp`
+  file.
+- `sampleDirectory`: The [File](file-api.md) object of the root directory containing the sample files.
+- `cacheDirectory`: The [File](file-api.md) object of the cache directory. If not set, the default cache directory will
+  be used.
+- `encoding`: The encoding of the raw label file, selected by the user during project creation. Defaults to "UTF-8".
+- `params`: The desired parameters of the labeler in the same format as the `savedParams`. If not set, `savedParams`
+  will be used.
 
 ### Property Getter
 

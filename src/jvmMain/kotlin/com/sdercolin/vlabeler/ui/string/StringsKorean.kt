@@ -115,6 +115,7 @@ fun Strings.ko(): String? = when (this) {
     StarterStart -> "시작하기"
     StarterNewProject -> "새 프로젝트..."
     StarterOpen -> "열기..."
+    StarterQuickEdit -> "빠른 편집"
     StarterRecent -> "최근 기록들"
     StarterRecentEmpty -> "최근에 연 프로젝트가 없어요."
     StarterRecentDeleted -> "제거된 프로젝트 파일이에요."
@@ -280,6 +281,7 @@ fun Strings.ko(): String? = when (this) {
     CustomizableItemRemovingException -> "선택된 커스텀 항목을 삭제하지 못했어요."
     PluginRuntimeExceptionTemplate -> "플러그인 런타임 오류: %s"
     ProjectConstructorRuntimeExceptionTemplate -> "프로젝트 구성 도중 라벨러 런타임 오류: %s"
+    QuickProjectBuilderRuntimeExceptionTemplate -> "빠른 편집 프로젝트 생성 도중 라벨러 런타임 오류: %s"
     PropertySetterRuntimeExceptionTemplate -> "항목 설정 도중 라벨러 런타임 오류: %s"
     PropertySetterUnexpectedRuntimeException ->
         "항목을 설정하는 도중 예상치 못한 오류가 발생했어요.\n" +

@@ -114,6 +114,7 @@ fun Strings.en(): String = when (this) {
     StarterStart -> "Start"
     StarterNewProject -> "New Project..."
     StarterOpen -> "Open..."
+    StarterQuickEdit -> "Quick Edit"
     StarterRecent -> "Recent"
     StarterRecentEmpty -> "You have no recent projects."
     StarterRecentDeleted -> "This project file has been removed."
@@ -279,6 +280,7 @@ fun Strings.en(): String = when (this) {
     CustomizableItemRemovingException -> "Could not remove the selected customized item."
     PluginRuntimeExceptionTemplate -> "Plugin runtime error: %s"
     ProjectConstructorRuntimeExceptionTemplate -> "Labeler runtime error when constructing project: %s"
+    QuickProjectBuilderRuntimeExceptionTemplate -> "Labeler runtime error when creating quick edit project: %s"
     PropertySetterRuntimeExceptionTemplate -> "Labeler runtime error when setting property: %s"
     PropertySetterUnexpectedRuntimeException ->
         "An unexpected error occurred when setting property.\n" +

@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.exportProjectModule
 import com.sdercolin.vlabeler.io.importProjectFile
 import com.sdercolin.vlabeler.io.loadProject
+import com.sdercolin.vlabeler.io.startQuickEdit
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.updater.UpdaterDialog
@@ -15,6 +16,7 @@ import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.getDirectory
 import com.sdercolin.vlabeler.util.lastPathSection
 import com.sdercolin.vlabeler.util.moveCacheDirTo
+import com.sdercolin.vlabeler.util.runIf
 import com.sdercolin.vlabeler.util.toFile
 import com.sdercolin.vlabeler.util.toFileOrNull
 import kotlinx.coroutines.CoroutineScope
@@ -97,6 +99,22 @@ fun StandaloneDialogs(
                         exportProjectModule(appState.requireProject(), project.currentModuleIndex, File(parent, name))
                         appState.hideProgress()
                     }
+                }
+            }
+        }
+        appState.quickEditArgs != null -> appState.quickEditArgs.let { (labeler, builder) ->
+            OpenFileDialog(
+                title = builder.getDisplayedName(),
+                extensions = if (builder.extension.isNotEmpty()) listOf(builder.extension) else null,
+                directoryMode = builder.extension.isEmpty(),
+            ) { parent, name ->
+                focusManager.clearFocus()
+                appState.closeQuickEditFileDialog()
+                if (parent != null && name != null) {
+                    val file = File(parent, name).runIf(builder.extension.isEmpty()) {
+                        getDirectory()
+                    }
+                    startQuickEdit(mainScope, labeler, builder, file, appState)
                 }
             }
         }

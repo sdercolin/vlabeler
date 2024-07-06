@@ -125,8 +125,11 @@ We have the following types of scripts:
   labels
 - [Raw label writer scripts](labeler-development.md#writing-raw-labels): contained in labelers, used to write entries as
   raw labels
-- [Project constructor scripts](labeler-development.md#constructing-a-project): contained in labelers, used to construct a
+- [Project constructor scripts](labeler-development.md#constructing-a-project): contained in labelers, used to construct
+  a
   project with multiple modules
+- [Quick project builder scripts](labeler-development.md#quick-project-builder): contained in labelers, used to build a
+  project with a single input file or folder
 - [Macro plugin scripts](plugin-development.md#batch-edit-macro-scripts): included in the plugin folder of a macro
   plugin
 - [Template plugin scripts](plugin-development.md#template-generation-scripts): included in the plugin folder of a
@@ -135,17 +138,17 @@ We have the following types of scripts:
 
 The availability of the APIs listed above depends on the type of the script.
 
-| API                                                       | Raw label parser | Raw label writer | Project constructor | Macro plugin | Template plugin |
-|-----------------------------------------------------------|------------------|------------------|---------------------|--------------|-----------------|
-| [File](#file-api)                                         | ✔                | ✔                | ✔                   | ✔            | ✔               |
-| [Env](#env-api)                                           | ✔                | ✔                | ✔                   | ✔            | ✔               |
-| [Command line](#command-line-api)                         |                  |                  |                     | ✔            | ✔               |
-| [Error handling](#error-handling)                         | ✔                | ✔                | ✔                   | ✔            | ✔               |
-| [Report](#display-a-report-after-execution)               |                  |                  |                     | ✔            |                 |
-| [Audio playback](#request-audio-playback-after-execution) |                  |                  |                     | ✔            |                 |
-| [Entry](#entry)                                           | ✔                | ✔                |                     | ✔            | ✔               |
-| [Module](#module)                                         |                  |                  |                     | ✔            |                 |
-| [Module definition](#module-definition)                   |                  |                  | ✔                   |              |                 |
+| API                                                       | Raw label parser | Raw label writer | Project constructor | Quick project builder | Macro plugin | Template plugin |
+|-----------------------------------------------------------|------------------|------------------|---------------------|-----------------------|--------------|-----------------|
+| [File](#file-api)                                         | ✔                | ✔                | ✔                   | ✔                     | ✔            | ✔               |
+| [Env](#env-api)                                           | ✔                | ✔                | ✔                   | ✔                     | ✔            | ✔               |
+| [Command line](#command-line-api)                         |                  |                  |                     |                       | ✔            | ✔               |
+| [Error handling](#error-handling)                         | ✔                | ✔                | ✔                   | ✔                     | ✔            | ✔               |
+| [Report](#display-a-report-after-execution)               |                  |                  |                     |                       | ✔            |                 |
+| [Audio playback](#request-audio-playback-after-execution) |                  |                  |                     |                       | ✔            |                 |
+| [Entry](#entry)                                           | ✔                | ✔                |                     |                       | ✔            | ✔               |
+| [Module](#module)                                         |                  |                  |                     |                       | ✔            |                 |
+| [Module definition](#module-definition)                   |                  |                  | ✔                   | ✔                     |              |                 |
 
 There are other tiny scripts contained in the labelers such as property getter/setter, but they only allow simple
 calculations and are not provided with most of the APIs introduced above. Please

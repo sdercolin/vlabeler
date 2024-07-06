@@ -107,12 +107,16 @@ fun LabelerConf.install(location: File): Result<File> = runCatching {
         val projectConstructor = this.projectConstructor?.let {
             it.copy(scripts = it.scripts.writeTo(folder, "project-constructor.js"))
         }
+        val quickProjectBuilders = this.quickProjectBuilders.map { def ->
+            def.copy(scripts = def.scripts.writeTo(folder, "${def.name}-quick-project-builder.js"))
+        }
         val text = copy(
             properties = properties,
             parser = parser,
             writer = writer,
             parameters = parameters,
             projectConstructor = projectConstructor,
+            quickProjectBuilders = quickProjectBuilders,
         ).stringifyJson()
         val file = File(folder, LabelerConf.LABELER_FILE_EXTENSION)
         file.writeText(text)

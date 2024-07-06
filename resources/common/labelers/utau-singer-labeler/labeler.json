@@ -1,6 +1,6 @@
 {
     "name": "utau-singer.default",
-    "version": 24,
+    "version": 25,
     "serialVersion": 2,
     "singleFile": false,
     "extension": "ini",
@@ -473,5 +473,24 @@
     ],
     "projectConstructor": {
         "scripts": "projectConstructor.js"
-    }
+    },
+    "quickProjectBuilders": [
+        {
+            "name": "default",
+            "displayedName": {
+                "en": "Edit UTAU singer",
+                "zh": "编辑 UTAU singer",
+                "ja": "UTAU singer を編集する",
+                "ko": "UTAU singer 파일 편집"
+            },
+            "description": {
+                "en": "Select your UTAU singer folder to start quick editing.",
+                "zh": "选择您的 UTAU singer 文件夹以开始快速编辑。",
+                "ja": "UTAU singer フォルダーを選択して、クイック編集を開始します。",
+                "ko": "UTAU singer 폴더를 선택하여 빠른 편집을 시작하세요."
+            },
+            "extension": "",
+            "scripts": "quickProjectBuilder.js"
+        }
+    ]
 }

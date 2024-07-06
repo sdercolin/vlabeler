@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
@@ -61,6 +62,7 @@ interface AppDialogState {
     val isShowingQuickLaunchManagerDialog: Boolean
     val isShowingTrackingSettingsDialog: Boolean
     val isShowingFileNameNormalizerDialog: Boolean
+    val quickEditArgs: Pair<LabelerConf, LabelerConf.QuickProjectBuilder>?
     val updaterDialogContent: Update?
     val importEntriesDialogArgs: ImportEntriesDialogArgs?
     val reloadLabelDialogArgs: ReloadLabelDialogArgs?
@@ -139,6 +141,8 @@ interface AppDialogState {
     fun closeReloadLabelDialog()
     fun openFileNameNormalizerDialog()
     fun closeFileNameNormalizerDialog()
+    fun openQuickEditFileDialog(quickEditArgs: Pair<LabelerConf, LabelerConf.QuickProjectBuilder>)
+    fun closeQuickEditFileDialog()
     fun closeEmbeddedDialog()
     fun closeAllDialogs()
 
@@ -161,6 +165,8 @@ interface AppDialogState {
             isShowingLicenseDialog ||
             isShowingQuickLaunchManagerDialog ||
             isShowingTrackingSettingsDialog ||
+            isShowingFileNameNormalizerDialog ||
+            quickEditArgs != null ||
             updaterDialogContent != null ||
             importEntriesDialogArgs != null ||
             macroPluginShownInDialog != null ||
@@ -197,6 +203,7 @@ class AppDialogStateImpl(
     override var isShowingLicenseDialog: Boolean by mutableStateOf(false)
     override var isShowingQuickLaunchManagerDialog: Boolean by mutableStateOf(false)
     override var isShowingTrackingSettingsDialog: Boolean by mutableStateOf(false)
+    override var quickEditArgs: Pair<LabelerConf, LabelerConf.QuickProjectBuilder>? by mutableStateOf(null)
     override var isShowingFileNameNormalizerDialog: Boolean by mutableStateOf(false)
     override var isShowingVideo: Boolean by mutableStateOf(false)
     override var updaterDialogContent: Update? by mutableStateOf(null)
@@ -572,6 +579,14 @@ class AppDialogStateImpl(
 
     override fun closeFileNameNormalizerDialog() {
         isShowingFileNameNormalizerDialog = false
+    }
+
+    override fun openQuickEditFileDialog(quickEditArgs: Pair<LabelerConf, LabelerConf.QuickProjectBuilder>) {
+        this.quickEditArgs = quickEditArgs
+    }
+
+    override fun closeQuickEditFileDialog() {
+        this.quickEditArgs = null
     }
 
     override fun closeEmbeddedDialog() {

@@ -14,6 +14,8 @@ child path string.
 
 ### Member methods
 
+`getParentFile(): File | null` : get the parent directory of this file (directory) or `null` if this file is the root.
+
 `listChildren(): File[]` : list all children of this file, including files and directories (directory).
 
 `listChildDirectories(): File[]` : list all child directories of this file (directory).
