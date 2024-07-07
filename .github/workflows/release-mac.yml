@@ -18,7 +18,7 @@ permissions:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: macos-13
 
     steps:
       - uses: actions/checkout@v3
@@ -45,29 +45,27 @@ jobs:
           MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
         run: |
           echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-          security create-keychain -p vlabeler2022 build.keychain
+          security create-keychain -p ${{ secrets.BUILD_KEYCHAIN_PWD }} build.keychain
           security default-keychain -s build.keychain
-          security unlock-keychain -p vlabeler2022 build.keychain
+          security unlock-keychain -p ${{ secrets.BUILD_KEYCHAIN_PWD }} build.keychain
           security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
           security find-identity -v
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k vlabeler2022 build.keychain
-          echo $'compose.desktop.mac.sign=true\ncompose.desktop.mac.signing.identity=${{ secrets.MACOS_CERTIFICATE_IDENTITY }}\ncompose.desktop.mac.notarization.appleID=${{ secrets.APPLE_ID }}\ncompose.desktop.mac.notarization.password=${{ secrets.MACOS_APP_PWD }}' >local.properties
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${{ secrets.BUILD_KEYCHAIN_PWD }} build.keychain
+          echo $'compose.desktop.mac.sign=true\ncompose.desktop.mac.signing.identity=${{ secrets.MACOS_CERTIFICATE_IDENTITY }}\ncompose.desktop.mac.notarization.appleID=${{ secrets.APPLE_ID }}\ncompose.desktop.mac.notarization.password=${{ secrets.MACOS_APP_PWD }}\ncompose.desktop.mac.notarization.teamID=${{ secrets.APPLE_TEAM_ID }}' >local.properties
           cat local.properties
 
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: packageDmg
+          arguments: notarizeDmg
 
-      - name: Rename and notarize
+      - name: Rename
         run: |
           VERSION=${{ github.ref_name }}
           echo $VERSION
           PREFIX=$(echo $VERSION | cut -d'-' -f 1)
           echo $PREFIX
           mv ./build/compose/binaries/main/dmg/vLabeler-$PREFIX.dmg ./vlabeler-$VERSION-mac-x64.dmg
-          xcrun notarytool submit vlabeler-$VERSION-mac-x64.dmg --apple-id ${{ secrets.APPLE_ID }} --password ${{ secrets.MACOS_APP_PWD }} --team-id ${{ secrets.APPLE_TEAM_ID }} --wait
-          xcrun stapler staple vlabeler-$VERSION-mac-x64.dmg
 
       - name: Release
         uses: softprops/action-gh-release@v1
