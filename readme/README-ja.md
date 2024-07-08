@@ -30,7 +30,7 @@
 Releases では、次のプラットフォーム用のアプリケーションパッケージが提供されます。
 
 - Windows: `~win64.zip`
-- ~~macOS (Intel): `~mac-x64.dmg`~~ ビルド環境がないため、現在は提供されていません
+- macOS (Intel): `~mac-x64.dmg`
 - macOS (Apple Silicon): `~mac-arm64.dmg`
 - Ubuntu: `~amd64.deb`
 

@@ -28,7 +28,7 @@ See [Releases](https://github.com/sdercolin/vlabeler/releases).
 Packaged application for the following platforms are provided in the releases.
 
 - Windows: `~win64.zip`
-- ~~macOS (Intel): `~mac-x64.dmg`~~ No longer supported because of lack of building environment
+- macOS (Intel): `~mac-x64.dmg`
 - macOS (Apple Silicon): `~mac-arm64.dmg`
 - Ubuntu: `~amd64.deb`
 
