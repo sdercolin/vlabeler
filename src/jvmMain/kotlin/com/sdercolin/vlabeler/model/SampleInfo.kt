@@ -110,6 +110,13 @@ data class SampleInfo(
                 val convertedFile = createCachedWavFile(project, moduleName, file, appConf)
                 val stream = AudioSystem.getAudioInputStream(convertedFile ?: file)
                 val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
+                if (stream.format.encoding !in arrayOf(
+                        AudioFormat.Encoding.PCM_SIGNED,
+                        AudioFormat.Encoding.PCM_FLOAT,
+                    )
+                ) {
+                    throw Exception("Unsupported audio encoding: ${stream.format.encoding}")
+                }
                 val format = stream.format.normalize(maxSampleRate)
                 Log.debug("Sample info loaded: $format")
                 val channelNumber = format.channels
@@ -122,13 +129,7 @@ data class SampleInfo(
                 val frameLength = frameLengthLong.toInt()
                 val channels = (0 until channelNumber).map { mutableListOf<Float>() }
                 val powerChannels = if (appConf.painter.power.mergeChannels) 1 else channels.size
-                if (stream.format.encoding !in arrayOf(
-                        AudioFormat.Encoding.PCM_SIGNED,
-                        AudioFormat.Encoding.PCM_FLOAT,
-                    )
-                ) {
-                    throw Exception("Unsupported audio encoding: ${format.encoding}")
-                }
+
                 val maxChunkSize = appConf.painter.maxDataChunkSize
                 val sampleRate = format.sampleRate
                 val lengthInMillis = frameLength / sampleRate * 1000
