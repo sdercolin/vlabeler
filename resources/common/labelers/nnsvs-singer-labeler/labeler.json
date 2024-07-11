@@ -1,6 +1,6 @@
 {
     "name": "nnsvs-singer.default",
-    "version": 11,
+    "version": 12,
     "serialVersion": 2,
     "singleFile": false,
     "extension": "lab",
@@ -118,7 +118,8 @@
                 "label": {
                     "en": "Default entry name",
                     "zh": "默认条目名称",
-                    "ja": "デフォルトエントリ名"
+                    "ja": "デフォルトエントリ名",
+                    "ko": "기본 엔트리 이름"
                 },
                 "defaultValue": "pau",
                 "optional": true
