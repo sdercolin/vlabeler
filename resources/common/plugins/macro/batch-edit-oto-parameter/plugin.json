@@ -96,13 +96,13 @@
                     "en": "Expression",
                     "zh": "表达式",
                     "ja": "計算式",
-                    "ko": "식"
+                    "ko": "계산식"
                 },
                 "description": {
                     "en": "Expression to calculate the new value. Parameter placeholders such as \"${Offset}\", \"${Overlap} are available in the calculation.",
                     "zh": "用于计算新值的表达式。可以在计算中使用参数占位符，例如 \"${左边界}\", \"${重叠}\"。",
                     "ja": "新しい値を計算するための式。計算式中にパラメーターのプレースホルダー（例：\"${左ブランク}\", \"${Overlap}\"）を使用できます。",
-                    "ko": "새로운 값의 계산에 쓰일 식이에요. 계산식에는 \"${오프셋}\", \"${오버랩}\" 등과 같은 플레이스홀더를 사용할 수 있어요."
+                    "ko": "새로운 값의 계산에 쓰일 계산식이에요. \"${오프셋}\", \"${오버랩}\" 등과 같은 플레이스홀더를 사용할 수 있어요."
                 },
                 "defaultValue": "",
                 "optional": false
