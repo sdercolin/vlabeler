@@ -1,6 +1,6 @@
 {
     "name": "audacity.default",
-    "version": 13,
+    "version": 14,
     "serialVersion": 2,
     "singleFile": false,
     "extension": "txt",
@@ -90,7 +90,8 @@
                 "label": {
                     "en": "Default entry name",
                     "zh": "默认条目名称",
-                    "ja": "デフォルトエントリ名"
+                    "ja": "デフォルトエントリ名",
+                    "ko": "기본 엔트리 이름"
                 },
                 "defaultValue": "pau",
                 "optional": true

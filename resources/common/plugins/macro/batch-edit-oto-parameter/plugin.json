@@ -1,6 +1,6 @@
 {
     "name": "batch-edit-oto-parameter",
-    "version": 8,
+    "version": 9,
     "type": "macro",
     "displayedName": {
         "en": "Batch edit oto parameter",
@@ -45,7 +45,8 @@
                 "label": {
                     "en": "Parameter to edit",
                     "zh": "要编辑的参数",
-                    "ja": "編集するパラメーター"
+                    "ja": "編集するパラメーター",
+                    "ko": "편집할 파라미터"
                 },
                 "defaultValue": "offset",
                 "options": [
@@ -59,27 +60,32 @@
                     {
                         "en": "Offset",
                         "zh": "左边界",
-                        "ja": "左ブランク"
+                        "ja": "左ブランク",
+                        "ko": "오프셋"
                     },
                     {
                         "en": "Overlap",
                         "zh": "重叠",
-                        "ja": "オーバーラップ"
+                        "ja": "オーバーラップ",
+                        "ko": "오버랩"
                     },
                     {
                         "en": "Preutterance",
                         "zh": "先行发声",
-                        "ja": "先行発声"
+                        "ja": "先行発声",
+                        "ko": "선행자음부"
                     },
                     {
                         "en": "Fixed",
                         "zh": "固定",
-                        "ja": "固定範囲"
+                        "ja": "固定範囲",
+                        "ko": "고정자음부"
                     },
                     {
                         "en": "Cutoff",
                         "zh": "右边界",
-                        "ja": "右ブランク"
+                        "ja": "右ブランク",
+                        "ko": "컷오프"
                     }
                 ]
             },
@@ -89,12 +95,14 @@
                 "label": {
                     "en": "Expression",
                     "zh": "表达式",
-                    "ja": "計算式"
+                    "ja": "計算式",
+                    "ko": "계산식"
                 },
                 "description": {
                     "en": "Expression to calculate the new value. Parameter placeholders such as \"${Offset}\", \"${Overlap} are available in the calculation.",
                     "zh": "用于计算新值的表达式。可以在计算中使用参数占位符，例如 \"${左边界}\", \"${重叠}\"。",
-                    "ja": "新しい値を計算するための式。計算式中にパラメーターのプレースホルダー（例：\"${左ブランク}\", \"${Overlap}\"）を使用できます。"
+                    "ja": "新しい値を計算するための式。計算式中にパラメーターのプレースホルダー（例：\"${左ブランク}\", \"${Overlap}\"）を使用できます。",
+                    "ko": "새로운 값의 계산에 쓰일 계산식이에요. \"${오프셋}\", \"${오버랩}\" 등과 같은 플레이스홀더를 사용할 수 있어요."
                 },
                 "defaultValue": "",
                 "optional": false
@@ -105,12 +113,14 @@
                 "label": {
                     "en": "Keep relative positions",
                     "zh": "保持相对位置",
-                    "ja": "相対位置を保持"
+                    "ja": "相対位置を保持",
+                    "ko": "상대적인 위치 유지"
                 },
                 "description": {
                     "en": "Move all the other parameters to keep the distance with the edited parameter.",
                     "zh": "移动所有其他参数以保持与编辑的参数的距离。",
-                    "ja": "編集したパラメーターとの距離を保持するように、他のすべてのパラメーターを移動します。"
+                    "ja": "編集したパラメーターとの距離を保持するように、他のすべてのパラメーターを移動します。",
+                    "ko": "편집된 파라미터와의 거리 유지를 위해 다른 모든 파라미터들을 이동해요."
                 },
                 "defaultValue": false
             }
