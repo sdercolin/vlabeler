@@ -10,7 +10,7 @@ fun ProjectWriter(appState: AppState) {
     LaunchedEffect(writtenStatus) {
         if (writtenStatus != ProjectWriteStatus.UpdateRequested) return@LaunchedEffect
         val project = appState.project ?: return@LaunchedEffect
-        saveProjectFile(project, allowAutoExport = true)
+        appState.saveProjectFile(project, allowAutoExport = true)
         appState.notifySaved()
     }
 }

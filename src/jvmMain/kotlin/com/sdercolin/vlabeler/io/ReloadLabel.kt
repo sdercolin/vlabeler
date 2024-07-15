@@ -6,42 +6,11 @@ import com.sdercolin.vlabeler.model.EntryListDiffItem
 import com.sdercolin.vlabeler.model.EntryNotes
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.computeEntryListDiff
-import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.ReloadLabelConfigs
-import com.sdercolin.vlabeler.ui.dialog.ReloadLabelDialogArgs
 import com.sdercolin.vlabeler.util.readTextByEncoding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
-/**
- * Reloads the label file and updates the project with the new entries.
- *
- * @param file The new label file. If null, use the defined raw label file in the module.
- * @param skipConfirmation If true, skip the confirmation dialog and apply the new entries directly.
- */
-fun AppState.reloadLabelFile(file: File?, skipConfirmation: Boolean) {
-    val project = project ?: return
-    val labelFile = file ?: project.currentModule.getRawFile(project) ?: return
-    mainScope.launch {
-        showProgress()
-        val result = withContext(Dispatchers.IO) { reloadEntriesFromLabelFile(project, labelFile) }
-            .getOrElse {
-                showError(it, null)
-                hideProgress()
-                return@launch
-            }
-        hideProgress()
-        if (skipConfirmation) {
-            editProject { applyReloadedEntries(result.first, result.second) }
-        } else {
-            openReloadLabelDialog(ReloadLabelDialogArgs(project.currentModule.name, result.first, result.second))
-        }
-    }
-}
-
-private fun AppState.reloadEntriesFromLabelFile(
+fun reloadEntriesFromLabelFile(
     project: Project,
     file: File,
 ): Result<Pair<List<Entry>, EntryListDiff>> = runCatching {

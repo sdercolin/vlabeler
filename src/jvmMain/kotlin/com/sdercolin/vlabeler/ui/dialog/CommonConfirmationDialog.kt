@@ -55,6 +55,9 @@ sealed class CommonConfirmationDialogAction(
             { string(Strings.CustomizableItemManagerRemoveItemConfirm, item.displayedName.get()) },
         )
 
+    object LabelFileChangeDetected : CommonConfirmationDialogAction(
+        Strings.AskIfLabelFileChangeDetectedDialogDescription,
+    )
     object ClearAppRecord : CommonConfirmationDialogAction(Strings.PreferencesMiscClearRecordConfirmation)
     object ClearAppData : CommonConfirmationDialogAction(Strings.PreferencesMiscClearAppDataConfirmation)
 }

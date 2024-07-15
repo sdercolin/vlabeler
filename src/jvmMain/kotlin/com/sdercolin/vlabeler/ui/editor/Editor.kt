@@ -65,6 +65,12 @@ fun Editor(state: EditorState, appState: AppState) {
     DisposableEffect(state) {
         onDispose { state.clear() }
     }
+    LaunchedEffect(appState.appConf.autoReload.behavior, state.project.currentModule.name) {
+        appState.autoReloadLabel(
+            behavior = appState.appConf.autoReload.behavior,
+            moduleName = state.project.currentModule.name,
+        )
+    }
 
     val labelerFocusRequester = remember { FocusRequester() }
 

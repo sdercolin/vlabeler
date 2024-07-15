@@ -114,6 +114,7 @@ class AppState(
 
     init {
         initDialogState(this)
+        initProjectStore(this)
         consumeArguments(launchArguments)
     }
 
@@ -376,6 +377,9 @@ class AppState(
                     RecordDir.deleteRecursivelyLogged()
                     exit()
                 }
+                CommonConfirmationDialogAction.LabelFileChangeDetected -> {
+                    // Always awaited
+                }
             }
             is EditExtraDialogResult -> when (result.target) {
                 EditExtraDialogTarget.EditEntry -> updateEntryExtra(result.index, result.extras)
@@ -634,13 +638,13 @@ class AppState(
     }
 
     sealed class PendingActionAfterSaved {
-        object Open : PendingActionAfterSaved()
+        data object Open : PendingActionAfterSaved()
         class OpenCertain(val file: File) : PendingActionAfterSaved()
-        object Export : PendingActionAfterSaved()
+        data object Export : PendingActionAfterSaved()
         class ExportOverwrite(val all: Boolean) : PendingActionAfterSaved()
-        object Close : PendingActionAfterSaved()
-        object CreatingNew : PendingActionAfterSaved()
-        object ClearCaches : PendingActionAfterSaved()
-        object Exit : PendingActionAfterSaved()
+        data object Close : PendingActionAfterSaved()
+        data object CreatingNew : PendingActionAfterSaved()
+        data object ClearCaches : PendingActionAfterSaved()
+        data object Exit : PendingActionAfterSaved()
     }
 }

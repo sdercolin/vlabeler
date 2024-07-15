@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.injectLabelerParams
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.ProjectStore
 import com.sdercolin.vlabeler.ui.dialog.importentries.ImportEntriesDialogArgs
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.CustomLabelerDir
@@ -194,7 +195,7 @@ suspend fun awaitLoadProject(
         appState.scrollFitViewModel.emitNext()
     }
     if (fixedProject != project) {
-        saveProjectFile(fixedProject, allowAutoExport = false)
+        appState.saveProjectFile(fixedProject, allowAutoExport = false)
     }
     appState.hideProgress()
 }
@@ -226,7 +227,7 @@ suspend fun awaitOpenCreatedProject(
     project: Project,
     appState: AppState,
 ) {
-    val file = saveProjectFile(project)
+    val file = appState.saveProjectFile(project)
     project.clearCache()
     appState.openEditor(project)
     appState.discardAutoSavedProjects()
@@ -242,7 +243,7 @@ suspend fun awaitOpenCreatedProject(
  *
  * @param project The project to export.
  */
-suspend fun exportProject(project: Project) {
+suspend fun ProjectStore.exportProject(project: Project) {
     val allModules = project.modules.withIndex()
     val groups = allModules.filter { it.value.rawFilePath != null }.groupBy { it.value.getRawFile(project) }
         .map { it.value }
@@ -259,8 +260,7 @@ suspend fun exportProject(project: Project) {
  * @param moduleIndex The index of the module to export.
  * @param outputFile The output file to export to.
  */
-@Suppress("RedundantSuspendModifier")
-suspend fun exportProjectModule(
+suspend fun ProjectStore.exportProjectModule(
     project: Project,
     moduleIndex: Int,
     outputFile: File,
@@ -284,14 +284,16 @@ suspend fun exportProjectModule(
         }
 
         val charset = project.encoding.let { Charset.forName(it) } ?: Charsets.UTF_8
-        outputFile.writeText(outputText, charset)
+        withExporting {
+            outputFile.writeText(outputText, charset)
+            outputFile
+        }
         Log.debug(
             "Project module ${outputModuleNames.joinToString { "\"$it\"" }} " +
                 "exported to ${outputFile.absolutePath}",
         )
     }.getOrElse {
         Log.error(it)
-        return
     }
 }
 
@@ -304,25 +306,26 @@ private var saveFileJob: Job? = null
  * @param allowAutoExport Whether to allow auto export.
  * @return The saved project file.
  */
-suspend fun saveProjectFile(project: Project, allowAutoExport: Boolean = false): File = withContext(Dispatchers.IO) {
-    saveFileJob?.join()
-    saveFileJob = launch {
-        val workingDirectory = project.workingDirectory
-        if (!workingDirectory.exists()) {
-            workingDirectory.mkdir()
-        }
-        val projectContent = project.copy(version = Project.PROJECT_VERSION).stringifyJson()
-        project.projectFile.writeText(projectContent)
-        Log.debug("Project saved to ${project.projectFile}")
+suspend fun ProjectStore.saveProjectFile(project: Project, allowAutoExport: Boolean = false): File =
+    withContext(Dispatchers.IO) {
+        saveFileJob?.join()
+        saveFileJob = launch {
+            val workingDirectory = project.workingDirectory
+            if (!workingDirectory.exists()) {
+                workingDirectory.mkdir()
+            }
+            val projectContent = project.copy(version = Project.PROJECT_VERSION).stringifyJson()
+            project.projectFile.writeText(projectContent)
+            Log.debug("Project saved to ${project.projectFile}")
 
-        if (allowAutoExport && project.autoExport) {
-            exportProject(project)
+            if (allowAutoExport && project.autoExport) {
+                exportProject(project)
+            }
         }
+        saveFileJob?.join()
+        saveFileJob = null
+        project.projectFile
     }
-    saveFileJob?.join()
-    saveFileJob = null
-    project.projectFile
-}
 
 /**
  * Save a project to a temporary file.

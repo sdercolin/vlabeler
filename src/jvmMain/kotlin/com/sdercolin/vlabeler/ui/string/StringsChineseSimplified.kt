@@ -197,6 +197,8 @@ fun Strings.zhHans(): String? = when (this) {
     AskIfLoadAutoSavedProjectDialogDescription -> "发现自动保存的项目文件。是否读取？该文件将会在您打开或创建别的项目时被删除。"
     AskIfRedirectSampleDirectoryDialogDescription ->
         "未找到当前子项目的采样目录(%s)，或该目录中不含有任何所需的采样文件。是否要重定向到其他目录？"
+    AskIfLabelFileChangeDetectedDialogDescription ->
+        "标注文件已被外部程序修改。是否要重新加载以反映这些变更？\n您可以在 `偏好设置` -> `自动重新加载` 中自定义此行为。"
     PluginDialogTitle -> "vLabeler - 插件"
     PluginDialogInfoAuthor -> "作者：%s"
     PluginDialogInfoVersion -> "版本：%d"
@@ -500,6 +502,13 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesAutoSaveTargetProject -> "覆盖项目文件"
     PreferencesAutoSaveTargetRecord -> "临时文件"
     PreferencesAutoSaveIntervalSec -> "间隔（秒）"
+    PreferencesAutoReload -> "自动重新加载"
+    PreferencesAutoReloadDescription -> "编辑当标注文件被修改时，自动重新加载标注文件的行为。"
+    PreferencesAutoReloadBehavior -> "行为"
+    PreferencesAutoReloadBehaviorDisabled -> "禁用"
+    PreferencesAutoReloadBehaviorAskWithDetails -> "询问（显示详细信息）"
+    PreferencesAutoReloadBehaviorAsk -> "询问是/否"
+    PreferencesAutoReloadBehaviorAuto -> "自动"
     PreferencesHistory -> "编辑历史"
     PreferencesHistoryDescription -> "编辑有关编辑历史（撤销/重做）的行为。"
     PreferencesHistoryMaxSize -> "最大保存的编辑次数"

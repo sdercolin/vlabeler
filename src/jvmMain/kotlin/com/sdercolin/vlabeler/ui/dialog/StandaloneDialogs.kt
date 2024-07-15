@@ -96,7 +96,11 @@ fun StandaloneDialogs(
                 if (parent != null && name != null) {
                     mainScope.launch(Dispatchers.IO) {
                         appState.showProgress()
-                        exportProjectModule(appState.requireProject(), project.currentModuleIndex, File(parent, name))
+                        appState.exportProjectModule(
+                            appState.requireProject(),
+                            project.currentModuleIndex,
+                            File(parent, name),
+                        )
                         appState.hideProgress()
                     }
                 }

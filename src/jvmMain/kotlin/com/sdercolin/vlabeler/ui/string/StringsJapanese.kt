@@ -206,6 +206,9 @@ fun Strings.ja(): String? = when (this) {
     AskIfRedirectSampleDirectoryDialogDescription ->
         "現在のサブプロジェクトのサンプルディレクトリ(%s)が見つかりません。あるいは、その中にサンプルファイルがありません。" +
             "他のディレクトリに変更しますか？"
+    AskIfLabelFileChangeDetectedDialogDescription ->
+        "ラベルファイルが外部プログラムによって変更されました。変更を反映するためにファイルを再読み込みしますか？\n" +
+            "この動作は `環境設定` -> `自動再読み込み` でカスタマイズできます。"
     PluginDialogTitle -> "vLabeler - プラグイン"
     PluginDialogInfoAuthor -> "作者：%s"
     PluginDialogInfoVersion -> "バージョン：%d"
@@ -525,6 +528,13 @@ fun Strings.ja(): String? = when (this) {
     PreferencesAutoSaveTargetProject -> "プロジェクトファイルに上書き"
     PreferencesAutoSaveTargetRecord -> "一時ファイル"
     PreferencesAutoSaveIntervalSec -> "間隔（秒）"
+    PreferencesAutoReload -> "自動再読み込み"
+    PreferencesAutoReloadDescription -> "該当のラベルファイルに変更がある時の自動再読み込みの動作をカスタマイズします。"
+    PreferencesAutoReloadBehavior -> "動作"
+    PreferencesAutoReloadBehaviorDisabled -> "無効"
+    PreferencesAutoReloadBehaviorAskWithDetails -> "確認（詳細）"
+    PreferencesAutoReloadBehaviorAsk -> "確認"
+    PreferencesAutoReloadBehaviorAuto -> "自動"
     PreferencesHistory -> "操作履歴"
     PreferencesHistoryDescription -> "操作履歴（取り消し、やり直し）に関する動作をカスタマイズします。"
     PreferencesHistoryMaxSize -> "保存される最大操作数"

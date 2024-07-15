@@ -19,6 +19,7 @@ import kotlinx.serialization.Serializable
  * @param editor Configurations about editor.
  * @param view Configurations about views.
  * @param autoSave Configurations about auto-save.
+ * @param autoReload Configurations about auto-reload.
  * @param playback Configurations about audio playback.
  * @param keymaps Custom keymap.
  * @param history Configurations about edit history (undo/redo).
@@ -31,6 +32,7 @@ data class AppConf(
     val editor: Editor = Editor(),
     val view: View = View(),
     val autoSave: AutoSave = AutoSave(),
+    val autoReload: AutoReload = AutoReload(),
     val playback: Playback = Playback(),
     val keymaps: Keymaps = Keymaps(),
     val history: History = History(),
@@ -99,11 +101,11 @@ data class AppConf(
      * Configurations about amplitude (waveforms) painting.
      *
      * @param resampleDownToHz Maximum sample rate for loading. If the audio has a higher sample rate, it will be
-     *     resampled down to this value. If set to 0, the original sample rate is used.
+     *    resampled down to this value. If set to 0, the original sample rate is used.
      * @param unitSize Frames of one pixel used when drawing the waveform.
      * @param intensityAccuracy Height of the container bitmap in pixel.
      * @param yAxisBlankRate Height rate of the extra blank region displayed in both top and bottom to the height of the
-     *     waveform.
+     *    waveform.
      * @param color Color of the waveform.
      * @param backgroundColor Background color of the waveform.
      */
@@ -143,10 +145,10 @@ data class AppConf(
      * @param heightWeight Height weight of the spectrogram to the amplitude form (whose weight is 1).
      * @param pointDensity Points drawn into one pixel.
      * @param standardHopSize Distance as the number of samples for which the window is slided when move to the next
-     *     frame. This value is used for cases with sample rate 48000 Hz. For other sample rates it is calculated
-     *     linear-proportionally.
+     *    frame. This value is used for cases with sample rate 48000 Hz. For other sample rates it is calculated
+     *    linear-proportionally.
      * @param standardWindowSize Number of samples in the window. This value is used for cases with sample rate 48000
-     *     Hz. For other sample rates it is calculated exponential-proportionally (base is 2).
+     *    Hz. For other sample rates it is calculated exponential-proportionally (base is 2).
      * @param windowType Window type used in the Short-Time FT. See [WindowType] for options.
      * @param melScaleStep Step of the mel scale for interpolation on the frequency axis.
      * @param maxFrequency Max frequency (Hz) displayed.
@@ -154,7 +156,7 @@ data class AppConf(
      * @param maxIntensity Max intensity (dB) displayed in the heatmap.
      * @param colorPalette Color palette name used in the heatmap. See [ColorPaletteDefinition] for details.
      * @param useHighAlphaContrast True if the alpha value of the color is used repeatedly in the heatmap, so that the
-     *     heatmap looks more contrasted. Only color palettes with alpha values are affected.
+     *    heatmap looks more contrasted. Only color palettes with alpha values are affected.
      */
     @Serializable
     @Immutable
@@ -338,9 +340,9 @@ data class AppConf(
      * @param scissorsColor Color hex string of the scissors' cursor position.
      * @param scissorsActions Actions taken with a successful scissors click.
      * @param useOnScreenScissors When true, the scissors process is handled on screen. Otherwise, it is handled in a
-     *     dialog. Only effective when [Project.multipleEditMode] is true.
+     *    dialog. Only effective when [Project.multipleEditMode] is true.
      * @param scissorsSubmitThreshold The dp number of the threshold to submit the scissors' cut after a click, when
-     *     [useOnScreenScissors] is true.
+     *    [useOnScreenScissors] is true.
      * @param autoScroll Timings when `scroll to editable area` is automatically conducted.
      * @param showDone When true, the done button/icon is shown in the editor and entry lists.
      * @param showStar When true, the star button/icon is shown in the editor and entry lists.
@@ -618,7 +620,7 @@ data class AppConf(
      * @param onLoadedNewSample True if the action is conducted when a new sample file is loaded.
      * @param onJumpedToEntry True if the action is conducted when jumped to an entry via entry list.
      * @param onSwitchedInMultipleEditMode True if action is conducted in multiple edit mode when switch to another.
-     *     entry.
+     *    entry.
      * @param onSwitched True if action is conducted when switched to another entry.
      */
     @Serializable
@@ -683,6 +685,45 @@ data class AppConf(
         }
     }
 
+    @Serializable
+    @Immutable
+    data class AutoReload(
+        val behavior: Behavior = DEFAULT_BEHAVIOR,
+    ) {
+
+        /**
+         * Behavior of the auto-reload.
+         */
+        @Serializable
+        @Immutable
+        enum class Behavior(override val stringKey: Strings) : LocalizedText {
+
+            /**
+             * Do not conduct auto-reload.
+             */
+            Disabled(Strings.PreferencesAutoReloadBehaviorDisabled),
+
+            /**
+             * Ask the user whether to reload with a preview.
+             */
+            AskWithDetails(Strings.PreferencesAutoReloadBehaviorAskWithDetails),
+
+            /**
+             * Ask the user whether to reload.
+             */
+            Ask(Strings.PreferencesAutoReloadBehaviorAsk),
+
+            /**
+             * Reload without asking.
+             */
+            Auto(Strings.PreferencesAutoReloadBehaviorAuto),
+        }
+
+        companion object {
+            val DEFAULT_BEHAVIOR = Behavior.Ask
+        }
+    }
+
     /**
      * Configurations about playback.
      *
@@ -739,7 +780,7 @@ data class AppConf(
      *
      * @param maxSize Max size of the edit history.
      * @param squashIndex Ignore changes that only contain different [Project.currentModuleIndex]s or
-     *     [Module.currentIndex]s.
+     *    [Module.currentIndex]s.
      */
     @Serializable
     @Immutable

@@ -1074,6 +1074,24 @@ object PreferencesPages {
             }
     }
 
+    object AutoReload : PreferencesPage(Strings.PreferencesAutoReload, Strings.PreferencesAutoReloadDescription) {
+        override val content: List<PreferencesGroup>
+            get() = buildPageContent {
+                withContext(
+                    selector = { it.autoReload },
+                    updater = { copy(autoReload = it) },
+                ) {
+                    selection(
+                        title = Strings.PreferencesAutoReloadBehavior,
+                        defaultValue = AppConf.AutoReload.DEFAULT_BEHAVIOR,
+                        select = { it.behavior },
+                        update = { copy(behavior = it) },
+                        options = AppConf.AutoReload.Behavior.entries.toTypedArray(),
+                    )
+                }
+            }
+    }
+
     object History : PreferencesPage(Strings.PreferencesHistory, Strings.PreferencesHistoryDescription) {
         override val content: List<PreferencesGroup>
             get() = buildPageContent {
@@ -1149,6 +1167,7 @@ object PreferencesPages {
             Editor,
             Playback,
             AutoSave,
+            AutoReload,
             History,
             Misc,
         )

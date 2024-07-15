@@ -210,6 +210,10 @@ fun Strings.en(): String = when (this) {
         "The sample directory of the current subproject (%s) is not found, " +
             "or doesn't contain any required sample files." +
             "Do you want to redirect it to a new directory?"
+    AskIfLabelFileChangeDetectedDialogDescription ->
+        "The label file has been changed by an external program. " +
+            "Do you want to reload the file to reflect the changes?\n" +
+            "You can customize this behavior in `Preferences` -> `Auto Reload`."
     PluginDialogTitle -> "vLabeler - Plugin"
     PluginDialogInfoAuthor -> "author: %s"
     PluginDialogInfoVersion -> "version: %d"
@@ -559,6 +563,13 @@ fun Strings.en(): String = when (this) {
     PreferencesAutoSaveTargetProject -> "Overwrite project file"
     PreferencesAutoSaveTargetRecord -> "Save to temporary file"
     PreferencesAutoSaveIntervalSec -> "Interval (sec)"
+    PreferencesAutoReload -> "Auto reload"
+    PreferencesAutoReloadDescription -> "Customize the behavior about auto-reloading label files when they are changed."
+    PreferencesAutoReloadBehavior -> "Behavior"
+    PreferencesAutoReloadBehaviorDisabled -> "Disabled"
+    PreferencesAutoReloadBehaviorAskWithDetails -> "Ask with details"
+    PreferencesAutoReloadBehaviorAsk -> "Ask Yes/No"
+    PreferencesAutoReloadBehaviorAuto -> "Auto"
     PreferencesHistory -> "Edit history"
     PreferencesHistoryDescription -> "Customize the behavior about edit history (undo/redo)."
     PreferencesHistoryMaxSize -> "Maximum retained size"
