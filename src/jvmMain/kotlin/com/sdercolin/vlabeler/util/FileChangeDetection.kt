@@ -4,15 +4,18 @@ import com.sdercolin.vlabeler.env.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
+import java.nio.file.ClosedWatchServiceException
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardWatchEventKinds.ENTRY_CREATE
 import java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY
+import java.nio.file.WatchService
 
 class FileChangeDetection(
     private val directory: File,
@@ -21,6 +24,7 @@ class FileChangeDetection(
 ) {
     private var job: Job? = null
     private var callbackJob: Job? = null
+    private var watchService: WatchService? = null
 
     fun startIn(coroutineScope: CoroutineScope) {
         if (job?.isActive == true) {
@@ -34,6 +38,8 @@ class FileChangeDetection(
                     directory.mkdirs()
                 }
                 val watchService = FileSystems.getDefault().newWatchService()
+                this@FileChangeDetection.watchService?.close()
+                this@FileChangeDetection.watchService = watchService
                 val directoryPath = Paths.get(directory.absolutePath)
                 directoryPath.register(watchService, ENTRY_CREATE, ENTRY_MODIFY)
                 while (isActive) {
@@ -67,16 +73,25 @@ class FileChangeDetection(
                     }
                 }
             }.onFailure {
-                Log.error(it)
+                if (it !is ClosedWatchServiceException) {
+                    Log.error(it)
+                }
             }
         }
     }
 
     fun dispose() {
+        this@FileChangeDetection.watchService?.close()
         callbackJob?.cancel()
         callbackJob = null
         job?.cancel()
         job = null
+    }
+
+    suspend fun awaitDispose() {
+        this@FileChangeDetection.watchService?.close()
+        callbackJob?.cancelAndJoin()
+        job?.cancelAndJoin()
     }
 
     fun interface Callback {

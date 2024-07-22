@@ -478,6 +478,7 @@ class AppState(
 
     fun exit(fromError: Boolean = false) {
         mainScope.launch {
+            terminalAutoReloadLabel()
             terminateAutoSaveProject()
             if (!fromError) discardAutoSavedProjects()
             ipcState.close()

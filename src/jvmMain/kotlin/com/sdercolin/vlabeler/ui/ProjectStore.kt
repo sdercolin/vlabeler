@@ -144,6 +144,7 @@ interface ProjectStore {
      */
     fun reloadLabelFile(file: File?, skipConfirmation: Boolean)
     fun autoReloadLabel(behavior: AppConf.AutoReload.Behavior, moduleName: String)
+    suspend fun terminalAutoReloadLabel()
 
     suspend fun withExporting(onSuccess: suspend () -> File)
 }
@@ -811,5 +812,10 @@ class ProjectStoreImpl(
         val hash = calculateMD5(file)
         cachedFileHashMap[file.absolutePath] = hash
         isExporting = false
+    }
+
+    override suspend fun terminalAutoReloadLabel() {
+        fileChangeDetection?.awaitDispose()
+        fileChangeDetection = null
     }
 }
