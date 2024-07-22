@@ -28,38 +28,46 @@ class FileChangeDetection(
             return
         }
         job = coroutineScope.launch(Dispatchers.IO) {
-            val watchService = FileSystems.getDefault().newWatchService()
-            val directoryPath = Paths.get(directory.absolutePath)
-            directoryPath.register(watchService, ENTRY_CREATE, ENTRY_MODIFY)
-            while (isActive) {
-                val key = watchService.take()
-                yield()
-                val new = mutableListOf<File>()
-                val changed = mutableListOf<File>()
-                key.pollEvents().forEach { event ->
-                    val kind = event.kind()
-                    val path = event.context() as Path
-                    val file = directory.resolve(path.toString())
-                    if (filter(file).not()) {
-                        return@forEach
-                    }
-                    when (kind) {
-                        ENTRY_CREATE -> new.add(file)
-                        ENTRY_MODIFY -> changed.add(file)
-                    }
-                    Log.debug("File change detected: new=$new, changed=$changed")
-                    if (callbackJob?.isActive == true) {
-                        Log.debug("File change detection callback is already running, skipping")
-                    } else {
-                        callbackJob = coroutineScope.launch {
-                            callback.onFileChanged(changed, new)
+            runCatching {
+                if (directory.isDirectory.not()) {
+                    Log.info("Creating directory $directory during file change detection")
+                    directory.mkdirs()
+                }
+                val watchService = FileSystems.getDefault().newWatchService()
+                val directoryPath = Paths.get(directory.absolutePath)
+                directoryPath.register(watchService, ENTRY_CREATE, ENTRY_MODIFY)
+                while (isActive) {
+                    val key = watchService.take()
+                    yield()
+                    val new = mutableListOf<File>()
+                    val changed = mutableListOf<File>()
+                    key.pollEvents().forEach { event ->
+                        val kind = event.kind()
+                        val path = event.context() as Path
+                        val file = directory.resolve(path.toString())
+                        if (filter(file).not()) {
+                            return@forEach
+                        }
+                        when (kind) {
+                            ENTRY_CREATE -> new.add(file)
+                            ENTRY_MODIFY -> changed.add(file)
+                        }
+                        Log.debug("File change detected: new=$new, changed=$changed")
+                        if (callbackJob?.isActive == true) {
+                            Log.debug("File change detection callback is already running, skipping")
+                        } else {
+                            callbackJob = coroutineScope.launch {
+                                callback.onFileChanged(changed, new)
+                            }
                         }
                     }
+                    val valid = key.reset()
+                    if (!valid) {
+                        break
+                    }
                 }
-                val valid = key.reset()
-                if (!valid) {
-                    break
-                }
+            }.onFailure {
+                Log.error(it)
             }
         }
     }
