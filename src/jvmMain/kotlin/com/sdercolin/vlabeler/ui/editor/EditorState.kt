@@ -103,9 +103,6 @@ class EditorState(
     val entryTag: String
         get() = project.currentEntry.notes.tag
 
-    val entryExtra: List<String?>
-        get() = project.currentEntry.extras
-
     val tagOptions
         get() = project.currentModule.entries
             .mapNotNull { it.notes.tag.ifEmpty { null } }
@@ -201,9 +198,6 @@ class EditorState(
         }
         this.editedEntries = editedEntries.map { it.value }.sortedBy { it.index }
     }
-
-    private fun groupContinuousEditions(editions: List<Edition>): List<List<Edition>> =
-        editions.groupContinuouslyBy { index }
 
     fun cutEntry(index: Int, position: Float, pixelPosition: Float) {
         val sample = getSampleInfo() ?: return

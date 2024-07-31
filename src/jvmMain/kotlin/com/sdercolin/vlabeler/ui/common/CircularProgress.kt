@@ -12,11 +12,11 @@ import com.sdercolin.vlabeler.ui.theme.Black50
 import com.sdercolin.vlabeler.util.runIf
 
 @Composable
-fun CircularProgress(darkenBackground: Boolean = true) {
+fun CircularProgress(blocking: Boolean = true, darkenBackground: Boolean = true) {
     Box(
         modifier = Modifier.fillMaxSize()
             .runIf(darkenBackground) { background(color = Black50) }
-            .plainClickable(),
+            .runIf(blocking) { plainClickable { } },
         contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()
