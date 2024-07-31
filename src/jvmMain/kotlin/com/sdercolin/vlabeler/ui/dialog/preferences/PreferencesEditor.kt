@@ -274,7 +274,7 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
         Spacer(Modifier.height(15.dp))
         Row {
             Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 modifier = Modifier.size(25.dp).padding(end = 10.dp),
                 contentDescription = null,
             )
