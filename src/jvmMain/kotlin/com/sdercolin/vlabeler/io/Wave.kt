@@ -10,7 +10,6 @@ import com.sdercolin.vlabeler.model.SampleInfo
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import javax.sound.sampled.AudioSystem
 
 /**

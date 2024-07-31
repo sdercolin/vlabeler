@@ -9,7 +9,6 @@ import com.sdercolin.vlabeler.io.normalize
 import com.sdercolin.vlabeler.repository.ConvertedAudioRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import kotlinx.serialization.Serializable
 import java.io.File
 import javax.sound.sampled.AudioFormat
