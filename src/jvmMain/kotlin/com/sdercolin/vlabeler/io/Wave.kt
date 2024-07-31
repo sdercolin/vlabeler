@@ -58,7 +58,6 @@ suspend fun loadSampleChunk(
         stream.skip(offset * frameSize)
         Log.debug("Loading chunk $chunkIndex: offset=$offset")
         val readSize = stream.readNBytes(buffer, 0, chunkSize * frameSize)
-        yield()
         val readFrameCount = readSize / frameSize
         for (frameIndex in 0 until readFrameCount) {
             val frameStart = frameIndex * frameSize

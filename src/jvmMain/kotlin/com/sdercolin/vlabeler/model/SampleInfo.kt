@@ -187,7 +187,6 @@ data class SampleInfo(
                 val buffer = ByteArray(frameSize)
                 var maxAbsolute = 0f
                 while (true) {
-                    yield()
                     val readSize = stream.readNBytes(buffer, 0, frameSize)
                     if (readSize == 0) break
                     for (channelIndex in 0 until format.channels) {
