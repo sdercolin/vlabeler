@@ -378,6 +378,12 @@ aaa;name:bbb;sample:ccc;tag:ddd
 
 您可以在 `工具` -> `批量编辑` -> `管理插件...` 中导入/删除/禁用批量编辑插件。
 
+### 使用脚本
+
+vLabeler 允许您使用自定义脚本来自动化标注任务。
+
+请参阅 [使用自定义脚本在 vLabeler 中完成您的标注任务](../readme/use_scripts.md) 了解更多信息。
+
 #### 可用的插件（除内建）
 
 - [resampler-test](https://github.com/sdercolin/vlabeler-resampler-test): 播放当前条目的 resampler 输出。与 setParam

@@ -412,6 +412,11 @@ it is not supported by the current labeler.
 
 You can import/delete/disable batch edit plugins in `Tools` -> `Batch Edit` -> `Manage plugins...`.
 
+### Use scripts
+
+vLabeler allows you to use custom scripts to automate your labeling tasks.
+See [Use custom scripts in vLabeler to complete your labeling tasks](readme/use_scripts.md) for more details.
+
 #### More available plugins (except built-in)
 
 - [resampler-test](https://github.com/sdercolin/vlabeler-resampler-test): Play the UTAU resampler output of the current

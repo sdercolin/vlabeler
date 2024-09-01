@@ -402,6 +402,11 @@ vLabeler に対応していない音声合成ソフトのラベルを編集し�
 
 `ツール` -> `一括編集` -> `プラグインマネージャー...` で一括編集プラグインをインポート/削除/無効化できます。
 
+### スクリプトの使用
+
+vLabeler では、カスタムスクリプトを使用してラベリングタスクを自動化できます。
+詳細については、[Use custom scripts in vLabeler to complete your labeling tasks](../readme/use_scripts.md) を参照してください。
+
 #### 使用可能なプラグイン（ビルトインを除く）
 
 - [resampler-test](https://github.com/sdercolin/vlabeler-resampler-test): 現在のエントリの resampler の出力を再生します。
