@@ -55,7 +55,7 @@ fun NewWindowVideo(videoState: VideoState, appConf: AppConf) {
                     false
                 },
             ) {
-                VideoCore(videoState, Modifier.fillMaxSize())
+                VideoPanel(videoState, Modifier.fillMaxSize())
             }
             isVisible = true
         }

@@ -41,7 +41,7 @@ fun EmbeddedVideo(videoState: VideoState) {
                 ).pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
                 .background(Color.Transparent),
         ) {
-            VideoCore(videoState, Modifier.size(videoState.width, videoState.height))
+            VideoPanel(videoState, Modifier.size(videoState.width, videoState.height))
         }
     }
 }
