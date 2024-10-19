@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.model.Plugin
@@ -73,7 +74,9 @@ fun App(
                     initialFile = screen.initialFile,
                 )
 
-            is Screen.Editor -> Editor(screen.state, appState)
+            is Screen.Editor -> key(screen.state) {
+                Editor(screen.state, appState)
+            }
         }
         if (appState.isShowingProjectSettingDialog) {
             ProjectSettingDialog(appState, finish = { appState.closeProjectSettingDialog() })
