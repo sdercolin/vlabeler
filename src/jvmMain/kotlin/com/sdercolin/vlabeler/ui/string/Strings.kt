@@ -397,6 +397,7 @@ enum class Strings {
     PreferencesEditor,
     PreferencesEditorDescription,
     PreferencesEditorPlayerCursorColor,
+    PreferencesEditorClickToJumToEntry,
     PreferencesEditorLockedDrag,
     PreferencesEditorLockedDragDescription,
     PreferencesEditorLockedDragUseLabeler,

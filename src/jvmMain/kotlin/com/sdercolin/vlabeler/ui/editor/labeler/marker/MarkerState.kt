@@ -415,6 +415,15 @@ class MarkerState(
         return null
     }
 
+    fun getEntryIndexByCursorPosition(position: Float): Int? {
+        entriesInPixel.forEachIndexed { index, entry ->
+            if (entry.getActualStart(labelerConf) <= position && entry.getActualEnd(labelerConf) >= position) {
+                return index
+            }
+        }
+        return null
+    }
+
     fun isValidCutPosition(position: Float) = entriesInPixel.any { it.isValidCutPosition(position) }
 
     fun isValidPlaybackPosition(position: Float) = position < entryConverter.convertToPixel(sampleLengthMillis)

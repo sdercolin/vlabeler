@@ -474,6 +474,8 @@ fun Strings.en(): String = when (this) {
     PreferencesEditor -> "Editor"
     PreferencesEditorDescription -> "Customize the editor's appearance and behavior."
     PreferencesEditorPlayerCursorColor -> "Player cursor color"
+    PreferencesEditorClickToJumToEntry ->
+        "Jump to the cursor position entry by clicking it on canvas in multiple entry edit mode"
     PreferencesEditorLockedDrag -> "Fixed-drag"
     PreferencesEditorLockedDragDescription ->
         "Select a condition to enable fixed-drag while you move " +

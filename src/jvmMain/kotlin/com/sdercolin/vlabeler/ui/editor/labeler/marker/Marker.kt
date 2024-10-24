@@ -125,7 +125,15 @@ fun MarkerPointEventContainer(
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
-                state.handleMousePress(tool, keyboardState, event, state.labelerConf, appState.appConf, screenRange)
+                state.handleMousePress(
+                    tool,
+                    keyboardState,
+                    event,
+                    state.labelerConf,
+                    appState.appConf,
+                    screenRange,
+                    editorState,
+                )
             }
             .onPointerEvent(PointerEventType.Release) { event ->
                 state.handleMouseRelease(
@@ -583,9 +591,10 @@ private fun MarkerState.handleMousePress(
     labelerConf: LabelerConf,
     appConf: AppConf,
     screenRange: FloatRange?,
+    editorState: EditorState,
 ) {
     when (tool) {
-        Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf)
+        Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf, editorState)
         Tool.Scissors -> Unit
         Tool.Pan -> handlePanPress(event)
         Tool.Playback -> handlePlaybackPress(keyboardState, screenRange, event)
@@ -597,6 +606,7 @@ private fun MarkerState.handleCursorPress(
     event: PointerEvent,
     labelerConf: LabelerConf,
     appConf: AppConf,
+    editorState: EditorState,
 ) {
     val action = keyboardState.getEnabledMouseClickAction(event) ?: return
     if (action.canMoveParameter()) {
@@ -618,6 +628,15 @@ private fun MarkerState.handleCursorPress(
             val withPreview = action == MouseClickAction.MoveParameterWithPlaybackPreview
             val forcedDrag = action == MouseClickAction.MoveParameterIgnoringConstraints
             cursorState.update { startDragging(lockedDrag, withPreview, forcedDrag) }
+        }
+        if (appConf.editor.clickToSwitchCurrentIndex) {
+            cursorStateValue.position?.let { position ->
+                getEntryIndexByCursorPosition(position)?.let { index ->
+                    // having bugs here
+                    // if the cursor do not move, it would not jump
+                    editorState.jumpToEntry(editorState.project.currentModule.name, index)
+                }
+            }
         }
     }
 }

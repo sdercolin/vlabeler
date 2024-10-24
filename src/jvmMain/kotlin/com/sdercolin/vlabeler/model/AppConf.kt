@@ -368,6 +368,7 @@ data class AppConf(
         val continuousLabelNames: ContinuousLabelNames = ContinuousLabelNames(),
         val postEditNext: PostEditAction = PostEditAction.DEFAULT_NEXT,
         val postEditDone: PostEditAction = PostEditAction.DEFAULT_DONE,
+        val clickToSwitchCurrentIndex: Boolean = DEFAULT_CLICK_TO_SWITCH_CURRENT_INDEX,
     ) {
 
         /**
@@ -399,6 +400,7 @@ data class AppConf(
             const val DEFAULT_SHOW_STAR = true
             const val DEFAULT_SHOW_TAG = true
             const val DEFAULT_SHOW_EXTRA = true
+            const val DEFAULT_CLICK_TO_SWITCH_CURRENT_INDEX = false
         }
     }
 

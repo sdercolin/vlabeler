@@ -428,6 +428,7 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditor -> "编辑器"
     PreferencesEditorDescription -> "编辑编辑器的外观与行为。"
     PreferencesEditorPlayerCursorColor -> "音频播放光标颜色"
+    PreferencesEditorClickToJumToEntry -> "在多条目编辑模式下，单击画布上的条目即可跳转到该条目"
     PreferencesEditorLockedDrag -> "锁定拖动"
     PreferencesEditorLockedDragDescription ->
         "选择启用锁定拖动的条件。" +

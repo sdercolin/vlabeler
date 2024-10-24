@@ -730,6 +730,12 @@ object PreferencesPages {
                         select = { it.playerCursorColor },
                         update = { copy(playerCursorColor = it) },
                     )
+                    switch(
+                        title = Strings.PreferencesEditorClickToJumToEntry,
+                        defaultValue = AppConf.Editor.DEFAULT_CLICK_TO_SWITCH_CURRENT_INDEX,
+                        select = { it.clickToSwitchCurrentIndex },
+                        update = { copy(clickToSwitchCurrentIndex = it) },
+                    )
                 }
             }
     }
