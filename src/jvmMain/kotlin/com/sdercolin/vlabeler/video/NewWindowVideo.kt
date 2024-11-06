@@ -48,10 +48,11 @@ fun NewWindowVideo(videoState: VideoState, appConf: AppConf) {
                         videoState.exit()
                         return@setContent true
                     }
+                    /* Disabled due to compose UI error
                     if (KeyAction.ToggleVideoPopupEmbedded.shouldCatch(keymap, it)) {
                         videoState.setEmbeddedMode()
                         return@setContent true
-                    }
+                    }*/
                     false
                 },
             ) {

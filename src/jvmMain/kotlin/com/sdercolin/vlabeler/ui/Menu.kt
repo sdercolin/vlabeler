@@ -346,6 +346,7 @@ fun FrameWindowScope.Menu(
                             onCheckedChange = { if (it) appState.toggleVideoPopup(false) },
                             enabled = appState.isEditorActive,
                         )
+                        /* Disabled due to compose UI error
                         CheckboxItem(
                             string(Strings.MenuViewVideoEmbedded),
                             checked = appState.isShowingVideo && appState.videoState.isEmbeddedMode,
@@ -355,7 +356,7 @@ fun FrameWindowScope.Menu(
                             },
                             shortcut = KeyAction.ToggleVideoPopupEmbedded.getKeyShortCut(),
                             enabled = appState.isEditorActive,
-                        )
+                        )*/
                         CheckboxItem(
                             string(Strings.MenuViewVideoNewWindow),
                             checked = appState.isShowingVideo && appState.videoState.isNewWindowMode,

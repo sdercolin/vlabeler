@@ -325,11 +325,13 @@ enum class KeyAction(
         KeySet(Key.Space, setOf(Key.Ctrl, Key.Shift)),
         false,
     ),
+
+    /* Disabled due to compose UI error
     ToggleVideoPopupEmbedded(
         listOf(Strings.ActionToggleVideoPopupEmbedded),
         KeySet(Key.V, setOf(Key.Ctrl)),
         true,
-    ),
+    ),*/
     ToggleVideoPopupNewWindow(
         listOf(Strings.ActionToggleVideoPopupNewWindow),
         KeySet(Key.V, setOf(Key.Ctrl, Key.Shift)),
