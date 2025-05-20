@@ -213,6 +213,24 @@
                 "min": 0
             },
             {
+                "type": "float",
+                "name": "ovlRatio",
+                "label": {
+                    "en": "Overlap ratio",
+                    "zh": "重叠的比例",
+                    "jp": "オーバーラップの比率",
+                    "ko": "오버랩의 비율"
+                },
+                "description": {
+                    "en": "Ratio between Overlap and Preutterance",
+                    "zh": "重叠和先行发声的比例",
+                    "jp": "オーバーラップと先行発声の比率",
+                    "ko": "오버랩과 선행자음부의 비율"
+                },
+                "defaultValue": 2,
+                "min": 2
+            },
+            {
                 "type": "boolean",
                 "name": "useHeadCV",
                 "label": {

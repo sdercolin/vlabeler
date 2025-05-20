@@ -33,6 +33,7 @@ if (!suffixes.includes(appendSuffix)) {
 let fixBuffer = Math.min(params["fixBuffer"], beatLength / 6)
 let consLength = Math.min(params["consLength"], beatLength / 5)
 let ovlVC = Math.min(params["ovlVC"], beatLength / 6)
+let ovlRatio = params["ovlRatio"]
 
 let useHeadCV = params["useHeadCV"]
 let useVCV = params["useVCV"]
@@ -193,7 +194,7 @@ function pushCV(sample, index, alias, nextHasConsonant) {
     let thisAlias = getAliasWithCount(alias, false, false)
 
     let start = offset + index * beatLength - consLength
-    let ovl = start + (consLength / 2)
+    let ovl = start + (consLength / ovlRatio)
     let preu = start + consLength
     let fixed = preu + fixBuffer
     let cutoff = 0 - (consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
@@ -212,11 +213,11 @@ function pushCV(sample, index, alias, nextHasConsonant) {
 function pushVC(sample, index, alias) {
     let thisAlias = getAliasWithCount(alias, false, false)
 
-    let start = offset + index * beatLength - consLength - 2 * ovlVC
+    let start = offset + index * beatLength - consLength - ovlRatio * ovlVC
     let ovl = start + ovlVC
-    let preu = start + 2 * ovlVC
-    let fixed = start + 2 * ovlVC + 10
-    let cutoff = 0 - (2 * ovlVC + consLength)
+    let preu = start + ovlRatio * ovlVC
+    let fixed = start + ovlRatio * ovlVC + 10
+    let cutoff = 0 - (ovlRatio * ovlVC + consLength)
 
     let end = start - cutoff
     let points = [fixed, preu, ovl, start]
@@ -233,8 +234,8 @@ function pushSoloC(sample, index, alias) {
     let thisAlias = getAliasWithCount(alias, false, true)
 
     let start = offset + index * beatLength - consLength
-    let ovl = start + consLength / 2
-    let preu = start + consLength / 2
+    let ovl = start + consLength / ovlRatio
+    let preu = start + consLength / ovlRatio
     let fixed = start
     let cutoff = 0 - (consLength)
 
@@ -272,11 +273,11 @@ function pushSoloV(sample, index, alias, nextHasConsonant) {
 function pushVV(sample, index, alias, nextHasConsonant) {
     let thisAlias = getAliasWithCount(alias, false, false)
 
-    let start = offset + index * beatLength - 2 * ovlVC
+    let start = offset + index * beatLength - ovlRatio * ovlVC
     let ovl = start + ovlVC
-    let preu = ovl + ovlVC
+    let preu = start + ovlRatio * ovlVC
     let fixed = preu + fixBuffer
-    let cutoff = 0 - (2 * ovlVC + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
+    let cutoff = 0 - (ovlRatio * ovlVC + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
 
     let end = start - cutoff
     let points = [fixed, preu, ovl, start]
@@ -292,11 +293,11 @@ function pushVV(sample, index, alias, nextHasConsonant) {
 function pushVCV(sample, index, alias, nextHasConsonant) {
     let thisAlias = getAliasWithCount(alias, false, false)
 
-    let start = offset + index * beatLength - consLength - 2 * ovlVC
+    let start = offset + index * beatLength - consLength - ovlRatio * ovlVC
     let ovl = start + ovlVC
     let preu = ovl + ovlVC + consLength
     let fixed = preu + fixBuffer
-    let cutoff = 0 - (2 * ovlVC + consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
+    let cutoff = 0 - (ovlRatio * ovlVC + consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
 
     let end = start - cutoff
     let points = [fixed, preu, ovl, start]
@@ -312,11 +313,11 @@ function pushVCV(sample, index, alias, nextHasConsonant) {
 function pushTail(sample, index, alias) {
     let thisAlias = getAliasWithCount(alias, false, false)
 
-    let start = offset + index * beatLength - 2 * ovlVC
+    let start = offset + index * beatLength - ovlRatio * ovlVC
     let ovl = start + ovlVC
-    let preu = start + 2 * ovlVC
-    let fixed = start + 2 * ovlVC + 10
-    let cutoff = 0 - (2 * ovlVC + 20)
+    let preu = start + ovlRatio * ovlVC
+    let fixed = start + ovlRatio * ovlVC + 10
+    let cutoff = 0 - (ovlRatio * ovlVC + 20)
 
     let end = start - cutoff
     let points = [fixed, preu, ovl, start]
