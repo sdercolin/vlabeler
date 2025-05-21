@@ -1,6 +1,6 @@
 {
     "name": "cvvc-oto-gen",
-    "version": 10,
+    "version": 11,
     "type": "template",
     "displayedName": {
         "en": "CVVC oto generator",
