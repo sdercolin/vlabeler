@@ -8,6 +8,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.internal.utils.localPropertiesFile
+import java.io.File
 import java.util.Properties
 
 buildscript {
@@ -106,7 +107,64 @@ compose.desktop {
             )
         }
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            val osName = System.getProperty("os.name").toLowerCase()
+
+            val targetFormats = when {
+                osName.startsWith("windows") -> arrayOf(TargetFormat.Msi)
+                osName.startsWith("mac") -> arrayOf(TargetFormat.Dmg)
+                osName.startsWith("linux") -> {
+                    val isRpmBased = try {
+                        val osReleaseFile = File("/etc/os-release")
+                        if (osReleaseFile.exists()) {
+                            val osRelease = osReleaseFile.readText()
+                            osRelease.contains("ID=fedora", ignoreCase = true) ||
+                                osRelease.contains("ID=rhel", ignoreCase = true) ||
+                                osRelease.contains("ID=centos", ignoreCase = true) ||
+                                osRelease.contains("ID=opensuse", ignoreCase = true) ||
+                                osRelease.contains("ID=suse", ignoreCase = true)
+                        } else {
+                            false
+                        }
+                    } catch (e: Exception) {
+                        false
+                    }
+
+                    val isDebBased = try {
+                        val osReleaseFile = File("/etc/os-release")
+                        if (osReleaseFile.exists()) {
+                            val osRelease = osReleaseFile.readText()
+                            osRelease.contains("ID=debian", ignoreCase = true) ||
+                                osRelease.contains("ID=ubuntu", ignoreCase = true) ||
+                                osRelease.contains("ID=mint", ignoreCase = true)
+                        } else {
+                            false
+                        }
+                    } catch (e: Exception) {
+                        false
+                    }
+
+                    when {
+                        isRpmBased -> arrayOf(TargetFormat.Rpm)
+                        isDebBased -> arrayOf(TargetFormat.Deb)
+                        else -> arrayOf(TargetFormat.AppImage)
+                    }
+                }
+                else -> arrayOf(TargetFormat.AppImage)
+            }
+
+            val additionalFormats = project.findProperty("additionalFormats")?.toString()?.split(",")?.mapNotNull {
+                when (it.trim().toLowerCase()) {
+                    "appimage" -> TargetFormat.AppImage
+                    "rpm" -> TargetFormat.Rpm
+                    "deb" -> TargetFormat.Deb
+                    "dmg" -> TargetFormat.Dmg
+                    "msi" -> TargetFormat.Msi
+                    else -> null
+                }
+            } ?: emptyList()
+
+            targetFormats(*targetFormats, *additionalFormats.toTypedArray())
+
             packageName = "vLabeler"
             packageVersion = (version as String).split("-").first()
             copyright = "© 2022 sdercolin"
