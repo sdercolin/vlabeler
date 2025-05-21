@@ -420,7 +420,13 @@ function parseSample(sample) {
         }
 
         if (consonant !== "") {
-            pushCV(sample, index, matched, nextHasConsonant)
+            if (index === 0) {
+                if (!useHeadCV) {
+                    pushCV(sample, index, matched, nextHasConsonant)
+                }
+            } else {
+                pushCV(sample, index, matched, nextHasConsonant)
+            }
         } else {
             pushSoloV(sample, index, matched, nextHasConsonant)
         }
