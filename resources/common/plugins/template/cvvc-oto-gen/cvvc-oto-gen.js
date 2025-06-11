@@ -30,9 +30,14 @@ if (!suffixes.includes(appendSuffix)) {
     suffixes.push(appendSuffix)
 }
 
-let fixBuffer = Math.min(params["fixBuffer"], beatLength / 6)
-let consLength = Math.min(params["consLength"], beatLength / 5)
-let ovlVC = Math.min(params["ovlVC"], beatLength / 6)
+let fixBuffer = params["fixBuffer"]
+let consLength = params["consLength"]
+let ovlVC = params["ovlVC"]
+if (params["tempoComp"]) {
+    fixBuffer = Math.min(fixBuffer, beatLength / 6)
+    consLength = Math.min(consLength, beatLength / 5)
+    ovlVC = Math.min(ovlVC, beatLength / 6)
+}
 let ovlRatio = params["ovlRatio"]
 
 let useHeadCV = params["useHeadCV"]

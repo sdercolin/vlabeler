@@ -1,6 +1,6 @@
 {
     "name": "cvvc-oto-gen",
-    "version": 11,
+    "version": 12,
     "type": "template",
     "displayedName": {
         "en": "CVVC oto generator",
@@ -168,10 +168,10 @@
                     "ko": "초기 모음 안정화 (밀리초)"
                 },
                 "description": {
-                    "en": "Distance from start of vowel to end of fixed region. May get shortened by very fast tempo.",
-                    "zh": "从元音开始到固定区域结束的距离。如果速度过快，可能会缩短此参数。",
-                    "ja": "母音のはじめと固定範囲の終わりの間の距離。速すぎるテンポには、設定より小さい値が適用される場合があります。",
-                    "ko": "모음 시작 위치부터 고정자음부 끝까지의 길이에요. (녹음 템포가 매우 빠를 경우 이 값이 줄어들 수 있어요.)"
+                    "en": "Distance from start of vowel to end of fixed region.",
+                    "zh": "从元音开始到固定区域结束的距离。",
+                    "ja": "母音のはじめと固定範囲の終わりの間の距離。",
+                    "ko": "모음 시작 위치부터 고정자음부 끝까지의 길이에요."
                 },
                 "defaultValue": 100,
                 "min": 0
@@ -186,10 +186,10 @@
                     "ko": "자음 길이 (밀리초)"
                 },
                 "description": {
-                    "en": "Distance between the preutterances of a VC and its next CV. May get shortened by very fast tempo.",
-                    "zh": "VC 的先行发声和其下一个 CV 的先行发声之间的距离。如果速度过快，可能会缩短此参数。",
-                    "ja": "VC の先行発声とその次の CV の先行発声の間の距離。速すぎるテンポには、設定より小さい値が適用される場合があります。",
-                    "ko": "VC의 선행자음부와 다음 CV의 선행자음부 사이의 길이에요. (녹음 템포가 매우 빠를 경우 이 값이 줄어들 수 있어요.)"
+                    "en": "Distance between the preutterances of a VC and its next CV.",
+                    "zh": "VC 的先行发声和其下一个 CV 的先行发声之间的距离。",
+                    "ja": "VC の先行発声とその次の CV の先行発声の間の距離。",
+                    "ko": "VC의 선행자음부와 다음 CV의 선행자음부 사이의 길이에요."
                 },
                 "defaultValue": 100,
                 "min": 0
@@ -204,13 +204,30 @@
                     "ko": "VC의 오버랩 (밀리초)"
                 },
                 "description": {
-                    "en": "Overlap used for VC, VV, VCV, and Tail. May get shortened by very fast tempo.",
-                    "zh": "VC、VV、VCV 和 Tail 的重叠。如果速度过快，可能会缩短此参数。",
-                    "jp": "VC、VV、VCV と Tail のオーバーラップ。速すぎるテンポには、設定より小さい値が適用される場合があります。",
-                    "ko": "VC, VV, VCV, Tail에 사용되는 오버랩이에요. (녹음 템포가 매우 빠를 경우 이 값이 줄어들 수 있어요.)"
+                    "en": "Overlap used for VC, VV, VCV, and Tail.",
+                    "zh": "VC、VV、VCV 和 Tail 的重叠。",
+                    "jp": "VC、VV、VCV と Tail のオーバーラップ。",
+                    "ko": "VC, VV, VCV, Tail에 사용되는 오버랩이에요."
                 },
                 "defaultValue": 80,
                 "min": 0
+            },
+            {
+                "type": "boolean",
+                "name": "tempoComp",
+                "label": {
+                    "en": "Adjust parameters for fast tempo",
+                    "zh": "",
+                    "ja": "",
+                    "ko": ""
+                },
+                "description": {
+                    "en": "Shorten the initial vowel stabilization, consonant length, and VC overlap for fast tempos. \nWARNING: If you disable this option, fast tempos and large parameters may cause rendering errors or crashes when using the voicebank. Please check the OTO very carefully.",
+                    "zh": "",
+                    "ja": "",
+                    "ko": ""
+                },
+                "defaultValue": true
             },
             {
                 "type": "float",
