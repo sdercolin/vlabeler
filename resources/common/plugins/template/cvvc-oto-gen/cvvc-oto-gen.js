@@ -453,8 +453,11 @@ function parseSample(sample) {
         lastVowel = vowel
         rest = rest.slice(matched.length)
         if (isHeadSeparatorMatched) {
+            let alias = (lastVowel + " " + appendSuffix).trim()
+            pushTail(sample, index, alias)
             rest = rest.slice(headSeparator.length)
             lastVowel = ""
+            index++
         }
         if (separator !== "" && rest.startsWith(separator)) {
             rest = rest.slice(separator.length)

@@ -131,8 +131,11 @@ function parseSample(sample) {
         lastVowel = vowelMap.get(matched)
         rest = rest.slice(matched.length)
         if (headSeparator !== "" && rest.startsWith(headSeparator)) {
+            let alias = lastVowel + " " + appendSuffix
+            push(sample, index, alias, false, false)
             rest = rest.slice(headSeparator.length)
             lastVowel = "-"
+            index++
         } else if (separator !== "" && rest.startsWith(separator)) {
             rest = rest.slice(separator.length)
         }
