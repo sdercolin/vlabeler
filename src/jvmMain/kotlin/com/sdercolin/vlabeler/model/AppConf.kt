@@ -368,6 +368,12 @@ data class AppConf(
         val continuousLabelNames: ContinuousLabelNames = ContinuousLabelNames(),
         val postEditNext: PostEditAction = PostEditAction.DEFAULT_NEXT,
         val postEditDone: PostEditAction = PostEditAction.DEFAULT_DONE,
+        val highlightCurrentEntryBorder: Boolean = DEFAULT_HIGHLIGHT_CURRENT_ENTRY_BORDER,
+        val currentEntryBorderHighlightColor: String = DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_COLOR,
+        val currentEntryBorderHighlightWidth: Float = DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH,
+        val highlightCursorPositionEntryBorder: Boolean = DEFAULT_HIGHLIGHT_CURSOR_POSITION_ENTRY_BORDER,
+        val cursorPositionEntryBorderHighlightColor: String = DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_COLOR,
+        val cursorPositionEntryBorderHighlightWidth: Float = DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH,
     ) {
 
         /**
@@ -399,6 +405,12 @@ data class AppConf(
             const val DEFAULT_SHOW_STAR = true
             const val DEFAULT_SHOW_TAG = true
             const val DEFAULT_SHOW_EXTRA = true
+            const val DEFAULT_HIGHLIGHT_CURRENT_ENTRY_BORDER = false
+            const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_COLOR = "#F48FB1"
+            const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH = 6f
+            const val DEFAULT_HIGHLIGHT_CURSOR_POSITION_ENTRY_BORDER = false
+            const val DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_COLOR = "#AD375F"
+            const val DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH = 4f
         }
     }
 

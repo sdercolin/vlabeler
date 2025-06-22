@@ -313,12 +313,40 @@ private fun FieldBorderCanvas(
                             state.getEntryIndexesByBorderIndex(pointIndex).second == entryIndex
                         ) 1f else IDLE_LINE_ALPHA
                     if (border in screenRange) {
+                        var strokeWidth: Float = STROKE_WIDTH
+                        var color = borderColor.copy(alpha = borderLineAlpha)
+                        if (editorConf.highlightCurrentEntryBorder) {
+                            val currentIndex = editorState.project.currentModule.currentIndex
+                            if (currentIndex == entryIndex || currentIndex == entryIndex - 1) {
+                                strokeWidth = editorConf.currentEntryBorderHighlightWidth
+                                color = editorConf.currentEntryBorderHighlightColor.toColor()
+                            }
+                        }
+                        // when dragging, the highlight border would glitch, but I have no idea how to fix that
+                        if (editorConf.highlightCursorPositionEntryBorder) {
+                            cursorState.value.position?.let { position ->
+                                if (entryInPixel.getActualStart(labelerConf) <= position &&
+                                    position <= entryInPixel.getActualEnd(labelerConf)
+                                ) {
+                                    strokeWidth = editorConf.cursorPositionEntryBorderHighlightWidth
+                                    color = editorConf.cursorPositionEntryBorderHighlightColor.toColor()
+                                }
+                                state.entriesInPixel.getOrNull(entryIndex - 1)?.let { entryInPixel ->
+                                    if (entryInPixel.getActualStart(labelerConf) < position &&
+                                        position <= entryInPixel.getActualEnd(labelerConf)
+                                    ) {
+                                        strokeWidth = editorConf.cursorPositionEntryBorderHighlightWidth
+                                        color = editorConf.cursorPositionEntryBorderHighlightColor.toColor()
+                                    }
+                                }
+                            }
+                        }
                         val relativeBorder = border - screenRange.start
                         drawLine(
-                            color = borderColor.copy(alpha = borderLineAlpha),
+                            color = color,
                             start = Offset(relativeBorder, 0f),
                             end = Offset(relativeBorder, canvasHeight),
-                            strokeWidth = STROKE_WIDTH,
+                            strokeWidth = strokeWidth,
                         )
                     }
                 }

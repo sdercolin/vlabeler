@@ -558,6 +558,18 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorContinuousLabelNamesEditableBackgroundColor -> "Background color (editing)"
     PreferencesEditorContinuousLabelNamesSize -> "Size"
     PreferencesEditorContinuousLabelNamesPosition -> "Position"
+    PreferencesEditorBorderHighlight -> "Border Highlight"
+    PreferencesEditorBorderHighlightDescription -> "Customize border highlighting in multiple entry edit mode"
+    PreferencesEditorHighlightCurrentEntryBorder -> "Highlight current entry border"
+    PreferencesEditorHighlightCurrentEntryBorderDescription,
+    -> "Highlight current entry border in multiple entry edit mode."
+    PreferencesEditorCurrentEntryBorderHighlightColor -> "Highlight color of current entry border"
+    PreferencesEditorCurrentEntryBorderHighlightWidth -> "Highlight width of current entry border"
+    PreferencesEditorHighlightCursorPositionEntryBorder -> "Highlight cursor position entry border"
+    PreferencesEditorHighlightCursorPositionEntryBorderDescription,
+    -> "Highlight cursor position entry border in multiple entry edit mode."
+    PreferencesEditorCursorPositionEntryBorderHighlightColor -> "Highlight color of the cursor position entry border"
+    PreferencesEditorCursorPositionEntryBorderHighlightWidth -> "Highlight width of the cursor position entry border"
     PreferencesPlayback -> "Playback"
     PreferencesPlaybackDescription -> "Customize the behavior about audio playback."
     PreferencesPlaybackPlayOnDragging -> "Preview playback"
