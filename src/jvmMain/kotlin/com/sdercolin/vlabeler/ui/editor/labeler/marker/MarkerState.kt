@@ -114,7 +114,7 @@ class MarkerState(
         }
     }
 
-    private fun getPointPosition(index: Int): Float = when (index) {
+    fun getPointPosition(index: Int): Float = when (index) {
         MarkerCursorState.START_POINT_INDEX -> startInPixel
         MarkerCursorState.END_POINT_INDEX -> endInPixel
         else -> middlePointsInPixel[index]

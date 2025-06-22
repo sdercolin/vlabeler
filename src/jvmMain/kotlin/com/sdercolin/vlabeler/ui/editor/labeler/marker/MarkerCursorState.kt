@@ -11,10 +11,18 @@ data class MarkerCursorState(
      * the size of points is 2. It's ensured that: entry's end is equal to the next entry's start.
      */
     val pointIndex: Int = NONE_POINT_INDEX,
+    /**
+     * The position of the point, always paired with [pointIndex].
+     */
+    val pointPosition: Float? = null,
     val lockedDrag: Boolean = false,
     val previewOnDragging: Boolean = false,
     val forcedDrag: Boolean = false,
     val position: Float? = null,
+    /**
+     * During dragging, the index offset between the dragging point and the point index.
+     */
+    val relativeDraggingIndexOffset: Int? = null,
 ) {
 
     fun startDragging(lockedDrag: Boolean, withPreview: Boolean, forcedDrag: Boolean) = copy(
@@ -22,12 +30,34 @@ data class MarkerCursorState(
         lockedDrag = lockedDrag,
         previewOnDragging = withPreview,
         forcedDrag = forcedDrag,
+        relativeDraggingIndexOffset = if (pointPosition != null && position != null) {
+            if (position - pointPosition > 0) {
+                1
+            } else {
+                0
+            }
+        } else {
+            null
+        },
     )
 
-    fun finishDragging() = copy(mouse = Mouse.None, lockedDrag = false)
+    fun finishDragging() = copy(
+        mouse = Mouse.None,
+        lockedDrag = false,
+        relativeDraggingIndexOffset = null,
+    )
 
-    fun moveToNothing() = copy(pointIndex = NONE_POINT_INDEX, mouse = Mouse.None)
-    fun moveToHover(index: Int) = copy(pointIndex = index, mouse = Mouse.Hovering)
+    fun moveToNothing() = copy(
+        pointIndex = NONE_POINT_INDEX,
+        pointPosition = null,
+        mouse = Mouse.None,
+    )
+
+    fun moveToHover(index: Int, position: Float) = copy(
+        pointIndex = index,
+        pointPosition = position,
+        mouse = Mouse.Hovering,
+    )
 
     enum class Mouse {
         Dragging,

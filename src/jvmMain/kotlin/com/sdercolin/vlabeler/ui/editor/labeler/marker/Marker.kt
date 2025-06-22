@@ -322,21 +322,42 @@ private fun FieldBorderCanvas(
                                 color = editorConf.currentEntryBorderHighlightColor.toColor()
                             }
                         }
-                        // when dragging, the highlight border would glitch, but I have no idea how to fix that
                         if (editorConf.highlightCursorPositionEntryBorder) {
-                            cursorState.value.position?.let { position ->
-                                if (entryInPixel.getActualStart(labelerConf) <= position &&
-                                    position <= entryInPixel.getActualEnd(labelerConf)
-                                ) {
-                                    strokeWidth = editorConf.cursorPositionEntryBorderHighlightWidth
-                                    color = editorConf.cursorPositionEntryBorderHighlightColor.toColor()
-                                }
-                                state.entriesInPixel.getOrNull(entryIndex - 1)?.let { entryInPixel ->
-                                    if (entryInPixel.getActualStart(labelerConf) < position &&
-                                        position <= entryInPixel.getActualEnd(labelerConf)
+                            fun applyHighlight() {
+                                strokeWidth = editorConf.cursorPositionEntryBorderHighlightWidth
+                                color = editorConf.cursorPositionEntryBorderHighlightColor.toColor()
+                            }
+                            if (cursorState.value.mouse != MarkerCursorState.Mouse.Dragging) {
+                                val position = cursorState.value.position
+                                if (position != null) {
+                                    val entryLeftBorder = state.entryBorders[entryIndex - 1]
+                                    val entryRightBorder = state.entryBorders[entryIndex]
+                                    if (entryLeftBorder <= position && position < entryRightBorder) {
+                                        // The current entry is the one that the cursor is hovering
+                                        applyHighlight()
+                                    }
+                                    val previousEntryLeftBorder = state.entryBorders.getOrNull(index = entryIndex - 2)
+                                    if (previousEntryLeftBorder != null &&
+                                        previousEntryLeftBorder <= position &&
+                                        position < entryLeftBorder
                                     ) {
-                                        strokeWidth = editorConf.cursorPositionEntryBorderHighlightWidth
-                                        color = editorConf.cursorPositionEntryBorderHighlightColor.toColor()
+                                        // The previous entry is the one that the cursor is hovering
+                                        // So we also need to draw this line, because it's the right border
+                                        // of the previous entry
+                                        applyHighlight()
+                                    }
+                                }
+                            } else {
+                                // While dragging, the cursor position is not stable,
+                                // so we direct decide by the point index
+                                val actualPointIndex = cursorState.value.relativeDraggingIndexOffset?.plus(pointIndex)
+                                if (actualPointIndex != null) {
+                                    val entryIndexesBeingDragged = state.getEntryIndexesByBorderIndex(actualPointIndex)
+                                    println(
+                                        "pointIndex: $pointIndex, actualPointIndex: $actualPointIndex, entryIndexesBeingDragged: $entryIndexesBeingDragged",
+                                    )
+                                    if (entryIndex in entryIndexesBeingDragged.toList()) {
+                                        applyHighlight()
                                     }
                                 }
                             }
@@ -554,7 +575,8 @@ private fun MarkerState.handleCursorMove(
         if (newPointIndex == NONE_POINT_INDEX) {
             cursorState.update { moveToNothing() }
         } else {
-            cursorState.update { moveToHover(newPointIndex) }
+            val newPointPosition = getPointPosition(newPointIndex)
+            cursorState.update { moveToHover(newPointIndex, newPointPosition) }
         }
     }
 }
