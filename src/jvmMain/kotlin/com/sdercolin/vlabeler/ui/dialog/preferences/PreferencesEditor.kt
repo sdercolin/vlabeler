@@ -37,7 +37,6 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
@@ -272,14 +271,13 @@ private fun PageHeader(page: PreferencesPage, state: PreferencesEditorState) {
 private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
     if (group.name != null) {
         Spacer(Modifier.height(15.dp))
-        Row {
+        Row(modifier = Modifier.padding(vertical = 5.dp)) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 modifier = Modifier.size(25.dp).padding(end = 10.dp),
                 contentDescription = null,
             )
             Text(
-                modifier = Modifier.padding(vertical = 5.dp),
                 text = string(group.name),
                 style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
                 maxLines = 1,
@@ -288,7 +286,7 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
         }
         if (group.description != null) {
             Text(
-                modifier = Modifier.padding(vertical = 5.dp).padding(start = 30.dp),
+                modifier = Modifier.padding(vertical = 5.dp).padding(start = 28.dp),
                 text = string(group.description),
                 style = MaterialTheme.typography.caption,
                 softWrap = true,
@@ -298,7 +296,7 @@ private fun Group(group: PreferencesGroup, state: PreferencesEditorState) {
     group.items.forEach { item ->
         Row(Modifier.padding(vertical = 10.dp)) {
             if (group.name != null) {
-                Spacer(Modifier.widthIn(30.dp))
+                Spacer(Modifier.widthIn(28.dp))
             }
             if (item.title != null) {
                 Column(Modifier.widthIn(min = 200.dp, max = if (item.columnStyle) Dp.Unspecified else 400.dp)) {

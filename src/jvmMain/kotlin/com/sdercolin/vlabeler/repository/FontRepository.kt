@@ -90,7 +90,7 @@ object FontRepository {
         val subName = naming.fontSubFamily
         val weight = definition?.weight ?: oS2Windows.weightClass
         val isItalic = definition?.isItalic ?: subName.contains("italic", ignoreCase = true)
-        println("Loading font $familyName $subName: Weight=$weight, isItalic=$isItalic")
+        Log.info("Loading font $familyName $subName: Weight=$weight, isItalic=$isItalic")
         return familyName to Font(
             identity = "$familyName $subName",
             data = originalData.readAllBytes(),

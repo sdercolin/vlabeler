@@ -315,17 +315,19 @@ private fun FieldBorderCanvas(
                     if (border in screenRange) {
                         var strokeWidth: Float = STROKE_WIDTH
                         var color = borderColor.copy(alpha = borderLineAlpha)
-                        if (editorConf.highlightCurrentEntryBorder) {
+                        if (editorState.project.multipleEditMode && editorConf.currentEntryBorderHighlight.enabled) {
                             val currentIndex = editorState.project.currentModule.currentIndex
                             if (currentIndex == entryIndex || currentIndex == entryIndex - 1) {
-                                strokeWidth = editorConf.currentEntryBorderHighlightWidth
-                                color = editorConf.currentEntryBorderHighlightColor.toColor()
+                                strokeWidth = editorConf.currentEntryBorderHighlight.width
+                                color = editorConf.currentEntryBorderHighlight.color.toColor()
                             }
                         }
-                        if (editorConf.highlightCursorPositionEntryBorder) {
+                        if (editorState.project.multipleEditMode &&
+                            editorConf.cursorPositionEntryBorderHighlight.enabled
+                        ) {
                             fun applyHighlight() {
-                                strokeWidth = editorConf.cursorPositionEntryBorderHighlightWidth
-                                color = editorConf.cursorPositionEntryBorderHighlightColor.toColor()
+                                strokeWidth = editorConf.cursorPositionEntryBorderHighlight.width
+                                color = editorConf.cursorPositionEntryBorderHighlight.color.toColor()
                             }
                             if (cursorState.value.mouse != MarkerCursorState.Mouse.Dragging) {
                                 val position = cursorState.value.position
@@ -353,9 +355,6 @@ private fun FieldBorderCanvas(
                                 val actualPointIndex = cursorState.value.relativeDraggingIndexOffset?.plus(pointIndex)
                                 if (actualPointIndex != null) {
                                     val entryIndexesBeingDragged = state.getEntryIndexesByBorderIndex(actualPointIndex)
-                                    println(
-                                        "pointIndex: $pointIndex, actualPointIndex: $actualPointIndex, entryIndexesBeingDragged: $entryIndexesBeingDragged",
-                                    )
                                     if (entryIndex in entryIndexesBeingDragged.toList()) {
                                         applyHighlight()
                                     }

@@ -368,12 +368,16 @@ data class AppConf(
         val continuousLabelNames: ContinuousLabelNames = ContinuousLabelNames(),
         val postEditNext: PostEditAction = PostEditAction.DEFAULT_NEXT,
         val postEditDone: PostEditAction = PostEditAction.DEFAULT_DONE,
-        val highlightCurrentEntryBorder: Boolean = DEFAULT_HIGHLIGHT_CURRENT_ENTRY_BORDER,
-        val currentEntryBorderHighlightColor: String = DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_COLOR,
-        val currentEntryBorderHighlightWidth: Float = DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH,
-        val highlightCursorPositionEntryBorder: Boolean = DEFAULT_HIGHLIGHT_CURSOR_POSITION_ENTRY_BORDER,
-        val cursorPositionEntryBorderHighlightColor: String = DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_COLOR,
-        val cursorPositionEntryBorderHighlightWidth: Float = DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH,
+        val currentEntryBorderHighlight: EntryBorderHighlight = EntryBorderHighlight(
+            enabled = DEFAULT_HIGHLIGHT_CURRENT_ENTRY_BORDER,
+            color = DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_COLOR,
+            width = DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH,
+        ),
+        val cursorPositionEntryBorderHighlight: EntryBorderHighlight = EntryBorderHighlight(
+            enabled = DEFAULT_HIGHLIGHT_CURSOR_POSITION_ENTRY_BORDER,
+            color = DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_COLOR,
+            width = DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH,
+        ),
     ) {
 
         /**
@@ -392,6 +396,14 @@ data class AppConf(
             Never(Strings.PreferencesEditorLockedDragNever),
         }
 
+        @Serializable
+        @Immutable
+        data class EntryBorderHighlight(
+            val enabled: Boolean,
+            val color: String,
+            val width: Float,
+        )
+
         companion object {
             const val DEFAULT_PLAYER_CURSOR_COLOR = "#FFFF00"
             const val DEFAULT_SCISSORS_COLOR = "#FFFFFF00"
@@ -406,11 +418,15 @@ data class AppConf(
             const val DEFAULT_SHOW_TAG = true
             const val DEFAULT_SHOW_EXTRA = true
             const val DEFAULT_HIGHLIGHT_CURRENT_ENTRY_BORDER = false
-            const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_COLOR = "#F48FB1"
-            const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH = 6f
+            const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_COLOR = View.DEFAULT_ACCENT_COLOR_VARIANT
+            const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH = 4f
+            const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH_MIN = 2f
+            const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH_MAX = 10f
             const val DEFAULT_HIGHLIGHT_CURSOR_POSITION_ENTRY_BORDER = false
-            const val DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_COLOR = "#AD375F"
-            const val DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH = 4f
+            const val DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_COLOR = View.DEFAULT_ACCENT_COLOR
+            const val DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH = 6f
+            const val DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH_MIN = 2f
+            const val DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH_MAX = 10f
         }
     }
 
@@ -429,8 +445,8 @@ data class AppConf(
         val play: Target = DEFAULT_PLAY,
     ) {
         fun getTargetEntryIndex(currentEntryIndex: Int) = when (goTo) {
-            AppConf.ScissorsActions.Target.Former -> currentEntryIndex
-            AppConf.ScissorsActions.Target.Latter -> currentEntryIndex + 1
+            Target.Former -> currentEntryIndex
+            Target.Latter -> currentEntryIndex + 1
             else -> null
         }
 

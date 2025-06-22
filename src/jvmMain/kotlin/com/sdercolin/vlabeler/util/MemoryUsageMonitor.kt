@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.util
 
+import com.sdercolin.vlabeler.env.Log
 import kotlinx.coroutines.delay
 
 /**
@@ -17,7 +18,7 @@ class MemoryUsageMonitor {
             val totalMemory = convertBytesToMegaBytes(Runtime.getRuntime().totalMemory())
             val freeMemory = convertBytesToMegaBytes(Runtime.getRuntime().freeMemory())
             val usedMemory = totalMemory - freeMemory
-            println("used memory: ${usedMemory.roundToDecimalDigit(3)} MB")
+            Log.info("used memory: ${usedMemory.roundToDecimalDigit(3)} MB")
         }
     }
 }

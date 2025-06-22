@@ -1,3 +1,5 @@
+@file:Suppress("KotlinConstantConditions")
+
 package com.sdercolin.vlabeler.ui.dialog.preferences
 
 import com.sdercolin.vlabeler.model.AppConf
@@ -1017,55 +1019,67 @@ object PreferencesPages {
     ) {
         override val content: List<PreferencesGroup>
             get() = buildPageContent {
-                withContext(
-                    selector = { it.editor },
-                    updater = { copy(editor = it) },
+                group(
+                    name = Strings.PreferencesEditorHighlightCurrentEntryBorder,
+                    description = Strings.PreferencesEditorHighlightCurrentEntryBorderDescription,
                 ) {
-
-                    switch(
-                        title = Strings.PreferencesEditorHighlightCurrentEntryBorder,
-                        description = Strings.PreferencesEditorHighlightCursorPositionEntryBorderDescription,
-                        defaultValue = AppConf.Editor.DEFAULT_HIGHLIGHT_CURRENT_ENTRY_BORDER,
-                        select = { it.highlightCurrentEntryBorder },
-                        update = { copy(highlightCurrentEntryBorder = it) },
-                    )
-                    color(
-                        title = Strings.PreferencesEditorCurrentEntryBorderHighlightColor,
-                        defaultValue = AppConf.Editor.DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_COLOR,
-                        useAlpha = false,
-                        select = { it.currentEntryBorderHighlightColor },
-                        update = { copy(currentEntryBorderHighlightColor = it) },
-                    )
-                    float(
-                        title = Strings.PreferencesEditorCurrentEntryBorderHighlightWidth,
-                        defaultValue = AppConf.Editor.DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH,
-                        min = 2f,
-                        max = 10f,
-                        select = { it.currentEntryBorderHighlightWidth },
-                        update = { copy(currentEntryBorderHighlightWidth = it) },
-                    )
-                    switch(
-                        title = Strings.PreferencesEditorHighlightCursorPositionEntryBorder,
-                        description = Strings.PreferencesEditorHighlightCursorPositionEntryBorderDescription,
-                        defaultValue = AppConf.Editor.DEFAULT_HIGHLIGHT_CURSOR_POSITION_ENTRY_BORDER,
-                        select = { it.highlightCursorPositionEntryBorder },
-                        update = { copy(highlightCursorPositionEntryBorder = it) },
-                    )
-                    color(
-                        title = Strings.PreferencesEditorCursorPositionEntryBorderHighlightColor,
-                        defaultValue = AppConf.Editor.DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_COLOR,
-                        useAlpha = false,
-                        select = { it.cursorPositionEntryBorderHighlightColor },
-                        update = { copy(cursorPositionEntryBorderHighlightColor = it) },
-                    )
-                    float(
-                        title = Strings.PreferencesEditorCursorPositionEntryBorderHighlightWidth,
-                        defaultValue = AppConf.Editor.DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH,
-                        min = 2f,
-                        max = 10f,
-                        select = { it.cursorPositionEntryBorderHighlightWidth },
-                        update = { copy(cursorPositionEntryBorderHighlightWidth = it) },
-                    )
+                    withContext(
+                        selector = { it.editor.currentEntryBorderHighlight },
+                        updater = { copy(editor = editor.copy(currentEntryBorderHighlight = it)) },
+                    ) {
+                        switch(
+                            title = Strings.PreferencesEditorHighlightEntryBorderEnabled,
+                            defaultValue = AppConf.Editor.DEFAULT_HIGHLIGHT_CURRENT_ENTRY_BORDER,
+                            select = { it.enabled },
+                            update = { copy(enabled = it) },
+                        )
+                        color(
+                            title = Strings.PreferencesEditorHighlightEntryBorderColor,
+                            defaultValue = AppConf.Editor.DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_COLOR,
+                            useAlpha = false,
+                            select = { it.color },
+                            update = { copy(color = it) },
+                        )
+                        float(
+                            title = Strings.PreferencesEditorHighlightEntryBorderWidth,
+                            defaultValue = AppConf.Editor.DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH,
+                            min = AppConf.Editor.DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH_MIN,
+                            max = AppConf.Editor.DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH_MAX,
+                            select = { it.width },
+                            update = { copy(width = it) },
+                        )
+                    }
+                }
+                group(
+                    name = Strings.PreferencesEditorHighlightCursorPositionEntryBorder,
+                    description = Strings.PreferencesEditorHighlightCursorPositionEntryBorderDescription,
+                ) {
+                    withContext(
+                        selector = { it.editor.cursorPositionEntryBorderHighlight },
+                        updater = { copy(editor = editor.copy(cursorPositionEntryBorderHighlight = it)) },
+                    ) {
+                        switch(
+                            title = Strings.PreferencesEditorHighlightEntryBorderEnabled,
+                            defaultValue = AppConf.Editor.DEFAULT_HIGHLIGHT_CURSOR_POSITION_ENTRY_BORDER,
+                            select = { it.enabled },
+                            update = { copy(enabled = it) },
+                        )
+                        color(
+                            title = Strings.PreferencesEditorHighlightEntryBorderColor,
+                            defaultValue = AppConf.Editor.DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_COLOR,
+                            useAlpha = false,
+                            select = { it.color },
+                            update = { copy(color = it) },
+                        )
+                        float(
+                            title = Strings.PreferencesEditorHighlightEntryBorderWidth,
+                            defaultValue = AppConf.Editor.DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH,
+                            min = AppConf.Editor.DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH_MIN,
+                            max = AppConf.Editor.DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH_MAX,
+                            select = { it.width },
+                            update = { copy(width = it) },
+                        )
+                    }
                 }
             }
     }
