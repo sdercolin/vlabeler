@@ -109,7 +109,7 @@ fun main(vararg args: String) = application {
         }
     }
 
-    val windowTitle = string(Strings.AppName) + appState?.project?.projectName?.let { " - $it" }.orEmpty()
+    val windowTitle = string(Strings.AppName) + appState?.project?.projectFile?.absolutePath?.let { " - $it" }.orEmpty()
 
     CompositionLocalProvider(UseCustomFileDialog.provides(appConf.value.misc.useCustomFileDialog)) {
         Window(
