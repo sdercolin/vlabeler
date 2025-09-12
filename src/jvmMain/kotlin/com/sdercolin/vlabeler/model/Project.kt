@@ -134,7 +134,9 @@ data class Project(
                 currentIndex = if (filteredIndexes.contains(it.currentIndex)) {
                     it.currentIndex
                 } else {
-                    filteredIndexes.firstOrNull() ?: it.currentIndex
+                    // if the current index is filtered out, move to the closest next index, or the previous one if not
+                    val closestNext = filteredIndexes.firstOrNull { index -> index > it.currentIndex }
+                    closestNext ?: filteredIndexes.lastOrNull() ?: 0
                 },
             )
         }
