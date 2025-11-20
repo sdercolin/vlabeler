@@ -562,10 +562,10 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorBorderHighlightDescription -> "Customize border highlighting in multiple edit mode."
     PreferencesEditorHighlightCurrentEntryBorder -> "Highlight entry borders of current entry"
     PreferencesEditorHighlightCurrentEntryBorderDescription,
-        -> "In multiple edit mode, highlight borders of the entry that is currently selected in the entry list."
+    -> "In multiple edit mode, highlight borders of the entry that is currently selected in the entry list."
     PreferencesEditorHighlightCursorPositionEntryBorder -> "Highlight entry borders with cursor position"
     PreferencesEditorHighlightCursorPositionEntryBorderDescription,
-        -> "In multiple edit mode, highlight borders of the entry where your cursor is currently positioned."
+    -> "In multiple edit mode, highlight borders of the entry where your cursor is currently positioned."
     PreferencesEditorHighlightEntryBorderEnabled -> "Enabled"
     PreferencesEditorHighlightEntryBorderColor -> "Color"
     PreferencesEditorHighlightEntryBorderWidth -> "Width"
@@ -586,7 +586,9 @@ fun Strings.en(): String = when (this) {
     PreferencesAutoSaveTargetRecord -> "Save to temporary file"
     PreferencesAutoSaveIntervalSec -> "Interval (sec)"
     PreferencesAutoSavePermanentBackupMaxCount -> "Maximum number of backups"
-    PreferencesAutoSavePermanentBackupMaxCountDescription -> "Backups are saved when your project file is automatically saved or manually saved. The oldest backups will be deleted when exceeding the limit."
+    PreferencesAutoSavePermanentBackupMaxCountDescription ->
+        "Backups are saved when your project file is" +
+            " automatically saved or manually saved. The oldest backups will be deleted when exceeding the limit."
     PreferencesAutoReload -> "Auto reload"
     PreferencesAutoReloadDescription -> "Customize the behavior about auto-reloading label files when they are changed."
     PreferencesAutoReloadBehavior -> "Behavior"

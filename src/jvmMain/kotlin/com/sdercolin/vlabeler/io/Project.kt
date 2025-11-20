@@ -316,7 +316,7 @@ private var saveFileJob: Job? = null
 suspend fun ProjectStore.saveProjectFile(
     project: Project,
     allowAutoExport: Boolean = false,
-    maxBackupFileCount: Int
+    maxBackupFileCount: Int,
 ): File =
     withContext(Dispatchers.IO) {
         saveFileJob?.join()
