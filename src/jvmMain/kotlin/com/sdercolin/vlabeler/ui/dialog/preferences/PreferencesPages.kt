@@ -1144,6 +1144,15 @@ object PreferencesPages {
                         select = { it.intervalSec },
                         update = { copy(intervalSec = it) },
                     )
+                    integer(
+                        title = Strings.PreferencesAutoSavePermanentBackupMaxCount,
+                        description = Strings.PreferencesAutoSavePermanentBackupMaxCountDescription,
+                        defaultValue = AppConf.AutoSave.DEFAULT_PERMANENT_BACKUP_MAX_COUNT,
+                        min = AppConf.AutoSave.MIN_PERMANENT_BACKUP_MAX_COUNT,
+                        max = AppConf.AutoSave.MAX_PERMANENT_BACKUP_MAX_COUNT,
+                        select = { it.permanentBackupMaxCount },
+                        update = { copy(permanentBackupMaxCount = it) },
+                    )
                 }
             }
     }

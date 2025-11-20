@@ -478,6 +478,8 @@ enum class Strings {
     PreferencesAutoSaveTargetProject,
     PreferencesAutoSaveTargetRecord,
     PreferencesAutoSaveIntervalSec,
+    PreferencesAutoSavePermanentBackupMaxCount,
+    PreferencesAutoSavePermanentBackupMaxCountDescription,
     PreferencesAutoReload,
     PreferencesAutoReloadDescription,
     PreferencesAutoReloadBehavior,

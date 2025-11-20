@@ -547,6 +547,10 @@ fun Strings.ja(): String? = when (this) {
     PreferencesAutoSaveTargetProject -> "プロジェクトファイルに上書き"
     PreferencesAutoSaveTargetRecord -> "一時ファイル"
     PreferencesAutoSaveIntervalSec -> "間隔（秒）"
+    PreferencesAutoSavePermanentBackupMaxCount -> "保存されるバックアップの最大数"
+    PreferencesAutoSavePermanentBackupMaxCountDescription ->
+        "プロジェクトファイルが自動保存または手動保存されるときにバックアップが保存されます。 " +
+            "制限を超えた場合、最も古いバックアップが削除されます。"
     PreferencesAutoReload -> "自動再読み込み"
     PreferencesAutoReloadDescription -> "該当のラベルファイルに変更がある時の自動再読み込みの動作をカスタマイズします。"
     PreferencesAutoReloadBehavior -> "動作"

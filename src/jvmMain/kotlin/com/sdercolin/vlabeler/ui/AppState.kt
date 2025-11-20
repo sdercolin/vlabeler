@@ -602,7 +602,7 @@ class AppState(
                 return false
             }
             result.save -> {
-                saveProjectFile(project)
+                saveProjectFile(project, maxBackupFileCount = appConf.autoSave.permanentBackupMaxCount)
             }
         }
         return true

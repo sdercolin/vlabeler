@@ -517,6 +517,8 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesAutoSaveTargetProject -> "覆盖项目文件"
     PreferencesAutoSaveTargetRecord -> "临时文件"
     PreferencesAutoSaveIntervalSec -> "间隔（秒）"
+    PreferencesAutoSavePermanentBackupMaxCount -> "最大备份数量"
+    PreferencesAutoSavePermanentBackupMaxCountDescription -> "当您的项目文件被自动保存或手动保存时，备份文件将会被保存。当备份数量超过该限制时，最旧的备份将会被删除。"
     PreferencesAutoReload -> "自动重新加载"
     PreferencesAutoReloadDescription -> "编辑当标注文件被修改时，自动重新加载标注文件的行为。"
     PreferencesAutoReloadBehavior -> "行为"

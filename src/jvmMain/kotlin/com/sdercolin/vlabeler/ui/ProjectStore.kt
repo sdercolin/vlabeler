@@ -543,12 +543,19 @@ class ProjectStoreImpl(
                 val project = project ?: continue
                 when (autoSave.target) {
                     AppConf.AutoSave.Target.Project -> if (unsavedChangesState.hasUnsavedChanges) {
-                        saveProjectFile(project, allowAutoExport = true)
+                        saveProjectFile(
+                            project,
+                            allowAutoExport = true,
+                            maxBackupFileCount = autoSave.permanentBackupMaxCount,
+                        )
                         unsavedChangesState.projectSaved()
                     }
                     AppConf.AutoSave.Target.Record ->
                         if (unsavedChangesState.hasUnsavedChanges && savedTemporaryProject != project) {
-                            autoSaveTemporaryProjectFile(project)
+                            autoSaveTemporaryProjectFile(
+                                project,
+                                maxBackupFileCount = autoSave.permanentBackupMaxCount,
+                            )
                             savedTemporaryProject = project
                         }
                     else -> Unit

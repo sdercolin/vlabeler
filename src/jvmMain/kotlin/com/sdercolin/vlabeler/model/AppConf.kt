@@ -679,6 +679,7 @@ data class AppConf(
     data class AutoSave(
         val target: Target = DEFAULT_TARGET,
         val intervalSec: Int = DEFAULT_INTERVAL_SEC,
+        val permanentBackupMaxCount: Int = DEFAULT_PERMANENT_BACKUP_MAX_COUNT,
     ) {
         /**
          * Targets of the auto-save.
@@ -710,6 +711,9 @@ data class AppConf(
             val DEFAULT_TARGET = Target.Record
             const val DEFAULT_INTERVAL_SEC = 30
             const val MIN_INTERVAL_SEC = 1
+            const val DEFAULT_PERMANENT_BACKUP_MAX_COUNT = 0
+            const val MIN_PERMANENT_BACKUP_MAX_COUNT = 0
+            const val MAX_PERMANENT_BACKUP_MAX_COUNT = 100
         }
     }
 

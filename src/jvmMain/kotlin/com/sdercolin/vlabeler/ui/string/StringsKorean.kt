@@ -572,6 +572,10 @@ fun Strings.ko(): String? = when (this) {
     PreferencesAutoSaveTargetProject -> "프로젝트 파일 덮어쓰기"
     PreferencesAutoSaveTargetRecord -> "임시 파일로 저장"
     PreferencesAutoSaveIntervalSec -> "저장 간격 (초)"
+    PreferencesAutoSavePermanentBackupMaxCount -> "영구 백업의 최대 개수"
+    PreferencesAutoSavePermanentBackupMaxCountDescription ->
+        "프로젝트 파일이 자동 저장되거나 수동으로 저장될 때 백업이 저장됩니다. " +
+            "제한을 초과하면 가장 오래된 백업이 삭제됩니다."
     PreferencesHistory -> "편집 기록"
     PreferencesHistoryDescription -> "편집(실행 취소/다시 실행) 동작을 커스텀합니다."
     PreferencesHistoryMaxSize -> "유지할 최대 편집 기록 수"
