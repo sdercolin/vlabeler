@@ -23,6 +23,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.charset.Charset
@@ -358,6 +360,8 @@ suspend fun autoSaveTemporaryProjectFile(project: Project, maxBackupFileCount: I
         file
     }
 
+private val backupMutex = Mutex()
+
 /**
  * Save a backup of the project to a backup file.
  *
@@ -369,35 +373,36 @@ suspend fun saveBackupProjectFile(project: Project, maxFileCount: Int) = withCon
     if (maxFileCount <= 0) {
         return@withContext
     }
-    val backupDir = project.workingDirectory.resolve("backups")
-    if (!backupDir.exists()) {
-        backupDir.mkdirs()
-    }
-    val filePrefix = project.projectFile.name + ".backup."
-    val existingBackupFiles = backupDir.listFiles { _, name ->
-        name.startsWith(filePrefix)
-    }?.sortedBy { it.lastModified() } ?: emptyList()
-    if (existingBackupFiles.size >= maxFileCount) {
-        val filesToDelete = existingBackupFiles.take(existingBackupFiles.size - maxFileCount + 1)
-        filesToDelete.forEach {
-            Log.info("Deleting old backup file: ${it.absolutePath}")
-            it.delete()
+    backupMutex.withLock {
+        val backupDir = project.workingDirectory.resolve("backups")
+        if (!backupDir.exists()) {
+            backupDir.mkdirs()
         }
-    }
-    val latest = existingBackupFiles.lastOrNull()
-    val projectContent = project.stringifyJson()
-    if (latest != null) {
-        val latestContent = latest.readText()
-        if (latestContent == projectContent) {
-            Log.debug("No changes since the last backup. Skipping backup.")
-            return@withContext
+        val filePrefix = project.projectFile.name + ".backup."
+        val existingBackupFiles = backupDir.listFiles { _, name ->
+            name.startsWith(filePrefix)
+        }?.sortedBy { it.lastModified() } ?: emptyList()
+        val latest = existingBackupFiles.lastOrNull()
+        val content = project.stringifyJson()
+        if (latest?.readText() == content) {
+            Log.debug("No changes since latest backup. Skipping backup.")
+            return@withLock null
         }
+        val overflow = existingBackupFiles.size - maxFileCount + 1
+        if (overflow > 0) {
+            existingBackupFiles.take(overflow).forEach {
+                Log.info("Deleting backup: ${it.absolutePath}")
+                it.delete()
+            }
+        }
+        val timestamp = System.currentTimeMillis()
+        val backupFile = backupDir.resolve("$filePrefix$timestamp")
+        val tmpFile = File(backupFile.absolutePath + ".tmp")
+        tmpFile.writeText(content)
+        tmpFile.renameTo(backupFile)
+
+        Log.debug("Project backup saved to ${backupFile.absolutePath}")
     }
-    val timestamp = System.currentTimeMillis()
-    val backupFile = backupDir.resolve("$filePrefix$timestamp")
-    backupFile.writeText(projectContent)
-    Log.debug("Project backup saved to ${backupFile.absolutePath}")
-    return@withContext
 }
 
 /**
