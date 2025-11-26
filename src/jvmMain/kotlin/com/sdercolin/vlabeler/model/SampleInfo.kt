@@ -107,8 +107,7 @@ data class SampleInfo(
         suspend fun load(project: Project, moduleName: String, file: File, appConf: AppConf): Result<SampleInfo> =
             runCatching {
                 val convertedFile = createCachedWavFile(project, moduleName, file, appConf)
-                val stream = AudioSystem.getAudioInputStream((convertedFile ?: file).inputStream())
-
+                val stream = AudioSystem.getAudioInputStream(convertedFile ?: file)
                 val maxSampleRate = appConf.painter.amplitude.resampleDownToHz
                 if (stream.format.encoding !in arrayOf(
                         AudioFormat.Encoding.PCM_SIGNED,
