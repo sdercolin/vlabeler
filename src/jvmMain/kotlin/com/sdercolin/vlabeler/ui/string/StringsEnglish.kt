@@ -593,7 +593,7 @@ fun Strings.en(): String = when (this) {
     PreferencesAutoReloadDescription -> "Customize the behavior about auto-reloading label files when they are changed."
     PreferencesAutoReloadBehavior -> "Behavior"
     PreferencesAutoReloadBehaviorDisabled -> "Disabled"
-    PreferencesAutoReloadBehaviorAskWithDetails -> "Ask with details"
+    PreferencesAutoReloadBehaviorAskWithDetails -> "Ask with details"Returning cached sample info
     PreferencesAutoReloadBehaviorAsk -> "Ask Yes/No"
     PreferencesAutoReloadBehaviorAuto -> "Auto"
     PreferencesHistory -> "Edit history"

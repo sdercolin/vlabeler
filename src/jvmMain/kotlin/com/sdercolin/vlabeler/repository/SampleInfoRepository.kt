@@ -85,8 +85,23 @@ object SampleInfoRepository {
         return Result.success(info)
     }
 
-    private fun Project.getSampleFilePath(sampleFile: File): String =
-        sampleFile.toRelativeString(rootSampleDirectory).replace(File.separatorChar, '/')
+    /**
+     * NOTE: On Windows, Java/Kotlin `Path` and `File` APIs perform case-insensitive path comparisons internally (e.g.
+     * WindowsPath.equalsIgnoreCase), even when the underlying NTFS directory has case sensitivity enabled.
+     *
+     * As a result, `toRelativeString()` may collapse two distinct files whose names differ only by case into the same
+     * relative path. This causes collisions in our cache keys, leading to incorrect reuse of cached SampleInfo data and
+     * preventing the second file from being loaded.
+     *
+     * To avoid this and still preserve the existing behavior of `toRelativeString()`, we append the original file name
+     * (with its exact casing) to the cache key. This ensures that case-distinct files map to different keys on Windows,
+     * while keeping all other behavior unchanged and remaining safe on Linux/macOS.
+     */
+    private fun Project.getSampleFilePath(sampleFile: File): String {
+        val relative = sampleFile.toRelativeString(rootSampleDirectory).replace(File.separatorChar, '/')
+        val rawName = sampleFile.name
+        return "$relative::$rawName"
+    }
 
     private fun getSampleInfoFile(project: Project, moduleName: String, sampleFile: File) =
         cacheMap[project.getSampleFilePath(sampleFile)]
