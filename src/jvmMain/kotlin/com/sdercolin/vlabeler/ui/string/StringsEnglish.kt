@@ -562,10 +562,10 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorBorderHighlightDescription -> "Customize border highlighting in multiple edit mode."
     PreferencesEditorHighlightCurrentEntryBorder -> "Highlight entry borders of current entry"
     PreferencesEditorHighlightCurrentEntryBorderDescription,
-    -> "In multiple edit mode, highlight borders of the entry that is currently selected in the entry list."
+        -> "In multiple edit mode, highlight borders of the entry that is currently selected in the entry list."
     PreferencesEditorHighlightCursorPositionEntryBorder -> "Highlight entry borders with cursor position"
     PreferencesEditorHighlightCursorPositionEntryBorderDescription,
-    -> "In multiple edit mode, highlight borders of the entry where your cursor is currently positioned."
+        -> "In multiple edit mode, highlight borders of the entry where your cursor is currently positioned."
     PreferencesEditorHighlightEntryBorderEnabled -> "Enabled"
     PreferencesEditorHighlightEntryBorderColor -> "Color"
     PreferencesEditorHighlightEntryBorderWidth -> "Width"
@@ -593,7 +593,7 @@ fun Strings.en(): String = when (this) {
     PreferencesAutoReloadDescription -> "Customize the behavior about auto-reloading label files when they are changed."
     PreferencesAutoReloadBehavior -> "Behavior"
     PreferencesAutoReloadBehaviorDisabled -> "Disabled"
-    PreferencesAutoReloadBehaviorAskWithDetails -> "Ask with details"Returning cached sample info
+    PreferencesAutoReloadBehaviorAskWithDetails -> "Ask with details"
     PreferencesAutoReloadBehaviorAsk -> "Ask Yes/No"
     PreferencesAutoReloadBehaviorAuto -> "Auto"
     PreferencesHistory -> "Edit history"
