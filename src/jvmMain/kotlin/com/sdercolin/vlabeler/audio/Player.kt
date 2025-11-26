@@ -86,7 +86,7 @@ class Player(
             withContext(Dispatchers.IO) {
                 runCatching {
                     Log.debug("Player.load(\"${newFile.absolutePath}\")")
-                    val line = AudioSystem.getAudioInputStream(newFile).use { stream ->
+                    val line = AudioSystem.getAudioInputStream(newFile.inputStream()).use { stream ->
                         format = stream.format.normalize(maxSampleRate)
                         data = AudioSystem.getAudioInputStream(format, stream).use {
                             val bytes = it.readAllBytes()
@@ -314,7 +314,7 @@ class Player(
                 }
                 Log.info("Player.load(\"${request.path}\")")
                 val file = request.path.toFile()
-                val stream = AudioSystem.getAudioInputStream(file)
+                val stream = AudioSystem.getAudioInputStream(file.inputStream())
                 val format = stream.format.normalize(maxSampleRate)
                 val data = AudioSystem.getAudioInputStream(format, stream).use {
                     val bytes = it.readAllBytes()
