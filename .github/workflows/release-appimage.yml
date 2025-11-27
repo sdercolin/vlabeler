@@ -31,11 +31,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libfuse2 zsync patchelf fakeroot desktop-file-utils
 
-      - name: Download appimagetool
+      - name: Download appimagetool and extract it
         run: |
           echo "Downloading appimagetool..."
           curl -LO https://github.com/AppImage/AppImageKit/releases/latest/download/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
+
+          echo "Extracting appimagetool..."
+          ./appimagetool-x86_64.AppImage --appimage-extract
+
+          echo "appimagetool extracted to squashfs-root/"
+          ls -R squashfs-root
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -48,7 +54,7 @@ jobs:
         with:
           arguments: packageAppImage
 
-      - name: Package AppImage manually
+      - name: Package AppImage manually using extracted appimagetool
         run: |
           VERSION=${{ github.ref_name }}
           APPDIR=build/compose/binaries/main/app/vLabeler
@@ -59,8 +65,8 @@ jobs:
             exit 1
           fi
 
-          echo "Packaging AppImage from: $APPDIR"
-          ./appimagetool-x86_64.AppImage "$APPDIR" "vlabeler-$VERSION-x86_64.AppImage"
+          echo "Packaging AppImage using extracted tool..."
+          ./squashfs-root/AppRun "$APPDIR" "vlabeler-$VERSION-x86_64.AppImage"
 
       - name: Release
         uses: softprops/action-gh-release@v1
