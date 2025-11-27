@@ -8,7 +8,6 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.internal.utils.localPropertiesFile
-import java.io.File
 import java.util.Properties
 
 buildscript {
@@ -144,8 +143,8 @@ compose.desktop {
                     }
 
                     when {
-                        isRpmBased -> arrayOf(TargetFormat.Rpm)
-                        isDebBased -> arrayOf(TargetFormat.Deb)
+                        isRpmBased -> arrayOf(TargetFormat.Rpm, TargetFormat.AppImage)
+                        isDebBased -> arrayOf(TargetFormat.Deb, TargetFormat.AppImage)
                         else -> arrayOf(TargetFormat.AppImage)
                     }
                 }
