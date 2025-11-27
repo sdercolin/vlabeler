@@ -43,18 +43,6 @@ jobs:
         with:
           arguments: packageAppImage
 
-      - name: Debug: Show Compose output structure
-        run: |
-          echo "=== build/compose/binaries ==="
-          ls -R build/compose/binaries || true
-
-      - name: Upload Compose Output (for inspection)
-        uses: actions/upload-artifact@v4
-        with:
-          name: compose-binaries-debug
-          path: build/compose/binaries
-          if-no-files-found: warn
-
       - name: Package AppImage manually
         run: |
           VERSION=${{ github.ref_name }}
