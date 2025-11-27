@@ -38,12 +38,12 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: Build AppImage
+      - name: Build AppDir
         uses: gradle/gradle-build-action@v2
         with:
           arguments: packageAppImage
 
-      - name: Debug - Show compose output structure
+      - name: Debug: Show Compose output structure
         run: |
           echo "=== build/compose/binaries ==="
           ls -R build/compose/binaries || true
@@ -55,21 +55,19 @@ jobs:
           path: build/compose/binaries
           if-no-files-found: warn
 
-      - name: Rename AppImage
+      - name: Package AppImage manually
         run: |
           VERSION=${{ github.ref_name }}
-          OUTPUT_DIR=build/compose/binaries/main/app
+          APPDIR=build/compose/binaries/main/app/vLabeler
 
-          # Find executable AppImage
-          APPIMAGE_FILE=$(find "$OUTPUT_DIR" -maxdepth 1 -type f -executable | head -n 1)
-
-          if [ -z "$APPIMAGE_FILE" ]; then
-            echo "AppImage not found!"
-            ls -R build/compose/binaries/main/app
+          if [ ! -d "$APPDIR" ]; then
+            echo "AppDir not found: $APPDIR"
+            ls -R build/compose/binaries/main/app || true
             exit 1
           fi
 
-          mv "$APPIMAGE_FILE" "./vlabeler-$VERSION-x86_64.AppImage"
+          echo "Packaging AppImage from AppDir: $APPDIR"
+          appimagetool "$APPDIR" "vlabeler-$VERSION-x86_64.AppImage"
 
       - name: Release
         uses: softprops/action-gh-release@v1
