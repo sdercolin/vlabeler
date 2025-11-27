@@ -1,0 +1,43 @@
+name: Bug Report
+description: Create a report to help us improve
+labels: ["bug"]
+body:
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+  - type: textarea
+    attributes:
+      label: App runtime Info
+      description: |
+        Please go to `Menu` -> `Help` -> `About` and click `Copy info` and paste your info here.
+        - You could omit the paths which may include your personal information
+        - If you cannot even launch the app, please at least provide your OS info and the app version you are using
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Logs
+      description: |
+        Please find the latest logs and upload them.
+        You can find the log files via `Menu` -> `Help` -> `Open Log Directory`.
+      placeholder: |
+        - info.log
+        - error.log
+    validations:
+      required: true
