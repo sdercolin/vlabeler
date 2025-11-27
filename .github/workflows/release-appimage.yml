@@ -26,17 +26,22 @@ jobs:
             exit 1
           fi
 
-      - name: Install AppImage dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            libfuse2 zsync patchelf fakeroot desktop-file-utils
+          sudo apt-get install -y libfuse2 zsync patchelf fakeroot desktop-file-utils
+
+      - name: Download appimagetool
+        run: |
+          echo "Downloading appimagetool..."
+          curl -LO https://github.com/AppImage/AppImageKit/releases/latest/download/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'corretto'
+          java-version: "17"
+          distribution: "corretto"
 
       - name: Build AppDir
         uses: gradle/gradle-build-action@v2
@@ -49,13 +54,13 @@ jobs:
           APPDIR=build/compose/binaries/main/app/vLabeler
 
           if [ ! -d "$APPDIR" ]; then
-            echo "AppDir not found: $APPDIR"
+            echo "AppDir not found at: $APPDIR"
             ls -R build/compose/binaries/main/app || true
             exit 1
           fi
 
-          echo "Packaging AppImage from AppDir: $APPDIR"
-          appimagetool "$APPDIR" "vlabeler-$VERSION-x86_64.AppImage"
+          echo "Packaging AppImage from: $APPDIR"
+          ./appimagetool-x86_64.AppImage "$APPDIR" "vlabeler-$VERSION-x86_64.AppImage"
 
       - name: Release
         uses: softprops/action-gh-release@v1
