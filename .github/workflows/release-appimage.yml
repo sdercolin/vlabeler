@@ -43,16 +43,28 @@ jobs:
         with:
           arguments: packageAppImage
 
+      - name: Debug - Show compose output structure
+        run: |
+          echo "=== build/compose/binaries ==="
+          ls -R build/compose/binaries || true
+
+      - name: Upload Compose Output (for inspection)
+        uses: actions/upload-artifact@v3
+        with:
+          name: compose-binaries-debug
+          path: build/compose/binaries
+
       - name: Rename AppImage
         run: |
           VERSION=${{ github.ref_name }}
-          OUTPUT_DIR=build/compose/binaries/main/app/AppImage
+          OUTPUT_DIR=build/compose/binaries/main/app
 
-          # find generated AppImage binary (exact name varies by project)
+          # Find executable AppImage
           APPIMAGE_FILE=$(find "$OUTPUT_DIR" -maxdepth 1 -type f -executable | head -n 1)
 
           if [ -z "$APPIMAGE_FILE" ]; then
             echo "AppImage not found!"
+            ls -R build/compose/binaries/main/app
             exit 1
           fi
 
