@@ -49,10 +49,11 @@ jobs:
           ls -R build/compose/binaries || true
 
       - name: Upload Compose Output (for inspection)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: compose-binaries-debug
           path: build/compose/binaries
+          if-no-files-found: warn
 
       - name: Rename AppImage
         run: |
