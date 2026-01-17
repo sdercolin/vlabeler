@@ -6,19 +6,19 @@
     "extension": "lab",
     "defaultInputFilePath": null,
     "displayedName": {
-        "en": "DiffSinger labeler",
-        "zh": "DiffSinger 标注器",
-        "ja": "DiffSinger ラベラー",
-        "ko": "DiffSinger 라벨러"
+        "en": "DiffSinger lab labeler",
+        "zh": "DiffSinger lab 标注器",
+        "ja": "DiffSinger lab ラベラー",
+        "ko": "DiffSinger lab 라벨러"
     },
     "author": "Maiko",
     "email": "maikotattun@yahoo.co.jp",
     "description": {
-        "en": "Default labeler for DiffSinger. Multiple lab files are included with the corresponding wav files. Please prepare lab files and wav files in same folder and set it as the sample directory.",
-        "ja": "DiffSinger のデフォルトラベラーです。複数の lab ファイルと wav　ファイルを処理できます。lab ファイルと wav ファイルを同じフォルダ内に用意し、サンプルディレクトリとして設定してください。"
+        "en": "This is a DiffSinger labeler that creates a lab file for each wav file. Place multiple wav files and their corresponding lab files with the same names within a single folder, then set it as the sample directory.",
+        "ja": "wav ファイルごとに lab ファイルを作成するタイプの DiffSinger ラベラーです。1つのフォルダ内に複数の wav ファイルと、同名の lab ファイル郡を入れ、サンプルディレクトリとして設定してください。"
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
-    "categoryTag": "DiffSinger",
+    "categoryTag": "Others",
     "displayOrder": 0,
     "continuous": true,
     "allowSameNameEntry": true,
