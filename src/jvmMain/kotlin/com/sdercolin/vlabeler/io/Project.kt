@@ -274,33 +274,29 @@ suspend fun ProjectStore.exportProjectModule(
     val inEntryScope = project.labelerConf.writer.scope == LabelerConf.Scope.Entry
     val outputModuleNames = mutableListOf<String>()
     val module = project.modules[moduleIndex]
-    runCatching {
-        if (outputFile.parentFile.exists().not()) {
-            outputFile.parentFile.mkdirs()
-        }
-        val outputText = if (inEntryScope) {
-            outputModuleNames.add(module.name)
-            project.singleModuleToRawLabels(moduleIndex)
-        } else {
-            val relatedModules = project.modules.withIndex().filter {
-                it.value == module || it.value.isParallelTo(module)
-            }
-            outputModuleNames.addAll(relatedModules.map { it.value.name })
-            project.modulesToRawLabels(relatedModules.map { it.index })
-        }
-
-        val charset = project.encoding.let { Charset.forName(it) } ?: Charsets.UTF_8
-        withExporting {
-            outputFile.writeText(outputText, charset)
-            outputFile
-        }
-        Log.debug(
-            "Project module ${outputModuleNames.joinToString { "\"$it\"" }} " +
-                "exported to ${outputFile.absolutePath}",
-        )
-    }.getOrElse {
-        Log.error(it)
+    if (outputFile.parentFile.exists().not()) {
+        outputFile.parentFile.mkdirs()
     }
+    val outputText = if (inEntryScope) {
+        outputModuleNames.add(module.name)
+        project.singleModuleToRawLabels(moduleIndex)
+    } else {
+        val relatedModules = project.modules.withIndex().filter {
+            it.value == module || it.value.isParallelTo(module)
+        }
+        outputModuleNames.addAll(relatedModules.map { it.value.name })
+        project.modulesToRawLabels(relatedModules.map { it.index })
+    }
+
+    val charset = project.encoding.let { Charset.forName(it) } ?: Charsets.UTF_8
+    withExporting {
+        outputFile.writeText(outputText, charset)
+        outputFile
+    }
+    Log.debug(
+        "Project module ${outputModuleNames.joinToString { "\"$it\"" }} " +
+            "exported to ${outputFile.absolutePath}",
+    )
 }
 
 private var saveFileJob: Job? = null
@@ -330,7 +326,11 @@ suspend fun ProjectStore.saveProjectFile(
             Log.debug("Project saved to ${project.projectFile}")
 
             if (allowAutoExport && project.autoExport) {
-                exportProject(project)
+                runCatching {
+                    exportProject(project)
+                }.onFailure {
+                    Log.error(it)
+                }
             }
         }
         saveFileJob?.join()

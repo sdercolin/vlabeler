@@ -652,20 +652,32 @@ class ProjectStoreImpl(
 
     override fun overwriteExportCurrentModule() {
         scope.launch(Dispatchers.IO) {
-            progressState.showProgress()
-            val project = requireProject()
-            val targetFile = requireNotNull(project.currentModule.getRawFile(project))
-            exportProjectModule(project, project.currentModuleIndex, targetFile)
-            progressState.hideProgress()
+            try {
+                progressState.showProgress()
+                val project = requireProject()
+                val targetFile = requireNotNull(project.currentModule.getRawFile(project))
+                exportProjectModule(project, project.currentModuleIndex, targetFile)
+            } catch (e: Exception) {
+                Log.error(e)
+                errorState.showError(e)
+            } finally {
+                progressState.hideProgress()
+            }
         }
     }
 
     override fun overwriteExportAllModules() {
         scope.launch(Dispatchers.IO) {
-            progressState.showProgress()
-            val project = requireProject()
-            exportProject(project)
-            progressState.hideProgress()
+            try {
+                progressState.showProgress()
+                val project = requireProject()
+                exportProject(project)
+            } catch (e: Exception) {
+                Log.error(e)
+                errorState.showError(e)
+            } finally {
+                progressState.hideProgress()
+            }
         }
     }
 
@@ -813,10 +825,13 @@ class ProjectStoreImpl(
 
     override suspend fun withExporting(onSuccess: suspend () -> File) {
         isExporting = true
-        val file = onSuccess()
-        val hash = calculateMD5(file)
-        cachedFileHashMap[file.absolutePath] = hash
-        isExporting = false
+        try {
+            val file = onSuccess()
+            val hash = calculateMD5(file)
+            cachedFileHashMap[file.absolutePath] = hash
+        } finally {
+            isExporting = false
+        }
     }
 
     override suspend fun terminalAutoReloadLabel() {
