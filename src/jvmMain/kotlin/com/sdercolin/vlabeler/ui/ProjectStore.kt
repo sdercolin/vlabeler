@@ -355,7 +355,14 @@ class ProjectStoreImpl(
     override fun jumpToModuleAndEntry(moduleIndex: Int, entryIndex: Int) {
         editProject {
             copy(currentModuleIndex = moduleIndex)
-                .updateCurrentModule { copy(currentIndex = entryIndex) }
+                .updateCurrentModule {
+                    val newFiltered = if (entryIndex !in filteredEntryIndexes) {
+                        (filteredEntryIndexes + entryIndex).sorted()
+                    } else {
+                        filteredEntryIndexes
+                    }
+                    copy(currentIndex = entryIndex, filteredEntryIndexes = newFiltered)
+                }
         }
         if (appConf.value.editor.autoScroll.let { it.onJumpedToEntry || it.onSwitched }) {
             scrollFitViewModel.emitNext()
