@@ -49,6 +49,8 @@ class EditorState(
     val isError get() = canvasState is CanvasState.Error
     var project: Project by mutableStateOf(project)
     var editedEntries: List<IndexedEntry> by mutableStateOf(project.getEntriesForEditing().second)
+    var entryLoadedCount: Int by mutableStateOf(0)
+        private set
     private val isActive get() = appState.isEditorActive
     private val appConf get() = appState.appConf
     val keyboardViewModel = appState.keyboardViewModel
@@ -243,6 +245,7 @@ class EditorState(
             Log.info("Load new entries: $newValues")
             editions.clear()
             editedEntries = newValues
+            entryLoadedCount++
         }
     }
 
