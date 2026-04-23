@@ -560,9 +560,9 @@ fun rememberMarkerState(
     }
     val entryLoadedCount = editorState.entryLoadedCount
     val cursorState = remember(entryLoadedCount) { mutableStateOf(MarkerCursorState()) }
-    val scissorsState = remember(entryLoadedCount) { mutableStateOf<MarkerScissorsState?>(null) }
-    val panState = remember(entryLoadedCount) { mutableStateOf<MarkerPanState?>(null) }
-    val playbackState = remember(entryLoadedCount) { mutableStateOf<MarkerPlaybackState?>(null) }
+    val scissorsState = remember { mutableStateOf<MarkerScissorsState?>(null) }
+    val panState = remember { mutableStateOf<MarkerPanState?>(null) }
+    val playbackState = remember { mutableStateOf<MarkerPlaybackState?>(null) }
     val canvasHeightState = remember { mutableStateOf(0f) }
     val waveformsHeightRatio = appState.appConf.painter.amplitudeHeightRatio
     val snapDrag = remember(project, canvasParams) {
