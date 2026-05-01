@@ -64,8 +64,10 @@ fun BoxScope.ParallelLabelCanvas(
 
     Column(modifier = Modifier.fillMaxWidth().background(color = Black)) {
         modules.forEachIndexed { index, module ->
+            val isCurrent = module == project.currentModule
             ModuleRow(
                 module = module,
+                isCurrent = isCurrent,
                 editorState = editorState,
                 horizontalScrollState = horizontalScrollState,
                 canvasParams = canvasState.params,
@@ -124,6 +126,7 @@ fun BoxScope.ParallelLabelCanvas(
 @Composable
 fun ColumnScope.ModuleRow(
     module: Module,
+    isCurrent: Boolean,
     editorState: EditorState,
     horizontalScrollState: ScrollState,
     editorConf: AppConf.Editor,
@@ -134,8 +137,21 @@ fun ColumnScope.ModuleRow(
     val entryConverter = remember(sampleInfo.sampleRate, canvasParams.resolution) {
         EntryConverter(sampleInfo.sampleRate, canvasParams.resolution)
     }
-    val entriesInPixel = remember(module.currentEntryGroup, canvasParams.lengthInPixel, sampleInfo.lengthMillis) {
-        module.currentEntryGroup.map { entry: IndexedEntry ->
+    val effectiveEntryGroup = if (isCurrent) {
+        editorState.editedEntries
+    } else {
+        val cascadeEditionsForModule = editorState.cascadeEditions[module.name]
+        if (cascadeEditionsForModule != null) {
+            val editionMap = cascadeEditionsForModule.associateBy { it.index }
+            module.currentEntryGroup.map { entry: IndexedEntry ->
+                editionMap[entry.index]?.toIndexedEntry() ?: entry
+            }
+        } else {
+            module.currentEntryGroup
+        }
+    }
+    val entriesInPixel = remember(effectiveEntryGroup, canvasParams.lengthInPixel, sampleInfo.lengthMillis) {
+        effectiveEntryGroup.map { entry: IndexedEntry ->
             entryConverter.convertToPixel(entry, sampleInfo.lengthMillis)
                 .validate(canvasParams.lengthInPixel)
         }

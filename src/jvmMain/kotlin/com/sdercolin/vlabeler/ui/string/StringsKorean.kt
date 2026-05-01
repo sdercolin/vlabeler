@@ -488,8 +488,8 @@ fun Strings.ko(): String? = when (this) {
     PreferencesEditorBoundaryMoveBehavior -> "경계 이동 동작"
     PreferencesEditorBoundaryMoveBehaviorDescription ->
         "병렬 티어에서의 경계 이동 동작을 선택합니다.\n" +
-            "\"캐스케이드\"로 설정하면, 다른 티어의 경계에 스냅된 경계를 이동할 때 " +
-            "해당 티어의 대응하는 엔트리 그룹도 함께 이동합니다."
+            "\"캐스케이드\"로 설정하면, 다른 티어의 경계와 정렬된 경계를 이동할 때 " +
+            "해당 티어의 정렬된 경계도 함께 이동합니다."
     PreferencesEditorBoundaryMoveBehaviorSingleBoundary -> "단일 경계"
     PreferencesEditorBoundaryMoveBehaviorCascaded -> "캐스케이드"
     PreferencesEditorLockedSettingParameterWithCursor -> "커서 설정에 따라 고정 드래그 적용"

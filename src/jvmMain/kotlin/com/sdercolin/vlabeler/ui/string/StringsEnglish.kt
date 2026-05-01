@@ -497,8 +497,8 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorBoundaryMoveBehavior -> "Boundary move behavior"
     PreferencesEditorBoundaryMoveBehaviorDescription ->
         "Select how boundaries move in parallel tiers.\n" +
-            "When set to \"Cascaded\", moving a boundary that snaps to a boundary in another tier " +
-            "will also move the corresponding entry group in that tier."
+            "When set to \"Cascaded\", moving a boundary that is aligned with a boundary in another tier " +
+            "will also move the aligned boundary in that tier."
     PreferencesEditorBoundaryMoveBehaviorSingleBoundary -> "Single boundary"
     PreferencesEditorBoundaryMoveBehaviorCascaded -> "Cascaded"
     PreferencesEditorLockedSettingParameterWithCursor -> "Apply fixed-drag with cursor setting"

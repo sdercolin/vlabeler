@@ -5,10 +5,8 @@ import com.sdercolin.vlabeler.ui.editor.labeler.marker.EntryConverter
 import kotlin.math.abs
 
 data class SnapTarget(
-    val moduleIndex: Int,
     val moduleName: String,
     val entryIndex: Int,
-    val sampleName: String,
 )
 
 class SnapDrag(project: Project, lengthInPixel: Float, entryConverter: EntryConverter) {
@@ -16,15 +14,12 @@ class SnapDrag(project: Project, lengthInPixel: Float, entryConverter: EntryConv
     private val map: Map<Float, List<SnapTarget>> = project.modules
         .filter { it.isParallelTo(project.currentModule) }
         .flatMap { module ->
-            val moduleIndex = project.modules.indexOf(module)
             module.entryGroups.flatMap { (_, entryGroup) ->
                 entryGroup.zipWithNext().map { (entry, _) ->
                     val pixel = entryConverter.convertToPixel(entry.end).coerceAtMost(lengthInPixel)
                     pixel to SnapTarget(
-                        moduleIndex = moduleIndex,
                         moduleName = module.name,
                         entryIndex = entry.index,
-                        sampleName = entry.sample,
                     )
                 }
             }

@@ -345,11 +345,6 @@ class MarkerState(
                     break
                 }
 
-                if (newBoundaryMillis < 0) {
-                    valid = false
-                    break
-                }
-
                 editions.add(
                     Edition(
                         index = target.entryIndex,

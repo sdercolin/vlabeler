@@ -470,8 +470,8 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorBoundaryMoveBehavior -> "境界移動の動作"
     PreferencesEditorBoundaryMoveBehaviorDescription ->
         "並列ティアでの境界移動の動作を選択します。\n" +
-            "「カスケード」に設定すると、他のティアの境界にスナップした境界を移動する際に、" +
-            "そのティアの対応するエントリグループも一緒に移動します。"
+            "「カスケード」に設定すると、他のティアの境界と揃っている境界を移動する際に、" +
+            "そのティアの揃った境界も一緒に移動します。"
     PreferencesEditorBoundaryMoveBehaviorSingleBoundary -> "単一境界"
     PreferencesEditorBoundaryMoveBehaviorCascaded -> "カスケード"
     PreferencesEditorLockedSettingParameterWithCursor -> "カーソル位置に設定する場合も連動ドラッグを有効にする"

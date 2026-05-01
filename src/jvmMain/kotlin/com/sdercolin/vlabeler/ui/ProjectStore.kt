@@ -234,11 +234,7 @@ class ProjectStoreImpl(
     override fun editEntries(editions: List<Edition>) {
         val previousProject = requireProject()
         editProject {
-            val editedEntryMap = mutableMapOf<Int, IndexedEntry>()
-            editions.forEach {
-                editedEntryMap[it.index] = it.toIndexedEntry()
-            }
-            val editedEntries = editedEntryMap.values.toList().sortedBy { it.index }
+            val editedEntries = editions.toSortedIndexedEntries()
             updateCurrentModule {
                 updateEntries(editedEntries, labelerConf)
                     .takePostEditAction(
@@ -270,11 +266,7 @@ class ProjectStoreImpl(
         editProject {
             var result = this
 
-            val editedEntryMap = mutableMapOf<Int, IndexedEntry>()
-            currentModuleEditions.forEach {
-                editedEntryMap[it.index] = it.toIndexedEntry()
-            }
-            val editedEntries = editedEntryMap.values.toList().sortedBy { it.index }
+            val editedEntries = currentModuleEditions.toSortedIndexedEntries()
             result = result.updateCurrentModule {
                 updateEntries(editedEntries, labelerConf)
                     .takePostEditAction(
@@ -292,11 +284,7 @@ class ProjectStoreImpl(
             }
 
             for ((moduleName, editions) in cascadeEditions) {
-                val cascadeEntryMap = mutableMapOf<Int, IndexedEntry>()
-                editions.forEach {
-                    cascadeEntryMap[it.index] = it.toIndexedEntry()
-                }
-                val cascadeEntries = cascadeEntryMap.values.toList().sortedBy { it.index }
+                val cascadeEntries = editions.toSortedIndexedEntries()
                 result = result.updateModule(moduleName) {
                     updateEntries(cascadeEntries, labelerConf)
                 }
@@ -904,3 +892,7 @@ class ProjectStoreImpl(
         }
     }
 }
+
+private fun List<Edition>.toSortedIndexedEntries(): List<IndexedEntry> =
+    associate { it.index to it.toIndexedEntry() }
+        .values.sortedBy { it.index }

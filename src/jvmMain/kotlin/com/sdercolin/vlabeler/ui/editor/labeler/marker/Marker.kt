@@ -104,6 +104,7 @@ fun MarkerPointEventContainer(
                         event,
                         editorState::submitEntries,
                         editorState::submitEntriesWithCascade,
+                        { editorState.cascadeEditions.isNotEmpty() },
                         appState.player,
                         editorState::cutEntry,
                         keyboardState,
@@ -124,6 +125,7 @@ fun MarkerPointEventContainer(
                     editorState::commitEntryCut,
                     density,
                     appState.appConf,
+                    keyboardState,
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
@@ -135,6 +137,7 @@ fun MarkerPointEventContainer(
                     event,
                     editorState::submitEntries,
                     editorState::submitEntriesWithCascade,
+                    { editorState.cascadeEditions.isNotEmpty() },
                     appState.player,
                     editorState::cutEntry,
                     keyboardState,
@@ -526,10 +529,11 @@ private fun MarkerState.handleMouseMove(
     commitEntryCut: () -> Unit,
     density: Density,
     appConf: AppConf,
+    keyboardState: KeyboardState,
 ) {
     screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(event, editions, updateCascadeEditions, screenRange, playByCursor, density)
+        Tool.Cursor -> handleCursorMove(event, editions, updateCascadeEditions, screenRange, playByCursor, density, appConf, keyboardState)
         Tool.Scissors -> handleScissorsMove(event, screenRange, commitEntryCut, density, appConf)
         Tool.Pan -> handlePanMove(event, scrollState, scope)
         Tool.Playback -> handlePlaybackMove(event, screenRange)
@@ -543,6 +547,8 @@ private fun MarkerState.handleCursorMove(
     screenRange: FloatRange,
     playByCursor: (Float) -> Unit,
     density: Density,
+    appConf: AppConf,
+    keyboardState: KeyboardState,
 ) {
     val eventChange = event.changes.first()
     val x = eventChange.position.x
@@ -551,6 +557,18 @@ private fun MarkerState.handleCursorMove(
     val y = eventChange.position.y.coerceIn(0f, canvasHeightState.value.coerceAtLeast(0f))
     if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
         val forcedDrag = cursorState.value.forcedDrag
+        val cascadingSubKeys = keyboardState.availableMouseClickActions.entries
+            .firstOrNull { it.value == MouseClickAction.MoveParameterCascading }
+            ?.key?.first?.subKeys.orEmpty()
+        val subKeys = keyboardState.keySet?.subKeys.orEmpty()
+        val invertModifiersHeld = cascadingSubKeys.isNotEmpty() && subKeys.containsAll(cascadingSubKeys)
+        val cascadingDrag = when (appConf.editor.boundaryMoveBehavior) {
+            AppConf.Editor.BoundaryMoveBehavior.SingleBoundary -> invertModifiersHeld
+            AppConf.Editor.BoundaryMoveBehavior.Cascaded -> !invertModifiersHeld
+        } && !forcedDrag
+        if (cascadingDrag != cursorState.value.cascadingDrag) {
+            cursorState.update { copy(cascadingDrag = cascadingDrag) }
+        }
         val updated = if (cursorState.value.lockedDrag) {
             getLockedDraggedEntries(cursorState.value.pointIndex, actualX, forcedDrag)
         } else {
@@ -730,6 +748,7 @@ private fun MarkerState.handleMouseRelease(
     event: PointerEvent,
     submitEntry: () -> Unit,
     submitEntryWithCascade: () -> Unit,
+    hasCascadeEditions: () -> Boolean,
     audioSectionPlayer: AudioSectionPlayer,
     cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
     keyboardState: KeyboardState,
@@ -739,7 +758,7 @@ private fun MarkerState.handleMouseRelease(
     screenRange ?: return
     val caughtAction = keyboardState.getEnabledMouseClickAction(event)
     val handled = when (tool) {
-        Tool.Cursor -> handleCursorRelease(submitEntry, submitEntryWithCascade)
+        Tool.Cursor -> handleCursorRelease(submitEntry, submitEntryWithCascade, hasCascadeEditions)
         Tool.Scissors -> handleScissorsRelease(canUseOnScreenScissors, cutEntry, event)
         Tool.Pan -> handlePanRelease()
         Tool.Playback -> {
@@ -763,10 +782,11 @@ private fun MarkerState.handleMouseRelease(
 private fun MarkerState.handleCursorRelease(
     submitEntry: () -> Unit,
     submitEntryWithCascade: () -> Unit,
+    hasCascadeEditions: () -> Boolean,
 ): Boolean = if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
     val wasCascading = cursorState.value.cascadingDrag
     cursorState.update { finishDragging() }
-    if (wasCascading) {
+    if (wasCascading && hasCascadeEditions()) {
         submitEntryWithCascade()
     } else {
         submitEntry()

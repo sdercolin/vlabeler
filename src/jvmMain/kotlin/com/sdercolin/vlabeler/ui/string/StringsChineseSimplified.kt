@@ -444,8 +444,8 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorBoundaryMoveBehavior -> "边界移动行为"
     PreferencesEditorBoundaryMoveBehaviorDescription ->
         "选择平行层级中边界的移动方式。\n" +
-            "设置为\"级联\"时，移动一个吸附到其他层级边界的边界时，" +
-            "会同时移动该层级中对应的条目组。"
+            "设置为\"级联\"时，移动一个与其他层级边界对齐的边界时，" +
+            "会同时移动该层级中对齐的边界。"
     PreferencesEditorBoundaryMoveBehaviorSingleBoundary -> "单一边界"
     PreferencesEditorBoundaryMoveBehaviorCascaded -> "级联"
     PreferencesEditorLockedSettingParameterWithCursor -> "光标设定时也应用锁定拖动"
