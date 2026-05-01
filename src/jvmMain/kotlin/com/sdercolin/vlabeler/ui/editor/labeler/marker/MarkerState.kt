@@ -11,8 +11,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.Tool
@@ -44,6 +46,7 @@ class MarkerState(
     val canvasHeightState: MutableState<Float>,
     val waveformsHeightRatio: Float,
     private val snapDrag: SnapDrag,
+    private val project: Project,
 ) {
     val entryBorders: List<Float> = entriesInPixel.fold<EntryInPixel, List<Float>>(listOf()) { acc, entryInPixel ->
         val lastEntryEnd = acc.lastOrNull()
@@ -312,6 +315,65 @@ class MarkerState(
             }
         }
         return entries
+    }
+
+    fun computeCascadeEditions(
+        snappedPosition: Float,
+        originalPosition: Float,
+    ): Map<String, List<Edition>> {
+        if (snappedPosition == originalPosition) return emptyMap()
+        val snapTargets = snapDrag.getSnapTargets(originalPosition)
+        if (snapTargets.isEmpty()) return emptyMap()
+
+        val newBoundaryMillis = entryConverter.convertToMillis(snappedPosition)
+
+        val result = mutableMapOf<String, List<Edition>>()
+
+        val targetsByModule = snapTargets.groupBy { it.moduleName }
+        for ((moduleName, targets) in targetsByModule) {
+            val module = project.modules.firstOrNull { it.name == moduleName } ?: continue
+
+            val editions = mutableListOf<Edition>()
+            var valid = true
+
+            for (target in targets) {
+                val leftEntry = module.entries.getOrNull(target.entryIndex) ?: continue
+                val rightEntry = module.entries.getOrNull(target.entryIndex + 1) ?: continue
+
+                if (newBoundaryMillis <= leftEntry.start || newBoundaryMillis >= rightEntry.end) {
+                    valid = false
+                    break
+                }
+
+                if (newBoundaryMillis < 0) {
+                    valid = false
+                    break
+                }
+
+                editions.add(
+                    Edition(
+                        index = target.entryIndex,
+                        newValue = leftEntry.copy(end = newBoundaryMillis),
+                        fieldNames = listOf("end"),
+                        method = Edition.Method.Dragging,
+                    ),
+                )
+                editions.add(
+                    Edition(
+                        index = target.entryIndex + 1,
+                        newValue = rightEntry.copy(start = newBoundaryMillis),
+                        fieldNames = listOf("start"),
+                        method = Edition.Method.Dragging,
+                    ),
+                )
+            }
+
+            if (valid && editions.isNotEmpty()) {
+                result[moduleName] = editions
+            }
+        }
+
+        return result
     }
 
     fun getPointIndexForHovering(
@@ -590,6 +652,7 @@ fun rememberMarkerState(
         panState,
         canvasHeightState,
         waveformsHeightRatio,
+        project,
     ) {
         MarkerState(
             entries,
@@ -609,6 +672,7 @@ fun rememberMarkerState(
             canvasHeightState,
             waveformsHeightRatio,
             snapDrag,
+            project,
         )
     }
 }

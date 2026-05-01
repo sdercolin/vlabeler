@@ -467,6 +467,13 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorLockedDragUseLabeler -> "ラベラーの設定"
     PreferencesEditorLockedDragUseStart -> "開始位置をドラッグするとき"
     PreferencesEditorLockedDragNever -> "有効にしない"
+    PreferencesEditorBoundaryMoveBehavior -> "境界移動の動作"
+    PreferencesEditorBoundaryMoveBehaviorDescription ->
+        "並列ティアでの境界移動の動作を選択します。\n" +
+            "「カスケード」に設定すると、他のティアの境界にスナップした境界を移動する際に、" +
+            "そのティアの対応するエントリグループも一緒に移動します。"
+    PreferencesEditorBoundaryMoveBehaviorSingleBoundary -> "単一境界"
+    PreferencesEditorBoundaryMoveBehaviorCascaded -> "カスケード"
     PreferencesEditorLockedSettingParameterWithCursor -> "カーソル位置に設定する場合も連動ドラッグを有効にする"
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "「パラメータをカーソル位置に設定」ショートカットでパラメータを設定するときにも、連動ドラッグ設定を適用します。"
@@ -637,6 +644,7 @@ fun Strings.ja(): String? = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "パラメータラインをドラッグ（プレビュー再生）"
     ActionMoveParameterIgnoringConstraints -> "パラメータラインをドラッグ（制約を無視）"
     ActionMoveParameterInvertingLocked -> "パラメータラインをドラッグ（連動ドラグ設定を反転）"
+    ActionMoveParameterCascading -> "パラメータラインをドラッグ（カスケード境界移動）"
     ActionPlayAudioSection -> "クリック位置の部分の音声を再生"
     ActionPlayAudioUntilEnd -> "クリック位置から最後までの音声を再生"
     ActionPlayAudioUntilScreenEnd -> "クリック位置から画面の最後までの音声を再生"

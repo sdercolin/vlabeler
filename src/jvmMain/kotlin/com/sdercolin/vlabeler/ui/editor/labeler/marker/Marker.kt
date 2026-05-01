@@ -103,6 +103,7 @@ fun MarkerPointEventContainer(
                         tool,
                         event,
                         editorState::submitEntries,
+                        editorState::submitEntriesWithCascade,
                         appState.player,
                         editorState::cutEntry,
                         keyboardState,
@@ -115,6 +116,7 @@ fun MarkerPointEventContainer(
                     tool,
                     event,
                     editorState::updateEntries,
+                    editorState::updateCascadeEditions,
                     screenRange,
                     playByCursor,
                     horizontalScrollState,
@@ -132,6 +134,7 @@ fun MarkerPointEventContainer(
                     tool,
                     event,
                     editorState::submitEntries,
+                    editorState::submitEntriesWithCascade,
                     appState.player,
                     editorState::cutEntry,
                     keyboardState,
@@ -515,6 +518,7 @@ private fun MarkerState.handleMouseMove(
     tool: Tool,
     event: PointerEvent,
     editions: (List<Edition>) -> Unit,
+    updateCascadeEditions: (Map<String, List<Edition>>) -> Unit,
     screenRange: FloatRange?,
     playByCursor: (Float) -> Unit,
     scrollState: ScrollState,
@@ -525,7 +529,7 @@ private fun MarkerState.handleMouseMove(
 ) {
     screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(event, editions, screenRange, playByCursor, density)
+        Tool.Cursor -> handleCursorMove(event, editions, updateCascadeEditions, screenRange, playByCursor, density)
         Tool.Scissors -> handleScissorsMove(event, screenRange, commitEntryCut, density, appConf)
         Tool.Pan -> handlePanMove(event, scrollState, scope)
         Tool.Playback -> handlePlaybackMove(event, screenRange)
@@ -535,6 +539,7 @@ private fun MarkerState.handleMouseMove(
 private fun MarkerState.handleCursorMove(
     event: PointerEvent,
     editions: (List<Edition>) -> Unit,
+    updateCascadeEditions: (Map<String, List<Edition>>) -> Unit,
     screenRange: FloatRange,
     playByCursor: (Float) -> Unit,
     density: Density,
@@ -557,6 +562,29 @@ private fun MarkerState.handleCursorMove(
             method = Edition.Method.Dragging,
             pointIndex = cursorState.value.pointIndex,
         )
+        if (cursorState.value.cascadingDrag) {
+            val pointIndex = cursorState.value.pointIndex
+            val originalPosition = cursorState.value.pointPosition
+            if (originalPosition != null) {
+                val snappedPosition = when {
+                    pointIndex == START_POINT_INDEX -> updated.firstOrNull()?.getActualStart(labelerConf)
+                    pointIndex == END_POINT_INDEX -> updated.lastOrNull()?.getActualEnd(labelerConf)
+                    isBorderIndex(pointIndex) -> {
+                        val (_, secondEntryIndex) = getEntryIndexesByBorderIndex(pointIndex)
+                        updated.getOrNull(secondEntryIndex)?.start
+                    }
+                    else -> null
+                }
+                if (snappedPosition != null) {
+                    val cascade = computeCascadeEditions(snappedPosition, originalPosition)
+                    updateCascadeEditions(cascade)
+                } else {
+                    updateCascadeEditions(emptyMap())
+                }
+            }
+        } else {
+            updateCascadeEditions(emptyMap())
+        }
         if (cursorState.value.previewOnDragging) {
             playByCursor(entryConverter.convertToFrame(actualX))
         }
@@ -666,7 +694,13 @@ private fun MarkerState.handleCursorPress(
             } xor invertLockedDrag
             val withPreview = action == MouseClickAction.MoveParameterWithPlaybackPreview
             val forcedDrag = action == MouseClickAction.MoveParameterIgnoringConstraints
-            cursorState.update { startDragging(lockedDrag, withPreview, forcedDrag) }
+            val cascadingDrag = when (appConf.editor.boundaryMoveBehavior) {
+                AppConf.Editor.BoundaryMoveBehavior.SingleBoundary ->
+                    action == MouseClickAction.MoveParameterCascading
+                AppConf.Editor.BoundaryMoveBehavior.Cascaded ->
+                    action != MouseClickAction.MoveParameterCascading
+            } && !forcedDrag
+            cursorState.update { startDragging(lockedDrag, withPreview, forcedDrag, cascadingDrag) }
         }
     }
 }
@@ -695,6 +729,7 @@ private fun MarkerState.handleMouseRelease(
     tool: Tool,
     event: PointerEvent,
     submitEntry: () -> Unit,
+    submitEntryWithCascade: () -> Unit,
     audioSectionPlayer: AudioSectionPlayer,
     cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
     keyboardState: KeyboardState,
@@ -704,7 +739,7 @@ private fun MarkerState.handleMouseRelease(
     screenRange ?: return
     val caughtAction = keyboardState.getEnabledMouseClickAction(event)
     val handled = when (tool) {
-        Tool.Cursor -> handleCursorRelease(submitEntry)
+        Tool.Cursor -> handleCursorRelease(submitEntry, submitEntryWithCascade)
         Tool.Scissors -> handleScissorsRelease(canUseOnScreenScissors, cutEntry, event)
         Tool.Pan -> handlePanRelease()
         Tool.Playback -> {
@@ -727,9 +762,15 @@ private fun MarkerState.handleMouseRelease(
 
 private fun MarkerState.handleCursorRelease(
     submitEntry: () -> Unit,
+    submitEntryWithCascade: () -> Unit,
 ): Boolean = if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
+    val wasCascading = cursorState.value.cascadingDrag
     cursorState.update { finishDragging() }
-    submitEntry()
+    if (wasCascading) {
+        submitEntryWithCascade()
+    } else {
+        submitEntry()
+    }
     true
 } else {
     false

@@ -122,6 +122,8 @@ class EditorState(
 
     private val editions = mutableMapOf<Int, Edition>()
 
+    private var cascadeEditions = mutableMapOf<String, List<Edition>>()
+
     val onScreenScissorsState = OnScreenScissorsState(this)
 
     val canUseOnScreenScissors: Boolean
@@ -173,6 +175,26 @@ class EditorState(
     fun submitEntries(editions: List<Edition>) {
         updateEntries(editions)
         submitEntries()
+    }
+
+    fun updateCascadeEditions(editions: Map<String, List<Edition>>) {
+        cascadeEditions.clear()
+        cascadeEditions.putAll(editions)
+    }
+
+    fun submitEntriesWithCascade() {
+        val changedEntries = editedEntries - project.getEntriesForEditing().second.toSet()
+        if (changedEntries.isNotEmpty()) {
+            Log.info("Submit entries with cascade: $changedEntries, cascade modules: ${cascadeEditions.keys}")
+            appState.editEntriesWithCascade(
+                editions.values.toList().sortedBy { it.index },
+                cascadeEditions.toMap(),
+            )
+        } else if (editions.isNotEmpty()) {
+            Log.info("No entries changed, discard editions: $editions")
+        }
+        editions.clear()
+        cascadeEditions.clear()
     }
 
     fun updateEntries(editions: List<Edition>) {

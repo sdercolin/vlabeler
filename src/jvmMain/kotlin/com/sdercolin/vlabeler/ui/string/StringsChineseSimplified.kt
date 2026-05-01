@@ -441,6 +441,13 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorLockedDragUseLabeler -> "使用标注器的设置"
     PreferencesEditorLockedDragUseStart -> "当拖动条目的起始线时"
     PreferencesEditorLockedDragNever -> "从不启用"
+    PreferencesEditorBoundaryMoveBehavior -> "边界移动行为"
+    PreferencesEditorBoundaryMoveBehaviorDescription ->
+        "选择平行层级中边界的移动方式。\n" +
+            "设置为\"级联\"时，移动一个吸附到其他层级边界的边界时，" +
+            "会同时移动该层级中对应的条目组。"
+    PreferencesEditorBoundaryMoveBehaviorSingleBoundary -> "单一边界"
+    PreferencesEditorBoundaryMoveBehaviorCascaded -> "级联"
     PreferencesEditorLockedSettingParameterWithCursor -> "光标设定时也应用锁定拖动"
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "使用\"将参数设置到光标位置\"键盘操作时也应用上面的锁定拖动的设置。"
@@ -602,6 +609,7 @@ fun Strings.zhHans(): String? = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "拖动参数线并执行预览播放"
     ActionMoveParameterIgnoringConstraints -> "拖动参数线（忽略约束）"
     ActionMoveParameterInvertingLocked -> "拖动参数线（反转锁定拖动）"
+    ActionMoveParameterCascading -> "拖动参数线（级联边界移动）"
     ActionPlayAudioSection -> "播放点击位置的音频片段"
     ActionPlayAudioUntilEnd -> "播放点击位置到结尾的音频"
     ActionPlayAudioUntilScreenEnd -> "播放点击位置到屏幕右端位置的音频"
