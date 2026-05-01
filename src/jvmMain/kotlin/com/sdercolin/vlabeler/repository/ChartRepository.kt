@@ -15,9 +15,9 @@ import com.sdercolin.vlabeler.util.parseJson
 import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
-import org.jetbrains.skiko.toBufferedImage
+import org.jetbrains.skia.EncodedImageFormat
+import org.jetbrains.skia.Image as SkiaImage
 import java.io.File
-import javax.imageio.ImageIO
 
 /**
  * Repository for charts.
@@ -158,10 +158,11 @@ object ChartRepository {
         if (file.parentFile.exists().not()) {
             file.parentFile.mkdirs()
         }
-        val outputStream = file.outputStream()
-        ImageIO.write(image.asSkiaBitmap().toBufferedImage(), "png", outputStream)
-        outputStream.flush()
-        outputStream.close()
+        val bitmap = image.asSkiaBitmap()
+        if (bitmap.peekPixels() == null) return
+        val skiaImage = SkiaImage.makeFromBitmap(bitmap)
+        val pngBytes = skiaImage.encodeToData(EncodedImageFormat.PNG)?.bytes ?: return
+        file.writeBytes(pngBytes)
         cacheMap[cacheKey] = file.relativeTo(cacheDirectory).path.replace(File.separatorChar, '/')
         cacheDirectory.mkdirs()
         cacheMapFile.writeText(cacheMap.stringifyJson())
