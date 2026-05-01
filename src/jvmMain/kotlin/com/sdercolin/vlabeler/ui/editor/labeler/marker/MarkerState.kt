@@ -325,7 +325,7 @@ class MarkerState(
         val snapTargets = snapDrag.getSnapTargets(originalPosition)
         if (snapTargets.isEmpty()) return emptyMap()
 
-        val newBoundaryMillis = entryConverter.convertToMillis(snappedPosition)
+        val newBorderMillis = entryConverter.convertToMillis(snappedPosition)
 
         val result = mutableMapOf<String, List<Edition>>()
 
@@ -340,7 +340,7 @@ class MarkerState(
                 val leftEntry = module.entries.getOrNull(target.entryIndex) ?: continue
                 val rightEntry = module.entries.getOrNull(target.entryIndex + 1) ?: continue
 
-                if (newBoundaryMillis <= leftEntry.start || newBoundaryMillis >= rightEntry.end) {
+                if (newBorderMillis <= leftEntry.start || newBorderMillis >= rightEntry.end) {
                     valid = false
                     break
                 }
@@ -348,7 +348,7 @@ class MarkerState(
                 editions.add(
                     Edition(
                         index = target.entryIndex,
-                        newValue = leftEntry.copy(end = newBoundaryMillis),
+                        newValue = leftEntry.copy(end = newBorderMillis),
                         fieldNames = listOf("end"),
                         method = Edition.Method.Dragging,
                     ),
@@ -356,7 +356,7 @@ class MarkerState(
                 editions.add(
                     Edition(
                         index = target.entryIndex + 1,
-                        newValue = rightEntry.copy(start = newBoundaryMillis),
+                        newValue = rightEntry.copy(start = newBorderMillis),
                         fieldNames = listOf("start"),
                         method = Edition.Method.Dragging,
                     ),

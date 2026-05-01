@@ -558,13 +558,13 @@ private fun MarkerState.handleCursorMove(
     if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
         val forcedDrag = cursorState.value.forcedDrag
         val cascadingSubKeys = keyboardState.availableMouseClickActions.entries
-            .firstOrNull { it.value == MouseClickAction.MoveParameterCascading }
+            .firstOrNull { it.value == MouseClickAction.MoveParameterInvertingCascaded }
             ?.key?.first?.subKeys.orEmpty()
         val subKeys = keyboardState.keySet?.subKeys.orEmpty()
         val invertModifiersHeld = cascadingSubKeys.isNotEmpty() && subKeys.containsAll(cascadingSubKeys)
-        val cascadingDrag = when (appConf.editor.boundaryMoveBehavior) {
-            AppConf.Editor.BoundaryMoveBehavior.SingleBoundary -> invertModifiersHeld
-            AppConf.Editor.BoundaryMoveBehavior.Cascaded -> !invertModifiersHeld
+        val cascadingDrag = when (appConf.editor.cascadedDrag) {
+            AppConf.Editor.CascadedDrag.Disabled -> invertModifiersHeld
+            AppConf.Editor.CascadedDrag.Enabled -> !invertModifiersHeld
         } && !forcedDrag
         if (cascadingDrag != cursorState.value.cascadingDrag) {
             cursorState.update { copy(cascadingDrag = cascadingDrag) }
@@ -712,11 +712,11 @@ private fun MarkerState.handleCursorPress(
             } xor invertLockedDrag
             val withPreview = action == MouseClickAction.MoveParameterWithPlaybackPreview
             val forcedDrag = action == MouseClickAction.MoveParameterIgnoringConstraints
-            val cascadingDrag = when (appConf.editor.boundaryMoveBehavior) {
-                AppConf.Editor.BoundaryMoveBehavior.SingleBoundary ->
-                    action == MouseClickAction.MoveParameterCascading
-                AppConf.Editor.BoundaryMoveBehavior.Cascaded ->
-                    action != MouseClickAction.MoveParameterCascading
+            val cascadingDrag = when (appConf.editor.cascadedDrag) {
+                AppConf.Editor.CascadedDrag.Disabled ->
+                    action == MouseClickAction.MoveParameterInvertingCascaded
+                AppConf.Editor.CascadedDrag.Enabled ->
+                    action != MouseClickAction.MoveParameterInvertingCascaded
             } && !forcedDrag
             cursorState.update { startDragging(lockedDrag, withPreview, forcedDrag, cascadingDrag) }
         }

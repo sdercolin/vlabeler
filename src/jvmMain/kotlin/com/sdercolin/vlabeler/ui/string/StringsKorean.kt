@@ -485,17 +485,16 @@ fun Strings.ko(): String? = when (this) {
     PreferencesEditorLockedDragUseLabeler -> "라벨러에 의해 정의된 설정 사용"
     PreferencesEditorLockedDragUseStart -> "엔트리의 시작부에서 고정 드래그"
     PreferencesEditorLockedDragNever -> "고정 드래그 사용 안함"
-    PreferencesEditorBoundaryMoveBehavior -> "경계 이동 동작"
-    PreferencesEditorBoundaryMoveBehaviorDescription ->
-        "병렬 티어에서의 경계 이동 동작을 선택합니다.\n" +
-            "\"캐스케이드\"로 설정하면, 다른 티어의 경계와 정렬된 경계를 이동할 때 " +
-            "해당 티어의 정렬된 경계도 함께 이동합니다."
-    PreferencesEditorBoundaryMoveBehaviorSingleBoundary -> "단일 경계"
-    PreferencesEditorBoundaryMoveBehaviorCascaded -> "캐스케이드"
     PreferencesEditorLockedSettingParameterWithCursor -> "커서 설정에 따라 고정 드래그 적용"
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "\"n번 마커 놓기 (커서 위치에)\" 입력으로 마커를 놓을 경우에도 " +
             "위의 고정 드래그 방식을 적용하기"
+    PreferencesEditorCascadedDrag -> "캐스케이드 드래그"
+    PreferencesEditorCascadedDragDescription ->
+        "병렬 하위 프로젝트의 테두리에 대해 캐스케이드 드래그를 활성화할지 선택합니다.\n" +
+            "\"캐스케이드 드래그 사용\"으로 설정하면, 병렬 하위 프로젝트 간 정렬된 테두리가 함께 이동합니다."
+    PreferencesEditorCascadedDragDisabled -> "단일 테두리만 드래그"
+    PreferencesEditorCascadedDragEnabled -> "캐스케이드 드래그 사용"
     PreferencesEditorNotes -> "엔트리 상태 표기"
     PreferencesEditorNotesDescription ->
         "엔트리의 상태 (중요, 완료, 태그, 추가 정보) 에 관한 " +
@@ -663,7 +662,7 @@ fun Strings.ko(): String? = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "마커 드래그 시 미리보기 재생"
     ActionMoveParameterIgnoringConstraints -> "마커 드래그 시 위치 제약 무시"
     ActionMoveParameterInvertingLocked -> "마커 드래그 시 \"고정 드래그\" 설정 반대로 적용"
-    ActionMoveParameterCascading -> "마커 드래그 시 캐스케이드 경계 이동"
+    ActionMoveParameterInvertingCascaded -> "마커 드래그 시 \"캐스케이드 드래그\" 설정 반대로 적용"
     ActionPlayAudioSection -> "클릭된 부분만 재생"
     ActionPlayAudioUntilEnd -> "클릭된 위치 ~ 끝까지 재생"
     ActionPlayAudioUntilScreenEnd -> "클릭된 위치 ~ 현재 화면에 표시된 영역의 끝까지 재생"

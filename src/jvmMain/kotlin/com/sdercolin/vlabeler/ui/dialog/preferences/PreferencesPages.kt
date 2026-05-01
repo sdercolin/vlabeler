@@ -719,21 +719,21 @@ object PreferencesPages {
                         update = { copy(lockedDrag = it) },
                         options = AppConf.Editor.LockedDrag.entries.toTypedArray(),
                     )
-                    selection(
-                        title = Strings.PreferencesEditorBoundaryMoveBehavior,
-                        description = Strings.PreferencesEditorBoundaryMoveBehaviorDescription,
-                        columnStyle = true,
-                        defaultValue = AppConf.Editor.DEFAULT_BOUNDARY_MOVE_BEHAVIOR,
-                        select = { it.boundaryMoveBehavior },
-                        update = { copy(boundaryMoveBehavior = it) },
-                        options = AppConf.Editor.BoundaryMoveBehavior.entries.toTypedArray(),
-                    )
                     switch(
                         title = Strings.PreferencesEditorLockedSettingParameterWithCursor,
                         description = Strings.PreferencesEditorLockedSettingParameterWithCursorDescription,
                         defaultValue = AppConf.Editor.DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR,
                         select = { it.lockedSettingParameterWithCursor },
                         update = { copy(lockedSettingParameterWithCursor = it) },
+                    )
+                    selection(
+                        title = Strings.PreferencesEditorCascadedDrag,
+                        description = Strings.PreferencesEditorCascadedDragDescription,
+                        columnStyle = true,
+                        defaultValue = AppConf.Editor.DEFAULT_CASCADED_DRAG,
+                        select = { it.cascadedDrag },
+                        update = { copy(cascadedDrag = it) },
+                        options = AppConf.Editor.CascadedDrag.entries.toTypedArray(),
                     )
                     color(
                         title = Strings.PreferencesEditorPlayerCursorColor,

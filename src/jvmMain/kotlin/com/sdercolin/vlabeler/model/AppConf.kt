@@ -360,7 +360,7 @@ data class AppConf(
         val scissorsSubmitThreshold: Int = DEFAULT_SCISSORS_SUBMIT_THRESHOLD,
         val autoScroll: AutoScroll = AutoScroll(),
         val lockedDrag: LockedDrag = DEFAULT_LOCKED_DRAG,
-        val boundaryMoveBehavior: BoundaryMoveBehavior = DEFAULT_BOUNDARY_MOVE_BEHAVIOR,
+        val cascadedDrag: CascadedDrag = DEFAULT_CASCADED_DRAG,
         val lockedSettingParameterWithCursor: Boolean = DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR,
         val showDone: Boolean = DEFAULT_SHOW_DONE,
         val showStar: Boolean = DEFAULT_SHOW_STAR,
@@ -399,12 +399,12 @@ data class AppConf(
 
         @Serializable
         @Immutable
-        enum class BoundaryMoveBehavior(override val stringKey: Strings) : LocalizedText {
-            @SerialName("SingleBoundary")
-            SingleBoundary(Strings.PreferencesEditorBoundaryMoveBehaviorSingleBoundary),
+        enum class CascadedDrag(override val stringKey: Strings) : LocalizedText {
+            @SerialName("Disabled")
+            Disabled(Strings.PreferencesEditorCascadedDragDisabled),
 
-            @SerialName("Cascaded")
-            Cascaded(Strings.PreferencesEditorBoundaryMoveBehaviorCascaded),
+            @SerialName("Enabled")
+            Enabled(Strings.PreferencesEditorCascadedDragEnabled),
         }
 
         @Serializable
@@ -423,7 +423,7 @@ data class AppConf(
             const val MIN_SCISSORS_SUBMIT_THRESHOLD = 1
             const val MAX_SCISSORS_SUBMIT_THRESHOLD = 50
             val DEFAULT_LOCKED_DRAG = LockedDrag.UseLabeler
-            val DEFAULT_BOUNDARY_MOVE_BEHAVIOR = BoundaryMoveBehavior.SingleBoundary
+            val DEFAULT_CASCADED_DRAG = CascadedDrag.Disabled
             const val DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR = true
             const val DEFAULT_SHOW_DONE = true
             const val DEFAULT_SHOW_STAR = true

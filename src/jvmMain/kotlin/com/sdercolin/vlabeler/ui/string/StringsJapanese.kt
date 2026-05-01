@@ -467,16 +467,15 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorLockedDragUseLabeler -> "ラベラーの設定"
     PreferencesEditorLockedDragUseStart -> "開始位置をドラッグするとき"
     PreferencesEditorLockedDragNever -> "有効にしない"
-    PreferencesEditorBoundaryMoveBehavior -> "境界移動の動作"
-    PreferencesEditorBoundaryMoveBehaviorDescription ->
-        "並列ティアでの境界移動の動作を選択します。\n" +
-            "「カスケード」に設定すると、他のティアの境界と揃っている境界を移動する際に、" +
-            "そのティアの揃った境界も一緒に移動します。"
-    PreferencesEditorBoundaryMoveBehaviorSingleBoundary -> "単一境界"
-    PreferencesEditorBoundaryMoveBehaviorCascaded -> "カスケード"
     PreferencesEditorLockedSettingParameterWithCursor -> "カーソル位置に設定する場合も連動ドラッグを有効にする"
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "「パラメータをカーソル位置に設定」ショートカットでパラメータを設定するときにも、連動ドラッグ設定を適用します。"
+    PreferencesEditorCascadedDrag -> "カスケードドラッグ"
+    PreferencesEditorCascadedDragDescription ->
+        "並列サブプロジェクトの枠線に対するカスケードドラッグを有効にするかどうかを選択します。\n" +
+            "「カスケードドラッグを有効」に設定すると、並列サブプロジェクト間で揃っている枠線が一緒に移動します。"
+    PreferencesEditorCascadedDragDisabled -> "単一の枠線のみドラッグ"
+    PreferencesEditorCascadedDragEnabled -> "カスケードドラッグを有効"
     PreferencesEditorNotes -> "備考"
     PreferencesEditorNotesDescription -> "エントリの備考（スターマーク、完了、タグ、追加情報）に関する表示と動作をカスタマイズします。"
     PreferencesEditorShowDone -> "\"完了\"状態を表示"
@@ -644,7 +643,7 @@ fun Strings.ja(): String? = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "パラメータラインをドラッグ（プレビュー再生）"
     ActionMoveParameterIgnoringConstraints -> "パラメータラインをドラッグ（制約を無視）"
     ActionMoveParameterInvertingLocked -> "パラメータラインをドラッグ（連動ドラグ設定を反転）"
-    ActionMoveParameterCascading -> "パラメータラインをドラッグ（カスケード境界移動）"
+    ActionMoveParameterInvertingCascaded -> "パラメータラインをドラッグ（カスケードドラッグ設定を反転）"
     ActionPlayAudioSection -> "クリック位置の部分の音声を再生"
     ActionPlayAudioUntilEnd -> "クリック位置から最後までの音声を再生"
     ActionPlayAudioUntilScreenEnd -> "クリック位置から画面の最後までの音声を再生"

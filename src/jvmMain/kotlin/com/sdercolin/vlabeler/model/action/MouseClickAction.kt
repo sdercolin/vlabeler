@@ -41,8 +41,8 @@ enum class MouseClickAction(
         KeySet(Key.MouseLeftClick, setOf(Key.Shift)),
         PointerEventType.Press,
     ),
-    MoveParameterCascading(
-        Strings.ActionMoveParameterCascading,
+    MoveParameterInvertingCascaded(
+        Strings.ActionMoveParameterInvertingCascaded,
         KeySet(Key.MouseLeftClick, setOf(Key.Ctrl, Key.Shift)),
         PointerEventType.Press,
     ),
@@ -110,5 +110,5 @@ fun MouseClickAction?.canMoveParameter(): Boolean =
         MouseClickAction.MoveParameterWithPlaybackPreview,
         MouseClickAction.MoveParameterInvertingPrimary,
         MouseClickAction.MoveParameterIgnoringConstraints,
-        MouseClickAction.MoveParameterCascading,
+        MouseClickAction.MoveParameterInvertingCascaded,
     )
