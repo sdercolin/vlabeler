@@ -125,7 +125,6 @@ fun MarkerPointEventContainer(
                     editorState::commitEntryCut,
                     density,
                     appState.appConf,
-                    keyboardState,
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
@@ -529,11 +528,10 @@ private fun MarkerState.handleMouseMove(
     commitEntryCut: () -> Unit,
     density: Density,
     appConf: AppConf,
-    keyboardState: KeyboardState,
 ) {
     screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(event, editions, updateCascadeEditions, screenRange, playByCursor, density, appConf, keyboardState)
+        Tool.Cursor -> handleCursorMove(event, editions, updateCascadeEditions, screenRange, playByCursor, density)
         Tool.Scissors -> handleScissorsMove(event, screenRange, commitEntryCut, density, appConf)
         Tool.Pan -> handlePanMove(event, scrollState, scope)
         Tool.Playback -> handlePlaybackMove(event, screenRange)
@@ -547,8 +545,6 @@ private fun MarkerState.handleCursorMove(
     screenRange: FloatRange,
     playByCursor: (Float) -> Unit,
     density: Density,
-    appConf: AppConf,
-    keyboardState: KeyboardState,
 ) {
     val eventChange = event.changes.first()
     val x = eventChange.position.x
@@ -557,18 +553,6 @@ private fun MarkerState.handleCursorMove(
     val y = eventChange.position.y.coerceIn(0f, canvasHeightState.value.coerceAtLeast(0f))
     if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
         val forcedDrag = cursorState.value.forcedDrag
-        val cascadingSubKeys = keyboardState.availableMouseClickActions.entries
-            .firstOrNull { it.value == MouseClickAction.MoveParameterInvertingCascaded }
-            ?.key?.first?.subKeys.orEmpty()
-        val subKeys = keyboardState.keySet?.subKeys.orEmpty()
-        val invertModifiersHeld = cascadingSubKeys.isNotEmpty() && subKeys.containsAll(cascadingSubKeys)
-        val cascadingDrag = when (appConf.editor.cascadedDrag) {
-            AppConf.Editor.CascadedDrag.Disabled -> invertModifiersHeld
-            AppConf.Editor.CascadedDrag.Enabled -> !invertModifiersHeld
-        } && !forcedDrag
-        if (cascadingDrag != cursorState.value.cascadingDrag) {
-            cursorState.update { copy(cascadingDrag = cascadingDrag) }
-        }
         val updated = if (cursorState.value.lockedDrag) {
             getLockedDraggedEntries(cursorState.value.pointIndex, actualX, forcedDrag)
         } else {
