@@ -1,0 +1,107 @@
+{
+    "name": "diffsinger.default",
+    "version": 1,
+    "serialVersion": 2,
+    "singleFile": false,
+    "extension": "lab",
+    "defaultInputFilePath": null,
+    "displayedName": {
+        "en": "DiffSinger lab labeler",
+        "zh": "DiffSinger lab 标注器",
+        "ja": "DiffSinger lab ラベラー",
+        "ko": "DiffSinger lab 라벨러"
+    },
+    "author": "Maiko",
+    "email": "maikotattun@yahoo.co.jp",
+    "description": {
+        "en": "This is a DiffSinger labeler that creates a lab file for each wav file. Place multiple wav files and their corresponding lab files with the same names within a single folder, then set it as the sample directory.",
+        "ja": "wav ファイルごとに lab ファイルを作成するタイプの DiffSinger ラベラーです。1つのフォルダ内に複数の wav ファイルと、同名の lab ファイル郡を入れ、サンプルディレクトリとして設定してください。"
+    },
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
+    "categoryTag": "Others",
+    "displayOrder": 0,
+    "continuous": true,
+    "allowSameNameEntry": true,
+    "defaultEntryName": "SP",
+    "defaultValues": [
+        0,
+        0
+    ],
+    "fields": [],
+    "extraFields": [],
+    "lockedDrag": {
+        "useDragBase": false,
+        "useStart": false
+    },
+    "decimalDigit": 4,
+    "entrySimilarityWeights": {
+        "name": 0,
+        "sample": 0.5,
+        "start": 0.25,
+        "end": 0.25,
+        "points": [],
+        "extras": [],
+        "tag": 0,
+        "threshold": 0.75
+    },
+    "properties": [
+        {
+            "name": "start",
+            "displayedName": "Start",
+            "valueGetter": [
+                "value = entry.start"
+            ],
+            "valueSetter": [
+                "entry.start = value"
+            ],
+            "shortcutIndex": 0
+        },
+        {
+            "name": "end",
+            "displayedName": "End",
+            "valueGetter": [
+                "value = entry.end"
+            ],
+            "valueSetter": [
+                "entry.end = value"
+            ],
+            "shortcutIndex": 1
+        }
+    ],
+    "parser": {
+        "scope": "Entry",
+        "defaultEncoding": "UTF-8",
+        "extractionPattern": "(.*) (.*) (.*)",
+        "variableNames": [
+            "left",
+            "right",
+            "name"
+        ],
+        "scripts": "parser.js"
+    },
+    "writer": {
+        "scope": "Entry",
+        "scripts": "writer.js"
+    },
+    "parameters": [
+        {
+            "parameter": {
+                "name": "defaultEntryName",
+                "type": "string",
+                "label": {
+                    "en": "Default entry name",
+                    "zh": "默认条目名称",
+                    "ja": "デフォルトエントリ名",
+                    "ko": "기본 엔트리 이름"
+                },
+                "defaultValue": "SP",
+                "optional": true
+            },
+            "injector": "defaultEntryName-injector.js",
+            "changeable": true
+        }
+    ],
+    "projectConstructor": {
+        "scripts": "projectConstructor.js"
+    }
+}
