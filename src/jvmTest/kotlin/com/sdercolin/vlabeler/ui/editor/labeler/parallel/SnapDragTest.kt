@@ -30,7 +30,13 @@ class SnapDragTest {
         Entry(sample = sample, name = "e$index", start = start, end = end, points = listOf(), extras = listOf())
 
     private fun makeModule(name: String, entries: List<Entry>, rawFilePath: String = "/shared.TextGrid") =
-        Module(name = name, sampleDirectoryPath = "/samples", entries = entries, currentIndex = 0, rawFilePath = rawFilePath)
+        Module(
+            name = name,
+            sampleDirectoryPath = "/samples",
+            entries = entries,
+            currentIndex = 0,
+            rawFilePath = rawFilePath,
+        )
 
     private fun makeProject(vararg modules: Module) =
         Project(
@@ -46,10 +52,13 @@ class SnapDragTest {
 
     @Test
     fun getSnapTargetsReturnsEmptyWhenNoParallelModules() {
-        val module = makeModule("tier1", listOf(
-            makeEntry("a.wav", 0f, 100f),
-            makeEntry("a.wav", 100f, 200f),
-        ))
+        val module = makeModule(
+            "tier1",
+            listOf(
+                makeEntry("a.wav", 0f, 100f),
+                makeEntry("a.wav", 100f, 200f),
+            ),
+        )
         val project = makeProject(module)
         val snapDrag = SnapDrag(project, 10000f, entryConverter)
 

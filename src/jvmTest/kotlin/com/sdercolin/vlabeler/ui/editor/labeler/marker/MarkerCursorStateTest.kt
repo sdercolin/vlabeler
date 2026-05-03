@@ -16,7 +16,12 @@ class MarkerCursorStateTest {
             position = 100f,
         )
 
-        val dragging = state.startDragging(lockedDrag = false, withPreview = false, forcedDrag = false, cascadingDrag = true)
+        val dragging = state.startDragging(
+            lockedDrag = false,
+            withPreview = false,
+            forcedDrag = false,
+            cascadingDrag = true,
+        )
 
         assertEquals(MarkerCursorState.Mouse.Dragging, dragging.mouse)
         assertTrue(dragging.cascadingDrag)
@@ -34,7 +39,12 @@ class MarkerCursorStateTest {
             position = 100f,
         )
 
-        val dragging = state.startDragging(lockedDrag = false, withPreview = false, forcedDrag = false, cascadingDrag = false)
+        val dragging = state.startDragging(
+            lockedDrag = false,
+            withPreview = false,
+            forcedDrag = false,
+            cascadingDrag = false,
+        )
 
         assertEquals(MarkerCursorState.Mouse.Dragging, dragging.mouse)
         assertFalse(dragging.cascadingDrag)
@@ -49,7 +59,12 @@ class MarkerCursorStateTest {
             position = 100f,
         )
 
-        val dragging = state.startDragging(lockedDrag = true, withPreview = false, forcedDrag = false, cascadingDrag = true)
+        val dragging = state.startDragging(
+            lockedDrag = true,
+            withPreview = false,
+            forcedDrag = false,
+            cascadingDrag = true,
+        )
 
         assertTrue(dragging.cascadingDrag)
         assertTrue(dragging.lockedDrag)
@@ -64,7 +79,12 @@ class MarkerCursorStateTest {
             position = 100f,
         )
 
-        val dragging = state.startDragging(lockedDrag = false, withPreview = false, forcedDrag = true, cascadingDrag = false)
+        val dragging = state.startDragging(
+            lockedDrag = false,
+            withPreview = false,
+            forcedDrag = true,
+            cascadingDrag = false,
+        )
 
         assertTrue(dragging.forcedDrag)
         assertFalse(dragging.cascadingDrag)
@@ -105,7 +125,12 @@ class MarkerCursorStateTest {
             position = 105f, // position > pointPosition => offset 1
         )
 
-        val dragging = state.startDragging(lockedDrag = false, withPreview = false, forcedDrag = false, cascadingDrag = true)
+        val dragging = state.startDragging(
+            lockedDrag = false,
+            withPreview = false,
+            forcedDrag = false,
+            cascadingDrag = true,
+        )
 
         assertEquals(1, dragging.relativeDraggingIndexOffset)
     }
@@ -119,7 +144,12 @@ class MarkerCursorStateTest {
             position = 100f, // position < pointPosition => offset 0
         )
 
-        val dragging = state.startDragging(lockedDrag = false, withPreview = false, forcedDrag = false, cascadingDrag = true)
+        val dragging = state.startDragging(
+            lockedDrag = false,
+            withPreview = false,
+            forcedDrag = false,
+            cascadingDrag = true,
+        )
 
         assertEquals(0, dragging.relativeDraggingIndexOffset)
     }
