@@ -6,7 +6,8 @@
         "en": "CV oto generator",
         "zh": "单独音 oto 生成器",
         "ja": "単独音 oto 生成器",
-        "ko": "단독음 oto 생성기"
+        "ko": "단독음 oto 생성기",
+        "ru": "Генератор oto для CV"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
@@ -14,7 +15,8 @@
         "en": "Generate template for CV oto.",
         "zh": "生成单独音 oto 模板。",
         "ja": "単独音 oto テンプレートを生成します。",
-        "ko": "단독음 oto 템플릿을 생성해 줘요."
+        "ko": "단독음 oto 템플릿을 생성해 줘요。",
+        "ru": "Генерирует шаблон oto для CV."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/cv-oto-gen",
     "supportedLabelFileExtension": "ini",
@@ -27,7 +29,8 @@
                     "en": "Offset (ms)",
                     "zh": "左边界（毫秒）",
                     "ja": "左ブランク（ミリ秒）",
-                    "ko": "왼쪽 여백 (밀리초)"
+                    "ko": "왼쪽 여백 (밀리초)",
+                    "ru": "Смещение (Offset) (мс)"
                 },
                 "defaultValue": 100,
                 "min": 0
@@ -39,7 +42,8 @@
                     "en": "Overlap (ms)",
                     "zh": "重叠（毫秒）",
                     "ja": "オーバーラップ（ミリ秒）",
-                    "ko": "오버랩 (밀리초)"
+                    "ko": "오버랩 (밀리초)",
+                    "ru": "Оверлап (Overlap) (мс)"
                 },
                 "defaultValue": 30
             },
@@ -50,7 +54,8 @@
                     "en": "Preutterance (ms)",
                     "zh": "先行发声（毫秒）",
                     "ja": "先行発声（ミリ秒）",
-                    "ko": "선행자음부 (밀리초)"
+                    "ko": "선행자음부 (밀리초)",
+                    "ru": "Преаттеранс (Preutterance) (мс)"
                 },
                 "defaultValue": 60,
                 "min": 0
@@ -62,7 +67,8 @@
                     "en": "Fixed (ms)",
                     "zh": "固定（毫秒）",
                     "ja": "固定範囲（ミリ秒）",
-                    "ko": "고정자음부 (밀리초)"
+                    "ko": "고정자음부 (밀리초)",
+                    "ru": "Фиксированная область (Fixed) (мс)"
                 },
                 "defaultValue": 100,
                 "min": 0
@@ -74,7 +80,8 @@
                     "en": "Cutoff (ms)",
                     "zh": "右边界（毫秒）",
                     "ja": "右ブランク（ミリ秒）",
-                    "ko": "컷오프 (밀리초)"
+                    "ko": "컷오프 (밀리초)",
+                    "ru": "Отсечка (Cutoff) (мс)"
                 },
                 "defaultValue": -1000
             }

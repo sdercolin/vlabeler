@@ -5,7 +5,8 @@ if (!folder.exists() || !folder.isDirectory()) {
         en: `Folder ${folderPath} does not exist.`,
         zh: `文件夹 ${folderPath} 不存在。`,
         ja: `フォルダ ${folderPath} が見つかりません。`,
-        ko: `폴더 ${folderPath} 가 존재하지 않습니다.`
+        ko: `폴더 ${folderPath} 가 존재하지 않습니다.`,
+        ru: `Папка ${folderPath} не существует.`
     })
 }
 let absolutePath = folder.getAbsolutePath()
@@ -17,7 +18,8 @@ if (!isUnderRoot) {
         en: `Folder ${folderPath} is not under project root directory.`,
         zh: `文件夹 ${folderPath} 不在项目根目录下。`,
         ja: `フォルダ ${folderPath} はプロジェクトのルートディレクトリの下にありません。`,
-        ko: `폴더 ${folderPath} 가 프로젝트의 루트 폴더 아래에 없습니다.`
+        ko: `폴더 ${folderPath} 가 프로젝트의 루트 폴더 아래에 없습니다.`,
+        ru: `Папка ${folderPath} не находится в корневом каталоге проекта.`
     })
 }
 
@@ -27,7 +29,8 @@ if (existingModulePaths.includes(absolutePath)) {
         en: `Folder ${folderPath} already exists.`,
         zh: `文件夹 ${folderPath} 已存在。`,
         ja: `フォルダ ${folderPath} は既に存在しています。`,
-        ko: `폴더 ${folderPath} 가 이미 존재합니다.`
+        ko: `폴더 ${folderPath} 가 이미 존재합니다.`,
+        ru: `Папка ${folderPath} уже существует.`
     })
 }
 
@@ -37,10 +40,10 @@ if (samples.length === 0) {
         en: `Folder ${folderPath} does not contain any wav files.`,
         zh: `文件夹 ${folderPath} 不包含任何 wav 文件。`,
         ja: `フォルダ ${folderPath} には wav ファイルが含まれていません。`,
-        ko: `폴더 ${folderPath} 가 wav 파일을 포함하지 않습니다.`
+        ko: `폴더 ${folderPath} 가 wav 파일을 포함하지 않습니다.`,
+        ru: `Папка ${folderPath} не содержит файлов wav.`
     })
 }
-
 let entries = samples.map(sample => {
     let name = sample.getNameWithoutExtension()
     let path = sample.getAbsolutePath()

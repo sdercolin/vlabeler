@@ -6,7 +6,8 @@
         "en": "Mark oto entries used in ust",
         "zh": "标出 ust 中用到的 oto 条目",
         "ja": "ust で使用されている oto エントリをマークする",
-        "ko": "ust에서 쓰인 oto 엔트리들 표시"
+        "ko": "ust에서 쓰인 oto 엔트리들 표시",
+        "ru": "Пометить oto-записи, используемые в ust"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
@@ -14,7 +15,8 @@
         "en": "Read a ust file and mark entries that are used in it.",
         "zh": "读取 ust 文件，并标出其中用到的条目。",
         "ja": "ust ファイルを読み込み、その中で使用されているエントリをマークします。",
-        "ko": "ust 파일을 읽고, 파일 내에서 사용되었던 엔트리들을 표시해 줘요."
+        "ko": "ust 파일을 읽고, 파일 내에서 사용되었던 엔트리들을 표시해 줘요.",
+        "ru": "Считывает ust-файл и помечает записи, которые в нем используются."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/mark-oto-entries-in-ust",
     "supportedLabelFileExtension": "ini",
@@ -28,7 +30,8 @@
                     "en": "Apply to all subprojects",
                     "zh": "应用于所有子项目",
                     "ja": "すべてのサブプロジェクトに適用",
-                    "ko": "모든 하위 프로젝트에 적용"
+                    "ko": "모든 하위 프로젝트에 적용",
+                    "ru": "Применить ко всем подпроектам"
                 },
                 "defaultValue": false
             },
@@ -39,7 +42,8 @@
                     "en": "File (.ust)",
                     "zh": "文件 (.ust)",
                     "ja": "ファイル (.ust)",
-                    "ko": "파일 (.ust)"
+                    "ko": "파일 (.ust)",
+                    "ru": "Файл (.ust)"
                 },
                 "defaultValue": {},
                 "acceptExtensions": [
@@ -54,7 +58,8 @@
                     "en": "The \"prefix.map\" file used in your voice bank. If not given, lyrics are matched strictly with entry names.",
                     "zh": "你的声库中使用的 \"prefix.map\" 文件。如果不给出，歌词将严格匹配条目名。",
                     "ja": "ボイスバンクで使用されている \"prefix.map\" ファイル。指定しない場合、歌詞はエントリ名と完全一致でマッチします。",
-                    "ko": "사용 중인 음원의 \"prefix.map\" 파일이에요. 지정하지 않을 경우, ust의 가사를 그대로 엔트리의 이름으로 사용해요."
+                    "ko": "사용 중인 음원의 \"prefix.map\" 파일이에요. 지정하지 않을 경우, ust의 가사를 그대로 엔트리의 이름으로 사용해요.",
+                    "ru": "Файл \"prefix.map\", используемый в вашем голосовом банке. Если не указан, текст строго сопоставляется с именами записей."
                 },
                 "defaultValue": {},
                 "optional": true,
@@ -69,13 +74,15 @@
                     "en": "Mark",
                     "zh": "标记符号",
                     "ja": "マーク",
-                    "ko": "표시"
+                    "ko": "표시",
+                    "ru": "Пометка"
                 },
                 "description": {
                     "en": "The text to be appended to the tags of the used entries.",
                     "zh": "用于标记的文本，将被附加到已用到的条目的标签后。",
                     "ja": "使用されているエントリのタグに追加されるテキストです。",
-                    "ko": "사용된 엔트리들의 태그 뒤에 붙일 텍스트에요."
+                    "ko": "사용된 엔트리들의 태그 뒤에 붙일 텍스트에요.",
+                    "ru": "Текст, который будет добавлен к тегам используемых записей."
                 },
                 "defaultValue": "*"
             }

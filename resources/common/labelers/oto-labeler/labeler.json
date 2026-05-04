@@ -9,7 +9,8 @@
         "en": "UTAU oto labeler",
         "zh": "UTAU oto 标注器",
         "ja": "UTAU oto ラベラー",
-        "ko": "UTAU oto 라벨러"
+        "ko": "UTAU oto 라벨러",
+        "ru": "Разметчик UTAU oto"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
@@ -17,7 +18,8 @@
         "en": "Default labeler for UTAU oto.",
         "zh": "用于 UTAU oto 的默认标注器。",
         "ja": "UTAU oto のデフォルトラベラー。",
-        "ko": "기본 내장된 UTAU oto용 라벨러에요."
+        "ko": "기본 내장된 UTAU oto용 라벨러에요.",
+        "ru": "Разметчик по умолчанию для UTAU oto."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
     "categoryTag": "UTAU",
@@ -37,7 +39,8 @@
                 "en": "Fixed",
                 "zh": "固",
                 "ja": "子",
-                "ko": "고정"
+                "ko": "고정",
+                "ru": "Фикс"
             },
             "color": "#1b51ff",
             "height": 0.5,
@@ -58,7 +61,8 @@
                 "en": "Preu",
                 "zh": "先",
                 "ja": "先",
-                "ko": "선행"
+                "ko": "선행",
+                "ru": "Преа"
             },
             "color": "#ff1a45",
             "height": 0.6667,
@@ -79,7 +83,8 @@
                 "en": "Ovl",
                 "zh": "重",
                 "ja": "オ",
-                "ko": "오버"
+                "ko": "오버",
+                "ru": "Овер"
             },
             "color": "#7fff39",
             "height": 0.8333,
@@ -100,7 +105,8 @@
                 "en": "Left",
                 "zh": "左",
                 "ja": "左",
-                "ko": "왼쪽"
+                "ko": "왼쪽",
+                "ru": "Лево"
             },
             "color": "#9c7212",
             "height": 0.9,
@@ -154,7 +160,8 @@
                 "en": "Offset",
                 "zh": "左边界",
                 "ja": "左ブランク",
-                "ko": "오프셋"
+                "ko": "오프셋",
+                "ru": "Смещение"
             },
             "valueGetter": "left-getter.js",
             "valueSetter": "left-setter.js",
@@ -166,7 +173,8 @@
                 "en": "Overlap",
                 "zh": "重叠",
                 "ja": "オーバーラップ",
-                "ko": "오버랩"
+                "ko": "오버랩",
+                "ru": "Овер"
             },
             "valueGetter": "ovl-getter.js",
             "valueSetter": "ovl-setter.js",
@@ -178,7 +186,8 @@
                 "en": "Preutterance",
                 "zh": "先行发声",
                 "ja": "先行発声",
-                "ko": "선행자음부"
+                "ko": "선행자음부",
+                "ru": "Преа"
             },
             "valueGetter": "preu-getter.js",
             "valueSetter": "preu-setter.js",
@@ -190,7 +199,8 @@
                 "en": "Fixed",
                 "zh": "固定",
                 "ja": "固定範囲",
-                "ko": "고정자음부"
+                "ko": "고정자음부",
+                "ru": "Фикс"
             },
             "valueGetter": "fixed-getter.js",
             "valueSetter": "fixed-setter.js",
@@ -202,7 +212,8 @@
                 "en": "Cutoff",
                 "zh": "右边界",
                 "ja": "右ブランク",
-                "ko": "컷오프"
+                "ko": "컷오프",
+                "ru": "Отсечка"
             },
             "valueGetter": "right-getter.js",
             "valueSetter": "right-setter.js",
@@ -237,7 +248,8 @@
                     "en": "Allow negative overlap",
                     "zh": "允许重叠为负值",
                     "ja": "オーバーラップのマイナス値を許容する",
-                    "ko": "오버랩 음수값 허용하기"
+                    "ko": "오버랩 음수값 허용하기",
+                    "ru": "Разрешить отрицательный оверлап"
                 },
                 "defaultValue": true
             },
@@ -252,7 +264,8 @@
                     "en": "Base for fixed-drag",
                     "zh": "锁定拖动的基准参数",
                     "ja": "連動ドラッグの基準",
-                    "ko": "고정 드래그의 기준 마커"
+                    "ko": "고정 드래그의 기준 마커",
+                    "ru": "База для фиксированного перетаскивания"
                 },
                 "defaultValue": "Preutterance",
                 "options": [
@@ -266,25 +279,29 @@
                         "en": "Left",
                         "zh": "左边界",
                         "ja": "左ブランク",
-                        "ko": "왼쪽 끝"
+                        "ko": "왼쪽 끝",
+                        "ru": "Лево"
                     },
                     {
                         "en": "Overlap",
                         "zh": "重叠",
                         "ja": "オーバーラップ",
-                        "ko": "오버랩"
+                        "ko": "오버랩",
+                        "ru": "Овер"
                     },
                     {
                         "en": "Preutterance",
                         "zh": "先行发声",
                         "ja": "先行発声",
-                        "ko": "선행자음부"
+                        "ko": "선행자음부",
+                        "ru": "Преа"
                     },
                     {
                         "en": "Fixed",
                         "zh": "固定",
                         "ja": "固定範囲",
-                        "ko": "고정자음부"
+                        "ko": "고정자음부",
+                        "ru": "Фикс"
                     }
                 ]
             },
@@ -299,13 +316,15 @@
                     "en": "Go to next entry after editing",
                     "zh": "编辑后跳转到下一个条目",
                     "ja": "編集後に次のエントリーに移動する",
-                    "ko": "편집이 끝나면 다음 엔트리로 이동"
+                    "ko": "편집이 끝나면 다음 엔트리로 이동",
+                    "ru": "Перейти к следующей записи после редактирования"
                 },
                 "description": {
                     "en": "Please enable this action in `Preferences` -> `Editor` -> `Post-editing actions`, and choose `Use settings defined by the labeler` as the trigger.",
                     "zh": "请在`环境设置`->`编辑器`->`编辑后动作`中启用此功能，并选择`使用标注器的设置`为`触发该行为的参数`。",
                     "ja": "`環境設定`->`エディタ`->`編集後アクション`でこの機能を有効にし、`アクションを実行できるパラメータ`では`ラベラーの設定`を選択してください。",
-                    "ko": "활성화하려면 `환경설정` -> `에디터` -> `사전편집 동작`을 누른 후, `라벨러에 의해 정의된 설정 사용`을 선택해 주세요."
+                    "ko": "활성화하려면 `환경설정` -> `에디터` -> `사전편집 동작`을 누른 후, `라벨러에 의해 정의된 설정 사용`을 선택해 주세요.",
+                    "ru": "Пожалуйста, включите это действие в `Предпочтения` -> `Редактор` -> `Действия после редактирования` и выберите `Использовать настройки, определенные разметчиком` в качестве триггера."
                 },
                 "defaultValue": "Disable",
                 "options": [
@@ -322,43 +341,50 @@
                         "en": "Disable",
                         "zh": "禁用",
                         "ja": "無効",
-                        "ko": "비활성"
+                        "ko": "비활성",
+                        "ru": "Отключить"
                     },
                     {
                         "en": "Left",
                         "zh": "左边界",
                         "ja": "左ブランク",
-                        "ko": "왼쪽 끝"
+                        "ko": "왼쪽 끝",
+                        "ru": "Лево"
                     },
                     {
                         "en": "Overlap",
                         "zh": "重叠",
                         "ja": "オーバーラップ",
-                        "ko": "오버랩"
+                        "ko": "오버랩",
+                        "ru": "Овер"
                     },
                     {
                         "en": "Preutterance",
                         "zh": "先行发声",
                         "ja": "先行発声",
-                        "ko": "선행자음부"
+                        "ko": "선행자음부",
+                        "ru": "Преа"
                     },
                     {
                         "en": "Fixed",
                         "zh": "固定",
                         "ja": "固定範囲",
-                        "ko": "고정자음부"
+                        "ko": "고정자음부",
+                        "ru": "Фикс"
                     },
                     {
                         "en": "Cutoff",
                         "zh": "右边界",
                         "ja": "右ブランク",
-                        "ko": "컷오프"
+                        "ko": "컷오프",
+                        "ru": "Отсечка"
                     },
                     {
                         "en": "Any",
                         "zh": "任意",
                         "ja": "任意",
-                        "ko": "아무거나"
+                        "ko": "아무거나",
+                        "ru": "Любой"
                     }
                 ]
             },
@@ -373,13 +399,15 @@
                     "en": "Mark entry as `Done` after editing",
                     "zh": "编辑后标记为已完成条目",
                     "ja": "編集後にエントリーを\"完了\"にする",
-                    "ko": "편집된 엔트리에 자동으로 \"완료\" 표시"
+                    "ko": "편집된 엔트리에 자동으로 \"완료\" 표시",
+                    "ru": "Отметить запись как «Готово» после редактирования"
                 },
                 "description": {
                     "en": "Please enable this action in `Preferences` -> `Editor` -> `Post-editing actions`, and choose `Use settings defined by the labeler` as the trigger.",
                     "zh": "请在`环境设置`->`编辑器`->`编辑后动作`中启用此功能，并选择`使用标注器的设置`为`触发该行为的参数`。",
                     "ja": "`環境設定`->`エディタ`->`編集後アクション`でこの機能を有効にし、`アクションを実行できるパラメータ`では`ラベラーの設定`を選択してください。",
-                    "ko": "활성화하려면 `환경설정` -> `에디터` -> `사전편집 동작`을 누른 후, `라벨러에 의해 정의된 설정 사용`을 선택해 주세요."
+                    "ko": "활성화하려면 `환경설정` -> `에디터` -> `사전편집 동작`을 누른 후, `라벨러에 의해 정의된 설정 사용`을 선택해 주세요.",
+                    "ru": "Пожалуйста, включите это действие в `Предпочтения` -> `Редактор` -> `Действия после редактирования` и выберите `Использовать настройки, определенные разметчиком` в качестве триггера."
                 },
                 "defaultValue": "Any",
                 "options": [
@@ -396,43 +424,50 @@
                         "en": "Disable",
                         "zh": "禁用",
                         "ja": "無効",
-                        "ko": "비활성"
+                        "ko": "비활성",
+                        "ru": "Отключить"
                     },
                     {
                         "en": "Left",
                         "zh": "左边界",
                         "ja": "左ブランク",
-                        "ko": "왼쪽 끝"
+                        "ko": "왼쪽 끝",
+                        "ru": "Лево"
                     },
                     {
                         "en": "Overlap",
                         "zh": "重叠",
                         "ja": "オーバーラップ",
-                        "ko": "오버랩"
+                        "ko": "오버랩",
+                        "ru": "Овер"
                     },
                     {
                         "en": "Preutterance",
                         "zh": "先行发声",
                         "ja": "先行発声",
-                        "ko": "선행자음부"
+                        "ko": "선행자음부",
+                        "ru": "Преа"
                     },
                     {
                         "en": "Fixed",
                         "zh": "固定",
                         "ja": "固定範囲",
-                        "ko": "고정자음부"
+                        "ko": "고정자음부",
+                        "ru": "Фикс"
                     },
                     {
                         "en": "Cutoff",
                         "zh": "右边界",
                         "ja": "右ブランク",
-                        "ko": "컷오프"
+                        "ko": "컷오프",
+                        "ru": "Отсечка"
                     },
                     {
                         "en": "Any",
                         "zh": "任意",
                         "ja": "任意",
-                        "ko": "아무거나"
+                        "ko": "아무거나",
+                        "ru": "Любой"
                     }
                 ]
             },
@@ -447,13 +482,15 @@
                 "en": "Edit UTAU oto file",
                 "zh": "编辑 UTAU oto 文件",
                 "ja": "UTAU oto を編集する",
-                "ko": "UTAU oto 파일 편집"
+                "ko": "UTAU oto 파일 편집",
+                "ru": "Редактировать файл UTAU oto"
             },
             "description": {
                 "en": "Select your UTAU oto file to start quick editing.",
                 "zh": "选择您的 UTAU oto 文件以开始快捷编辑。",
                 "ja": "UTAU oto ファイルを選択して、クイック編集を開始します。",
-                "ko": "UTAU oto 파일을 선택하여 빠른 편집을 시작합니다."
+                "ko": "UTAU oto 파일을 선택하여 빠른 편집을 시작합니다.",
+                "ru": "Выберите ваш файл UTAU oto, чтобы начать быстрое редактирование."
             },
             "extension": "ini",
             "scripts": "quickProjectBuilder.js"

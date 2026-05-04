@@ -6,7 +6,8 @@
         "en": "Regex raw label generator",
         "zh": "基于正则表达式的原始标签生成器",
         "ja": "正規表現によるラベル生成器",
-        "ko": "정규표현식 원시 레이블 생성기"
+        "ko": "정규표현식 원시 레이블 생성기",
+        "ru": "Генератор исходных меток по Regex"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
@@ -14,7 +15,8 @@
         "en": "Generate raw label templates using regex replacement.",
         "zh": "使用正则表达式替换生成原始标签模板。",
         "ja": "正規表現による置換を用いてラベルテンプレートを生成します。",
-        "ko": "정규표현식 치환을 사용해 원시 레이블 템플릿을 생성해 줘요."
+        "ko": "정규표현식 치환을 사용해 원시 레이블 템플릿을 생성해 줘요。",
+        "ru": "Генерирует шаблоны исходных меток, используя замену по регулярному выражению."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/template/regex-raw-gen",
     "supportedLabelFileExtension": "*",
@@ -28,7 +30,8 @@
                     "en": "Regex for extraction from sample name",
                     "zh": "用于提取的正则表达式",
                     "ja": "サンプル名から抽出する正規表現",
-                    "ko": "샘플 이름에서의 추출에 사용할 정규표현식"
+                    "ko": "샘플 이름에서의 추출에 사용할 정규표현식",
+                    "ru": "Regex для извлечения из имени сэмпла"
                 },
                 "defaultValue": "",
                 "multiLine": false,
@@ -41,13 +44,15 @@
                     "en": "Template lines per sample",
                     "zh": "每个采样对应的模板",
                     "ja": "サンプルごとのテンプレート",
-                    "ko": "샘플당 템플릿"
+                    "ko": "샘플당 템플릿",
+                    "ru": "Строки шаблона на сэмпл"
                 },
                 "description": {
                     "en": "Use `$1`, `$2`, etc. to refer to the extracted value",
                     "zh": "使用 `$1`, `$2`, 等来引用提取到的值",
                     "ja": "抽出した値を参照するには `$1`, `$2`, などを使用してください",
-                    "ko": "추출된 값을 참조하려면 `$1`, `$2` 등을 사용해 주세요."
+                    "ko": "추출된 값을 참조하려면 `$1`, `$2` 등을 사용해 주세요.",
+                    "ru": "Используйте `$1`, `$2` и т. д. для ссылки на извлеченное значение"
                 },
                 "defaultValue": "",
                 "multiLine": true,

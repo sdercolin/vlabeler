@@ -6,7 +6,8 @@
         "en": "Reorder entries",
         "zh": "重新排序条目",
         "ja": "エントリを並び替える",
-        "ko": "엔트리 목록 재정렬"
+        "ko": "엔트리 목록 재정렬",
+        "ru": "Изменить порядок записей"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
@@ -14,7 +15,8 @@
         "en": "Reorder all entries by entry name, sample name, start time, or tag",
         "zh": "根据条目名，采样名，开始时间或标签来重新排序所有条目",
         "ja": "エントリ名、サンプル名、開始位置、またはタグによってエントリを並び替えます",
-        "ko": "엔트리 이름, 샘플 이름, 시작 시간, 태그 중 하나로 모든 엔트리를 재정렬해요."
+        "ko": "엔트리 이름, 샘플 이름, 시작 시간, 태그 중 하나로 모든 엔트리를 재정렬해요.",
+        "ru": "Изменить порядок всех записей по имени записи, имени сэмпла, времени начала или тегу"
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/sort-entries",
     "supportedLabelFileExtension": "*",
@@ -27,7 +29,8 @@
                     "en": "Descending order",
                     "zh": "降序排列",
                     "ja": "降順",
-                    "ko": "내림차순"
+                    "ko": "내림차순",
+                    "ru": "По убыванию"
                 },
                 "defaultValue": false
             },
@@ -38,7 +41,8 @@
                     "en": "Sort by tag",
                     "zh": "根据标签排序",
                     "ja": "タグで並び替える",
-                    "ko": "태그로 정렬"
+                    "ko": "태그로 정렬",
+                    "ru": "Сортировать по тегу"
                 },
                 "defaultValue": false
             },
@@ -49,7 +53,8 @@
                     "en": "Sort by tag first",
                     "zh": "首先根据标签排序",
                     "ja": "タグを優先して並び替える",
-                    "ko": "태그로 우선 정렬"
+                    "ko": "태그로 우선 정렬",
+                    "ru": "Сначала сортировать по тегу"
                 },
                 "enableIf": "useTag",
                 "defaultValue": true
@@ -61,7 +66,8 @@
                     "en": "Sort entries by",
                     "zh": "排序方式",
                     "ja": "並び替えの方法",
-                    "ko": "엔트리 정렬 기준"
+                    "ko": "엔트리 정렬 기준",
+                    "ru": "Сортировать записи по"
                 },
                 "defaultValue": "sampleStart",
                 "options": [
@@ -74,19 +80,22 @@
                         "en": "Sample -> Start time",
                         "zh": "采样名 -> 开始时间",
                         "jp": "サンプル名 -> 開始位置",
-                        "ko": "샘플 이름 -> 시작 시간"
+                        "ko": "샘플 이름 -> 시작 시간",
+                        "ru": "Сэмпл -> Время начала"
                     },
                     {
                         "en": "Sample -> Entry name",
                         "zh": "采样名 -> 条目名",
                         "jp": "サンプル名 -> エントリ名",
-                        "ko": "샘플 이름 -> 엔트리 이름"
+                        "ko": "샘플 이름 -> 엔트리 이름",
+                        "ru": "Сэмпл -> Имя записи"
                     },
                     {
                         "en": "Entry name only",
                         "zh": "仅条目名",
                         "jp": "エントリ名のみ",
-                        "ko": "엔트리 이름만"
+                        "ko": "엔트리 이름만",
+                        "ru": "Только имя записи"
                     }
                 ]
             }

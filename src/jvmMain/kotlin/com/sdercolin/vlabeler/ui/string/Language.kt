@@ -11,6 +11,8 @@ enum class Language(val code: String, private val displayName: String) : Text {
     ChineseSimplified("zh-Hans", "简体中文"),
     Japanese("ja", "日本語"),
     Korean("ko", "한국어"),
+    Russian("ru", "Русский"),
+    Ukrainian("uk", "Українська")
     ;
 
     override val text: String

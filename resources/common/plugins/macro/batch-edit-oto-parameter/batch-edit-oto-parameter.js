@@ -3,11 +3,11 @@ let parameterName = params["parameter"]
 let keepDistance = params["keepDistance"]
 
 let nameTexts = [
-    ["offset", ["Offset", "左边界", "左ブランク"]],
-    ["fixed", ["Fixed", "固定", "固定範囲"]],
-    ["overlap", ["Overlap", "重叠", "オーバーラップ"]],
-    ["preutterance", ["Preutterance", "先行发声", "先行発声"]],
-    ["cutoff", ["Cutoff", "右边界", "右ブランク"]],
+    ["offset", ["Offset", "左边界", "左ブランク", "Офф."]],
+    ["fixed", ["Fixed", "固定", "固定範囲", "Фикс."]],
+    ["overlap", ["Overlap", "重叠", "オーバーラップ", "Овер."]],
+    ["preutterance", ["Preutterance", "先行发声", "先行発声", "Преу."]],
+    ["cutoff", ["Cutoff", "右边界", "右ブランク", "Обрезка"]],
 ]
 
 let expression = params["expression"]
@@ -25,7 +25,8 @@ if (unknownExpressionMatch) {
         en: `Unknown parameter in input expression: ${unknownExpressionMatch[0]}`,
         zh: `输入的表达式中包含未知参数：${unknownExpressionMatch[0]}`,
         ja: `入力式に未知のパラメータが含まれています：${unknownExpressionMatch[0]}`,
-        ko: `입력된 정규표현식에 알 수 없는 매개변수가 포함되어 있습니다: ${unknownExpressionMatch[0]}`
+        ko: `입력된 정규표현식에 알 수 없는 매개변수가 포함되어 있습니다: ${unknownExpressionMatch[0]}`,
+        ru: `Неизвестный параметр во входном выражении: ${unknownExpressionMatch[0]}`
     })
 }
 
@@ -57,7 +58,8 @@ for (let index of selectedEntryIndexes) {
             en: "Failed to calculate the new value, cause: " + e.message,
             zh: "计算新值失败，原因：" + e.message,
             ja: "新しい値の計算に失敗しました。原因：" + e.message,
-            ko: "새 값의 계산에 실패했습니다. 원인: " + e.message
+            ko: "새 값의 계산에 실패했습니다. 원인: " + e.message,
+            ru: "Не удалось вычислить новое значение, причина: " + e.message
         })
     }
 

@@ -70,7 +70,8 @@ for (let [text, vowel] of vowelLineParsed) {
             en: `The vowel map contains duplicate entries for ${text}.`,
             zh: `元音表中包含重复的项目 ${text}。`,
             ja: `母音マップには、複数回 ${text} が含まれています。`,
-            ko: `모음 맵에 중복 항목 ${text} 이 있습니다.`
+            ko: `모음 맵에 중복 항목 ${text} 이 있습니다.`,
+            ru: `Карта гласных содержит дублирующиеся записи для ${text}.`
         })
     }
     vowelMap.set(text, vowel)
@@ -92,7 +93,8 @@ for (let [text, consonant] of consonantLineParsed) {
             en: `The consonant map contains duplicate entries for ${text}.`,
             zh: `辅音表中包含重复的项目 ${text}。`,
             ja: `子音マップには、複数回 ${text} が含まれています。`,
-            ko: `자음 맵에 중복 항목 ${text} 이 있습니다.`
+            ko: `자음 맵에 중복 항목 ${text} 이 있습니다.`,
+            ru: `Карта согласных содержит дублирующиеся записи для ${text}.`
         })
     }
     let vowelItem = vowelList.find(vowel => text.endsWith(vowel[0]))
@@ -101,7 +103,8 @@ for (let [text, consonant] of consonantLineParsed) {
             en: `Could not find matched item in the vowel map for ${text}.`,
             zh: `无法在元音表中找到与 ${text} 匹配的项目。`,
             ja: `母音マップに ${text} とマッチする項目が見つかりませんでした。`,
-            ko: `${text} 와 일치하는 항목이 모음 맵에 없습니다.`
+            ko: `${text} 와 일치하는 항목이 모음 맵에 없습니다.`,
+            ru: `Не удалось найти соответствующий элемент в карте гласных для ${text}.`
         })
     }
     let vowel = vowelItem[1]

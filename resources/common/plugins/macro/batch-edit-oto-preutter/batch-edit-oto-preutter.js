@@ -15,7 +15,8 @@ function tryParseInt(str) {
     if (isNaN(num)) {
         error({
             en: `Non-numeric characters are entered in the preutterance or overlap`,
-            ja: `先行発声またはオーバーラップに数字以外が入力されています`
+            ja: `先行発声またはオーバーラップに数字以外が入力されています`,
+            ru: `В поле 'Преу.' или 'Овер.' введены нечисловые символы`
         })
     }
     return { success: true, value: num };

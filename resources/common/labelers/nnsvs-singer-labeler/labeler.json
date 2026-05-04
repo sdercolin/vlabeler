@@ -9,7 +9,8 @@
         "en": "NNSVS singer labeler",
         "zh": "NNSVS singer 标注器",
         "ja": "NNSVS singer ラベラー",
-        "ko": "NNSVS singer 라벨러"
+        "ko": "NNSVS singer 라벨러",
+        "ru": "Разметчик NNSVS singer"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
@@ -17,7 +18,8 @@
         "en": "Default labeler for NNSVS/ENUNU singer. Multiple lab files are included with the corresponding wav files. Please prepare a folder with a `lab` folder and a `wav` folder inside and set it as the sample directory.",
         "zh": "NNSVS/ENUNU singer 的默认标注器。该标注器将可以处理多个 lab 文件，每个 lab 文件对应一个 wav 文件。请准备一个包含 `lab` 文件夹和 `wav` 文件夹的文件夹，并将其设置为采样目录。",
         "ja": "NNSVS/ENUNU singer のデフォルトラベラーです。複数の lab ファイルと wav　ファイルを処理できます。`lab` フォルダと `wav` フォルダを含むフォルダを用意し、サンプルディレクトリとして設定してください。",
-        "ko": "기본 내장된 NNSVS/ENUNU 가수용 라벨러에요. 하나의 wav 파일에 속하는 여러 개의 lab 파일을 편집할 수 있어요. 올바른 `lab`폴더와 `wav`폴더가 포함된 경로를 샘플 폴더로 설정해 주세요. "
+        "ko": "기본 내장된 NNSVS/ENUNU 가수용 라벨러에요. 하나의 wav 파일에 속하는 여러 개의 lab 파일을 편집할 수 있어요. 올바른 `lab`폴더와 `wav`폴더가 포함된 경로를 샘플 폴더로 설정해 주세요. ",
+        "ru": "Разметчик по умолчанию для NNSVS/ENUNU певца. Несколько lab-файлов включены вместе с соответствующими wav-файлами. Пожалуйста, подготовьте папку, содержащую внутри папки `lab` и `wav`, и установите ее как каталог сэмплов."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
     "categoryTag": "NNSVS",
@@ -94,7 +96,8 @@
                     "en": "wav folder name",
                     "zh": "wav 文件夹名称",
                     "ja": "wav フォルダ名",
-                    "ko": "wav 폴더의 이름"
+                    "ko": "wav 폴더의 이름",
+                    "ru": "Имя папки, содержащей wav"
                 },
                 "defaultValue": "wav"
             }
@@ -107,7 +110,8 @@
                     "en": "lab folder name",
                     "zh": "lab 文件夹名称",
                     "ja": "lab フォルダ名",
-                    "ko": "lab 폴더의 이름"
+                    "ko": "lab 폴더의 이름",
+                    "ru": "Имя папки, содержащей lab"
                 },
                 "defaultValue": "lab"
             }
@@ -120,7 +124,8 @@
                     "en": "Default entry name",
                     "zh": "默认条目名称",
                     "ja": "デフォルトエントリ名",
-                    "ko": "기본 엔트리 이름"
+                    "ko": "기본 엔트리 이름",
+                    "ru": "Имя записи по умолчанию"
                 },
                 "defaultValue": "pau",
                 "optional": true

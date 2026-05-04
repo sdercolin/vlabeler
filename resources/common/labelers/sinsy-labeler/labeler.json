@@ -9,7 +9,8 @@
         "en": "Sinsy lab labeler",
         "zh": "Sinsy lab 标注器",
         "ja": "Sinsy lab ラベラー",
-        "ko": "Sinsy lab 라벨러"
+        "ko": "Sinsy lab 라벨러",
+        "ru": "Разметчик Sinsy lab"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
@@ -17,7 +18,8 @@
         "en": "Default labeler for lab file in Sinsy's standard.",
         "zh": "用于 Sinsy 规范的 lab 文件的默认标注器。",
         "ja": "Sinsy の標準の lab ファイルのデフォルトラベラーです。",
-        "ko": "기본 내장된 Sinsy 표준 lab용 라벨러에요."
+        "ko": "기본 내장된 Sinsy 표준 lab용 라벨러에요.",
+        "ru": "Разметчик по умолчанию для lab-файла в стандарте Sinsy."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
     "continuous": true,
@@ -92,7 +94,8 @@
                     "en": "Default entry name",
                     "zh": "默认条目名称",
                     "ja": "デフォルトエントリ名",
-                    "ko": "기본 엔트리 이름"
+                    "ko": "기본 엔트리 이름",
+                    "ru": "Имя записи по умолчанию"
                 },
                 "defaultValue": "pau",
                 "optional": true

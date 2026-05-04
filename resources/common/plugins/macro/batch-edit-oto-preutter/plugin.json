@@ -4,13 +4,15 @@
     "type": "macro",
     "displayedName": {
         "en": "Batch edit preutterance and overlap",
-        "ja": "先行発声とオーバーラップを一括編集"
+        "ja": "先行発声とオーバーラップを一括編集",
+        "ru": "Пакетное редактирование преаттеранса и оверлапа"
     },
     "author": "Maiko",
     "email": "maikotattun@yahoo.co.jp",
     "description": {
         "en": "Edit the preutterance and overlap in UTAU oto.ini at once.",
-        "ja": "UTAU oto.ini の先行発声とオーバーラップを一括編集します。"
+        "ja": "UTAU oto.ini の先行発声とオーバーラップを一括編集します。",
+        "ru": "Одновременное редактирование преаттеранса (preutterance) и оверлапа (overlap) в UTAU oto.ini."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/batch-edit-oto-preutter",
     "supportedLabelFileExtension": "ini",
@@ -23,13 +25,15 @@
                     "en": "Entry filters",
                     "zh": "条目筛选器",
                     "ja": "エントリフィルター",
-                    "ko": "엔트리 필터"
+                    "ko": "엔트리 필터",
+                    "ru": "Фильтры записей"
                 },
                 "description": {
                     "en": "Add filters to select the entries to edit. Leave blank to edit all entries.",
                     "zh": "添加筛选器以选择要编辑的条目。留空以编辑所有条目。",
                     "ja": "編集するエントリを選択するフィルターを追加してください。空にしておくことで、すべてのエントリを編集できます。",
-                    "ko": "편집할 엔트리들의 선택에 사용할 필터를 추가해 주세요. 모든 엔트리를 선택하려면 이 칸을 비워 두세요."
+                    "ko": "편집할 엔트리들의 선택에 사용할 필터를 추가해 주세요. 모든 엔트리를 선택하려면 이 칸을 비워 두세요.",
+                    "ru": "Добавьте фильтры для выбора записей для редактирования. Оставьте пустым для редактирования всех записей."
                 },
                 "defaultValue": {
                     "filters": [
@@ -47,11 +51,13 @@
                 "name": "preutterance",
                 "label": {
                     "en": "New preutterance value",
-                    "ja": "新しい先行発声"
+                    "ja": "新しい先行発声",
+                    "ru": "Новое значение преаттеранса"
                 },
                 "description": {
                     "en": "Entering only numbers results in a fixed value. If you put \"+\" or \"-\" at the beginning, it will be calculated. If left blank, the preutterance will not be changed.",
-                    "ja": "数字だけを入力すると固定値になります。先頭に半角で \"+\", \"-\" を付けると計算されます。空欄の場合、先行発声を変更しません。"
+                    "ja": "数字だけを入力すると固定値になります。先頭に半角で \"+\", \"-\" を付けると計算されます。空欄の場合、先行発声を変更しません。",
+                    "ru": "Ввод только чисел приводит к фиксированному значению. Если вы поставите \"+\" или \"-\" в начале, будет произведен расчет. Если оставить поле пустым, преаттеранс не будет изменен."
                 },
                 "defaultValue": "",
                 "optional": true
@@ -61,11 +67,13 @@
                 "name": "overlap",
                 "label": {
                     "en": "Overlap",
-                    "ja": "オーバーラップ"
+                    "ja": "オーバーラップ",
+                    "ru": "Оверлап"
                 },
                 "description": {
                     "en": "Adjust the overlap based on the preutterance. \"3\" will set the overlap to 1/3 of the preutterance. If left blank, the overlap is not changed.",
-                    "ja": "先行発声を基準にオーバーラップを調整します。\"3\" と入力すれば先行発声の1/3になります。空欄の場合、オーバーラップを変更しません。"
+                    "ja": "先行発声を基準にオーバーラップを調整します。\"3\" と入力すれば先行発声の1/3になります。空欄の場合、オーバーラップを変更しません。",
+                    "ru": "Отрегулировать оверлап на основе преаттеранса. \"3\" установит оверлап равным 1/3 преаттеранса. Если оставить поле пустым, оверлап не будет изменен."
                 },
                 "defaultValue": "3",
                 "optional": true

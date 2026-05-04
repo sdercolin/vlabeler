@@ -6,7 +6,8 @@
         "en": "Convert tempo",
         "zh": "转换节奏",
         "ja": "テンポを変換する",
-        "ko": "템포 변환"
+        "ko": "템포 변환",
+        "ru": "Конвертировать темп"
     },
     "author": "adlez27",
     "email": "adlez.dysto@gmail.com",
@@ -14,7 +15,8 @@
         "en": "Convert parameter timing from original tempo to new tempo",
         "zh": "将参数时序从原始节奏转换为新节奏",
         "ja": "パラメーターのタイミングを元のテンポから新しいテンポに変換する",
-        "ko": "파라미터 타이밍을 원래 템포에서 새 템포로 변환하기"
+        "ko": "파라미터 타이밍을 원래 템포에서 새 템포로 변환하기",
+        "ru": "Конвертировать время параметров из исходного темпа в новый темп"
     },
     "website": "https://github.com/adlez27/vlabeler/",
     "supportedLabelFileExtension": "ini",
@@ -27,7 +29,8 @@
                     "en": "Original tempo",
                     "zh": "原始节奏",
                     "ja": "元のテンポ",
-                    "ko": "오리지널 템포"
+                    "ko": "오리지널 템포",
+                    "ru": "Исходный темп"
                 },
                 "defaultValue": 100.0
             },
@@ -38,7 +41,8 @@
                     "en": "New tempo",
                     "zh": "新节奏",
                     "ja": "新テンポ",
-                    "ko": "새로운 템포"
+                    "ko": "새로운 템포",
+                    "ru": "Новый темп"
                 },
                 "defaultValue": 120.0
             },
@@ -49,7 +53,8 @@
                     "en": "Parameters to convert",
                     "zh": "要编辑的参数",
                     "ja": "編集するパラメーター",
-                    "ko": "편집할 파라미터"
+                    "ko": "편집할 파라미터",
+                    "ru": "Параметры для конвертации"
                 },
                 "defaultValue": "offset",
                 "options": [
@@ -61,13 +66,15 @@
                         "en": "Offset only",
                         "zh": "仅左边界",
                         "ja": "左ブランクのみ",
-                        "ko": "오프셋 전용"
+                        "ko": "오프셋 전용",
+                        "ru": "Только смещение (Offset)"
                     },
                     {
                         "en": "All parameters",
                         "zh": "所有参数",
                         "jp": "すべてのパラメータ",
-                        "ko": "모든 매개변수"
+                        "ko": "모든 매개변수",
+                        "ru": "Все параметры"
                     }
                 ]
             }

@@ -9,7 +9,8 @@
         "en": "Audacity labeler",
         "zh": "Audacity 标注器",
         "ja": "Audacity ラベラー",
-        "ko": "Audacity 라벨러"
+        "ko": "Audacity 라벨러",
+        "ru": "Разметчик Audacity"
     },
     "author": "sdercolin",
     "email": "sder.colin@gmail.com",
@@ -17,7 +18,8 @@
         "en": "Default labeler for Audacity Labels file. Basic behaviours are same as the Sinsy lab labeler.",
         "zh": "用于 Audacity 式标签文件的默认标注器。基本行为与 Sinsy lab 标注器相同。",
         "ja": "Audacity ラベルファイルのデフォルトラベラー。基本的な動作は Sinsy labラベラーと同じです。",
-        "ko": "기본 내장된 Audacity 레이블용 라벨러에요. Sinsy lab 라벨러와 기본적인 구동 방식이 같아요."
+        "ko": "기본 내장된 Audacity 레이블용 라벨러에요. Sinsy lab 라벨러와 기본적인 구동 방식이 같아요.",
+        "ru": "Разметчик по умолчанию для файла меток Audacity. Основное поведение такое же, как у разметчика Sinsy lab."
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
     "continuous": true,
@@ -92,7 +94,8 @@
                     "en": "Default entry name",
                     "zh": "默认条目名称",
                     "ja": "デフォルトエントリ名",
-                    "ko": "기본 엔트리 이름"
+                    "ko": "기본 엔트리 이름",
+                    "ru": "Имя записи по умолчанию"
                 },
                 "defaultValue": "pau",
                 "optional": true

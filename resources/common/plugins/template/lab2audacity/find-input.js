@@ -3,7 +3,8 @@ function notFoundError(path) {
         en: `Expected input file ${path} does not exist.`,
         zh: `无法找到预期的输入文件 ${path}。`,
         ja: `期待される入力ファイル ${path} を見つかりませんでした。`,
-        ko: `예상되었던 입력 파일 ${path} 이 존재하지 않습니다.`
+        ko: `예상되었던 입력 파일 ${path} 이 존재하지 않습니다.`,
+        ru: `Ожидаемый входной файл ${path} не существует.`
     })
 }
 
@@ -24,7 +25,8 @@ if (labeler.projectConstructor) {
             en: `Input file is not specified.`,
             zh: `未指定输入文件。`,
             ja: `入力ファイルが指定されていません。`,
-            ko: `입력 파일이 지정되지 않았습니다.`
+            ko: `입력 파일이 지정되지 않았습니다.`,
+            ru: `Входной файл не указан.`
         })
     }
 

@@ -172,9 +172,25 @@ if (koReport === "") {
     koReport += "프로젝트와 입력 oto 파일이 동일해요."
 }
 
+let ruReport = ""
+if (entriesOnlyInBaseText.length > 0) {
+    if (!append) {
+        ruReport += `В проекте отсутствуют следующие записи:\n${entriesOnlyInBaseText.join("")}\n`
+    } else {
+        ruReport += `В проекте отсутствовали следующие записи, они были добавлены:\n${entriesOnlyInBaseText.join("")}\n`
+    }
+}
+if (entriesOnlyInProjectText.length > 0) {
+    ruReport += `В проекте присутствуют следующие записи, которых нет в файле oto:\n${entriesOnlyInProjectText.join("")}\n`
+}
+if (ruReport === "") {
+    ruReport += "Проект и входной файл oto идентичны."
+}
+
 report({
     en: enReport,
     zh: zhReport,
     ja: jaReport,
-    ko: koReport
+    ko: koReport,
+    ru: ruReport
 })
