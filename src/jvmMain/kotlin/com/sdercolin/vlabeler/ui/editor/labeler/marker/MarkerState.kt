@@ -44,6 +44,7 @@ class MarkerState(
     val canvasHeightState: MutableState<Float>,
     val waveformsHeightRatio: Float,
     private val snapDrag: SnapDrag,
+    val currentIndex: MutableState<Int>,
 ) {
     val entryBorders: List<Float> = entriesInPixel.fold<EntryInPixel, List<Float>>(listOf()) { acc, entryInPixel ->
         val lastEntryEnd = acc.lastOrNull()
@@ -415,6 +416,15 @@ class MarkerState(
         return null
     }
 
+    fun getEntryIndexByCursorPosition(position: Float): Int? {
+        entriesInPixel.forEachIndexed { index, entry ->
+            if (entry.getActualStart(labelerConf) <= position && entry.getActualEnd(labelerConf) >= position) {
+                return index
+            }
+        }
+        return null
+    }
+
     fun isValidCutPosition(position: Float) = entriesInPixel.any { it.isValidCutPosition(position) }
 
     fun isValidPlaybackPosition(position: Float) = position < entryConverter.convertToPixel(sampleLengthMillis)
@@ -448,21 +458,41 @@ class MarkerState(
             KeyAction.SetValue8 -> 7
             KeyAction.SetValue9 -> 8
             KeyAction.SetValue10 -> 9
+            KeyAction.SetCurrentEntryLeft -> 0
+            KeyAction.SetCurrentEntryRight -> 1
             else -> return null
         }
 
-        // Only used in single edit mode
-        if (entries.size != 1) return null
-
-        val fieldCount = this.labelerConf.fields.filter { it.shortcutIndex != null }.size
-        val pointIndex = when {
-            paramIndex == 0 -> MarkerCursorState.START_POINT_INDEX
-            paramIndex == fieldCount + 1 -> MarkerCursorState.END_POINT_INDEX
-            paramIndex <= fieldCount -> this.labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
-                .takeIf { it >= 0 } ?: return null
-            else -> return null
-        }
+        val pointIndex: Int?
         val cursorPosition = cursorState.value.position ?: return null
+        if (entries.size != 1) {
+            // filedCount might be wrong
+            // and would not work on potential variant fields like dv label
+            val fieldCount = this.labelerConf.fields.filter { it.shortcutIndex != null }.size
+            val index = if (action == KeyAction.SetCurrentEntryLeft || action == KeyAction.SetCurrentEntryRight) {
+                currentIndex.value
+            } else {
+                getEntryIndexByCursorPosition(cursorPosition) ?: return null
+            }
+            pointIndex = when {
+                paramIndex == 0 -> if (index == 0) MarkerCursorState.START_POINT_INDEX else index * (fieldCount + 1) - 1
+                paramIndex == fieldCount + 1 ->
+                    if (index == entries.size - 1) MarkerCursorState.END_POINT_INDEX else index * (fieldCount + 1)
+                paramIndex <= fieldCount -> this.labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
+                    .takeIf { it > 0 }?.plus(index * (fieldCount + 1)) ?: return null
+                else -> return null
+            }
+        } else {
+            val fieldCount = this.labelerConf.fields.filter { it.shortcutIndex != null }.size
+            pointIndex = when {
+                paramIndex == 0 -> MarkerCursorState.START_POINT_INDEX
+                paramIndex == fieldCount + 1 -> MarkerCursorState.END_POINT_INDEX
+                paramIndex <= fieldCount -> this.labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
+                    .takeIf { it >= 0 } ?: return null
+                else -> return null
+            }
+        }
+
         val lockDrag = appConf.editor.lockedSettingParameterWithCursor &&
             when (appConf.editor.lockedDrag) {
                 AppConf.Editor.LockedDrag.UseLabeler -> {
@@ -571,6 +601,7 @@ fun rememberMarkerState(
             entryConverter,
         )
     }
+    val currentIndex = mutableStateOf(project.currentModule.currentIndex)
 
     return remember(
         sampleRate,
@@ -608,6 +639,7 @@ fun rememberMarkerState(
             canvasHeightState,
             waveformsHeightRatio,
             snapDrag,
+            currentIndex
         )
     }
 }

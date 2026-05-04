@@ -412,6 +412,8 @@ enum class KeyAction(
         KeySet(Key.P),
         false,
     ),
+    SetCurrentEntryLeft(listOf(Strings.ActionSetCurrentEntryLeft), null, false),
+    SetCurrentEntryRight(listOf(Strings.ActionSetCurrentEntryRight), null, false),
     SetProperty1(listOf(Strings.ActionSetProperty1), null, false),
     SetProperty2(listOf(Strings.ActionSetProperty2), null, false),
     SetProperty3(listOf(Strings.ActionSetProperty3), null, false),
