@@ -16,8 +16,8 @@ import com.sdercolin.vlabeler.util.stringifyJson
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import org.jetbrains.skia.EncodedImageFormat
-import org.jetbrains.skia.Image as SkiaImage
 import java.io.File
+import org.jetbrains.skia.Image as SkiaImage
 
 /**
  * Repository for charts.
