@@ -726,6 +726,15 @@ object PreferencesPages {
                         select = { it.lockedSettingParameterWithCursor },
                         update = { copy(lockedSettingParameterWithCursor = it) },
                     )
+                    selection(
+                        title = Strings.PreferencesEditorCascadedDrag,
+                        description = Strings.PreferencesEditorCascadedDragDescription,
+                        columnStyle = true,
+                        defaultValue = AppConf.Editor.DEFAULT_CASCADED_DRAG,
+                        select = { it.cascadedDrag },
+                        update = { copy(cascadedDrag = it) },
+                        options = AppConf.Editor.CascadedDrag.entries.toTypedArray(),
+                    )
                     color(
                         title = Strings.PreferencesEditorPlayerCursorColor,
                         defaultValue = AppConf.Editor.DEFAULT_PLAYER_CURSOR_COLOR,

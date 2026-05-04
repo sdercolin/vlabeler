@@ -498,6 +498,13 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "Apply the fixed-drag setting above also when " +
             "setting the parameters with \"Set Parameter To Cursor Position\" key actions"
+    PreferencesEditorCascadedDrag -> "Cascaded drag"
+    PreferencesEditorCascadedDragDescription ->
+        "Select whether to enable cascaded drag to borders in parallel subprojects.\n" +
+            "When set to \"Enable cascaded drag\", aligned borders across parallel subprojects " +
+            "will move together."
+    PreferencesEditorCascadedDragDisabled -> "Drag single border only"
+    PreferencesEditorCascadedDragEnabled -> "Enable cascaded drag"
     PreferencesEditorNotes -> "Notes"
     PreferencesEditorNotesDescription ->
         "Customize the editor's appearance and behavior about entry " +
@@ -676,6 +683,7 @@ fun Strings.en(): String = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "Drag Parameter Line with Playback Preview"
     ActionMoveParameterIgnoringConstraints -> "Drag Parameter Line Ignoring Constraints"
     ActionMoveParameterInvertingLocked -> "Drag Parameter Line with Fixed-drag Settings Inverted"
+    ActionMoveParameterInvertingCascaded -> "Drag Parameter Line with Cascaded-drag Settings Inverted"
     ActionPlayAudioSection -> "Play the Clicked Audio Part"
     ActionPlayAudioUntilEnd -> "Play the Audio from Clicked Position until the End"
     ActionPlayAudioUntilScreenEnd -> "Play the Audio from Clicked Position until the End of the Screen"

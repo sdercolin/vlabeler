@@ -60,6 +60,7 @@ interface ProjectStore {
     fun updateProject(project: Project)
     fun updateProjectOnLoadedSample(sampleInfo: SampleInfo, moduleName: String)
     fun editEntries(editions: List<Edition>)
+    fun editEntriesWithCascade(currentModuleEditions: List<Edition>, cascadeEditions: Map<String, List<Edition>>)
     fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?)
     fun cutEntryOnScreen(
         index: Int,
@@ -233,11 +234,7 @@ class ProjectStoreImpl(
     override fun editEntries(editions: List<Edition>) {
         val previousProject = requireProject()
         editProject {
-            val editedEntryMap = mutableMapOf<Int, IndexedEntry>()
-            editions.forEach {
-                editedEntryMap[it.index] = it.toIndexedEntry()
-            }
-            val editedEntries = editedEntryMap.values.toList().sortedBy { it.index }
+            val editedEntries = editions.toSortedIndexedEntries()
             updateCurrentModule {
                 updateEntries(editedEntries, labelerConf)
                     .takePostEditAction(
@@ -253,6 +250,47 @@ class ProjectStoreImpl(
                         labelerConf,
                     )
             }
+        }
+        val entrySwitched = previousProject.currentModuleIndex == project?.currentModuleIndex &&
+            previousProject.currentModule.currentIndex != project?.currentModule?.currentIndex
+        if (entrySwitched) {
+            scrollIfNeededWhenSwitchedEntry(previousProject)
+        }
+    }
+
+    override fun editEntriesWithCascade(
+        currentModuleEditions: List<Edition>,
+        cascadeEditions: Map<String, List<Edition>>,
+    ) {
+        val previousProject = requireProject()
+        editProject {
+            var result = this
+
+            val editedEntries = currentModuleEditions.toSortedIndexedEntries()
+            result = result.updateCurrentModule {
+                updateEntries(editedEntries, labelerConf)
+                    .takePostEditAction(
+                        currentModuleEditions,
+                        appConf.value.editor,
+                        AppConf.PostEditAction.Type.Done,
+                        labelerConf,
+                    )
+                    .takePostEditAction(
+                        currentModuleEditions,
+                        appConf.value.editor,
+                        AppConf.PostEditAction.Type.Next,
+                        labelerConf,
+                    )
+            }
+
+            for ((moduleName, editions) in cascadeEditions) {
+                val cascadeEntries = editions.toSortedIndexedEntries()
+                result = result.updateModule(moduleName) {
+                    updateEntries(cascadeEntries, labelerConf)
+                }
+            }
+
+            result
         }
         val entrySwitched = previousProject.currentModuleIndex == project?.currentModuleIndex &&
             previousProject.currentModule.currentIndex != project?.currentModule?.currentIndex
@@ -854,3 +892,7 @@ class ProjectStoreImpl(
         }
     }
 }
+
+private fun List<Edition>.toSortedIndexedEntries(): List<IndexedEntry> =
+    associate { it.index to it.toIndexedEntry() }
+        .values.sortedBy { it.index }
