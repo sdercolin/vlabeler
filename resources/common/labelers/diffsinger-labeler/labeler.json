@@ -1,6 +1,6 @@
 {
     "name": "diffsinger.default",
-    "version": 1,
+    "version": 2,
     "serialVersion": 2,
     "singleFile": false,
     "extension": "lab",
@@ -18,7 +18,6 @@
         "ja": "wav ファイルごとに lab ファイルを作成するタイプの DiffSinger ラベラーです。1つのフォルダ内に複数の wav ファイルと、同名の lab ファイル郡を入れ、サンプルディレクトリとして設定してください。"
     },
     "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
-    "categoryTag": "Others",
     "displayOrder": 0,
     "continuous": true,
     "allowSameNameEntry": true,
