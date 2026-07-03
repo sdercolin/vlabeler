@@ -55,6 +55,7 @@ interface AppDialogState {
     val isShowingProjectSettingDialog: Boolean
     val isShowingSampleListDialog: Boolean
     val isShowingSampleDirectoryRedirectDialog: Boolean
+    val isShowingRootSampleDirectoryRedirectDialog: Boolean
     val isShowingPrerenderDialog: Boolean
     val isShowingEntrySampleSyncDialog: Boolean
     val isShowingAboutDialog: Boolean
@@ -106,6 +107,8 @@ interface AppDialogState {
     fun closeSampleListDialog()
     fun openSampleDirectoryRedirectDialog()
     fun closeSampleDirectoryRedirectDialog()
+    fun openRootSampleDirectoryRedirectDialog()
+    fun closeRootSampleDirectoryRedirectDialog()
     fun openPrerenderDialog()
     fun closePrerenderDialog()
     fun openEntrySampleSyncDialog()
@@ -159,6 +162,7 @@ interface AppDialogState {
             isShowingProjectSettingDialog ||
             isShowingSampleListDialog ||
             isShowingSampleDirectoryRedirectDialog ||
+            isShowingRootSampleDirectoryRedirectDialog ||
             isShowingPrerenderDialog ||
             isShowingEntrySampleSyncDialog ||
             isShowingAboutDialog ||
@@ -197,6 +201,7 @@ class AppDialogStateImpl(
     override var preferencesDialogArgs: PreferencesEditorState.LaunchArgs? by mutableStateOf(null)
     override var isShowingSampleListDialog: Boolean by mutableStateOf(false)
     override var isShowingSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
+    override var isShowingRootSampleDirectoryRedirectDialog: Boolean by mutableStateOf(false)
     override var isShowingPrerenderDialog: Boolean by mutableStateOf(false)
     override var isShowingEntrySampleSyncDialog: Boolean by mutableStateOf(false)
     override var isShowingAboutDialog: Boolean by mutableStateOf(false)
@@ -424,6 +429,14 @@ class AppDialogStateImpl(
 
     override fun closeSampleDirectoryRedirectDialog() {
         isShowingSampleDirectoryRedirectDialog = false
+    }
+
+    override fun openRootSampleDirectoryRedirectDialog() {
+        isShowingRootSampleDirectoryRedirectDialog = true
+    }
+
+    override fun closeRootSampleDirectoryRedirectDialog() {
+        isShowingRootSampleDirectoryRedirectDialog = false
     }
 
     override fun openPrerenderDialog() {

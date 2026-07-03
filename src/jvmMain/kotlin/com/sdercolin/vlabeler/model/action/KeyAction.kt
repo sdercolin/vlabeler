@@ -285,6 +285,7 @@ enum class KeyAction(
     ),
     PrerenderAll(listOf(Strings.MenuTools, Strings.MenuToolsPrerender), null, true),
     SyncSample(listOf(Strings.MenuTools, Strings.MenuToolsSyncSample), null, true),
+    RelocateRootSampleDirectory(listOf(Strings.MenuTools, Strings.MenuToolsRelocateRootSampleDirectory), null, true),
     RecycleMemory(listOf(Strings.MenuTools, Strings.MenuToolsRecycleMemory), null, true),
     FileNameNormalizer(listOf(Strings.MenuTools, Strings.MenuToolsFileNameNormalizer), null, true),
     ManageTemplatePlugins(

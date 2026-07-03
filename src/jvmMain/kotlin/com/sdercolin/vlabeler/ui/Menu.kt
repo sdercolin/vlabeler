@@ -530,6 +530,12 @@ fun FrameWindowScope.Menu(
                         enabled = appState.isEditorActive,
                     )
                     Item(
+                        string(Strings.MenuToolsRelocateRootSampleDirectory),
+                        onClick = { appState.openRootSampleDirectoryRedirectDialog() },
+                        shortcut = KeyAction.RelocateRootSampleDirectory.getKeyShortCut(),
+                        enabled = appState.isEditorActive,
+                    )
+                    Item(
                         string(Strings.MenuToolsRecycleMemory),
                         onClick = { System.gc() },
                         shortcut = KeyAction.RecycleMemory.getKeyShortCut(),

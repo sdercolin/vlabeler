@@ -98,6 +98,7 @@ interface ProjectStore {
     fun toggleMultipleEditMode(on: Boolean)
     fun changeSampleDirectory(directory: File)
     fun changeSampleDirectory(moduleName: String, directory: File)
+    fun changeRootSampleDirectory(directory: File)
     fun getAutoSavedProjectFile(): File?
     fun discardAutoSavedProjects()
     fun enableAutoSaveProject(
@@ -545,6 +546,20 @@ class ProjectStoreImpl(
                 val root = requireProject().rootSampleDirectory
                 copy(sampleDirectoryPath = directory.relativeTo(root).path)
             }
+        }
+    }
+
+    override fun changeRootSampleDirectory(directory: File) {
+        editProject {
+            // Keep the working directory and the cache directory at their current locations,
+            // so that only the sample files are redirected.
+            val currentWorkingDirectory = workingDirectory.absolutePath
+            val currentCacheDirectory = cacheDirectory.absolutePath
+            copy(
+                rootSampleDirectoryPath = directory.absolutePath,
+                workingDirectoryPath = currentWorkingDirectory,
+                cacheDirectoryPath = currentCacheDirectory,
+            ).makeRelativePathsIfPossible()
         }
     }
 

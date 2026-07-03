@@ -147,6 +147,25 @@ fun StandaloneDialogs(
                 }
             }
         }
+        appState.isShowingRootSampleDirectoryRedirectDialog -> {
+            val project = appState.requireProject()
+            OpenFileDialog(
+                title = string(Strings.ChooseRootSampleDirectoryDialogTitle),
+                initialDirectory = project.rootSampleDirectory
+                    .takeIf { it.isDirectory }?.absolutePath,
+                extensions = null,
+                directoryMode = true,
+            ) { parent, name ->
+                focusManager.clearFocus()
+                appState.closeRootSampleDirectoryRedirectDialog()
+                if (parent != null && name != null) {
+                    val newDirectory = File(parent, name).getDirectory()
+                    if (newDirectory.exists() && newDirectory.isDirectory) {
+                        appState.changeRootSampleDirectory(newDirectory)
+                    }
+                }
+            }
+        }
         appState.isShowingImportDialog -> OpenFileDialog(
             title = string(Strings.ImportDialogTitle),
             extensions = listOf(Project.PROJECT_FILE_EXTENSION),
