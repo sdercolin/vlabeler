@@ -45,6 +45,7 @@ import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
+import com.sdercolin.vlabeler.ui.dialog.EditEntriesTagDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogTarget
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
@@ -357,8 +358,12 @@ class AppState(
             is MoveEntryDialogResult -> {
                 moveEntry(result.oldIndex, result.newIndex)
             }
+            is EditEntriesTagDialogResult -> {
+                editEntriesTag(result.indexes, result.tag)
+            }
             is CommonConfirmationDialogResult -> when (val action = result.action) {
                 is CommonConfirmationDialogAction.RemoveEntry -> removeEntry(action.entryIndex)
+                is CommonConfirmationDialogAction.RemoveEntries -> removeEntries(action.entryIndexes)
                 is CommonConfirmationDialogAction.LoadAutoSavedProject -> {
                     loadProject(mainScope, action.file, this, autoSaved = true)
                     hasLoadedAutoSavedProject = true

@@ -206,6 +206,8 @@ fun Strings.ko(): String? = when (this) {
         "엔트리 \"%s\" 삭제 중...\n" +
             "이 엔트리는 현재 샘플 파일에서 유일하게 참조되고 있던 엔트리에요.\n" +
             "나중에 이 샘플에 엔트리를 추가하려면, `외형` -> `샘플 목록`을 눌러 주세요."
+    AskIfRemoveEntriesDialogDescription -> "%d개의 엔트리 삭제 중..."
+    EditEntriesTagDialogDescription -> "선택한 %d개 엔트리의 태그를 설정해요. 비워 두면 태그가 삭제돼요."
     AskIfLoadAutoSavedProjectDialogDescription ->
         "자동 저장된 프로젝트 파일을 찾았어요. 불러올까요? " +
             "자동 저장된 임시 파일은 다른 프로젝트를 만들거나 열면 사라지니 주의하세요."
@@ -807,5 +809,11 @@ fun Strings.ko(): String? = when (this) {
     EditorContextActionFilterUnstarred -> "즐겨찾기되지 않은 항목만 필터"
     EditorContextActionFilterDone -> "완료된 항목만 필터"
     EditorContextActionFilterUndone -> "미완료 항목만 필터"
+    EditorContextActionSetEntriesDone -> "%d개 항목을 완료로 표시"
+    EditorContextActionSetEntriesUndone -> "%d개 항목을 미완료로 표시"
+    EditorContextActionSetEntriesStarred -> "%d개 항목을 즐겨찾기에 추가"
+    EditorContextActionSetEntriesUnstarred -> "%d개 항목을 즐겨찾기에서 제거"
+    EditorContextActionEditEntriesTag -> "%d개 항목의 태그 설정..."
+    EditorContextActionRemoveEntries -> "%d개 항목 제거..."
     else -> null
 }

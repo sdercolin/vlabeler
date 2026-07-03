@@ -191,6 +191,8 @@ enum class Strings {
     MoveEntryDialogDescription,
     AskIfRemoveEntryDialogDescription,
     AskIfRemoveEntryLastDialogDescription,
+    AskIfRemoveEntriesDialogDescription,
+    EditEntriesTagDialogDescription,
     AskIfLoadAutoSavedProjectDialogDescription,
     AskIfRedirectSampleDirectoryDialogDescription,
     AskIfLabelFileChangeDetectedDialogDescription,
@@ -669,6 +671,12 @@ enum class Strings {
     EditorContextActionFilterUnstarred,
     EditorContextActionFilterDone,
     EditorContextActionFilterUndone,
+    EditorContextActionSetEntriesDone,
+    EditorContextActionSetEntriesUndone,
+    EditorContextActionSetEntriesStarred,
+    EditorContextActionSetEntriesUnstarred,
+    EditorContextActionEditEntriesTag,
+    EditorContextActionRemoveEntries,
     ;
 
     fun get(language: Language): String = when (language) {

@@ -13,6 +13,7 @@ import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
+import com.sdercolin.vlabeler.ui.dialog.EditEntriesTagDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogTarget
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
@@ -99,6 +100,8 @@ interface AppDialogState {
     fun openEditModuleExtraDialog()
     fun askIfSaveBeforeExit()
     fun confirmIfRemoveEntry(index: Int, name: String, isLastEntry: Boolean)
+    fun confirmIfRemoveEntries(indexes: List<Int>)
+    fun openEditEntriesTagDialog(indexes: List<Int>, commonTag: String)
     fun confirmIfLoadAutoSavedProject(file: File)
     fun confirmIfRedirectSampleDirectory(currentDirectory: File)
     fun confirmIfRemoveCustomizableItem(state: CustomizableItemManagerDialogState<*>, item: CustomizableItem)
@@ -398,6 +401,12 @@ class AppDialogStateImpl(
 
     override fun confirmIfRemoveEntry(index: Int, name: String, isLastEntry: Boolean) =
         openEmbeddedDialog(CommonConfirmationDialogAction.RemoveEntry(index, name, isLastEntry))
+
+    override fun confirmIfRemoveEntries(indexes: List<Int>) =
+        openEmbeddedDialog(CommonConfirmationDialogAction.RemoveEntries(indexes))
+
+    override fun openEditEntriesTagDialog(indexes: List<Int>, commonTag: String) =
+        openEmbeddedDialog(EditEntriesTagDialogArgs(indexes, commonTag))
 
     override fun confirmIfLoadAutoSavedProject(file: File) =
         openEmbeddedDialog(CommonConfirmationDialogAction.LoadAutoSavedProject(file))

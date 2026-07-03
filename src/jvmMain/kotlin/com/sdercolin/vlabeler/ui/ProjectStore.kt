@@ -113,6 +113,10 @@ interface ProjectStore {
     fun toggleCurrentEntryStar()
     fun editEntryTag(index: Int, tag: String)
     fun editCurrentEntryTag(tag: String)
+    fun setEntriesDone(indexes: List<Int>, done: Boolean)
+    fun setEntriesStar(indexes: List<Int>, star: Boolean)
+    fun editEntriesTag(indexes: List<Int>, tag: String)
+    fun removeEntries(indexes: List<Int>)
     val canEditCurrentEntryExtra: Boolean
     val canEditCurrentModuleExtra: Boolean
 
@@ -334,13 +338,30 @@ class ProjectStoreImpl(
     override val canUndo get() = history.canUndo
     override fun undo() {
         history.undo()
-        project = history.current
+        project = history.current.withCurrentIndexesKept()
+    }
+
+    /**
+     * When index changes are squashed in the history, a restored snapshot carries the indexes from when it was
+     * pushed, which may be stale. Keep the indexes of the current project instead, so that undo/redo does not move
+     * the cursor.
+     */
+    private fun Project.withCurrentIndexesKept(): Project {
+        if (!appConf.value.history.squashIndex) return this
+        val current = project ?: return this
+        return copy(
+            currentModuleIndex = current.currentModuleIndex.coerceIn(0, modules.lastIndex),
+            modules = modules.mapIndexed { index, module ->
+                val currentModule = current.modules.getOrNull(index) ?: return@mapIndexed module
+                module.copy(currentIndex = currentModule.currentIndex.coerceIn(0, module.entries.lastIndex))
+            },
+        )
     }
 
     override val canRedo get() = history.canRedo
     override fun redo() {
         history.redo()
-        project = history.current
+        project = history.current.withCurrentIndexesKept()
     }
 
     override val canGoNextEntryOrSample: Boolean
@@ -631,6 +652,29 @@ class ProjectStoreImpl(
 
     override fun editCurrentEntryTag(tag: String) {
         editCurrentProjectModule { editEntryTag(currentIndex, tag) }
+    }
+
+    override fun setEntriesDone(indexes: List<Int>, done: Boolean) {
+        editCurrentProjectModule { setEntriesDone(indexes, done) }
+    }
+
+    override fun setEntriesStar(indexes: List<Int>, star: Boolean) {
+        editCurrentProjectModule { setEntriesStar(indexes, star) }
+    }
+
+    override fun editEntriesTag(indexes: List<Int>, tag: String) {
+        editCurrentProjectModule { editEntriesTag(indexes, tag) }
+    }
+
+    override fun removeEntries(indexes: List<Int>) {
+        val previousProject = requireProject()
+        editProject { updateCurrentModule { removeEntries(indexes, labelerConf) } }
+        val autoScrollConf = appConf.value.editor.autoScroll
+        if ((requireProject().hasSwitchedSample(previousProject) && autoScrollConf.onLoadedNewSample) ||
+            autoScrollConf.onSwitched
+        ) {
+            scrollFitViewModel.emitNext()
+        }
     }
 
     override val canEditCurrentEntryExtra: Boolean

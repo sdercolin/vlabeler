@@ -205,6 +205,8 @@ fun Strings.en(): String = when (this) {
         "Removing entry \"%s\"...\n" +
             "This entry is the only one that has reference of the current sample file.\n" +
             "If you need to add an entry on it later, please see menu `View` -> `Sample List`."
+    AskIfRemoveEntriesDialogDescription -> "Removing %d entries..."
+    EditEntriesTagDialogDescription -> "Set tag for %d selected entries. Leave empty to clear tags."
     AskIfLoadAutoSavedProjectDialogDescription ->
         "Auto-saved project file found. Do you want to load it? " +
             "The file will be discarded if you opened or created another one."
@@ -833,4 +835,10 @@ fun Strings.en(): String = when (this) {
     EditorContextActionFilterUnstarred -> "Filter Unstarred Entries"
     EditorContextActionFilterDone -> "Filter Done Entries"
     EditorContextActionFilterUndone -> "Filter Undone Entries"
+    EditorContextActionSetEntriesDone -> "Mark %d Entries as Done"
+    EditorContextActionSetEntriesUndone -> "Mark %d Entries as Not Done"
+    EditorContextActionSetEntriesStarred -> "Star %d Entries"
+    EditorContextActionSetEntriesUnstarred -> "Unstar %d Entries"
+    EditorContextActionEditEntriesTag -> "Set Tag for %d Entries..."
+    EditorContextActionRemoveEntries -> "Remove %d Entries..."
 }
