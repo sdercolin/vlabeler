@@ -209,8 +209,6 @@ fun Strings.en(): String = when (this) {
             "This entry is the only one that has reference of the current sample file.\n" +
             "If you need to add an entry on it later, please see menu `View` -> `Sample List`."
     AskIfRemoveEntriesDialogDescription -> "Removing %d entries..."
-    AskIfReloadAllLabelFilesDialogDescription ->
-        "Reloading label files of %d subprojects (%d added, %d removed, %d edited entries)..."
     EditEntriesTagDialogDescription -> "Set tag for %d selected entries. Leave empty to clear tags."
     AskIfLoadAutoSavedProjectDialogDescription ->
         "Auto-saved project file found. Do you want to load it? " +

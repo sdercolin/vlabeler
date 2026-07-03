@@ -194,7 +194,6 @@ enum class Strings {
     AskIfRemoveEntryDialogDescription,
     AskIfRemoveEntryLastDialogDescription,
     AskIfRemoveEntriesDialogDescription,
-    AskIfReloadAllLabelFilesDialogDescription,
     EditEntriesTagDialogDescription,
     AskIfLoadAutoSavedProjectDialogDescription,
     AskIfRedirectSampleDirectoryDialogDescription,

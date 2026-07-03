@@ -22,6 +22,7 @@ import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
+import com.sdercolin.vlabeler.ui.dialog.ReloadLabelConfigs
 import com.sdercolin.vlabeler.ui.dialog.ReloadLabelDialogArgs
 import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
@@ -158,7 +159,7 @@ interface ProjectStore {
      */
     fun reloadAllLabelFiles(skipConfirmation: Boolean)
     fun canReloadAllLabelFiles(): Boolean
-    fun applyAllReloadedEntries(reloads: List<ModuleLabelReload>)
+    fun applyAllReloadedEntries(reloads: List<ModuleLabelReload>, configs: ReloadLabelConfigs = ReloadLabelConfigs())
     fun autoReloadLabel(behavior: AppConf.AutoReload.Behavior, moduleName: String)
     suspend fun terminalAutoReloadLabel()
 
@@ -865,9 +866,7 @@ class ProjectStoreImpl(
             } else {
                 dialogState?.openReloadLabelDialog(
                     ReloadLabelDialogArgs(
-                        project.currentModule.name,
-                        result.first,
-                        result.second,
+                        listOf(ModuleLabelReload(project.currentModule.name, result.first, result.second)),
                     ),
                 )
             }
@@ -898,7 +897,7 @@ class ProjectStoreImpl(
             if (skipConfirmation) {
                 applyAllReloadedEntries(reloads)
             } else {
-                dialogState?.confirmIfReloadAllLabelFiles(reloads)
+                dialogState?.openReloadLabelDialog(ReloadLabelDialogArgs(reloads))
             }
         }
     }
@@ -908,10 +907,10 @@ class ProjectStoreImpl(
         return project.modules.size > 1 && project.modules.any { it.getRawFile(project) != null }
     }
 
-    override fun applyAllReloadedEntries(reloads: List<ModuleLabelReload>) {
+    override fun applyAllReloadedEntries(reloads: List<ModuleLabelReload>, configs: ReloadLabelConfigs) {
         editProject {
             reloads.fold(this) { acc, reload ->
-                acc.applyReloadedEntries(reload.moduleName, reload.entries, reload.diff)
+                acc.applyReloadedEntries(reload.moduleName, reload.entries, reload.diff, configs)
             }
         }
     }

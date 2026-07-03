@@ -209,8 +209,6 @@ fun Strings.ko(): String? = when (this) {
             "이 엔트리는 현재 샘플 파일에서 유일하게 참조되고 있던 엔트리에요.\n" +
             "나중에 이 샘플에 엔트리를 추가하려면, `외형` -> `샘플 목록`을 눌러 주세요."
     AskIfRemoveEntriesDialogDescription -> "%d개의 엔트리 삭제 중..."
-    AskIfReloadAllLabelFilesDialogDescription ->
-        "%d개 하위 프로젝트의 라벨 파일을 새로 고쳐요. (엔트리 %d개 추가, %d개 삭제, %d개 편집)"
     EditEntriesTagDialogDescription -> "선택한 %d개 엔트리의 태그를 설정해요. 비워 두면 태그가 삭제돼요."
     AskIfLoadAutoSavedProjectDialogDescription ->
         "자동 저장된 프로젝트 파일을 찾았어요. 불러올까요? " +

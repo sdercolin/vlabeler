@@ -194,7 +194,7 @@ fun App(
                 finish = { result ->
                     appState.closeReloadLabelDialog()
                     if (result != null) {
-                        appState.editProject { applyReloadedEntries(args.entries, args.diff, result) }
+                        appState.applyAllReloadedEntries(args.reloads, result)
                     }
                 },
             )

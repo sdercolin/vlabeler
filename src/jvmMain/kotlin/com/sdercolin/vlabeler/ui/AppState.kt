@@ -364,7 +364,6 @@ class AppState(
             is CommonConfirmationDialogResult -> when (val action = result.action) {
                 is CommonConfirmationDialogAction.RemoveEntry -> removeEntry(action.entryIndex)
                 is CommonConfirmationDialogAction.RemoveEntries -> removeEntries(action.entryIndexes)
-                is CommonConfirmationDialogAction.ReloadAllLabelFiles -> applyAllReloadedEntries(action.reloads)
                 is CommonConfirmationDialogAction.LoadAutoSavedProject -> {
                     loadProject(mainScope, action.file, this, autoSaved = true)
                     hasLoadedAutoSavedProject = true
