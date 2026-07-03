@@ -338,13 +338,30 @@ class ProjectStoreImpl(
     override val canUndo get() = history.canUndo
     override fun undo() {
         history.undo()
-        project = history.current
+        project = history.current.withCurrentIndexesKept()
+    }
+
+    /**
+     * When index changes are squashed in the history, a restored snapshot carries the indexes from when it was
+     * pushed, which may be stale. Keep the indexes of the current project instead, so that undo/redo does not move
+     * the cursor.
+     */
+    private fun Project.withCurrentIndexesKept(): Project {
+        if (!appConf.value.history.squashIndex) return this
+        val current = project ?: return this
+        return copy(
+            currentModuleIndex = current.currentModuleIndex.coerceIn(0, modules.lastIndex),
+            modules = modules.mapIndexed { index, module ->
+                val currentModule = current.modules.getOrNull(index) ?: return@mapIndexed module
+                module.copy(currentIndex = currentModule.currentIndex.coerceIn(0, module.entries.lastIndex))
+            },
+        )
     }
 
     override val canRedo get() = history.canRedo
     override fun redo() {
         history.redo()
-        project = history.current
+        project = history.current.withCurrentIndexesKept()
     }
 
     override val canGoNextEntryOrSample: Boolean
