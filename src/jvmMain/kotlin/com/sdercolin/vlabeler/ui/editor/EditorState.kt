@@ -202,7 +202,13 @@ class EditorState(
         val editionGroups = editions.groupContinuouslyBy { index }
         editionGroups.forEach { group ->
             group.forEach { edition ->
-                editedEntries[edition.index] = edition.toIndexedEntry()
+                // Editions of entries that are not loaded for editing (e.g. a synced neighbor entry in
+                // single edit mode of a continuous labeler) should not be added to the edited entry list,
+                // otherwise the marker's entry list grows during dragging and the dragged point is
+                // reinterpreted against the wrong entry.
+                if (editedEntries.containsKey(edition.index)) {
+                    editedEntries[edition.index] = edition.toIndexedEntry()
+                }
                 this.editions[edition.index] = edition
             }
             if (project.labelerConf.continuous) {
