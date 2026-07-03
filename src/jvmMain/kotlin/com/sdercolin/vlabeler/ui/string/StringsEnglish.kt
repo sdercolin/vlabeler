@@ -205,7 +205,7 @@ fun Strings.en(): String = when (this) {
         "Removing entry \"%s\"...\n" +
             "This entry is the only one that has reference of the current sample file.\n" +
             "If you need to add an entry on it later, please see menu `View` -> `Sample List`."
-    AskIfRemoveEntriesDialogDescription -> "Are you sure you want to remove %d entries?"
+    AskIfRemoveEntriesDialogDescription -> "Removing %d entries..."
     EditEntriesTagDialogDescription -> "Set tag for %d selected entries. Leave empty to clear tags."
     AskIfLoadAutoSavedProjectDialogDescription ->
         "Auto-saved project file found. Do you want to load it? " +

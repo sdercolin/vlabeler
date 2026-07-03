@@ -202,7 +202,7 @@ fun Strings.ja(): String? = when (this) {
         "エントリ「%s」を削除します。\n" +
             "このエントリはサンプルに紐付けられている唯一のエントリのため、削除すると、サンプルはプロジェクトから消えますが、" +
             "メニュー「表示」->「サンプルリスト」で確認・再度追加できます。"
-    AskIfRemoveEntriesDialogDescription -> "%d 個のエントリを削除してもよろしいですか？"
+    AskIfRemoveEntriesDialogDescription -> "%d 個のエントリを削除します。"
     EditEntriesTagDialogDescription -> "選択した %d 個のエントリのタグを設定します。空にするとタグがクリアされます。"
     AskIfLoadAutoSavedProjectDialogDescription ->
         "自動保存されたプロジェクトファイルが見つかりました。読み込みますか？" +
@@ -791,8 +791,8 @@ fun Strings.ja(): String? = when (this) {
     EditorContextActionFilterUndone -> "未完了のエントリをフィルター"
     EditorContextActionSetEntriesDone -> "%d 個のエントリを完了にする"
     EditorContextActionSetEntriesUndone -> "%d 個のエントリを未完了にする"
-    EditorContextActionSetEntriesStarred -> "%d 個のエントリにスターを付ける"
-    EditorContextActionSetEntriesUnstarred -> "%d 個のエントリのスターを外す"
+    EditorContextActionSetEntriesStarred -> "%d 個のエントリにスターマークを付ける"
+    EditorContextActionSetEntriesUnstarred -> "%d 個のエントリのスターマークを外す"
     EditorContextActionEditEntriesTag -> "%d 個のエントリのタグを設定..."
     EditorContextActionRemoveEntries -> "%d 個のエントリを削除..."
     else -> null

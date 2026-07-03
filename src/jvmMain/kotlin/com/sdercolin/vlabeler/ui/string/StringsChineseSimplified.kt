@@ -196,7 +196,7 @@ fun Strings.zhHans(): String? = when (this) {
     AskIfRemoveEntryLastDialogDescription ->
         "将要删除条目\"%s\"...\n" +
             "该条目是当前采样文件关联到的唯一条目。如果您想重新关联这个采样文件，请前往菜单 `视图` -> `采样列表`"
-    AskIfRemoveEntriesDialogDescription -> "确定要删除 %d 个条目吗？"
+    AskIfRemoveEntriesDialogDescription -> "将要删除 %d 个条目..."
     EditEntriesTagDialogDescription -> "为选中的 %d 个条目设置标签。留空以清除标签。"
     AskIfLoadAutoSavedProjectDialogDescription -> "发现自动保存的项目文件。是否读取？该文件将会在您打开或创建别的项目时被删除。"
     AskIfRedirectSampleDirectoryDialogDescription ->

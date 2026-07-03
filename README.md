@@ -298,6 +298,25 @@ All these filters are combined with `AND` logic.
 
 You can click the `More` button to open a dialog to use the advanced filters.
 
+### Selecting multiple entries
+
+In the pinned entry list and the entry list popup in the editor, you can select multiple entries and edit them
+together:
+
+- `Ctrl` + click: add an entry to the selection, or remove it from the selection
+- `Shift` + click: select a range of entries
+
+Note that the above `Ctrl` is mapped to `Command` if you are using macOS.
+
+Right-click on the selected entries to show the available batch actions:
+
+- Mark the selected entries as done/not done
+- Star/unstar the selected entries
+- Set a tag for the selected entries
+- Remove the selected entries
+
+A click without modifier keys clears the selection. A batch action can be reverted by a single `Undo`.
+
 ### Linking filter to editor
 
 By default, project navigation (go to next sample/entry etc. by keyboard shortcuts, mouse wheel scroll or button click)
