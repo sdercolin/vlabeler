@@ -20,6 +20,8 @@ fun Strings.zhHans(): String? = when (this) {
     MenuFileReloadLabelFilePickFile -> "使用选择的文件..."
     MenuFileReloadLabelFileDefault -> "使用输出文件..."
     MenuFileReloadLabelFileDefaultWithoutConfirmation -> "使用输出文件（跳过确认）"
+    MenuFileReloadLabelFileAllModules -> "使用所有子项目的输出文件..."
+    MenuFileReloadLabelFileAllModulesWithoutConfirmation -> "使用所有子项目的输出文件（跳过确认）"
     MenuFileExport -> "导出为标注文件..."
     MenuFileExportOverwrite -> "覆盖导出标注文件"
     MenuFileExportOverwriteAll -> "覆盖导出全部标注文件"

@@ -40,8 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.io.ModuleLabelReload
 import com.sdercolin.vlabeler.model.Entry
-import com.sdercolin.vlabeler.model.EntryListDiff
 import com.sdercolin.vlabeler.model.EntryListDiffItem
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.DoneIcon
@@ -49,6 +49,7 @@ import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.LargeDialogContainer
 import com.sdercolin.vlabeler.ui.common.NavigatorItemSummary
 import com.sdercolin.vlabeler.ui.common.NavigatorListItemNumber
+import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.StarIcon
 import com.sdercolin.vlabeler.ui.common.WithTooltip
 import com.sdercolin.vlabeler.ui.string.*
@@ -59,9 +60,7 @@ import com.sdercolin.vlabeler.util.alpha
 import com.sdercolin.vlabeler.util.toColor
 
 data class ReloadLabelDialogArgs(
-    val moduleName: String,
-    val entries: List<Entry>,
-    val diff: EntryListDiff,
+    val reloads: List<ModuleLabelReload>,
 )
 
 data class ReloadLabelConfigs(
@@ -92,7 +91,12 @@ fun ReloadLabelDialog(
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.height(25.dp))
-            Content(moduleName = args.moduleName, diff = args.diff)
+            var selectedIndex by remember { mutableStateOf(0) }
+            Content(
+                reloads = args.reloads,
+                selectedIndex = selectedIndex,
+                onSelectIndex = { selectedIndex = it },
+            )
             Spacer(modifier = Modifier.height(25.dp))
             ButtonBar(finish)
         }
@@ -100,7 +104,13 @@ fun ReloadLabelDialog(
 }
 
 @Composable
-fun ColumnScope.Content(moduleName: String, diff: EntryListDiff) {
+private fun ColumnScope.Content(
+    reloads: List<ModuleLabelReload>,
+    selectedIndex: Int,
+    onSelectIndex: (Int) -> Unit,
+) {
+    val reload = reloads[selectedIndex.coerceIn(reloads.indices)]
+    val diff = reload.diff
     var showUnchanged by remember { mutableStateOf(false) }
     val items = remember(showUnchanged, diff) {
         if (showUnchanged) {
@@ -111,9 +121,16 @@ fun ColumnScope.Content(moduleName: String, diff: EntryListDiff) {
     }
     Column(modifier = Modifier.fillMaxWidth().weight(1f)) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            if (moduleName.isNotBlank()) {
+            if (reloads.size > 1) {
+                SelectionBox(
+                    value = selectedIndex,
+                    onSelect = onSelectIndex,
+                    options = reloads.indices.toList(),
+                    getText = { index -> reloads[index].getDisplayText() },
+                )
+            } else if (reload.moduleName.isNotBlank()) {
                 Text(
-                    text = string(Strings.ReloadLabelDialogModuleNameTemplate, moduleName),
+                    text = string(Strings.ReloadLabelDialogModuleNameTemplate, reload.moduleName),
                     style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -153,6 +170,15 @@ fun ColumnScope.Content(moduleName: String, diff: EntryListDiff) {
             }
         }
     }
+}
+
+@Composable
+private fun ModuleLabelReload.getDisplayText(): String {
+    val name = moduleName.ifBlank { string(Strings.CommonRootModuleName) }
+    val added = diff.items.count { it is EntryListDiffItem.Add }
+    val removed = diff.items.count { it is EntryListDiffItem.Remove }
+    val edited = diff.items.count { it is EntryListDiffItem.Edit }
+    return "$name (+$added -$removed ~$edited)"
 }
 
 @Composable

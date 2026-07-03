@@ -20,6 +20,8 @@ fun Strings.ja(): String? = when (this) {
     MenuFileReloadLabelFilePickFile -> "ファイルから..."
     MenuFileReloadLabelFileDefault -> "出力先ファイルから..."
     MenuFileReloadLabelFileDefaultWithoutConfirmation -> "出力先ファイルから（確認なし）"
+    MenuFileReloadLabelFileAllModules -> "すべてのサブプロジェクトの出力先ファイルから..."
+    MenuFileReloadLabelFileAllModulesWithoutConfirmation -> "すべてのサブプロジェクトの出力先ファイルから（確認なし）"
     MenuFileExport -> "ラベルファイルをエクスポート..."
     MenuFileExportOverwrite -> "ラベルファイルを上書きエクスポート"
     MenuFileExportOverwriteAll -> "すべてのラベルファイルを上書きエクスポート"

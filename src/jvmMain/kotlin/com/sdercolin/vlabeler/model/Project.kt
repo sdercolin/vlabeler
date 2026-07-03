@@ -155,11 +155,19 @@ data class Project(
         entries: List<Entry>,
         diff: EntryListDiff,
         configs: ReloadLabelConfigs = ReloadLabelConfigs(),
+    ): Project = applyReloadedEntries(currentModule.name, entries, diff, configs)
+
+    fun applyReloadedEntries(
+        moduleName: String,
+        entries: List<Entry>,
+        diff: EntryListDiff,
+        configs: ReloadLabelConfigs = ReloadLabelConfigs(),
     ): Project {
-        val mergedEntries = mergeEntryLists(entries, currentModule.entries, diff, configs)
-        val newModule = currentModule.copy(entries = mergedEntries, currentIndex = 0)
+        val module = modules.first { it.name == moduleName }
+        val mergedEntries = mergeEntryLists(entries, module.entries, diff, configs)
+        val newModule = module.copy(entries = mergedEntries, currentIndex = 0)
         return copy(
-            modules = modules.map { if (it == currentModule) newModule else it },
+            modules = modules.map { if (it.name == moduleName) newModule else it },
             entryFilter = null,
         ).applyCurrentEntryFilter()
     }

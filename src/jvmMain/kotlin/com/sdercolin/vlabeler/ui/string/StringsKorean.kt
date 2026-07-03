@@ -20,6 +20,8 @@ fun Strings.ko(): String? = when (this) {
     MenuFileReloadLabelFilePickFile -> "파일에서 불러오기..."
     MenuFileReloadLabelFileDefault -> "출력 파일에서 불러오기..."
     MenuFileReloadLabelFileDefaultWithoutConfirmation -> "출력 파일에서 불러오기 (확인 없이)"
+    MenuFileReloadLabelFileAllModules -> "모든 하위 프로젝트의 출력 파일에서 불러오기..."
+    MenuFileReloadLabelFileAllModulesWithoutConfirmation -> "모든 하위 프로젝트의 출력 파일에서 불러오기 (확인 없이)"
     MenuFileExport -> "라벨 파일 내보내기..."
     MenuFileExportOverwrite -> "덮어씌워 라벨 파일 내보내기"
     MenuFileExportOverwriteAll -> "덮어씌워 모든 라벨 파일 내보내기"

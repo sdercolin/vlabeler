@@ -68,6 +68,16 @@ enum class KeyAction(
         null,
         true,
     ),
+    ReloadLabelFileAllModules(
+        listOf(Strings.MenuFile, Strings.MenuFileReloadLabelFileAllModules),
+        null,
+        true,
+    ),
+    ReloadLabelFileAllModulesWithoutConfirmation(
+        listOf(Strings.MenuFile, Strings.MenuFileReloadLabelFileAllModulesWithoutConfirmation),
+        null,
+        true,
+    ),
     ExportProject(
         listOf(Strings.MenuFile, Strings.MenuFileExport),
         KeySet(Key.E, setOf(Key.Ctrl)),

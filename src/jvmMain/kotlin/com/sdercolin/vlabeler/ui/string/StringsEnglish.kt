@@ -18,6 +18,9 @@ fun Strings.en(): String = when (this) {
     MenuFileReloadLabelFilePickFile -> "From File..."
     MenuFileReloadLabelFileDefault -> "From Output File..."
     MenuFileReloadLabelFileDefaultWithoutConfirmation -> "From Output File (without confirmation)"
+    MenuFileReloadLabelFileAllModules -> "From Output Files of All Subprojects..."
+    MenuFileReloadLabelFileAllModulesWithoutConfirmation ->
+        "From Output Files of All Subprojects (without confirmation)"
     MenuFileExport -> "Export Label File..."
     MenuFileExportOverwrite -> "Export Label File Overwriting"
     MenuFileExportOverwriteAll -> "Export All Label Files Overwriting"

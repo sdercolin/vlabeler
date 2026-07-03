@@ -19,6 +19,8 @@ enum class Strings {
     MenuFileReloadLabelFilePickFile,
     MenuFileReloadLabelFileDefault,
     MenuFileReloadLabelFileDefaultWithoutConfirmation,
+    MenuFileReloadLabelFileAllModules,
+    MenuFileReloadLabelFileAllModulesWithoutConfirmation,
     MenuFileExport,
     MenuFileExportOverwrite,
     MenuFileExportOverwriteAll,
