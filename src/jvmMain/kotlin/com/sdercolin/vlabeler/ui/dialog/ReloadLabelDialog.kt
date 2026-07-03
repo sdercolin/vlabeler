@@ -44,12 +44,12 @@ import com.sdercolin.vlabeler.io.ModuleLabelReload
 import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.EntryListDiffItem
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
-import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.DoneIcon
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.LargeDialogContainer
 import com.sdercolin.vlabeler.ui.common.NavigatorItemSummary
 import com.sdercolin.vlabeler.ui.common.NavigatorListItemNumber
+import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.StarIcon
 import com.sdercolin.vlabeler.ui.common.WithTooltip
 import com.sdercolin.vlabeler.ui.string.*
