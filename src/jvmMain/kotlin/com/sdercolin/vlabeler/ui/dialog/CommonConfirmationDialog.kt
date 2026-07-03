@@ -16,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.sdercolin.vlabeler.io.ModuleLabelReload
+import com.sdercolin.vlabeler.model.EntryListDiffItem
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
@@ -67,6 +69,22 @@ sealed class CommonConfirmationDialogAction(
     object LabelFileChangeDetected : CommonConfirmationDialogAction(
         Strings.AskIfLabelFileChangeDetectedDialogDescription,
     )
+
+    class ReloadAllLabelFiles(val reloads: List<ModuleLabelReload>) :
+        CommonConfirmationDialogAction(
+            getText = {
+                val added = reloads.sumOf { reload -> reload.diff.items.count { it is EntryListDiffItem.Add } }
+                val removed = reloads.sumOf { reload -> reload.diff.items.count { it is EntryListDiffItem.Remove } }
+                val edited = reloads.sumOf { reload -> reload.diff.items.count { it is EntryListDiffItem.Edit } }
+                string(
+                    Strings.AskIfReloadAllLabelFilesDialogDescription,
+                    reloads.size,
+                    added,
+                    removed,
+                    edited,
+                )
+            },
+        )
 
     object ClearAppRecord : CommonConfirmationDialogAction(Strings.PreferencesMiscClearRecordConfirmation)
     object ClearAppData : CommonConfirmationDialogAction(Strings.PreferencesMiscClearAppDataConfirmation)

@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.io.ModuleLabelReload
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
@@ -101,6 +102,7 @@ interface AppDialogState {
     fun askIfSaveBeforeExit()
     fun confirmIfRemoveEntry(index: Int, name: String, isLastEntry: Boolean)
     fun confirmIfRemoveEntries(indexes: List<Int>)
+    fun confirmIfReloadAllLabelFiles(reloads: List<ModuleLabelReload>)
     fun openEditEntriesTagDialog(indexes: List<Int>, commonTag: String)
     fun confirmIfLoadAutoSavedProject(file: File)
     fun confirmIfRedirectSampleDirectory(currentDirectory: File)
@@ -404,6 +406,9 @@ class AppDialogStateImpl(
 
     override fun confirmIfRemoveEntries(indexes: List<Int>) =
         openEmbeddedDialog(CommonConfirmationDialogAction.RemoveEntries(indexes))
+
+    override fun confirmIfReloadAllLabelFiles(reloads: List<ModuleLabelReload>) =
+        openEmbeddedDialog(CommonConfirmationDialogAction.ReloadAllLabelFiles(reloads))
 
     override fun openEditEntriesTagDialog(indexes: List<Int>, commonTag: String) =
         openEmbeddedDialog(EditEntriesTagDialogArgs(indexes, commonTag))

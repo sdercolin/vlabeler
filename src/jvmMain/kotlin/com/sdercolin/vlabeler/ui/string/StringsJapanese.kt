@@ -20,6 +20,8 @@ fun Strings.ja(): String? = when (this) {
     MenuFileReloadLabelFilePickFile -> "ファイルから..."
     MenuFileReloadLabelFileDefault -> "出力先ファイルから..."
     MenuFileReloadLabelFileDefaultWithoutConfirmation -> "出力先ファイルから（確認なし）"
+    MenuFileReloadLabelFileAllModules -> "すべてのサブプロジェクトの出力先ファイルから..."
+    MenuFileReloadLabelFileAllModulesWithoutConfirmation -> "すべてのサブプロジェクトの出力先ファイルから（確認なし）"
     MenuFileExport -> "ラベルファイルをエクスポート..."
     MenuFileExportOverwrite -> "ラベルファイルを上書きエクスポート"
     MenuFileExportOverwriteAll -> "すべてのラベルファイルを上書きエクスポート"
@@ -203,6 +205,8 @@ fun Strings.ja(): String? = when (this) {
             "このエントリはサンプルに紐付けられている唯一のエントリのため、削除すると、サンプルはプロジェクトから消えますが、" +
             "メニュー「表示」->「サンプルリスト」で確認・再度追加できます。"
     AskIfRemoveEntriesDialogDescription -> "%d 個のエントリを削除します。"
+    AskIfReloadAllLabelFilesDialogDescription ->
+        "%d 個のサブプロジェクトのラベルファイルを再読み込みします（%d 個のエントリが追加、%d 個が削除、%d 個が編集されます）。"
     EditEntriesTagDialogDescription -> "選択した %d 個のエントリのタグを設定します。空にするとタグがクリアされます。"
     AskIfLoadAutoSavedProjectDialogDescription ->
         "自動保存されたプロジェクトファイルが見つかりました。読み込みますか？" +

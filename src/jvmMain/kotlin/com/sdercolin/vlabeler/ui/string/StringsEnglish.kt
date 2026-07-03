@@ -18,6 +18,9 @@ fun Strings.en(): String = when (this) {
     MenuFileReloadLabelFilePickFile -> "From File..."
     MenuFileReloadLabelFileDefault -> "From Output File..."
     MenuFileReloadLabelFileDefaultWithoutConfirmation -> "From Output File (without confirmation)"
+    MenuFileReloadLabelFileAllModules -> "From Output Files of All Subprojects..."
+    MenuFileReloadLabelFileAllModulesWithoutConfirmation ->
+        "From Output Files of All Subprojects (without confirmation)"
     MenuFileExport -> "Export Label File..."
     MenuFileExportOverwrite -> "Export Label File Overwriting"
     MenuFileExportOverwriteAll -> "Export All Label Files Overwriting"
@@ -206,6 +209,8 @@ fun Strings.en(): String = when (this) {
             "This entry is the only one that has reference of the current sample file.\n" +
             "If you need to add an entry on it later, please see menu `View` -> `Sample List`."
     AskIfRemoveEntriesDialogDescription -> "Removing %d entries..."
+    AskIfReloadAllLabelFilesDialogDescription ->
+        "Reloading label files of %d subprojects (%d added, %d removed, %d edited entries)..."
     EditEntriesTagDialogDescription -> "Set tag for %d selected entries. Leave empty to clear tags."
     AskIfLoadAutoSavedProjectDialogDescription ->
         "Auto-saved project file found. Do you want to load it? " +

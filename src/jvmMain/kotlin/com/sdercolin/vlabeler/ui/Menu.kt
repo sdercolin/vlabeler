@@ -150,6 +150,18 @@ fun FrameWindowScope.Menu(
                             shortcut = KeyAction.ReloadLabelFileDefaultWithoutConfirmation.getKeyShortCut(),
                             enabled = canReloadLabelFile && appState.hasRawLabelFileForCurrentModule(),
                         )
+                        Item(
+                            string(Strings.MenuFileReloadLabelFileAllModules),
+                            onClick = { appState.reloadAllLabelFiles(skipConfirmation = false) },
+                            shortcut = KeyAction.ReloadLabelFileAllModules.getKeyShortCut(),
+                            enabled = canReloadLabelFile && appState.canReloadAllLabelFiles(),
+                        )
+                        Item(
+                            string(Strings.MenuFileReloadLabelFileAllModulesWithoutConfirmation),
+                            onClick = { appState.reloadAllLabelFiles(skipConfirmation = true) },
+                            shortcut = KeyAction.ReloadLabelFileAllModulesWithoutConfirmation.getKeyShortCut(),
+                            enabled = canReloadLabelFile && appState.canReloadAllLabelFiles(),
+                        )
                     }
                     Item(
                         string(Strings.MenuFileExport),

@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectUpdateOnSampleException
 import com.sdercolin.vlabeler.exception.PropertySetterRuntimeException
 import com.sdercolin.vlabeler.exception.PropertySetterUnexpectedRuntimeException
+import com.sdercolin.vlabeler.io.ModuleLabelReload
 import com.sdercolin.vlabeler.io.autoSaveTemporaryProjectFile
 import com.sdercolin.vlabeler.io.exportProject
 import com.sdercolin.vlabeler.io.exportProjectModule
@@ -148,6 +149,16 @@ interface ProjectStore {
      * @param skipConfirmation If true, skip the confirmation dialog and apply the new entries directly.
      */
     fun reloadLabelFile(file: File?, skipConfirmation: Boolean)
+
+    /**
+     * Reloads the label files of all modules that have a defined raw label file, and updates the project with the
+     * new entries.
+     *
+     * @param skipConfirmation If true, skip the confirmation dialog and apply the new entries directly.
+     */
+    fun reloadAllLabelFiles(skipConfirmation: Boolean)
+    fun canReloadAllLabelFiles(): Boolean
+    fun applyAllReloadedEntries(reloads: List<ModuleLabelReload>)
     fun autoReloadLabel(behavior: AppConf.AutoReload.Behavior, moduleName: String)
     suspend fun terminalAutoReloadLabel()
 
@@ -859,6 +870,48 @@ class ProjectStoreImpl(
                         result.second,
                     ),
                 )
+            }
+        }
+    }
+
+    override fun reloadAllLabelFiles(skipConfirmation: Boolean) {
+        val project = project ?: return
+        val modulesWithFiles = project.modules.mapNotNull { module ->
+            module.getRawFile(project)?.takeIf { it.exists() }?.let { module to it }
+        }
+        if (modulesWithFiles.isEmpty()) return
+        scope.launch {
+            progressState.showProgress()
+            val results = withContext(Dispatchers.IO) {
+                modulesWithFiles.map { (module, file) ->
+                    reloadEntriesFromLabelFile(project, module, file)
+                        .map { ModuleLabelReload(module.name, it.first, it.second) }
+                }
+            }
+            progressState.hideProgress()
+            val reloads = results.map { result ->
+                result.getOrElse {
+                    errorState.showError(it, null)
+                    return@launch
+                }
+            }
+            if (skipConfirmation) {
+                applyAllReloadedEntries(reloads)
+            } else {
+                dialogState?.confirmIfReloadAllLabelFiles(reloads)
+            }
+        }
+    }
+
+    override fun canReloadAllLabelFiles(): Boolean {
+        val project = project ?: return false
+        return project.modules.size > 1 && project.modules.any { it.getRawFile(project) != null }
+    }
+
+    override fun applyAllReloadedEntries(reloads: List<ModuleLabelReload>) {
+        editProject {
+            reloads.fold(this) { acc, reload ->
+                acc.applyReloadedEntries(reload.moduleName, reload.entries, reload.diff)
             }
         }
     }
