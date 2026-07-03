@@ -300,8 +300,7 @@ You can click the `More` button to open a dialog to use the advanced filters.
 
 ### Selecting multiple entries
 
-In the pinned entry list and the entry list popup in the editor, you can select multiple entries and edit them
-together:
+In the pinned entry list, you can select multiple entries and edit them together:
 
 - `Ctrl` + click: add an entry to the selection, or remove it from the selection
 - `Shift` + click: select a range of entries
