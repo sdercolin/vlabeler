@@ -196,6 +196,8 @@ fun Strings.zhHans(): String? = when (this) {
     AskIfRemoveEntryLastDialogDescription ->
         "将要删除条目\"%s\"...\n" +
             "该条目是当前采样文件关联到的唯一条目。如果您想重新关联这个采样文件，请前往菜单 `视图` -> `采样列表`"
+    AskIfRemoveEntriesDialogDescription -> "确定要删除 %d 个条目吗？"
+    EditEntriesTagDialogDescription -> "为选中的 %d 个条目设置标签。留空以清除标签。"
     AskIfLoadAutoSavedProjectDialogDescription -> "发现自动保存的项目文件。是否读取？该文件将会在您打开或创建别的项目时被删除。"
     AskIfRedirectSampleDirectoryDialogDescription ->
         "未找到当前子项目的采样目录(%s)，或该目录中不含有任何所需的采样文件。是否要重定向到其他目录？"
@@ -738,5 +740,11 @@ fun Strings.zhHans(): String? = when (this) {
     EditorContextActionFilterUnstarred -> "筛选未星标条目"
     EditorContextActionFilterDone -> "筛选已完成条目"
     EditorContextActionFilterUndone -> "筛选未完成条目"
+    EditorContextActionSetEntriesDone -> "将 %d 个条目标记为已完成"
+    EditorContextActionSetEntriesUndone -> "将 %d 个条目标记为未完成"
+    EditorContextActionSetEntriesStarred -> "为 %d 个条目添加星标"
+    EditorContextActionSetEntriesUnstarred -> "取消 %d 个条目的星标"
+    EditorContextActionEditEntriesTag -> "设置 %d 个条目的标签..."
+    EditorContextActionRemoveEntries -> "删除 %d 个条目..."
     else -> null
 }

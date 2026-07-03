@@ -41,6 +41,11 @@ sealed class CommonConfirmationDialogAction(
             },
         )
 
+    class RemoveEntries(val entryIndexes: List<Int>) :
+        CommonConfirmationDialogAction(
+            getText = { string(Strings.AskIfRemoveEntriesDialogDescription, entryIndexes.size) },
+        )
+
     class LoadAutoSavedProject(val file: File) :
         CommonConfirmationDialogAction(Strings.AskIfLoadAutoSavedProjectDialogDescription)
 

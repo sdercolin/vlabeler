@@ -78,11 +78,28 @@ class EntryListStateItem(
     val isMultipleEditMode: Boolean,
     val viewConf: AppConf.View,
     val enableContextMenu: Boolean,
+    private val listState: EntryListState? = null,
 ) :
     ContextMenuSubject<EditorEntryContextAction> {
     @Composable
-    override fun getContextMenuActions(): List<EditorEntryContextAction> = if (enableContextMenu) {
-        listOfNotNull(
+    override fun getContextMenuActions(): List<EditorEntryContextAction> {
+        if (!enableContextMenu) return emptyList()
+        val multiSelectedItems = listState?.getMultiSelectedItems().orEmpty()
+        if (multiSelectedItems.size > 1 && multiSelectedItems.any { it.index == index }) {
+            val indexes = multiSelectedItems.map { it.index }.sorted()
+            val selectedEntries = multiSelectedItems.map { it.entry }
+            return listOfNotNull(
+                EditorEntryContextAction.SetEntriesDone(indexes, done = selectedEntries.any { !it.notes.done }),
+                EditorEntryContextAction.SetEntriesStar(indexes, star = selectedEntries.any { !it.notes.star }),
+                EditorEntryContextAction.EditEntriesTag(
+                    indexes,
+                    commonTag = selectedEntries.map { it.notes.tag }.distinct().singleOrNull() ?: "",
+                ),
+                EditorEntryContextAction.RemoveEntries(indexes)
+                    .takeIf { listState != null && indexes.size < listState.entries.size },
+            )
+        }
+        return listOfNotNull(
             EditorEntryContextAction.CopyEntryName(entry.name),
             EditorEntryContextAction.CopySampleName(entry.getDisplayedSampleName(viewConf)),
             EditorEntryContextAction.OpenRenameEntryDialog(index),
@@ -94,8 +111,6 @@ class EntryListStateItem(
                 .takeUnless { isMultipleEditMode },
             EditorEntryContextAction.FilterByTag(entry.notes.tag),
         )
-    } else {
-        emptyList()
     }
 }
 
@@ -119,6 +134,35 @@ class EntryListState(
     override var searchResult: List<EntryListStateItem> by mutableStateOf(initialResult.second)
     override var selectedIndex: Int? by mutableStateOf(null)
 
+    override val allowMultiSelection: Boolean = enableContextMenu
+    override var multiSelectedIndexes: Set<Int> by mutableStateOf(emptySet())
+        private set
+    private var multiSelectAnchor: Int? = null
+
+    override fun multiSelectToggle(index: Int) {
+        val base = multiSelectedIndexes.ifEmpty { setOfNotNull(selectedIndex) }
+        multiSelectedIndexes = if (index in base) base - index else base + index
+        multiSelectAnchor = index
+    }
+
+    override fun multiSelectRange(index: Int) {
+        val anchor = multiSelectAnchor ?: selectedIndex
+        if (anchor == null) {
+            multiSelectAnchor = index
+            multiSelectedIndexes = setOf(index)
+            return
+        }
+        multiSelectedIndexes = (minOf(anchor, index)..maxOf(anchor, index)).toSet()
+    }
+
+    override fun multiSelectClear() {
+        if (multiSelectedIndexes.isNotEmpty()) multiSelectedIndexes = emptySet()
+        multiSelectAnchor = null
+    }
+
+    fun getMultiSelectedItems(): List<EntryListStateItem> =
+        multiSelectedIndexes.sorted().mapNotNull { searchResult.getOrNull(it) }
+
     override var hasFocus: Boolean by mutableStateOf(false)
     var isFilterExpanded: Boolean by mutableStateOf(
         filterState.filter.isEmpty().not() || (filterState as? LinkableEntryListFilterState)?.linked == true,
@@ -137,6 +181,7 @@ class EntryListState(
                 entry = it.value,
                 isMultipleEditMode = isMultipleEditMode,
                 enableContextMenu = enableContextMenu,
+                listState = this,
             )
         }
     }

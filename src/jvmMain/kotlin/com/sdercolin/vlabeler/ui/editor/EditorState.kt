@@ -566,6 +566,18 @@ class EditorState(
         is EditorEntryContextAction.CopySampleName -> {
             Clipboard.copyToClipboard(action.sampleName)
         }
+        is EditorEntryContextAction.SetEntriesDone -> {
+            appState.setEntriesDone(action.entryIndexes, action.done)
+        }
+        is EditorEntryContextAction.SetEntriesStar -> {
+            appState.setEntriesStar(action.entryIndexes, action.star)
+        }
+        is EditorEntryContextAction.EditEntriesTag -> {
+            appState.openEditEntriesTagDialog(action.entryIndexes, action.commonTag)
+        }
+        is EditorEntryContextAction.RemoveEntries -> {
+            appState.confirmIfRemoveEntries(action.entryIndexes)
+        }
         is EditorEntryContextAction.FilterBySampleName -> {
             appState.updateEntryFilter {
                 EntryFilter(

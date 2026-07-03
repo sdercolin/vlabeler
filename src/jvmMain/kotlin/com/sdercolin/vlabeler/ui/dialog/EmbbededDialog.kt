@@ -63,6 +63,8 @@ private fun <T : EmbeddedDialogArgs> TypedDialog(
             JumpToModuleDialog(args, (request as EmbeddedDialogRequest<JumpToModuleDialogArgs>).onResult)
         is InputEntryNameDialogArgs ->
             InputEntryNameDialog(args, (request as EmbeddedDialogRequest<InputEntryNameDialogArgs>).onResult)
+        is EditEntriesTagDialogArgs ->
+            EditEntriesTagDialog(args, (request as EmbeddedDialogRequest<EditEntriesTagDialogArgs>).onResult)
         is CommonConfirmationDialogAction ->
             CommonConfirmationDialog(args, (request as EmbeddedDialogRequest<CommonConfirmationDialogAction>).onResult)
         is MoveEntryDialogArgs ->

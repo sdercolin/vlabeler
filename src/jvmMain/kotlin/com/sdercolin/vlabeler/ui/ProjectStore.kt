@@ -113,6 +113,10 @@ interface ProjectStore {
     fun toggleCurrentEntryStar()
     fun editEntryTag(index: Int, tag: String)
     fun editCurrentEntryTag(tag: String)
+    fun setEntriesDone(indexes: List<Int>, done: Boolean)
+    fun setEntriesStar(indexes: List<Int>, star: Boolean)
+    fun editEntriesTag(indexes: List<Int>, tag: String)
+    fun removeEntries(indexes: List<Int>)
     val canEditCurrentEntryExtra: Boolean
     val canEditCurrentModuleExtra: Boolean
 
@@ -631,6 +635,29 @@ class ProjectStoreImpl(
 
     override fun editCurrentEntryTag(tag: String) {
         editCurrentProjectModule { editEntryTag(currentIndex, tag) }
+    }
+
+    override fun setEntriesDone(indexes: List<Int>, done: Boolean) {
+        editCurrentProjectModule { setEntriesDone(indexes, done) }
+    }
+
+    override fun setEntriesStar(indexes: List<Int>, star: Boolean) {
+        editCurrentProjectModule { setEntriesStar(indexes, star) }
+    }
+
+    override fun editEntriesTag(indexes: List<Int>, tag: String) {
+        editCurrentProjectModule { editEntriesTag(indexes, tag) }
+    }
+
+    override fun removeEntries(indexes: List<Int>) {
+        val previousProject = requireProject()
+        editProject { updateCurrentModule { removeEntries(indexes, labelerConf) } }
+        val autoScrollConf = appConf.value.editor.autoScroll
+        if ((requireProject().hasSwitchedSample(previousProject) && autoScrollConf.onLoadedNewSample) ||
+            autoScrollConf.onSwitched
+        ) {
+            scrollFitViewModel.emitNext()
+        }
     }
 
     override val canEditCurrentEntryExtra: Boolean
