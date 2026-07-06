@@ -1,0 +1,42 @@
+{
+    "name": "relocate-sample-directory",
+    "version": 1,
+    "type": "macro",
+    "displayedName": {
+        "en": "Relocate sample directory of all subprojects",
+        "zh": "重新设置所有子项目的采样目录",
+        "ja": "すべてのサブプロジェクトのサンプルディレクトリを変更",
+        "ko": "모든 하위 프로젝트의 샘플 폴더 변경"
+    },
+    "author": "sdercolin",
+    "email": "sder.colin@gmail.com",
+    "description": {
+        "en": "Change the sample directory of all subprojects to another folder under the project root. Designed for projects where all subprojects share a single sample folder (e.g. created by the `NNSVS singer labeler`), for example after re-processing all audio files into a new folder. All sample files referenced by the project must exist in the new folder.",
+        "zh": "将所有子项目的采样目录更改为项目根目录下的另一个文件夹。适用于所有子项目共享同一个采样文件夹的项目（例如由 `NNSVS singer 标注器` 创建的项目），例如在将所有音频文件处理并输出到新文件夹之后使用。项目中引用的所有采样文件必须存在于新文件夹中。",
+        "ja": "すべてのサブプロジェクトのサンプルディレクトリを、プロジェクトのルートディレクトリ以下の別のフォルダに変更します。すべてのサブプロジェクトが同じサンプルフォルダを共有するプロジェクト（例：`NNSVS singer ラベラー` で作成されたプロジェクト）を想定しています。例えば、すべての音声ファイルを加工して新しいフォルダに出力した後に使用できます。プロジェクトで参照されているすべてのサンプルファイルが新しいフォルダに存在する必要があります。",
+        "ko": "모든 하위 프로젝트의 샘플 폴더를 프로젝트 루트 폴더 아래의 다른 폴더로 변경해요. 모든 하위 프로젝트가 하나의 샘플 폴더를 공유하는 프로젝트(예: `NNSVS singer 라벨러`로 만든 프로젝트)를 위해 설계되었어요. 예를 들어 모든 오디오 파일을 가공하여 새 폴더에 저장한 후에 사용할 수 있어요. 프로젝트에서 참조하는 모든 샘플 파일이 새 폴더에 있어야 해요."
+    },
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/relocate-sample-directory",
+    "supportedLabelFileExtension": "lab",
+    "scope": "Project",
+    "parameters": {
+        "list": [
+            {
+                "type": "rawFile",
+                "name": "folder",
+                "label": {
+                    "en": "New sample directory",
+                    "zh": "新的采样目录",
+                    "ja": "新しいサンプルディレクトリ",
+                    "ko": "새 샘플 폴더"
+                },
+                "defaultValue": "",
+                "optional": false,
+                "isFolder": true
+            }
+        ]
+    },
+    "scriptFiles": [
+        "relocate-sample-directory.js"
+    ]
+}
