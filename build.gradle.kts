@@ -26,6 +26,7 @@ plugins {
     id("org.jetbrains.compose")
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
     id("com.github.jk1.dependency-license-report") version "2.0"
+    id("org.jetbrains.kotlinx.kover") version "0.7.6"
 }
 
 version = project.properties["app.version"] as String
@@ -49,6 +50,12 @@ kotlin {
         withJava()
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
+            // Make the bundled resources (labelers, plugins, app.conf.json) available to tests
+            // in the same way as in a packaged application. See `ResourceDir` in `util/Path.kt`.
+            systemProperty(
+                "compose.application.resources.dir",
+                project.layout.projectDirectory.dir("resources").dir("common").asFile.absolutePath,
+            )
         }
     }
     sourceSets {
@@ -89,6 +96,7 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0")
             }
         }
     }

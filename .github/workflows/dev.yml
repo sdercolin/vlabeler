@@ -23,4 +23,13 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          ./gradlew build test
+          ./gradlew build test koverXmlReport koverHtmlReport
+
+      - name: Upload test and coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-and-coverage-reports
+          path: |
+            build/reports/tests
+            build/reports/kover
