@@ -21,6 +21,7 @@ fun createTestProject(
     inputFilePath: String? = null,
     encoding: String = DefaultEncoding,
 ): Project = runBlocking {
+    TestEnv.ensureLogDirectory()
     projectOf(
         sampleDirectory = sampleDirectory.absolutePath,
         workingDirectory = workingDirectory.absolutePath,
