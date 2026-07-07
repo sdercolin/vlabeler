@@ -25,9 +25,17 @@ Requires **JDK 17+** to build.
 
 Notes:
 - The `test` task depends on `checkLicenseReportUpdate` — if you add/change dependencies in `build.gradle.kts`, run `./gradlew updateLicenseReport` or tests will fail.
-- Tests use kotlin.test on JUnit Platform, under `src/jvmTest/kotlin`.
 - App version lives in `gradle.properties` (`app.version`).
 - Dev feature flags: add `flag.xxx=true` to `local.properties` (read by `flag/FeatureFlags.kt` via system properties).
+
+## Testing
+
+Full guide: `docs/testing.md`. Keep both that file and this section updated when extending the test suite.
+
+- Tests use kotlin.test on JUnit Platform, under `src/jvmTest/kotlin`, in short packages mirroring the production area (`io`, `model`, `util`, ...). Coverage via Kover (`./gradlew koverHtmlReport`).
+- Shared helpers in `src/jvmTest/kotlin/testutil/`: `TestLabelers` (loads real bundled labelers — the test task points `compose.application.resources.dir` at `resources/common`), `TestFixtures.deploy(...)` (copies a fixture project from `src/jvmTest/resources/fixtures/` and generates wav files at runtime — no binaries in git), `createTestProject(...)` (runs the real `projectOf` flow incl. JS scripts), `TestEnv.ensureLogDirectory()` (required before code that constructs `util.JavaScript()` with defaults; the log dir only exists where the app has run — missing on CI).
+- Set `Log.muted = true`/`false` in setup/teardown when tested code logs.
+- Some tests intentionally document suspected bugs (listed in `docs/testing.md`) — don't "fix" those tests without fixing the bug.
 
 ## Git conventions
 
