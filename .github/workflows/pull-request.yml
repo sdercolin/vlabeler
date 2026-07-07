@@ -2,7 +2,7 @@ name: pull-request-builder
 
 on:
   pull_request:
-    branches: [ main, dev ]
+    branches: [ main, dev, feature/automated-tests ]
     types: [ opened, synchronize, reopened ]
 
 jobs:
