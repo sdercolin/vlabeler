@@ -42,7 +42,6 @@ class SavedMutableStateTest {
         assertEquals(1, value)
         setValue(5)
         assertEquals(5, state.value)
-        // note: the destructured setter delegates to the wrapped state directly, so `save` is not called
-        assertEquals(emptyList(), saved)
+        assertEquals(listOf(5), saved)
     }
 }
