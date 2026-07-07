@@ -74,16 +74,10 @@ gh release edit <version> --notes-file <file>
 
 Show the final notes to the user before saving.
 
-**Prerelease flag**: the release must stay **prerelease = true** the whole time the builds are
-running (the workflows create it that way) — never flip it early. Only after all 4 builds have
-succeeded, the artifacts are verified, and the notes are finalized, turn it to the released
-state:
-
-```
-gh release edit <version> --prerelease=false --latest
-```
-
-This applies to both beta and stable versions.
+**Prerelease flag**: leave the release as **prerelease = true** (the workflows create it that
+way, and it must stay so while builds are running). Do NOT flip it — the user manually sets the
+release to the latest released state themselves after verifying the builds. Just remind them in
+the wrap-up.
 
 ## 5. Notify related issues (do NOT close)
 
@@ -113,6 +107,8 @@ Board: `vLabeler` (https://trello.com/b/rP1L7rbi/vlabeler). Use the connected Tr
 - Post a short summary to the user: version, release URL, artifact status, issues notified,
   Trello moves.
 - Remind the user of manual follow-ups that are theirs to do:
+  - Set the release from prerelease to the latest released state on GitHub (after verifying the
+    builds).
   - Announce in the Discord server.
   - Optionally bump `app.version` on `dev` to start the next cycle (e.g. `1.7.1-beta1` after a
     stable `1.7.0`), committed directly to `dev`.
