@@ -25,6 +25,7 @@ mirroring the production area rather than full package paths:
 | `io/` | Label parsing/writing, reloading, project files/lifecycle, wave loading, DSP (power/spectrogram/fundamental) |
 | `model/` | Domain model: `Module`, `ProjectHistory`, `LabelerConf`, `Entry`, serialization |
 | `plugins/` | Integration tests executing all bundled template and macro plugins through the real plugin runner |
+| `ui/` | State-holder tests (`ProjectStore`, app states) and Compose UI tests (`*UiTest`) for common components |
 | `util/` | Pure helper functions |
 | `env/`, `strings/` | Environment and localization helpers |
 | `fixtures/` | Smoke tests creating projects from the fixture data with the bundled labelers |
@@ -79,6 +80,25 @@ Plugin tests load the bundled plugins through the real `loadPlugins(type, langua
 project and captures plugin reports via `MacroPluginExecutionListener`). Tests assert exact output entries; when
 adding or changing a bundled plugin, add or update its test accordingly.
 
+### Compose UI tests
+
+UI tests use the JUnit-independent `runComposeUiTest` (`androidx.compose.ui.test`, opt-in `ExperimentalTestApi`) from
+the `compose.uiTest` dependency. It renders offscreen through Skiko, so it works on the JUnit 5 platform and on
+headless CI machines without a display. See `ui/ComposeUiTestSmokeTest.kt` for the base pattern
+(`runComposeUiTest { setContent { AppTheme { ... } } }`) and the `ui/*UiTest.kt` classes for component examples.
+Notes:
+
+- A `Modifier.testTag` on a component wrapper usually lands on a `Box`, not the interactive descendant — find
+  interactive nodes with matchers such as `hasSetTextAction()` or `hasClickAction()`.
+- On desktop, a disabled `BasicTextField` still exposes `SetText` semantics (unlike Android) — assert with
+  `isNotEnabled()` instead of action absence.
+- `string(Strings.X)` resolves without extra setup (`LocalLanguage` defaults to English).
+- "Cannot find font family Default" log lines in headless runs are benign.
+
+State-holder classes (`ui/ProjectStore.kt`, `AppErrorState`, dialog states, ...) are plain classes over Compose
+`mutableStateOf` and are tested without rendering — see `ui/ProjectStoreTest.kt`, which drives the real
+implementations against fixture projects.
+
 ### Environment gotchas
 
 - **Logging**: set `Log.muted = true` in `@BeforeTest` and back to `false` in `@AfterTest` when the tested code logs.
@@ -106,7 +126,9 @@ The test effort is tracked on the `feature/automated-tests` branch (sub-parts ar
 2. ✅ **Phase 2 — unit tests**: `io` (raw labels round-trips, reload, backups, wave/DSP), `model`, `util`
 3. ✅ **Phase 3 — integration tests**: all bundled template/macro plugins, full project lifecycle
    (create → save → load → edit → export → reload)
-4. **Phase 4 — UI tests**: state holders (`ProjectStore`, dialog states) and Compose UI tests (`runComposeUiTest`)
+4. ✅ **Phase 4 — UI tests**: state holders (`ProjectStore`, app states) and Compose UI tests for common
+   components and a standalone dialog. Not covered yet: the editor canvas/marker UI, dialogs requiring a full
+   `AppState`, and full-application flows.
 5. **Phase 5 — CI polish**: split unit/integration steps, coverage thresholds
 
 When adding tests in a new phase, keep this document and the Testing section of `CLAUDE.md` up to date.
