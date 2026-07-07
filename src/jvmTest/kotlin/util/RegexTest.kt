@@ -1,3 +1,5 @@
+package util
+
 import com.sdercolin.vlabeler.util.matchGroups
 import com.sdercolin.vlabeler.util.replaceWithVariables
 import kotlin.test.Test

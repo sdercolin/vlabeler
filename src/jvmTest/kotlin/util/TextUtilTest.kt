@@ -1,3 +1,5 @@
+package util
+
 import com.sdercolin.vlabeler.util.removeControlCharacters
 import com.sdercolin.vlabeler.util.toStringTrimmed
 import kotlin.test.Test

@@ -1,3 +1,5 @@
+package util
+
 import androidx.compose.ui.graphics.Color
 import com.sdercolin.vlabeler.util.argbHexString
 import com.sdercolin.vlabeler.util.rgbHexString

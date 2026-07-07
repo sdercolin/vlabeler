@@ -1,3 +1,5 @@
+package util
+
 import com.sdercolin.vlabeler.util.JavaScript
 import java.io.File
 import kotlin.test.BeforeTest

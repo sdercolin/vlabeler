@@ -1,3 +1,5 @@
+package util
+
 import com.sdercolin.vlabeler.util.UnicodeNormalizer
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test

@@ -104,6 +104,51 @@ kotlin {
     }
 }
 
+// Test subsets by package, as a local development convenience to run one level in isolation.
+// They reuse the classes and classpath of the full `jvmTest` task. Note: these tasks are not instrumented by Kover
+// (it only instruments `jvmTest` in this setup), so coverage reports require a `jvmTest` run.
+fun registerTestSubset(name: String, subsetDescription: String, packages: List<String>) =
+    tasks.register(name, org.gradle.api.tasks.testing.Test::class) {
+        group = "verification"
+        description = subsetDescription
+        val jvmTest = tasks.getByName("jvmTest") as org.gradle.api.tasks.testing.Test
+        testClassesDirs = jvmTest.testClassesDirs
+        classpath = jvmTest.classpath
+        useJUnitPlatform()
+        systemProperty(
+            "compose.application.resources.dir",
+            project.layout.projectDirectory.dir("resources").dir("common").asFile.absolutePath,
+        )
+        filter { packages.forEach { includeTestsMatching("$it.*") } }
+    }
+
+registerTestSubset(
+    "unitTest",
+    "Run unit tests (util, model, env, strings, testutil)",
+    listOf("util", "model", "env", "strings", "testutil"),
+)
+registerTestSubset(
+    "integrationTest",
+    "Run integration tests (io, fixtures, plugins)",
+    listOf("io", "fixtures", "plugins"),
+)
+registerTestSubset(
+    "uiTest",
+    "Run UI tests (ui, com.sdercolin.vlabeler.ui)",
+    listOf("ui", "com.sdercolin.vlabeler.ui"),
+)
+
+koverReport {
+    defaults {
+        verify {
+            // Guards against coverage regressions; raise the bound as coverage grows (baseline: 32% on 2026-07-07).
+            rule("Minimal line coverage") {
+                minBound(30)
+            }
+        }
+    }
+}
+
 compose.desktop {
     application {
         mainClass = "com.sdercolin.vlabeler.MainKt"

@@ -32,7 +32,8 @@ Notes:
 
 Full guide: `docs/testing.md`. Keep both that file and this section updated when extending the test suite.
 
-- Tests use kotlin.test on JUnit Platform, under `src/jvmTest/kotlin`, in short packages mirroring the production area (`io`, `model`, `util`, `plugins`, ...). Coverage via Kover (`./gradlew koverHtmlReport`).
+- Tests use kotlin.test on JUnit Platform, under `src/jvmTest/kotlin`, in short packages mirroring the production area (`io`, `model`, `util`, `plugins`, ...). Coverage via Kover (`./gradlew koverHtmlReport`); CI enforces a minimal line coverage bound (`koverVerify`).
+- Per-level local runs: `./gradlew unitTest` / `integrationTest` / `uiTest`.
 - All bundled labelers and plugins have integration tests (`fixtures/`, `plugins/`) that execute their real JS scripts — when changing a bundled labeler/plugin, update its test in the same PR.
 - Compose UI tests use `runComposeUiTest` (headless via Skiko, works on CI); state holders like `ProjectStore` are tested without rendering. See the "Compose UI tests" section of `docs/testing.md` for desktop-specific gotchas.
 - Shared helpers in `src/jvmTest/kotlin/testutil/`: `TestLabelers` (loads real bundled labelers — the test task points `compose.application.resources.dir` at `resources/common`), `TestFixtures.deploy(...)` (copies a fixture project from `src/jvmTest/resources/fixtures/` and generates wav files at runtime — no binaries in git), `createTestProject(...)` (runs the real `projectOf` flow incl. JS scripts), `TestEnv.ensureLogDirectory()` (required before code that constructs `util.JavaScript()` with defaults; the log dir only exists where the app has run — missing on CI).

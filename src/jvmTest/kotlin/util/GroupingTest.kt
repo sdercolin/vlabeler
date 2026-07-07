@@ -1,3 +1,5 @@
+package util
+
 import com.sdercolin.vlabeler.util.groupContinuouslyBy
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
