@@ -43,9 +43,7 @@ class CollectionsTest {
 
     @Test
     fun testGetNextOrNullNotFound() {
-        // When the predicate matches nothing, `indexOfFirst` returns -1,
-        // so the current implementation returns the item at index 0.
-        assertEquals("a", list.getNextOrNull { it == "d" })
+        assertNull(list.getNextOrNull { it == "d" })
     }
 
     @Test

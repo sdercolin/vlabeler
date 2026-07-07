@@ -86,15 +86,7 @@ including the labeler's project constructor and parser scripts in the GraalVM JS
   floating point equality.
 - ktlint applies to test sources: run `./gradlew ktlintFormat` before committing.
 - Tests must not change production behavior. If a test reveals a suspected bug, write the test against the **current**
-  behavior with a comment, and raise the bug separately (see below).
-
-## Tests documenting suspected bugs
-
-The following tests intentionally pin current, possibly-buggy behavior; fixing the bug should flip the test:
-
-- `util/DateTimeTest.testParseIsoTimeIgnoresOffset` — `parseIsoTime` ignores the timezone offset in the input.
-- `util/CollectionsTest.testGetNextOrNullNotFound` — `getNextOrNull` returns the first element when nothing matches.
-- `util/MathTest` — `Double.roundToDecimalDigit` loses precision by converting through `Float`.
+  behavior with a comment, and raise the bug separately for discussion before fixing it.
 
 ## Roadmap
 

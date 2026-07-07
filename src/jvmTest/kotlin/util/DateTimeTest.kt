@@ -22,13 +22,11 @@ class DateTimeTest {
     }
 
     @Test
-    fun testParseIsoTimeIgnoresOffset() {
-        // The current implementation parses the value as a LocalDateTime and always
-        // converts it with the UTC offset, so the offset in the input is ignored.
-        assertEquals(
-            parseIsoTime("2022-01-02T03:04:05Z"),
-            parseIsoTime("2022-01-02T03:04:05+09:00"),
-        )
+    fun testParseIsoTimeRespectsOffset() {
+        val expected = LocalDateTime.of(2022, 1, 2, 3, 4, 5)
+            .toInstant(ZoneOffset.ofHours(9))
+            .toEpochMilli()
+        assertEquals(expected, parseIsoTime("2022-01-02T03:04:05+09:00"))
     }
 
     @Test

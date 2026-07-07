@@ -29,6 +29,8 @@ class MathTest {
         assertEquals(1.24, 1.236.roundToDecimalDigit(2))
         assertEquals(1.2, 1.234.roundToDecimalDigit(1))
         assertEquals(1.0, 1.234.roundToDecimalDigit(0))
+        // values whose scaled representation exceeds the Float precision (2^24) must not lose precision
+        assertEquals(200000.01, 200000.011.roundToDecimalDigit(2))
     }
 
     @Test
