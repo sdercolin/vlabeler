@@ -742,6 +742,14 @@ object PreferencesPages {
                         select = { it.playerCursorColor },
                         update = { copy(playerCursorColor = it) },
                     )
+                    stringList(
+                        title = Strings.PreferencesEditorEntryNamePresets,
+                        description = Strings.PreferencesEditorEntryNamePresetsDescription,
+                        columnStyle = true,
+                        defaultValue = listOf(),
+                        select = { it.entryNamePresets },
+                        update = { copy(entryNamePresets = it) },
+                    )
                 }
             }
     }
@@ -1404,6 +1412,28 @@ private class PreferencesItemContext<P>(
             update = updateWithContext(update),
             enabled = selectWithContext(enabled),
             validationRules = validationRules,
+        ),
+    )
+
+    fun stringList(
+        title: Strings,
+        description: Strings? = null,
+        clickableTags: List<ClickableTag> = listOf(),
+        columnStyle: Boolean = false,
+        defaultValue: List<String>,
+        select: (P) -> List<String>,
+        update: P.(List<String>) -> P,
+        enabled: (P) -> Boolean = { true },
+    ) = builder.item(
+        PreferencesItem.StringListInput(
+            title = title,
+            description = description,
+            clickableTags = clickableTags,
+            columnStyle = columnStyle,
+            defaultValue = defaultValue,
+            select = selectWithContext(select),
+            update = updateWithContext(update),
+            enabled = selectWithContext(enabled),
         ),
     )
 

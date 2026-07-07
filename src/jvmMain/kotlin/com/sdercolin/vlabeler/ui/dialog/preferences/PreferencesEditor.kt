@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.ui.dialog.preferences
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,27 +20,38 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -48,7 +60,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -71,6 +85,7 @@ import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.argbHexString
 import com.sdercolin.vlabeler.util.rgbHexString
@@ -231,7 +246,7 @@ private fun RowScope.Page(state: PreferencesEditorState) {
         if (page.scrollable) {
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(scrollState),
-                modifier = Modifier.align(Alignment.CenterEnd).width(30.dp),
+                modifier = Modifier.align(Alignment.CenterEnd).width(15.dp),
             )
         }
     }
@@ -340,6 +355,7 @@ private fun Item(item: PreferencesItem, state: PreferencesEditorState) {
         is PreferencesItem.IntegerInput -> IntegerInputItem(item, state)
         is PreferencesItem.FloatInput -> FloatInputItem(item, state)
         is PreferencesItem.StringInput -> TextInputItem(item, state)
+        is PreferencesItem.StringListInput -> StringListInputItem(item, state)
         is PreferencesItem.ColorStringInput -> ColorStringInputItem(item, state)
         is PreferencesItem.Selection<*> -> SelectionItem(item, state)
         is PreferencesItem.Keymap<*> -> Keymap(item, state)
@@ -407,6 +423,131 @@ private fun TextInputItem(item: PreferencesItem.StringInput, state: PreferencesE
         onValueChange = { state.update(item, it) },
         getInvalidPrompt = { item.getInvalidPrompt(state.conf, it) },
     )
+}
+
+@Composable
+private fun StringListInputItem(item: PreferencesItem.StringListInput, state: PreferencesEditorState) {
+    val values = item.select(state.conf)
+    val enabled = item.enabled(state.conf)
+    val scrollState = rememberLazyListState()
+    Column(
+        modifier = Modifier.widthIn(max = 400.dp).fillMaxWidth().background(MaterialTheme.colors.background),
+    ) {
+        Row(Modifier.height(160.dp).fillMaxWidth()) {
+            Box(Modifier.weight(1f).fillMaxHeight()) {
+                LazyColumn(
+                    state = scrollState,
+                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp),
+                ) {
+                    itemsIndexed(values) { index, value ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = value,
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.body2,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            val upEnabled = enabled && index > 0
+                            Icon(
+                                modifier = Modifier.size(16.dp).clickable(enabled = upEnabled) {
+                                    val list = values.toMutableList()
+                                    list.add(index - 1, list.removeAt(index))
+                                    state.update(item, list)
+                                },
+                                imageVector = Icons.Default.ArrowUpward,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onSurface
+                                    .runIf(upEnabled.not()) { copy(alpha = 0.2f) },
+                            )
+                            val downEnabled = enabled && index < values.lastIndex
+                            Icon(
+                                modifier = Modifier.size(16.dp).clickable(enabled = downEnabled) {
+                                    val list = values.toMutableList()
+                                    list.add(index + 1, list.removeAt(index))
+                                    state.update(item, list)
+                                },
+                                imageVector = Icons.Default.ArrowDownward,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onSurface
+                                    .runIf(downEnabled.not()) { copy(alpha = 0.2f) },
+                            )
+                            Icon(
+                                modifier = Modifier.size(16.dp).clickable(enabled = enabled) {
+                                    state.update(item, values.filterIndexed { i, _ -> i != index })
+                                },
+                                imageVector = Icons.Default.Close,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onSurface
+                                    .runIf(enabled.not()) { copy(alpha = 0.2f) },
+                            )
+                        }
+                    }
+                }
+                if (values.isEmpty()) {
+                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                        Text(
+                            text = string(Strings.PreferencesStringListEmptyPlaceholder),
+                            modifier = Modifier.align(Alignment.Center),
+                            style = MaterialTheme.typography.body2,
+                        )
+                    }
+                }
+            }
+            VerticalScrollbar(rememberScrollbarAdapter(scrollState))
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colors.surface).padding(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            var newValue by remember { mutableStateOf("") }
+            val addEnabled = enabled && newValue.isNotBlank() && newValue.trim() !in values
+            val submitNewValue = {
+                if (addEnabled) {
+                    state.update(item, values + newValue.trim())
+                    newValue = ""
+                }
+            }
+            Box(
+                modifier = Modifier.width(150.dp)
+                    .background(White20, MaterialTheme.shapes.small)
+                    .padding(vertical = 4.dp, horizontal = 10.dp),
+            ) {
+                BasicTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = newValue,
+                    onValueChange = { newValue = it },
+                    singleLine = true,
+                    enabled = enabled,
+                    textStyle = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.onSurface),
+                    cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { submitNewValue() }),
+                )
+                if (newValue.isEmpty()) {
+                    Text(
+                        text = string(Strings.PreferencesStringListNewItemPlaceholder),
+                        style = MaterialTheme.typography.caption.copy(
+                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+            Icon(
+                modifier = Modifier.size(18.dp).clickable(enabled = addEnabled) { submitNewValue() },
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                tint = MaterialTheme.colors.onSurface.runIf(addEnabled.not()) { copy(alpha = 0.2f) },
+            )
+        }
+    }
 }
 
 @Composable

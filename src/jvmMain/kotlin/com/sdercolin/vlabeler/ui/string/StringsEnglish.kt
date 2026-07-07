@@ -490,6 +490,12 @@ fun Strings.en(): String = when (this) {
     PreferencesEditor -> "Editor"
     PreferencesEditorDescription -> "Customize the editor's appearance and behavior."
     PreferencesEditorPlayerCursorColor -> "Player cursor color"
+    PreferencesEditorEntryNamePresets -> "Entry name presets"
+    PreferencesEditorEntryNamePresetsDescription ->
+        "Preset entry names that can be quickly applied in the dialogs where you input an entry name, e.g. when " +
+            "renaming or cutting an entry."
+    PreferencesStringListEmptyPlaceholder -> "No items"
+    PreferencesStringListNewItemPlaceholder -> "New item..."
     PreferencesEditorLockedDrag -> "Fixed-drag"
     PreferencesEditorLockedDragDescription ->
         "Select a condition to enable fixed-drag while you move " +

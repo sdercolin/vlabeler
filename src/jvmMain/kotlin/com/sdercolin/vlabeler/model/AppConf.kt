@@ -349,6 +349,7 @@ data class AppConf(
      * @param showTag When true, the tag or "New tag" button is shown in the editor and entry lists.
      * @param showExtra When true, the extra editor button/icon is shown in the editor and entry lists.
      * @param continuousLabelNames Appearance of the label names in the editor for continuous labelers.
+     * @param entryNamePresets Preset entry names that can be quickly applied in entry name input dialogs.
      */
     @Serializable
     @Immutable
@@ -379,6 +380,7 @@ data class AppConf(
             color = DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_COLOR,
             width = DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH,
         ),
+        val entryNamePresets: List<String> = listOf(),
     ) {
 
         /**

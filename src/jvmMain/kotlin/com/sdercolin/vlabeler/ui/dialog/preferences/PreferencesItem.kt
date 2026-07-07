@@ -147,6 +147,27 @@ sealed class PreferencesItem(
         validationRules,
     )
 
+    class StringListInput(
+        title: Strings,
+        description: Strings?,
+        clickableTags: List<ClickableTag>,
+        columnStyle: Boolean,
+        defaultValue: List<String>,
+        select: (AppConf) -> List<String>,
+        update: AppConf.(List<String>) -> AppConf,
+        enabled: (AppConf) -> Boolean,
+    ) : Valued<List<String>>(
+        title,
+        description,
+        clickableTags,
+        columnStyle,
+        defaultValue,
+        select,
+        update,
+        enabled,
+        validationRules = listOf(),
+    )
+
     class ColorStringInput(
         title: Strings,
         description: Strings?,
