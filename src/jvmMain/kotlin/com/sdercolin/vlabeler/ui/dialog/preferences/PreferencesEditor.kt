@@ -2,6 +2,7 @@ package com.sdercolin.vlabeler.ui.dialog.preferences
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,17 +20,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -44,6 +51,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -52,7 +60,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -62,7 +72,6 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ColorHexInputBox
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
-import com.sdercolin.vlabeler.ui.common.InputBox
 import com.sdercolin.vlabeler.ui.common.IntegerInputBox
 import com.sdercolin.vlabeler.ui.common.PartialClickableText
 import com.sdercolin.vlabeler.ui.common.SearchBar
@@ -76,6 +85,7 @@ import com.sdercolin.vlabeler.ui.dialog.OpenFileDialog
 import com.sdercolin.vlabeler.ui.dialog.SaveFileDialog
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.Black50
+import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.ui.theme.getSwitchColors
 import com.sdercolin.vlabeler.util.argbHexString
 import com.sdercolin.vlabeler.util.rgbHexString
@@ -419,66 +429,109 @@ private fun TextInputItem(item: PreferencesItem.StringInput, state: PreferencesE
 private fun StringListInputItem(item: PreferencesItem.StringListInput, state: PreferencesEditorState) {
     val values = item.select(state.conf)
     val enabled = item.enabled(state.conf)
-    Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
-        values.forEachIndexed { index, value ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = value,
-                    modifier = Modifier.widthIn(min = 150.dp),
-                    style = MaterialTheme.typography.body2,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Spacer(Modifier.width(10.dp))
-                IconButton(
-                    enabled = enabled && index > 0,
-                    onClick = {
-                        val list = values.toMutableList()
-                        list.add(index - 1, list.removeAt(index))
-                        state.update(item, list)
-                    },
-                    modifier = Modifier.size(30.dp),
+    val scrollState = rememberLazyListState()
+    Column(
+        modifier = Modifier.fillMaxWidth().background(MaterialTheme.colors.background),
+    ) {
+        Row(Modifier.height(160.dp).fillMaxWidth()) {
+            Box(Modifier.weight(1f).fillMaxHeight()) {
+                LazyColumn(
+                    state = scrollState,
+                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp),
                 ) {
-                    Icon(Icons.Default.ArrowUpward, contentDescription = null, modifier = Modifier.size(16.dp))
+                    itemsIndexed(values) { index, value ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = value,
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.body2,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            val upEnabled = enabled && index > 0
+                            Icon(
+                                modifier = Modifier.size(16.dp).clickable(enabled = upEnabled) {
+                                    val list = values.toMutableList()
+                                    list.add(index - 1, list.removeAt(index))
+                                    state.update(item, list)
+                                },
+                                imageVector = Icons.Default.ArrowUpward,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onSurface
+                                    .runIf(upEnabled.not()) { copy(alpha = 0.2f) },
+                            )
+                            val downEnabled = enabled && index < values.lastIndex
+                            Icon(
+                                modifier = Modifier.size(16.dp).clickable(enabled = downEnabled) {
+                                    val list = values.toMutableList()
+                                    list.add(index + 1, list.removeAt(index))
+                                    state.update(item, list)
+                                },
+                                imageVector = Icons.Default.ArrowDownward,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onSurface
+                                    .runIf(downEnabled.not()) { copy(alpha = 0.2f) },
+                            )
+                            Icon(
+                                modifier = Modifier.size(16.dp).clickable(enabled = enabled) {
+                                    state.update(item, values.filterIndexed { i, _ -> i != index })
+                                },
+                                imageVector = Icons.Default.Close,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onSurface
+                                    .runIf(enabled.not()) { copy(alpha = 0.2f) },
+                            )
+                        }
+                    }
                 }
-                IconButton(
-                    enabled = enabled && index < values.lastIndex,
-                    onClick = {
-                        val list = values.toMutableList()
-                        list.add(index + 1, list.removeAt(index))
-                        state.update(item, list)
-                    },
-                    modifier = Modifier.size(30.dp),
-                ) {
-                    Icon(Icons.Default.ArrowDownward, contentDescription = null, modifier = Modifier.size(16.dp))
-                }
-                IconButton(
-                    enabled = enabled,
-                    onClick = { state.update(item, values.filterIndexed { i, _ -> i != index }) },
-                    modifier = Modifier.size(30.dp),
-                ) {
-                    Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(16.dp))
+                if (values.isEmpty()) {
+                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                        Text(
+                            text = string(Strings.PreferencesStringListEmptyPlaceholder),
+                            modifier = Modifier.align(Alignment.Center),
+                            style = MaterialTheme.typography.body2,
+                        )
+                    }
                 }
             }
+            VerticalScrollbar(rememberScrollbarAdapter(scrollState))
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colors.surface).padding(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             var newValue by remember { mutableStateOf("") }
-            InputBox(
-                value = newValue,
-                onValueChange = { newValue = it },
-                enabled = enabled,
-            )
-            Spacer(Modifier.width(10.dp))
-            IconButton(
-                enabled = enabled && newValue.isNotBlank() && newValue.trim() !in values,
-                onClick = {
+            val addEnabled = enabled && newValue.isNotBlank() && newValue.trim() !in values
+            val submitNewValue = {
+                if (addEnabled) {
                     state.update(item, values + newValue.trim())
                     newValue = ""
-                },
-                modifier = Modifier.size(30.dp),
-            ) {
-                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                }
             }
+            BasicTextField(
+                modifier = Modifier.width(150.dp)
+                    .background(White20, MaterialTheme.shapes.small)
+                    .padding(vertical = 4.dp, horizontal = 10.dp),
+                value = newValue,
+                onValueChange = { newValue = it },
+                singleLine = true,
+                enabled = enabled,
+                textStyle = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.onSurface),
+                cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { submitNewValue() }),
+            )
+            Icon(
+                modifier = Modifier.size(18.dp).clickable(enabled = addEnabled) { submitNewValue() },
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                tint = MaterialTheme.colors.onSurface.runIf(addEnabled.not()) { copy(alpha = 0.2f) },
+            )
         }
     }
 }

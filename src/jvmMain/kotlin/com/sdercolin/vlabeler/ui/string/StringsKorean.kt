@@ -484,6 +484,7 @@ fun Strings.ko(): String? = when (this) {
     PreferencesEditorEntryNamePresets -> "엔트리 이름 프리셋"
     PreferencesEditorEntryNamePresetsDescription ->
         "엔트리 이름을 입력하는 대화창(엔트리 이름 변경, 자르기 등)에서 빠르게 적용할 수 있는 엔트리 이름 프리셋이에요."
+    PreferencesStringListEmptyPlaceholder -> "항목이 없어요"
     PreferencesEditorLockedDrag -> "고정 드래그"
     PreferencesEditorLockedDragDescription ->
         "주요 마커를 움직일 때, 고정 드래그의 방식을 선택합니다.\n" +
