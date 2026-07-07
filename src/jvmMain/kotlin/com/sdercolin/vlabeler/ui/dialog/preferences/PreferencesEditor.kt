@@ -36,6 +36,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Settings
@@ -58,6 +62,7 @@ import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.common.ColorHexInputBox
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.common.FloatInputBox
+import com.sdercolin.vlabeler.ui.common.InputBox
 import com.sdercolin.vlabeler.ui.common.IntegerInputBox
 import com.sdercolin.vlabeler.ui.common.PartialClickableText
 import com.sdercolin.vlabeler.ui.common.SearchBar
@@ -340,6 +345,7 @@ private fun Item(item: PreferencesItem, state: PreferencesEditorState) {
         is PreferencesItem.IntegerInput -> IntegerInputItem(item, state)
         is PreferencesItem.FloatInput -> FloatInputItem(item, state)
         is PreferencesItem.StringInput -> TextInputItem(item, state)
+        is PreferencesItem.StringListInput -> StringListInputItem(item, state)
         is PreferencesItem.ColorStringInput -> ColorStringInputItem(item, state)
         is PreferencesItem.Selection<*> -> SelectionItem(item, state)
         is PreferencesItem.Keymap<*> -> Keymap(item, state)
@@ -407,6 +413,74 @@ private fun TextInputItem(item: PreferencesItem.StringInput, state: PreferencesE
         onValueChange = { state.update(item, it) },
         getInvalidPrompt = { item.getInvalidPrompt(state.conf, it) },
     )
+}
+
+@Composable
+private fun StringListInputItem(item: PreferencesItem.StringListInput, state: PreferencesEditorState) {
+    val values = item.select(state.conf)
+    val enabled = item.enabled(state.conf)
+    Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+        values.forEachIndexed { index, value ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = value,
+                    modifier = Modifier.widthIn(min = 150.dp),
+                    style = MaterialTheme.typography.body2,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(Modifier.width(10.dp))
+                IconButton(
+                    enabled = enabled && index > 0,
+                    onClick = {
+                        val list = values.toMutableList()
+                        list.add(index - 1, list.removeAt(index))
+                        state.update(item, list)
+                    },
+                    modifier = Modifier.size(30.dp),
+                ) {
+                    Icon(Icons.Default.ArrowUpward, contentDescription = null, modifier = Modifier.size(16.dp))
+                }
+                IconButton(
+                    enabled = enabled && index < values.lastIndex,
+                    onClick = {
+                        val list = values.toMutableList()
+                        list.add(index + 1, list.removeAt(index))
+                        state.update(item, list)
+                    },
+                    modifier = Modifier.size(30.dp),
+                ) {
+                    Icon(Icons.Default.ArrowDownward, contentDescription = null, modifier = Modifier.size(16.dp))
+                }
+                IconButton(
+                    enabled = enabled,
+                    onClick = { state.update(item, values.filterIndexed { i, _ -> i != index }) },
+                    modifier = Modifier.size(30.dp),
+                ) {
+                    Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(16.dp))
+                }
+            }
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            var newValue by remember { mutableStateOf("") }
+            InputBox(
+                value = newValue,
+                onValueChange = { newValue = it },
+                enabled = enabled,
+            )
+            Spacer(Modifier.width(10.dp))
+            IconButton(
+                enabled = enabled && newValue.isNotBlank() && newValue.trim() !in values,
+                onClick = {
+                    state.update(item, values + newValue.trim())
+                    newValue = ""
+                },
+                modifier = Modifier.size(30.dp),
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+            }
+        }
+    }
 }
 
 @Composable

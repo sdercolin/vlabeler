@@ -481,6 +481,9 @@ fun Strings.ko(): String? = when (this) {
     PreferencesEditor -> "에디터"
     PreferencesEditorDescription -> "에디터의 외관과 프로그램의 동작을 커스텀합니다."
     PreferencesEditorPlayerCursorColor -> "재생 커서 색상"
+    PreferencesEditorEntryNamePresets -> "엔트리 이름 프리셋"
+    PreferencesEditorEntryNamePresetsDescription ->
+        "엔트리 이름을 입력하는 대화창(엔트리 이름 변경, 자르기 등)에서 빠르게 적용할 수 있는 엔트리 이름 프리셋이에요."
     PreferencesEditorLockedDrag -> "고정 드래그"
     PreferencesEditorLockedDragDescription ->
         "주요 마커를 움직일 때, 고정 드래그의 방식을 선택합니다.\n" +

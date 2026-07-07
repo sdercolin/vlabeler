@@ -353,6 +353,7 @@ class AppDialogStateImpl(
                 invalidOptions = invalidOptions,
                 showSnackbar = { state.mainScope.launch { snackbarState.showSnackbar(it) } },
                 purpose = purpose,
+                presets = state.appConf.editor.entryNamePresets,
             ),
         )
     }

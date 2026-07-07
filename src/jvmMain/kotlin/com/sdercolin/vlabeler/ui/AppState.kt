@@ -281,6 +281,7 @@ class AppState(
                         invalidOptions = invalidOptions,
                         showSnackbar = showSnackbar,
                         purpose = InputEntryNameDialogPurpose.CutFormer,
+                        presets = appConf.editor.entryNamePresets,
                     ),
                 )
                 (result as InputEntryNameDialogResult?)?.name ?: return@launch
@@ -299,6 +300,7 @@ class AppState(
                         invalidOptions = invalidOptions,
                         showSnackbar = showSnackbar,
                         purpose = InputEntryNameDialogPurpose.CutLatter,
+                        presets = appConf.editor.entryNamePresets,
                     ),
                 )
                 (result as InputEntryNameDialogResult?)?.name ?: return@launch
