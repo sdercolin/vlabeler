@@ -246,7 +246,7 @@ private fun RowScope.Page(state: PreferencesEditorState) {
         if (page.scrollable) {
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(scrollState),
-                modifier = Modifier.align(Alignment.CenterEnd).width(30.dp),
+                modifier = Modifier.align(Alignment.CenterEnd).width(15.dp),
             )
         }
     }
@@ -431,7 +431,7 @@ private fun StringListInputItem(item: PreferencesItem.StringListInput, state: Pr
     val enabled = item.enabled(state.conf)
     val scrollState = rememberLazyListState()
     Column(
-        modifier = Modifier.fillMaxWidth().background(MaterialTheme.colors.background),
+        modifier = Modifier.widthIn(max = 400.dp).fillMaxWidth().background(MaterialTheme.colors.background),
     ) {
         Row(Modifier.height(160.dp).fillMaxWidth()) {
             Box(Modifier.weight(1f).fillMaxHeight()) {
@@ -513,19 +513,33 @@ private fun StringListInputItem(item: PreferencesItem.StringListInput, state: Pr
                     newValue = ""
                 }
             }
-            BasicTextField(
+            Box(
                 modifier = Modifier.width(150.dp)
                     .background(White20, MaterialTheme.shapes.small)
                     .padding(vertical = 4.dp, horizontal = 10.dp),
-                value = newValue,
-                onValueChange = { newValue = it },
-                singleLine = true,
-                enabled = enabled,
-                textStyle = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.onSurface),
-                cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { submitNewValue() }),
-            )
+            ) {
+                BasicTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = newValue,
+                    onValueChange = { newValue = it },
+                    singleLine = true,
+                    enabled = enabled,
+                    textStyle = MaterialTheme.typography.caption.copy(color = MaterialTheme.colors.onSurface),
+                    cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { submitNewValue() }),
+                )
+                if (newValue.isEmpty()) {
+                    Text(
+                        text = string(Strings.PreferencesStringListNewItemPlaceholder),
+                        style = MaterialTheme.typography.caption.copy(
+                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
             Icon(
                 modifier = Modifier.size(18.dp).clickable(enabled = addEnabled) { submitNewValue() },
                 imageVector = Icons.Default.Add,

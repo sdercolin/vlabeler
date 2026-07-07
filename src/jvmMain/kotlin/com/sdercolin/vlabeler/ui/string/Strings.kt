@@ -408,6 +408,7 @@ enum class Strings {
     PreferencesEditorEntryNamePresets,
     PreferencesEditorEntryNamePresetsDescription,
     PreferencesStringListEmptyPlaceholder,
+    PreferencesStringListNewItemPlaceholder,
     PreferencesEditorLockedDrag,
     PreferencesEditorLockedDragDescription,
     PreferencesEditorLockedDragUseLabeler,

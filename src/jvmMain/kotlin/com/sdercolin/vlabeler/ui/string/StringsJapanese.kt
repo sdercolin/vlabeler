@@ -468,6 +468,7 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorEntryNamePresetsDescription ->
         "エントリ名を入力するダイアログ（エントリの名前変更やカット時など）で、すばやく適用できるエントリ名のプリセットです。"
     PreferencesStringListEmptyPlaceholder -> "項目がありません"
+    PreferencesStringListNewItemPlaceholder -> "新しい項目..."
     PreferencesEditorLockedDrag -> "連動ドラッグ"
     PreferencesEditorLockedDragDescription ->
         "連動ドラッグを有効にする条件を選択します。" +
