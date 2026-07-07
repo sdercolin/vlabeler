@@ -66,17 +66,24 @@ gh api repos/sdercolin/vlabeler/releases/generate-notes \
 ```
 
 Review and improve: group user-facing changes first, mention notable new features in one or two
-plain sentences at the top if the list is long. Then update the release:
-
-- Beta: keep **prerelease = true**.
-- Stable: set **prerelease = false** and mark as latest.
+plain sentences at the top if the list is long. Then update the release notes:
 
 ```
-gh release edit <version> --notes-file <file> [--prerelease | --latest]
+gh release edit <version> --notes-file <file>
 ```
 
-Show the final notes to the user before saving. Note: the in-app updater reads GitHub releases
-and distinguishes channels by the prerelease flag, so setting it correctly matters.
+Show the final notes to the user before saving.
+
+**Prerelease flag**: the release must stay **prerelease = true** the whole time the builds are
+running (the workflows create it that way) — never flip it early. Only after all 4 builds have
+succeeded, the artifacts are verified, and the notes are finalized, turn it to the released
+state:
+
+```
+gh release edit <version> --prerelease=false --latest
+```
+
+This applies to both beta and stable versions.
 
 ## 5. Notify related issues (do NOT close)
 
