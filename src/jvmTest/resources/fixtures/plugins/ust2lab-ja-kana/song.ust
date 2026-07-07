@@ -1,0 +1,23 @@
+[#VERSION]
+UST Version1.2
+[#SETTING]
+Tempo=120.00
+Tracks=1
+ProjectName=song
+Mode2=True
+[#0000]
+Length=480
+Lyric=あ
+NoteNum=60
+Intensity=100
+[#0001]
+Length=480
+Lyric=か
+NoteNum=62
+Intensity=100
+[#0002]
+Length=480
+Lyric=R
+NoteNum=60
+Intensity=100
+[#TRACKEND]

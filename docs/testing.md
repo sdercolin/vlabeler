@@ -22,8 +22,9 @@ mirroring the production area rather than full package paths:
 
 | Location | Contents |
 |---|---|
-| `io/` | Label parsing/writing, reloading, project files, wave loading, DSP (power/spectrogram/fundamental) |
+| `io/` | Label parsing/writing, reloading, project files/lifecycle, wave loading, DSP (power/spectrogram/fundamental) |
 | `model/` | Domain model: `Module`, `ProjectHistory`, `LabelerConf`, `Entry`, serialization |
+| `plugins/` | Integration tests executing all bundled template and macro plugins through the real plugin runner |
 | `util/` | Pure helper functions |
 | `env/`, `strings/` | Environment and localization helpers |
 | `fixtures/` | Smoke tests creating projects from the fixture data with the bundled labelers |
@@ -46,6 +47,7 @@ in a packaged app. Use `testutil.TestLabelers` to load a bundled labeler (`utauS
 - `utau-singer/` — a voicebank with two pitch folders (`C4`, `A3`) with `oto.ini` files
 - `nnsvs-singer/` — `lab/` folder with HTS-style `.lab` files (100 ns units)
 - `oto/` — a flat single-`oto.ini` voicebank
+- `plugins/<plugin-name>/` — inputs for plugin tests (UST files, Audacity/Sinsy label files, oto files, prefix maps)
 
 Wav files are **not committed**; they are generated at test runtime. Deploy a fixture to a temp directory with:
 
@@ -68,6 +70,14 @@ lookup can be shadowed by a package of the same name.
 `testutil.createTestProject(labeler, sampleDirectory, ...)` runs the real project creation flow (`projectOf`),
 including the labeler's project constructor and parser scripts in the GraalVM JS engine. See
 `fixtures/UtauSingerProjectFixtureTest.kt` for a complete example including temp directory setup/teardown.
+
+### Running plugins
+
+Plugin tests load the bundled plugins through the real `loadPlugins(type, language)` path (which also exercises
+`file::` default-parameter injection) and execute them with `runTemplatePlugin` / `runMacroPlugin`. Shared helpers:
+`plugins/TemplatePluginRunner.kt` and `plugins/MacroPluginTestBase.kt` (the latter builds a two-module `utau-singer`
+project and captures plugin reports via `MacroPluginExecutionListener`). Tests assert exact output entries; when
+adding or changing a bundled plugin, add or update its test accordingly.
 
 ### Environment gotchas
 
@@ -94,8 +104,8 @@ The test effort is tracked on the `feature/automated-tests` branch (sub-parts ar
 
 1. ✅ **Phase 1 — foundations**: Kover coverage, fixtures, `testutil` helpers, labeler smoke tests, CI reports
 2. ✅ **Phase 2 — unit tests**: `io` (raw labels round-trips, reload, backups, wave/DSP), `model`, `util`
-3. **Phase 3 — integration tests**: bundled template/macro plugin execution, full project lifecycle
-   (create → save → load → edit → export)
+3. ✅ **Phase 3 — integration tests**: all bundled template/macro plugins, full project lifecycle
+   (create → save → load → edit → export → reload)
 4. **Phase 4 — UI tests**: state holders (`ProjectStore`, dialog states) and Compose UI tests (`runComposeUiTest`)
 5. **Phase 5 — CI polish**: split unit/integration steps, coverage thresholds
 
