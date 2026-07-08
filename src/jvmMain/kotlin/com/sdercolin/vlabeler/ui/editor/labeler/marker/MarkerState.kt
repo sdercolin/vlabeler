@@ -442,14 +442,14 @@ class MarkerState(
                 }
             }
 
-        // check start again
+        // check end again
         if ((endInPixel - x).absoluteValue <= NEAR_RADIUS_START_OR_END) {
             return MarkerCursorState.END_POINT_INDEX
         }
 
-        // check end again
+        // check start again
         if ((startInPixel - x).absoluteValue <= NEAR_RADIUS_START_OR_END) {
-            MarkerCursorState.START_POINT_INDEX
+            return MarkerCursorState.START_POINT_INDEX
         }
 
         return MarkerCursorState.NONE_POINT_INDEX

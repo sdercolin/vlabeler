@@ -258,9 +258,11 @@ class ProjectCreatorStateTest {
 
         assertEquals(working.absolutePath, state.workingDirectory)
         assertEquals("MySinger", state.projectName)
-        // pins current behavior: with an edited working directory, changing the sample directory refills the
-        // project name but does not refresh the not-yet-edited cache directory, which keeps its previous value
-        assertEquals("", state.cacheDirectory)
+        // the not-yet-edited cache directory follows the edited working directory and the refilled project name
+        assertEquals(
+            Project.getDefaultCacheDirectory(working.absolutePath, "MySinger"),
+            state.cacheDirectory,
+        )
     }
 
     @Test

@@ -15,7 +15,6 @@ val jsonForIpc = Json {
     encodeDefaults = true
     ignoreUnknownKeys = true
     isLenient = true
-    serializersModule
     serializersModule = SerializersModule {
         polymorphic(IpcRequest::class) {
             subclass(HeartbeatRequest::class)
