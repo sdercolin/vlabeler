@@ -22,10 +22,26 @@ val DefaultAppConfFile get() = ResourceDir.resolve(APP_CONF_FILE_NAME)
 val DefaultLabelerDir get() = ResourceDir.resolve(LABELER_FOLDER_NAME)
 val DefaultPluginDir get() = ResourceDir.resolve(PLUGIN_FOLDER_NAME)
 
+private const val ENV_KEY_APP_DIR = "VLABELER_APP_DIR"
+
 // External files
 val HomeDir get() = File(System.getProperty("user.home"))
+
+/**
+ * A custom application directory given by the environment variable `VLABELER_APP_DIR`. The value has to be an
+ * absolute path; the directory is created if it does not exist. If the value is invalid, `null` is returned so that
+ * the default location is used.
+ */
+private val customAppDir: File? by lazy {
+    val path = System.getenv(ENV_KEY_APP_DIR)?.trim()?.takeIf { it.isNotEmpty() } ?: return@lazy null
+    val file = File(path)
+    if (!file.isAbsolute) return@lazy null
+    runCatching { file.mkdirs() }
+    file.takeIf { it.isDirectory }
+}
+
 val AppDir
-    get() = when {
+    get() = customAppDir ?: when {
         isMacOS -> HomeDir.resolve("Library").resolve(APP_NAME_PATH)
         else -> HomeDir.resolve(APP_NAME_PATH)
     }
