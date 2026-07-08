@@ -108,7 +108,10 @@ Notes:
 
 State-holder classes (`ui/ProjectStore.kt`, `AppErrorState`, dialog states, ...) are plain classes over Compose
 `mutableStateOf` and are tested without rendering — see `ui/ProjectStoreTest.kt`, which drives the real
-implementations against fixture projects.
+implementations against fixture projects. For classes that require an `AppState` (which cannot be constructed in
+tests because it binds the IPC port and starts analytics/audio), `ui/EditorStateTest.kt` shows the furthest-going
+pattern: an uninitialized instance via `sun.misc.Unsafe` with real members injected reflectively, giving a
+functional editor against real sample loading and chart rendering.
 
 ### Environment gotchas
 

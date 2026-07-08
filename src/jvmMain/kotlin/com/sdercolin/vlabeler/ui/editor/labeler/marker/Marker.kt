@@ -862,7 +862,8 @@ private fun MarkerState.handleScissorsCut(
     cutEntry(entryIndex, timePosition, position)
 }
 
-private fun MarkerState.editEntryIfNeeded(
+// internal for testing: this is the drag-result -> Edition conversion, the core of committing a drag operation
+internal fun MarkerState.editEntryIfNeeded(
     updated: List<EntryInPixel>,
     editEntries: (List<Edition>) -> Unit,
     method: Edition.Method,
