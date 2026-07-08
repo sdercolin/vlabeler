@@ -151,9 +151,9 @@ registerTestSubset(
 koverReport {
     defaults {
         verify {
-            // Guards against coverage regressions; raise the bound as coverage grows (baseline: 36% on 2026-07-08).
+            // Guards against coverage regressions; raise the bound as coverage grows (baseline: 45% on 2026-07-08).
             rule("Minimal line coverage") {
-                minBound(34)
+                minBound(43)
             }
         }
     }
