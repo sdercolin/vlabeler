@@ -48,7 +48,7 @@ import kotlin.test.assertTrue
  *
  * The [AppRecordStore] is constructed with an already-cancelled scope so that its `collectAndWrite()` loop never
  * runs and nothing is ever written to the real application directory. This safety assumption is itself asserted in
- * [app record store on cancelled scope never updates or writes the record file].
+ * [app record store on cancelled scope updates in memory but never writes the record file].
  */
 class ProjectCreatorStateTest {
 
@@ -107,13 +107,14 @@ class ProjectCreatorStateTest {
     /* region AppRecordStore safety */
 
     @Test
-    fun `app record store on cancelled scope never updates or writes the record file`() {
+    fun `app record store on cancelled scope updates in memory but never writes the record file`() {
         val before = Triple(AppRecordFile.exists(), AppRecordFile.lastModified(), AppRecordFile.length())
         val store = AppRecordStore(AppRecord(), cancelledScope())
         store.update { copy(autoExport = true) }
         // longer than the 500 ms write throttle in AppRecordStore
         Thread.sleep(800)
-        assertEquals(AppRecord(), store.value)
+        // updates are synchronous and in-memory only; the write collector never runs on a cancelled scope
+        assertEquals(AppRecord(autoExport = true), store.value)
         val after = Triple(AppRecordFile.exists(), AppRecordFile.lastModified(), AppRecordFile.length())
         assertEquals(before, after)
     }

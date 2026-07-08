@@ -70,7 +70,7 @@ object PreferencesPages {
                     integer(
                         title = Strings.PreferencesChartsMaxDataChunkSize,
                         description = Strings.PreferencesChartsMaxDataChunkSizeDescription,
-                        defaultValue = AppConf.CanvasResolution.DEFAULT_STEP,
+                        defaultValue = AppConf.Painter.DEFAULT_MAX_DATA_CHUNK_SIZE,
                         min = AppConf.Painter.MIN_MAX_DATA_CHUNK_SIZE,
                         max = AppConf.Painter.MAX_MAX_DATA_CHUNK_SIZE,
                         select = { it.maxDataChunkSize },

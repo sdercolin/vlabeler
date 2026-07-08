@@ -32,7 +32,7 @@ mirroring the production area rather than full package paths:
 | `plugins/` | Integration tests executing all bundled template and macro plugins through the real plugin runner |
 | `repository/` | Cache repositories: versioning/invalidation, move/clear |
 | `ipc/` | Remote-control API: wire-level JSON contract and real ZeroMQ round trips |
-| `ui/` | State-holder tests (`ProjectStore`, project creator wizard, app states) and Compose UI tests (`*UiTest`) |
+| `ui/` | State-holder tests (`ProjectStore`, project creator wizard, preferences editor, plugin/customization dialogs, app states) and Compose UI tests (`*UiTest`) |
 | `com.sdercolin.vlabeler.ui.editor.labeler.marker` | Editor marker drag/constraint logic (`MarkerStateFactory` builds real states) |
 | `util/` | Pure helper functions |
 | `env/`, `strings/` | Environment and localization helpers |
