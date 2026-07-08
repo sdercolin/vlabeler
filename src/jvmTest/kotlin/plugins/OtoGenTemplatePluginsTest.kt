@@ -45,11 +45,10 @@ class OtoGenTemplatePluginsTest {
         val entries = assertIs<TemplatePluginResult.Parsed>(result).entries
         // defaults: offset 100, overlap 30, preutterance 60, fixed 100, cutoff -1000
         // points are absolute positions: [fixed, preutterance, overlap, offset(start)]
-        // note: the current script uses the full sample file name (with extension) as the entry name
         assertEquals(
             listOf(
-                Entry("あ.wav", "あ.wav", 100f, 1100f, listOf(200f, 160f, 130f, 100f), listOf("-1000")),
-                Entry("か.wav", "か.wav", 100f, 1100f, listOf(200f, 160f, 130f, 100f), listOf("-1000")),
+                Entry("あ.wav", "あ", 100f, 1100f, listOf(200f, 160f, 130f, 100f), listOf("-1000")),
+                Entry("か.wav", "か", 100f, 1100f, listOf(200f, 160f, 130f, 100f), listOf("-1000")),
             ),
             entries,
         )

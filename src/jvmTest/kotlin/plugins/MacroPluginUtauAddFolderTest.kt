@@ -7,12 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-/**
- * The name declared in the plugin.json of the "utau-add-folder" plugin. Note that it differs from the directory name
- * "utau-add-folder": the declared name (and the website field) contains a typo ("foler"). This is a suspected bug in
- * the bundled resources; the tests pin the current behavior by loading the plugin with the declared name.
- */
-private const val UTAU_ADD_FOLDER_PLUGIN_NAME = "utau-add-foler"
+private const val UTAU_ADD_FOLDER_PLUGIN_NAME = "utau-add-folder"
 
 /**
  * Integration tests for the bundled "utau-add-folder" macro plugin (project scope).
