@@ -75,11 +75,25 @@ gh release edit <version> --notes-file <file>
 Show the final notes to the user before saving.
 
 **Prerelease flag**: leave the release as **prerelease = true** (the workflows create it that
-way, and it must stay so while builds are running). Do NOT flip it — the user manually sets the
-release to the latest released state themselves after verifying the builds. Just remind them in
-the wrap-up.
+way, and it must stay so while builds are running). Do NOT flip it — see step 5.
 
-## 5. Notify related issues (do NOT close)
+## 5. Wait for the user to release
+
+The release is considered **released** only when the user manually removes the prerelease label
+on GitHub, after they have verified the builds. Note:
+
+- The user removes the prerelease label themselves (this is what makes the in-app auto-update
+  system pick the version up). Do NOT do it for them.
+- **A beta must never be marked as "latest release"** — for betas, only the prerelease label is
+  removed. Marking as latest is only for stable versions (also the user's call).
+
+When all builds have succeeded and the notes are applied, tell the user everything is ready and
+wait for them to confirm they have removed the prerelease label. Do not proceed to step 6 before
+that.
+
+## 6. Notify related issues (do NOT close)
+
+Only after the user has removed the prerelease label (step 5):
 
 Find issues addressed by this release: check merged PRs since the previous tag
 (`gh pr list --state merged --base dev --search "merged:>=<previous tag date>"`) and their
@@ -92,7 +106,7 @@ For each issue, leave a comment like:
 
 **Never close the issues** — the submitter closes them after verifying.
 
-## 6. Update the Trello board
+## 7. Update the Trello board
 
 Board: `vLabeler` (https://trello.com/b/rP1L7rbi/vlabeler). Use the connected Trello MCP tools
 (or ask the user if not connected).
@@ -102,15 +116,13 @@ Board: `vLabeler` (https://trello.com/b/rP1L7rbi/vlabeler). Use the connected Tr
 - For a stable release, also move cards from **Beta Released** to **Released** if their changes
   are included in this stable version.
 
-## 7. Wrap up
+## 8. Wrap up
 
 - Post a short summary to the user: version, release URL, artifact status, issues notified,
   Trello moves.
 - Remind the user of manual follow-ups that are theirs to do:
-  - Set the release from prerelease to the latest released state on GitHub (after verifying the
-    builds).
   - Announce in the Discord server.
   - Optionally bump `app.version` on `dev` to start the next cycle (e.g. `1.7.1-beta1` after a
     stable `1.7.0`), committed directly to `dev`.
-- If anything in steps 2–6 failed halfway, report exactly which steps completed so the release
+- If anything in steps 2–7 failed halfway, report exactly which steps completed so the release
   can be resumed without re-tagging.
