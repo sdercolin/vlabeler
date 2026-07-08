@@ -30,7 +30,10 @@ mirroring the production area rather than full package paths:
 | `io/` | Label parsing/writing, reloading, project files/lifecycle, wave loading, DSP (power/spectrogram/fundamental) |
 | `model/` | Domain model: `Module`, `ProjectHistory`, `LabelerConf`, `Entry`, serialization |
 | `plugins/` | Integration tests executing all bundled template and macro plugins through the real plugin runner |
-| `ui/` | State-holder tests (`ProjectStore`, app states) and Compose UI tests (`*UiTest`) for common components |
+| `repository/` | Cache repositories: versioning/invalidation, move/clear |
+| `ipc/` | Remote-control API: wire-level JSON contract and real ZeroMQ round trips |
+| `ui/` | State-holder tests (`ProjectStore`, project creator wizard, app states) and Compose UI tests (`*UiTest`) |
+| `com.sdercolin.vlabeler.ui.editor.labeler.marker` | Editor marker drag/constraint logic (`MarkerStateFactory` builds real states) |
 | `util/` | Pure helper functions |
 | `env/`, `strings/` | Environment and localization helpers |
 | `fixtures/` | Smoke tests creating projects from the fixture data with the bundled labelers |
@@ -109,9 +112,12 @@ implementations against fixture projects.
 
 ### Environment gotchas
 
+- **Application directory**: the test tasks set the `VLABELER_APP_DIR` environment variable to `build/test-app-dir`,
+  so `AppDir` (logs, records, custom labelers/plugins) never points at the real user directory. Tests must still not
+  write outside temp directories or that build directory.
 - **Logging**: set `Log.muted = true` in `@BeforeTest` and back to `false` in `@AfterTest` when the tested code logs.
 - **Log directory**: constructing `util.JavaScript()` with default arguments opens the info log file directly, which
-  fails on machines where the app has never run (e.g. CI). Call `testutil.TestEnv.ensureLogDirectory()` first
+  fails if the (redirected) log directory does not exist yet. Call `testutil.TestEnv.ensureLogDirectory()` first
   (`createTestProject` already does).
 - **License report**: the `test` Gradle task depends on `checkLicenseReportUpdate`; run
   `./gradlew updateLicenseReport` after changing dependencies.

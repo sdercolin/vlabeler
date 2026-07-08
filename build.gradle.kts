@@ -56,6 +56,12 @@ kotlin {
                 "compose.application.resources.dir",
                 project.layout.projectDirectory.dir("resources").dir("common").asFile.absolutePath,
             )
+            // Redirect the application directory (logs, records, custom labelers/plugins) away from the real
+            // `~/vLabeler` so tests never read or write user data. See `AppDir` in `util/Path.kt`.
+            environment(
+                "VLABELER_APP_DIR",
+                project.layout.buildDirectory.dir("test-app-dir").get().asFile.absolutePath,
+            )
         }
     }
     sourceSets {
@@ -119,6 +125,10 @@ fun registerTestSubset(name: String, subsetDescription: String, packages: List<S
             "compose.application.resources.dir",
             project.layout.projectDirectory.dir("resources").dir("common").asFile.absolutePath,
         )
+        environment(
+            "VLABELER_APP_DIR",
+            project.layout.buildDirectory.dir("test-app-dir").get().asFile.absolutePath,
+        )
         filter { packages.forEach { includeTestsMatching("$it.*") } }
     }
 
@@ -141,9 +151,9 @@ registerTestSubset(
 koverReport {
     defaults {
         verify {
-            // Guards against coverage regressions; raise the bound as coverage grows (baseline: 32% on 2026-07-07).
+            // Guards against coverage regressions; raise the bound as coverage grows (baseline: 36% on 2026-07-08).
             rule("Minimal line coverage") {
-                minBound(30)
+                minBound(34)
             }
         }
     }
