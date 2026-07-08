@@ -63,6 +63,7 @@ object ConvertedAudioRepository {
      */
     fun clear(project: Project) {
         project.getCacheDir().resolve(WAVE_CACHE_FOLDER_NAME).deleteRecursivelyLogged()
+        cacheMap.clear()
     }
 
     /**

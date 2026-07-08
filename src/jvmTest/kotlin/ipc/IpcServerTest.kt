@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import org.junit.jupiter.api.Assumptions
 import org.zeromq.SocketType
 import org.zeromq.ZContext
 import org.zeromq.ZMQ
@@ -31,7 +32,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
  * End-to-end tests for [IpcServer] over a real ZeroMQ REQ/REP socket pair on `tcp://localhost:32342`.
@@ -65,16 +65,19 @@ class IpcServerTest {
 
     /**
      * [IpcServer.bind] swallows bind failures, which would make the test hang until timeout instead of failing
-     * clearly, so check the fixed port up front and fail fast with an explanation.
+     * clearly, so check the fixed port up front. When the port is taken (typically by a running vLabeler instance
+     * on a developer machine), skip the test instead of failing; CI machines never run the application, so these
+     * tests are always executed there.
      */
     private fun requirePortFree() {
-        try {
+        val portFree = try {
             ServerSocket(PORT).close()
+            true
         } catch (e: IOException) {
-            fail(
-                "Port $PORT is already in use (a running vLabeler instance or a leaked server from a previous " +
-                    "test run?). Free the port and re-run. Cause: $e",
-            )
+            false
+        }
+        Assumptions.assumeTrue(portFree) {
+            "Port $PORT is already in use (probably by a running vLabeler instance); skipping the socket test."
         }
     }
 

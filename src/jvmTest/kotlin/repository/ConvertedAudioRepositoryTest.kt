@@ -136,10 +136,7 @@ class ConvertedAudioRepositoryTest {
     }
 
     @Test
-    fun testClearKeepsCacheMapEntries() {
-        // Pins current behavior: unlike SampleInfoRepository.clear and ChartRepository.clear, this clear() does not
-        // reset the in-memory cache map, so the next conversion of the same sample gets a suffixed file name
-        // because the stale map entry still reserves the base name. Suspected bug in production code.
+    fun testClearResetsCacheMapEntries() {
         val project = createProject()
         ConvertedAudioRepository.init(project)
         val wavFile = project.rootSampleDirectory.resolve("_a_ka.wav")
@@ -148,7 +145,8 @@ class ConvertedAudioRepositoryTest {
         ConvertedAudioRepository.clear(project)
         val output = create(project, wavFile)
 
-        assertEquals("__a_ka.wav.converted.1.wav", output.name)
+        // the in-memory map is reset together with the files, so the base name is available again
+        assertEquals("__a_ka.wav.converted.wav", output.name)
     }
 
     @Test

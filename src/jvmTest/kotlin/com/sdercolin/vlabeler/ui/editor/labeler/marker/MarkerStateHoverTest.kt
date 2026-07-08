@@ -119,10 +119,7 @@ class MarkerStateHoverTest {
     }
 
     @Test
-    fun hoveringNearStartButCloserToNextPointReturnsNone() {
-        // Suspected production bug (pinning current behavior): the final start check in
-        // MarkerState.getPointIndexForHovering computes START_POINT_INDEX without returning it, so a position that
-        // is within the start radius but closer to the next point ends up as NONE instead of START.
+    fun hoveringNearStartButCloserToNextPointReturnsStart() {
         val state = MarkerStateFactory.create(
             labelerConf = TestLabelers.nnsvsSinger,
             allEntries = listOf(
@@ -131,7 +128,8 @@ class MarkerStateHoverTest {
             ),
         )
         // x = 108 is within 20 px of the start (100) but closer to the border (110); the line hit test skips the
-        // border because the position is also within the start radius and left of the border
-        assertEquals(MarkerCursorState.NONE_POINT_INDEX, state.hover(108f, 500f))
+        // border because the position is also within the start radius and left of the border, so the fallback
+        // start check applies
+        assertEquals(MarkerCursorState.START_POINT_INDEX, state.hover(108f, 500f))
     }
 }

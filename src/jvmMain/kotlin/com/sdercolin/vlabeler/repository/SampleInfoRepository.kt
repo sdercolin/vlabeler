@@ -31,6 +31,9 @@ object SampleInfoRepository {
      * @param project Current project.
      */
     fun init(project: Project) {
+        // the memory cache is keyed by (module name, sample name) without any project identity, so it has to be
+        // dropped when a(nother) project is initialized to avoid serving stale entries across projects
+        infoMap.clear()
         cacheDirectory = project.getCacheDir().resolve(SAMPLE_INFO_CACHE_FOLDER_NAME)
         cacheDirectory.mkdirs()
         cacheMap = runCatching {
