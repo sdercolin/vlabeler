@@ -84,13 +84,6 @@ class PreferencesPagesTraversalTest {
     private fun List<LocatedItem>.valued(): List<Pair<String, PreferencesItem.Valued<*>>> =
         mapNotNull { (location, item) -> (item as? PreferencesItem.Valued<*>)?.let { location to it } }
 
-    /**
-     * Items whose declared `defaultValue` does not match the default of the [AppConf] field they operate on.
-     * These are excluded from the default-consistency assertions and pinned in dedicated tests instead.
-     */
-    private fun isKnownDefaultMismatch(location: String) =
-        location.contains(Strings.PreferencesChartsMaxDataChunkSize.name)
-
     /** Produces a value for the item that differs from its default value, or null if none can be derived. */
     private fun mutatedValueFor(item: PreferencesItem.Valued<*>): Any? = when (item) {
         is PreferencesItem.Switch -> item.defaultValue.not()
@@ -172,7 +165,7 @@ class PreferencesPagesTraversalTest {
     fun `every valued item declares the default value of its own conf field`() {
         val items = allItems().valued()
         assertTrue(items.size >= 100, "expected the traversal to find at least 100 valued items, got ${items.size}")
-        items.filterNot { (location, _) -> isKnownDefaultMismatch(location) }
+        items
             .forEach { (location, item) ->
                 assertEquals(
                     item.defaultValue,
@@ -194,7 +187,6 @@ class PreferencesPagesTraversalTest {
     @Test
     fun `every valued item resets its page copy exactly back to the default conf`() {
         allItems().valued()
-            .filterNot { (location, _) -> isKnownDefaultMismatch(location) }
             .forEach { (location, item) ->
                 @Suppress("UNCHECKED_CAST")
                 val valuedItem = item as PreferencesItem.Valued<Any?>
@@ -266,23 +258,6 @@ class PreferencesPagesTraversalTest {
         }
     }
 
-    /**
-     * Pins a suspected copy-paste bug in [PreferencesPages.ChartsCanvas]: the "max data chunk size" item declares
-     * `defaultValue = AppConf.CanvasResolution.DEFAULT_STEP` (= 20) instead of
-     * `AppConf.Painter.DEFAULT_MAX_DATA_CHUNK_SIZE` (= 441000). Resetting the item (or the Charts/Canvas page) sets
-     * `painter.maxDataChunkSize` to 20, far below the item's own minimum of
-     * [AppConf.Painter.MIN_MAX_DATA_CHUNK_SIZE]. If this test fails, the bug has been fixed: remove this test and the
-     * corresponding known-mismatch exclusion above.
-     */
-    @Test
-    fun `known issue - max data chunk size item declares the canvas resolution step as its default`() {
-        val (_, item) = allItems().valued().single { (location, _) -> isKnownDefaultMismatch(location) }
-        assertEquals(AppConf.CanvasResolution.DEFAULT_STEP, item.defaultValue)
-        assertEquals(AppConf.Painter.DEFAULT_MAX_DATA_CHUNK_SIZE, item.select(AppConf()))
-        assertNotEquals(item.defaultValue, item.select(AppConf()))
-    }
-
-    @Test
     fun `keymap pages expose exactly one keymap item of their action type`() {
         val expectations = mapOf(
             PreferencesPages.KeymapKeyAction to ActionType.Key,

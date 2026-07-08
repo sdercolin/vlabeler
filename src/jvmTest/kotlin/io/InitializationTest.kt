@@ -191,6 +191,24 @@ class InitializationTest {
     }
 
     @Test
+    fun testRunMigrationResetsRosettaCheckOnMinorUpdate() {
+        // an older minor version triggers the Rosetta compatibility re-check; both updates issued by runMigration
+        // are applied because AppRecordStore.update is synchronous and atomic
+        val previousRaw = "${appVersion.major}.${appVersion.minor - 1}.0"
+        val store = recordStoreOf(
+            AppRecord(
+                appVersionLastLaunchedRaw = previousRaw,
+                hasCheckedRosettaCompatibleMode = true,
+            ),
+        )
+
+        runMigration(store)
+
+        assertEquals(appVersion, store.value.appVersionLastLaunched)
+        assertFalse(store.value.hasCheckedRosettaCompatibleMode)
+    }
+
+    @Test
     fun testLoadPluginsLoadsBundledPlugins() {
         val plugins = runBlocking { loadPlugins(Language.English) }
 

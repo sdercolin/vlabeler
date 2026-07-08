@@ -172,9 +172,6 @@ class ImportProjectEdgeCasesTest {
 
     @Test
     fun testNotesAreImported() {
-        // NOTE: the backward compatibility path for the legacy "meta" field in `parseEntry` cannot be tested here:
-        // it is only reachable in packaged (non-debug) runs, because in debug runs (including tests)
-        // `json.ignoreUnknownKeys` is false and the unknown "meta" key fails the whole entry deserialization.
         val json = """
             {
                 "labelerConf": {
@@ -203,6 +200,42 @@ class ImportProjectEdgeCasesTest {
 
         assertEquals(
             EntryNotes(done = true, star = true, tag = "some-tag"),
+            actual.single().entries.single().notes,
+        )
+    }
+
+    @Test
+    fun testLegacyMetaNotesAreImported() {
+        // "meta" is the legacy name of "notes"; it is stripped before strict entry deserialization and mapped to
+        // the notes of the imported entry
+        val json = """
+            {
+                "labelerConf": {
+                    "continuous": false,
+                    "extension": "ini"
+                },
+                "entries": [
+                    {
+                        "sample": "sample1",
+                        "name": "entry1",
+                        "start": 1,
+                        "end": 2,
+                        "points": [1, 2],
+                        "extras": ["a"],
+                        "meta": {
+                            "done": true,
+                            "star": false,
+                            "tag": "legacy-tag"
+                        }
+                    }
+                ]
+            }
+        """.trimIndent()
+
+        val actual = importModulesFromProject(json)
+
+        assertEquals(
+            EntryNotes(done = true, star = false, tag = "legacy-tag"),
             actual.single().entries.single().notes,
         )
     }

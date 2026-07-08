@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
@@ -19,12 +20,6 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
 
     init {
         collectAndWrite()
-    }
-
-    private fun push(appRecord: AppRecord) {
-        scope.launch(Dispatchers.IO) {
-            _stateFlow.emit(appRecord)
-        }
     }
 
     private fun collectAndWrite() {
@@ -41,7 +36,9 @@ class AppRecordStore(appRecord: AppRecord, private val scope: CoroutineScope) {
     val value get() = stateFlow.value
 
     fun update(updater: AppRecord.() -> AppRecord) {
-        push(updater(value))
+        // update the state atomically and synchronously so that consecutive updates never read a stale value;
+        // persisting to the record file stays asynchronous and throttled in `collectAndWrite`
+        _stateFlow.update(updater)
     }
 
     private fun applyLogSettings(appRecord: AppRecord) {
