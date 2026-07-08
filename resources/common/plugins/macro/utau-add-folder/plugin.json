@@ -1,6 +1,6 @@
 {
-    "name": "utau-add-foler",
-    "version": 3,
+    "name": "utau-add-folder",
+    "version": 4,
     "type": "macro",
     "displayedName": {
         "en": "Add folder as sub-project for UTAU singer",
@@ -16,7 +16,7 @@
         "ja": "音源のルートディレクトリ以下のフォルダを参照しサブプロジェクトを作成する。このプラグインは、`UTAU singer ラベラー` と一緒に使用することを想定しています。",
         "ko": "가수 루트 디렉토리의 속 폴더에서 하위 프로젝트를 만들어 줘요. `UTAU 가수 라벨러`와 함께 사용하도록 설계된 플러그인이에요."
     },
-    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/utau-add-foler",
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/plugins/macro/utau-add-folder",
     "supportedLabelFileExtension": "ini",
     "scope": "Project",
     "parameters": {
