@@ -8,12 +8,17 @@ conventions to follow when adding tests.
 ```bash
 ./gradlew jvmTest                                  # run all tests
 ./gradlew jvmTest --tests "io.RawLabelsTest"       # run a single test class
-./gradlew build test                               # what PR CI runs (includes ktlint and license report check)
+./gradlew unitTest                                 # only unit tests (util, model, env, strings, testutil)
+./gradlew integrationTest                          # only integration tests (io, fixtures, plugins)
+./gradlew uiTest                                   # only UI tests (ui)
+./gradlew build test koverVerify                   # what PR CI runs (includes ktlint and license report check)
 ./gradlew koverHtmlReport                          # coverage report at build/reports/kover/html
 ```
 
-CI (`.github/workflows/pull-request.yml`) runs the full build and tests for PRs targeting `main`, `dev` and
-`feature/automated-tests`, and uploads test and coverage reports as workflow artifacts (also on failure).
+CI (`.github/workflows/pull-request.yml`) runs the full build and tests for PRs targeting `main` and `dev`, uploads
+test and coverage reports as workflow artifacts (also on failure), and enforces a minimal line coverage bound via
+`koverVerify` (see `koverReport` in `build.gradle.kts`; raise the bound as coverage grows). Coverage data is only
+collected from the full `jvmTest` task — the subset tasks are a local convenience and are not instrumented.
 
 ## Test source layout
 
@@ -30,7 +35,10 @@ mirroring the production area rather than full package paths:
 | `env/`, `strings/` | Environment and localization helpers |
 | `fixtures/` | Smoke tests creating projects from the fixture data with the bundled labelers |
 | `testutil/` | Shared test helpers (see below) |
-| (root) | Older tests for single utilities |
+
+A few tests use the full production package name (e.g. `com.sdercolin.vlabeler.ui.editor...`) instead of a short
+package; prefer short packages for new tests so that the subset tasks pick them up (the `uiTest` subset covers both
+forms for `ui`).
 
 ## Test infrastructure
 
@@ -129,6 +137,8 @@ The test effort is tracked on the `feature/automated-tests` branch (sub-parts ar
 4. ✅ **Phase 4 — UI tests**: state holders (`ProjectStore`, app states) and Compose UI tests for common
    components and a standalone dialog. Not covered yet: the editor canvas/marker UI, dialogs requiring a full
    `AppState`, and full-application flows.
-5. **Phase 5 — CI polish**: split unit/integration steps, coverage thresholds
+5. ✅ **Phase 5 — CI polish**: per-level test subset tasks, minimal line coverage bound in CI, GitHub Actions
+   upgrades. (Splitting CI into per-level steps was evaluated and skipped: Kover only instruments `jvmTest`, so a
+   split would double-run the whole suite for coverage — not worth it at the current suite runtime.)
 
 When adding tests in a new phase, keep this document and the Testing section of `CLAUDE.md` up to date.
