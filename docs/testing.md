@@ -105,6 +105,8 @@ Notes:
   `isNotEnabled()` instead of action absence.
 - `string(Strings.X)` resolves without extra setup (`LocalLanguage` defaults to English).
 - "Cannot find font family Default" log lines in headless runs are benign.
+- Screen-level dialogs wrapped in an AWT `DialogWindow` (e.g. `PluginDialog`, `ColorPickerDialog`) do not mount in
+  `runComposeUiTest`; test their inner content composable or drive the flow through the public state holder instead.
 
 State-holder classes (`ui/ProjectStore.kt`, `AppErrorState`, dialog states, ...) are plain classes over Compose
 `mutableStateOf` and are tested without rendering — see `ui/ProjectStoreTest.kt`, which drives the real
