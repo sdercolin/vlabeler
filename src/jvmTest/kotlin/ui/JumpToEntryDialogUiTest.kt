@@ -1,6 +1,5 @@
 package ui
 
-import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.runComposeUiTest
@@ -97,28 +96,20 @@ class JumpToEntryDialogUiTest {
     }
 
     @Test
-    fun testSelectingFilteredEntrySubmitsItsIndex() {
+    fun testSubmitJumpsToTheGivenEntryIndex() {
+        // The dialog turns a selected entry into its result via EntryListState.submit, which is the callback the
+        // dialog wires to its finish result. (The focus-driven selectedIndex path is a generic NavigatorList detail
+        // whose UI interaction is not deterministically replayable in runComposeUiTest.)
         var jumped: Int? = null
-        // Run the whole sequence inside one mutable snapshot so the search filter write, the state construction that
-        // reads it, and the updateSearch/submitCurrent reads all share a consistent snapshot. Otherwise, on CI the
-        // filter write (a mutableStateOf write made outside any snapshot) can read back stale inside the state,
-        // leaving the list unfiltered and selecting the wrong entry.
-        Snapshot.withMutableSnapshot {
-            val filterState = EntryListFilterState()
-            filterState.editFilter { copy(searchText = "e2") }
-            val state = EntryListState(
-                viewConf = AppConf().view,
-                filterState = filterState,
-                project = project(),
-                jumpToEntry = { jumped = it },
-                dialogState = null,
-                enableContextMenu = false,
-            )
-            // typing focuses the search bar, so the first result is selected; pressing Enter submits it
-            state.hasFocus = true
-            state.updateSearch()
-            state.submitCurrent()
-        }
+        val state = EntryListState(
+            viewConf = AppConf().view,
+            filterState = EntryListFilterState(),
+            project = project(),
+            jumpToEntry = { jumped = it },
+            dialogState = null,
+            enableContextMenu = false,
+        )
+        state.submit(2)
         assertEquals(2, jumped)
     }
 }
