@@ -1,5 +1,6 @@
 package ui
 
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.runComposeUiTest
@@ -108,10 +109,14 @@ class JumpToEntryDialogUiTest {
             dialogState = null,
             enableContextMenu = false,
         )
-        // typing focuses the search bar, so the first result is selected; pressing Enter submits it
-        state.hasFocus = true
-        state.updateSearch()
-        state.submitCurrent()
+        // typing focuses the search bar, so the first result is selected; pressing Enter submits it.
+        // run inside a mutable snapshot so the selectedIndex written by updateSearch is observed by
+        // submitCurrent regardless of any global snapshot state left by earlier runComposeUiTest tests
+        Snapshot.withMutableSnapshot {
+            state.hasFocus = true
+            state.updateSearch()
+            state.submitCurrent()
+        }
         assertEquals(2, jumped)
     }
 }

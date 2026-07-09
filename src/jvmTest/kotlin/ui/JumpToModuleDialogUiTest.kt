@@ -1,5 +1,6 @@
 package ui
 
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.runComposeUiTest
@@ -82,10 +83,14 @@ class JumpToModuleDialogUiTest {
     fun testSelectingFilteredModuleSubmitsItsIndex() {
         var jumped: Int? = null
         val state = ModuleListState(project(), jumpToModule = { jumped = it })
-        state.searchText = "bet"
-        state.hasFocus = true
-        state.updateSearch()
-        state.submitCurrent()
+        // run inside a mutable snapshot so the selectedIndex written by updateSearch is observed by
+        // submitCurrent regardless of any global snapshot state left by earlier runComposeUiTest tests
+        Snapshot.withMutableSnapshot {
+            state.searchText = "bet"
+            state.hasFocus = true
+            state.updateSearch()
+            state.submitCurrent()
+        }
         assertEquals(1, jumped)
     }
 }
