@@ -141,6 +141,14 @@ class MarkerStateIndexTest {
     }
 
     @Test
+    fun getPointIndexAsSingleEntryReturnsNoneForAPointOfAnotherEntry() {
+        val state = continuousState()
+        // border 1 belongs to entry 2 (as its start), not to entry 0; the result must not collide with
+        // END_POINT_INDEX (-1), which would misattribute an edition's field to "end"
+        assertEquals(MarkerCursorState.NONE_POINT_INDEX, state.getPointIndexAsSingleEntry(0, 1))
+    }
+
+    @Test
     fun getPointIndexAsSingleEntryForLastEntryInContinuousMode() {
         val state = continuousState()
         // entry 2: border 1 is its start, the global end is its end

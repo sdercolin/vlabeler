@@ -101,7 +101,9 @@ class MarkerState(
         val endPointIndex = if (entryIndex == entryIndices.last()) {
             MarkerCursorState.END_POINT_INDEX
         } else {
-            startPointIndex + labelerConf.fields.size + 1
+            // the end border's flattened index, derived from the entry index directly (not from startPointIndex,
+            // which is overridden to START_POINT_INDEX for the first entry and would otherwise mis-compute it)
+            (entryIndex + 1) * (labelerConf.fields.size + 1) - 1
         }
         return when (pointIndex) {
             startPointIndex -> MarkerCursorState.START_POINT_INDEX
@@ -112,7 +114,9 @@ class MarkerState(
                 } else {
                     (startPointIndex + 1) until (startPointIndex + 1 + labelerConf.fields.size)
                 }
-                fieldPointIndexes.indexOfFirst { it == pointIndex }
+                val fieldIndex = fieldPointIndexes.indexOfFirst { it == pointIndex }
+                // the point does not belong to this entry; do not return -1, which collides with END_POINT_INDEX
+                if (fieldIndex < 0) MarkerCursorState.NONE_POINT_INDEX else fieldIndex
             }
         }
     }

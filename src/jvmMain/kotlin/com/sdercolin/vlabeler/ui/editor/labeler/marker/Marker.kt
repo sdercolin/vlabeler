@@ -862,7 +862,8 @@ private fun MarkerState.handleScissorsCut(
     cutEntry(entryIndex, timePosition, position)
 }
 
-private fun MarkerState.editEntryIfNeeded(
+// internal for testing: this is the drag-result -> Edition conversion, the core of committing a drag operation
+internal fun MarkerState.editEntryIfNeeded(
     updated: List<EntryInPixel>,
     editEntries: (List<Edition>) -> Unit,
     method: Edition.Method,
@@ -878,14 +879,32 @@ private fun MarkerState.editEntryIfNeeded(
             else -> labelerConf.fields[pointIndex].name
         }
 
+        fun getChangedFieldNames(entry: EntryInPixel): List<String> {
+            val original = entriesInPixel.first { it.index == entry.index }
+            return buildList {
+                if (entry.start != original.start) add("start")
+                labelerConf.fields.forEachIndexed { index, field ->
+                    if (entry.points[index] != original.points[index]) add(field.name)
+                }
+                if (entry.end != original.end) add("end")
+            }
+        }
+
         val editions = edited.map { entry ->
             val entryInMillis = entryConverter.convertToMillis(entry)
             val entryIndexInEdited = updated.indexOfFirst { it.index == entry.index }
-            val editedFieldName = getEditedFieldName(getPointIndexAsSingleEntry(entryIndexInEdited, pointIndex))
+            val pointIndexAsSingleEntry = getPointIndexAsSingleEntry(entryIndexInEdited, pointIndex)
+            val fieldNames = if (pointIndexAsSingleEntry == MarkerCursorState.NONE_POINT_INDEX) {
+                // this entry does not own the dragged point (e.g. it is co-moved by a locked drag),
+                // so list the fields that actually changed instead
+                getChangedFieldNames(entry)
+            } else {
+                listOf(getEditedFieldName(pointIndexAsSingleEntry))
+            }
             Edition(
                 entry.index,
                 entryInMillis.entry,
-                fieldNames = listOf(editedFieldName),
+                fieldNames = fieldNames,
                 method = method,
             )
         }.toMutableList()
