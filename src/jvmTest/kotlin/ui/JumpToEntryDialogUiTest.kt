@@ -99,20 +99,22 @@ class JumpToEntryDialogUiTest {
     @Test
     fun testSelectingFilteredEntrySubmitsItsIndex() {
         var jumped: Int? = null
-        val filterState = EntryListFilterState()
-        filterState.editFilter { copy(searchText = "e2") }
-        val state = EntryListState(
-            viewConf = AppConf().view,
-            filterState = filterState,
-            project = project(),
-            jumpToEntry = { jumped = it },
-            dialogState = null,
-            enableContextMenu = false,
-        )
-        // typing focuses the search bar, so the first result is selected; pressing Enter submits it.
-        // run inside a mutable snapshot so the selectedIndex written by updateSearch is observed by
-        // submitCurrent regardless of any global snapshot state left by earlier runComposeUiTest tests
+        // Run the whole sequence inside one mutable snapshot so the search filter write, the state construction that
+        // reads it, and the updateSearch/submitCurrent reads all share a consistent snapshot. Otherwise, on CI the
+        // filter write (a mutableStateOf write made outside any snapshot) can read back stale inside the state,
+        // leaving the list unfiltered and selecting the wrong entry.
         Snapshot.withMutableSnapshot {
+            val filterState = EntryListFilterState()
+            filterState.editFilter { copy(searchText = "e2") }
+            val state = EntryListState(
+                viewConf = AppConf().view,
+                filterState = filterState,
+                project = project(),
+                jumpToEntry = { jumped = it },
+                dialogState = null,
+                enableContextMenu = false,
+            )
+            // typing focuses the search bar, so the first result is selected; pressing Enter submits it
             state.hasFocus = true
             state.updateSearch()
             state.submitCurrent()

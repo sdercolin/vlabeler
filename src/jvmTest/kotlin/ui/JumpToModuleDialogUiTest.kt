@@ -82,10 +82,11 @@ class JumpToModuleDialogUiTest {
     @Test
     fun testSelectingFilteredModuleSubmitsItsIndex() {
         var jumped: Int? = null
-        val state = ModuleListState(project(), jumpToModule = { jumped = it })
-        // run inside a mutable snapshot so the selectedIndex written by updateSearch is observed by
-        // submitCurrent regardless of any global snapshot state left by earlier runComposeUiTest tests
+        // Run the whole sequence inside one mutable snapshot so the state construction and the search/submit reads
+        // share a consistent snapshot; otherwise the mutableStateOf writes can read back stale on CI and select the
+        // wrong module.
         Snapshot.withMutableSnapshot {
+            val state = ModuleListState(project(), jumpToModule = { jumped = it })
             state.searchText = "bet"
             state.hasFocus = true
             state.updateSearch()
