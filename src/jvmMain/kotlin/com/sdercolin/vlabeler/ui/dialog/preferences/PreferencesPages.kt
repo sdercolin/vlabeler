@@ -749,6 +749,7 @@ object PreferencesPages {
                         defaultValue = listOf(),
                         select = { it.entryNamePresets },
                         update = { copy(entryNamePresets = it) },
+                        importExportEnabled = true,
                     )
                 }
             }
@@ -1424,6 +1425,7 @@ private class PreferencesItemContext<P>(
         select: (P) -> List<String>,
         update: P.(List<String>) -> P,
         enabled: (P) -> Boolean = { true },
+        importExportEnabled: Boolean = false,
     ) = builder.item(
         PreferencesItem.StringListInput(
             title = title,
@@ -1434,6 +1436,7 @@ private class PreferencesItemContext<P>(
             select = selectWithContext(select),
             update = updateWithContext(update),
             enabled = selectWithContext(enabled),
+            importExportEnabled = importExportEnabled,
         ),
     )
 

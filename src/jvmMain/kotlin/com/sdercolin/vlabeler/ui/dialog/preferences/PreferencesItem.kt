@@ -156,6 +156,11 @@ sealed class PreferencesItem(
         select: (AppConf) -> List<String>,
         update: AppConf.(List<String>) -> AppConf,
         enabled: (AppConf) -> Boolean,
+        /**
+         * When true, import/export buttons are shown, allowing the list to be read from / written to a plain-text file
+         * with one item per line.
+         */
+        val importExportEnabled: Boolean = false,
     ) : Valued<List<String>>(
         title,
         description,

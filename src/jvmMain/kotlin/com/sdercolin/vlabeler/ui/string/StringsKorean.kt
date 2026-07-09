@@ -486,6 +486,14 @@ fun Strings.ko(): String? = when (this) {
         "엔트리 이름을 입력하는 대화창(엔트리 이름 변경, 자르기 등)에서 빠르게 적용할 수 있는 엔트리 이름 프리셋이에요."
     PreferencesStringListEmptyPlaceholder -> "항목이 없어요"
     PreferencesStringListNewItemPlaceholder -> "새 항목..."
+    PreferencesStringListImport -> "파일에서 가져오기"
+    PreferencesStringListExport -> "파일로 내보내기"
+    PreferencesStringListImportDialogTitle -> "파일에서 가져오기"
+    PreferencesStringListExportDialogTitle -> "파일로 내보내기"
+    PreferencesStringListImportSuccess -> "항목을 가져왔어요."
+    PreferencesStringListImportFailure -> "선택한 파일을 가져오지 못했어요."
+    PreferencesStringListExportSuccess -> "항목을 내보냈어요."
+    PreferencesStringListExportFailure -> "선택한 파일로 내보내지 못했어요."
     PreferencesEditorLockedDrag -> "고정 드래그"
     PreferencesEditorLockedDragDescription ->
         "주요 마커를 움직일 때, 고정 드래그의 방식을 선택합니다.\n" +
