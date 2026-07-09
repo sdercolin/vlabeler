@@ -469,6 +469,14 @@ fun Strings.ja(): String? = when (this) {
         "エントリ名を入力するダイアログ（エントリの名前変更やカット時など）で、すばやく適用できるエントリ名のプリセットです。"
     PreferencesStringListEmptyPlaceholder -> "項目がありません"
     PreferencesStringListNewItemPlaceholder -> "新しい項目..."
+    PreferencesStringListImport -> "ファイルからインポート"
+    PreferencesStringListExport -> "ファイルにエクスポート"
+    PreferencesStringListImportDialogTitle -> "ファイルからインポート"
+    PreferencesStringListExportDialogTitle -> "ファイルにエクスポート"
+    PreferencesStringListImportSuccess -> "項目をインポートしました。"
+    PreferencesStringListImportFailure -> "選択したファイルのインポートに失敗しました。"
+    PreferencesStringListExportSuccess -> "項目をエクスポートしました。"
+    PreferencesStringListExportFailure -> "選択したファイルへのエクスポートに失敗しました。"
     PreferencesEditorLockedDrag -> "連動ドラッグ"
     PreferencesEditorLockedDragDescription ->
         "連動ドラッグを有効にする条件を選択します。" +

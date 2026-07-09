@@ -251,7 +251,7 @@ fun EntryList(
             text = filterState.filter.searchText,
             onTextChange = {
                 filterState.editFilter { copy(searchText = it) }
-                state.updateSearch()
+                state.updateSearch(selectFirst = true)
             },
             focusRequester = focusRequester,
             onFocusedChanged = {

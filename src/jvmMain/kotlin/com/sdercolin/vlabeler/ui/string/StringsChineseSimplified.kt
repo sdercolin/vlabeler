@@ -442,6 +442,14 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorEntryNamePresetsDescription -> "预设的条目名称，可以在输入条目名称的对话框中（例如重命名或剪切条目时）快速使用。"
     PreferencesStringListEmptyPlaceholder -> "没有项目"
     PreferencesStringListNewItemPlaceholder -> "新的项目..."
+    PreferencesStringListImport -> "从文件导入"
+    PreferencesStringListExport -> "导出到文件"
+    PreferencesStringListImportDialogTitle -> "从文件导入"
+    PreferencesStringListExportDialogTitle -> "导出到文件"
+    PreferencesStringListImportSuccess -> "已成功导入项目。"
+    PreferencesStringListImportFailure -> "导入所选文件失败。"
+    PreferencesStringListExportSuccess -> "已成功导出项目。"
+    PreferencesStringListExportFailure -> "导出到所选文件失败。"
     PreferencesEditorLockedDrag -> "锁定拖动"
     PreferencesEditorLockedDragDescription ->
         "选择启用锁定拖动的条件。" +

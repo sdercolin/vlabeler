@@ -327,6 +327,67 @@ class PreferencesEditorState(
         ),
     }
 
+    var stringListFilePicker: StringListFilePicker? by mutableStateOf(null)
+        private set
+
+    fun requestStringListImport(item: PreferencesItem.StringListInput) {
+        stringListFilePicker = StringListFilePicker(
+            item = item,
+            writeMode = false,
+            title = Strings.PreferencesStringListImportDialogTitle,
+            initialFileName = null,
+        )
+    }
+
+    fun requestStringListExport(item: PreferencesItem.StringListInput) {
+        stringListFilePicker = StringListFilePicker(
+            item = item,
+            writeMode = true,
+            title = Strings.PreferencesStringListExportDialogTitle,
+            initialFileName = "presets.txt",
+        )
+    }
+
+    fun handleStringListFilePickerResult(
+        picker: StringListFilePicker,
+        parent: String?,
+        name: String?,
+    ) {
+        stringListFilePicker = null
+        if (parent == null || name == null) return
+        val file = File(parent, name)
+        if (picker.writeMode) {
+            runCatching { file.writeText(picker.item.select(conf).joinToString("\n")) }
+                .onSuccess { showSnackbar(stringStatic(Strings.PreferencesStringListExportSuccess)) }
+                .onFailure {
+                    showSnackbar(stringStatic(Strings.PreferencesStringListExportFailure))
+                    Log.error(it)
+                }
+        } else {
+            runCatching {
+                file.readText().lines().map { it.trim() }.filter { it.isNotEmpty() }.distinct()
+            }
+                .onSuccess {
+                    update(picker.item, it)
+                    showSnackbar(stringStatic(Strings.PreferencesStringListImportSuccess))
+                }
+                .onFailure {
+                    showSnackbar(stringStatic(Strings.PreferencesStringListImportFailure))
+                    Log.error(it)
+                }
+        }
+    }
+
+    @Immutable
+    data class StringListFilePicker(
+        val item: PreferencesItem.StringListInput,
+        val writeMode: Boolean,
+        val title: Strings,
+        val initialFileName: String?,
+    ) {
+        val extensions: List<String> = listOf("txt")
+    }
+
     @Immutable
     sealed class LaunchArgs(val page: PreferencesPage) {
         @Immutable

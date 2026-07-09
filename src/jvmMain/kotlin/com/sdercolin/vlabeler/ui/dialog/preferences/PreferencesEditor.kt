@@ -47,6 +47,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Settings
@@ -78,6 +80,7 @@ import com.sdercolin.vlabeler.ui.common.SearchBar
 import com.sdercolin.vlabeler.ui.common.SelectionBox
 import com.sdercolin.vlabeler.ui.common.SingleClickableText
 import com.sdercolin.vlabeler.ui.common.TextInputBox
+import com.sdercolin.vlabeler.ui.common.WithTooltip
 import com.sdercolin.vlabeler.ui.common.plainClickable
 import com.sdercolin.vlabeler.ui.dialog.ColorPickerArgs
 import com.sdercolin.vlabeler.ui.dialog.ColorPickerDialog
@@ -158,6 +161,7 @@ fun PreferencesEditor(
         KeymapItemEditConflictDialog(it)
     }
     FilePicker(state)
+    StringListFilePicker(state)
 }
 
 @Composable
@@ -546,6 +550,28 @@ private fun StringListInputItem(item: PreferencesItem.StringListInput, state: Pr
                 contentDescription = null,
                 tint = MaterialTheme.colors.onSurface.runIf(addEnabled.not()) { copy(alpha = 0.2f) },
             )
+            if (item.importExportEnabled) {
+                Spacer(Modifier.weight(1f))
+                WithTooltip(string(Strings.PreferencesStringListImport)) {
+                    Icon(
+                        modifier = Modifier.size(18.dp)
+                            .clickable(enabled = enabled) { state.requestStringListImport(item) },
+                        imageVector = Icons.Default.FileDownload,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onSurface.runIf(enabled.not()) { copy(alpha = 0.2f) },
+                    )
+                }
+                val exportEnabled = enabled && values.isNotEmpty()
+                WithTooltip(string(Strings.PreferencesStringListExport)) {
+                    Icon(
+                        modifier = Modifier.size(18.dp)
+                            .clickable(enabled = exportEnabled) { state.requestStringListExport(item) },
+                        imageVector = Icons.Default.FileUpload,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onSurface.runIf(exportEnabled.not()) { copy(alpha = 0.2f) },
+                    )
+                }
+            }
         }
     }
 }
@@ -748,6 +774,32 @@ private fun ButtonBar(
         }
         Spacer(Modifier.width(25.dp))
         ConfirmButton(onClick = finish)
+    }
+}
+
+@Composable
+private fun StringListFilePicker(state: PreferencesEditorState) {
+    state.stringListFilePicker?.let { picker ->
+        val title = string(picker.title)
+        if (picker.writeMode) {
+            SaveFileDialog(
+                title = title,
+                extensions = picker.extensions,
+                initialFileName = picker.initialFileName,
+                onCloseRequest = { parent, name ->
+                    state.handleStringListFilePickerResult(picker, parent, name)
+                },
+            )
+        } else {
+            OpenFileDialog(
+                title = title,
+                extensions = picker.extensions,
+                initialFileName = picker.initialFileName,
+                onCloseRequest = { parent, name ->
+                    state.handleStringListFilePickerResult(picker, parent, name)
+                },
+            )
+        }
     }
 }
 

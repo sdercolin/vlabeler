@@ -496,6 +496,14 @@ fun Strings.en(): String = when (this) {
             "renaming or cutting an entry."
     PreferencesStringListEmptyPlaceholder -> "No items"
     PreferencesStringListNewItemPlaceholder -> "New item..."
+    PreferencesStringListImport -> "Import from file"
+    PreferencesStringListExport -> "Export to file"
+    PreferencesStringListImportDialogTitle -> "Import from file"
+    PreferencesStringListExportDialogTitle -> "Export to file"
+    PreferencesStringListImportSuccess -> "Successfully imported items."
+    PreferencesStringListImportFailure -> "Failed to import the selected file."
+    PreferencesStringListExportSuccess -> "Successfully exported items."
+    PreferencesStringListExportFailure -> "Failed to export to the selected file."
     PreferencesEditorLockedDrag -> "Fixed-drag"
     PreferencesEditorLockedDragDescription ->
         "Select a condition to enable fixed-drag while you move " +
