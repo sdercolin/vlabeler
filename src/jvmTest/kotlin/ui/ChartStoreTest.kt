@@ -130,6 +130,21 @@ class ChartStoreTest {
     }
 
     @Test
+    fun `prepareForNewLoading leaves the spectrogram status unset when spectrogram is disabled`() {
+        val project = createProject()
+        val appConf = AppConf().run {
+            copy(painter = painter.copy(spectrogram = painter.spectrogram.copy(enabled = false)))
+        }
+        val info = loadSampleInfo(project, project.rootSampleDirectory.resolve("_a_ka.wav"), appConf)
+        val store = ChartStore()
+
+        assertTrue(store.prepareForNewLoading(project, appConf, info))
+        assertEquals(ChartStore.ChartLoadingStatus.Loading, store.getWaveformStatus(0, 0))
+        // the spectrogram will not be rendered, so its status must not be stuck at Loading
+        assertNull(store.getSpectrogramStatus(0))
+    }
+
+    @Test
     fun `prepareForNewLoading resets when another sample is loaded`() {
         val project = createProject()
         val appConf = AppConf()

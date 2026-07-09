@@ -305,18 +305,18 @@ class MarkerEditEntryTest {
                         fieldNames = listOf("start"),
                         Edition.Method.Dragging,
                     ),
-                    // for entries other than the one owning the dragged point, the field name resolution falls
-                    // back to "end" (see getPointIndexAsSingleEntry returning -1 == END_POINT_INDEX)
+                    // entries co-moved by the locked drag do not own the dragged point, so their field names are
+                    // derived from what actually changed (the whole entry translated, so both borders moved)
                     Edition(
                         1,
                         entryB.copy(start = 210f, end = 360f),
-                        fieldNames = listOf("end"),
+                        fieldNames = listOf("start", "end"),
                         Edition.Method.Dragging,
                     ),
                     Edition(
                         2,
                         entryC.copy(start = 360f, end = 510f),
-                        fieldNames = listOf("end"),
+                        fieldNames = listOf("start", "end"),
                         Edition.Method.Dragging,
                     ),
                 ),

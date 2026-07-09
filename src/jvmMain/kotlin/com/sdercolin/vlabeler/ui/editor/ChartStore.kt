@@ -84,7 +84,7 @@ class ChartStore {
         }
         currentSampleInfo = sampleInfo
         job?.cancel()
-        initializeStates(sampleInfo.chunkCount, sampleInfo.channels)
+        initializeStates(sampleInfo, appConf)
         ChartRepository.init(project, appConf, PAINTING_ALGORITHM_VERSION)
         return true
     }
@@ -163,14 +163,17 @@ class ChartStore {
     suspend fun awaitLoad() = job?.join()
 
     private fun initializeStates(
-        chunkCount: Int,
-        channelCount: Int,
+        sampleInfo: SampleInfo,
+        appConf: AppConf,
     ) {
-        repeat(chunkCount) { chunkIndex ->
-            repeat(channelCount) { channelIndex ->
+        repeat(sampleInfo.chunkCount) { chunkIndex ->
+            repeat(sampleInfo.channels) { channelIndex ->
                 waveformStatusList[channelIndex to chunkIndex] = ChartLoadingStatus.Loading
             }
-            spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loading
+            // matches the rendering condition, so the status does not stay Loading forever when disabled
+            if (sampleInfo.hasSpectrogram && appConf.painter.spectrogram.enabled) {
+                spectrogramStatusList[chunkIndex] = ChartLoadingStatus.Loading
+            }
         }
     }
 
