@@ -336,12 +336,18 @@ class AppDialogStateTest {
 
     @Test
     fun `closeAllDialogs clears the dialogs it owns`() {
+        // openImportDialog itself calls closeAllDialogs, so open it first, then the flag-only dialogs
+        appState.openImportDialog()
         appState.openProjectSettingDialog()
         appState.openSampleListDialog()
         appState.openSampleDirectoryRedirectDialog()
         appState.openQuickLaunchManagerDialog()
         appState.showMacroPluginReport("report".toLocalized())
         appState.openEmbeddedDialog(AskIfSaveDialogPurpose.IsExiting)
+        // dialogs that closeAllDialogs previously did not clear
+        appState.openAboutDialog()
+        appState.openLicenseDialog()
+        appState.openTrackingSettingsDialog()
         assertTrue(appState.anyDialogOpening())
 
         appState.closeAllDialogs()
@@ -352,6 +358,11 @@ class AppDialogStateTest {
         assertFalse(appState.isShowingQuickLaunchManagerDialog)
         assertNull(appState.macroPluginReport)
         assertNull(appState.embeddedDialog)
+        assertFalse(appState.isShowingAboutDialog)
+        assertFalse(appState.isShowingLicenseDialog)
+        assertFalse(appState.isShowingImportDialog)
+        assertFalse(appState.isShowingTrackingSettingsDialog)
+        // closeAllDialogs must leave no dialog open
         assertFalse(appState.anyDialogOpening())
     }
 
