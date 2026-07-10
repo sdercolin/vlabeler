@@ -549,6 +549,8 @@ enum class Strings {
     ActionSetValue8,
     ActionSetValue9,
     ActionSetValue10,
+    ActionSetCurrentEntryLeft,
+    ActionSetCurrentEntryRight,
     ActionSetProperty1,
     ActionSetProperty2,
     ActionSetProperty3,

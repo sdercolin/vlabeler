@@ -91,20 +91,31 @@ class MarkerState(
         return index % (labelerConf.fields.size + 1)
     }
 
+    /**
+     * The flattened point index of the given entry's start border. Returns [MarkerCursorState.START_POINT_INDEX] for
+     * the first entry, whose start is the shared canvas start rather than an inner border.
+     */
+    fun getStartBorderPointIndex(entryIndex: Int): Int = if (entryIndex == 0) {
+        MarkerCursorState.START_POINT_INDEX
+    } else {
+        entryIndex * (labelerConf.fields.size + 1) - 1
+    }
+
+    /**
+     * The flattened point index of the given entry's end border. Returns [MarkerCursorState.END_POINT_INDEX] for the
+     * last entry, whose end is the shared canvas end rather than an inner border.
+     */
+    fun getEndBorderPointIndex(entryIndex: Int): Int = if (entryIndex == entriesInPixel.indices.last()) {
+        MarkerCursorState.END_POINT_INDEX
+    } else {
+        // the end border's flattened index, derived from the entry index directly (not from the start border index,
+        // which is overridden to START_POINT_INDEX for the first entry and would otherwise mis-compute it)
+        (entryIndex + 1) * (labelerConf.fields.size + 1) - 1
+    }
+
     fun getPointIndexAsSingleEntry(entryIndex: Int, pointIndex: Int): Int {
-        val entryIndices = entriesInPixel.indices
-        val startPointIndex = if (entryIndex == 0) {
-            MarkerCursorState.START_POINT_INDEX
-        } else {
-            entryIndex * (labelerConf.fields.size + 1) - 1
-        }
-        val endPointIndex = if (entryIndex == entryIndices.last()) {
-            MarkerCursorState.END_POINT_INDEX
-        } else {
-            // the end border's flattened index, derived from the entry index directly (not from startPointIndex,
-            // which is overridden to START_POINT_INDEX for the first entry and would otherwise mis-compute it)
-            (entryIndex + 1) * (labelerConf.fields.size + 1) - 1
-        }
+        val startPointIndex = getStartBorderPointIndex(entryIndex)
+        val endPointIndex = getEndBorderPointIndex(entryIndex)
         return when (pointIndex) {
             startPointIndex -> MarkerCursorState.START_POINT_INDEX
             endPointIndex -> MarkerCursorState.END_POINT_INDEX
@@ -476,6 +487,14 @@ class MarkerState(
         return null
     }
 
+    /**
+     * Returns the index (within [entriesInPixel]) of the entry whose actual range contains [position], or null if the
+     * cursor is not over any entry.
+     */
+    fun getEntryIndexByCursorPosition(position: Float): Int? = entriesInPixel.indexOfFirst {
+        it.getActualStart(labelerConf) <= position && position <= it.getActualEnd(labelerConf)
+    }.takeIf { it >= 0 }
+
     fun isValidCutPosition(position: Float) = entriesInPixel.any { it.isValidCutPosition(position) }
 
     fun isValidPlaybackPosition(position: Float) = position < entryConverter.convertToPixel(sampleLengthMillis)
@@ -498,32 +517,12 @@ class MarkerState(
         appConf: AppConf,
         labelerConf: LabelerConf,
     ): Pair<List<EntryInPixel>, Int>? {
-        val paramIndex = when (action) {
-            KeyAction.SetValue1 -> 0
-            KeyAction.SetValue2 -> 1
-            KeyAction.SetValue3 -> 2
-            KeyAction.SetValue4 -> 3
-            KeyAction.SetValue5 -> 4
-            KeyAction.SetValue6 -> 5
-            KeyAction.SetValue7 -> 6
-            KeyAction.SetValue8 -> 7
-            KeyAction.SetValue9 -> 8
-            KeyAction.SetValue10 -> 9
-            else -> return null
-        }
-
-        // Only used in single edit mode
-        if (entries.size != 1) return null
-
-        val fieldCount = this.labelerConf.fields.filter { it.shortcutIndex != null }.size
-        val pointIndex = when {
-            paramIndex == 0 -> MarkerCursorState.START_POINT_INDEX
-            paramIndex == fieldCount + 1 -> MarkerCursorState.END_POINT_INDEX
-            paramIndex <= fieldCount -> this.labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
-                .takeIf { it >= 0 } ?: return null
-            else -> return null
-        }
         val cursorPosition = cursorState.value.position ?: return null
+        val pointIndex = if (entries.size == 1) {
+            getSingleEditPointIndexByKeyAction(action) ?: return null
+        } else {
+            getMultiEditPointIndexByKeyAction(action, cursorPosition) ?: return null
+        }
         val lockDrag = appConf.editor.lockedSettingParameterWithCursor &&
             when (appConf.editor.lockedDrag) {
                 AppConf.Editor.LockedDrag.UseLabeler -> {
@@ -543,6 +542,59 @@ class MarkerState(
             getDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
         }
         return entries to pointIndex
+    }
+
+    /**
+     * Resolves the flattened point index for a `SetValueN` key action in single entry edit mode, where the parameter
+     * refers to the single edited entry's start/end/field points.
+     */
+    private fun getSingleEditPointIndexByKeyAction(action: KeyAction): Int? {
+        val paramIndex = when (action) {
+            KeyAction.SetValue1 -> 0
+            KeyAction.SetValue2 -> 1
+            KeyAction.SetValue3 -> 2
+            KeyAction.SetValue4 -> 3
+            KeyAction.SetValue5 -> 4
+            KeyAction.SetValue6 -> 5
+            KeyAction.SetValue7 -> 6
+            KeyAction.SetValue8 -> 7
+            KeyAction.SetValue9 -> 8
+            KeyAction.SetValue10 -> 9
+            else -> return null
+        }
+        val fieldCount = labelerConf.fields.filter { it.shortcutIndex != null }.size
+        return when {
+            paramIndex == 0 -> MarkerCursorState.START_POINT_INDEX
+            paramIndex == fieldCount + 1 -> MarkerCursorState.END_POINT_INDEX
+            paramIndex <= fieldCount -> labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
+                .takeIf { it >= 0 } ?: return null
+            else -> return null
+        }
+    }
+
+    /**
+     * Resolves the flattened point index for a border-setting key action in multiple entry edit mode. Only borders can
+     * be set here, since fields cannot be identified unambiguously across a group of entries:
+     * - [KeyAction.SetValue1] / [KeyAction.SetValue2] target the left / right border of the entry under the cursor.
+     * - [KeyAction.SetCurrentEntryLeft] / [KeyAction.SetCurrentEntryRight] target the left / right border of the
+     *   current entry regardless of where the cursor is.
+     *
+     * Returns null when the action is not a supported border action, or when the target entry cannot be located.
+     */
+    private fun getMultiEditPointIndexByKeyAction(action: KeyAction, cursorPosition: Float): Int? {
+        val entryIndex = when (action) {
+            KeyAction.SetValue1, KeyAction.SetValue2 ->
+                getEntryIndexByCursorPosition(cursorPosition) ?: return null
+            KeyAction.SetCurrentEntryLeft, KeyAction.SetCurrentEntryRight ->
+                entries.indexOfFirst { it.index == project.currentModule.currentIndex }.takeIf { it >= 0 }
+                    ?: return null
+            else -> return null
+        }
+        return when (action) {
+            KeyAction.SetValue1, KeyAction.SetCurrentEntryLeft -> getStartBorderPointIndex(entryIndex)
+            KeyAction.SetValue2, KeyAction.SetCurrentEntryRight -> getEndBorderPointIndex(entryIndex)
+            else -> null
+        }
     }
 
     val isCursor: Boolean
