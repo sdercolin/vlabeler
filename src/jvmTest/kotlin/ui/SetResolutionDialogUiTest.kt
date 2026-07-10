@@ -6,6 +6,7 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.isNotEnabled
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.runComposeUiTest
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialog
@@ -54,6 +55,33 @@ class SetResolutionDialogUiTest {
         }
         onNode(hasSetTextAction()).performTextReplacement("abc")
         onNodeWithText("OK").assert(isNotEnabled())
+    }
+
+    @Test
+    fun testValidValueSubmittedByKeyboardDone() = runComposeUiTest {
+        var result: SetResolutionDialogResult? = null
+        setContent {
+            AppTheme {
+                SetResolutionDialog(args(), finish = { result = it as SetResolutionDialogResult? })
+            }
+        }
+        onNode(hasSetTextAction()).performTextReplacement("500")
+        onNode(hasSetTextAction()).performImeAction()
+        assertEquals(500, result?.newValue)
+    }
+
+    @Test
+    fun testOutOfRangeValueNotSubmittedByKeyboardDone() = runComposeUiTest {
+        var called = false
+        setContent {
+            AppTheme {
+                SetResolutionDialog(args(), finish = { called = true })
+            }
+        }
+        onNode(hasSetTextAction()).performTextReplacement("5000")
+        // pressing Enter on an out-of-range value must not submit it, matching the disabled confirm button
+        onNode(hasSetTextAction()).performImeAction()
+        assertEquals(false, called)
     }
 
     @Test

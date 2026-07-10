@@ -50,7 +50,9 @@ fun SetResolutionDialog(
     }
     var value by remember { mutableStateOf<Int?>(args.current) }
 
-    val submitIfValid: () -> Unit = remember { { input.text.toIntOrNull()?.let { submit(it) } } }
+    // submit the range-validated `value` (null when out of range or non-numeric), so the keyboard Done action
+    // matches the confirm button and never submits an out-of-range resolution
+    val submitIfValid: () -> Unit = { value?.let { submit(it) } }
 
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
