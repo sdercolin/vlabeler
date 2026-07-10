@@ -21,6 +21,7 @@ import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.io.openCreatedProject
 import com.sdercolin.vlabeler.io.saveProjectFile
 import com.sdercolin.vlabeler.ipc.IpcState
+import com.sdercolin.vlabeler.ipc.IpcStateImpl
 import com.sdercolin.vlabeler.ipc.request.OpenOrCreateRequest
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
@@ -103,6 +104,10 @@ class AppState(
     snackbarState: AppSnackbarState = AppSnackbarStateImpl(snackbarHostState),
     dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarState),
     updaterState: AppUpdaterState = AppUpdaterStateImpl(appConf, snackbarState, dialogState, appRecordStore, mainScope),
+    // Factory for the IPC state. It needs the fully-constructed AppState, so it is passed as a factory rather than a
+    // value. The default builds the real IPC server (which binds a fixed local port); tests pass a factory that
+    // returns a fake [IpcState] so no port is bound.
+    ipcStateFactory: (AppState) -> IpcState = { IpcStateImpl(it) },
 ) : AppErrorState by errorState,
     AppViewState by viewState,
     AppScreenState by screenState,
@@ -135,7 +140,7 @@ class AppState(
         errorState,
     ) { toggleVideoPopup(false) }
 
-    private val ipcState: IpcState = IpcState(this)
+    private val ipcState: IpcState = ipcStateFactory(this)
     val trackingState = TrackingState(appRecordStore, mainScope)
 
     fun validate() {
