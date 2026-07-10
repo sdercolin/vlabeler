@@ -174,7 +174,10 @@ interface AppDialogState {
             importEntriesDialogArgs != null ||
             macroPluginShownInDialog != null ||
             macroPluginReport != null ||
-            customizableItemManagerTypeShownInDialog != null ||
+            (
+                customizableItemManagerTypeShownInDialog != null &&
+                    customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
+                ) ||
             embeddedDialog != null
 }
 
@@ -610,15 +613,26 @@ class AppDialogStateImpl(
         isShowingOpenProjectDialog = false
         isShowingSaveAsProjectDialog = false
         isShowingExportDialog = false
-        isShowingSampleListDialog = false
+        isShowingImportDialog = false
         isShowingPreferencesDialog = false
         preferencesDialogArgs = null
+        isShowingSampleListDialog = false
         isShowingSampleDirectoryRedirectDialog = false
+        isShowingPrerenderDialog = false
+        isShowingEntrySampleSyncDialog = false
+        isShowingAboutDialog = false
+        isShowingLicenseDialog = false
+        isShowingQuickLaunchManagerDialog = false
+        isShowingTrackingSettingsDialog = false
+        quickEditArgs = null
+        isShowingFileNameNormalizerDialog = false
+        isShowingVideo = false
+        updaterDialogContent = null
+        importEntriesDialogArgs = null
+        reloadLabelDialogArgs = null
         macroPluginShownInDialog = null
         macroPluginReport = null
         customizableItemManagerTypeShownInDialog = null
-        isShowingQuickLaunchManagerDialog = false
-        isShowingVideo = false
         closeEmbeddedDialog()
     }
 }

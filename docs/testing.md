@@ -108,6 +108,8 @@ Notes:
 - Screen-level dialogs wrapped in an AWT `DialogWindow` (e.g. `PluginDialog`, `ColorPickerDialog`) do not mount in
   `runComposeUiTest`; test their inner content composable or drive the flow through the public state holder instead.
 
+A real `AppState` can be built in tests via `testutil.TestAppState.create(scope)`, which injects a `testutil.FakeIpcState` (the `AppState` constructor takes an IPC-state factory so no local port is bound) and collaborators that avoid network/audio. Prefer this over reflection for app-level glue and dialog-state tests; see `ui/AppStateConstructionTest.kt`.
+
 State-holder classes (`ui/ProjectStore.kt`, `AppErrorState`, dialog states, ...) are plain classes over Compose
 `mutableStateOf` and are tested without rendering — see `ui/ProjectStoreTest.kt`, which drives the real
 implementations against fixture projects. For classes that require an `AppState` (which cannot be constructed in
