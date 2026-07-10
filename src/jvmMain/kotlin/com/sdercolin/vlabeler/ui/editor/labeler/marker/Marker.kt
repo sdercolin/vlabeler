@@ -690,20 +690,14 @@ private fun MarkerState.handleCursorPress(
 ) {
     val action = keyboardState.getEnabledMouseClickAction(event) ?: return
     if (action.canMoveParameter()) {
-        if (appConf.editor.clickToJumpToEntry && entries.size > 1 && screenRange != null) {
-            // Derive the click position from the press event itself (not the hover-driven cursorState.position),
-            // so the jump also works when the mouse is pressed without any preceding move.
-            val position = event.changes.first().position.x + screenRange.start
-            getEntryIndexByCursorPosition(position)?.let { indexInGroup ->
-                val targetIndex = entries[indexInGroup].index
-                // Skip when the clicked entry is already current; jumpToEntry would otherwise re-trigger the
-                // auto-centering scroll for a no-op jump.
-                if (targetIndex != editorState.project.currentModule.currentIndex) {
-                    editorState.jumpToEntry(editorState.project.currentModule.name, targetIndex)
-                }
-            }
-        }
         val cursorStateValue = cursorState.value
+        if (cursorStateValue.mouse != MarkerCursorState.Mouse.Hovering) {
+            // Not grabbing a point/border to drag, so a click on an entry body may switch the current entry.
+            // This is intentionally skipped while hovering a point: dragging a (possibly shared) border should not
+            // change the current entry, which otherwise switched to the previous entry when its start border was
+            // grabbed.
+            maybeJumpToClickedEntry(appConf, screenRange, event, editorState)
+        }
         if (cursorStateValue.mouse == MarkerCursorState.Mouse.Hovering) {
             val invertLockedDrag = action == MouseClickAction.MoveParameterInvertingPrimary
             val lockedDrag = when (appConf.editor.lockedDrag) {
@@ -728,6 +722,25 @@ private fun MarkerState.handleCursorPress(
             } && !forcedDrag
             cursorState.update { startDragging(lockedDrag, withPreview, forcedDrag, cascadingDrag) }
         }
+    }
+}
+
+private fun MarkerState.maybeJumpToClickedEntry(
+    appConf: AppConf,
+    screenRange: FloatRange?,
+    event: PointerEvent,
+    editorState: EditorState,
+) {
+    if (!appConf.editor.clickToJumpToEntry || entries.size <= 1 || screenRange == null) return
+    // Derive the click position from the press event itself (not the hover-driven cursorState.position),
+    // so the jump also works when the mouse is pressed without any preceding move.
+    val position = event.changes.first().position.x + screenRange.start
+    val indexInGroup = getEntryIndexByCursorPosition(position) ?: return
+    val targetIndex = entries[indexInGroup].index
+    // Skip when the clicked entry is already current; jumpToEntry would otherwise re-trigger the
+    // auto-centering scroll for a no-op jump.
+    if (targetIndex != editorState.project.currentModule.currentIndex) {
+        editorState.jumpToEntry(editorState.project.currentModule.name, targetIndex)
     }
 }
 
