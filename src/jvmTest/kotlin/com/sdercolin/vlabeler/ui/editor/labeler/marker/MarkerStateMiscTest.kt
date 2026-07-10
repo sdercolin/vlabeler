@@ -31,12 +31,13 @@ class MarkerStateMiscTest {
         ),
     )
 
-    private fun continuousState() = MarkerStateFactory.create(
+    private fun continuousState(currentIndex: Int = 0) = MarkerStateFactory.create(
         labelerConf = TestLabelers.nnsvsSinger,
         allEntries = listOf(
             MarkerStateFactory.entry(100f, 200f, name = "a"),
             MarkerStateFactory.entry(200f, 350f, name = "b"),
         ),
+        currentIndex = currentIndex,
     )
 
     // region tools
@@ -167,15 +168,105 @@ class MarkerStateMiscTest {
     }
 
     @Test
-    fun setValueInMultiEntryModeReturnsNull() {
-        val state = continuousState()
-        assertNull(state.setValueWithCursorAt(KeyAction.SetValue1, 150f))
-    }
-
-    @Test
     fun nonSetValueActionReturnsNull() {
         val state = utauSingerState()
         assertNull(state.setValueWithCursorAt(KeyAction.NewProject, 150f))
+    }
+
+    // endregion
+
+    // region getUpdatedEntriesByKeyAction in multiple entry edit mode
+
+    @Test
+    fun setValue1InMultiEntryModeSetsLeftBorderOfEntryUnderCursor() {
+        val state = continuousState()
+        // cursor 150 is inside entry "a" (100..200), the first entry, so its left border is the group start
+        val result = state.setValueWithCursorAt(KeyAction.SetValue1, 150f)
+        assertNotNull(result)
+        val (entries, pointIndex) = result
+        assertEquals(MarkerCursorState.START_POINT_INDEX, pointIndex)
+        assertEquals(state.entriesInPixel[0].copy(start = 150f), entries[0])
+    }
+
+    @Test
+    fun setValue1InMultiEntryModeSetsInnerBorderWhenCursorInSecondEntry() {
+        val state = continuousState()
+        // cursor 250 is inside entry "b" (200..350); its left border is the inner border between "a" and "b"
+        val result = state.setValueWithCursorAt(KeyAction.SetValue1, 250f)
+        assertNotNull(result)
+        val (entries, pointIndex) = result
+        assertEquals(0, pointIndex)
+        assertEquals(state.entriesInPixel[0].copy(end = 250f), entries[0])
+        assertEquals(state.entriesInPixel[1].copy(start = 250f), entries[1])
+    }
+
+    @Test
+    fun setValue2InMultiEntryModeSetsRightBorderOfEntryUnderCursor() {
+        val state = continuousState()
+        // cursor 150 is inside entry "a"; its right border is the inner border between "a" and "b"
+        val result = state.setValueWithCursorAt(KeyAction.SetValue2, 150f)
+        assertNotNull(result)
+        val (entries, pointIndex) = result
+        assertEquals(0, pointIndex)
+        assertEquals(state.entriesInPixel[0].copy(end = 150f), entries[0])
+        assertEquals(state.entriesInPixel[1].copy(start = 150f), entries[1])
+    }
+
+    @Test
+    fun setValue2InMultiEntryModeSetsGroupEndWhenCursorInLastEntry() {
+        val state = continuousState()
+        // cursor 300 is inside entry "b" (200..350), the last entry, so its right border is the group end
+        val result = state.setValueWithCursorAt(KeyAction.SetValue2, 300f)
+        assertNotNull(result)
+        val (entries, pointIndex) = result
+        assertEquals(MarkerCursorState.END_POINT_INDEX, pointIndex)
+        assertEquals(state.entriesInPixel[1].copy(end = 300f), entries[1])
+    }
+
+    @Test
+    fun setValueInMultiEntryModeWithCursorOutsideAllEntriesReturnsNull() {
+        val state = continuousState()
+        // 900 is past the last entry's end (350), so no entry is under the cursor
+        assertNull(state.setValueWithCursorAt(KeyAction.SetValue1, 900f))
+    }
+
+    @Test
+    fun setValue3AndBeyondAreNotSupportedInMultiEntryMode() {
+        val state = continuousState()
+        assertNull(state.setValueWithCursorAt(KeyAction.SetValue3, 250f))
+    }
+
+    @Test
+    fun setCurrentEntryLeftUsesCurrentEntryRegardlessOfCursor() {
+        // current entry is "b" (index 1) while the cursor is inside "a"
+        val state = continuousState(currentIndex = 1)
+        val result = state.setValueWithCursorAt(KeyAction.SetCurrentEntryLeft, 150f)
+        assertNotNull(result)
+        val (entries, pointIndex) = result
+        // "b"'s left border is the inner border, not the group start that a cursor-based lookup on "a" would give
+        assertEquals(0, pointIndex)
+        assertEquals(state.entriesInPixel[0].copy(end = 150f), entries[0])
+        assertEquals(state.entriesInPixel[1].copy(start = 150f), entries[1])
+    }
+
+    @Test
+    fun setCurrentEntryRightUsesCurrentEntryRegardlessOfCursor() {
+        // current entry is "a" (index 0) while the cursor is inside "b"
+        val state = continuousState(currentIndex = 0)
+        val result = state.setValueWithCursorAt(KeyAction.SetCurrentEntryRight, 250f)
+        assertNotNull(result)
+        val (entries, pointIndex) = result
+        // "a"'s right border is the inner border, not the group end that a cursor-based lookup on "b" would give
+        assertEquals(0, pointIndex)
+        assertEquals(state.entriesInPixel[0].copy(end = 250f), entries[0])
+        assertEquals(state.entriesInPixel[1].copy(start = 250f), entries[1])
+    }
+
+    @Test
+    fun setCurrentEntryActionsAreIgnoredInSingleEntryMode() {
+        val state = utauSingerState()
+        assertNull(state.setValueWithCursorAt(KeyAction.SetCurrentEntryLeft, 200f))
+        assertNull(state.setValueWithCursorAt(KeyAction.SetCurrentEntryRight, 200f))
     }
 
     // endregion

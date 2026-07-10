@@ -50,12 +50,14 @@ object MarkerStateFactory {
      * @param labelerConf the labeler in use.
      * @param allEntries all entries of the current module (== the current group), in millis.
      * @param editedIndexes indexes in [allEntries] that are being edited (all of them by default).
+     * @param currentIndex the module's current entry index (the first edited entry by default).
      * @param parallelModules additional modules that are parallel to the current module (sharing the raw label file).
      */
     fun create(
         labelerConf: LabelerConf,
         allEntries: List<Entry>,
         editedIndexes: List<Int> = allEntries.indices.toList(),
+        currentIndex: Int = editedIndexes.first(),
         sampleRate: Float = 1000f,
         resolution: Int = 1,
         sampleLengthMillis: Float = DEFAULT_SAMPLE_LENGTH_MILLIS,
@@ -65,7 +67,7 @@ object MarkerStateFactory {
             name = "main",
             sampleDirectoryPath = "/samples",
             entries = allEntries,
-            currentIndex = editedIndexes.first(),
+            currentIndex = currentIndex,
             rawFilePath = RAW_FILE_PATH,
         )
         val project = Project(
