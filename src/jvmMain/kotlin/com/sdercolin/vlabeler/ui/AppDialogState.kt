@@ -174,7 +174,10 @@ interface AppDialogState {
             importEntriesDialogArgs != null ||
             macroPluginShownInDialog != null ||
             macroPluginReport != null ||
-            customizableItemManagerTypeShownInDialog != null ||
+            (
+                customizableItemManagerTypeShownInDialog != null &&
+                    customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
+                ) ||
             embeddedDialog != null
 }
 

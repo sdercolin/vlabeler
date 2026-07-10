@@ -367,10 +367,14 @@ class AppDialogStateTest {
         appState.closeAboutDialog()
         assertFalse(appState.anyDialogOpening())
 
-        // NOTE: despite its name, anyDialogOpeningExceptMacroPluginManager() does NOT exclude the macro-plugin
-        // customizable item manager: it returns true whenever customizableItemManagerTypeShownInDialog != null.
+        // the macro-plugin customizable item manager is counted by anyDialogOpening() but excluded from
+        // anyDialogOpeningExceptMacroPluginManager()
         appState.openCustomizableItemManagerDialog(CustomizableItem.Type.MacroPlugin)
         assertTrue(appState.anyDialogOpening())
+        assertFalse(appState.anyDialogOpeningExceptMacroPluginManager())
+
+        // a non-macro-plugin manager IS counted by both
+        appState.openCustomizableItemManagerDialog(CustomizableItem.Type.Labeler)
         assertTrue(appState.anyDialogOpeningExceptMacroPluginManager())
     }
 
