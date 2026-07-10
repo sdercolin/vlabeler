@@ -695,7 +695,12 @@ private fun MarkerState.handleCursorPress(
             // so the jump also works when the mouse is pressed without any preceding move.
             val position = event.changes.first().position.x + screenRange.start
             getEntryIndexByCursorPosition(position)?.let { indexInGroup ->
-                editorState.jumpToEntry(editorState.project.currentModule.name, entries[indexInGroup].index)
+                val targetIndex = entries[indexInGroup].index
+                // Skip when the clicked entry is already current; jumpToEntry would otherwise re-trigger the
+                // auto-centering scroll for a no-op jump.
+                if (targetIndex != editorState.project.currentModule.currentIndex) {
+                    editorState.jumpToEntry(editorState.project.currentModule.name, targetIndex)
+                }
             }
         }
         val cursorStateValue = cursorState.value
