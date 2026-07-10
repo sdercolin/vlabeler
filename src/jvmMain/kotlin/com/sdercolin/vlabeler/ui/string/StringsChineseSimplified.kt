@@ -460,6 +460,9 @@ fun Strings.zhHans(): String? = when (this) {
     PreferencesEditorLockedSettingParameterWithCursor -> "光标设定时也应用锁定拖动"
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "使用\"将参数设置到光标位置\"键盘操作时也应用上面的锁定拖动的设置。"
+    PreferencesEditorClickToJumpToEntry -> "单击跳转到条目"
+    PreferencesEditorClickToJumpToEntryDescription ->
+        "在多条目编辑模式下，单击画布上的条目即可将其设为当前条目。"
     PreferencesEditorCascadedDrag -> "级联拖动"
     PreferencesEditorCascadedDragDescription ->
         "选择是否启用对平行子项目中边界的级联拖动。\n" +

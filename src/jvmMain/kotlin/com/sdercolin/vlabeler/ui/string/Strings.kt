@@ -428,6 +428,8 @@ enum class Strings {
     PreferencesEditorCascadedDragEnabled,
     PreferencesEditorLockedSettingParameterWithCursor,
     PreferencesEditorLockedSettingParameterWithCursorDescription,
+    PreferencesEditorClickToJumpToEntry,
+    PreferencesEditorClickToJumpToEntryDescription,
     PreferencesEditorNotes,
     PreferencesEditorNotesDescription,
     PreferencesEditorShowDone,

@@ -128,7 +128,15 @@ fun MarkerPointEventContainer(
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
-                state.handleMousePress(tool, keyboardState, event, state.labelerConf, appState.appConf, screenRange)
+                state.handleMousePress(
+                    tool,
+                    keyboardState,
+                    event,
+                    state.labelerConf,
+                    appState.appConf,
+                    screenRange,
+                    editorState,
+                )
             }
             .onPointerEvent(PointerEventType.Release) { event ->
                 state.handleMouseRelease(
@@ -662,9 +670,10 @@ private fun MarkerState.handleMousePress(
     labelerConf: LabelerConf,
     appConf: AppConf,
     screenRange: FloatRange?,
+    editorState: EditorState,
 ) {
     when (tool) {
-        Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf)
+        Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf, screenRange, editorState)
         Tool.Scissors -> Unit
         Tool.Pan -> handlePanPress(event)
         Tool.Playback -> handlePlaybackPress(keyboardState, screenRange, event)
@@ -676,9 +685,19 @@ private fun MarkerState.handleCursorPress(
     event: PointerEvent,
     labelerConf: LabelerConf,
     appConf: AppConf,
+    screenRange: FloatRange?,
+    editorState: EditorState,
 ) {
     val action = keyboardState.getEnabledMouseClickAction(event) ?: return
     if (action.canMoveParameter()) {
+        if (appConf.editor.clickToJumpToEntry && entries.size > 1 && screenRange != null) {
+            // Derive the click position from the press event itself (not the hover-driven cursorState.position),
+            // so the jump also works when the mouse is pressed without any preceding move.
+            val position = event.changes.first().position.x + screenRange.start
+            getEntryIndexByCursorPosition(position)?.let { indexInGroup ->
+                editorState.jumpToEntry(editorState.project.currentModule.name, entries[indexInGroup].index)
+            }
+        }
         val cursorStateValue = cursorState.value
         if (cursorStateValue.mouse == MarkerCursorState.Mouse.Hovering) {
             val invertLockedDrag = action == MouseClickAction.MoveParameterInvertingPrimary
