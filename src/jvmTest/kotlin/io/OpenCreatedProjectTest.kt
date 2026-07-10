@@ -27,6 +27,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -117,8 +118,6 @@ class OpenCreatedProjectTest {
 
     @Test
     fun testImportProjectFileShowsErrorOnUnreadableFile() {
-        // importModulesFromProject swallows parse errors (returns empty), so the error path is reached only when the
-        // file itself cannot be read
         val file = tempDir.resolve("does-not-exist.lbp")
 
         runBlocking {
@@ -129,6 +128,25 @@ class OpenCreatedProjectTest {
         }
 
         assertIs<ProjectImportException>(appState.error)
+        assertFalse(appState.isBusy)
+    }
+
+    @Test
+    fun testImportProjectFileShowsErrorOnMalformedFile() {
+        // a readable but structurally invalid project file surfaces an import error instead of silently opening the
+        // import dialog with no modules
+        val file = tempDir.resolve("malformed.lbp")
+        file.writeText("not a valid project")
+
+        runBlocking {
+            importProjectFile(this, file, appState)
+            withTimeout(15_000) {
+                while (appState.error == null) delay(5)
+            }
+        }
+
+        assertIs<ProjectImportException>(appState.error)
+        assertNull(appState.importEntriesDialogArgs)
         assertFalse(appState.isBusy)
     }
 }

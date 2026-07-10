@@ -47,12 +47,13 @@ class ImportProjectEdgeCasesTest {
     """.trimIndent()
 
     @Test
-    fun testInvalidJsonReturnsEmptyList() {
-        assertEquals(emptyList(), importModulesFromProject("not a json"))
+    fun testInvalidJsonThrows() {
+        // malformed input is a structural failure, so the caller can surface it instead of silently importing nothing
+        assertFailsWith<Exception> { importModulesFromProject("not a json") }
     }
 
     @Test
-    fun testMissingLabelerConfReturnsEmptyList() {
+    fun testMissingLabelerConfThrows() {
         val json = """
             {
                 "modules": [
@@ -64,7 +65,7 @@ class ImportProjectEdgeCasesTest {
             }
         """.trimIndent()
 
-        assertEquals(emptyList(), importModulesFromProject(json))
+        assertFailsWith<Exception> { importModulesFromProject(json) }
     }
 
     @Test

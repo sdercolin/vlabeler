@@ -51,7 +51,14 @@ data class ImportedModule(
     }
 }
 
-fun importModulesFromProject(projectText: String): List<ImportedModule> = runCatching {
+/**
+ * Parses the importable modules from a project file's text.
+ *
+ * Throws if the text is not a structurally valid project (e.g. malformed JSON or a missing `labelerConf`), so that
+ * the caller can distinguish a parse failure from a valid project that simply has no importable entries (which
+ * returns an empty list). Individual malformed modules or entries are skipped.
+ */
+fun importModulesFromProject(projectText: String): List<ImportedModule> {
     val root = json.parseToJsonElement(projectText)
 
     val modules = mutableListOf<ImportedModule>()
@@ -85,12 +92,7 @@ fun importModulesFromProject(projectText: String): List<ImportedModule> = runCat
         }
     }
 
-    require(modules.isNotEmpty())
-
-    modules.distinctBy { it.name }
-}.getOrElse {
-    Log.error(it)
-    emptyList()
+    return modules.distinctBy { it.name }
 }
 
 private fun parseModule(element: JsonElement, continuous: Boolean, extension: String): ImportedModule? = runCatching {
