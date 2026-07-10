@@ -124,6 +124,11 @@ class ProjectSettingDialogStateTest {
         state.updateOutputFile(tempDir.resolve("missing-parent").resolve("output.ini").absolutePath)
         assertFalse(state.isOutputFileValid)
         assertTrue(state.isError)
+
+        // an empty output file means "no output file" and must be treated as valid, like null
+        state.updateOutputFile("")
+        assertTrue(state.isOutputFileValid)
+        assertFalse(state.isError)
     }
 
     @Test
