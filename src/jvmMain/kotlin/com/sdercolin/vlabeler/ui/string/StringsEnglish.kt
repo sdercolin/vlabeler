@@ -517,6 +517,9 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "Apply the fixed-drag setting above also when " +
             "setting the parameters with \"Set Parameter To Cursor Position\" key actions"
+    PreferencesEditorClickToJumpToEntry -> "Click to jump to entry"
+    PreferencesEditorClickToJumpToEntryDescription ->
+        "In multiple entry edit mode, click an entry on the canvas to make it the current entry"
     PreferencesEditorCascadedDrag -> "Cascaded drag"
     PreferencesEditorCascadedDragDescription ->
         "Select whether to enable cascaded drag to borders in parallel subprojects.\n" +

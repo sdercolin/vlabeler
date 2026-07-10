@@ -271,6 +271,31 @@ class MarkerStateMiscTest {
 
     // endregion
 
+    // region getEntryIndexByCursorPosition
+
+    @Test
+    fun getEntryIndexByCursorPositionReturnsEntryContainingPosition() {
+        val state = continuousState()
+        assertEquals(0, state.getEntryIndexByCursorPosition(150f))
+        assertEquals(1, state.getEntryIndexByCursorPosition(300f))
+    }
+
+    @Test
+    fun getEntryIndexByCursorPositionReturnsFirstMatchOnSharedBorder() {
+        val state = continuousState()
+        // 200 is both entry "a"'s end and entry "b"'s start; the first containing entry wins
+        assertEquals(0, state.getEntryIndexByCursorPosition(200f))
+    }
+
+    @Test
+    fun getEntryIndexByCursorPositionReturnsNullWhenOutsideAllEntries() {
+        val state = continuousState()
+        assertNull(state.getEntryIndexByCursorPosition(50f))
+        assertNull(state.getEntryIndexByCursorPosition(900f))
+    }
+
+    // endregion
+
     // region computeCascadeEditions
 
     private fun cascadeState(): Pair<MarkerState, List<Entry>> {

@@ -726,6 +726,13 @@ object PreferencesPages {
                         select = { it.lockedSettingParameterWithCursor },
                         update = { copy(lockedSettingParameterWithCursor = it) },
                     )
+                    switch(
+                        title = Strings.PreferencesEditorClickToJumpToEntry,
+                        description = Strings.PreferencesEditorClickToJumpToEntryDescription,
+                        defaultValue = AppConf.Editor.DEFAULT_CLICK_TO_JUMP_TO_ENTRY,
+                        select = { it.clickToJumpToEntry },
+                        update = { copy(clickToJumpToEntry = it) },
+                    )
                     selection(
                         title = Strings.PreferencesEditorCascadedDrag,
                         description = Strings.PreferencesEditorCascadedDragDescription,

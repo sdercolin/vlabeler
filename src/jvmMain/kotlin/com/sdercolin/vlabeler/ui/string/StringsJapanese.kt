@@ -487,6 +487,9 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorLockedSettingParameterWithCursor -> "カーソル位置に設定する場合も連動ドラッグを有効にする"
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "「パラメータをカーソル位置に設定」ショートカットでパラメータを設定するときにも、連動ドラッグ設定を適用します。"
+    PreferencesEditorClickToJumpToEntry -> "クリックでエントリーへ移動"
+    PreferencesEditorClickToJumpToEntryDescription ->
+        "複数エントリー編集モードで、キャンバス上のエントリーをクリックすると現在のエントリーになります。"
     PreferencesEditorCascadedDrag -> "カスケードドラッグ"
     PreferencesEditorCascadedDragDescription ->
         "並列サブプロジェクトの枠線に対するカスケードドラッグを有効にするかどうかを選択します。\n" +

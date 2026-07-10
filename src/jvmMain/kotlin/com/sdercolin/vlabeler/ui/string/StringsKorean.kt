@@ -506,6 +506,9 @@ fun Strings.ko(): String? = when (this) {
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "\"n번 마커 놓기 (커서 위치에)\" 입력으로 마커를 놓을 경우에도 " +
             "위의 고정 드래그 방식을 적용하기"
+    PreferencesEditorClickToJumpToEntry -> "클릭하여 엔트리로 이동"
+    PreferencesEditorClickToJumpToEntryDescription ->
+        "다중 엔트리 편집 모드에서 캔버스의 엔트리를 클릭하면 현재 엔트리로 설정됩니다."
     PreferencesEditorCascadedDrag -> "캐스케이드 드래그"
     PreferencesEditorCascadedDragDescription ->
         "병렬 하위 프로젝트의 테두리에 대해 캐스케이드 드래그를 활성화할지 선택합니다.\n" +
