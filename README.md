@@ -156,7 +156,11 @@ You can customize the key bindings in `Settings` -> `Prefereneces` -> `Keymaps`.
 - Mouse drag on primary parameters: move all the lines together
 - `Shift`: invert normal/primary. e.g. mouse drag on primary parameters with Shift pressed only moves itself.
 - `Q`/`W`/`E`/`R`/... : move the corresponding parameter line to current cursor position. The order is defined in the
-  labeler. Note that this feature is only available in the single entry editing mode.
+  labeler.
+    - In the single entry editing mode, this applies to all the parameter lines of the entry.
+    - In the multi-entry editing mode, only `Q` and `W` are available, moving the left and right border of the entry
+      under the cursor respectively. You can also bind the `Set Current Entry's Left/Right Border` actions (no default
+      key) in `Keymaps` to move the borders of the current entry regardless of the cursor position.
 
 ### Audio playback
 
@@ -228,6 +232,10 @@ By clicking the names, the following actions are conducted:
 
 - Click: Rename the entry
 - Long click: Go to the entry
+
+You can also enable `Settings` -> `Prefereneces` -> `Editor` -> `Click to jump to entry` (off by default) to switch the
+current entry by clicking an entry's body on the canvas. Clicking a border or parameter line still starts a drag and
+does not switch the current entry.
 
 ## Support other audio formats
 
