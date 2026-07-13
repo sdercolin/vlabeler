@@ -232,6 +232,31 @@ class ProjectStoreTest {
         assertEquals(1, store.requireProject().currentModule.currentIndex)
     }
 
+    @Test
+    fun `undo and redo restore a module count change`() {
+        val store = createStoreWithProject()
+        val before = store.requireProject()
+        // remove the current module ("C4"), like a module management operation does
+        store.editProject {
+            copy(
+                modules = modules.filterIndexed { index, _ -> index != currentModuleIndex },
+                currentModuleIndex = 0,
+            )
+        }
+        assertEquals(before.modules.size - 1, store.requireProject().modules.size)
+        assertTrue(store.canUndo)
+
+        store.undo()
+        val restored = store.requireProject()
+        assertEquals(before.modules.map { it.name }, restored.modules.map { it.name })
+        // with the default squashing configuration, the cursor stays on the module of the current project,
+        // matched by name because the module count differs between the snapshots
+        assertEquals("A3", restored.currentModule.name)
+
+        store.redo()
+        assertEquals(listOf("A3"), store.requireProject().modules.map { it.name })
+    }
+
     /* endregion */
 
     /* region entry navigation */

@@ -16,6 +16,8 @@ import com.sdercolin.vlabeler.env.isDebug
 import com.sdercolin.vlabeler.io.install
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.ModuleOperationDescriptor
+import com.sdercolin.vlabeler.model.ModuleOperationType
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
@@ -117,6 +119,43 @@ fun FrameWindowScope.Menu(
                         shortcut = KeyAction.ImportProject.getKeyShortCut(),
                         enabled = appState.hasProject,
                     )
+                    val labelerConfForModuleManagement = appState.project?.labelerConf
+                    if (labelerConfForModuleManagement?.moduleManagement?.hasAnyOperation == true) {
+                        val moduleManagement = labelerConfForModuleManagement.moduleManagement
+                        fun openDialog(type: ModuleOperationType) = appState.openModuleOperationDialog(
+                            ModuleOperationDescriptor(labelerConfForModuleManagement, type),
+                        )
+                        Menu(string(Strings.MenuFileModuleManagement)) {
+                            if (moduleManagement.add != null) {
+                                Item(
+                                    string(Strings.MenuFileModuleManagementAdd),
+                                    onClick = { openDialog(ModuleOperationType.Add) },
+                                    shortcut = KeyAction.ModuleManagementAdd.getKeyShortCut(),
+                                )
+                            }
+                            if (moduleManagement.rename != null) {
+                                Item(
+                                    string(Strings.MenuFileModuleManagementRename),
+                                    onClick = { openDialog(ModuleOperationType.Rename) },
+                                    shortcut = KeyAction.ModuleManagementRename.getKeyShortCut(),
+                                )
+                            }
+                            if (moduleManagement.remove != null) {
+                                Item(
+                                    string(Strings.MenuFileModuleManagementRemove),
+                                    onClick = { openDialog(ModuleOperationType.Remove) },
+                                    shortcut = KeyAction.ModuleManagementRemove.getKeyShortCut(),
+                                )
+                            }
+                            if (moduleManagement.duplicate != null) {
+                                Item(
+                                    string(Strings.MenuFileModuleManagementDuplicate),
+                                    onClick = { openDialog(ModuleOperationType.Duplicate) },
+                                    shortcut = KeyAction.ModuleManagementDuplicate.getKeyShortCut(),
+                                )
+                            }
+                        }
+                    }
                     val canReloadLabelFile = appState.project?.labelerConf?.parser?.scope == LabelerConf.Scope.Entry
                     Menu(
                         string(Strings.MenuFileReloadLabelFile),

@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.ModuleOperationDescriptor
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
@@ -29,6 +30,7 @@ import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
 import com.sdercolin.vlabeler.ui.dialog.importentries.ImportEntriesDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.plugin.ModuleOperationDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesEditorState
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.ParamMap
@@ -69,6 +71,7 @@ interface AppDialogState {
     val reloadLabelDialogArgs: ReloadLabelDialogArgs?
     val macroPluginShownInDialog: MacroPluginDialogArgs?
     val macroPluginReport: LocalizedJsonString?
+    val moduleOperationShownInDialog: ModuleOperationDialogArgs?
     val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
     val embeddedDialog: EmbeddedDialogRequest<*>?
 
@@ -131,6 +134,9 @@ interface AppDialogState {
     fun closeMacroPluginDialog()
     fun showMacroPluginReport(report: LocalizedJsonString)
     fun closeMacroPluginReport()
+    fun openModuleOperationDialog(descriptor: ModuleOperationDescriptor)
+    fun updateModuleOperationDialogInputParams(params: ParamMap)
+    fun closeModuleOperationDialog()
     fun openCustomizableItemManagerDialog(type: CustomizableItem.Type)
     fun closeCustomizableItemManagerDialog()
     fun requestClearCaches(scope: CoroutineScope)
@@ -174,6 +180,7 @@ interface AppDialogState {
             importEntriesDialogArgs != null ||
             macroPluginShownInDialog != null ||
             macroPluginReport != null ||
+            moduleOperationShownInDialog != null ||
             (
                 customizableItemManagerTypeShownInDialog != null &&
                     customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
@@ -217,6 +224,7 @@ class AppDialogStateImpl(
     override var reloadLabelDialogArgs: ReloadLabelDialogArgs? by mutableStateOf(null)
     override var macroPluginShownInDialog: MacroPluginDialogArgs? by mutableStateOf(null)
     override var macroPluginReport: LocalizedJsonString? by mutableStateOf(null)
+    override var moduleOperationShownInDialog: ModuleOperationDialogArgs? by mutableStateOf(null)
     override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
     override var embeddedDialog: EmbeddedDialogRequest<*>? by mutableStateOf(null)
 
@@ -537,6 +545,21 @@ class AppDialogStateImpl(
 
     override fun closeMacroPluginDialog() {
         macroPluginShownInDialog = null
+    }
+
+    override fun openModuleOperationDialog(descriptor: ModuleOperationDescriptor) {
+        scope.launch(Dispatchers.IO) {
+            moduleOperationShownInDialog =
+                ModuleOperationDialogArgs(descriptor, descriptor.loadSavedParams(descriptor.getSavedParamsFile()))
+        }
+    }
+
+    override fun updateModuleOperationDialogInputParams(params: ParamMap) {
+        moduleOperationShownInDialog = moduleOperationShownInDialog?.copy(paramMap = params)
+    }
+
+    override fun closeModuleOperationDialog() {
+        moduleOperationShownInDialog = null
     }
 
     override fun showMacroPluginReport(report: LocalizedJsonString) {

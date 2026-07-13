@@ -361,10 +361,25 @@ class ProjectStoreImpl(
     private fun Project.withCurrentIndexesKept(): Project {
         if (!appConf.value.history.squashIndex) return this
         val current = project ?: return this
+        // when the module list size has changed (e.g. by a module management operation), match modules by name,
+        // because index-based matching would associate unrelated modules
+        val sizeChanged = modules.size != current.modules.size
+        fun findMatchingModule(index: Int, module: Module): Module? =
+            if (sizeChanged) current.modules.firstOrNull { it.name == module.name } else current.modules.getOrNull(
+                index,
+            )
+        val newCurrentModuleIndex = if (sizeChanged) {
+            val currentModuleName = current.currentModule.name
+            modules.indexOfFirst { it.name == currentModuleName }
+                .takeIf { it >= 0 }
+                ?: currentModuleIndex.coerceIn(0, modules.lastIndex)
+        } else {
+            current.currentModuleIndex.coerceIn(0, modules.lastIndex)
+        }
         return copy(
-            currentModuleIndex = current.currentModuleIndex.coerceIn(0, modules.lastIndex),
+            currentModuleIndex = newCurrentModuleIndex,
             modules = modules.mapIndexed { index, module ->
-                val currentModule = current.modules.getOrNull(index) ?: return@mapIndexed module
+                val currentModule = findMatchingModule(index, module) ?: return@mapIndexed module
                 module.copy(currentIndex = currentModule.currentIndex.coerceIn(0, module.entries.lastIndex))
             },
         )

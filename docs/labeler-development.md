@@ -12,6 +12,7 @@ Here is a list of the topics covered in this guide:
 - [Labeler Definition](#labeler-definition)
 - [Scripting in a Labeler](#scripting-in-a-labeler)
     - [Constructing a Project](#constructing-a-project)
+    - [Managing Modules](#managing-modules)
     - [Property Getter](#property-getter)
     - [Property Setter](#property-setter)
     - [Parsing Raw Labels](#parsing-raw-labels)
@@ -597,6 +598,34 @@ The array contains `QuickProjectBuilder` objects, which have the following field
 
 See the [Enable Quick Edit](#enable-quick-edit) section for details about the feature and the scripts.
 
+### Module Management
+
+The application provides menu items under `File` -> `Manage Subprojects` to add, rename, remove, or duplicate a module
+(subproject). Since the semantics of a module differ between labelers (e.g. a module name may encode information used
+by the writer), these menu items are only available when the labeler explicitly defines the corresponding operations in
+the `moduleManagement` field. There is no default implementation: an operation that is not defined by the labeler is
+not shown in the menu.
+
+The `ModuleManagement` object has the following fields:
+
+| Key       | Type                        | Default value | Description                                                       |
+|-----------|-----------------------------|---------------|-------------------------------------------------------------------|
+| add       | ModuleOperation &#124; null | null          | The definition of the operation to add a new module.              |
+| rename    | ModuleOperation &#124; null | null          | The definition of the operation to rename the current module.     |
+| remove    | ModuleOperation &#124; null | null          | The definition of the operation to remove the current module.     |
+| duplicate | ModuleOperation &#124; null | null          | The definition of the operation to duplicate the current module.  |
+
+Each `ModuleOperation` object has the following fields:
+
+| Key           | Type                           | Default value | Description                                                                                                           |
+|---------------|--------------------------------|---------------|-----------------------------------------------------------------------------------------------------------------------|
+| displayedName | String (Localized) &#124; null | null          | The displayed name of the operation used as the title of the parameter dialog. If null, a default name is used.        |
+| description   | String (Localized) &#124; null | null          | The description of the operation shown in the parameter dialog.                                                        |
+| parameters    | Parameter[]                    | []            | The definitions of parameters, in the same format as a plugin's `parameters.list`. See [parameter.md](parameter.md) for details. |
+| scripts       | EmbeddedScripts                | (Required)    | The scripts to conduct the operation.                                                                                   |
+
+See the [Managing Modules](#managing-modules) section for details about the scripts.
+
 ## Scripting in a Labeler
 
 In the previous sections, we have learned the structure and definition of a labeler. In this section, we will learn how
@@ -753,6 +782,46 @@ how to create a project from the input file or folder.
 - `encoding`: The encoding of the raw label file, selected by the user during project creation. Defaults to "UTF-8".
 - `params`: The desired parameters of the labeler in the same format as the `savedParams`. If not set, `savedParams`
   will be used.
+
+### Managing Modules
+
+The `scripts` field in a [Module Management](#module-management) operation refers to a JavaScript code snippet that
+conducts the operation. When the user runs the corresponding menu item, a dialog is shown to collect the values of the
+declared `parameters`, and then the scripts are executed.
+
+The scripts are executed in the same environment as a macro plugin with `Project` scope (see
+[plugin-development.md](plugin-development.md)), except for plugin-specific inputs.
+
+#### Input
+
+- `labeler`: The [LabelerConf](../src/jvmMain/kotlin/com/sdercolin/vlabeler/model/LabelerConf.kt) object of the current
+  labeler.
+- `labelerParams`: The current parameter values of the labeler. You can get values using their `name` as the key.
+- `params`: The parameter values of the operation collected from the dialog. You can get values using their `name` as
+  the key.
+- `resources`: The contents of the resource files of the labeler as a string list.
+- `modules`: The list of the current [Module](../src/jvmMain/resources/js/class_module.js) objects.
+- `currentModuleIndex`: The index of the current module in `modules`. The operation is supposed to target the current
+  module.
+- `projectRootDirectory`: The [File](file-api.md) object of the root sample directory of the project.
+- `debug`: Whether the application is running in debug mode.
+
+The [Entry](../src/jvmMain/resources/js/class_entry.js) and
+[Module](../src/jvmMain/resources/js/class_module.js) classes, the [File API](file-api.md), the
+[Env API](env-api.md), `error()` and `report()` are available.
+
+#### Output
+
+Modify the `modules` list (e.g. rename an item, `push`, `splice`, or sort) and update `currentModuleIndex` if needed.
+The result is validated by the application: the project must contain at least one module, the module names must be
+unique, and `currentModuleIndex` must be a valid index. Use `error()` with a localized message to reject invalid
+inputs in a user-friendly way before these validations are reached.
+
+The changes are pushed to the undo/redo history of the project, like any other edition.
+
+For reference implementations, see the `renameModule.js`, `removeModule.js`, and `addModule.js` scripts of the bundled
+[nnsvs-singer-labeler](../resources/common/labelers/nnsvs-singer-labeler) and
+[utau-singer-labeler](../resources/common/labelers/utau-singer-labeler).
 
 ### Property Getter
 

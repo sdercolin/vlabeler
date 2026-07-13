@@ -1,7 +1,7 @@
 {
     "name": "diffsinger.default",
-    "version": 2,
-    "serialVersion": 2,
+    "version": 3,
+    "serialVersion": 3,
     "singleFile": false,
     "extension": "lab",
     "defaultInputFilePath": null,
@@ -102,5 +102,53 @@
     ],
     "projectConstructor": {
         "scripts": "projectConstructor.js"
+    },
+    "moduleManagement": {
+        "add": {
+            "parameters": [
+                {
+                    "type": "rawFile",
+                    "name": "wavFile",
+                    "label": {
+                        "en": "wav file to add",
+                        "zh": "要添加的 wav 文件",
+                        "ja": "追加する wav ファイル",
+                        "ko": "추가할 wav 파일"
+                    },
+                    "description": {
+                        "en": "Select a wav file in the project's sample directory that is not included in the project yet. If a lab file with the same name exists, it is loaded as well.",
+                        "zh": "选择一个位于该项目的采样目录中且尚未被包含在项目中的 wav 文件。如果存在同名的 lab 文件，也会被一并加载。",
+                        "ja": "プロジェクトのサンプルディレクトリにある、まだプロジェクトに含まれていない wav ファイルを選択してください。同名の lab ファイルがある場合は、同時に読み込まれます。",
+                        "ko": "프로젝트의 샘플 폴더에 있는, 아직 프로젝트에 포함되지 않은 wav 파일을 선택해 주세요. 같은 이름의 lab 파일이 있으면 함께 불러와요."
+                    },
+                    "defaultValue": "",
+                    "optional": false,
+                    "acceptExtensions": [
+                        "wav"
+                    ]
+                }
+            ],
+            "scripts": "addModule.js"
+        },
+        "rename": {
+            "parameters": [
+                {
+                    "type": "string",
+                    "name": "newName",
+                    "label": {
+                        "en": "New name",
+                        "zh": "新名称",
+                        "ja": "新しい名前",
+                        "ko": "새 이름"
+                    },
+                    "defaultValue": "",
+                    "optional": false
+                }
+            ],
+            "scripts": "renameModule.js"
+        },
+        "remove": {
+            "scripts": "removeModule.js"
+        }
     }
 }
