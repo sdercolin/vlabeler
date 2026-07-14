@@ -16,7 +16,7 @@ fun Strings.ko(): String? = when (this) {
     MenuFileSaveAs -> "다른 이름으로 저장..."
     MenuFileProjectSetting -> "프로젝트 설정..."
     MenuFileImportProject -> "프로젝트 불러오기..."
-    MenuFileModuleManagement -> "하위 프로젝트 관리"
+    MenuFileModuleManagement -> "하위 프로젝트 관리 (실험적)"
     MenuFileModuleManagementAdd -> "[추가] 하위 프로젝트..."
     MenuFileModuleManagementRename -> "[이름 변경] 현재 하위 프로젝트..."
     MenuFileModuleManagementRemove -> "[제거] 현재 하위 프로젝트..."

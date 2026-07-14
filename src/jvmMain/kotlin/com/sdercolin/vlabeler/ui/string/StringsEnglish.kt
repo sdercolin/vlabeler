@@ -14,7 +14,7 @@ fun Strings.en(): String = when (this) {
     MenuFileSaveAs -> "Save As..."
     MenuFileProjectSetting -> "Project Settings..."
     MenuFileImportProject -> "Import Project..."
-    MenuFileModuleManagement -> "Manage Subprojects"
+    MenuFileModuleManagement -> "Manage Subprojects (Experimental)"
     MenuFileModuleManagementAdd -> "Add Subproject..."
     MenuFileModuleManagementRename -> "Rename Current Subproject..."
     MenuFileModuleManagementRemove -> "Remove Current Subproject..."

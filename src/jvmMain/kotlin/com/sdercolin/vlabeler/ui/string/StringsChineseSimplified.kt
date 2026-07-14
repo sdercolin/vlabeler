@@ -16,7 +16,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuFileSaveAs -> "另存为..."
     MenuFileProjectSetting -> "项目设置..."
     MenuFileImportProject -> "导入项目..."
-    MenuFileModuleManagement -> "管理子项目"
+    MenuFileModuleManagement -> "管理子项目（实验性）"
     MenuFileModuleManagementAdd -> "添加子项目..."
     MenuFileModuleManagementRename -> "重命名当前子项目..."
     MenuFileModuleManagementRemove -> "删除当前子项目..."

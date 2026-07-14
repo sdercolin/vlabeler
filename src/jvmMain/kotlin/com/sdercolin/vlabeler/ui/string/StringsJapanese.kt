@@ -16,7 +16,7 @@ fun Strings.ja(): String? = when (this) {
     MenuFileSaveAs -> "名前を付けて保存..."
     MenuFileProjectSetting -> "プロジェクト設定..."
     MenuFileImportProject -> "プロジェクトをインポート..."
-    MenuFileModuleManagement -> "サブプロジェクトの管理"
+    MenuFileModuleManagement -> "サブプロジェクトの管理（実験的）"
     MenuFileModuleManagementAdd -> "サブプロジェクトを追加..."
     MenuFileModuleManagementRename -> "このサブプロジェクトの名前を編集..."
     MenuFileModuleManagementRemove -> "このサブプロジェクトを削除..."
