@@ -5,6 +5,7 @@ import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import com.sdercolin.vlabeler.model.ModuleOperationDescriptor
 import com.sdercolin.vlabeler.model.ModuleOperationType
 import com.sdercolin.vlabeler.model.runModuleOperation
+import com.sdercolin.vlabeler.util.ParamMap
 import com.sdercolin.vlabeler.util.toParamMap
 import testutil.TestFixtures
 import testutil.TestLabelers
@@ -122,5 +123,121 @@ class UtauSingerProjectFixtureTest {
                 onReport = {},
             )
         }
+    }
+
+    private fun runOperation(
+        project: com.sdercolin.vlabeler.model.Project,
+        type: ModuleOperationType,
+        params: Map<String, Any>,
+    ) = runModuleOperation(
+        descriptor = ModuleOperationDescriptor(project.labelerConf, type),
+        params = params.toParamMap(),
+        project = project,
+        onReport = {},
+    )
+
+    @Test
+    fun testRenameModuleOperation() {
+        val sampleDir = TestFixtures.deploy(
+            "utau-singer",
+            tempDir.resolve("utau-singer"),
+            wavFiles = listOf("C4/_a_ka.wav", "C4/_i_ki.wav", "A3/_a_ka.wav"),
+        )
+        val project = createTestProject(
+            labeler = TestLabelers.utauSinger,
+            sampleDirectory = sampleDir,
+        )
+        assertEquals("A3", project.currentModule.name)
+
+        val result = runOperation(project, ModuleOperationType.Rename, mapOf("newName" to "B3"))
+        assertEquals(listOf("B3", "C4"), result.modules.map { it.name })
+        assertEquals("B3", result.currentModule.name)
+
+        // the folder is renamed on disk, and the module follows it
+        assertTrue(sampleDir.resolve("B3/_a_ka.wav").exists())
+        assertTrue(sampleDir.resolve("B3/oto.ini").exists())
+        assertFalse(sampleDir.resolve("A3").exists())
+        val renamed = result.modules.first { it.name == "B3" }
+        assertEquals("B3", renamed.sampleDirectoryPath)
+        assertTrue(renamed.rawFilePath!!.replace('\\', '/').endsWith("B3/oto.ini"))
+        assertEquals(project.modules.first { it.name == "A3" }.entries, renamed.entries)
+    }
+
+    @Test
+    fun testRemoveModuleOperation() {
+        val sampleDir = TestFixtures.deploy(
+            "utau-singer",
+            tempDir.resolve("utau-singer"),
+            wavFiles = listOf("C4/_a_ka.wav", "C4/_i_ki.wav", "A3/_a_ka.wav"),
+        )
+        val project = createTestProject(
+            labeler = TestLabelers.utauSinger,
+            sampleDirectory = sampleDir,
+        )
+        assertEquals("A3", project.currentModule.name)
+
+        val result = runOperation(project, ModuleOperationType.Remove, mapOf())
+        assertEquals(listOf("C4"), result.modules.map { it.name })
+        // the folder is deleted from disk, including all the files inside it
+        assertFalse(sampleDir.resolve("A3").exists())
+        assertTrue(sampleDir.resolve("C4/_a_ka.wav").exists())
+    }
+
+    @Test
+    fun testModuleOperationsBlockedForNestedSubprojects() {
+        val sampleDir = TestFixtures.deploy(
+            "utau-singer",
+            tempDir.resolve("utau-singer"),
+            wavFiles = listOf("C4/_a_ka.wav", "C4/_i_ki.wav", "A3/_a_ka.wav"),
+        )
+        // a nested folder with an oto.ini is constructed as a subproject of its own
+        TestWav.write(sampleDir.resolve("C4/sub/_a_ka.wav"))
+        sampleDir.resolve("C4/sub/oto.ini").writeText("_a_ka.wav=- a,10.0,100.0,-400.0,80.0,30.0")
+        val project = createTestProject(
+            labeler = TestLabelers.utauSinger,
+            sampleDirectory = sampleDir,
+        )
+        assertEquals(listOf("A3", "C4", "C4/sub"), project.modules.map { it.name }.sorted())
+
+        // renaming or removing a subproject whose folder contains another subproject is blocked
+        val onC4 = project.copy(currentModuleIndex = project.modules.indexOfFirst { it.name == "C4" })
+        assertFailsWith<PluginRuntimeException> {
+            runOperation(onC4, ModuleOperationType.Rename, mapOf("newName" to "B3"))
+        }
+        assertFailsWith<PluginRuntimeException> {
+            runOperation(onC4, ModuleOperationType.Remove, mapOf())
+        }
+        assertTrue(sampleDir.resolve("C4/sub/oto.ini").exists())
+
+        // the nested subproject itself can be renamed, moving its folder
+        val onSub = project.copy(currentModuleIndex = project.modules.indexOfFirst { it.name == "C4/sub" })
+        val result = runOperation(onSub, ModuleOperationType.Rename, mapOf("newName" to "C4/sub2"))
+        assertTrue(result.modules.any { it.name == "C4/sub2" })
+        assertTrue(sampleDir.resolve("C4/sub2/_a_ka.wav").exists())
+        assertFalse(sampleDir.resolve("C4/sub").exists())
+    }
+
+    @Test
+    fun testModuleOperationsBlockedForRootSubproject() {
+        val sampleDir = TestFixtures.deploy(
+            "utau-singer",
+            tempDir.resolve("utau-singer"),
+            wavFiles = listOf("C4/_a_ka.wav", "C4/_i_ki.wav", "A3/_a_ka.wav", "_root.wav"),
+        )
+        val labeler = TestLabelers.utauSinger
+        val project = createTestProject(
+            labeler = labeler,
+            sampleDirectory = sampleDir,
+            labelerParams = ParamMap(labeler.getDefaultParams() + ("useRootDirectory" to true)),
+        )
+        val onRoot = project.copy(currentModuleIndex = project.modules.indexOfFirst { it.name == "" })
+
+        assertFailsWith<PluginRuntimeException> {
+            runOperation(onRoot, ModuleOperationType.Rename, mapOf("newName" to "renamed"))
+        }
+        assertFailsWith<PluginRuntimeException> {
+            runOperation(onRoot, ModuleOperationType.Remove, mapOf())
+        }
+        assertTrue(sampleDir.resolve("_root.wav").exists())
     }
 }

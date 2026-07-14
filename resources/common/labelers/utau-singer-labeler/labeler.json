@@ -1,6 +1,6 @@
 {
     "name": "utau-singer.default",
-    "version": 26,
+    "version": 27,
     "serialVersion": 3,
     "singleFile": false,
     "extension": "ini",
@@ -533,9 +533,21 @@
                     "optional": false
                 }
             ],
+            "confirmation": {
+                "en": "The folder of the current subproject will be renamed (moved) on disk accordingly. This operation cannot be undone, and the undo history of the project will be cleared. Continue?",
+                "zh": "当前子项目对应的文件夹将在磁盘上被重命名（移动）。此操作无法撤销，且项目的撤销历史将被清空。是否继续？",
+                "ja": "現在のサブプロジェクトのフォルダはディスク上でリネーム（移動）されます。この操作は元に戻せず、プロジェクトの取り消し履歴はクリアされます。続行しますか？",
+                "ko": "현재 하위 프로젝트의 폴더 이름이 디스크에서 변경(이동)됩니다. 이 작업은 되돌릴 수 없으며, 프로젝트의 실행 취소 기록이 지워집니다. 계속하시겠습니까?"
+            },
             "scripts": "renameModule.js"
         },
         "remove": {
+            "confirmation": {
+                "en": "The folder of the current subproject, including all the files inside it, will be deleted from disk. This operation cannot be undone, and the undo history of the project will be cleared. Continue?",
+                "zh": "当前子项目对应的文件夹及其中的所有文件将从磁盘中删除。此操作无法撤销，且项目的撤销历史将被清空。是否继续？",
+                "ja": "現在のサブプロジェクトのフォルダとその中のすべてのファイルはディスクから削除されます。この操作は元に戻せず、プロジェクトの取り消し履歴はクリアされます。続行しますか？",
+                "ko": "현재 하위 프로젝트의 폴더와 그 안의 모든 파일이 디스크에서 삭제됩니다. 이 작업은 되돌릴 수 없으며, 프로젝트의 실행 취소 기록이 지워집니다. 계속하시겠습니까?"
+            },
             "scripts": "removeModule.js"
         }
     }

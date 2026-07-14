@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
+import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.QuickLaunchManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.ReloadLabelDialog
@@ -165,6 +166,13 @@ fun App(
                     mainScope.launch {
                         appState.closeModuleOperationDialog()
                         if (it != null) {
+                            val confirmation = args.descriptor.operation.confirmation
+                            if (confirmation != null) {
+                                val result = appState.awaitEmbeddedDialog(
+                                    CommonConfirmationDialogAction.ModuleOperationConfirmation(confirmation),
+                                )
+                                if (result == null) return@launch
+                            }
                             appState.showProgress()
                             withContext(Dispatchers.IO) {
                                 args.descriptor.saveParams(it, args.descriptor.getSavedParamsFile())
