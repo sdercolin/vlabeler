@@ -135,6 +135,7 @@ interface AppDialogState {
     fun showMacroPluginReport(report: LocalizedJsonString)
     fun closeMacroPluginReport()
     fun openModuleOperationDialog(descriptor: ModuleOperationDescriptor)
+    fun openModuleOperationDialog(descriptor: ModuleOperationDescriptor, params: ParamMap)
     fun updateModuleOperationDialogInputParams(params: ParamMap)
     fun closeModuleOperationDialog()
     fun openCustomizableItemManagerDialog(type: CustomizableItem.Type)
@@ -549,9 +550,12 @@ class AppDialogStateImpl(
 
     override fun openModuleOperationDialog(descriptor: ModuleOperationDescriptor) {
         scope.launch(Dispatchers.IO) {
-            moduleOperationShownInDialog =
-                ModuleOperationDialogArgs(descriptor, descriptor.loadSavedParams(descriptor.getSavedParamsFile()))
+            openModuleOperationDialog(descriptor, descriptor.loadSavedParams(descriptor.getSavedParamsFile()))
         }
+    }
+
+    override fun openModuleOperationDialog(descriptor: ModuleOperationDescriptor, params: ParamMap) {
+        moduleOperationShownInDialog = ModuleOperationDialogArgs(descriptor, params)
     }
 
     override fun updateModuleOperationDialogInputParams(params: ParamMap) {
@@ -655,6 +659,7 @@ class AppDialogStateImpl(
         reloadLabelDialogArgs = null
         macroPluginShownInDialog = null
         macroPluginReport = null
+        moduleOperationShownInDialog = null
         customizableItemManagerTypeShownInDialog = null
         closeEmbeddedDialog()
     }

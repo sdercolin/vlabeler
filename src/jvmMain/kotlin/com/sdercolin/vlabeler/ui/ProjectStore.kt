@@ -361,25 +361,25 @@ class ProjectStoreImpl(
     private fun Project.withCurrentIndexesKept(): Project {
         if (!appConf.value.history.squashIndex) return this
         val current = project ?: return this
-        // when the module list size has changed (e.g. by a module management operation), match modules by name,
-        // because index-based matching would associate unrelated modules
-        val sizeChanged = modules.size != current.modules.size
-        fun findMatchingModule(index: Int, module: Module): Module? =
-            if (sizeChanged) current.modules.firstOrNull { it.name == module.name } else current.modules.getOrNull(
-                index,
-            )
-        val newCurrentModuleIndex = if (sizeChanged) {
-            val currentModuleName = current.currentModule.name
-            modules.indexOfFirst { it.name == currentModuleName }
-                .takeIf { it >= 0 }
-                ?: currentModuleIndex.coerceIn(0, modules.lastIndex)
-        } else {
-            current.currentModuleIndex.coerceIn(0, modules.lastIndex)
-        }
+        // Match modules between the restored snapshot and the current project by name, so that module management
+        // operations (add/remove/rename, possibly reordering the list) do not associate unrelated modules.
+        // Modules that exist on only one side (e.g. the renamed ones) are paired by their order of appearance.
+        val currentNames = current.modules.mapTo(mutableSetOf()) { it.name }
+        val restoredNames = modules.mapTo(mutableSetOf()) { it.name }
+        val pairedByOrder = modules.filter { it.name !in currentNames }
+            .zip(current.modules.filter { it.name !in restoredNames })
+            .associate { (restored, currentModule) -> restored.name to currentModule }
+        fun findMatchingModule(module: Module): Module? =
+            current.modules.firstOrNull { it.name == module.name } ?: pairedByOrder[module.name]
+        val currentModuleName = current.currentModule.name
+        val newCurrentModuleIndex = modules
+            .indexOfFirst { findMatchingModule(it)?.name == currentModuleName }
+            .takeIf { it >= 0 }
+            ?: currentModuleIndex.coerceIn(0, modules.lastIndex)
         return copy(
             currentModuleIndex = newCurrentModuleIndex,
-            modules = modules.mapIndexed { index, module ->
-                val currentModule = findMatchingModule(index, module) ?: return@mapIndexed module
+            modules = modules.map { module ->
+                val currentModule = findMatchingModule(module) ?: return@map module
                 module.copy(currentIndex = currentModule.currentIndex.coerceIn(0, module.entries.lastIndex))
             },
         )

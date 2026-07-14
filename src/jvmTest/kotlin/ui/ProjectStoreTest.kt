@@ -233,6 +233,33 @@ class ProjectStoreTest {
     }
 
     @Test
+    fun `undo and redo track the current module across a rename with reordering`() {
+        val store = createStoreWithProject()
+        // rename the current module ("C4") to a name that sorts first and re-sort the list,
+        // like the rename operation of the TextGrid labeler does
+        store.editProject {
+            val renamed = currentModule.copy(name = "A0")
+            val newModules = (modules.filterIndexed { index, _ -> index != currentModuleIndex } + renamed)
+                .sortedBy { it.name }
+            copy(modules = newModules, currentModuleIndex = newModules.indexOfFirst { it.name == "A0" })
+        }
+        assertEquals(listOf("A0", "A3"), store.requireProject().modules.map { it.name })
+        assertEquals("A0", store.requireProject().currentModule.name)
+        // an index-only change after the rename, squashed by the history
+        store.jumpToEntry(1)
+
+        store.undo()
+        val restored = store.requireProject()
+        assertEquals(listOf("A3", "C4"), restored.modules.map { it.name })
+        // the cursor stays on the renamed module, paired by the names that exist on only one side
+        assertEquals("C4", restored.currentModule.name)
+        assertEquals(1, restored.currentModule.currentIndex)
+
+        store.redo()
+        assertEquals("A0", store.requireProject().currentModule.name)
+    }
+
+    @Test
     fun `undo and redo restore a module count change`() {
         val store = createStoreWithProject()
         val before = store.requireProject()
