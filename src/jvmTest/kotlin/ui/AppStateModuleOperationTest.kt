@@ -24,8 +24,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Tests for [AppState.executeModuleOperation], especially the undo history handling around operations that declare a
- * confirmation (i.e. operations changing files on disk).
+ * Tests for [AppState.executeModuleOperation], especially the undo history handling around operations declared as
+ * irreversible (i.e. operations changing files on disk).
  */
 class AppStateModuleOperationTest {
 
@@ -62,7 +62,7 @@ class AppStateModuleOperationTest {
     }
 
     @Test
-    fun `an operation with a confirmation clears the undo history`() {
+    fun `an irreversible operation clears the undo history`() {
         appState.editCurrentEntryTag("edited")
         assertTrue(appState.canUndo)
 
@@ -76,7 +76,7 @@ class AppStateModuleOperationTest {
     }
 
     @Test
-    fun `an operation without a confirmation keeps the undo history`() {
+    fun `a reversible operation keeps the undo history`() {
         appState.editCurrentEntryTag("edited")
         assertTrue(appState.canUndo)
 

@@ -479,9 +479,11 @@ data class LabelerConf(
      *     `parameters.list`. See [docs/parameter.md] for details.
      * @property scripts JavaScript code executed to conduct the operation.
      * @property confirmation Confirmation message (localized) shown to the user before the operation is conducted.
-     *     Should be set when the operation makes changes that cannot be undone, e.g. renaming or deleting files on
-     *     disk. When set, the undo history of the project is cleared after the operation is applied, because undoing
-     *     to a state that is inconsistent with the changed files is not safe.
+     *     Should be set when the operation is dangerous, e.g. it removes data or changes files on disk.
+     * @property irreversible Whether the operation makes changes that cannot be undone, e.g. renaming or deleting
+     *     files on disk. When true, the undo history of the project is cleared after the operation is applied,
+     *     because undoing to a state that is inconsistent with the changed files is not safe. An irreversible
+     *     operation should also define a [confirmation].
      */
     @Serializable(with = ModuleOperationSerializer::class)
     @Immutable
@@ -491,6 +493,7 @@ data class LabelerConf(
         val parameters: List<Parameter<*>> = listOf(),
         val scripts: EmbeddedScripts,
         val confirmation: LocalizedJsonString? = null,
+        val irreversible: Boolean = false,
     )
 
     @Serializer(ModuleOperation::class)
@@ -514,7 +517,8 @@ data class LabelerConf(
             val confirmation = element["confirmation"]?.takeUnless { it is JsonNull }?.let {
                 decoder.json.decodeFromJsonElement<LocalizedJsonString>(it)
             }
-            return ModuleOperation(displayedName, description, parameters, scripts, confirmation)
+            val irreversible = element["irreversible"]?.jsonPrimitive?.boolean ?: false
+            return ModuleOperation(displayedName, description, parameters, scripts, confirmation, irreversible)
         }
 
         override fun serialize(encoder: Encoder, value: ModuleOperation) {
@@ -536,6 +540,7 @@ data class LabelerConf(
                     "confirmation" to (
                         value.confirmation?.let { encoder.json.encodeToJsonElement(it) } ?: JsonNull
                         ),
+                    "irreversible" to JsonPrimitive(value.irreversible),
                 ),
             )
             encoder.encodeJsonElement(element)

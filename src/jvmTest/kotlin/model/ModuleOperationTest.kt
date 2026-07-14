@@ -78,10 +78,13 @@ class ModuleOperationTest {
         val addParameter = moduleManagement.add?.parameters?.single()
         assertTrue(addParameter is Parameter.RawFileParam)
         assertEquals(listOf("wav"), addParameter.acceptExtensions)
-        // rename and remove change files on disk, so they require a confirmation; add does not
+        // rename and remove change files on disk, so they are confirmed and irreversible; add is not
         assertNotNull(moduleManagement.rename?.confirmation)
         assertNotNull(moduleManagement.remove?.confirmation)
         assertNull(moduleManagement.add?.confirmation)
+        assertEquals(true, moduleManagement.rename?.irreversible)
+        assertEquals(true, moduleManagement.remove?.irreversible)
+        assertEquals(false, moduleManagement.add?.irreversible)
     }
 
     @Test
