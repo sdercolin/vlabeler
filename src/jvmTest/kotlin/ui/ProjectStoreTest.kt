@@ -232,6 +232,58 @@ class ProjectStoreTest {
         assertEquals(1, store.requireProject().currentModule.currentIndex)
     }
 
+    @Test
+    fun `undo and redo track the current module across a rename with reordering`() {
+        val store = createStoreWithProject()
+        // rename the current module ("C4") to a name that sorts first and re-sort the list,
+        // like the rename operation of the TextGrid labeler does
+        store.editProject {
+            val renamed = currentModule.copy(name = "A0")
+            val newModules = (modules.filterIndexed { index, _ -> index != currentModuleIndex } + renamed)
+                .sortedBy { it.name }
+            copy(modules = newModules, currentModuleIndex = newModules.indexOfFirst { it.name == "A0" })
+        }
+        assertEquals(listOf("A0", "A3"), store.requireProject().modules.map { it.name })
+        assertEquals("A0", store.requireProject().currentModule.name)
+        // an index-only change after the rename, squashed by the history
+        store.jumpToEntry(1)
+
+        store.undo()
+        val restored = store.requireProject()
+        assertEquals(listOf("A3", "C4"), restored.modules.map { it.name })
+        // the cursor stays on the renamed module, paired by the names that exist on only one side
+        assertEquals("C4", restored.currentModule.name)
+        assertEquals(1, restored.currentModule.currentIndex)
+
+        store.redo()
+        assertEquals("A0", store.requireProject().currentModule.name)
+    }
+
+    @Test
+    fun `undo and redo restore a module count change`() {
+        val store = createStoreWithProject()
+        val before = store.requireProject()
+        // remove the current module ("C4"), like a module management operation does
+        store.editProject {
+            copy(
+                modules = modules.filterIndexed { index, _ -> index != currentModuleIndex },
+                currentModuleIndex = 0,
+            )
+        }
+        assertEquals(before.modules.size - 1, store.requireProject().modules.size)
+        assertTrue(store.canUndo)
+
+        store.undo()
+        val restored = store.requireProject()
+        assertEquals(before.modules.map { it.name }, restored.modules.map { it.name })
+        // with the default squashing configuration, the cursor stays on the module of the current project,
+        // matched by name because the module count differs between the snapshots
+        assertEquals("A3", restored.currentModule.name)
+
+        store.redo()
+        assertEquals(listOf("A3"), store.requireProject().modules.map { it.name })
+    }
+
     /* endregion */
 
     /* region entry navigation */

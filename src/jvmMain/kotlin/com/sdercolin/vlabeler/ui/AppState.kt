@@ -28,11 +28,13 @@ import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.Arguments
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.MacroPluginExecutionListener
+import com.sdercolin.vlabeler.model.ModuleOperationDescriptor
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.runMacroPlugin
+import com.sdercolin.vlabeler.model.runModuleOperation
 import com.sdercolin.vlabeler.repository.ConvertedAudioRepository
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.tracking.TrackingService
@@ -526,6 +528,17 @@ class AppState(
             }
         editProject { newProject }
         trackMacroPluginExecution(plugin, params, quickLaunch = slot != null)
+    }
+
+    fun executeModuleOperation(descriptor: ModuleOperationDescriptor, params: ParamMap) {
+        val newProject = runCatching {
+            runModuleOperation(descriptor, params, requireProject(), onReport = { showMacroPluginReport(it) })
+        }
+            .getOrElse {
+                showError(it)
+                return
+            }
+        editProject { newProject }
     }
 
     private fun consumeArguments(arguments: Arguments) {

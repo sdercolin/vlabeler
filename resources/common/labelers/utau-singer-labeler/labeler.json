@@ -1,7 +1,7 @@
 {
     "name": "utau-singer.default",
-    "version": 25,
-    "serialVersion": 2,
+    "version": 26,
+    "serialVersion": 3,
     "singleFile": false,
     "extension": "ini",
     "displayedName": {
@@ -492,5 +492,51 @@
             "extension": "",
             "scripts": "quickProjectBuilder.js"
         }
-    ]
+    ],
+    "moduleManagement": {
+        "add": {
+            "parameters": [
+                {
+                    "type": "rawFile",
+                    "name": "folder",
+                    "label": {
+                        "en": "Folder to add",
+                        "zh": "要添加的文件夹",
+                        "ja": "追加するフォルダ",
+                        "ko": "추가할 폴더"
+                    },
+                    "description": {
+                        "en": "Select a folder under the singer's root directory that is not included in the project yet.",
+                        "zh": "选择一个位于歌手根目录下且尚未被包含在项目中的文件夹。",
+                        "ja": "音源のルートディレクトリ以下にある、まだプロジェクトに含まれていないフォルダを選択してください。",
+                        "ko": "가수 루트 폴더 아래에 있는, 아직 프로젝트에 포함되지 않은 폴더를 선택해 주세요."
+                    },
+                    "defaultValue": "",
+                    "optional": false,
+                    "isFolder": true
+                }
+            ],
+            "scripts": "addModule.js"
+        },
+        "rename": {
+            "parameters": [
+                {
+                    "type": "string",
+                    "name": "newName",
+                    "label": {
+                        "en": "New name",
+                        "zh": "新名称",
+                        "ja": "新しい名前",
+                        "ko": "새 이름"
+                    },
+                    "defaultValue": "",
+                    "optional": false
+                }
+            ],
+            "scripts": "renameModule.js"
+        },
+        "remove": {
+            "scripts": "removeModule.js"
+        }
+    }
 }

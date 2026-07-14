@@ -2,6 +2,8 @@ package ui
 
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.env.Version
+import com.sdercolin.vlabeler.model.ModuleOperationDescriptor
+import com.sdercolin.vlabeler.model.ModuleOperationType
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.AppState
@@ -23,6 +25,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import testutil.TestAppState
+import testutil.TestLabelers
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -74,6 +77,10 @@ class AppDialogStateTest {
         supportedLabelFileExtension = "*",
         scriptFiles = emptyList(),
     )
+
+    /** A real module operation descriptor from a bundled labeler that declares `moduleManagement`. */
+    private fun moduleOperationDescriptor() =
+        ModuleOperationDescriptor(TestLabelers.nnsvsSinger, ModuleOperationType.Rename)
 
     /* region simple standalone dialog toggles */
 
@@ -245,6 +252,27 @@ class AppDialogStateTest {
     }
 
     @Test
+    fun `module operation dialog stores args, updates params, and closes`() {
+        val descriptor = moduleOperationDescriptor()
+        val params = ParamMap(mapOf("newName" to "a"))
+        appState.openModuleOperationDialog(descriptor, params)
+
+        var args = assertNotNull(appState.moduleOperationShownInDialog)
+        assertSame(descriptor, args.descriptor)
+        assertSame(params, args.paramMap)
+
+        val newParams = ParamMap(mapOf("newName" to "b"))
+        appState.updateModuleOperationDialogInputParams(newParams)
+        args = assertNotNull(appState.moduleOperationShownInDialog)
+        assertSame(newParams, args.paramMap)
+        // the descriptor is preserved when only the params change
+        assertSame(descriptor, args.descriptor)
+
+        appState.closeModuleOperationDialog()
+        assertNull(appState.moduleOperationShownInDialog)
+    }
+
+    @Test
     fun `macro plugin report is shown and dismissed`() {
         val report = "done".toLocalized()
         appState.showMacroPluginReport(report)
@@ -343,6 +371,7 @@ class AppDialogStateTest {
         appState.openSampleDirectoryRedirectDialog()
         appState.openQuickLaunchManagerDialog()
         appState.showMacroPluginReport("report".toLocalized())
+        appState.openModuleOperationDialog(moduleOperationDescriptor(), ParamMap(mapOf("newName" to "a")))
         appState.openEmbeddedDialog(AskIfSaveDialogPurpose.IsExiting)
         // dialogs that closeAllDialogs previously did not clear
         appState.openAboutDialog()
@@ -357,6 +386,7 @@ class AppDialogStateTest {
         assertFalse(appState.isShowingSampleDirectoryRedirectDialog)
         assertFalse(appState.isShowingQuickLaunchManagerDialog)
         assertNull(appState.macroPluginReport)
+        assertNull(appState.moduleOperationShownInDialog)
         assertNull(appState.embeddedDialog)
         assertFalse(appState.isShowingAboutDialog)
         assertFalse(appState.isShowingLicenseDialog)

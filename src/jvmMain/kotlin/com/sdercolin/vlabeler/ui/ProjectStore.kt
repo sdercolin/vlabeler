@@ -361,10 +361,25 @@ class ProjectStoreImpl(
     private fun Project.withCurrentIndexesKept(): Project {
         if (!appConf.value.history.squashIndex) return this
         val current = project ?: return this
+        // Match modules between the restored snapshot and the current project by name, so that module management
+        // operations (add/remove/rename, possibly reordering the list) do not associate unrelated modules.
+        // Modules that exist on only one side (e.g. the renamed ones) are paired by their order of appearance.
+        val currentNames = current.modules.mapTo(mutableSetOf()) { it.name }
+        val restoredNames = modules.mapTo(mutableSetOf()) { it.name }
+        val pairedByOrder = modules.filter { it.name !in currentNames }
+            .zip(current.modules.filter { it.name !in restoredNames })
+            .associate { (restored, currentModule) -> restored.name to currentModule }
+        fun findMatchingModule(module: Module): Module? =
+            current.modules.firstOrNull { it.name == module.name } ?: pairedByOrder[module.name]
+        val currentModuleName = current.currentModule.name
+        val newCurrentModuleIndex = modules
+            .indexOfFirst { findMatchingModule(it)?.name == currentModuleName }
+            .takeIf { it >= 0 }
+            ?: currentModuleIndex.coerceIn(0, modules.lastIndex)
         return copy(
-            currentModuleIndex = current.currentModuleIndex.coerceIn(0, modules.lastIndex),
-            modules = modules.mapIndexed { index, module ->
-                val currentModule = current.modules.getOrNull(index) ?: return@mapIndexed module
+            currentModuleIndex = newCurrentModuleIndex,
+            modules = modules.map { module ->
+                val currentModule = findMatchingModule(module) ?: return@map module
                 module.copy(currentIndex = currentModule.currentIndex.coerceIn(0, module.entries.lastIndex))
             },
         )

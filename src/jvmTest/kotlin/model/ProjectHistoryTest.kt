@@ -85,6 +85,32 @@ class ProjectHistoryTest {
     }
 
     @Test
+    fun `push records removal of a trailing module`() {
+        val history = history()
+        val extraModule = baseProject.modules.first().copy(name = "extra")
+        val twoModules = baseProject.copy(modules = baseProject.modules + extraModule)
+        history.new(twoModules)
+
+        // removing the last module keeps the remaining modules equal to a prefix of the previous list,
+        // which used to be squashed as an index-only change by the zip-based comparison
+        val removed = twoModules.copy(modules = twoModules.modules.take(1))
+        history.push(removed)
+        assertEquals(removed, history.current)
+        assertTrue(history.canUndo)
+    }
+
+    @Test
+    fun `push records addition of a module`() {
+        val history = history()
+        history.new(baseProject)
+        val extraModule = baseProject.modules.first().copy(name = "extra")
+        val added = baseProject.copy(modules = baseProject.modules + extraModule)
+        history.push(added)
+        assertEquals(added, history.current)
+        assertTrue(history.canUndo)
+    }
+
+    @Test
     fun `undo and redo move over pushed states`() {
         val history = history()
         val first = baseProject.withTag("first")

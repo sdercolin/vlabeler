@@ -1,8 +1,14 @@
 package fixtures
 
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.exception.PluginRuntimeException
+import com.sdercolin.vlabeler.model.ModuleOperationDescriptor
+import com.sdercolin.vlabeler.model.ModuleOperationType
+import com.sdercolin.vlabeler.model.runModuleOperation
+import com.sdercolin.vlabeler.util.toParamMap
 import testutil.TestFixtures
 import testutil.TestLabelers
+import testutil.TestWav
 import testutil.createTestProject
 import java.io.File
 import kotlin.io.path.createTempDirectory
@@ -10,7 +16,9 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Smoke test: creates a project from the `utau-singer` fixture with the bundled `utau-singer-labeler`, going through
@@ -68,5 +76,51 @@ class UtauSingerProjectFixtureTest {
 
         val a3 = project.modules.first { it.name == "A3" }
         assertEquals(listOf("- aA3", "a kaA3"), a3.entries.map { it.name })
+    }
+
+    @Test
+    fun testAddModuleOperation() {
+        val sampleDir = TestFixtures.deploy(
+            "utau-singer",
+            tempDir.resolve("utau-singer"),
+            wavFiles = listOf("C4/_a_ka.wav", "C4/_i_ki.wav", "A3/_a_ka.wav"),
+        )
+        val project = createTestProject(
+            labeler = TestLabelers.utauSinger,
+            sampleDirectory = sampleDir,
+        )
+        // create a new pitch folder after the project is created
+        val newFolder = sampleDir.resolve("B3")
+        TestWav.write(newFolder.resolve("_a_ka.wav"))
+
+        val descriptor = ModuleOperationDescriptor(project.labelerConf, ModuleOperationType.Add)
+        val result = runModuleOperation(
+            descriptor = descriptor,
+            params = mapOf<String, Any>("folder" to newFolder.absolutePath).toParamMap(),
+            project = project,
+            onReport = {},
+        )
+
+        assertEquals(listOf("A3", "B3", "C4"), result.modules.map { it.name }.sorted())
+        val added = result.modules.first { it.name == "B3" }
+        assertEquals("B3", result.currentModule.name)
+        assertTrue(added.rawFilePath!!.endsWith("oto.ini"))
+
+        // entries are created from the labeler's default values, to be synced with the sample length later
+        val entry = added.entries.single()
+        assertEquals("_a_ka.wav", entry.sample)
+        assertEquals(100f, entry.start)
+        assertEquals(500f, entry.end)
+        assertTrue(entry.needSync)
+
+        // adding the same folder again is rejected
+        assertFailsWith<PluginRuntimeException> {
+            runModuleOperation(
+                descriptor = descriptor,
+                params = mapOf<String, Any>("folder" to newFolder.absolutePath).toParamMap(),
+                project = result,
+                onReport = {},
+            )
+        }
     }
 }

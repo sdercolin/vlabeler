@@ -53,6 +53,26 @@ enum class KeyAction(
         null,
         true,
     ),
+    ModuleManagementAdd(
+        listOf(Strings.MenuFile, Strings.MenuFileModuleManagement, Strings.MenuFileModuleManagementAdd),
+        null,
+        true,
+    ),
+    ModuleManagementRename(
+        listOf(Strings.MenuFile, Strings.MenuFileModuleManagement, Strings.MenuFileModuleManagementRename),
+        null,
+        true,
+    ),
+    ModuleManagementRemove(
+        listOf(Strings.MenuFile, Strings.MenuFileModuleManagement, Strings.MenuFileModuleManagementRemove),
+        null,
+        true,
+    ),
+    ModuleManagementDuplicate(
+        listOf(Strings.MenuFile, Strings.MenuFileModuleManagement, Strings.MenuFileModuleManagementDuplicate),
+        null,
+        true,
+    ),
     ReloadLabelFilePickFile(
         listOf(Strings.MenuFile, Strings.MenuFileReloadLabelFilePickFile),
         null,

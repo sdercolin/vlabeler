@@ -22,6 +22,7 @@ import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDia
 import com.sdercolin.vlabeler.ui.dialog.importentries.ImportEntriesDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginReportDialog
+import com.sdercolin.vlabeler.ui.dialog.plugin.ModuleOperationDialog
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesDialog
 import com.sdercolin.vlabeler.ui.dialog.prerender.PrerenderDialog
 import com.sdercolin.vlabeler.ui.dialog.project.ProjectSettingDialog
@@ -150,6 +151,36 @@ fun App(
             MacroPluginReportDialog(
                 report = report,
                 finish = { appState.closeMacroPluginReport() },
+            )
+        }
+        appState.moduleOperationShownInDialog?.let { args ->
+            val snackbarHostState = remember { SnackbarHostState() }
+            ModuleOperationDialog(
+                appConf = appState.appConf,
+                appRecordStore = appState.appRecordStore,
+                snackbarHostState = snackbarHostState,
+                args = args,
+                project = appState.requireProject(),
+                submit = {
+                    mainScope.launch {
+                        appState.closeModuleOperationDialog()
+                        if (it != null) {
+                            appState.showProgress()
+                            withContext(Dispatchers.IO) {
+                                args.descriptor.saveParams(it, args.descriptor.getSavedParamsFile())
+                                appState.executeModuleOperation(args.descriptor, it)
+                            }
+                            appState.hideProgress()
+                        }
+                    }
+                },
+                save = {
+                    mainScope.launch(Dispatchers.IO) {
+                        appState.updateModuleOperationDialogInputParams(it)
+                        args.descriptor.saveParams(it, args.descriptor.getSavedParamsFile())
+                    }
+                },
+                load = { appState.updateModuleOperationDialogInputParams(it) },
             )
         }
         appState.customizableItemManagerTypeShownInDialog?.let {

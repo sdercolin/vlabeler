@@ -22,12 +22,16 @@ import kotlinx.serialization.Serializer
 import kotlinx.serialization.Transient
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import java.io.File
 
@@ -72,6 +76,8 @@ import java.io.File
  * @property writer Defines how to write content in the original label format.
  * @property parameters Configurable parameters of the labeler. See [ParameterHolder].
  * @property projectConstructor Scripts to construct a project with subprojects. See [ProjectConstructor].
+ * @property moduleManagement Module (subproject) management operations provided by the labeler. See
+ *     [ModuleManagement].
  * @property resourceFiles Paths of the resource files used in the scripts.
  * @property directory Directory of the labeler. For single file labeler, it is null.
  * @property builtIn Whether the labeler is built-in.
@@ -114,6 +120,7 @@ data class LabelerConf(
     val parameters: List<ParameterHolder> = listOf(),
     val projectConstructor: ProjectConstructor? = null,
     val quickProjectBuilders: List<QuickProjectBuilder> = listOf(),
+    val moduleManagement: ModuleManagement = ModuleManagement(),
     override val resourceFiles: List<String> = listOf(),
     @Transient override val directory: File? = null,
     @Transient val builtIn: Boolean = false,
@@ -427,6 +434,103 @@ data class LabelerConf(
         val scripts: EmbeddedScripts,
     )
 
+    /**
+     * Definition of the module (subproject) management operations provided by the labeler, so that the corresponding
+     * menu items are available in the application menu. Since the semantics of a module differ between labelers
+     * (e.g. its name may encode information used by the [Writer]), no operation has a default implementation: an
+     * operation that is not defined here is not available for the labeler. See the "Module Management" section of
+     * [docs/labeler-development.md] for details.
+     *
+     * @property add Definition of the operation to add a new module.
+     * @property rename Definition of the operation to rename the current module.
+     * @property remove Definition of the operation to remove the current module.
+     * @property duplicate Definition of the operation to duplicate the current module.
+     */
+    @Serializable
+    @Immutable
+    data class ModuleManagement(
+        val add: ModuleOperation? = null,
+        val rename: ModuleOperation? = null,
+        val remove: ModuleOperation? = null,
+        val duplicate: ModuleOperation? = null,
+    ) {
+
+        val hasAnyOperation: Boolean
+            get() = listOfNotNull(add, rename, remove, duplicate).isNotEmpty()
+
+        fun getOperation(type: ModuleOperationType): ModuleOperation? = when (type) {
+            ModuleOperationType.Add -> add
+            ModuleOperationType.Rename -> rename
+            ModuleOperationType.Remove -> remove
+            ModuleOperationType.Duplicate -> duplicate
+        }
+    }
+
+    /**
+     * Definition of a module (subproject) management operation. The [scripts] are executed in the same environment as
+     * a macro plugin with `Project` scope: the whole `modules` list and `currentModuleIndex` are exposed as mutable
+     * inputs/outputs, and the operation targets the current module. See the "Module Management" section of
+     * [docs/labeler-development.md] for details.
+     *
+     * @property displayedName Displayed name of the operation (localized), used in the parameter dialog. If null, a
+     *     default name of the operation type is used.
+     * @property description Description of the operation (localized), used in the parameter dialog.
+     * @property parameters Configurable parameters of the operation, defined in the same way as a plugin's
+     *     `parameters.list`. See [docs/parameter.md] for details.
+     * @property scripts JavaScript code executed to conduct the operation.
+     */
+    @Serializable(with = ModuleOperationSerializer::class)
+    @Immutable
+    data class ModuleOperation(
+        val displayedName: LocalizedJsonString? = null,
+        val description: LocalizedJsonString? = null,
+        val parameters: List<Parameter<*>> = listOf(),
+        val scripts: EmbeddedScripts,
+    )
+
+    @Serializer(ModuleOperation::class)
+    object ModuleOperationSerializer : KSerializer<ModuleOperation> {
+        override fun deserialize(decoder: Decoder): ModuleOperation {
+            require(decoder is JsonDecoder)
+            val element = decoder.decodeJsonElement()
+            require(element is JsonObject)
+            val displayedName = element["displayedName"]?.takeUnless { it is JsonNull }?.let {
+                decoder.json.decodeFromJsonElement<LocalizedJsonString>(it)
+            }
+            val description = element["description"]?.takeUnless { it is JsonNull }?.let {
+                decoder.json.decodeFromJsonElement<LocalizedJsonString>(it)
+            }
+            val parameters = element["parameters"]?.takeUnless { it is JsonNull }?.jsonArray?.map {
+                decoder.json.decodeFromJsonElement(PolymorphicSerializer(Parameter::class), it)
+            } ?: emptyList()
+            val scripts = requireNotNull(element["scripts"]).let {
+                decoder.json.decodeFromJsonElement(EmbeddedScriptsSerializer, it)
+            }
+            return ModuleOperation(displayedName, description, parameters, scripts)
+        }
+
+        override fun serialize(encoder: Encoder, value: ModuleOperation) {
+            require(encoder is JsonEncoder)
+            val element = JsonObject(
+                mapOf(
+                    "displayedName" to (
+                        value.displayedName?.let { encoder.json.encodeToJsonElement(it) } ?: JsonNull
+                        ),
+                    "description" to (
+                        value.description?.let { encoder.json.encodeToJsonElement(it) } ?: JsonNull
+                        ),
+                    "parameters" to JsonArray(
+                        value.parameters.map {
+                            encoder.json.encodeToJsonElement(PolymorphicSerializer(Parameter::class), it)
+                        },
+                    ),
+                    "scripts" to encoder.json.encodeToJsonElement(EmbeddedScriptsSerializer, value.scripts),
+                ),
+            )
+            encoder.encodeJsonElement(element)
+        }
+    }
+
     val useImplicitStart: Boolean
         get() = fields.any { it.replaceStart }
 
@@ -480,6 +584,7 @@ data class LabelerConf(
      */
     fun preloadScripts(): LabelerConf {
         fun EmbeddedScripts.preload() = copy(lines = getScripts(directory).lines())
+        fun ModuleOperation.preload() = copy(scripts = scripts.preload())
         return copy(
             parser = parser.copy(scripts = parser.scripts.preload()),
             writer = writer.copy(scripts = writer.scripts?.preload()),
@@ -487,6 +592,12 @@ data class LabelerConf(
             quickProjectBuilders = quickProjectBuilders.map {
                 it.copy(scripts = it.scripts.preload())
             },
+            moduleManagement = moduleManagement.copy(
+                add = moduleManagement.add?.preload(),
+                rename = moduleManagement.rename?.preload(),
+                remove = moduleManagement.remove?.preload(),
+                duplicate = moduleManagement.duplicate?.preload(),
+            ),
             properties = properties.map {
                 it.copy(
                     valueGetter = it.valueGetter.preload(),
@@ -552,6 +663,6 @@ data class LabelerConf(
     companion object {
         const val LABELER_FILE_EXTENSION = "labeler.json"
         private const val LABELER_SAVED_PARAMS_FILE_EXTENSION = ".labeler.param.json"
-        private const val SERIAL_VERSION = 2
+        private const val SERIAL_VERSION = 3
     }
 }
