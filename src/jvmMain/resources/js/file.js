@@ -152,6 +152,12 @@ class File {
             JavaFiles.deleteIfExists(Path.of(this.getAbsolutePath()))
         }
     }
+
+    moveTo(target) {
+        target.getParentFile()?.mkdirs()
+        JavaFiles.move(Path.of(this.getAbsolutePath()), Path.of(target.getAbsolutePath()))
+        return target
+    }
 }
 
 function getNameWithoutExtension(path) {

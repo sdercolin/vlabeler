@@ -623,6 +623,17 @@ Each `ModuleOperation` object has the following fields:
 | description   | String (Localized) &#124; null | null          | The description of the operation shown in the parameter dialog.                                                        |
 | parameters    | Parameter[]                    | []            | The definitions of parameters, in the same format as a plugin's `parameters.list`. See [parameter.md](parameter.md) for details. |
 | scripts       | EmbeddedScripts                | (Required)    | The scripts to conduct the operation.                                                                                   |
+| confirmation  | String (Localized) &#124; null | null          | A confirmation message shown before the operation is conducted. Should be set for dangerous operations; see below.     |
+| irreversible  | Boolean                        | false         | Whether the operation makes changes that cannot be undone, e.g. changing files on disk; see below.                     |
+
+As a principle, the operations should keep the modules consistent with the files and directories on disk, in the same
+way as the project constructor builds them, because features like project import/export and label file reloading
+depend on that correspondence. For example, renaming a module of the bundled `UTAU singer labeler` renames the
+corresponding folder on disk, and removing it deletes the folder. An operation that makes such disk changes must set
+`irreversible` to `true`: the undo history of the project is then cleared after the operation is applied, because
+undoing the project to a state that is inconsistent with the changed files is not safe. It should also define a
+`confirmation` message, so that the user is asked to confirm before the scripts run. A `confirmation` can also be used
+alone for dangerous but undoable operations (e.g. removing data that is only written to disk on export).
 
 See the [Managing Modules](#managing-modules) section for details about the scripts.
 
@@ -817,7 +828,10 @@ The result is validated by the application: the project must contain at least on
 unique, and `currentModuleIndex` must be a valid index. Use `error()` with a localized message to reject invalid
 inputs in a user-friendly way before these validations are reached.
 
-The changes are pushed to the undo/redo history of the project, like any other edition.
+The changes are pushed to the undo/redo history of the project, like any other edition, except that an operation
+declared as `irreversible` clears the undo history after it is applied, because it is supposed to have changed files
+on disk (e.g. via [File.moveTo](file-api.md), `delete()`, or `deleteRecursively()`), and undoing the project to a
+state that is inconsistent with the changed files is not safe.
 
 For reference implementations, see the `renameModule.js`, `removeModule.js`, and `addModule.js` scripts of the bundled
 [nnsvs-singer-labeler](../resources/common/labelers/nnsvs-singer-labeler) and

@@ -22,6 +22,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -77,6 +78,13 @@ class ModuleOperationTest {
         val addParameter = moduleManagement.add?.parameters?.single()
         assertTrue(addParameter is Parameter.RawFileParam)
         assertEquals(listOf("wav"), addParameter.acceptExtensions)
+        // rename and remove change files on disk, so they are confirmed and irreversible; add is not
+        assertNotNull(moduleManagement.rename?.confirmation)
+        assertNotNull(moduleManagement.remove?.confirmation)
+        assertNull(moduleManagement.add?.confirmation)
+        assertEquals(true, moduleManagement.rename?.irreversible)
+        assertEquals(true, moduleManagement.remove?.irreversible)
+        assertEquals(false, moduleManagement.add?.irreversible)
     }
 
     @Test
@@ -104,15 +112,29 @@ class ModuleOperationTest {
     }
 
     @Test
-    fun `rename changes the current module name`() {
+    fun `rename changes the module name and renames the files on disk`() {
         val project = createProject()
         assertEquals(listOf("doremi", "legato"), project.modules.map { it.name })
 
         val result = runOperation(project, ModuleOperationType.Rename, mapOf("newName" to "renamed"))
-        assertEquals(listOf("renamed", "legato"), result.modules.map { it.name })
-        // everything else is unchanged
-        assertEquals(project.modules[0].entries, result.modules[0].entries)
-        assertEquals(project.modules[1], result.modules[1])
+        // the modules are sorted by name after the change
+        assertEquals(listOf("legato", "renamed"), result.modules.map { it.name })
+        assertEquals("renamed", result.currentModule.name)
+
+        val renamed = result.modules.first { it.name == "renamed" }
+        // the entries follow the renamed wav file, and the raw file path follows the renamed lab file
+        assertTrue(renamed.entries.all { it.sample == "renamed.wav" })
+        assertTrue(renamed.rawFilePath!!.endsWith("renamed.lab"))
+        assertEquals(project.modules[0].entries.map { it.name }, renamed.entries.map { it.name })
+
+        // the files are renamed on disk
+        assertTrue(sampleDir.resolve("wav/renamed.wav").exists())
+        assertTrue(sampleDir.resolve("lab/renamed.lab").exists())
+        assertFalse(sampleDir.resolve("wav/doremi.wav").exists())
+        assertFalse(sampleDir.resolve("lab/doremi.lab").exists())
+
+        // the other module is unchanged
+        assertEquals(project.modules[1], result.modules[0])
     }
 
     @Test
@@ -121,6 +143,7 @@ class ModuleOperationTest {
         assertFailsWith<PluginRuntimeException> {
             runOperation(project, ModuleOperationType.Rename, mapOf("newName" to "legato"))
         }
+        assertTrue(sampleDir.resolve("wav/doremi.wav").exists())
     }
 
     @Test
@@ -132,11 +155,25 @@ class ModuleOperationTest {
     }
 
     @Test
-    fun `remove deletes the current module`() {
+    fun `rename to a name whose files exist on disk fails`() {
+        val project = createProject()
+        TestWav.write(sampleDir.resolve("wav/stray.wav"), durationMs = 1000)
+        assertFailsWith<PluginRuntimeException> {
+            runOperation(project, ModuleOperationType.Rename, mapOf("newName" to "stray"))
+        }
+        assertTrue(sampleDir.resolve("wav/doremi.wav").exists())
+    }
+
+    @Test
+    fun `remove deletes the current module and its files`() {
         val project = createProject()
         val result = runOperation(project, ModuleOperationType.Remove, mapOf())
         assertEquals(listOf("legato"), result.modules.map { it.name })
         assertEquals(0, result.currentModuleIndex)
+        assertFalse(sampleDir.resolve("wav/doremi.wav").exists())
+        assertFalse(sampleDir.resolve("lab/doremi.lab").exists())
+        assertTrue(sampleDir.resolve("wav/legato.wav").exists())
+        assertTrue(sampleDir.resolve("lab/legato.lab").exists())
     }
 
     @Test
@@ -145,6 +182,7 @@ class ModuleOperationTest {
         val result = runOperation(project, ModuleOperationType.Remove, mapOf())
         assertEquals(listOf("doremi"), result.modules.map { it.name })
         assertEquals(0, result.currentModuleIndex)
+        assertFalse(sampleDir.resolve("wav/legato.wav").exists())
     }
 
     @Test

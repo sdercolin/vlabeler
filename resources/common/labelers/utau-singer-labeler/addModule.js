@@ -60,4 +60,5 @@ let rawFilePath = File.fromPathAndChildPath(absolutePath, "oto.ini").getAbsolute
 
 let module = new Module(name, absolutePath, entries, 0, rawFilePath)
 modules.push(module)
-currentModuleIndex = modules.length - 1
+modules.sort((a, b) => a.name.localeCompare(b.name))
+currentModuleIndex = modules.findIndex(module => module.name === name)

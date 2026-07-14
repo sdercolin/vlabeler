@@ -68,6 +68,9 @@ sealed class CommonConfirmationDialogAction(
         Strings.AskIfLabelFileChangeDetectedDialogDescription,
     )
 
+    class ModuleOperationConfirmation(message: LocalizedJsonString) :
+        CommonConfirmationDialogAction(getText = { message.get() })
+
     object ClearAppRecord : CommonConfirmationDialogAction(Strings.PreferencesMiscClearRecordConfirmation)
     object ClearAppData : CommonConfirmationDialogAction(Strings.PreferencesMiscClearAppDataConfirmation)
 }

@@ -391,6 +391,9 @@ class AppState(
                     RecordDir.deleteRecursivelyLogged()
                     exit()
                 }
+                is CommonConfirmationDialogAction.ModuleOperationConfirmation -> {
+                    // Always awaited by the caller, nothing to do here
+                }
                 CommonConfirmationDialogAction.LabelFileChangeDetected -> {
                     // Always awaited
                 }
@@ -538,7 +541,13 @@ class AppState(
                 showError(it)
                 return
             }
+        val previousProject = project
         editProject { newProject }
+        if (descriptor.operation.irreversible && project != previousProject) {
+            // an irreversible operation has changed files on disk, so undoing to a state that is inconsistent
+            // with the changed files is not safe
+            history.new(requireProject())
+        }
     }
 
     private fun consumeArguments(arguments: Arguments) {

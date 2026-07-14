@@ -57,6 +57,9 @@ successfully.
 
 `deleteRecursively(): void` : delete this file or directory recursively
 
+`moveTo(target: File): File` : move (rename) this file or directory to the `target` location, creating the target's
+parent directories if needed, and return the `target` object. Throws if the target already exists.
+
 ### Related global functions
 
 `getNameWithoutExtension(fileName: string): string` : get the name without extension of the input string as a file name.

@@ -6,6 +6,9 @@ if (modules.length <= 1) {
         ko: '유일한 하위 프로젝트는 제거할 수 없습니다.'
     })
 }
+let module = modules[currentModuleIndex]
+projectRootDirectory.resolve(module.entries[0].sample).delete()
+File.fromPath(module.rawFilePath).delete()
 modules.splice(currentModuleIndex, 1)
 if (currentModuleIndex >= modules.length) {
     currentModuleIndex = modules.length - 1
