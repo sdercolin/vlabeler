@@ -45,13 +45,13 @@ release builds and is outward-facing.
 
 ## 3. Monitor the release builds
 
-The tag push triggers 4 workflows: `Release Mac`, `Release Mac (ARM)`, `Release Ubuntu`,
-`Release Win`. They create/update the GitHub release for the tag (as prerelease) and attach
-artifacts.
+The tag push triggers 3 workflows: `Release Mac (ARM)`, `Release Ubuntu`, `Release Win`. They
+create/update the GitHub release for the tag (as prerelease) and attach artifacts. (Intel Mac
+builds were dropped after 1.7.0-beta2.)
 
-- Watch with `gh run list --limit 10` / `gh run watch <id>` until all 4 succeed.
-- Verify the release has all expected artifacts: `~win64.zip`, `~mac-x64.dmg`, `~mac-arm64.dmg`,
-  `~amd64.deb` (+ AppImage if produced).
+- Watch with `gh run list --limit 10` / `gh run watch <id>` until all 3 succeed.
+- Verify the release has all expected artifacts: `~win64.zip`, `~mac-arm64.dmg`, `~amd64.deb`
+  (+ AppImage if produced).
 - If a build fails for a transient reason, re-run it (`gh run rerun <id>`); the tag does not need
   to be moved.
 

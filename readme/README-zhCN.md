@@ -27,7 +27,6 @@
 Releases 中提供了适用于以下平台的应用程序包。
 
 - Windows: `~win64.zip`
-- macOS (Intel): `~mac-x64.dmg`
 - macOS (Apple Silicon): `~mac-arm64.dmg`
 - Ubuntu: `~amd64.deb`
 
