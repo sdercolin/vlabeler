@@ -53,6 +53,9 @@ const config: Config = {
           versions: {
             current: {
               label: appVersion,
+              // The current docs describe the latest *released* beta, so the default
+              // "unreleased documentation" banner would be misleading.
+              banner: 'none',
             },
           },
         },
