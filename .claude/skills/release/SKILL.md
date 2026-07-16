@@ -27,8 +27,19 @@ Stop and report if any of these fail:
 ## 1. Choose the release branch
 
 - **Beta**: release from `dev`.
-- **Stable**: merge `dev` into `main` first (regular merge, no squash), push `main`, and release
-  from `main`. Verify CI passes on `main` before tagging.
+- **Stable**: first snapshot the docs site version on `dev` (see below), then merge `dev` into
+  `main` (regular merge, no squash), push `main`, and release from `main`. Verify CI passes on
+  `main` before tagging.
+
+  **Docs version snapshot** (stable releases only): on `dev`, run
+
+  ```
+  cd website && npm run docusaurus docs:version <version>
+  ```
+
+  with the exact version being released (e.g. `1.7.0`), and commit the generated
+  `versioned_docs/` / `versioned_sidebars/` / `versions.json` changes to `dev`. This makes the
+  released version the default on the docs site. See `website/README.md`.
 
 ## 2. Tag via tools/release.sh
 

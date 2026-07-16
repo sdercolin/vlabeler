@@ -405,7 +405,7 @@ aaa;name:bbb;sample:ccc;tag:ddd
 
 vLabeler 允许您使用自定义脚本来自动化标注任务。
 
-请参阅 [使用自定义脚本在 vLabeler 中完成您的标注任务](../readme/use_scripts.md) 了解更多信息。
+请参阅 [使用自定义脚本在 vLabeler 中完成您的标注任务](../readme/use-scripts.md) 了解更多信息。
 
 #### 可用的插件（除内建）
 

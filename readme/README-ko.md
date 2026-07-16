@@ -423,7 +423,7 @@ aaa;name:bbb;sample:ccc;tag:ddd
 
 vLabeler는 사용자 정의 스크립트를 사용하여 라벨링 작업을 자동화할 수 있습니다.
 
-자세한 내용은 [vLabeler에서 사용자 정의 스크립트 사용하여 라벨링 작업 완료하기](../readme/use_scripts.md)를 참조하세요.
+자세한 내용은 [vLabeler에서 사용자 정의 스크립트 사용하여 라벨링 작업 완료하기](../readme/use-scripts.md)를 참조하세요.
 
 #### 기타 플러그인 목록 (내장 플러그인 이외)
 
