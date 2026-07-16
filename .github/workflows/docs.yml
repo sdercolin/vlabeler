@@ -1,10 +1,13 @@
 name: Deploy docs
 
-# The published site always reflects the released version, so it is only deployed from `main`.
-# Docs changes merged to `dev` go live with the next release.
+# The docs site is versioned (Docusaurus versioning) and always built from `dev`:
+# - `website/docs` holds the documentation of the latest beta, shown as "Beta" in the
+#   version dropdown.
+# - On each stable release, the docs are snapshotted into `website/versioned_docs`
+#   (see website/README.md); the latest snapshot is the default version shown to readers.
 on:
   push:
-    branches: [main]
+    branches: [dev]
     paths: [website/**]
   workflow_dispatch:
 
