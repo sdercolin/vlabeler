@@ -29,11 +29,16 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
 
-  // The site is English-only for now.
-  // When translations are ready, add 'zh-Hans', 'ja' and 'ko' to `locales`.
+  // Translated pages live under `i18n/<locale>/docusaurus-plugin-content-docs/`.
+  // Pages without a translation automatically fall back to English.
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'zh-Hans', 'ja', 'ko'],
+    localeConfigs: {
+      'zh-Hans': {label: '简体中文'},
+      ja: {label: '日本語'},
+      ko: {label: '한국어'},
+    },
   },
 
   presets: [
@@ -81,6 +86,10 @@ const config: Config = {
       items: [
         {
           type: 'docsVersionDropdown',
+          position: 'right',
+        },
+        {
+          type: 'localeDropdown',
           position: 'right',
         },
         {

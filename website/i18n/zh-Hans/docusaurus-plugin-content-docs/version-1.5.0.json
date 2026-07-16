@@ -1,0 +1,38 @@
+{
+  "version.label": {
+    "message": "1.5.0",
+    "description": "The label for version 1.5.0"
+  },
+  "sidebar.docs.category.Getting Started": {
+    "message": "开始使用",
+    "description": "The label for category 'Getting Started' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Getting Started.link.generated-index.description": {
+    "message": "安装 vLabeler 并创建您的第一个项目。",
+    "description": "The generated-index page description for category 'Getting Started' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Editor": {
+    "message": "编辑器",
+    "description": "The label for category 'Editor' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Editor.link.generated-index.description": {
+    "message": "vLabeler 编辑器中的键盘/鼠标操作、工具和条目导航。",
+    "description": "The generated-index page description for category 'Editor' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Customization": {
+    "message": "自定义",
+    "description": "The label for category 'Customization' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Customization.link.generated-index.description": {
+    "message": "使用标注器、插件和自定义脚本扩展 vLabeler。",
+    "description": "The generated-index page description for category 'Customization' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Miscellaneous": {
+    "message": "其他",
+    "description": "The label for category 'Miscellaneous' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Miscellaneous.link.generated-index.description": {
+    "message": "应用目录、日志和应用使用数据的统计。",
+    "description": "The generated-index page description for category 'Miscellaneous' in sidebar 'docs'"
+  }
+}

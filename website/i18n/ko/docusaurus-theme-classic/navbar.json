@@ -1,0 +1,22 @@
+{
+  "title": {
+    "message": "vLabeler",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "vLabeler 로고",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Homepage": {
+    "message": "홈페이지",
+    "description": "Navbar item with label Homepage"
+  },
+  "item.label.Discord": {
+    "message": "Discord",
+    "description": "Navbar item with label Discord"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}
