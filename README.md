@@ -440,7 +440,7 @@ You can import/delete/disable batch edit plugins in `Tools` -> `Batch Edit` -> `
 ### Use scripts
 
 vLabeler allows you to use custom scripts to automate your labeling tasks.
-See [Use custom scripts in vLabeler to complete your labeling tasks](readme/use_scripts.md) for more details.
+See [Use custom scripts in vLabeler to complete your labeling tasks](readme/use-scripts.md) for more details.
 
 #### More available plugins (except built-in)
 

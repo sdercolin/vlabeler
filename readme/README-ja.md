@@ -430,7 +430,7 @@ vLabeler に対応していない音声合成ソフトのラベルを編集し�
 ### スクリプトの使用
 
 vLabeler では、カスタムスクリプトを使用してラベリングタスクを自動化できます。
-詳細については、[Use custom scripts in vLabeler to complete your labeling tasks](../readme/use_scripts.md) を参照してください。
+詳細については、[Use custom scripts in vLabeler to complete your labeling tasks](../readme/use-scripts.md) を参照してください。
 
 #### 使用可能なプラグイン（ビルトインを除く）
 
