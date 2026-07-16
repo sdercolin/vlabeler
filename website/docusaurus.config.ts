@@ -20,8 +20,8 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://sdercolin.github.io',
-  baseUrl: '/vlabeler/',
+  url: 'https://docs.vlabeler.com',
+  baseUrl: '/',
 
   // GitHub pages deployment config.
   organizationName: 'sdercolin',
