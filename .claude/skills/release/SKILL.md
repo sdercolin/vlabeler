@@ -26,20 +26,42 @@ Stop and report if any of these fail:
 
 ## 1. Choose the release branch
 
-- **Beta**: release from `dev`.
+- **Beta**: release from `dev`. No docs-site action is needed: `website/docs` on `dev` is always
+  the documentation of the latest beta and its version label follows `app.version`
+  automatically. Betas are never snapshotted — only the latest beta is documented.
 - **Stable**: first snapshot the docs site version on `dev` (see below), then merge `dev` into
   `main` (regular merge, no squash), push `main`, and release from `main`. Verify CI passes on
   `main` before tagging.
 
-  **Docs version snapshot** (stable releases only): on `dev`, run
+  **Docs version snapshot** (stable releases only), on `dev`:
 
-  ```
-  cd website && npm run docusaurus docs:version <version>
-  ```
+  1. Snapshot the English docs with the exact version being released (e.g. `1.7.0`):
 
-  with the exact version being released (e.g. `1.7.0`), and commit the generated
-  `versioned_docs/` / `versioned_sidebars/` / `versions.json` changes to `dev`. This makes the
-  released version the default on the docs site. See `website/README.md`.
+     ```
+     cd website && npm run docusaurus docs:version <version>
+     ```
+
+  2. Snapshot the translations too, so the stable version stays translated (untranslated
+     versions fall back to English):
+
+     ```
+     for l in zh-Hans ja ko; do
+       cp -r website/i18n/$l/docusaurus-plugin-content-docs/current \
+             website/i18n/$l/docusaurus-plugin-content-docs/version-<version>
+       cp website/i18n/$l/docusaurus-plugin-content-docs/current.json \
+          website/i18n/$l/docusaurus-plugin-content-docs/version-<version>.json
+     done
+     ```
+
+  3. If a snapshot of the **same minor line** already exists (e.g. `1.7.0` when releasing
+     `1.7.1`), delete the superseded snapshot so each minor keeps only its newest patch:
+     remove its entry from `website/versions.json`, its `website/versioned_docs/version-<old>/`
+     and `website/versioned_sidebars/version-<old>-sidebars.json`, and the corresponding
+     `version-<old>*` files under each `website/i18n/<locale>/docusaurus-plugin-content-docs/`.
+     Snapshots of **older minors stay** — they are the maintained docs of those versions.
+
+  4. Verify with `cd website && npm run build`, then commit everything to `dev`. This makes the
+     released version the default on the docs site. See `website/README.md`.
 
 ## 2. Tag via tools/release.sh
 
