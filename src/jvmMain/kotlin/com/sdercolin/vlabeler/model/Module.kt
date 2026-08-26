@@ -154,12 +154,12 @@ data class Module(
         return copy(entries = entries)
     }
 
-    fun updateEntries(editedEntries: List<IndexedEntry>, labelerConf: LabelerConf): Module {
+    fun updateEntries(editedEntries: List<IndexedEntry>, labelerConf: LabelerConf? = null): Module {
         val entries = entries.toMutableList()
         editedEntries.forEach {
             entries[it.index] = it.entry
         }
-        if (labelerConf.continuous) {
+        if (labelerConf?.continuous == true) {
             val groups = editedEntries
                 .groupBy { it.sample.asNormalizedFileName() }.values
                 .flatMap { it.groupContinuouslyBy { index } }
@@ -182,12 +182,12 @@ data class Module(
         return copy(entries = entries)
     }
 
-    fun updateCurrentEntry(entry: Entry, labelerConf: LabelerConf): Module {
+    fun updateCurrentEntry(entry: Entry, labelerConf: LabelerConf? = null): Module {
         val editedEntry = getEntryForEditing(currentIndex)
         return updateEntry(editedEntry.edit(entry), labelerConf)
     }
 
-    private fun updateEntry(editedEntry: IndexedEntry, labelerConf: LabelerConf) =
+    private fun updateEntry(editedEntry: IndexedEntry, labelerConf: LabelerConf? = null) =
         updateEntries(listOf(editedEntry), labelerConf)
 
     fun takePostEditAction(
@@ -227,23 +227,34 @@ data class Module(
         }
     }
 
-    fun renameEntry(index: Int, newName: String, labelerConf: LabelerConf): Module {
+    fun renameEntry(index: Int, newName: String, labelerConf: LabelerConf? = null): Module {
         val editedEntry = getEntryForEditing(index)
         val renamed = editedEntry.entry.copy(name = newName)
         return updateEntry(editedEntry.edit(renamed), labelerConf)
     }
 
-    fun updateEntryExtra(index: Int, extras: List<String?>, labelerConf: LabelerConf): Module {
+    fun renameMultipleEntries(startIndex: Int, names: List<String>, labelerConf: LabelerConf? = null): Module {
+        var mod = this
+        for (i in names.indices) {
+            val targetIdx = startIndex + i
+            if (targetIdx < mod.entries.size) {
+                mod = mod.renameEntry(targetIdx, names[i], labelerConf)
+            }
+        }
+        return mod
+    }
+
+    fun updateEntryExtra(index: Int, extras: List<String?>, labelerConf: LabelerConf? = null): Module {
         val editedEntry = getEntryForEditing(index)
         val updated = editedEntry.entry.copy(extras = extras)
         return updateEntry(editedEntry.edit(updated), labelerConf)
     }
 
-    fun duplicateEntry(index: Int, newName: String, labelerConf: LabelerConf): Module {
+    fun duplicateEntry(index: Int, newName: String, labelerConf: LabelerConf? = null): Module {
         val entries = entries.toMutableList()
         var original = entries[index]
         var duplicated = original.copy(name = newName)
-        if (labelerConf.continuous) {
+        if (labelerConf?.continuous == true) {
             val splitPoint = (original.start + original.end) / 2
             original = original.copy(end = splitPoint)
             duplicated = duplicated.copy(start = splitPoint)

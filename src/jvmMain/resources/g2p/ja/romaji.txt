@@ -1,0 +1,470 @@
+a  a
+i  i
+u  u
+e  e
+o  o
+ka  k a
+ki  k i
+ki  k u
+ke  k e
+ko  k o
+ga  g a
+gi  g i
+gu  g u
+ge  g e
+go  g o
+sa  s a
+shi  sh i
+su  s u
+se  s e
+so  s o
+za  z a
+ji  j i
+zu  z u
+ze  z e
+zo  z o
+ta  t a
+chi  ch i
+tsu  ts u
+te  t e
+to  t o
+da  d a
+de  d e
+do  d o
+na  n a
+ni  n i
+nu  n u
+ne  n e
+no  n o
+ha  h a
+hi  h i
+fu  f u
+he  h e
+ho  h o
+ba  b a
+bi  b i
+bu  b u
+be  b e
+bo  b o
+pa  p a
+pi  p i
+pu  p u
+pe  p e
+po  p o
+ma  m a
+mi  m i
+mu  m u
+me  m e
+mo  m o
+ya  y a
+yu  y u
+yo  y o
+ra  r a
+ri  r i
+ru  r u
+re  r e
+ro  r o
+wa  w a
+n  N
+kya  ky a
+kyu  ky u
+kyo  ky o
+gya  gy a
+gyu  gy u
+gyo  gy o
+sha  sh a
+shu  sh u
+sho  sh o
+ja  j a
+ju  j u
+jo  j o
+cha  ch a
+chu  ch u
+cho  ch o
+nya  ny a
+nyu  ny u
+nyo  ny o
+hya  hy a
+hyu  hy u
+hyo  hy o
+bya  by a
+byu  by u
+byo  by o
+pya  py a
+pyu  py u
+pyo  py o
+mya  my a
+myu  my u
+myo  my o
+rya  ry a
+ryu  ry u
+ryo  ry o
+ye  y e
+kye  ky e
+gye  gy e
+she  sh e
+je  j e
+che  ch e
+nye  ny e
+hye  hy e
+bye  by e
+pye  py e
+mye  my e
+rye  ry e
+wi  w i
+we  w e
+wo  w o
+kwa  kw a
+kwi  kw i
+kwe  kw e
+kwo  kw o
+gwa  gw a
+gwi  gw i
+gwe  gw e
+gwo  gw o
+tsa  ts a
+tsi  ts i
+tse  ts e
+tso  ts o
+fa  f a
+fi  f i
+fe  f e
+fo  f o
+vu  v u
+va  v a
+vi  v i
+ve  v e
+vo  v o
+si  s i
+zi  z i
+ti  t i
+tyu  ty u
+tu  t u
+di  d i
+dyu  dy u
+du  d u
+nga  ng a
+ngi  ng i
+ngu  ng u
+nge  ng e
+ngo  ng o
+ngye  ngy e
+ngya  ngy a
+ngyu  ngy u
+ngyo  ngy o
+ai  a i
+ui  u i
+oi  o i
+kai  k a i
+kui  k u i
+koi  k o i
+gai  g a i
+gui  g u i
+goi  g o i
+sai  s a i
+sui  s u i
+soi  s o i
+zai  z a i
+zui  z u i
+zoi  z o i
+tai  t a i
+tsui  ts u i
+toi  t o i
+dai  d a i
+doi  d o i
+nai  n a i
+nui  n u i
+noi  n o i
+hai  h a i
+fui  f u i
+hoi  h o i
+bai  b a i
+bui  b u i
+boi  b o i
+pai  p a i
+pui  p u i
+poi  p o i
+mai  m a i
+mui  m u i
+moi  m o i
+yai  y a i
+yui  y u i
+yoi  y o i
+rai  r a i
+rui  r u i
+roi  r o i
+wai  w a i
+kyai  ky a i
+kyui  ky u i
+kyoi  ky o i
+gyai  gy a i
+gyui  gy u i
+gyoi  gy o i
+shai  sh a i
+shui  sh u i
+shoi  sh o i
+jai  j a i
+jui  j u i
+joi  j o i
+chai  ch a i
+chui  ch u i
+choi  ch o i
+nyai  ny a i
+nyui  ny u i
+nyoi  ny o i
+hyai  hy a i
+hyui  hy u i
+hyoi  hy o i
+byai  by a i
+byui  by u i
+byoi  by o i
+pyai  py a i
+pyui  py u i
+pyoi  py o i
+myai  my a i
+myui  my u i
+myoi  my o i
+ryai  ry a i
+ryui  ry u i
+ryoi  ry o i
+woi  w o i
+kwai  kw a i
+kwoi  kw o i
+gwai  gw a i
+gwoi  gw o i
+tsai  ts a i
+tsoi  ts o i
+fai  f a i
+foi  f o i
+vui  v u i
+vai  v a i
+voi  v o i
+tyui  ty u i
+tui  t u i
+dyui  dy u i
+dui  t u i
+ngai  ng a i
+ngui  ng u i
+ngoi  ng o i
+ngyai  ngy a i
+ngyui  ngy u i
+ngyoi  ngy o i
+au  a u
+kau  k a u
+gau  g a u
+sau  s a u
+zau  z a u
+tau  t a u
+dau  d a u
+nau  n a u
+hau  h a u
+bau  b a u
+pau  p a u
+mau  m a u
+yau  y a u
+rau  r a u
+wau  w a u
+kyau  ky a u
+gyau  gy a u
+shau  sh a u
+jau  j a u
+chau  ch a u
+nyau  ny a u
+hyau  hy a u
+byau  by a u
+pyau  py a u
+myau  my a u
+ryau  ry a u
+kwau  kw a u
+gwau  gw a u
+tsau  ts a u
+fau  f a u
+vau  v a u
+ngau  ng a u
+ngyau  ngy a u
+ao  a o
+kao  k a o
+gao  g a o
+sao  s a o
+zao  z a o
+tao  t a o
+dao  d a o
+nao  n a o
+hao  h a o
+bao  b a o
+pao  p a o
+mao  m a o
+yao  y a o
+rao  r a o
+wao  w a o
+kyao  ky a o
+gyao  gy a o
+shao  sh a o
+jao  j a o
+chao  ch a o
+nyao  ny a o
+hyao  hy a o
+byao by a o
+pyao  py a o
+myao  my a o
+ryao  ry a o
+kwao  kw a o
+gwao  gw a o
+tsao  ts a o
+fao  f a o
+vao  v a o
+ngao  ng a o
+ngyao  ngy a o
+an  a N
+in  i N
+un  u N
+en  e N
+on  o N
+kan  k a N
+kin  k i N
+kun  k u N
+ken  k e N
+kon  k o N
+gan  g a N
+gin  g i N
+gun  g u N
+gen  g e N
+gon  g o N
+san  s a N
+shin  sh i N
+sun  s u N
+sen  s e N
+son  s o N
+zan  z a N
+jin  j i N
+zun  z u N
+zen  z e N
+zon  z o N
+tan  t a N
+chin  ch i N
+tsun  ts u N
+ten  t e N
+ton  t o N
+dan  d a N
+den  d e N
+don  d o N
+nan  n a N
+nin  n i N
+nun  n u N
+nen  n e N
+non  n o N
+han  h a N
+hin  h i N
+fun  f u N
+hen  h e N
+hon  h o N
+ban  b a N
+bin  b i N
+bun  b u N
+ben  b e N
+bon  b o N
+pan  p a N
+pin  p i N
+pun  p u N
+pen  p e N
+pon  p o N
+man  m a N
+min  m i N
+mun  m u N
+men  m e N
+mon  m o N
+yan  y a N
+yun  y u N
+yon  y o N
+ran  r a N
+rin  r i N
+run  r u N
+ren  r e N
+ron  r o N
+wan  w a N
+kyan  ky a N
+kyun  ky u N
+kyon  ky o N
+gyan  gy a N
+gyun  gy u N
+gyon  gy o N
+shan  sh a N
+shun  sh u N
+shon  sh o N
+jan  j a N
+jun  j u N
+jon  j o N
+chan  ch a N
+chun  ch u N
+chon  ch o N
+nyan  ny a N
+nyun  ny u N
+nyon  ny o N
+hyan  hy a N
+hyun  hy u N
+hyon  hy o N
+byan  by a N
+byun  by u N
+byon  by o N
+pyan  py a N
+pyun  py u N
+pyon  py o N
+myan  my a N
+myun  my u N
+myon  my o N
+ryan  ry a N
+ryun  ry u N
+ryon  ry o N
+yen  y e N
+kyen  ky e N
+gyen  gy e N
+shen  sh e N
+jen  j e N
+chen  ch e N
+nyen  ny e N
+hyen  hy e N
+byen  by e N
+pyen  py e N
+myen  my e N
+ryen  ry e N
+win  w i N
+wen  w e N
+won  w o N
+kwan  kw a N
+kwin  kw i N
+kwen  kw e N
+kwon  kw o N
+gwan  gw a N
+gwin  gw i N
+gwen  gw e N
+gwon  gw o N
+tsan  ts a N
+tsin  ts i N
+tsen  ts e N
+tson  ts o N
+fan  f a N
+fin  f i N
+fen  f e N
+fon  f o N
+vun  v u N
+van  v a N
+vin  v i N
+ven  v e N
+von  v o N
+sin  s i N
+zin  z i N
+tin  t i N
+tyun  ty u N
+tun  t u N
+din  d i N
+dyun  dy u N
+dun  d u N
+ngan  ng a N
+ngin  ng i N
+ngun  ng u N
+ngen  ng e N
+ngon  ng o N
+ngyen  ngy e N
+ngyan  ngy a N
+ngyun  ngy u N
+ngyon  ngy o N

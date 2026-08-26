@@ -1,0 +1,9 @@
+{
+  "id": "en",
+  "displayName": "English (ARPAbet)",
+  "displayNameKey": "PhonemizerLanguageEnglish",
+  "version": 1,
+  "dict": "g2p/en/dict.txt",
+  "phones": "g2p/en/phones.txt",
+  "model": "g2p/en/g2p.onnx"
+}

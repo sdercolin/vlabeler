@@ -64,6 +64,7 @@ import com.sdercolin.vlabeler.util.AppRecordFile
 import com.sdercolin.vlabeler.util.MemoryUsageMonitor
 import com.sdercolin.vlabeler.util.Resources
 import com.sdercolin.vlabeler.util.parseJson
+import com.sdercolin.vlabeler.util.phonemizer.loadExternalPhonemizers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -82,6 +83,7 @@ val UseCustomFileDialog = compositionLocalOf { false }
 fun main(vararg args: String) = application {
     remember { Log.init() }
     remember { ensureDirectories() }
+    remember { loadExternalPhonemizers() }
 
     val mainScope = rememberCoroutineScope()
     val appRecordStore = rememberAppRecordStore(mainScope)

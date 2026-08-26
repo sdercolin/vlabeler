@@ -1,0 +1,9 @@
+{
+  "id": "ru",
+  "displayName": "Russian (Lunai)",
+  "displayNameKey": "PhonemizerLanguageRussian",
+  "version": 1,
+  "dict": "g2p/ru/dict.txt",
+  "phones": "g2p/ru/phones.txt",
+  "model": "g2p/ru/g2p.onnx"
+}

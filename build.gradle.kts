@@ -74,7 +74,8 @@ kotlin {
                 implementation(compose("org.jetbrains.compose.components:components-splitpane-desktop"))
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
                 implementation("com.github.psambit9791:jdsp:1.0.0")
-                implementation("org.graalvm.js:js:22.1.0")
+                implementation("org.graalvm.polyglot:polyglot:24.1.0")
+                implementation("org.graalvm.polyglot:js-community:24.1.0")
                 implementation("org.apache.tika:tika-parser-text-module:2.4.1")
                 implementation("io.ktor:ktor-client-core:2.1.0")
                 implementation("io.ktor:ktor-client-apache:2.1.0")
@@ -87,6 +88,7 @@ kotlin {
                 implementation("uk.co.caprica:vlcj:4.7.0")
                 implementation("cafe.adriel.bonsai:bonsai-core:1.2.0")
                 implementation("org.apache.pdfbox:fontbox:2.0.24")
+                implementation("com.microsoft.onnxruntime:onnxruntime:1.17.1")
 
                 val lwjglVersion = "3.3.1"
                 listOf("lwjgl", "lwjgl-nfd").forEach { lwjglDep ->
@@ -271,7 +273,7 @@ compose.desktop {
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     version.set("0.45.2")
     enableExperimentalRules.set(true)
-    disabledRules.set(setOf("no-wildcard-imports"))
+    disabledRules.set(setOf("no-wildcard-imports", "max-line-length"))
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
