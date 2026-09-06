@@ -1,0 +1,25 @@
+{
+    "name": "phonemizer-ja",
+    "version": 1,
+    "type": "phonemizer",
+    "displayedName": {
+        "en": "Japanese",
+        "zh": "日语",
+        "ja": "日本語",
+        "ko": "일본어"
+    },
+    "author": "MysticILD",
+    "description": {
+        "en": "Phonemize Japanese Kana and Romaji into phonemes"
+    },
+    "supportedLabelFileExtension": "*",
+    "resourceFiles": [
+        "hiragana.txt",
+        "katakana.txt",
+        "romaji.txt",
+        "special.txt"
+    ],
+    "scriptFiles": [
+        "phonemizer-ja.js"
+    ]
+}

@@ -13,7 +13,6 @@ private const val APP_CONF_FILE_NAME = "app.conf.json"
 private const val APP_RECORD_FILE_NAME = "app.record.json"
 private const val LABELER_FOLDER_NAME = "labelers"
 private const val PLUGIN_FOLDER_NAME = "plugins"
-private const val PHONEMIZER_FOLDER_NAME = "phonemizers"
 private const val RECORD_FOLDER_NAME = ".record"
 
 // Internal files
@@ -49,8 +48,6 @@ val AppDir
 val CustomAppConfFile get() = AppDir.resolve(APP_CONF_FILE_NAME)
 val CustomLabelerDir get() = AppDir.resolve(LABELER_FOLDER_NAME)
 val CustomPluginDir get() = AppDir.resolve(PLUGIN_FOLDER_NAME)
-val CustomPhonemizerDir get() = AppDir.resolve(PHONEMIZER_FOLDER_NAME)
-val DefaultPhonemizerDir get() = ResourceDir.resolve(PHONEMIZER_FOLDER_NAME)
 val RecordDir get() = AppDir.resolve(RECORD_FOLDER_NAME)
 val AppRecordFile get() = RecordDir.resolve(APP_RECORD_FILE_NAME)
 val DefaultDownloadDir: File

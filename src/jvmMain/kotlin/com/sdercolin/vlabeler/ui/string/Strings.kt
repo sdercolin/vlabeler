@@ -708,11 +708,8 @@ enum class Strings {
     PhonemizerOn,
     PhonemizerOff,
     PhonemizerSpreadAcrossEntries,
-    PhonemizerLanguageRaw,
-    PhonemizerLanguageJapanese,
-    PhonemizerLanguageEnglish,
-    PhonemizerLanguageRussian,
-    InputEntryNameDialogTabToCycle,
+    ActionEditEntryNameDialogNext,
+    ActionEditEntryNameDialogPrevious,
     InputEntryNameDialogPrev,
     InputEntryNameDialogNext,
     ;

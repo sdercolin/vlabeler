@@ -136,7 +136,7 @@ class PluginDialogState(
                     Plugin.Type.Macro -> {
                         plugin.saveMacroParams(params, plugin.getSavedParamsFile(), appRecordStore, targetSlot)
                     }
-                    Plugin.Type.Template -> {
+                    Plugin.Type.Template, Plugin.Type.Phonemizer -> {
                         plugin.saveParams(params, plugin.getSavedParamsFile())
                     }
                 }

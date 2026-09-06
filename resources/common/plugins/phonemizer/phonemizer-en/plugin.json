@@ -1,0 +1,23 @@
+{
+    "name": "phonemizer-en",
+    "version": 1,
+    "type": "phonemizer",
+    "displayedName": {
+        "en": "English",
+        "zh": "英语",
+        "ja": "英語",
+        "ko": "영어"
+    },
+    "author": "MysticILD",
+    "description": {
+        "en": "Phonemize English text into phonemes"
+    },
+    "supportedLabelFileExtension": "*",
+    "resourceFiles": [
+        "dict.txt",
+        "phones.txt"
+    ],
+    "scriptFiles": [
+        "phonemizer-en.js"
+    ]
+}

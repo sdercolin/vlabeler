@@ -6,11 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.sdercolin.vlabeler.env.Log
+import com.sdercolin.vlabeler.io.loadPlugins
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.ModuleOperationDescriptor
 import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
@@ -358,6 +360,15 @@ class AppDialogStateImpl(
             project.currentModule.entries.map { it.name }
                 .runIf(purpose == InputEntryNameDialogPurpose.Rename) { minus(entry.name) }
         }
+        val phonemizerPlugins = if (purpose == InputEntryNameDialogPurpose.Rename) {
+            state.getActivePlugins(Plugin.Type.Phonemizer).ifEmpty {
+                loadPlugins(Plugin.Type.Phonemizer, state.appConf.view.language)
+            }
+        } else {
+            emptyList()
+        }
+        val nextKeySet = state.appConf.keymaps.getKeySet(KeyAction.EditEntryNameDialogNext)
+        val previousKeySet = state.appConf.keymaps.getKeySet(KeyAction.EditEntryNameDialogPrevious)
         openEmbeddedDialog(
             InputEntryNameDialogArgs(
                 index = index,
@@ -366,6 +377,9 @@ class AppDialogStateImpl(
                 showSnackbar = { state.mainScope.launch { snackbarState.showSnackbar(it) } },
                 purpose = purpose,
                 presets = state.appConf.editor.entryNamePresets,
+                phonemizerPlugins = phonemizerPlugins,
+                nextKeySet = nextKeySet,
+                previousKeySet = previousKeySet,
             ),
         )
     }

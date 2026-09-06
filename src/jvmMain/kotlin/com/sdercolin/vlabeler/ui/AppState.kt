@@ -371,9 +371,11 @@ class AppState(
                                 }
                             }
                             NavigationDirection.Previous -> {
-                                val prevIdx = (result.index - 1).coerceAtLeast(0)
-                                jumpToEntry(prevIdx)
-                                openEditEntryNameDialog(prevIdx, InputEntryNameDialogPurpose.Rename)
+                                if (result.index > 0) {
+                                    val prevIdx = result.index - 1
+                                    jumpToEntry(prevIdx)
+                                    openEditEntryNameDialog(prevIdx, InputEntryNameDialogPurpose.Rename)
+                                }
                             }
                             null -> Unit
                         }

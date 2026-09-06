@@ -31,10 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isShiftPressed
-import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.TextRange
@@ -43,13 +40,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sdercolin.vlabeler.model.PhonemizerRunner
+import com.sdercolin.vlabeler.model.Plugin
+import com.sdercolin.vlabeler.model.key.Key
+import com.sdercolin.vlabeler.model.key.KeySet
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.DarkGray
 import com.sdercolin.vlabeler.ui.theme.White20
-import com.sdercolin.vlabeler.util.phonemizer.Phonemizer
-import com.sdercolin.vlabeler.util.phonemizer.PhonemizerLanguage
-import com.sdercolin.vlabeler.util.phonemizer.PhonemizerRegistry
 import com.sdercolin.vlabeler.util.removeControlCharacters
 
 data class InputEntryNameDialogArgs(
@@ -59,6 +57,9 @@ data class InputEntryNameDialogArgs(
     val showSnackbar: (String) -> Unit,
     val purpose: InputEntryNameDialogPurpose,
     val presets: List<String> = listOf(),
+    val phonemizerPlugins: List<Plugin> = emptyList(),
+    val nextKeySet: KeySet? = KeySet(Key.Tab),
+    val previousKeySet: KeySet? = KeySet(Key.Tab, setOf(Key.Shift)),
 ) : EmbeddedDialogArgs
 
 enum class InputEntryNameDialogPurpose(val stringKey: Strings) {
@@ -83,8 +84,7 @@ data class InputEntryNameDialogResult(
 
 object InputEntryNameDialogState {
     var phonemizeMode: Boolean = false
-    var selectedLanguage: PhonemizerLanguage = PhonemizerLanguage.Raw
-    var selectedId: String = PhonemizerLanguage.Raw.id
+    var selectedPluginName: String? = null
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -99,11 +99,25 @@ fun InputEntryNameDialog(
         mutableStateOf(TextFieldValue(args.initial, selection = TextRange(0, args.initial.length)))
     }
 
-    var selectedId by remember { mutableStateOf(InputEntryNameDialogState.selectedId) }
+    var selectedPluginName by remember {
+        mutableStateOf(
+            InputEntryNameDialogState.selectedPluginName
+                ?.takeIf { name -> args.phonemizerPlugins.any { it.name == name } }
+                ?: args.phonemizerPlugins.firstOrNull()?.name,
+        )
+    }
     var phonemizeMode by remember { mutableStateOf(InputEntryNameDialogState.phonemizeMode) }
 
-    val currentPhonemes = remember(input.text, selectedId, phonemizeMode) {
-        if (phonemizeMode && input.text.isNotBlank()) Phonemizer.phonemize(input.text, selectedId) else emptyList<String>()
+    val activePlugin = remember(selectedPluginName, args.phonemizerPlugins) {
+        args.phonemizerPlugins.find { it.name == selectedPluginName } ?: args.phonemizerPlugins.firstOrNull()
+    }
+
+    val currentPhonemes = remember(input.text, activePlugin, phonemizeMode) {
+        if (phonemizeMode && activePlugin != null && input.text.isNotBlank()) {
+            PhonemizerRunner.run(activePlugin, input.text)
+        } else {
+            emptyList()
+        }
     }
 
     val submit = { navigation: NavigationDirection? ->
@@ -138,77 +152,62 @@ fun InputEntryNameDialog(
 
     Column(Modifier.widthIn(min = 420.dp)) {
         Spacer(Modifier.height(15.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.widthIn(min = 400.dp),
-        ) {
-            Text(
-                text = string(args.purpose.stringKey),
-                style = MaterialTheme.typography.body2,
-                fontWeight = FontWeight.Bold,
-            )
-            if (args.purpose == InputEntryNameDialogPurpose.Rename) {
+        Text(
+            text = string(args.purpose.stringKey),
+            style = MaterialTheme.typography.body2,
+            fontWeight = FontWeight.Bold,
+        )
+        if (args.purpose == InputEntryNameDialogPurpose.Rename && args.phonemizerPlugins.isNotEmpty()) {
+            Spacer(Modifier.height(15.dp))
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
-                    text = string(Strings.InputEntryNameDialogTabToCycle),
-                    style = MaterialTheme.typography.caption.copy(
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
-                    ),
+                    text = string(Strings.PhonemizerLabel),
+                    style = MaterialTheme.typography.caption,
+                    fontWeight = FontWeight.SemiBold,
                 )
-            }
-        }
-        Spacer(Modifier.height(15.dp))
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(
-                text = string(Strings.PhonemizerLabel),
-                style = MaterialTheme.typography.caption,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Box(
-                modifier = Modifier
-                    .background(
-                        color = if (phonemizeMode) MaterialTheme.colors.primary else DarkGray,
-                        shape = RoundedCornerShape(4.dp),
-                    )
-                    .clickable {
-                        phonemizeMode = !phonemizeMode
-                        InputEntryNameDialogState.phonemizeMode = phonemizeMode
-                    }
-                    .padding(horizontal = 8.dp, vertical = 3.dp),
-            ) {
-                Text(
-                    text = string(if (phonemizeMode) Strings.PhonemizerOn else Strings.PhonemizerOff),
-                    style = MaterialTheme.typography.caption.copy(
-                        color = if (phonemizeMode) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSurface,
-                        fontWeight = FontWeight.Bold,
-                    ),
-                )
-            }
-            if (phonemizeMode) {
-                for (phonemizer in PhonemizerRegistry.getAll()) {
-                    val isSelected = selectedId == phonemizer.id
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (isSelected) MaterialTheme.colors.primary.copy(alpha = 0.8f) else DarkGray,
-                                shape = RoundedCornerShape(4.dp),
-                            )
-                            .clickable {
-                                selectedId = phonemizer.id
-                                InputEntryNameDialogState.selectedId = selectedId
-                                PhonemizerLanguage.values().find { it.id == phonemizer.id }?.let {
-                                    InputEntryNameDialogState.selectedLanguage = it
-                                }
-                            }
-                            .padding(horizontal = 6.dp, vertical = 3.dp),
-                    ) {
-                        Text(
-                            text = string(phonemizer.displayNameKey),
-                            style = MaterialTheme.typography.caption.copy(
-                                fontSize = 11.sp,
-                                color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSurface,
-                            ),
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = if (phonemizeMode) MaterialTheme.colors.primary else DarkGray,
+                            shape = RoundedCornerShape(4.dp),
                         )
+                        .clickable {
+                            phonemizeMode = !phonemizeMode
+                            InputEntryNameDialogState.phonemizeMode = phonemizeMode
+                        }
+                        .padding(horizontal = 8.dp, vertical = 3.dp),
+                ) {
+                    Text(
+                        text = string(if (phonemizeMode) Strings.PhonemizerOn else Strings.PhonemizerOff),
+                        style = MaterialTheme.typography.caption.copy(
+                            color = if (phonemizeMode) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSurface,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    )
+                }
+                if (phonemizeMode) {
+                    for (plugin in args.phonemizerPlugins) {
+                        val isSelected = activePlugin?.name == plugin.name
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = if (isSelected) MaterialTheme.colors.primary.copy(alpha = 0.8f) else DarkGray,
+                                    shape = RoundedCornerShape(4.dp),
+                                )
+                                .clickable {
+                                    selectedPluginName = plugin.name
+                                    InputEntryNameDialogState.selectedPluginName = plugin.name
+                                }
+                                .padding(horizontal = 6.dp, vertical = 3.dp),
+                        ) {
+                            Text(
+                                text = plugin.displayedName.get(),
+                                style = MaterialTheme.typography.caption.copy(
+                                    fontSize = 11.sp,
+                                    color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSurface,
+                                ),
+                            )
+                        }
                     }
                 }
             }
@@ -217,11 +216,18 @@ fun InputEntryNameDialog(
         OutlinedTextField(
             modifier = Modifier.width(380.dp).focusRequester(focusRequester)
                 .onPreviewKeyEvent { event ->
-                    if (event.type == KeyEventType.KeyDown && event.key == Key.Tab) {
-                        if (event.isShiftPressed) trySubmit(NavigationDirection.Previous) else trySubmit(
-                            NavigationDirection.Next,
-                        )
-                        true
+                    if (event.type == KeyEventType.KeyDown && args.purpose == InputEntryNameDialogPurpose.Rename) {
+                        if (args.previousKeySet?.shouldCatch(event) == true) {
+                            if (args.index > 0) {
+                                trySubmit(NavigationDirection.Previous)
+                            }
+                            true
+                        } else if (args.nextKeySet?.shouldCatch(event) == true) {
+                            trySubmit(NavigationDirection.Next)
+                            true
+                        } else {
+                            false
+                        }
                     } else false
                 },
             value = input,
@@ -291,16 +297,19 @@ fun InputEntryNameDialog(
             TextButton(onClick = { dismiss() }) { Text(string(Strings.CommonCancel)) }
             Spacer(Modifier.width(15.dp))
             if (args.purpose == InputEntryNameDialogPurpose.Rename) {
-                TextButton(enabled = input.text.isNotBlank(), onClick = { trySubmit(NavigationDirection.Previous) }) {
-                    Text(
-                        string(Strings.InputEntryNameDialogPrev),
-                    )
+                TextButton(
+                    enabled = input.text.isNotBlank() && args.index > 0,
+                    onClick = { trySubmit(NavigationDirection.Previous) },
+                ) {
+                    val label = string(Strings.InputEntryNameDialogPrev) +
+                        (args.previousKeySet?.displayedKeyName?.let { " ($it)" } ?: "")
+                    Text(label)
                 }
                 Spacer(Modifier.width(10.dp))
                 TextButton(enabled = input.text.isNotBlank(), onClick = { trySubmit(NavigationDirection.Next) }) {
-                    Text(
-                        string(Strings.InputEntryNameDialogNext),
-                    )
+                    val label = string(Strings.InputEntryNameDialogNext) +
+                        (args.nextKeySet?.displayedKeyName?.let { " ($it)" } ?: "")
+                    Text(label)
                 }
                 Spacer(Modifier.width(15.dp))
             }
