@@ -872,4 +872,12 @@ fun Strings.en(): String = when (this) {
     EditorContextActionSetEntriesUnstarred -> "Unstar %d Entries"
     EditorContextActionEditEntriesTag -> "Set Tag for %d Entries..."
     EditorContextActionRemoveEntries -> "Remove %d Entries..."
+    PhonemizerLabel -> "Phonemizer"
+    PhonemizerOn -> "ON"
+    PhonemizerOff -> "OFF"
+    PhonemizerSpreadAcrossEntries -> "Spread across %d entries:"
+    ActionEditEntryNameDialogNext -> "Rename Dialog: Confirm and Edit Next Entry"
+    ActionEditEntryNameDialogPrevious -> "Rename Dialog: Confirm and Edit Previous Entry"
+    InputEntryNameDialogPrev -> "<< Prev"
+    InputEntryNameDialogNext -> "Next >>"
 }

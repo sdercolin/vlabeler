@@ -11,3 +11,29 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+---
+
+This product includes CMU Pronouncing Dictionary (CMUdict) 0.7b
+Copyright (C) 1993-2015 Carnegie Mellon University. All rights reserved.
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+THIS SOFTWARE IS PROVIDED BY CARNEGIE MELLON UNIVERSITY ``AS IS'' AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+
+---
+
+This product includes G2P dictionaries and ONNX models derived from OpenUtau
+(https://github.com/stakira/OpenUtau) -- Copyright (c) 2014 StAkira, MIT License.
+The Russian and English dictionaries/models are redistributed under the same
+terms with attribution. The Japanese kana tables are public domain data
+derived from linguistic resources.
+
+ONNX Runtime (com.microsoft.onnxruntime:onnxruntime 1.17.1) is MIT licensed
+(https://github.com/microsoft/onnxruntime).

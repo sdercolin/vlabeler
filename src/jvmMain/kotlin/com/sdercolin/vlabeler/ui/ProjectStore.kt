@@ -88,6 +88,7 @@ interface ProjectStore {
     fun jumpToEntry(index: Int)
     fun jumpToEntry(moduleName: String, index: Int)
     fun renameEntry(index: Int, newName: String)
+    fun renameMultipleEntries(startIndex: Int, names: List<String>)
     fun updateEntryExtra(index: Int, extras: List<String?>)
     fun updateCurrentModuleExtra(extras: List<String?>)
     fun duplicateEntry(index: Int, newName: String)
@@ -496,6 +497,12 @@ class ProjectStoreImpl(
     override fun renameEntry(index: Int, newName: String) = editProject {
         updateCurrentModule {
             renameEntry(index, newName, labelerConf)
+        }
+    }
+
+    override fun renameMultipleEntries(startIndex: Int, names: List<String>) = editProject {
+        updateCurrentModule {
+            renameMultipleEntries(startIndex, names, labelerConf)
         }
     }
 

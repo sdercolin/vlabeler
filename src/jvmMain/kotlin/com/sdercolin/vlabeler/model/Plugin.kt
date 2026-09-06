@@ -57,7 +57,7 @@ data class Plugin(
 
     override val isSelfExecutable: Boolean
         get() = when (type) {
-            Type.Template -> false
+            Type.Template, Type.Phonemizer -> false
             Type.Macro -> true
         }
 
@@ -79,6 +79,9 @@ data class Plugin(
 
         @SerialName("macro")
         Macro("macro"),
+
+        @SerialName("phonemizer")
+        Phonemizer("phonemizer"),
     }
 
     @Serializable(with = PluginParameterListSerializer::class)
@@ -90,7 +93,7 @@ data class Plugin(
         val allParamTypes = Parameter::class.sealedSubclasses
         val acceptedParamTypes = when (type) {
             Type.Template -> allParamTypes.minus(Parameter.EntrySelectorParam::class)
-            Type.Macro -> allParamTypes
+            Type.Macro, Type.Phonemizer -> allParamTypes
         }
         for (parameter in parameters?.list.orEmpty()) {
             require(parameter::class in acceptedParamTypes) {

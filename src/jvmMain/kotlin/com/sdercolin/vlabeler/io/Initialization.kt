@@ -68,7 +68,9 @@ fun loadAppConf(mainScope: CoroutineScope, appRecord: AppRecordStore): MutableSt
 }
 
 suspend fun loadPlugins(language: Language): List<Plugin> = withContext(Dispatchers.IO) {
-    loadPlugins(Plugin.Type.Template, language) + loadPlugins(Plugin.Type.Macro, language)
+    loadPlugins(Plugin.Type.Template, language) +
+        loadPlugins(Plugin.Type.Macro, language) +
+        loadPlugins(Plugin.Type.Phonemizer, language)
 }
 
 fun ensureDirectories() {

@@ -704,6 +704,14 @@ enum class Strings {
     EditorContextActionSetEntriesUnstarred,
     EditorContextActionEditEntriesTag,
     EditorContextActionRemoveEntries,
+    PhonemizerLabel,
+    PhonemizerOn,
+    PhonemizerOff,
+    PhonemizerSpreadAcrossEntries,
+    ActionEditEntryNameDialogNext,
+    ActionEditEntryNameDialogPrevious,
+    InputEntryNameDialogPrev,
+    InputEntryNameDialogNext,
     ;
 
     fun get(language: Language): String = when (language) {

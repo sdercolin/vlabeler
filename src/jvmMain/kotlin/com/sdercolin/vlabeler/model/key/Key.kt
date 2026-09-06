@@ -71,6 +71,14 @@ enum class Key(
         },
         listOf(ActualKey.Enter),
     ),
+    Tab(
+        if (isMacOS) {
+            "⇥"
+        } else {
+            "Tab"
+        },
+        listOf(ActualKey.Tab),
+    ),
     Backspace(
         if (isMacOS) {
             "⌫"

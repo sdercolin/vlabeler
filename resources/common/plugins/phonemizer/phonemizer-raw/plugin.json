@@ -1,0 +1,19 @@
+{
+    "name": "phonemizer-raw",
+    "version": 1,
+    "type": "phonemizer",
+    "displayedName": {
+        "en": "Raw",
+        "zh": "原始",
+        "ja": "Raw",
+        "ko": "Raw"
+    },
+    "author": "MysticILD",
+    "description": {
+        "en": "Split text by spaces and punctuation"
+    },
+    "supportedLabelFileExtension": "*",
+    "scriptFiles": [
+        "phonemizer-raw.js"
+    ]
+}

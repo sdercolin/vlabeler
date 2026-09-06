@@ -1,0 +1,7 @@
+息  AP
+吸  AP
+br  AP
+bre  AP
+breath  AP
+-  SP
+R  SP

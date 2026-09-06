@@ -58,6 +58,7 @@ import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToEntryDialogResult
 import com.sdercolin.vlabeler.ui.dialog.JumpToModuleDialogResult
 import com.sdercolin.vlabeler.ui.dialog.MoveEntryDialogResult
+import com.sdercolin.vlabeler.ui.dialog.NavigationDirection
 import com.sdercolin.vlabeler.ui.dialog.SetEntryPropertyDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.SetEntryPropertyDialogResult
 import com.sdercolin.vlabeler.ui.dialog.SetResolutionDialogResult
@@ -354,7 +355,31 @@ class AppState(
             }
             is InputEntryNameDialogResult -> run {
                 when (result.purpose) {
-                    InputEntryNameDialogPurpose.Rename -> renameEntry(result.index, result.name)
+                    InputEntryNameDialogPurpose.Rename -> {
+                        if (result.extraNames.isNotEmpty()) {
+                            renameMultipleEntries(result.index, listOf(result.name) + result.extraNames)
+                        } else {
+                            renameEntry(result.index, result.name)
+                        }
+                        when (result.navigation) {
+                            NavigationDirection.Next -> {
+                                val nextIdx = result.index + 1 + result.extraNames.size
+                                val total: Int = requireProject().currentModule.entries.size
+                                if (nextIdx < total) {
+                                    jumpToEntry(nextIdx)
+                                    openEditEntryNameDialog(nextIdx, InputEntryNameDialogPurpose.Rename)
+                                }
+                            }
+                            NavigationDirection.Previous -> {
+                                if (result.index > 0) {
+                                    val prevIdx = result.index - 1
+                                    jumpToEntry(prevIdx)
+                                    openEditEntryNameDialog(prevIdx, InputEntryNameDialogPurpose.Rename)
+                                }
+                            }
+                            null -> Unit
+                        }
+                    }
                     InputEntryNameDialogPurpose.Duplicate -> duplicateEntry(result.index, result.name)
                     InputEntryNameDialogPurpose.CutFormer -> {
                         // handled on caller side

@@ -1,0 +1,991 @@
+ア  A
+イ  I
+ウ  U
+エ  E
+オ  O
+カ  k A
+キ  k I
+ク  k U
+ケ  k E
+コ  k O
+ガ  g A
+ギ  g I
+グ  g U
+ゲ  g E
+ゴ  g O
+サ  s A
+シ  sh I
+ス  s U
+セ  s E
+ソ  s O
+ザ  z A
+ジ  j I
+ズ  z U
+ゼ  z E
+ゾ  z O
+タ  t A
+チ  ch I
+ツ  ts U
+テ  t E
+ト  t O
+ダ  d A
+ヂ  j I
+ヅ  z U
+デ  d E
+ド  d O
+ナ  n A
+ニ  n I
+ヌ  n U
+ネ  n E
+ノ  n O
+ハ  h A
+ヒ  h I
+フ  f U
+ヘ  h E
+ホ  h O
+バ  b A
+ビ  b I
+ブ  b U
+ベ  b E
+ボ  b O
+パ  p A
+ピ  p I
+プ  p U
+ペ  p E
+ポ  p O
+マ  m A
+ミ  m I
+ム  m U
+メ  m E
+モ  m O
+ヤ  y A
+ユ  y U
+ヨ  y O
+ラ  r A
+リ  r I
+ル  r U
+レ  r E
+ロ  r O
+ワ  w A
+ヲ  O
+ン  N
+キャ  ky A
+キュ  ky U
+キョ  ky O
+ギャ  gy A
+ギュ  gy U
+ギョ  gy O
+シャ  sh A
+シュ  sh U
+ショ  sh O
+ジャ  j A
+ジュ  j U
+ジョ  j O
+チャ  ch A
+チュ  ch U
+チョ  ch O
+ヂャ  j A
+ヂュ  j U
+ヂョ  j O
+ニャ  ny A
+ニュ  ny U
+ニョ  ny O
+ヒャ  hy A
+ヒュ  hy U
+ヒョ  hy O
+ビャ  by A
+ビュ  by U
+ビョ  by O
+ピャ  py A
+ピュ  py U
+ピョ  py O
+ミャ  my A
+ミュ  my U
+ミョ  my O
+リャ  ry A
+リュ  ry U
+リョ  ry O
+イェ  y E
+キェ  ky E
+ギェ  gy E
+シェ  sh E
+ジェ  j E
+チェ  ch E
+ヂェ  j E
+ニェ  ny E
+ヒェ  hy E
+ビェ  by E
+ピェ  py E
+ミェ  my E
+リェ  ry E
+ウィ  w I
+ウェ  w E
+ウォ  w O
+クァ  kw A
+クィ  kw I
+クェ  kw E
+クォ  kw O
+グァ  gw A
+グィ  gw I
+グェ  gw E
+グォ  gw O
+ツァ  ts A
+ツィ  ts I
+ツェ  ts E
+ツォ  ts O
+ファ  f A
+フィ  f I
+フェ  f E
+フォ  f O
+ヴゥ  v U
+ヴァ  v A
+ヴィ  v I
+ヴェ  v E
+ヴォ  v O
+スィ  s I
+ズィ  z I
+ティ  t I
+テュ  ty U
+トゥ  t U
+ディ  d I
+デュ  dy U
+ドゥ  d U
+カ゜  ng A
+キ゜  ng I
+ク゜  ng U
+ケ゜  ng E
+コ゜  ng O
+キ゜ェ  ngy E
+キ゜ャ  ngy A
+キ゜ュ  ngy U
+キ゜ョ  ngy O
+ヰ  I
+ヱ  E
+ッ  cl
+アイ  A I
+ウイ  U I
+オイ  O I
+カイ  k A I
+クイ  k U I
+コイ  k O I
+ガイ  g A I
+グイ  g U I
+ゴイ  g O I
+サイ  s A I
+スイ  s U I
+ソイ  s O I
+ザイ  z A I
+ズイ  z U I
+ゾイ  z O I
+タイ  t A I
+ツイ  ts U I
+トイ  t O I
+ダイ  d A I
+ヅイ  z U I
+ドイ  d O I
+ナイ  n A I
+ヌイ  n U I
+ノイ  n O I
+ハイ  h A I
+フイ  f U I
+ホイ  h O I
+バイ  b A I
+ブイ  b U I
+ボイ  b O I
+パイ  p A I
+プイ  p U I
+ポイ  p O I
+マイ  m A I
+ムイ  m U I
+モイ  m O I
+ヤイ  y A I
+ユイ  y U I
+ヨイ  y O I
+ライ  r A I
+ルイ  r U I
+ロイ  r O I
+ワイ  w A I
+ヲイ  O I
+キャイ  ky A I
+キュイ  ky U I
+キョイ  ky O I
+ギャイ  gy A I
+ギュイ  gy U I
+ギョイ  gy O I
+シャイ  sh A I
+シュイ  sh U I
+ショイ  sh O I
+ジャイ  j A I
+ジュイ  j U I
+ジョイ  j O I
+チャイ  ch A I
+チュイ  ch U I
+チョイ  ch O I
+ヂャイ  j A I
+ヂュイ  j U I
+ヂョイ  j O I
+ニャイ  ny A I
+ニュイ  ny U I
+ニョイ  ny O I
+ヒャイ  hy A I
+ヒュイ  hy U I
+ヒョイ  hy O I
+ビャイ  by A I
+ビュイ  by U I
+ビョイ  by O I
+ピャイ  py A I
+ピュイ  py U I
+ピョイ  py O I
+ミャイ  my A I
+ミュイ  my U I
+ミョイ  my O I
+リャイ  ry A I
+リュイ  ry U I
+リョイ  ry O I
+ウォイ  w O I
+クァイ  kw A I
+クォイ  kw O I
+グァイ  gw A I
+グォイ  gw O I
+ツァイ  ts A I
+ツォイ  ts O I
+ファイ  f A I
+フォイ  f O I
+ヴイ  v U I
+ヴァイ  v A I
+ヴォイ  v O I
+テュイ  ty U I
+トゥイ  t U I
+デュイ  dy U I
+ドゥイ  t U I
+カ゜イ  ng A I
+ク゜イ  ng U I
+コ゜イ  ng O I
+キ゜ャイ  ngy A I
+キ゜ュイ  ngy U I
+キ゜ョイ  ngy O I
+アウ  A U
+カウ  k A U
+ガウ  g A U
+サウ  s A U
+ザウ  z A U
+タウ  t A U
+ダウ  d A U
+ナウ  n A U
+ハウ  h A U
+バウ  b A U
+パウ  p A U
+マウ  m A U
+ヤウ  y A U
+ラウ  r A U
+ワウ  w A U
+キャウ  ky A U
+ギャウ  gy A U
+シャウ  sh A U
+ジャウ  j A U
+チャウ  ch A U
+ヂャウ  j A U
+ニャウ  ny A U
+ヒャウ  hy A U
+ビャウ  by A U
+ピャウ  py A U
+ミャウ  my A U
+リャウ  ry A U
+クァウ  kw A U
+グァウ  gw A U
+ツァウ  ts A U
+ファウ  f A U
+ヴァウ  v A U
+カ゜ウ  ng A U
+キ゜ャウ  ngy A U
+アオ  A O
+カオ  k A O
+ガオ  g A O
+サオ  s A O
+ザオ  z A O
+タオ  t A O
+ダオ  d A O
+ナオ  n A O
+ハオ  h A O
+バオ  b A O
+パオ  p A O
+マオ  m A O
+ヤオ  y A O
+ラオ  r A O
+ワオ  w A O
+キャオ  ky A O
+ギャオ  gy A O
+シャオ  sh A O
+ジャオ  j A O
+チャオ  ch A O
+ヂャオ  j A O
+ニャオ  ny A O
+ヒャオ  hy A O
+ビャオ  by A O
+ピャオ  py A O
+ミャオ  my A O
+リャオ  ry A O
+クァオ  kw A O
+グァオ  gw A O
+ツァオ  ts A O
+ファオ  f A O
+ヴァオ  v A O
+カ゜オ  ng A O
+キ゜ャオ  ngy A O
+アン  A N
+イン  I N
+ウン  U N
+エン  E N
+オン  O N
+カン  k A N
+キン  k I N
+クン  k U N
+ケン  k E N
+コン  k O N
+ガン  g A N
+ギン  g I N
+グン  g U N
+ゲン  g E N
+ゴン  g O N
+サン  s A N
+シン  sh I N
+スン  s U N
+セン  s E N
+ソン  s O N
+ザン  z A N
+ジン  j I N
+ズン  z U N
+ゼン  z E N
+ゾン  z O N
+タン  t A N
+チン  ch I N
+ツン  ts U N
+テン  t E N
+トン  t O N
+ダン  d A N
+ヂン  j I N
+ヅン  z U N
+デン  d E N
+ドン  d O N
+ナン  n A N
+ニン  n I N
+ヌン  n U N
+ネン  n E N
+ノン  n O N
+ハン  h A N
+ヒン  h I N
+フン  f U N
+ヘン  h E N
+ホン  h O N
+バン  b A N
+ビン  b I N
+ブン  b U N
+ベン  b E N
+ボン  b O N
+パン  p A N
+ピン  p I N
+プン  p U N
+ペン  p E N
+ポン  p O N
+マン  m A N
+ミン  m I N
+ムン  m U N
+メン  m E N
+モン  m O N
+ヤン  y A N
+ユン  y U N
+ヨン  y O N
+ラン  r A N
+リン  r I N
+ルン  r U N
+レン  r E N
+ロン  r O N
+ワン  w A N
+ヲン  O N
+キャン  ky A N
+キュン  ky U N
+キョン  ky O N
+ギャン  gy A N
+ギュン  gy U N
+ギョン  gy O N
+シャン  sh A N
+シュン  sh U N
+ション  sh O N
+ジャン  j A N
+ジュン  j U N
+ジョン  j O N
+チャン  ch A N
+チュン  ch U N
+チョン  ch O N
+ヂャン  j A N
+ヂュン  j U N
+ヂョン  j O N
+ニャン  ny A N
+ニュン  ny U N
+ニョン  ny O N
+ヒャン  hy A N
+ヒュン  hy U N
+ヒョン  hy O N
+ビャン  by A N
+ビュン  by U N
+ビョン  by O N
+ピャン  py A N
+ピュン  py U N
+ピョン  py O N
+ミャン  my A N
+ミュン  my U N
+ミョン  my O N
+リャン  ry A N
+リュン  ry U N
+リョン  ry O N
+イェン  y E N
+キェン  ky E N
+ギェン  gy E N
+シェン  sh E N
+ジェン  j E N
+チェン  ch E N
+ヂェン  j E N
+ニェン  ny E N
+ヒェン  hy E N
+ビェン  by E N
+ピェン  py E N
+ミェン  my E N
+リェン  ry E N
+ウィン  w I N
+ウェン  w E N
+ウォン  w O N
+クァン  kw A N
+クィン  kw I N
+クェン  kw E N
+クォン  kw O N
+グァン  gw A N
+グィン  gw I N
+グェン  gw E N
+グォン  gw O N
+ツァン  ts A N
+ツィン  ts I N
+ツェン  ts E N
+ツォン  ts O N
+ファン  f A N
+フィン  f I N
+フェン  f E N
+フォン  f O N
+ヴン  v U N
+ヴァン  v A N
+ヴィン  v I N
+ヴェン  v E N
+ヴォン  v O N
+スィン  s I N
+ズィン  z I N
+ティン  t I N
+テュン  ty U N
+トゥン  t U N
+ディン  d I N
+デュン  dy U N
+ドゥン  d U N
+カ゜ン  ng A N
+キ゜ン  ng I N
+ク゜ン  ng U N
+ケ゜ン  ng E N
+コ゜ン  ng O N
+キ゜ェン  ngy E N
+キ゜ャン  ngy A N
+キ゜ュン  ngy U N
+キ゜ョン  ngy O N
+ヰン  I N
+ヱン  E N
+アッ  A cl
+イッ  I cl
+ウッ  U cl
+エッ  E cl
+オッ  O cl
+カッ  k A cl
+キッ  k I cl
+クッ  k U cl
+ケッ  k E cl
+コッ  k O cl
+ガッ  g A cl
+ギッ  g I cl
+グッ  g U cl
+ゲッ  g E cl
+ゴッ  g O cl
+サッ  s A cl
+シッ  sh I cl
+スッ  s U cl
+セッ  s E cl
+ソッ  s O cl
+ザッ  z A cl
+ジッ  j I cl
+ズッ  z U cl
+ゼッ  z E cl
+ゾッ  z O cl
+タッ  t A cl
+チッ  ch I cl
+ツッ  ts U cl
+テッ  t E cl
+トッ  t O cl
+ダッ  d A cl
+ヂッ  j I cl
+ヅッ  z U cl
+デッ  d E cl
+ドッ  d O cl
+ナッ  n A cl
+ニッ  n I cl
+ヌッ  n U cl
+ネッ  n E cl
+ノッ  n O cl
+ハッ  h A cl
+ヒッ  h I cl
+フッ  f U cl
+ヘッ  h E cl
+ホッ  h O cl
+バッ  b A cl
+ビッ  b I cl
+ブッ  b U cl
+ベッ  b E cl
+ボッ  b O cl
+パッ  p A cl
+ピッ  p I cl
+プッ  p U cl
+ペッ  p E cl
+ポッ  p O cl
+マッ  m A cl
+ミッ  m I cl
+ムッ  m U cl
+メッ  m E cl
+モッ  m O cl
+ヤッ  y A cl
+ユッ  y U cl
+ヨッ  y O cl
+ラッ  r A cl
+リッ  r I cl
+ルッ  r U cl
+レッ  r E cl
+ロッ  r O cl
+ワッ  w A cl
+ヲッ  O cl
+ンッ  N cl
+キャッ  ky A cl
+キュッ  ky U cl
+キョッ  ky O cl
+ギャッ  gy A cl
+ギュッ  gy U cl
+ギョッ  gy O cl
+シャッ  sh A cl
+シュッ  sh U cl
+ショッ  sh O cl
+ジャッ  j A cl
+ジュッ  j U cl
+ジョッ  j O cl
+チャッ  ch A cl
+チュッ  ch U cl
+チョッ  ch O cl
+ヂャッ  j A cl
+ヂュッ  j U cl
+ヂョッ  j O cl
+ニャッ  ny A cl
+ニュッ  ny U cl
+ニョッ  ny O cl
+ヒャッ  hy A cl
+ヒュッ  hy U cl
+ヒョッ  hy O cl
+ビャッ  by A cl
+ビュッ  by U cl
+ビョッ  by O cl
+ピャッ  py A cl
+ピュッ  py U cl
+ピョッ  py O cl
+ミャッ  my A cl
+ミュッ  my U cl
+ミョッ  my O cl
+リャッ  ry A cl
+リュッ  ry U cl
+リョッ  ry O cl
+イェッ  y E cl
+キェッ  ky E cl
+ギェッ  gy E cl
+シェッ  sh E cl
+ジェッ  j E cl
+チェッ  ch E cl
+ヂェッ  j E cl
+ニェッ  ny E cl
+ヒェッ  hy E cl
+ビェッ  by E cl
+ピェッ  py E cl
+ミェッ  my E cl
+リェッ  ry E cl
+ウィッ  w I cl
+ウェッ  w E cl
+ウォッ  w O cl
+クァッ  kw A cl
+クィッ  kw I cl
+クェッ  kw E cl
+クォッ  kw O cl
+グァッ  gw A cl
+グィッ  gw I cl
+グェッ  gw E cl
+グォッ  gw O cl
+ツァッ  ts A cl
+ツィッ  ts I cl
+ツェッ  ts E cl
+ツォッ  ts O cl
+ファッ  f A cl
+フィッ  f I cl
+フェッ  f E cl
+フォッ  f O cl
+ヴッ  v U cl
+ヴァッ  v A cl
+ヴィッ  v I cl
+ヴェッ  v E cl
+ヴォッ  v O cl
+スィッ  s I cl
+ズィッ  z I cl
+ティッ  t I cl
+テュッ  ty U cl
+トゥッ  t U cl
+ディッ  d I cl
+デュッ  dy U cl
+ドゥッ  d U cl
+カ゜ッ  ng A cl
+キ゜ッ  ng I cl
+ク゜ッ  ng U cl
+ケ゜ッ  ng E cl
+コ゜ッ  ng O cl
+キ゜ェッ  ngy E cl
+キ゜ャッ  ngy A cl
+キ゜ュッ  ngy U cl
+キ゜ョッ  ngy O cl
+ヰッ  I cl
+ヱッ  E cl
+アイッ  A I cl
+ウイッ  U I cl
+オイッ  O I cl
+カイッ  k A I cl
+クイッ  k U I cl
+コイッ  k O I cl
+ガイッ  g A I cl
+グイッ  g U I cl
+ゴイッ  g O I cl
+サイッ  s A I cl
+スイッ  s U I cl
+ソイッ  s O I cl
+ザイッ  z A I cl
+ズイッ  z U I cl
+ゾイッ  z O I cl
+タイッ  t A I cl
+ツイッ  ts U I cl
+トイッ  t O I cl
+ダイッ  d A I cl
+ヅイッ  z U I cl
+ドイッ  d O I cl
+ナイッ  n A I cl
+ヌイッ  n U I cl
+ノイッ  n O I cl
+ハイッ  h A I cl
+フイッ  f U I cl
+ホイッ  h O I cl
+バイッ  b A I cl
+ブイッ  b U I cl
+ボイッ  b O I cl
+パイッ  p A I cl
+プイッ  p U I cl
+ポイッ  p O I cl
+マイッ  m A I cl
+ムイッ  m U I cl
+モイッ  m O I cl
+ヤイッ  y A I cl
+ユイッ  y U I cl
+ヨイッ  y O I cl
+ライッ  r A I cl
+ルイッ  r U I cl
+ロイッ  r O I cl
+ワイッ  w A I cl
+ヲイッ  O I cl
+キャイッ  ky A I cl
+キュイッ  ky U I cl
+キョイッ  ky O I cl
+ギャイッ  gy A I cl
+ギュイッ  gy U I cl
+ギョイッ  gy O I cl
+シャイッ  sh A I cl
+シュイッ  sh U I cl
+ショイッ  sh O I cl
+ジャイッ  j A I cl
+ジュイッ  j U I cl
+ジョイッ  j O I cl
+チャイッ  ch A I cl
+チュイッ  ch U I cl
+チョイッ  ch O I cl
+ヂャイッ  j A I cl
+ヂュイッ  j U I cl
+ヂョイッ  j O I cl
+ニャイッ  ny A I cl
+ニュイッ  ny U I cl
+ニョイッ  ny O I cl
+ヒャイッ  hy A I cl
+ヒュイッ  hy U I cl
+ヒョイッ  hy O I cl
+ビャイッ  by A I cl
+ビュイッ  by U I cl
+ビョイッ  by O I cl
+ピャイッ  py A I cl
+ピュイッ  py U I cl
+ピョイッ  py O I cl
+ミャイッ  my A I cl
+ミュイッ  my U I cl
+ミョイッ  my O I cl
+リャイッ  ry A I cl
+リュイッ  ry U I cl
+リョイッ  ry O I cl
+ウォイッ  w O I cl
+クァイッ  kw A I cl
+クォイッ  kw O I cl
+グァイッ  gw A I cl
+グォイッ  gw O I cl
+ツァイッ  ts A I cl
+ツォイッ  ts O I cl
+ファイッ  f A I cl
+フォイッ  f O I cl
+ヴイッ  v U I cl
+ヴァイッ  v A I cl
+ヴォイッ  v O I cl
+テュイッ  ty U I cl
+トゥイッ  t U I cl
+デュイッ  dy U I cl
+ドゥイッ  t U I cl
+カ゜イッ  ng A I cl
+ク゜イッ  ng U I cl
+コ゜イッ  ng O I cl
+キ゜ャイッ  ngy A I cl
+キ゜ュイッ  ngy U I cl
+キ゜ョイッ  ngy O I cl
+アウッ  A U cl
+カウッ  k A U cl
+ガウッ  g A U cl
+サウッ  s A U cl
+ザウッ  z A U cl
+タウッ  t A U cl
+ダウッ  d A U cl
+ナウッ  n A U cl
+ハウッ  h A U cl
+バウッ  b A U cl
+パウッ  p A U cl
+マウッ  m A U cl
+ヤウッ  y A U cl
+ラウッ  r A U cl
+ワウッ  w A U cl
+キャウッ  ky A U cl
+ギャウッ  gy A U cl
+シャウッ  sh A U cl
+ジャウッ  j A U cl
+チャウッ  ch A U cl
+ヂャウッ  j A U cl
+ニャウッ  ny A U cl
+ヒャウッ  hy A U cl
+ビャウッ  by A U cl
+ピャウッ  py A U cl
+ミャウッ  my A U cl
+リャウッ  ry A U cl
+クァウッ  kw A U cl
+グァウッ  gw A U cl
+ツァウッ  ts A U cl
+ファウッ  f A U cl
+ヴァウッ  v A U cl
+カ゜ウッ  ng A U cl
+キ゜ャウッ  ngy A U cl
+アオッ  A O cl
+カオッ  k A O cl
+ガオッ  g A O cl
+サオッ  s A O cl
+ザオッ  z A O cl
+タオッ  t A O cl
+ダオッ  d A O cl
+ナオッ  n A O cl
+ハオッ  h A O cl
+バオッ  b A O cl
+パオッ  p A O cl
+マオッ  m A O cl
+ヤオッ  y A O cl
+ラオッ  r A O cl
+ワオッ  w A O cl
+キャオッ  ky A O cl
+ギャオッ  gy A O cl
+シャオッ  sh A O cl
+ジャオッ  j A O cl
+チャオッ  ch A O cl
+ヂャオッ  j A O cl
+ニャオッ  ny A O cl
+ヒャオッ  hy A O cl
+ビャオッ  by A O cl
+ピャオッ  py A O cl
+ミャオッ  my A O cl
+リャオッ  ry A O cl
+クァオッ  kw A O cl
+グァオッ  gw A O cl
+ツァオッ  ts A O cl
+ファオッ  f A O cl
+ヴァオッ  v A O cl
+カ゜オッ  ng A O cl
+キ゜ャオッ  ngy A O cl
+アンッ  A N cl
+インッ  I N cl
+ウンッ  U N cl
+エンッ  E N cl
+オンッ  O N cl
+カンッ  k A N cl
+キンッ  k I N cl
+クンッ  k U N cl
+ケンッ  k E N cl
+コンッ  k O N cl
+ガンッ  g A N cl
+ギンッ  g I N cl
+グンッ  g U N cl
+ゲンッ  g E N cl
+ゴンッ  g O N cl
+サンッ  s A N cl
+シンッ  sh I N cl
+スンッ  s U N cl
+センッ  s E N cl
+ソンッ  s O N cl
+ザンッ  z A N cl
+ジンッ  j I N cl
+ズンッ  z U N cl
+ゼンッ  z E N cl
+ゾンッ  z O N cl
+タンッ  t A N cl
+チンッ  ch I N cl
+ツンッ  ts U N cl
+テンッ  t E N cl
+トンッ  t O N cl
+ダンッ  d A N cl
+ヂンッ  j I N cl
+ヅンッ  z U N cl
+デンッ  d E N cl
+ドンッ  d O N cl
+ナンッ  n A N cl
+ニンッ  n I N cl
+ヌンッ  n U N cl
+ネンッ  n E N cl
+ノンッ  n O N cl
+ハンッ  h A N cl
+ヒンッ  h I N cl
+フンッ  f U N cl
+ヘンッ  h E N cl
+ホンッ  h O N cl
+バンッ  b A N cl
+ビンッ  b I N cl
+ブンッ  b U N cl
+ベンッ  b E N cl
+ボンッ  b O N cl
+パンッ  p A N cl
+ピンッ  p I N cl
+プンッ  p U N cl
+ペンッ  p E N cl
+ポンッ  p O N cl
+マンッ  m A N cl
+ミンッ  m I N cl
+ムンッ  m U N cl
+メンッ  m E N cl
+モンッ  m O N cl
+ヤンッ  y A N cl
+ユンッ  y U N cl
+ヨンッ  y O N cl
+ランッ  r A N cl
+リンッ  r I N cl
+ルンッ  r U N cl
+レンッ  r E N cl
+ロンッ  r O N cl
+ワンッ  w A N cl
+ヲンッ  O N cl
+キャンッ  ky A N cl
+キュンッ  ky U N cl
+キョンッ  ky O N cl
+ギャンッ  gy A N cl
+ギュンッ  gy U N cl
+ギョンッ  gy O N cl
+シャンッ  sh A N cl
+シュンッ  sh U N cl
+ションッ  sh O N cl
+ジャンッ  j A N cl
+ジュンッ  j U N cl
+ジョンッ  j O N cl
+チャンッ  ch A N cl
+チュンッ  ch U N cl
+チョンッ  ch O N cl
+ヂャンッ  j A N cl
+ヂュンッ  j U N cl
+ヂョンッ  j O N cl
+ニャンッ  ny A N cl
+ニュンッ  ny U N cl
+ニョンッ  ny O N cl
+ヒャンッ  hy A N cl
+ヒュンッ  hy U N cl
+ヒョンッ  hy O N cl
+ビャンッ  by A N cl
+ビュンッ  by U N cl
+ビョンッ  by O N cl
+ピャンッ  py A N cl
+ピュンッ  py U N cl
+ピョンッ  py O N cl
+ミャンッ  my A N cl
+ミュンッ  my U N cl
+ミョンッ  my O N cl
+リャンッ  ry A N cl
+リュンッ  ry U N cl
+リョンッ  ry O N cl
+イェンッ  y E N cl
+キェンッ  ky E N cl
+ギェンッ  gy E N cl
+シェンッ  sh E N cl
+ジェンッ  j E N cl
+チェンッ  ch E N cl
+ヂェンッ  j E N cl
+ニェンッ  ny E N cl
+ヒェンッ  hy E N cl
+ビェンッ  by E N cl
+ピェンッ  py E N cl
+ミェンッ  my E N cl
+リェンッ  ry E N cl
+ウィンッ  w I N cl
+ウェンッ  w E N cl
+ウォンッ  w O N cl
+クァンッ  kw A N cl
+クィンッ  kw I N cl
+クェンッ  kw E N cl
+クォンッ  kw O N cl
+グァンッ  gw A N cl
+グィンッ  gw I N cl
+グェンッ  gw E N cl
+グォンッ  gw O N cl
+ツァンッ  ts A N cl
+ツィンッ  ts I N cl
+ツェンッ  ts E N cl
+ツォンッ  ts O N cl
+ファンッ  f A N cl
+フィンッ  f I N cl
+フェンッ  f E N cl
+フォンッ  f O N cl
+ヴンッ  v U N cl
+ヴァンッ  v A N cl
+ヴィンッ  v I N cl
+ヴェンッ  v E N cl
+ヴォンッ  v O N cl
+スィンッ  s I N cl
+ズィンッ  z I N cl
+ティンッ  t I N cl
+テュンッ  ty U N cl
+トゥンッ  t U N cl
+ディンッ  d I N cl
+デュンッ  dy U N cl
+ドゥンッ  d U N cl
+カ゜ンッ  ng A N cl
+キ゜ンッ  ng I N cl
+ク゜ンッ  ng U N cl
+ケ゜ンッ  ng E N cl
+コ゜ンッ  ng O N cl
+キ゜ェンッ  ngy E N cl
+キ゜ャンッ  ngy A N cl
+キ゜ュンッ  ngy U N cl
+キ゜ョンッ  ngy O N cl
+ヰンッ  I N cl
+ヱンッ  E N cl

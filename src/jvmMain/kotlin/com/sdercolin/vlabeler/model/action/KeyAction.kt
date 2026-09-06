@@ -387,6 +387,16 @@ enum class KeyAction(
         KeySet(Key.Escape),
         false,
     ),
+    EditEntryNameDialogNext(
+        listOf(Strings.ActionEditEntryNameDialogNext),
+        KeySet(Key.Tab),
+        false,
+    ),
+    EditEntryNameDialogPrevious(
+        listOf(Strings.ActionEditEntryNameDialogPrevious),
+        KeySet(Key.Tab, setOf(Key.Shift)),
+        false,
+    ),
     ScissorsCut(
         listOf(Strings.ActionScissorsCut),
         null,

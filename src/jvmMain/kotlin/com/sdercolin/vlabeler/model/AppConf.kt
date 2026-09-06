@@ -9,6 +9,7 @@ import com.sdercolin.vlabeler.model.palette.ColorPaletteDefinition
 import com.sdercolin.vlabeler.repository.FontRepository
 import com.sdercolin.vlabeler.repository.update.model.UpdateChannel
 import com.sdercolin.vlabeler.ui.string.*
+import com.sdercolin.vlabeler.util.getNullableOrElse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -823,7 +824,10 @@ data class AppConf(
         val keyActionMap: Map<KeyAction, KeySet?> = mapOf(),
         val mouseClickActionMap: Map<MouseClickAction, KeySet?> = mapOf(),
         val mouseScrollActionMap: Map<MouseScrollAction, KeySet?> = mapOf(),
-    )
+    ) {
+        fun getKeySet(action: KeyAction): KeySet? =
+            keyActionMap.getNullableOrElse(action) { action.defaultKeySet }
+    }
 
     /**
      * Configurations about edit history (undo/redo).

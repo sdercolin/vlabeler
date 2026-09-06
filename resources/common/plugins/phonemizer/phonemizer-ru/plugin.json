@@ -1,0 +1,23 @@
+{
+    "name": "phonemizer-ru",
+    "version": 1,
+    "type": "phonemizer",
+    "displayedName": {
+        "en": "Russian",
+        "zh": "俄语",
+        "ja": "ロシア語",
+        "ko": "러시아어"
+    },
+    "author": "MysticILD",
+    "description": {
+        "en": "Phonemize Russian text into phonemes"
+    },
+    "supportedLabelFileExtension": "*",
+    "resourceFiles": [
+        "dict.txt",
+        "phones.txt"
+    ],
+    "scriptFiles": [
+        "phonemizer-ru.js"
+    ]
+}
