@@ -112,9 +112,12 @@ data class Project(
     fun updateModule(name: String, updater: Module.() -> Module): Project {
         val module = getModule(name)
         val index = modules.indexOf(module)
+        val updated = module.updater()
+        // keep the current entry navigable even if the update made it no longer match the filter
+        val keepCurrentEntry = updated.currentIndex in updated.filteredEntryIndexes
         return copy(
-            modules = modules.toMutableList().apply { this[index] = module.updater() },
-        ).applyCurrentEntryFilter()
+            modules = modules.toMutableList().apply { this[index] = updated },
+        ).updateEntryFilter(entryFilter, keepCurrentEntryOfModule = name.takeIf { keepCurrentEntry })
     }
 
     fun updateCurrentModule(updater: Module.() -> Module): Project {
@@ -123,12 +126,20 @@ data class Project(
 
     fun applyCurrentEntryFilter(): Project = updateEntryFilter(entryFilter)
 
-    fun updateEntryFilter(entryFilter: EntryFilter?): Project {
+    fun updateEntryFilter(entryFilter: EntryFilter?, keepCurrentEntryOfModule: String? = null): Project {
         val modules = modules.map {
-            val filteredIndexes = entryFilter?.getFilteredIndexes(
+            val matchedIndexes = entryFilter?.getFilteredIndexes(
                 entries = it.entries,
                 labelerConf = labelerConf,
             ) ?: it.entries.indices.toList()
+            val keepCurrentIndex = it.name == keepCurrentEntryOfModule &&
+                it.currentIndex in it.entries.indices &&
+                it.currentIndex !in matchedIndexes
+            val filteredIndexes = if (keepCurrentIndex) {
+                (matchedIndexes + it.currentIndex).sorted()
+            } else {
+                matchedIndexes
+            }
             it.copy(
                 filteredEntryIndexes = filteredIndexes,
                 currentIndex = if (filteredIndexes.contains(it.currentIndex)) {
