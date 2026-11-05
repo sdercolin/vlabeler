@@ -58,7 +58,7 @@ application. [See more](https://github.com/JetBrains/compose-jb/tree/master/tuto
 
 Currently, cross-platform building is not supported. Only packages for your OS are built.
 
-Please ensure you have **JDK 17+** for building.
+Please use **JDK 17** (recommended, same as CI) for building. JDK 21 also works; newer JDKs (e.g. 25) are not supported by the current Gradle version.
 
 ```
 // Package by an installer

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 vLabeler is an open-source desktop voice labeling application built with Kotlin + Compose Multiplatform (JVM-only, `src/jvmMain`). Label formats and batch operations are user-customizable via JavaScript-based "labelers" and "plugins" executed by an embedded GraalVM JS engine.
 
-Requires **JDK 17+** to build.
+Requires **JDK 17** to build (recommended, same as CI; JDK 21 also works, JDK 25 fails with the current Gradle 7.3.3).
 
 ## Commands
 
