@@ -588,6 +588,25 @@ class ProjectStoreTest {
     /* region editions */
 
     @Test
+    fun `editEntries keeps the current entry when it no longer matches the filter`() {
+        val store = createStoreWithProject()
+        store.updateEntryFilter { copy(done = false) }
+        val before = store.requireProject().currentModule
+        assertEquals(listOf(0, 1, 2, 3), before.filteredEntryIndexes)
+        val entry = before.entries[0]
+        store.editEntries(listOf(Edition(0, entry.copy(end = entry.end + 5f), listOf("end"), Edition.Method.Dragging)))
+        val module = store.requireProject().currentModule
+        assertTrue(module.entries[0].notes.done)
+        assertEquals(0, module.currentIndex)
+        assertEquals(listOf(0, 1, 2, 3), module.filteredEntryIndexes)
+
+        store.nextEntry()
+        val switched = store.requireProject().currentModule
+        assertEquals(1, switched.currentIndex)
+        assertEquals(listOf(1, 2, 3), switched.filteredEntryIndexes)
+    }
+
+    @Test
     fun `editEntries applies the edition and takes the post-edit done action`() {
         val store = createStoreWithProject()
         val entry = store.requireProject().currentModule.entries[0]
