@@ -10,6 +10,15 @@ Release `$ARGUMENTS` (a version like `1.7.0-beta1` or `1.7.0`). If no version is
 
 A version is **stable** if it has no `-betaN` suffix; otherwise it is a **beta**.
 
+If the user just says "make a beta release" and `app.version` is already tagged, the target is the
+next beta (`X.Y.Z-beta(N+1)`). `tools/release.sh` does the version bump itself (see step 2), so
+don't commit the bump by hand.
+
+**GitHub account**: the active `gh` account may be `colin-weng-s`, which only has read access to
+`sdercolin/vlabeler`. Anything that writes to the repo (`generate-notes`, `gh release edit`,
+`gh run rerun`) needs the `sdercolin` account. Ask the user once, then prefix those commands with
+`GH_TOKEN=$(gh auth token -u sdercolin)` instead of switching the global account.
+
 ## 0. Pre-flight checks
 
 Stop and report if any of these fail:
@@ -21,7 +30,9 @@ Stop and report if any of these fail:
 3. The tag does not already exist (`git tag -l <version>`, `gh release view <version>`).
 4. The latest commit on the release branch passed CI (`gh run list --branch dev --limit 5`).
 5. `./gradlew build test` passes locally (this includes `checkLicenseReportUpdate`; if it fails,
-   run `./gradlew updateLicenseReport` and commit).
+   run `./gradlew updateLicenseReport` and commit). Run it with JDK 17 (CI) or 21:
+   `JAVA_HOME=$(/usr/libexec/java_home -v 17) ./gradlew build test`. The machine's default JDK
+   may be 25, and Gradle 7.3.3 fails on it with a bare `What went wrong: 25.x` message.
 6. No open PRs targeting `dev` that the user wants included. List them and confirm.
 
 ## 1. Choose the release branch
@@ -71,9 +82,9 @@ From the release branch at the release commit:
 ./tools/release.sh <version>
 ```
 
-The script validates the tag against `app.version` (offering to update and commit it if they
-differ — prefer fixing `gradle.properties` beforehand so the script does not need to), then tags
-HEAD and pushes the tag. **Confirm with the user before running it** — pushing the tag starts the
+The script validates the tag against `app.version`. If they differ, it asks y/n, then updates
+`app.version`, commits, and pushes the release branch (non-interactively: `echo y | ./tools/release.sh <version>`).
+It then tags HEAD and pushes the tag. **Confirm with the user before running it** — pushing the tag starts the
 release builds and is outward-facing.
 
 ## 3. Monitor the release builds
@@ -85,8 +96,12 @@ builds were dropped after 1.7.0-beta2.)
 - Watch with `gh run list --limit 10` / `gh run watch <id>` until all 3 succeed.
 - Verify the release has all expected artifacts: `~win64.zip`, `~mac-arm64.dmg`, `~amd64.deb`
   (+ AppImage if produced).
-- If a build fails for a transient reason, re-run it (`gh run rerun <id>`); the tag does not need
-  to be moved.
+- If a build fails for a transient reason, re-run it (`gh run rerun <id>`, as `sdercolin`); the
+  tag does not need to be moved.
+- If Mac `:notarizeDmg` fails (`xcrun notarytool submit ... exit code 1`) and fails again after a
+  re-run, it is not transient: usually a pending Apple developer agreement or an expired
+  app-specific password in the repo secrets. Only the user can fix it. Report it and continue
+  with the other steps.
 
 ## 4. Write the release notes
 
