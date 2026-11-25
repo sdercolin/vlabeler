@@ -81,4 +81,44 @@ sealed interface EditorEntryContextAction : ContextMenuAction<EditorEntryContext
         override val text: Strings
             get() = Strings.EditorContextActionFilterUndone
     }
+
+    sealed interface MultiEntryAction : EditorEntryContextAction {
+        val entryIndexes: List<Int>
+
+        @Composable
+        override fun toContextMenuItem(onClick: (EditorEntryContextAction) -> Unit): ContextMenuItem {
+            return ContextMenuItem(
+                label = string(text, entryIndexes.size),
+                onClick = { onClick(this) },
+            )
+        }
+    }
+
+    class SetEntriesDone(override val entryIndexes: List<Int>, val done: Boolean) : MultiEntryAction {
+        override val text: Strings
+            get() = if (done) {
+                Strings.EditorContextActionSetEntriesDone
+            } else {
+                Strings.EditorContextActionSetEntriesUndone
+            }
+    }
+
+    class SetEntriesStar(override val entryIndexes: List<Int>, val star: Boolean) : MultiEntryAction {
+        override val text: Strings
+            get() = if (star) {
+                Strings.EditorContextActionSetEntriesStarred
+            } else {
+                Strings.EditorContextActionSetEntriesUnstarred
+            }
+    }
+
+    class EditEntriesTag(override val entryIndexes: List<Int>, val commonTag: String) : MultiEntryAction {
+        override val text: Strings
+            get() = Strings.EditorContextActionEditEntriesTag
+    }
+
+    class RemoveEntries(override val entryIndexes: List<Int>) : MultiEntryAction {
+        override val text: Strings
+            get() = Strings.EditorContextActionRemoveEntries
+    }
 }

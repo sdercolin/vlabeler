@@ -16,10 +16,21 @@ fun Strings.ko(): String? = when (this) {
     MenuFileSaveAs -> "다른 이름으로 저장..."
     MenuFileProjectSetting -> "프로젝트 설정..."
     MenuFileImportProject -> "프로젝트 불러오기..."
+    MenuFileModuleManagement -> "하위 프로젝트 관리 (실험적)"
+    MenuFileModuleManagementAdd -> "[추가] 하위 프로젝트..."
+    MenuFileModuleManagementRename -> "[이름 변경] 현재 하위 프로젝트..."
+    MenuFileModuleManagementRemove -> "[제거] 현재 하위 프로젝트..."
+    MenuFileModuleManagementDuplicate -> "[복제] 현재 하위 프로젝트..."
+    ModuleOperationAddDefaultName -> "하위 프로젝트 추가"
+    ModuleOperationRenameDefaultName -> "현재 하위 프로젝트 이름 변경"
+    ModuleOperationRemoveDefaultName -> "현재 하위 프로젝트 제거"
+    ModuleOperationDuplicateDefaultName -> "현재 하위 프로젝트 복제"
     MenuFileReloadLabelFile -> "라벨 파일 새로 고침"
     MenuFileReloadLabelFilePickFile -> "파일에서 불러오기..."
     MenuFileReloadLabelFileDefault -> "출력 파일에서 불러오기..."
     MenuFileReloadLabelFileDefaultWithoutConfirmation -> "출력 파일에서 불러오기 (확인 없이)"
+    MenuFileReloadLabelFileAllModules -> "모든 하위 프로젝트의 출력 파일에서 불러오기..."
+    MenuFileReloadLabelFileAllModulesWithoutConfirmation -> "모든 하위 프로젝트의 출력 파일에서 불러오기 (확인 없이)"
     MenuFileExport -> "라벨 파일 내보내기..."
     MenuFileExportOverwrite -> "덮어씌워 라벨 파일 내보내기"
     MenuFileExportOverwriteAll -> "덮어씌워 모든 라벨 파일 내보내기"
@@ -206,6 +217,8 @@ fun Strings.ko(): String? = when (this) {
         "엔트리 \"%s\" 삭제 중...\n" +
             "이 엔트리는 현재 샘플 파일에서 유일하게 참조되고 있던 엔트리에요.\n" +
             "나중에 이 샘플에 엔트리를 추가하려면, `외형` -> `샘플 목록`을 눌러 주세요."
+    AskIfRemoveEntriesDialogDescription -> "%d개의 엔트리 삭제 중..."
+    EditEntriesTagDialogDescription -> "선택한 %d개 엔트리의 태그를 설정해요. 비워 두면 태그가 삭제돼요."
     AskIfLoadAutoSavedProjectDialogDescription ->
         "자동 저장된 프로젝트 파일을 찾았어요. 불러올까요? " +
             "자동 저장된 임시 파일은 다른 프로젝트를 만들거나 열면 사라지니 주의하세요."
@@ -477,6 +490,19 @@ fun Strings.ko(): String? = when (this) {
     PreferencesEditor -> "에디터"
     PreferencesEditorDescription -> "에디터의 외관과 프로그램의 동작을 커스텀합니다."
     PreferencesEditorPlayerCursorColor -> "재생 커서 색상"
+    PreferencesEditorEntryNamePresets -> "엔트리 이름 프리셋"
+    PreferencesEditorEntryNamePresetsDescription ->
+        "엔트리 이름을 입력하는 대화창(엔트리 이름 변경, 자르기 등)에서 빠르게 적용할 수 있는 엔트리 이름 프리셋이에요."
+    PreferencesStringListEmptyPlaceholder -> "항목이 없어요"
+    PreferencesStringListNewItemPlaceholder -> "새 항목..."
+    PreferencesStringListImport -> "파일에서 가져오기"
+    PreferencesStringListExport -> "파일로 내보내기"
+    PreferencesStringListImportDialogTitle -> "파일에서 가져오기"
+    PreferencesStringListExportDialogTitle -> "파일로 내보내기"
+    PreferencesStringListImportSuccess -> "항목을 가져왔어요."
+    PreferencesStringListImportFailure -> "선택한 파일을 가져오지 못했어요."
+    PreferencesStringListExportSuccess -> "항목을 내보냈어요."
+    PreferencesStringListExportFailure -> "선택한 파일로 내보내지 못했어요."
     PreferencesEditorLockedDrag -> "고정 드래그"
     PreferencesEditorLockedDragDescription ->
         "주요 마커를 움직일 때, 고정 드래그의 방식을 선택합니다.\n" +
@@ -489,6 +515,15 @@ fun Strings.ko(): String? = when (this) {
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "\"n번 마커 놓기 (커서 위치에)\" 입력으로 마커를 놓을 경우에도 " +
             "위의 고정 드래그 방식을 적용하기"
+    PreferencesEditorClickToJumpToEntry -> "클릭하여 엔트리로 이동"
+    PreferencesEditorClickToJumpToEntryDescription ->
+        "다중 엔트리 편집 모드에서 캔버스의 엔트리를 클릭하면 현재 엔트리로 설정됩니다."
+    PreferencesEditorCascadedDrag -> "캐스케이드 드래그"
+    PreferencesEditorCascadedDragDescription ->
+        "병렬 하위 프로젝트의 테두리에 대해 캐스케이드 드래그를 활성화할지 선택합니다.\n" +
+            "\"캐스케이드 드래그 사용\"으로 설정하면, 병렬 하위 프로젝트 간 정렬된 테두리가 함께 이동합니다."
+    PreferencesEditorCascadedDragDisabled -> "단일 테두리만 드래그"
+    PreferencesEditorCascadedDragEnabled -> "캐스케이드 드래그 사용"
     PreferencesEditorNotes -> "엔트리 상태 표기"
     PreferencesEditorNotesDescription ->
         "엔트리의 상태 (중요, 완료, 태그, 추가 정보) 에 관한 " +
@@ -572,6 +607,10 @@ fun Strings.ko(): String? = when (this) {
     PreferencesAutoSaveTargetProject -> "프로젝트 파일 덮어쓰기"
     PreferencesAutoSaveTargetRecord -> "임시 파일로 저장"
     PreferencesAutoSaveIntervalSec -> "저장 간격 (초)"
+    PreferencesAutoSavePermanentBackupMaxCount -> "영구 백업의 최대 개수"
+    PreferencesAutoSavePermanentBackupMaxCountDescription ->
+        "프로젝트 파일이 자동 저장되거나 수동으로 저장될 때 백업이 저장됩니다. " +
+            "제한을 초과하면 가장 오래된 백업이 삭제됩니다."
     PreferencesHistory -> "편집 기록"
     PreferencesHistoryDescription -> "편집(실행 취소/다시 실행) 동작을 커스텀합니다."
     PreferencesHistoryMaxSize -> "유지할 최대 편집 기록 수"
@@ -620,8 +659,8 @@ fun Strings.ko(): String? = when (this) {
     ActionInputResolution -> "캔버스 해상도 입력"
     ActionCancelDialog -> "대화창 닫기"
     ActionScissorsCut -> "자르기 (커서 위치에서)"
-    ActionSetValue1 -> "1번 마커 놓기 (커서 위치에)"
-    ActionSetValue2 -> "2번 마커 놓기 (커서 위치에)"
+    ActionSetValue1 -> "1번 마커 놓기 (커서 위치에) (다중 엔트리 편집 모드에서는 커서 위치 엔트리의 왼쪽 경계)"
+    ActionSetValue2 -> "2번 마커 놓기 (커서 위치에) (다중 엔트리 편집 모드에서는 커서 위치 엔트리의 오른쪽 경계)"
     ActionSetValue3 -> "3번 마커 놓기 (커서 위치에)"
     ActionSetValue4 -> "4번 마커 놓기 (커서 위치에)"
     ActionSetValue5 -> "5번 마커 놓기 (커서 위치에)"
@@ -630,6 +669,8 @@ fun Strings.ko(): String? = when (this) {
     ActionSetValue8 -> "8번 마커 놓기 (커서 위치에)"
     ActionSetValue9 -> "9번 마커 놓기 (커서 위치에)"
     ActionSetValue10 -> "10번 마커 놓기 (커서 위치에)"
+    ActionSetCurrentEntryLeft -> "현재 엔트리의 왼쪽 경계를 커서 위치에 놓기 (다중 엔트리 편집 모드)"
+    ActionSetCurrentEntryRight -> "현재 엔트리의 오른쪽 경계를 커서 위치에 놓기 (다중 엔트리 편집 모드)"
     ActionSetProperty1 -> "1번 값 입력"
     ActionSetProperty2 -> "2번 값 입력"
     ActionSetProperty3 -> "3번 값 입력"
@@ -652,6 +693,7 @@ fun Strings.ko(): String? = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "마커 드래그 시 미리보기 재생"
     ActionMoveParameterIgnoringConstraints -> "마커 드래그 시 위치 제약 무시"
     ActionMoveParameterInvertingLocked -> "마커 드래그 시 \"고정 드래그\" 설정 반대로 적용"
+    ActionMoveParameterInvertingCascaded -> "마커 드래그 시 \"캐스케이드 드래그\" 설정 반대로 적용"
     ActionPlayAudioSection -> "클릭된 부분만 재생"
     ActionPlayAudioUntilEnd -> "클릭된 위치 ~ 끝까지 재생"
     ActionPlayAudioUntilScreenEnd -> "클릭된 위치 ~ 현재 화면에 표시된 영역의 끝까지 재생"
@@ -796,5 +838,11 @@ fun Strings.ko(): String? = when (this) {
     EditorContextActionFilterUnstarred -> "즐겨찾기되지 않은 항목만 필터"
     EditorContextActionFilterDone -> "완료된 항목만 필터"
     EditorContextActionFilterUndone -> "미완료 항목만 필터"
+    EditorContextActionSetEntriesDone -> "%d개 항목을 완료로 표시"
+    EditorContextActionSetEntriesUndone -> "%d개 항목을 미완료로 표시"
+    EditorContextActionSetEntriesStarred -> "%d개 항목을 즐겨찾기에 추가"
+    EditorContextActionSetEntriesUnstarred -> "%d개 항목을 즐겨찾기에서 제거"
+    EditorContextActionEditEntriesTag -> "%d개 항목의 태그 설정..."
+    EditorContextActionRemoveEntries -> "%d개 항목 제거..."
     else -> null
 }

@@ -41,6 +41,11 @@ sealed class CommonConfirmationDialogAction(
             },
         )
 
+    class RemoveEntries(val entryIndexes: List<Int>) :
+        CommonConfirmationDialogAction(
+            getText = { string(Strings.AskIfRemoveEntriesDialogDescription, entryIndexes.size) },
+        )
+
     class LoadAutoSavedProject(val file: File) :
         CommonConfirmationDialogAction(Strings.AskIfLoadAutoSavedProjectDialogDescription)
 
@@ -62,6 +67,9 @@ sealed class CommonConfirmationDialogAction(
     object LabelFileChangeDetected : CommonConfirmationDialogAction(
         Strings.AskIfLabelFileChangeDetectedDialogDescription,
     )
+
+    class ModuleOperationConfirmation(message: LocalizedJsonString) :
+        CommonConfirmationDialogAction(getText = { message.get() })
 
     object ClearAppRecord : CommonConfirmationDialogAction(Strings.PreferencesMiscClearRecordConfirmation)
     object ClearAppData : CommonConfirmationDialogAction(Strings.PreferencesMiscClearAppDataConfirmation)

@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.exception.InvalidEditedProjectException
 import com.sdercolin.vlabeler.exception.ProjectUpdateOnSampleException
 import com.sdercolin.vlabeler.exception.PropertySetterRuntimeException
 import com.sdercolin.vlabeler.exception.PropertySetterUnexpectedRuntimeException
+import com.sdercolin.vlabeler.io.ModuleLabelReload
 import com.sdercolin.vlabeler.io.autoSaveTemporaryProjectFile
 import com.sdercolin.vlabeler.io.exportProject
 import com.sdercolin.vlabeler.io.exportProjectModule
@@ -21,6 +22,7 @@ import com.sdercolin.vlabeler.model.ProjectHistory
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
+import com.sdercolin.vlabeler.ui.dialog.ReloadLabelConfigs
 import com.sdercolin.vlabeler.ui.dialog.ReloadLabelDialogArgs
 import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
@@ -60,6 +62,7 @@ interface ProjectStore {
     fun updateProject(project: Project)
     fun updateProjectOnLoadedSample(sampleInfo: SampleInfo, moduleName: String)
     fun editEntries(editions: List<Edition>)
+    fun editEntriesWithCascade(currentModuleEditions: List<Edition>, cascadeEditions: Map<String, List<Edition>>)
     fun cutEntry(index: Int, position: Float, rename: String?, newName: String, targetEntryIndex: Int?)
     fun cutEntryOnScreen(
         index: Int,
@@ -112,6 +115,10 @@ interface ProjectStore {
     fun toggleCurrentEntryStar()
     fun editEntryTag(index: Int, tag: String)
     fun editCurrentEntryTag(tag: String)
+    fun setEntriesDone(indexes: List<Int>, done: Boolean)
+    fun setEntriesStar(indexes: List<Int>, star: Boolean)
+    fun editEntriesTag(indexes: List<Int>, tag: String)
+    fun removeEntries(indexes: List<Int>)
     val canEditCurrentEntryExtra: Boolean
     val canEditCurrentModuleExtra: Boolean
 
@@ -143,6 +150,16 @@ interface ProjectStore {
      * @param skipConfirmation If true, skip the confirmation dialog and apply the new entries directly.
      */
     fun reloadLabelFile(file: File?, skipConfirmation: Boolean)
+
+    /**
+     * Reloads the label files of all modules that have a defined raw label file, and updates the project with the
+     * new entries.
+     *
+     * @param skipConfirmation If true, skip the confirmation dialog and apply the new entries directly.
+     */
+    fun reloadAllLabelFiles(skipConfirmation: Boolean)
+    fun canReloadAllLabelFiles(): Boolean
+    fun applyAllReloadedEntries(reloads: List<ModuleLabelReload>, configs: ReloadLabelConfigs = ReloadLabelConfigs())
     fun autoReloadLabel(behavior: AppConf.AutoReload.Behavior, moduleName: String)
     suspend fun terminalAutoReloadLabel()
 
@@ -233,11 +250,7 @@ class ProjectStoreImpl(
     override fun editEntries(editions: List<Edition>) {
         val previousProject = requireProject()
         editProject {
-            val editedEntryMap = mutableMapOf<Int, IndexedEntry>()
-            editions.forEach {
-                editedEntryMap[it.index] = it.toIndexedEntry()
-            }
-            val editedEntries = editedEntryMap.values.toList().sortedBy { it.index }
+            val editedEntries = editions.toSortedIndexedEntries()
             updateCurrentModule {
                 updateEntries(editedEntries, labelerConf)
                     .takePostEditAction(
@@ -253,6 +266,47 @@ class ProjectStoreImpl(
                         labelerConf,
                     )
             }
+        }
+        val entrySwitched = previousProject.currentModuleIndex == project?.currentModuleIndex &&
+            previousProject.currentModule.currentIndex != project?.currentModule?.currentIndex
+        if (entrySwitched) {
+            scrollIfNeededWhenSwitchedEntry(previousProject)
+        }
+    }
+
+    override fun editEntriesWithCascade(
+        currentModuleEditions: List<Edition>,
+        cascadeEditions: Map<String, List<Edition>>,
+    ) {
+        val previousProject = requireProject()
+        editProject {
+            var result = this
+
+            val editedEntries = currentModuleEditions.toSortedIndexedEntries()
+            result = result.updateCurrentModule {
+                updateEntries(editedEntries, labelerConf)
+                    .takePostEditAction(
+                        currentModuleEditions,
+                        appConf.value.editor,
+                        AppConf.PostEditAction.Type.Done,
+                        labelerConf,
+                    )
+                    .takePostEditAction(
+                        currentModuleEditions,
+                        appConf.value.editor,
+                        AppConf.PostEditAction.Type.Next,
+                        labelerConf,
+                    )
+            }
+
+            for ((moduleName, editions) in cascadeEditions) {
+                val cascadeEntries = editions.toSortedIndexedEntries()
+                result = result.updateModule(moduleName) {
+                    updateEntries(cascadeEntries, labelerConf)
+                }
+            }
+
+            result
         }
         val entrySwitched = previousProject.currentModuleIndex == project?.currentModuleIndex &&
             previousProject.currentModule.currentIndex != project?.currentModule?.currentIndex
@@ -296,13 +350,45 @@ class ProjectStoreImpl(
     override val canUndo get() = history.canUndo
     override fun undo() {
         history.undo()
-        project = history.current
+        project = history.current.withCurrentIndexesKept()
+    }
+
+    /**
+     * When index changes are squashed in the history, a restored snapshot carries the indexes from when it was
+     * pushed, which may be stale. Keep the indexes of the current project instead, so that undo/redo does not move
+     * the cursor.
+     */
+    private fun Project.withCurrentIndexesKept(): Project {
+        if (!appConf.value.history.squashIndex) return this
+        val current = project ?: return this
+        // Match modules between the restored snapshot and the current project by name, so that module management
+        // operations (add/remove/rename, possibly reordering the list) do not associate unrelated modules.
+        // Modules that exist on only one side (e.g. the renamed ones) are paired by their order of appearance.
+        val currentNames = current.modules.mapTo(mutableSetOf()) { it.name }
+        val restoredNames = modules.mapTo(mutableSetOf()) { it.name }
+        val pairedByOrder = modules.filter { it.name !in currentNames }
+            .zip(current.modules.filter { it.name !in restoredNames })
+            .associate { (restored, currentModule) -> restored.name to currentModule }
+        fun findMatchingModule(module: Module): Module? =
+            current.modules.firstOrNull { it.name == module.name } ?: pairedByOrder[module.name]
+        val currentModuleName = current.currentModule.name
+        val newCurrentModuleIndex = modules
+            .indexOfFirst { findMatchingModule(it)?.name == currentModuleName }
+            .takeIf { it >= 0 }
+            ?: currentModuleIndex.coerceIn(0, modules.lastIndex)
+        return copy(
+            currentModuleIndex = newCurrentModuleIndex,
+            modules = modules.map { module ->
+                val currentModule = findMatchingModule(module) ?: return@map module
+                module.copy(currentIndex = currentModule.currentIndex.coerceIn(0, module.entries.lastIndex))
+            },
+        )
     }
 
     override val canRedo get() = history.canRedo
     override fun redo() {
         history.redo()
-        project = history.current
+        project = history.current.withCurrentIndexesKept()
     }
 
     override val canGoNextEntryOrSample: Boolean
@@ -355,7 +441,14 @@ class ProjectStoreImpl(
     override fun jumpToModuleAndEntry(moduleIndex: Int, entryIndex: Int) {
         editProject {
             copy(currentModuleIndex = moduleIndex)
-                .updateCurrentModule { copy(currentIndex = entryIndex) }
+                .updateCurrentModule {
+                    val newFiltered = if (entryIndex !in filteredEntryIndexes) {
+                        (filteredEntryIndexes + entryIndex).sorted()
+                    } else {
+                        filteredEntryIndexes
+                    }
+                    copy(currentIndex = entryIndex, filteredEntryIndexes = newFiltered)
+                }
         }
         if (appConf.value.editor.autoScroll.let { it.onJumpedToEntry || it.onSwitched }) {
             scrollFitViewModel.emitNext()
@@ -543,12 +636,19 @@ class ProjectStoreImpl(
                 val project = project ?: continue
                 when (autoSave.target) {
                     AppConf.AutoSave.Target.Project -> if (unsavedChangesState.hasUnsavedChanges) {
-                        saveProjectFile(project, allowAutoExport = true)
+                        saveProjectFile(
+                            project,
+                            allowAutoExport = true,
+                            maxBackupFileCount = autoSave.permanentBackupMaxCount,
+                        )
                         unsavedChangesState.projectSaved()
                     }
                     AppConf.AutoSave.Target.Record ->
                         if (unsavedChangesState.hasUnsavedChanges && savedTemporaryProject != project) {
-                            autoSaveTemporaryProjectFile(project)
+                            autoSaveTemporaryProjectFile(
+                                project,
+                                maxBackupFileCount = autoSave.permanentBackupMaxCount,
+                            )
                             savedTemporaryProject = project
                         }
                     else -> Unit
@@ -579,6 +679,29 @@ class ProjectStoreImpl(
 
     override fun editCurrentEntryTag(tag: String) {
         editCurrentProjectModule { editEntryTag(currentIndex, tag) }
+    }
+
+    override fun setEntriesDone(indexes: List<Int>, done: Boolean) {
+        editCurrentProjectModule { setEntriesDone(indexes, done) }
+    }
+
+    override fun setEntriesStar(indexes: List<Int>, star: Boolean) {
+        editCurrentProjectModule { setEntriesStar(indexes, star) }
+    }
+
+    override fun editEntriesTag(indexes: List<Int>, tag: String) {
+        editCurrentProjectModule { editEntriesTag(indexes, tag) }
+    }
+
+    override fun removeEntries(indexes: List<Int>) {
+        val previousProject = requireProject()
+        editProject { updateCurrentModule { removeEntries(indexes, labelerConf) } }
+        val autoScrollConf = appConf.value.editor.autoScroll
+        if ((requireProject().hasSwitchedSample(previousProject) && autoScrollConf.onLoadedNewSample) ||
+            autoScrollConf.onSwitched
+        ) {
+            scrollFitViewModel.emitNext()
+        }
     }
 
     override val canEditCurrentEntryExtra: Boolean
@@ -645,20 +768,32 @@ class ProjectStoreImpl(
 
     override fun overwriteExportCurrentModule() {
         scope.launch(Dispatchers.IO) {
-            progressState.showProgress()
-            val project = requireProject()
-            val targetFile = requireNotNull(project.currentModule.getRawFile(project))
-            exportProjectModule(project, project.currentModuleIndex, targetFile)
-            progressState.hideProgress()
+            try {
+                progressState.showProgress()
+                val project = requireProject()
+                val targetFile = requireNotNull(project.currentModule.getRawFile(project))
+                exportProjectModule(project, project.currentModuleIndex, targetFile)
+            } catch (e: Exception) {
+                Log.error(e)
+                errorState.showError(e)
+            } finally {
+                progressState.hideProgress()
+            }
         }
     }
 
     override fun overwriteExportAllModules() {
         scope.launch(Dispatchers.IO) {
-            progressState.showProgress()
-            val project = requireProject()
-            exportProject(project)
-            progressState.hideProgress()
+            try {
+                progressState.showProgress()
+                val project = requireProject()
+                exportProject(project)
+            } catch (e: Exception) {
+                Log.error(e)
+                errorState.showError(e)
+            } finally {
+                progressState.hideProgress()
+            }
         }
     }
 
@@ -746,11 +881,51 @@ class ProjectStoreImpl(
             } else {
                 dialogState?.openReloadLabelDialog(
                     ReloadLabelDialogArgs(
-                        project.currentModule.name,
-                        result.first,
-                        result.second,
+                        listOf(ModuleLabelReload(project.currentModule.name, result.first, result.second)),
                     ),
                 )
+            }
+        }
+    }
+
+    override fun reloadAllLabelFiles(skipConfirmation: Boolean) {
+        val project = project ?: return
+        val modulesWithFiles = project.modules.mapNotNull { module ->
+            module.getRawFile(project)?.takeIf { it.exists() }?.let { module to it }
+        }
+        if (modulesWithFiles.isEmpty()) return
+        scope.launch {
+            progressState.showProgress()
+            val results = withContext(Dispatchers.IO) {
+                modulesWithFiles.map { (module, file) ->
+                    reloadEntriesFromLabelFile(project, module, file)
+                        .map { ModuleLabelReload(module.name, it.first, it.second) }
+                }
+            }
+            progressState.hideProgress()
+            val reloads = results.map { result ->
+                result.getOrElse {
+                    errorState.showError(it, null)
+                    return@launch
+                }
+            }
+            if (skipConfirmation) {
+                applyAllReloadedEntries(reloads)
+            } else {
+                dialogState?.openReloadLabelDialog(ReloadLabelDialogArgs(reloads))
+            }
+        }
+    }
+
+    override fun canReloadAllLabelFiles(): Boolean {
+        val project = project ?: return false
+        return project.modules.size > 1 && project.modules.any { it.getRawFile(project) != null }
+    }
+
+    override fun applyAllReloadedEntries(reloads: List<ModuleLabelReload>, configs: ReloadLabelConfigs) {
+        editProject {
+            reloads.fold(this) { acc, reload ->
+                acc.applyReloadedEntries(reload.moduleName, reload.entries, reload.diff, configs)
             }
         }
     }
@@ -806,10 +981,13 @@ class ProjectStoreImpl(
 
     override suspend fun withExporting(onSuccess: suspend () -> File) {
         isExporting = true
-        val file = onSuccess()
-        val hash = calculateMD5(file)
-        cachedFileHashMap[file.absolutePath] = hash
-        isExporting = false
+        try {
+            val file = onSuccess()
+            val hash = calculateMD5(file)
+            cachedFileHashMap[file.absolutePath] = hash
+        } finally {
+            isExporting = false
+        }
     }
 
     override suspend fun terminalAutoReloadLabel() {
@@ -825,3 +1003,7 @@ class ProjectStoreImpl(
         }
     }
 }
+
+private fun List<Edition>.toSortedIndexedEntries(): List<IndexedEntry> =
+    associate { it.index to it.toIndexedEntry() }
+        .values.sortedBy { it.index }

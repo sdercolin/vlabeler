@@ -20,8 +20,8 @@ class SavedMutableState<T>(initial: T, private val save: (T) -> Unit) : MutableS
             save(value)
         }
 
-    override fun component1() = state.component1()
-    override fun component2() = state.component2()
+    override fun component1(): T = value
+    override fun component2(): (T) -> Unit = { value = it }
 }
 
 /**

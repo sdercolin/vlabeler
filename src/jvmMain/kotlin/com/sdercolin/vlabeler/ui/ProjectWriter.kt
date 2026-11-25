@@ -10,7 +10,11 @@ fun ProjectWriter(appState: AppState) {
     LaunchedEffect(writtenStatus) {
         if (writtenStatus != ProjectWriteStatus.UpdateRequested) return@LaunchedEffect
         val project = appState.project ?: return@LaunchedEffect
-        appState.saveProjectFile(project, allowAutoExport = true)
+        appState.saveProjectFile(
+            project,
+            allowAutoExport = true,
+            maxBackupFileCount = appState.appConf.autoSave.permanentBackupMaxCount,
+        )
         appState.notifySaved()
     }
 }

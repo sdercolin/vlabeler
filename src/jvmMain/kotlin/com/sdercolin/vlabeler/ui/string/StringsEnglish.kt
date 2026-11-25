@@ -14,10 +14,22 @@ fun Strings.en(): String = when (this) {
     MenuFileSaveAs -> "Save As..."
     MenuFileProjectSetting -> "Project Settings..."
     MenuFileImportProject -> "Import Project..."
+    MenuFileModuleManagement -> "Manage Subprojects (Experimental)"
+    MenuFileModuleManagementAdd -> "Add Subproject..."
+    MenuFileModuleManagementRename -> "Rename Current Subproject..."
+    MenuFileModuleManagementRemove -> "Remove Current Subproject..."
+    MenuFileModuleManagementDuplicate -> "Duplicate Current Subproject..."
+    ModuleOperationAddDefaultName -> "Add Subproject"
+    ModuleOperationRenameDefaultName -> "Rename Current Subproject"
+    ModuleOperationRemoveDefaultName -> "Remove Current Subproject"
+    ModuleOperationDuplicateDefaultName -> "Duplicate Current Subproject"
     MenuFileReloadLabelFile -> "Reload Label File"
     MenuFileReloadLabelFilePickFile -> "From File..."
     MenuFileReloadLabelFileDefault -> "From Output File..."
     MenuFileReloadLabelFileDefaultWithoutConfirmation -> "From Output File (without confirmation)"
+    MenuFileReloadLabelFileAllModules -> "From Output Files of All Subprojects..."
+    MenuFileReloadLabelFileAllModulesWithoutConfirmation ->
+        "From Output Files of All Subprojects (without confirmation)"
     MenuFileExport -> "Export Label File..."
     MenuFileExportOverwrite -> "Export Label File Overwriting"
     MenuFileExportOverwriteAll -> "Export All Label Files Overwriting"
@@ -205,6 +217,8 @@ fun Strings.en(): String = when (this) {
         "Removing entry \"%s\"...\n" +
             "This entry is the only one that has reference of the current sample file.\n" +
             "If you need to add an entry on it later, please see menu `View` -> `Sample List`."
+    AskIfRemoveEntriesDialogDescription -> "Removing %d entries..."
+    EditEntriesTagDialogDescription -> "Set tag for %d selected entries. Leave empty to clear tags."
     AskIfLoadAutoSavedProjectDialogDescription ->
         "Auto-saved project file found. Do you want to load it? " +
             "The file will be discarded if you opened or created another one."
@@ -485,6 +499,20 @@ fun Strings.en(): String = when (this) {
     PreferencesEditor -> "Editor"
     PreferencesEditorDescription -> "Customize the editor's appearance and behavior."
     PreferencesEditorPlayerCursorColor -> "Player cursor color"
+    PreferencesEditorEntryNamePresets -> "Entry name presets"
+    PreferencesEditorEntryNamePresetsDescription ->
+        "Preset entry names that can be quickly applied in the dialogs where you input an entry name, e.g. when " +
+            "renaming or cutting an entry."
+    PreferencesStringListEmptyPlaceholder -> "No items"
+    PreferencesStringListNewItemPlaceholder -> "New item..."
+    PreferencesStringListImport -> "Import from file"
+    PreferencesStringListExport -> "Export to file"
+    PreferencesStringListImportDialogTitle -> "Import from file"
+    PreferencesStringListExportDialogTitle -> "Export to file"
+    PreferencesStringListImportSuccess -> "Successfully imported items."
+    PreferencesStringListImportFailure -> "Failed to import the selected file."
+    PreferencesStringListExportSuccess -> "Successfully exported items."
+    PreferencesStringListExportFailure -> "Failed to export to the selected file."
     PreferencesEditorLockedDrag -> "Fixed-drag"
     PreferencesEditorLockedDragDescription ->
         "Select a condition to enable fixed-drag while you move " +
@@ -498,6 +526,16 @@ fun Strings.en(): String = when (this) {
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "Apply the fixed-drag setting above also when " +
             "setting the parameters with \"Set Parameter To Cursor Position\" key actions"
+    PreferencesEditorClickToJumpToEntry -> "Click to jump to entry"
+    PreferencesEditorClickToJumpToEntryDescription ->
+        "In multiple entry edit mode, click an entry on the canvas to make it the current entry"
+    PreferencesEditorCascadedDrag -> "Cascaded drag"
+    PreferencesEditorCascadedDragDescription ->
+        "Select whether to enable cascaded drag to borders in parallel subprojects.\n" +
+            "When set to \"Enable cascaded drag\", aligned borders across parallel subprojects " +
+            "will move together."
+    PreferencesEditorCascadedDragDisabled -> "Drag single border only"
+    PreferencesEditorCascadedDragEnabled -> "Enable cascaded drag"
     PreferencesEditorNotes -> "Notes"
     PreferencesEditorNotesDescription ->
         "Customize the editor's appearance and behavior about entry " +
@@ -585,6 +623,10 @@ fun Strings.en(): String = when (this) {
     PreferencesAutoSaveTargetProject -> "Overwrite project file"
     PreferencesAutoSaveTargetRecord -> "Save to temporary file"
     PreferencesAutoSaveIntervalSec -> "Interval (sec)"
+    PreferencesAutoSavePermanentBackupMaxCount -> "Maximum number of backups"
+    PreferencesAutoSavePermanentBackupMaxCountDescription ->
+        "Backups are saved when your project file is" +
+            " automatically saved or manually saved. The oldest backups will be deleted when exceeding the limit."
     PreferencesAutoReload -> "Auto reload"
     PreferencesAutoReloadDescription -> "Customize the behavior about auto-reloading label files when they are changed."
     PreferencesAutoReloadBehavior -> "Behavior"
@@ -640,8 +682,8 @@ fun Strings.en(): String = when (this) {
     ActionInputResolution -> "Input Canvas Resolution"
     ActionCancelDialog -> "Close Dialog"
     ActionScissorsCut -> "Cut at Current Cursor Position"
-    ActionSetValue1 -> "Set Parameter 1 To Cursor Position"
-    ActionSetValue2 -> "Set Parameter 2 To Cursor Position"
+    ActionSetValue1 -> "Set Parameter 1 To Cursor Position (Left Border Of Entry Under Cursor In Multi-Edit Mode)"
+    ActionSetValue2 -> "Set Parameter 2 To Cursor Position (Right Border Of Entry Under Cursor In Multi-Edit Mode)"
     ActionSetValue3 -> "Set Parameter 3 To Cursor Position"
     ActionSetValue4 -> "Set Parameter 4 To Cursor Position"
     ActionSetValue5 -> "Set Parameter 5 To Cursor Position"
@@ -650,6 +692,8 @@ fun Strings.en(): String = when (this) {
     ActionSetValue8 -> "Set Parameter 8 To Cursor Position"
     ActionSetValue9 -> "Set Parameter 9 To Cursor Position"
     ActionSetValue10 -> "Set Parameter 10 To Cursor Position"
+    ActionSetCurrentEntryLeft -> "Set Current Entry's Left Border To Cursor Position (Multiple Entry Edit Mode)"
+    ActionSetCurrentEntryRight -> "Set Current Entry's Right Border To Cursor Position (Multiple Entry Edit Mode)"
     ActionSetProperty1 -> "Input Value for Property 1"
     ActionSetProperty2 -> "Input Value for Property 2"
     ActionSetProperty3 -> "Input Value for Property 3"
@@ -672,6 +716,7 @@ fun Strings.en(): String = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "Drag Parameter Line with Playback Preview"
     ActionMoveParameterIgnoringConstraints -> "Drag Parameter Line Ignoring Constraints"
     ActionMoveParameterInvertingLocked -> "Drag Parameter Line with Fixed-drag Settings Inverted"
+    ActionMoveParameterInvertingCascaded -> "Drag Parameter Line with Cascaded-drag Settings Inverted"
     ActionPlayAudioSection -> "Play the Clicked Audio Part"
     ActionPlayAudioUntilEnd -> "Play the Audio from Clicked Position until the End"
     ActionPlayAudioUntilScreenEnd -> "Play the Audio from Clicked Position until the End of the Screen"
@@ -821,4 +866,10 @@ fun Strings.en(): String = when (this) {
     EditorContextActionFilterUnstarred -> "Filter Unstarred Entries"
     EditorContextActionFilterDone -> "Filter Done Entries"
     EditorContextActionFilterUndone -> "Filter Undone Entries"
+    EditorContextActionSetEntriesDone -> "Mark %d Entries as Done"
+    EditorContextActionSetEntriesUndone -> "Mark %d Entries as Not Done"
+    EditorContextActionSetEntriesStarred -> "Star %d Entries"
+    EditorContextActionSetEntriesUnstarred -> "Unstar %d Entries"
+    EditorContextActionEditEntriesTag -> "Set Tag for %d Entries..."
+    EditorContextActionRemoveEntries -> "Remove %d Entries..."
 }

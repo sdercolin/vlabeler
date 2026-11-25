@@ -34,7 +34,7 @@ import kotlin.math.pow
  * @property length The number of frames in the sample file.
  * @property lengthMillis The length of the sample file in milliseconds.
  * @property chunkSize The number of frames in each chunk. The last chunk may have fewer frames, but it doesn't matter
- *     because the chunkSize is used for calculating the offset of the current chunk.
+ *    because the chunkSize is used for calculating the offset of the current chunk.
  * @property chunkCount The number of chunks.
  * @property hasSpectrogram Whether spectrogram is loaded for the sample file.
  * @property hasPower Whether power is loaded for the sample file.

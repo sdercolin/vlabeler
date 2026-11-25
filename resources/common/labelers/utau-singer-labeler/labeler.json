@@ -1,7 +1,7 @@
 {
     "name": "utau-singer.default",
-    "version": 25,
-    "serialVersion": 2,
+    "version": 27,
+    "serialVersion": 3,
     "singleFile": false,
     "extension": "ini",
     "displayedName": {
@@ -492,5 +492,65 @@
             "extension": "",
             "scripts": "quickProjectBuilder.js"
         }
-    ]
+    ],
+    "moduleManagement": {
+        "add": {
+            "parameters": [
+                {
+                    "type": "rawFile",
+                    "name": "folder",
+                    "label": {
+                        "en": "Folder to add",
+                        "zh": "要添加的文件夹",
+                        "ja": "追加するフォルダ",
+                        "ko": "추가할 폴더"
+                    },
+                    "description": {
+                        "en": "Select a folder under the singer's root directory that is not included in the project yet.",
+                        "zh": "选择一个位于歌手根目录下且尚未被包含在项目中的文件夹。",
+                        "ja": "音源のルートディレクトリ以下にある、まだプロジェクトに含まれていないフォルダを選択してください。",
+                        "ko": "가수 루트 폴더 아래에 있는, 아직 프로젝트에 포함되지 않은 폴더를 선택해 주세요."
+                    },
+                    "defaultValue": "",
+                    "optional": false,
+                    "isFolder": true
+                }
+            ],
+            "scripts": "addModule.js"
+        },
+        "rename": {
+            "parameters": [
+                {
+                    "type": "string",
+                    "name": "newName",
+                    "label": {
+                        "en": "New name",
+                        "zh": "新名称",
+                        "ja": "新しい名前",
+                        "ko": "새 이름"
+                    },
+                    "defaultValue": "",
+                    "optional": false
+                }
+            ],
+            "confirmation": {
+                "en": "The folder of the current subproject will be renamed (moved) on disk accordingly. This operation cannot be undone, and the undo history of the project will be cleared. Continue?",
+                "zh": "当前子项目对应的文件夹将在磁盘上被重命名（移动）。此操作无法撤销，且项目的撤销历史将被清空。是否继续？",
+                "ja": "現在のサブプロジェクトのフォルダはディスク上でリネーム（移動）されます。この操作は元に戻せず、プロジェクトの取り消し履歴はクリアされます。続行しますか？",
+                "ko": "현재 하위 프로젝트의 폴더 이름이 디스크에서 변경(이동)됩니다. 이 작업은 되돌릴 수 없으며, 프로젝트의 실행 취소 기록이 지워집니다. 계속하시겠습니까?"
+            },
+            "irreversible": true,
+            "scripts": "renameModule.js"
+        },
+        "remove": {
+            "confirmation": {
+                "en": "The folder of the current subproject, including all the files inside it, will be deleted from disk. This operation cannot be undone, and the undo history of the project will be cleared. Continue?",
+                "zh": "当前子项目对应的文件夹及其中的所有文件将从磁盘中删除。此操作无法撤销，且项目的撤销历史将被清空。是否继续？",
+                "ja": "現在のサブプロジェクトのフォルダとその中のすべてのファイルはディスクから削除されます。この操作は元に戻せず、プロジェクトの取り消し履歴はクリアされます。続行しますか？",
+                "ko": "현재 하위 프로젝트의 폴더와 그 안의 모든 파일이 디스크에서 삭제됩니다. 이 작업은 되돌릴 수 없으며, 프로젝트의 실행 취소 기록이 지워집니다. 계속하시겠습니까?"
+            },
+            "irreversible": true,
+            "scripts": "removeModule.js"
+        }
+    }
 }

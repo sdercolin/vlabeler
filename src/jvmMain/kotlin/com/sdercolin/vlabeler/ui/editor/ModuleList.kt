@@ -92,7 +92,7 @@ fun ModuleList(
             text = state.searchText,
             onTextChange = {
                 state.searchText = it
-                state.updateSearch()
+                state.updateSearch(selectFirst = true)
             },
             focusRequester = focusRequester,
             onFocusedChanged = {

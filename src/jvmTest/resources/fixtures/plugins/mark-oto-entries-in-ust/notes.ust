@@ -1,0 +1,18 @@
+[#VERSION]
+UST Version1.2
+[#SETTING]
+Tempo=120.00
+Tracks=1
+ProjectName=test
+Mode2=True
+[#0000]
+Length=480
+Lyric=a ka
+NoteNum=57
+PreUtterance=
+[#0001]
+Length=480
+Lyric=- i
+NoteNum=60
+PreUtterance=
+[#TRACKEND]

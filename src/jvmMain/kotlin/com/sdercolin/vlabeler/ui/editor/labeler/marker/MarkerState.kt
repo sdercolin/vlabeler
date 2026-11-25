@@ -11,8 +11,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.ui.editor.Edition
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.IndexedEntry
 import com.sdercolin.vlabeler.ui.editor.Tool
@@ -44,6 +46,7 @@ class MarkerState(
     val canvasHeightState: MutableState<Float>,
     val waveformsHeightRatio: Float,
     private val snapDrag: SnapDrag,
+    private val project: Project,
 ) {
     val entryBorders: List<Float> = entriesInPixel.fold<EntryInPixel, List<Float>>(listOf()) { acc, entryInPixel ->
         val lastEntryEnd = acc.lastOrNull()
@@ -88,18 +91,31 @@ class MarkerState(
         return index % (labelerConf.fields.size + 1)
     }
 
+    /**
+     * The flattened point index of the given entry's start border. Returns [MarkerCursorState.START_POINT_INDEX] for
+     * the first entry, whose start is the shared canvas start rather than an inner border.
+     */
+    fun getStartBorderPointIndex(entryIndex: Int): Int = if (entryIndex == 0) {
+        MarkerCursorState.START_POINT_INDEX
+    } else {
+        entryIndex * (labelerConf.fields.size + 1) - 1
+    }
+
+    /**
+     * The flattened point index of the given entry's end border. Returns [MarkerCursorState.END_POINT_INDEX] for the
+     * last entry, whose end is the shared canvas end rather than an inner border.
+     */
+    fun getEndBorderPointIndex(entryIndex: Int): Int = if (entryIndex == entriesInPixel.indices.last()) {
+        MarkerCursorState.END_POINT_INDEX
+    } else {
+        // the end border's flattened index, derived from the entry index directly (not from the start border index,
+        // which is overridden to START_POINT_INDEX for the first entry and would otherwise mis-compute it)
+        (entryIndex + 1) * (labelerConf.fields.size + 1) - 1
+    }
+
     fun getPointIndexAsSingleEntry(entryIndex: Int, pointIndex: Int): Int {
-        val entryIndices = entriesInPixel.indices
-        val startPointIndex = if (entryIndex == 0) {
-            MarkerCursorState.START_POINT_INDEX
-        } else {
-            entryIndex * (labelerConf.fields.size + 1) - 1
-        }
-        val endPointIndex = if (entryIndex == entryIndices.last()) {
-            MarkerCursorState.END_POINT_INDEX
-        } else {
-            startPointIndex + labelerConf.fields.size + 1
-        }
+        val startPointIndex = getStartBorderPointIndex(entryIndex)
+        val endPointIndex = getEndBorderPointIndex(entryIndex)
         return when (pointIndex) {
             startPointIndex -> MarkerCursorState.START_POINT_INDEX
             endPointIndex -> MarkerCursorState.END_POINT_INDEX
@@ -109,7 +125,9 @@ class MarkerState(
                 } else {
                     (startPointIndex + 1) until (startPointIndex + 1 + labelerConf.fields.size)
                 }
-                fieldPointIndexes.indexOfFirst { it == pointIndex }
+                val fieldIndex = fieldPointIndexes.indexOfFirst { it == pointIndex }
+                // the point does not belong to this entry; do not return -1, which collides with END_POINT_INDEX
+                if (fieldIndex < 0) MarkerCursorState.NONE_POINT_INDEX else fieldIndex
             }
         }
     }
@@ -314,6 +332,60 @@ class MarkerState(
         return entries
     }
 
+    fun computeCascadeEditions(
+        snappedPosition: Float,
+        originalPosition: Float,
+    ): Map<String, List<Edition>> {
+        if (snappedPosition == originalPosition) return emptyMap()
+        val snapTargets = snapDrag.getSnapTargets(originalPosition)
+        if (snapTargets.isEmpty()) return emptyMap()
+
+        val newBorderMillis = entryConverter.convertToMillis(snappedPosition)
+
+        val result = mutableMapOf<String, List<Edition>>()
+
+        val targetsByModule = snapTargets.groupBy { it.moduleName }
+        for ((moduleName, targets) in targetsByModule) {
+            val module = project.modules.firstOrNull { it.name == moduleName } ?: continue
+
+            val editions = mutableListOf<Edition>()
+            var valid = true
+
+            for (target in targets) {
+                val leftEntry = module.entries.getOrNull(target.entryIndex) ?: continue
+                val rightEntry = module.entries.getOrNull(target.entryIndex + 1) ?: continue
+
+                if (newBorderMillis <= leftEntry.start || newBorderMillis >= rightEntry.end) {
+                    valid = false
+                    break
+                }
+
+                editions.add(
+                    Edition(
+                        index = target.entryIndex,
+                        newValue = leftEntry.copy(end = newBorderMillis),
+                        fieldNames = listOf("end"),
+                        method = Edition.Method.Dragging,
+                    ),
+                )
+                editions.add(
+                    Edition(
+                        index = target.entryIndex + 1,
+                        newValue = rightEntry.copy(start = newBorderMillis),
+                        fieldNames = listOf("start"),
+                        method = Edition.Method.Dragging,
+                    ),
+                )
+            }
+
+            if (valid && editions.isNotEmpty()) {
+                result[moduleName] = editions
+            }
+        }
+
+        return result
+    }
+
     fun getPointIndexForHovering(
         x: Float,
         y: Float,
@@ -385,14 +457,14 @@ class MarkerState(
                 }
             }
 
-        // check start again
+        // check end again
         if ((endInPixel - x).absoluteValue <= NEAR_RADIUS_START_OR_END) {
             return MarkerCursorState.END_POINT_INDEX
         }
 
-        // check end again
+        // check start again
         if ((startInPixel - x).absoluteValue <= NEAR_RADIUS_START_OR_END) {
-            MarkerCursorState.START_POINT_INDEX
+            return MarkerCursorState.START_POINT_INDEX
         }
 
         return MarkerCursorState.NONE_POINT_INDEX
@@ -414,6 +486,14 @@ class MarkerState(
         }
         return null
     }
+
+    /**
+     * Returns the index (within [entriesInPixel]) of the entry whose actual range contains [position], or null if the
+     * cursor is not over any entry.
+     */
+    fun getEntryIndexByCursorPosition(position: Float): Int? = entriesInPixel.indexOfFirst {
+        it.getActualStart(labelerConf) <= position && position <= it.getActualEnd(labelerConf)
+    }.takeIf { it >= 0 }
 
     fun isValidCutPosition(position: Float) = entriesInPixel.any { it.isValidCutPosition(position) }
 
@@ -437,32 +517,12 @@ class MarkerState(
         appConf: AppConf,
         labelerConf: LabelerConf,
     ): Pair<List<EntryInPixel>, Int>? {
-        val paramIndex = when (action) {
-            KeyAction.SetValue1 -> 0
-            KeyAction.SetValue2 -> 1
-            KeyAction.SetValue3 -> 2
-            KeyAction.SetValue4 -> 3
-            KeyAction.SetValue5 -> 4
-            KeyAction.SetValue6 -> 5
-            KeyAction.SetValue7 -> 6
-            KeyAction.SetValue8 -> 7
-            KeyAction.SetValue9 -> 8
-            KeyAction.SetValue10 -> 9
-            else -> return null
-        }
-
-        // Only used in single edit mode
-        if (entries.size != 1) return null
-
-        val fieldCount = this.labelerConf.fields.filter { it.shortcutIndex != null }.size
-        val pointIndex = when {
-            paramIndex == 0 -> MarkerCursorState.START_POINT_INDEX
-            paramIndex == fieldCount + 1 -> MarkerCursorState.END_POINT_INDEX
-            paramIndex <= fieldCount -> this.labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
-                .takeIf { it >= 0 } ?: return null
-            else -> return null
-        }
         val cursorPosition = cursorState.value.position ?: return null
+        val pointIndex = if (entries.size == 1) {
+            getSingleEditPointIndexByKeyAction(action) ?: return null
+        } else {
+            getMultiEditPointIndexByKeyAction(action, cursorPosition) ?: return null
+        }
         val lockDrag = appConf.editor.lockedSettingParameterWithCursor &&
             when (appConf.editor.lockedDrag) {
                 AppConf.Editor.LockedDrag.UseLabeler -> {
@@ -482,6 +542,59 @@ class MarkerState(
             getDraggedEntries(pointIndex, cursorPosition, forcedDrag = false)
         }
         return entries to pointIndex
+    }
+
+    /**
+     * Resolves the flattened point index for a `SetValueN` key action in single entry edit mode, where the parameter
+     * refers to the single edited entry's start/end/field points.
+     */
+    private fun getSingleEditPointIndexByKeyAction(action: KeyAction): Int? {
+        val paramIndex = when (action) {
+            KeyAction.SetValue1 -> 0
+            KeyAction.SetValue2 -> 1
+            KeyAction.SetValue3 -> 2
+            KeyAction.SetValue4 -> 3
+            KeyAction.SetValue5 -> 4
+            KeyAction.SetValue6 -> 5
+            KeyAction.SetValue7 -> 6
+            KeyAction.SetValue8 -> 7
+            KeyAction.SetValue9 -> 8
+            KeyAction.SetValue10 -> 9
+            else -> return null
+        }
+        val fieldCount = labelerConf.fields.filter { it.shortcutIndex != null }.size
+        return when {
+            paramIndex == 0 -> MarkerCursorState.START_POINT_INDEX
+            paramIndex == fieldCount + 1 -> MarkerCursorState.END_POINT_INDEX
+            paramIndex <= fieldCount -> labelerConf.fields.indexOfFirst { it.shortcutIndex == paramIndex }
+                .takeIf { it >= 0 } ?: return null
+            else -> return null
+        }
+    }
+
+    /**
+     * Resolves the flattened point index for a border-setting key action in multiple entry edit mode. Only borders can
+     * be set here, since fields cannot be identified unambiguously across a group of entries:
+     * - [KeyAction.SetValue1] / [KeyAction.SetValue2] target the left / right border of the entry under the cursor.
+     * - [KeyAction.SetCurrentEntryLeft] / [KeyAction.SetCurrentEntryRight] target the left / right border of the
+     *   current entry regardless of where the cursor is.
+     *
+     * Returns null when the action is not a supported border action, or when the target entry cannot be located.
+     */
+    private fun getMultiEditPointIndexByKeyAction(action: KeyAction, cursorPosition: Float): Int? {
+        val entryIndex = when (action) {
+            KeyAction.SetValue1, KeyAction.SetValue2 ->
+                getEntryIndexByCursorPosition(cursorPosition) ?: return null
+            KeyAction.SetCurrentEntryLeft, KeyAction.SetCurrentEntryRight ->
+                entries.indexOfFirst { it.index == project.currentModule.currentIndex }.takeIf { it >= 0 }
+                    ?: return null
+            else -> return null
+        }
+        return when (action) {
+            KeyAction.SetValue1, KeyAction.SetCurrentEntryLeft -> getStartBorderPointIndex(entryIndex)
+            KeyAction.SetValue2, KeyAction.SetCurrentEntryRight -> getEndBorderPointIndex(entryIndex)
+            else -> null
+        }
     }
 
     val isCursor: Boolean
@@ -558,7 +671,8 @@ fun rememberMarkerState(
         } else null
         nextEntry?.end ?: canvasParams.lengthInPixel
     }
-    val cursorState = remember { mutableStateOf(MarkerCursorState()) }
+    val entryLoadedCount = editorState.entryLoadedCount
+    val cursorState = remember(entryLoadedCount) { mutableStateOf(MarkerCursorState()) }
     val scissorsState = remember { mutableStateOf<MarkerScissorsState?>(null) }
     val panState = remember { mutableStateOf<MarkerPanState?>(null) }
     val playbackState = remember { mutableStateOf<MarkerPlaybackState?>(null) }
@@ -589,6 +703,7 @@ fun rememberMarkerState(
         panState,
         canvasHeightState,
         waveformsHeightRatio,
+        project,
     ) {
         MarkerState(
             entries,
@@ -608,6 +723,7 @@ fun rememberMarkerState(
             canvasHeightState,
             waveformsHeightRatio,
             snapDrag,
+            project,
         )
     }
 }

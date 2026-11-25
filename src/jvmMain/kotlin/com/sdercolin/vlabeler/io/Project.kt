@@ -23,6 +23,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.charset.Charset
@@ -195,7 +197,11 @@ suspend fun awaitLoadProject(
         appState.scrollFitViewModel.emitNext()
     }
     if (fixedProject != project) {
-        appState.saveProjectFile(fixedProject, allowAutoExport = false)
+        appState.saveProjectFile(
+            fixedProject,
+            allowAutoExport = false,
+            maxBackupFileCount = appState.appConf.autoSave.permanentBackupMaxCount,
+        )
     }
     appState.hideProgress()
 }
@@ -227,7 +233,7 @@ suspend fun awaitOpenCreatedProject(
     project: Project,
     appState: AppState,
 ) {
-    val file = appState.saveProjectFile(project)
+    val file = appState.saveProjectFile(project, maxBackupFileCount = appState.appConf.autoSave.permanentBackupMaxCount)
     project.clearCache()
     appState.openEditor(project)
     appState.discardAutoSavedProjects()
@@ -268,33 +274,29 @@ suspend fun ProjectStore.exportProjectModule(
     val inEntryScope = project.labelerConf.writer.scope == LabelerConf.Scope.Entry
     val outputModuleNames = mutableListOf<String>()
     val module = project.modules[moduleIndex]
-    runCatching {
-        if (outputFile.parentFile.exists().not()) {
-            outputFile.parentFile.mkdirs()
-        }
-        val outputText = if (inEntryScope) {
-            outputModuleNames.add(module.name)
-            project.singleModuleToRawLabels(moduleIndex)
-        } else {
-            val relatedModules = project.modules.withIndex().filter {
-                it.value == module || it.value.isParallelTo(module)
-            }
-            outputModuleNames.addAll(relatedModules.map { it.value.name })
-            project.modulesToRawLabels(relatedModules.map { it.index })
-        }
-
-        val charset = project.encoding.let { Charset.forName(it) } ?: Charsets.UTF_8
-        withExporting {
-            outputFile.writeText(outputText, charset)
-            outputFile
-        }
-        Log.debug(
-            "Project module ${outputModuleNames.joinToString { "\"$it\"" }} " +
-                "exported to ${outputFile.absolutePath}",
-        )
-    }.getOrElse {
-        Log.error(it)
+    if (outputFile.parentFile.exists().not()) {
+        outputFile.parentFile.mkdirs()
     }
+    val outputText = if (inEntryScope) {
+        outputModuleNames.add(module.name)
+        project.singleModuleToRawLabels(moduleIndex)
+    } else {
+        val relatedModules = project.modules.withIndex().filter {
+            it.value == module || it.value.isParallelTo(module)
+        }
+        outputModuleNames.addAll(relatedModules.map { it.value.name })
+        project.modulesToRawLabels(relatedModules.map { it.index })
+    }
+
+    val charset = project.encoding.let { Charset.forName(it) } ?: Charsets.UTF_8
+    withExporting {
+        outputFile.writeText(outputText, charset)
+        outputFile
+    }
+    Log.debug(
+        "Project module ${outputModuleNames.joinToString { "\"$it\"" }} " +
+            "exported to ${outputFile.absolutePath}",
+    )
 }
 
 private var saveFileJob: Job? = null
@@ -304,9 +306,14 @@ private var saveFileJob: Job? = null
  *
  * @param project The project to save.
  * @param allowAutoExport Whether to allow auto export.
+ * @param maxBackupFileCount The maximum number of backup files to keep.
  * @return The saved project file.
  */
-suspend fun ProjectStore.saveProjectFile(project: Project, allowAutoExport: Boolean = false): File =
+suspend fun ProjectStore.saveProjectFile(
+    project: Project,
+    allowAutoExport: Boolean = false,
+    maxBackupFileCount: Int,
+): File =
     withContext(Dispatchers.IO) {
         saveFileJob?.join()
         saveFileJob = launch {
@@ -319,11 +326,18 @@ suspend fun ProjectStore.saveProjectFile(project: Project, allowAutoExport: Bool
             Log.debug("Project saved to ${project.projectFile}")
 
             if (allowAutoExport && project.autoExport) {
-                exportProject(project)
+                runCatching {
+                    exportProject(project)
+                }.onFailure {
+                    Log.error(it)
+                }
             }
         }
         saveFileJob?.join()
         saveFileJob = null
+        launch {
+            saveBackupProjectFile(project, maxFileCount = maxBackupFileCount)
+        }
         project.projectFile
     }
 
@@ -331,14 +345,64 @@ suspend fun ProjectStore.saveProjectFile(project: Project, allowAutoExport: Bool
  * Save a project to a temporary file.
  *
  * @param project The project to save.
+ * @param maxBackupFileCount The maximum number of backup files to keep.
  * @return The saved temporary file.
  */
-suspend fun autoSaveTemporaryProjectFile(project: Project): File = withContext(Dispatchers.IO) {
-    val file = RecordDir.resolve("_" + project.projectFile.name)
-    val projectContent = project.stringifyJson()
-    file.writeText(projectContent)
-    Log.debug("Project auto-saved temporarily: $file")
-    file
+suspend fun autoSaveTemporaryProjectFile(project: Project, maxBackupFileCount: Int): File =
+    withContext(Dispatchers.IO) {
+        val file = RecordDir.resolve("_" + project.projectFile.name)
+        val projectContent = project.stringifyJson()
+        file.writeText(projectContent)
+        Log.debug("Project auto-saved temporarily: $file")
+        launch {
+            saveBackupProjectFile(project, maxFileCount = maxBackupFileCount)
+        }
+        file
+    }
+
+private val backupMutex = Mutex()
+
+/**
+ * Save a backup of the project to a backup file.
+ *
+ * @param project The project to back up.
+ * @param maxFileCount The maximum number of backup files to keep.
+ * @return The saved backup file.
+ */
+suspend fun saveBackupProjectFile(project: Project, maxFileCount: Int) = withContext(Dispatchers.IO) {
+    if (maxFileCount <= 0) {
+        return@withContext
+    }
+    backupMutex.withLock {
+        val backupDir = project.workingDirectory.resolve("backups")
+        if (!backupDir.exists()) {
+            backupDir.mkdirs()
+        }
+        val filePrefix = project.projectFile.name + ".backup."
+        val existingBackupFiles = backupDir.listFiles { _, name ->
+            name.startsWith(filePrefix)
+        }?.sortedBy { it.lastModified() } ?: emptyList()
+        val latest = existingBackupFiles.lastOrNull()
+        val content = project.stringifyJson()
+        if (latest?.readText() == content) {
+            Log.debug("No changes since latest backup. Skipping backup.")
+            return@withLock null
+        }
+        val overflow = existingBackupFiles.size - maxFileCount + 1
+        if (overflow > 0) {
+            existingBackupFiles.take(overflow).forEach {
+                Log.info("Deleting backup: ${it.absolutePath}")
+                it.delete()
+            }
+        }
+        val timestamp = System.currentTimeMillis()
+        val backupFile = backupDir.resolve("$filePrefix$timestamp")
+        val tmpFile = File(backupFile.absolutePath + ".tmp")
+        tmpFile.writeText(content)
+        tmpFile.renameTo(backupFile)
+
+        Log.debug("Project backup saved to ${backupFile.absolutePath}")
+    }
 }
 
 /**

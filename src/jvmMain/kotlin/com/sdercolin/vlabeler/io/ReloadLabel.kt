@@ -4,6 +4,7 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.EntryListDiff
 import com.sdercolin.vlabeler.model.EntryListDiffItem
 import com.sdercolin.vlabeler.model.EntryNotes
+import com.sdercolin.vlabeler.model.Module
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.computeEntryListDiff
 import com.sdercolin.vlabeler.ui.dialog.ReloadLabelConfigs
@@ -13,9 +14,15 @@ import java.io.File
 fun reloadEntriesFromLabelFile(
     project: Project,
     file: File,
+): Result<Pair<List<Entry>, EntryListDiff>> = reloadEntriesFromLabelFile(project, project.currentModule, file)
+
+fun reloadEntriesFromLabelFile(
+    project: Project,
+    module: Module,
+    file: File,
 ): Result<Pair<List<Entry>, EntryListDiff>> = runCatching {
-    val sampleFiles = project.currentModule.entries.map { it.sample }.distinct().sorted()
-        .map { project.currentModule.getSampleFile(project, it) }
+    val sampleFiles = module.entries.map { it.sample }.distinct().sorted()
+        .map { module.getSampleFile(project, it) }
 
     val entries = moduleFromRawLabels(
         sources = file.readTextByEncoding(project.encoding).lines(),
@@ -27,12 +34,18 @@ fun reloadEntriesFromLabelFile(
         encoding = project.encoding,
     )
     val diff = computeEntryListDiff(
-        list1 = project.currentModule.entries,
+        list1 = module.entries,
         list2 = entries,
         weights = project.labelerConf.entrySimilarityWeights,
     )
     entries to diff
 }
+
+data class ModuleLabelReload(
+    val moduleName: String,
+    val entries: List<Entry>,
+    val diff: EntryListDiff,
+)
 
 fun mergeEntryLists(
     newList: List<Entry>,

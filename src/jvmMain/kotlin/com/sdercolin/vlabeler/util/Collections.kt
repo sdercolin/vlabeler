@@ -7,6 +7,7 @@ fun <T> List<T>.getPreviousOrNull(predict: (T) -> Boolean): T? {
 
 fun <T> List<T>.getNextOrNull(predict: (T) -> Boolean): T? {
     val index = indexOfFirst { predict(it) }
+    if (index < 0) return null
     return getOrNull(index + 1)
 }
 

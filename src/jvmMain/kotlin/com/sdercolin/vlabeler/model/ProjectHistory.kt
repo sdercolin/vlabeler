@@ -44,16 +44,19 @@ class ProjectHistory(private val appConfState: State<AppConf>) {
         index = list.lastIndex
     }
 
-    private fun Project.contentEquals(other: Project) = copy(
-        entryFilter = other.entryFilter,
-        currentModuleIndex = if (squashIndex) other.currentModuleIndex else currentModuleIndex,
-        // modules size will not change
-        modules = modules.zip(other.modules).map { (module, other) ->
-            module.copy(
-                currentIndex = if (squashIndex) other.currentIndex else module.currentIndex,
-            )
-        },
-    ) == other
+    private fun Project.contentEquals(other: Project): Boolean {
+        // module management operations may change the size of the module list
+        if (modules.size != other.modules.size) return false
+        return copy(
+            entryFilter = other.entryFilter,
+            currentModuleIndex = if (squashIndex) other.currentModuleIndex else currentModuleIndex,
+            modules = modules.zip(other.modules).map { (module, other) ->
+                module.copy(
+                    currentIndex = if (squashIndex) other.currentIndex else module.currentIndex,
+                )
+            },
+        ) == other
+    }
 
     fun undo() {
         if (canUndo) index--

@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -42,7 +43,9 @@ class IpcServer(val coroutineScope: CoroutineScope) {
     fun startReceive(requestFlow: MutableSharedFlow<IpcRequest>) {
         job?.cancel()
         job = coroutineScope.launch(Dispatchers.IO) {
-            while (job?.isActive == true && zContext.isClosed.not()) {
+            // `isActive` refers to this coroutine; do not read `job` here, because this body may start running
+            // before the assignment to `job` is visible.
+            while (isActive && zContext.isClosed.not()) {
                 if (hasUncaughtError) {
                     close()
                     return@launch
@@ -54,7 +57,11 @@ class IpcServer(val coroutineScope: CoroutineScope) {
                     val request = jsonForIpc.decodeFromString<IpcRequest>(message)
                     requestFlow.emit(request)
                 } catch (t: Throwable) {
-                    if (t !is CancellationException && (t as? ZMQException)?.errorCode != ZError.ETERM) {
+                    val zmqErrorCode = (t as? ZMQException)?.errorCode
+                    // ETERM: the context is being closed.
+                    // EFSM: the REP socket is waiting for `send` to be called for the previously received request,
+                    // which is expected while a request is still being handled.
+                    if (t !is CancellationException && zmqErrorCode != ZError.ETERM && zmqErrorCode != ZError.EFSM) {
                         Log.error("Failed to receive an IPC request:")
                         Log.error(t)
                     }

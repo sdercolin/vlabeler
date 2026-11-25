@@ -8,6 +8,7 @@ import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.util.json
 import com.segment.analytics.kotlin.core.utilities.safeJsonArray
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonArray
@@ -50,7 +51,14 @@ data class ImportedModule(
     }
 }
 
-fun importModulesFromProject(projectText: String): List<ImportedModule> = runCatching {
+/**
+ * Parses the importable modules from a project file's text.
+ *
+ * Throws if the text is not a structurally valid project (e.g. malformed JSON or a missing `labelerConf`), so that
+ * the caller can distinguish a parse failure from a valid project that simply has no importable entries (which
+ * returns an empty list). Individual malformed modules or entries are skipped.
+ */
+fun importModulesFromProject(projectText: String): List<ImportedModule> {
     val root = json.parseToJsonElement(projectText)
 
     val modules = mutableListOf<ImportedModule>()
@@ -84,12 +92,7 @@ fun importModulesFromProject(projectText: String): List<ImportedModule> = runCat
         }
     }
 
-    require(modules.isNotEmpty())
-
-    modules.distinctBy { it.name }
-}.getOrElse {
-    Log.error(it)
-    emptyList()
+    return modules.distinctBy { it.name }
 }
 
 private fun parseModule(element: JsonElement, continuous: Boolean, extension: String): ImportedModule? = runCatching {
@@ -117,7 +120,9 @@ private fun parseEntryArray(element: JsonElement): List<Entry>? = runCatching {
 }
 
 private fun parseEntry(element: JsonElement): Entry? = runCatching {
-    val entry = json.decodeFromJsonElement<Entry>(element)
+    // "meta" is the legacy name of "notes"; strip it before decoding so that the strict parser used in debug mode
+    // (`ignoreUnknownKeys = false`) does not fail on the unknown key before the compatibility handling below
+    val entry = json.decodeFromJsonElement<Entry>(JsonObject(element.jsonObject.filterKeys { it != "meta" }))
     val notes = if (element.jsonObject["notes"] == null) {
         // backward compatibility for "notes"
         element.jsonObject["meta"]?.let {

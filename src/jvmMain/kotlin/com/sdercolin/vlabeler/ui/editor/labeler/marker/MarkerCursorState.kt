@@ -18,6 +18,7 @@ data class MarkerCursorState(
     val lockedDrag: Boolean = false,
     val previewOnDragging: Boolean = false,
     val forcedDrag: Boolean = false,
+    val cascadingDrag: Boolean = false,
     val position: Float? = null,
     /**
      * During dragging, the index offset between the dragging point and the point index.
@@ -25,11 +26,12 @@ data class MarkerCursorState(
     val relativeDraggingIndexOffset: Int? = null,
 ) {
 
-    fun startDragging(lockedDrag: Boolean, withPreview: Boolean, forcedDrag: Boolean) = copy(
+    fun startDragging(lockedDrag: Boolean, withPreview: Boolean, forcedDrag: Boolean, cascadingDrag: Boolean) = copy(
         mouse = Mouse.Dragging,
         lockedDrag = lockedDrag,
         previewOnDragging = withPreview,
         forcedDrag = forcedDrag,
+        cascadingDrag = cascadingDrag,
         relativeDraggingIndexOffset = if (pointPosition != null && position != null) {
             if (position - pointPosition > 0) {
                 1
@@ -44,6 +46,7 @@ data class MarkerCursorState(
     fun finishDragging() = copy(
         mouse = Mouse.None,
         lockedDrag = false,
+        cascadingDrag = false,
         relativeDraggingIndexOffset = null,
     )
 

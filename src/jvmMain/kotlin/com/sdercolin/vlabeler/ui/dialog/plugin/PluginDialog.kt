@@ -72,6 +72,7 @@ import com.sdercolin.vlabeler.model.BasePlugin
 import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.FileWithEncoding
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.ModuleOperationDescriptor
 import com.sdercolin.vlabeler.model.Parameter
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
@@ -193,6 +194,60 @@ fun MacroPluginDialog(
         load = load,
         executable = executable,
         slot = args.slot,
+    ),
+)
+
+@Immutable
+data class ModuleOperationDialogArgs(
+    val descriptor: ModuleOperationDescriptor,
+    val paramMap: ParamMap,
+)
+
+@Composable
+private fun rememberModuleOperationDialogState(
+    descriptor: ModuleOperationDescriptor,
+    snackbarHostState: SnackbarHostState,
+    paramMap: ParamMap,
+    savedParamMap: ParamMap?,
+    project: Project?,
+    submit: (ParamMap?) -> Unit,
+    save: (ParamMap) -> Unit,
+    load: (ParamMap) -> Unit,
+) = remember(descriptor, paramMap, savedParamMap, submit, save, load) {
+    ModuleOperationDialogState(
+        descriptor = descriptor,
+        snackbarHostState = snackbarHostState,
+        paramMap = paramMap,
+        savedParamMap = savedParamMap,
+        project = project,
+        submit = submit,
+        save = save,
+        load = load,
+    )
+}
+
+@Composable
+fun ModuleOperationDialog(
+    appConf: AppConf,
+    appRecordStore: AppRecordStore,
+    snackbarHostState: SnackbarHostState,
+    args: ModuleOperationDialogArgs,
+    project: Project?,
+    submit: (ParamMap?) -> Unit,
+    save: (ParamMap) -> Unit,
+    load: (ParamMap) -> Unit,
+) = PluginDialog(
+    appConf = appConf,
+    appRecordStore = appRecordStore,
+    state = rememberModuleOperationDialogState(
+        descriptor = args.descriptor,
+        snackbarHostState = snackbarHostState,
+        paramMap = args.paramMap,
+        savedParamMap = args.paramMap,
+        project = project,
+        submit = submit,
+        save = save,
+        load = load,
     ),
 )
 

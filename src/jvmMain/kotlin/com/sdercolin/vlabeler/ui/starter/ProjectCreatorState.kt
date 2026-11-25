@@ -120,9 +120,10 @@ class ProjectCreatorState(
         }
         if (!workingDirectoryEdited) {
             workingDirectory = sampleDirectory
-            if (!cacheDirectoryEdited) {
-                fillInCacheDirectoryByDefault(path, projectName)
-            }
+        }
+        if (!cacheDirectoryEdited) {
+            // refresh with the possibly user-edited working directory and the refilled project name
+            fillInCacheDirectoryByDefault(workingDirectory, projectName)
         }
     }
 
@@ -197,7 +198,12 @@ class ProjectCreatorState(
         return try {
             val file = File(cacheDirectory)
             val parent = file.parent.orEmpty()
-            if (parent != workingDirectory && parent.toFile().exists().not()) return false
+            // compare as files so that e.g. a trailing separator does not create a false mismatch
+            if (File(parent).absolutePath != File(workingDirectory).absolutePath &&
+                parent.toFile().exists().not()
+            ) {
+                return false
+            }
             if (file.isFile) return false
             return file.name.isValidFileName()
         } catch (t: Throwable) {
@@ -366,7 +372,6 @@ class ProjectCreatorState(
     private fun getEncodingByLabeler(): String {
         val parser = labeler.parser
         return encodings.find { encodingNameEquals(parser.defaultEncoding, it) }
-            ?: encodings.first().takeIf { it.isNotBlank() }
             ?: encodings.first()
     }
 

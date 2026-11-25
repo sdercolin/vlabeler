@@ -49,6 +49,8 @@ class EditorState(
     val isError get() = canvasState is CanvasState.Error
     var project: Project by mutableStateOf(project)
     var editedEntries: List<IndexedEntry> by mutableStateOf(project.getEntriesForEditing().second)
+    var entryLoadedCount: Int by mutableStateOf(0)
+        private set
     private val isActive get() = appState.isEditorActive
     private val appConf get() = appState.appConf
     val keyboardViewModel = appState.keyboardViewModel
@@ -120,6 +122,9 @@ class EditorState(
 
     private val editions = mutableMapOf<Int, Edition>()
 
+    var cascadeEditions by mutableStateOf<Map<String, List<Edition>>>(emptyMap())
+        private set
+
     val onScreenScissorsState = OnScreenScissorsState(this)
 
     val canUseOnScreenScissors: Boolean
@@ -173,12 +178,37 @@ class EditorState(
         submitEntries()
     }
 
+    fun updateCascadeEditions(editions: Map<String, List<Edition>>) {
+        cascadeEditions = editions
+    }
+
+    fun submitEntriesWithCascade() {
+        val changedEntries = editedEntries - project.getEntriesForEditing().second.toSet()
+        if (changedEntries.isNotEmpty()) {
+            Log.info("Submit entries with cascade: $changedEntries, cascade modules: ${cascadeEditions.keys}")
+            appState.editEntriesWithCascade(
+                editions.values.toList().sortedBy { it.index },
+                cascadeEditions.toMap(),
+            )
+        } else if (editions.isNotEmpty()) {
+            Log.info("No entries changed, discard editions: $editions")
+        }
+        editions.clear()
+        cascadeEditions = emptyMap()
+    }
+
     fun updateEntries(editions: List<Edition>) {
         val editedEntries = this.editedEntries.associateBy { it.index }.toMutableMap()
         val editionGroups = editions.groupContinuouslyBy { index }
         editionGroups.forEach { group ->
             group.forEach { edition ->
-                editedEntries[edition.index] = edition.toIndexedEntry()
+                // Editions of entries that are not loaded for editing (e.g. a synced neighbor entry in
+                // single edit mode of a continuous labeler) should not be added to the edited entry list,
+                // otherwise the marker's entry list grows during dragging and the dragged point is
+                // reinterpreted against the wrong entry.
+                if (editedEntries.containsKey(edition.index)) {
+                    editedEntries[edition.index] = edition.toIndexedEntry()
+                }
                 this.editions[edition.index] = edition
             }
             if (project.labelerConf.continuous) {
@@ -243,6 +273,7 @@ class EditorState(
             Log.info("Load new entries: $newValues")
             editions.clear()
             editedEntries = newValues
+            entryLoadedCount++
         }
     }
 
@@ -534,6 +565,18 @@ class EditorState(
         }
         is EditorEntryContextAction.CopySampleName -> {
             Clipboard.copyToClipboard(action.sampleName)
+        }
+        is EditorEntryContextAction.SetEntriesDone -> {
+            appState.setEntriesDone(action.entryIndexes, action.done)
+        }
+        is EditorEntryContextAction.SetEntriesStar -> {
+            appState.setEntriesStar(action.entryIndexes, action.star)
+        }
+        is EditorEntryContextAction.EditEntriesTag -> {
+            appState.openEditEntriesTagDialog(action.entryIndexes, action.commonTag)
+        }
+        is EditorEntryContextAction.RemoveEntries -> {
+            appState.confirmIfRemoveEntries(action.entryIndexes)
         }
         is EditorEntryContextAction.FilterBySampleName -> {
             appState.updateEntryFilter {

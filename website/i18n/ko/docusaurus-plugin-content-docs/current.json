@@ -1,0 +1,34 @@
+{
+  "sidebar.docs.category.Getting Started": {
+    "message": "시작하기",
+    "description": "The label for category 'Getting Started' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Getting Started.link.generated-index.description": {
+    "message": "vLabeler를 설치하고 첫 프로젝트를 만들어 보세요.",
+    "description": "The generated-index page description for category 'Getting Started' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Editor": {
+    "message": "에디터",
+    "description": "The label for category 'Editor' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Editor.link.generated-index.description": {
+    "message": "vLabeler 에디터의 키보드/마우스 동작, 도구, 엔트리 탐색에 관해 다뤄요.",
+    "description": "The generated-index page description for category 'Editor' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Customization": {
+    "message": "커스터마이징",
+    "description": "The label for category 'Customization' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Customization.link.generated-index.description": {
+    "message": "라벨러, 플러그인, 사용자 정의 스크립트로 vLabeler를 확장해 보세요.",
+    "description": "The generated-index page description for category 'Customization' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Miscellaneous": {
+    "message": "기타",
+    "description": "The label for category 'Miscellaneous' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Miscellaneous.link.generated-index.description": {
+    "message": "앱 폴더, 로그, 앱 사용 기록 추적에 관해 다뤄요.",
+    "description": "The generated-index page description for category 'Miscellaneous' in sidebar 'docs'"
+  }
+}

@@ -9,10 +9,12 @@ import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.LabelerConf
+import com.sdercolin.vlabeler.model.ModuleOperationDescriptor
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.repository.update.model.Update
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
+import com.sdercolin.vlabeler.ui.dialog.EditEntriesTagDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogTarget
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogArgs
@@ -28,6 +30,7 @@ import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItem
 import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDialogState
 import com.sdercolin.vlabeler.ui.dialog.importentries.ImportEntriesDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialogArgs
+import com.sdercolin.vlabeler.ui.dialog.plugin.ModuleOperationDialogArgs
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesEditorState
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.util.ParamMap
@@ -68,6 +71,7 @@ interface AppDialogState {
     val reloadLabelDialogArgs: ReloadLabelDialogArgs?
     val macroPluginShownInDialog: MacroPluginDialogArgs?
     val macroPluginReport: LocalizedJsonString?
+    val moduleOperationShownInDialog: ModuleOperationDialogArgs?
     val customizableItemManagerTypeShownInDialog: CustomizableItem.Type?
     val embeddedDialog: EmbeddedDialogRequest<*>?
 
@@ -99,6 +103,8 @@ interface AppDialogState {
     fun openEditModuleExtraDialog()
     fun askIfSaveBeforeExit()
     fun confirmIfRemoveEntry(index: Int, name: String, isLastEntry: Boolean)
+    fun confirmIfRemoveEntries(indexes: List<Int>)
+    fun openEditEntriesTagDialog(indexes: List<Int>, commonTag: String)
     fun confirmIfLoadAutoSavedProject(file: File)
     fun confirmIfRedirectSampleDirectory(currentDirectory: File)
     fun confirmIfRemoveCustomizableItem(state: CustomizableItemManagerDialogState<*>, item: CustomizableItem)
@@ -128,6 +134,10 @@ interface AppDialogState {
     fun closeMacroPluginDialog()
     fun showMacroPluginReport(report: LocalizedJsonString)
     fun closeMacroPluginReport()
+    fun openModuleOperationDialog(descriptor: ModuleOperationDescriptor)
+    fun openModuleOperationDialog(descriptor: ModuleOperationDescriptor, params: ParamMap)
+    fun updateModuleOperationDialogInputParams(params: ParamMap)
+    fun closeModuleOperationDialog()
     fun openCustomizableItemManagerDialog(type: CustomizableItem.Type)
     fun closeCustomizableItemManagerDialog()
     fun requestClearCaches(scope: CoroutineScope)
@@ -171,7 +181,11 @@ interface AppDialogState {
             importEntriesDialogArgs != null ||
             macroPluginShownInDialog != null ||
             macroPluginReport != null ||
-            customizableItemManagerTypeShownInDialog != null ||
+            moduleOperationShownInDialog != null ||
+            (
+                customizableItemManagerTypeShownInDialog != null &&
+                    customizableItemManagerTypeShownInDialog != CustomizableItem.Type.MacroPlugin
+                ) ||
             embeddedDialog != null
 }
 
@@ -211,6 +225,7 @@ class AppDialogStateImpl(
     override var reloadLabelDialogArgs: ReloadLabelDialogArgs? by mutableStateOf(null)
     override var macroPluginShownInDialog: MacroPluginDialogArgs? by mutableStateOf(null)
     override var macroPluginReport: LocalizedJsonString? by mutableStateOf(null)
+    override var moduleOperationShownInDialog: ModuleOperationDialogArgs? by mutableStateOf(null)
     override var customizableItemManagerTypeShownInDialog: CustomizableItem.Type? by mutableStateOf(null)
     override var embeddedDialog: EmbeddedDialogRequest<*>? by mutableStateOf(null)
 
@@ -350,6 +365,7 @@ class AppDialogStateImpl(
                 invalidOptions = invalidOptions,
                 showSnackbar = { state.mainScope.launch { snackbarState.showSnackbar(it) } },
                 purpose = purpose,
+                presets = state.appConf.editor.entryNamePresets,
             ),
         )
     }
@@ -398,6 +414,12 @@ class AppDialogStateImpl(
 
     override fun confirmIfRemoveEntry(index: Int, name: String, isLastEntry: Boolean) =
         openEmbeddedDialog(CommonConfirmationDialogAction.RemoveEntry(index, name, isLastEntry))
+
+    override fun confirmIfRemoveEntries(indexes: List<Int>) =
+        openEmbeddedDialog(CommonConfirmationDialogAction.RemoveEntries(indexes))
+
+    override fun openEditEntriesTagDialog(indexes: List<Int>, commonTag: String) =
+        openEmbeddedDialog(EditEntriesTagDialogArgs(indexes, commonTag))
 
     override fun confirmIfLoadAutoSavedProject(file: File) =
         openEmbeddedDialog(CommonConfirmationDialogAction.LoadAutoSavedProject(file))
@@ -526,6 +548,24 @@ class AppDialogStateImpl(
         macroPluginShownInDialog = null
     }
 
+    override fun openModuleOperationDialog(descriptor: ModuleOperationDescriptor) {
+        scope.launch(Dispatchers.IO) {
+            openModuleOperationDialog(descriptor, descriptor.loadSavedParams(descriptor.getSavedParamsFile()))
+        }
+    }
+
+    override fun openModuleOperationDialog(descriptor: ModuleOperationDescriptor, params: ParamMap) {
+        moduleOperationShownInDialog = ModuleOperationDialogArgs(descriptor, params)
+    }
+
+    override fun updateModuleOperationDialogInputParams(params: ParamMap) {
+        moduleOperationShownInDialog = moduleOperationShownInDialog?.copy(paramMap = params)
+    }
+
+    override fun closeModuleOperationDialog() {
+        moduleOperationShownInDialog = null
+    }
+
     override fun showMacroPluginReport(report: LocalizedJsonString) {
         macroPluginReport = report
     }
@@ -600,15 +640,27 @@ class AppDialogStateImpl(
         isShowingOpenProjectDialog = false
         isShowingSaveAsProjectDialog = false
         isShowingExportDialog = false
-        isShowingSampleListDialog = false
+        isShowingImportDialog = false
         isShowingPreferencesDialog = false
         preferencesDialogArgs = null
+        isShowingSampleListDialog = false
         isShowingSampleDirectoryRedirectDialog = false
+        isShowingPrerenderDialog = false
+        isShowingEntrySampleSyncDialog = false
+        isShowingAboutDialog = false
+        isShowingLicenseDialog = false
+        isShowingQuickLaunchManagerDialog = false
+        isShowingTrackingSettingsDialog = false
+        quickEditArgs = null
+        isShowingFileNameNormalizerDialog = false
+        isShowingVideo = false
+        updaterDialogContent = null
+        importEntriesDialogArgs = null
+        reloadLabelDialogArgs = null
         macroPluginShownInDialog = null
         macroPluginReport = null
+        moduleOperationShownInDialog = null
         customizableItemManagerTypeShownInDialog = null
-        isShowingQuickLaunchManagerDialog = false
-        isShowingVideo = false
         closeEmbeddedDialog()
     }
 }

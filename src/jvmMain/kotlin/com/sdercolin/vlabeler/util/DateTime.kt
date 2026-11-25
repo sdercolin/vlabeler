@@ -2,12 +2,11 @@ package com.sdercolin.vlabeler.util
 
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 fun parseIsoTime(time: String): Long {
     val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-    return LocalDateTime.parse(time, formatter).toInstant(ZoneOffset.UTC).toEpochMilli()
+    return OffsetDateTime.parse(time, formatter).toInstant().toEpochMilli()
 }
 
 fun getLocalDate(time: Long): String {

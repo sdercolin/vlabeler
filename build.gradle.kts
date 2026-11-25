@@ -26,6 +26,7 @@ plugins {
     id("org.jetbrains.compose")
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
     id("com.github.jk1.dependency-license-report") version "2.0"
+    id("org.jetbrains.kotlinx.kover") version "0.7.6"
 }
 
 version = project.properties["app.version"] as String
@@ -49,6 +50,18 @@ kotlin {
         withJava()
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
+            // Make the bundled resources (labelers, plugins, app.conf.json) available to tests
+            // in the same way as in a packaged application. See `ResourceDir` in `util/Path.kt`.
+            systemProperty(
+                "compose.application.resources.dir",
+                project.layout.projectDirectory.dir("resources").dir("common").asFile.absolutePath,
+            )
+            // Redirect the application directory (logs, records, custom labelers/plugins) away from the real
+            // `~/vLabeler` so tests never read or write user data. See `AppDir` in `util/Path.kt`.
+            environment(
+                "VLABELER_APP_DIR",
+                project.layout.buildDirectory.dir("test-app-dir").get().asFile.absolutePath,
+            )
         }
     }
     sourceSets {
@@ -89,6 +102,58 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0")
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+                implementation(compose.uiTest)
+            }
+        }
+    }
+}
+
+// Test subsets by package, as a local development convenience to run one level in isolation.
+// They reuse the classes and classpath of the full `jvmTest` task. Note: these tasks are not instrumented by Kover
+// (it only instruments `jvmTest` in this setup), so coverage reports require a `jvmTest` run.
+fun registerTestSubset(name: String, subsetDescription: String, packages: List<String>) =
+    tasks.register(name, org.gradle.api.tasks.testing.Test::class) {
+        group = "verification"
+        description = subsetDescription
+        val jvmTest = tasks.getByName("jvmTest") as org.gradle.api.tasks.testing.Test
+        testClassesDirs = jvmTest.testClassesDirs
+        classpath = jvmTest.classpath
+        useJUnitPlatform()
+        systemProperty(
+            "compose.application.resources.dir",
+            project.layout.projectDirectory.dir("resources").dir("common").asFile.absolutePath,
+        )
+        environment(
+            "VLABELER_APP_DIR",
+            project.layout.buildDirectory.dir("test-app-dir").get().asFile.absolutePath,
+        )
+        filter { packages.forEach { includeTestsMatching("$it.*") } }
+    }
+
+registerTestSubset(
+    "unitTest",
+    "Run unit tests (util, model, env, strings, testutil)",
+    listOf("util", "model", "env", "strings", "testutil"),
+)
+registerTestSubset(
+    "integrationTest",
+    "Run integration tests (io, fixtures, plugins)",
+    listOf("io", "fixtures", "plugins"),
+)
+registerTestSubset(
+    "uiTest",
+    "Run UI tests (ui, com.sdercolin.vlabeler.ui)",
+    listOf("ui", "com.sdercolin.vlabeler.ui"),
+)
+
+koverReport {
+    defaults {
+        verify {
+            // Guards against coverage regressions; raise the bound as coverage grows (baseline: 61% on 2026-07-10).
+            rule("Minimal line coverage") {
+                minBound(59)
             }
         }
     }
@@ -144,8 +209,8 @@ compose.desktop {
                     }
 
                     when {
-                        isRpmBased -> arrayOf(TargetFormat.Rpm)
-                        isDebBased -> arrayOf(TargetFormat.Deb)
+                        isRpmBased -> arrayOf(TargetFormat.Rpm, TargetFormat.AppImage)
+                        isDebBased -> arrayOf(TargetFormat.Deb, TargetFormat.AppImage)
                         else -> arrayOf(TargetFormat.AppImage)
                     }
                 }

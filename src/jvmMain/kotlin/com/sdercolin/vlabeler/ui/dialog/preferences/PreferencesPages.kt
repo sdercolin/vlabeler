@@ -70,7 +70,7 @@ object PreferencesPages {
                     integer(
                         title = Strings.PreferencesChartsMaxDataChunkSize,
                         description = Strings.PreferencesChartsMaxDataChunkSizeDescription,
-                        defaultValue = AppConf.CanvasResolution.DEFAULT_STEP,
+                        defaultValue = AppConf.Painter.DEFAULT_MAX_DATA_CHUNK_SIZE,
                         min = AppConf.Painter.MIN_MAX_DATA_CHUNK_SIZE,
                         max = AppConf.Painter.MAX_MAX_DATA_CHUNK_SIZE,
                         select = { it.maxDataChunkSize },
@@ -726,12 +726,37 @@ object PreferencesPages {
                         select = { it.lockedSettingParameterWithCursor },
                         update = { copy(lockedSettingParameterWithCursor = it) },
                     )
+                    switch(
+                        title = Strings.PreferencesEditorClickToJumpToEntry,
+                        description = Strings.PreferencesEditorClickToJumpToEntryDescription,
+                        defaultValue = AppConf.Editor.DEFAULT_CLICK_TO_JUMP_TO_ENTRY,
+                        select = { it.clickToJumpToEntry },
+                        update = { copy(clickToJumpToEntry = it) },
+                    )
+                    selection(
+                        title = Strings.PreferencesEditorCascadedDrag,
+                        description = Strings.PreferencesEditorCascadedDragDescription,
+                        columnStyle = true,
+                        defaultValue = AppConf.Editor.DEFAULT_CASCADED_DRAG,
+                        select = { it.cascadedDrag },
+                        update = { copy(cascadedDrag = it) },
+                        options = AppConf.Editor.CascadedDrag.entries.toTypedArray(),
+                    )
                     color(
                         title = Strings.PreferencesEditorPlayerCursorColor,
                         defaultValue = AppConf.Editor.DEFAULT_PLAYER_CURSOR_COLOR,
                         useAlpha = false,
                         select = { it.playerCursorColor },
                         update = { copy(playerCursorColor = it) },
+                    )
+                    stringList(
+                        title = Strings.PreferencesEditorEntryNamePresets,
+                        description = Strings.PreferencesEditorEntryNamePresetsDescription,
+                        columnStyle = true,
+                        defaultValue = listOf(),
+                        select = { it.entryNamePresets },
+                        update = { copy(entryNamePresets = it) },
+                        importExportEnabled = true,
                     )
                 }
             }
@@ -1144,6 +1169,15 @@ object PreferencesPages {
                         select = { it.intervalSec },
                         update = { copy(intervalSec = it) },
                     )
+                    integer(
+                        title = Strings.PreferencesAutoSavePermanentBackupMaxCount,
+                        description = Strings.PreferencesAutoSavePermanentBackupMaxCountDescription,
+                        defaultValue = AppConf.AutoSave.DEFAULT_PERMANENT_BACKUP_MAX_COUNT,
+                        min = AppConf.AutoSave.MIN_PERMANENT_BACKUP_MAX_COUNT,
+                        max = AppConf.AutoSave.MAX_PERMANENT_BACKUP_MAX_COUNT,
+                        select = { it.permanentBackupMaxCount },
+                        update = { copy(permanentBackupMaxCount = it) },
+                    )
                 }
             }
     }
@@ -1386,6 +1420,30 @@ private class PreferencesItemContext<P>(
             update = updateWithContext(update),
             enabled = selectWithContext(enabled),
             validationRules = validationRules,
+        ),
+    )
+
+    fun stringList(
+        title: Strings,
+        description: Strings? = null,
+        clickableTags: List<ClickableTag> = listOf(),
+        columnStyle: Boolean = false,
+        defaultValue: List<String>,
+        select: (P) -> List<String>,
+        update: P.(List<String>) -> P,
+        enabled: (P) -> Boolean = { true },
+        importExportEnabled: Boolean = false,
+    ) = builder.item(
+        PreferencesItem.StringListInput(
+            title = title,
+            description = description,
+            clickableTags = clickableTags,
+            columnStyle = columnStyle,
+            defaultValue = defaultValue,
+            select = selectWithContext(select),
+            update = updateWithContext(update),
+            enabled = selectWithContext(enabled),
+            importExportEnabled = importExportEnabled,
         ),
     )
 

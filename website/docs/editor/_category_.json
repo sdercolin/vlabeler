@@ -1,0 +1,8 @@
+{
+  "label": "Editor",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Keyboard/mouse actions, tools, and entry navigation in the vLabeler editor."
+  }
+}

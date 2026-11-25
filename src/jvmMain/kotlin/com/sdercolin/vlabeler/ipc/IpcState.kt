@@ -12,9 +12,16 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 /**
- * State for Inter-Process Communication.
+ * State for Inter-Process Communication. Tests provide a fake implementation so that no local port is bound.
  */
-class IpcState(private val appState: AppState) {
+interface IpcState {
+    fun close()
+}
+
+/**
+ * The real [IpcState], backed by a ZeroMQ server bound to a fixed local port (see [IpcServer]).
+ */
+class IpcStateImpl(private val appState: AppState) : IpcState {
 
     private val server = IpcServer(appState.mainScope)
 
@@ -41,7 +48,7 @@ class IpcState(private val appState: AppState) {
         response(response)
     }
 
-    fun close() {
+    override fun close() {
         server.close()
     }
 }

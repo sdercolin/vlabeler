@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.ui.common.CircularProgress
 import com.sdercolin.vlabeler.ui.common.WarningTextStyle
+import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialog
 import com.sdercolin.vlabeler.ui.dialog.QuickLaunchManagerDialog
 import com.sdercolin.vlabeler.ui.dialog.ReloadLabelDialog
@@ -22,6 +23,7 @@ import com.sdercolin.vlabeler.ui.dialog.customization.CustomizableItemManagerDia
 import com.sdercolin.vlabeler.ui.dialog.importentries.ImportEntriesDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginDialog
 import com.sdercolin.vlabeler.ui.dialog.plugin.MacroPluginReportDialog
+import com.sdercolin.vlabeler.ui.dialog.plugin.ModuleOperationDialog
 import com.sdercolin.vlabeler.ui.dialog.preferences.PreferencesDialog
 import com.sdercolin.vlabeler.ui.dialog.prerender.PrerenderDialog
 import com.sdercolin.vlabeler.ui.dialog.project.ProjectSettingDialog
@@ -152,6 +154,43 @@ fun App(
                 finish = { appState.closeMacroPluginReport() },
             )
         }
+        appState.moduleOperationShownInDialog?.let { args ->
+            val snackbarHostState = remember { SnackbarHostState() }
+            ModuleOperationDialog(
+                appConf = appState.appConf,
+                appRecordStore = appState.appRecordStore,
+                snackbarHostState = snackbarHostState,
+                args = args,
+                project = appState.requireProject(),
+                submit = {
+                    mainScope.launch {
+                        appState.closeModuleOperationDialog()
+                        if (it != null) {
+                            val confirmation = args.descriptor.operation.confirmation
+                            if (confirmation != null) {
+                                val result = appState.awaitEmbeddedDialog(
+                                    CommonConfirmationDialogAction.ModuleOperationConfirmation(confirmation),
+                                )
+                                if (result == null) return@launch
+                            }
+                            appState.showProgress()
+                            withContext(Dispatchers.IO) {
+                                args.descriptor.saveParams(it, args.descriptor.getSavedParamsFile())
+                                appState.executeModuleOperation(args.descriptor, it)
+                            }
+                            appState.hideProgress()
+                        }
+                    }
+                },
+                save = {
+                    mainScope.launch(Dispatchers.IO) {
+                        appState.updateModuleOperationDialogInputParams(it)
+                        args.descriptor.saveParams(it, args.descriptor.getSavedParamsFile())
+                    }
+                },
+                load = { appState.updateModuleOperationDialogInputParams(it) },
+            )
+        }
         appState.customizableItemManagerTypeShownInDialog?.let {
             CustomizableItemManagerDialog(
                 it,
@@ -194,7 +233,7 @@ fun App(
                 finish = { result ->
                     appState.closeReloadLabelDialog()
                     if (result != null) {
-                        appState.editProject { applyReloadedEntries(args.entries, args.diff, result) }
+                        appState.applyAllReloadedEntries(args.reloads, result)
                     }
                 },
             )

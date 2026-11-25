@@ -23,6 +23,6 @@ points = [fixed, preutterance, overlap]
 points.push(start)
 
 for (sample of samples) {
-    entry = new Entry(sample, sample, start, end, points, extras)
+    entry = new Entry(sample, getNameWithoutExtension(sample), start, end, points, extras)
     output.push(entry)
 }

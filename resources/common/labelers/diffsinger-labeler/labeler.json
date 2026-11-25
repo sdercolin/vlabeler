@@ -1,0 +1,168 @@
+{
+    "name": "diffsinger.default",
+    "version": 4,
+    "serialVersion": 3,
+    "singleFile": false,
+    "extension": "lab",
+    "defaultInputFilePath": null,
+    "displayedName": {
+        "en": "DiffSinger lab labeler",
+        "zh": "DiffSinger lab 标注器",
+        "ja": "DiffSinger lab ラベラー",
+        "ko": "DiffSinger lab 라벨러"
+    },
+    "author": "Maiko",
+    "email": "maikotattun@yahoo.co.jp",
+    "description": {
+        "en": "This is a DiffSinger labeler that creates a lab file for each wav file. Place multiple wav files and their corresponding lab files with the same names within a single folder, then set it as the sample directory.",
+        "ja": "wav ファイルごとに lab ファイルを作成するタイプの DiffSinger ラベラーです。1つのフォルダ内に複数の wav ファイルと、同名の lab ファイル郡を入れ、サンプルディレクトリとして設定してください。"
+    },
+    "website": "https://github.com/sdercolin/vlabeler/tree/main/resources/common/labelers",
+    "displayOrder": 0,
+    "continuous": true,
+    "allowSameNameEntry": true,
+    "defaultEntryName": "SP",
+    "defaultValues": [
+        0,
+        0
+    ],
+    "fields": [],
+    "extraFields": [],
+    "lockedDrag": {
+        "useDragBase": false,
+        "useStart": false
+    },
+    "decimalDigit": 4,
+    "entrySimilarityWeights": {
+        "name": 0,
+        "sample": 0.5,
+        "start": 0.25,
+        "end": 0.25,
+        "points": [],
+        "extras": [],
+        "tag": 0,
+        "threshold": 0.75
+    },
+    "properties": [
+        {
+            "name": "start",
+            "displayedName": "Start",
+            "valueGetter": [
+                "value = entry.start"
+            ],
+            "valueSetter": [
+                "entry.start = value"
+            ],
+            "shortcutIndex": 0
+        },
+        {
+            "name": "end",
+            "displayedName": "End",
+            "valueGetter": [
+                "value = entry.end"
+            ],
+            "valueSetter": [
+                "entry.end = value"
+            ],
+            "shortcutIndex": 1
+        }
+    ],
+    "parser": {
+        "scope": "Entry",
+        "defaultEncoding": "UTF-8",
+        "extractionPattern": "(.*) (.*) (.*)",
+        "variableNames": [
+            "left",
+            "right",
+            "name"
+        ],
+        "scripts": "parser.js"
+    },
+    "writer": {
+        "scope": "Entry",
+        "scripts": "writer.js"
+    },
+    "parameters": [
+        {
+            "parameter": {
+                "name": "defaultEntryName",
+                "type": "string",
+                "label": {
+                    "en": "Default entry name",
+                    "zh": "默认条目名称",
+                    "ja": "デフォルトエントリ名",
+                    "ko": "기본 엔트리 이름"
+                },
+                "defaultValue": "SP",
+                "optional": true
+            },
+            "injector": "defaultEntryName-injector.js",
+            "changeable": true
+        }
+    ],
+    "projectConstructor": {
+        "scripts": "projectConstructor.js"
+    },
+    "moduleManagement": {
+        "add": {
+            "parameters": [
+                {
+                    "type": "rawFile",
+                    "name": "wavFile",
+                    "label": {
+                        "en": "wav file to add",
+                        "zh": "要添加的 wav 文件",
+                        "ja": "追加する wav ファイル",
+                        "ko": "추가할 wav 파일"
+                    },
+                    "description": {
+                        "en": "Select a wav file in the project's sample directory that is not included in the project yet. If a lab file with the same name exists, it is loaded as well.",
+                        "zh": "选择一个位于该项目的采样目录中且尚未被包含在项目中的 wav 文件。如果存在同名的 lab 文件，也会被一并加载。",
+                        "ja": "プロジェクトのサンプルディレクトリにある、まだプロジェクトに含まれていない wav ファイルを選択してください。同名の lab ファイルがある場合は、同時に読み込まれます。",
+                        "ko": "프로젝트의 샘플 폴더에 있는, 아직 프로젝트에 포함되지 않은 wav 파일을 선택해 주세요. 같은 이름의 lab 파일이 있으면 함께 불러와요."
+                    },
+                    "defaultValue": "",
+                    "optional": false,
+                    "acceptExtensions": [
+                        "wav"
+                    ]
+                }
+            ],
+            "scripts": "addModule.js"
+        },
+        "rename": {
+            "parameters": [
+                {
+                    "type": "string",
+                    "name": "newName",
+                    "label": {
+                        "en": "New name",
+                        "zh": "新名称",
+                        "ja": "新しい名前",
+                        "ko": "새 이름"
+                    },
+                    "defaultValue": "",
+                    "optional": false
+                }
+            ],
+            "confirmation": {
+                "en": "The wav file and the lab file of the current subproject will be renamed on disk accordingly. This operation cannot be undone, and the undo history of the project will be cleared. Continue?",
+                "zh": "当前子项目对应的 wav 文件和 lab 文件将在磁盘上被重命名。此操作无法撤销，且项目的撤销历史将被清空。是否继续？",
+                "ja": "現在のサブプロジェクトの wav ファイルと lab ファイルはディスク上でリネームされます。この操作は元に戻せず、プロジェクトの取り消し履歴はクリアされます。続行しますか？",
+                "ko": "현재 하위 프로젝트의 wav 파일과 lab 파일의 이름이 디스크에서 변경됩니다. 이 작업은 되돌릴 수 없으며, 프로젝트의 실행 취소 기록이 지워집니다. 계속하시겠습니까?"
+            },
+            "irreversible": true,
+            "scripts": "renameModule.js"
+        },
+        "remove": {
+            "confirmation": {
+                "en": "The wav file and the lab file of the current subproject will be deleted from disk. This operation cannot be undone, and the undo history of the project will be cleared. Continue?",
+                "zh": "当前子项目对应的 wav 文件和 lab 文件将从磁盘中删除。此操作无法撤销，且项目的撤销历史将被清空。是否继续？",
+                "ja": "現在のサブプロジェクトの wav ファイルと lab ファイルはディスクから削除されます。この操作は元に戻せず、プロジェクトの取り消し履歴はクリアされます。続行しますか？",
+                "ko": "현재 하위 프로젝트의 wav 파일과 lab 파일이 디스크에서 삭제됩니다. 이 작업은 되돌릴 수 없으며, 프로젝트의 실행 취소 기록이 지워집니다. 계속하시겠습니까?"
+            },
+            "irreversible": true,
+            "scripts": "removeModule.js"
+        }
+    }
+}

@@ -21,17 +21,20 @@ import com.sdercolin.vlabeler.io.loadProject
 import com.sdercolin.vlabeler.io.openCreatedProject
 import com.sdercolin.vlabeler.io.saveProjectFile
 import com.sdercolin.vlabeler.ipc.IpcState
+import com.sdercolin.vlabeler.ipc.IpcStateImpl
 import com.sdercolin.vlabeler.ipc.request.OpenOrCreateRequest
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.AppRecord
 import com.sdercolin.vlabeler.model.Arguments
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.MacroPluginExecutionListener
+import com.sdercolin.vlabeler.model.ModuleOperationDescriptor
 import com.sdercolin.vlabeler.model.Plugin
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.runMacroPlugin
+import com.sdercolin.vlabeler.model.runModuleOperation
 import com.sdercolin.vlabeler.repository.ConvertedAudioRepository
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.tracking.TrackingService
@@ -45,6 +48,7 @@ import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogPurpose
 import com.sdercolin.vlabeler.ui.dialog.AskIfSaveDialogResult
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogAction
 import com.sdercolin.vlabeler.ui.dialog.CommonConfirmationDialogResult
+import com.sdercolin.vlabeler.ui.dialog.EditEntriesTagDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogResult
 import com.sdercolin.vlabeler.ui.dialog.EditExtraDialogTarget
 import com.sdercolin.vlabeler.ui.dialog.EmbeddedDialogResult
@@ -102,6 +106,10 @@ class AppState(
     snackbarState: AppSnackbarState = AppSnackbarStateImpl(snackbarHostState),
     dialogState: AppDialogState = AppDialogStateImpl(unsavedChangesState, projectStore, snackbarState),
     updaterState: AppUpdaterState = AppUpdaterStateImpl(appConf, snackbarState, dialogState, appRecordStore, mainScope),
+    // Factory for the IPC state. It needs the fully-constructed AppState, so it is passed as a factory rather than a
+    // value. The default builds the real IPC server (which binds a fixed local port); tests pass a factory that
+    // returns a fake [IpcState] so no port is bound.
+    ipcStateFactory: (AppState) -> IpcState = { IpcStateImpl(it) },
 ) : AppErrorState by errorState,
     AppViewState by viewState,
     AppScreenState by screenState,
@@ -134,7 +142,7 @@ class AppState(
         errorState,
     ) { toggleVideoPopup(false) }
 
-    private val ipcState: IpcState = IpcState(this)
+    private val ipcState: IpcState = ipcStateFactory(this)
     val trackingState = TrackingState(appRecordStore, mainScope)
 
     fun validate() {
@@ -280,6 +288,7 @@ class AppState(
                         invalidOptions = invalidOptions,
                         showSnackbar = showSnackbar,
                         purpose = InputEntryNameDialogPurpose.CutFormer,
+                        presets = appConf.editor.entryNamePresets,
                     ),
                 )
                 (result as InputEntryNameDialogResult?)?.name ?: return@launch
@@ -298,6 +307,7 @@ class AppState(
                         invalidOptions = invalidOptions,
                         showSnackbar = showSnackbar,
                         purpose = InputEntryNameDialogPurpose.CutLatter,
+                        presets = appConf.editor.entryNamePresets,
                     ),
                 )
                 (result as InputEntryNameDialogResult?)?.name ?: return@launch
@@ -357,8 +367,12 @@ class AppState(
             is MoveEntryDialogResult -> {
                 moveEntry(result.oldIndex, result.newIndex)
             }
+            is EditEntriesTagDialogResult -> {
+                editEntriesTag(result.indexes, result.tag)
+            }
             is CommonConfirmationDialogResult -> when (val action = result.action) {
                 is CommonConfirmationDialogAction.RemoveEntry -> removeEntry(action.entryIndex)
+                is CommonConfirmationDialogAction.RemoveEntries -> removeEntries(action.entryIndexes)
                 is CommonConfirmationDialogAction.LoadAutoSavedProject -> {
                     loadProject(mainScope, action.file, this, autoSaved = true)
                     hasLoadedAutoSavedProject = true
@@ -376,6 +390,9 @@ class AppState(
                 is CommonConfirmationDialogAction.ClearAppRecord -> {
                     RecordDir.deleteRecursivelyLogged()
                     exit()
+                }
+                is CommonConfirmationDialogAction.ModuleOperationConfirmation -> {
+                    // Always awaited by the caller, nothing to do here
                 }
                 CommonConfirmationDialogAction.LabelFileChangeDetected -> {
                     // Always awaited
@@ -516,6 +533,23 @@ class AppState(
         trackMacroPluginExecution(plugin, params, quickLaunch = slot != null)
     }
 
+    fun executeModuleOperation(descriptor: ModuleOperationDescriptor, params: ParamMap) {
+        val newProject = runCatching {
+            runModuleOperation(descriptor, params, requireProject(), onReport = { showMacroPluginReport(it) })
+        }
+            .getOrElse {
+                showError(it)
+                return
+            }
+        val previousProject = project
+        editProject { newProject }
+        if (descriptor.operation.irreversible && project != previousProject) {
+            // an irreversible operation has changed files on disk, so undoing to a state that is inconsistent
+            // with the changed files is not safe
+            history.new(requireProject())
+        }
+    }
+
     private fun consumeArguments(arguments: Arguments) {
         if (arguments.file != null) {
             val file = arguments.file
@@ -602,7 +636,7 @@ class AppState(
                 return false
             }
             result.save -> {
-                saveProjectFile(project)
+                saveProjectFile(project, maxBackupFileCount = appConf.autoSave.permanentBackupMaxCount)
             }
         }
         return true

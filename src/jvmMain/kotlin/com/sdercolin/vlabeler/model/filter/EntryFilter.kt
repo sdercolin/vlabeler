@@ -94,8 +94,7 @@ data class EntryFilter(
 
     fun getFilteredIndexes(entries: List<Entry>, labelerConf: LabelerConf): List<Int> {
         if (advanced != null) {
-            val js = JavaScript()
-            return advanced.select(entries, labelerConf, js)
+            return JavaScript().use { js -> advanced.select(entries, labelerConf, js) }
         }
         return entries.indices.filter { matchBasic(entries[it]) }
     }

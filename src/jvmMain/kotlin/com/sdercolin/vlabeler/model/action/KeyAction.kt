@@ -53,6 +53,26 @@ enum class KeyAction(
         null,
         true,
     ),
+    ModuleManagementAdd(
+        listOf(Strings.MenuFile, Strings.MenuFileModuleManagement, Strings.MenuFileModuleManagementAdd),
+        null,
+        true,
+    ),
+    ModuleManagementRename(
+        listOf(Strings.MenuFile, Strings.MenuFileModuleManagement, Strings.MenuFileModuleManagementRename),
+        null,
+        true,
+    ),
+    ModuleManagementRemove(
+        listOf(Strings.MenuFile, Strings.MenuFileModuleManagement, Strings.MenuFileModuleManagementRemove),
+        null,
+        true,
+    ),
+    ModuleManagementDuplicate(
+        listOf(Strings.MenuFile, Strings.MenuFileModuleManagement, Strings.MenuFileModuleManagementDuplicate),
+        null,
+        true,
+    ),
     ReloadLabelFilePickFile(
         listOf(Strings.MenuFile, Strings.MenuFileReloadLabelFilePickFile),
         null,
@@ -65,6 +85,16 @@ enum class KeyAction(
     ),
     ReloadLabelFileDefaultWithoutConfirmation(
         listOf(Strings.MenuFile, Strings.MenuFileReloadLabelFileDefaultWithoutConfirmation),
+        null,
+        true,
+    ),
+    ReloadLabelFileAllModules(
+        listOf(Strings.MenuFile, Strings.MenuFileReloadLabelFileAllModules),
+        null,
+        true,
+    ),
+    ReloadLabelFileAllModulesWithoutConfirmation(
+        listOf(Strings.MenuFile, Strings.MenuFileReloadLabelFileAllModulesWithoutConfirmation),
         null,
         true,
     ),
@@ -412,6 +442,8 @@ enum class KeyAction(
         KeySet(Key.P),
         false,
     ),
+    SetCurrentEntryLeft(listOf(Strings.ActionSetCurrentEntryLeft), null, false),
+    SetCurrentEntryRight(listOf(Strings.ActionSetCurrentEntryRight), null, false),
     SetProperty1(listOf(Strings.ActionSetProperty1), null, false),
     SetProperty2(listOf(Strings.ActionSetProperty2), null, false),
     SetProperty3(listOf(Strings.ActionSetProperty3), null, false),

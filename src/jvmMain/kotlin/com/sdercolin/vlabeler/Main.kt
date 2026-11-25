@@ -46,6 +46,7 @@ import com.sdercolin.vlabeler.io.loadAppConf
 import com.sdercolin.vlabeler.io.produceAppState
 import com.sdercolin.vlabeler.io.runMigration
 import com.sdercolin.vlabeler.model.AppRecord
+import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.parseArgs
 import com.sdercolin.vlabeler.tracking.event.LaunchEvent
@@ -66,8 +67,13 @@ import com.sdercolin.vlabeler.util.parseJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.awt.datatransfer.DataFlavor
+import java.awt.dnd.DnDConstants
+import java.awt.dnd.DropTarget
+import java.awt.dnd.DropTargetDropEvent
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
+import java.io.File
 
 var hasUncaughtError = false
 
@@ -120,6 +126,7 @@ fun main(vararg args: String) = application {
             onKeyEvent = onKeyEvent,
         ) {
             LaunchWindowFocusListener(appState)
+            LaunchDragAndDropListener(mainScope, appState)
             LaunchSaveWindowSize(windowState, appRecordStore)
             Menu(mainScope, appState, appConf.value.view)
 
@@ -196,6 +203,43 @@ private fun LaunchSaveWindowSize(
         snapshotFlow { windowState.size }
             .onEach(appRecordStore::saveWindowSize)
             .launchIn(this)
+    }
+}
+
+@Composable
+private fun WindowScope.LaunchDragAndDropListener(mainScope: CoroutineScope, appState: AppState?) {
+    DisposableEffect(appState) {
+        if (appState != null) {
+            window.dropTarget = object : DropTarget() {
+                @Synchronized
+                override fun drop(event: DropTargetDropEvent) {
+                    runCatching {
+                        if (!event.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                            event.rejectDrop()
+                            return
+                        }
+                        event.acceptDrop(DnDConstants.ACTION_COPY)
+                        val files = (event.transferable.getTransferData(DataFlavor.javaFileListFlavor) as? List<*>)
+                            ?.filterIsInstance<File>()
+                            .orEmpty()
+                        val projectFile = files.firstOrNull {
+                            it.isFile && it.extension == Project.PROJECT_FILE_EXTENSION
+                        }
+                        event.dropComplete(projectFile != null)
+                        if (projectFile != null) {
+                            Log.info("Project file dropped: ${projectFile.absolutePath}")
+                            appState.requestOpenCertainProject(mainScope, projectFile)
+                        }
+                    }.onFailure {
+                        Log.error(it)
+                        runCatching { event.dropComplete(false) }
+                    }
+                }
+            }
+        }
+        onDispose {
+            window.dropTarget = null
+        }
     }
 }
 

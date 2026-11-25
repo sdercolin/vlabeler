@@ -103,6 +103,8 @@ fun MarkerPointEventContainer(
                         tool,
                         event,
                         editorState::submitEntries,
+                        editorState::submitEntriesWithCascade,
+                        { editorState.cascadeEditions.isNotEmpty() },
                         appState.player,
                         editorState::cutEntry,
                         keyboardState,
@@ -115,6 +117,7 @@ fun MarkerPointEventContainer(
                     tool,
                     event,
                     editorState::updateEntries,
+                    editorState::updateCascadeEditions,
                     screenRange,
                     playByCursor,
                     horizontalScrollState,
@@ -125,13 +128,23 @@ fun MarkerPointEventContainer(
                 )
             }
             .onPointerEvent(PointerEventType.Press) { event ->
-                state.handleMousePress(tool, keyboardState, event, state.labelerConf, appState.appConf, screenRange)
+                state.handleMousePress(
+                    tool,
+                    keyboardState,
+                    event,
+                    state.labelerConf,
+                    appState.appConf,
+                    screenRange,
+                    editorState,
+                )
             }
             .onPointerEvent(PointerEventType.Release) { event ->
                 state.handleMouseRelease(
                     tool,
                     event,
                     editorState::submitEntries,
+                    editorState::submitEntriesWithCascade,
+                    { editorState.cascadeEditions.isNotEmpty() },
                     appState.player,
                     editorState::cutEntry,
                     keyboardState,
@@ -515,6 +528,7 @@ private fun MarkerState.handleMouseMove(
     tool: Tool,
     event: PointerEvent,
     editions: (List<Edition>) -> Unit,
+    updateCascadeEditions: (Map<String, List<Edition>>) -> Unit,
     screenRange: FloatRange?,
     playByCursor: (Float) -> Unit,
     scrollState: ScrollState,
@@ -525,7 +539,7 @@ private fun MarkerState.handleMouseMove(
 ) {
     screenRange ?: return
     when (tool) {
-        Tool.Cursor -> handleCursorMove(event, editions, screenRange, playByCursor, density)
+        Tool.Cursor -> handleCursorMove(event, editions, updateCascadeEditions, screenRange, playByCursor, density)
         Tool.Scissors -> handleScissorsMove(event, screenRange, commitEntryCut, density, appConf)
         Tool.Pan -> handlePanMove(event, scrollState, scope)
         Tool.Playback -> handlePlaybackMove(event, screenRange)
@@ -535,6 +549,7 @@ private fun MarkerState.handleMouseMove(
 private fun MarkerState.handleCursorMove(
     event: PointerEvent,
     editions: (List<Edition>) -> Unit,
+    updateCascadeEditions: (Map<String, List<Edition>>) -> Unit,
     screenRange: FloatRange,
     playByCursor: (Float) -> Unit,
     density: Density,
@@ -557,6 +572,29 @@ private fun MarkerState.handleCursorMove(
             method = Edition.Method.Dragging,
             pointIndex = cursorState.value.pointIndex,
         )
+        if (cursorState.value.cascadingDrag) {
+            val pointIndex = cursorState.value.pointIndex
+            val originalPosition = cursorState.value.pointPosition
+            if (originalPosition != null) {
+                val snappedPosition = when {
+                    pointIndex == START_POINT_INDEX -> updated.firstOrNull()?.getActualStart(labelerConf)
+                    pointIndex == END_POINT_INDEX -> updated.lastOrNull()?.getActualEnd(labelerConf)
+                    isBorderIndex(pointIndex) -> {
+                        val (_, secondEntryIndex) = getEntryIndexesByBorderIndex(pointIndex)
+                        updated.getOrNull(secondEntryIndex)?.start
+                    }
+                    else -> null
+                }
+                if (snappedPosition != null) {
+                    val cascade = computeCascadeEditions(snappedPosition, originalPosition)
+                    updateCascadeEditions(cascade)
+                } else {
+                    updateCascadeEditions(emptyMap())
+                }
+            }
+        } else {
+            updateCascadeEditions(emptyMap())
+        }
         if (cursorState.value.previewOnDragging) {
             playByCursor(entryConverter.convertToFrame(actualX))
         }
@@ -632,9 +670,10 @@ private fun MarkerState.handleMousePress(
     labelerConf: LabelerConf,
     appConf: AppConf,
     screenRange: FloatRange?,
+    editorState: EditorState,
 ) {
     when (tool) {
-        Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf)
+        Tool.Cursor -> handleCursorPress(keyboardState, event, labelerConf, appConf, screenRange, editorState)
         Tool.Scissors -> Unit
         Tool.Pan -> handlePanPress(event)
         Tool.Playback -> handlePlaybackPress(keyboardState, screenRange, event)
@@ -646,10 +685,19 @@ private fun MarkerState.handleCursorPress(
     event: PointerEvent,
     labelerConf: LabelerConf,
     appConf: AppConf,
+    screenRange: FloatRange?,
+    editorState: EditorState,
 ) {
     val action = keyboardState.getEnabledMouseClickAction(event) ?: return
     if (action.canMoveParameter()) {
         val cursorStateValue = cursorState.value
+        if (cursorStateValue.mouse != MarkerCursorState.Mouse.Hovering) {
+            // Not grabbing a point/border to drag, so a click on an entry body may switch the current entry.
+            // This is intentionally skipped while hovering a point: dragging a (possibly shared) border should not
+            // change the current entry, which otherwise switched to the previous entry when its start border was
+            // grabbed.
+            maybeJumpToClickedEntry(appConf, screenRange, event, editorState)
+        }
         if (cursorStateValue.mouse == MarkerCursorState.Mouse.Hovering) {
             val invertLockedDrag = action == MouseClickAction.MoveParameterInvertingPrimary
             val lockedDrag = when (appConf.editor.lockedDrag) {
@@ -666,8 +714,33 @@ private fun MarkerState.handleCursorPress(
             } xor invertLockedDrag
             val withPreview = action == MouseClickAction.MoveParameterWithPlaybackPreview
             val forcedDrag = action == MouseClickAction.MoveParameterIgnoringConstraints
-            cursorState.update { startDragging(lockedDrag, withPreview, forcedDrag) }
+            val cascadingDrag = when (appConf.editor.cascadedDrag) {
+                AppConf.Editor.CascadedDrag.Disabled ->
+                    action == MouseClickAction.MoveParameterInvertingCascaded
+                AppConf.Editor.CascadedDrag.Enabled ->
+                    action != MouseClickAction.MoveParameterInvertingCascaded
+            } && !forcedDrag
+            cursorState.update { startDragging(lockedDrag, withPreview, forcedDrag, cascadingDrag) }
         }
+    }
+}
+
+private fun MarkerState.maybeJumpToClickedEntry(
+    appConf: AppConf,
+    screenRange: FloatRange?,
+    event: PointerEvent,
+    editorState: EditorState,
+) {
+    if (!appConf.editor.clickToJumpToEntry || entries.size <= 1 || screenRange == null) return
+    // Derive the click position from the press event itself (not the hover-driven cursorState.position),
+    // so the jump also works when the mouse is pressed without any preceding move.
+    val position = event.changes.first().position.x + screenRange.start
+    val indexInGroup = getEntryIndexByCursorPosition(position) ?: return
+    val targetIndex = entries[indexInGroup].index
+    // Skip when the clicked entry is already current; jumpToEntry would otherwise re-trigger the
+    // auto-centering scroll for a no-op jump.
+    if (targetIndex != editorState.project.currentModule.currentIndex) {
+        editorState.jumpToEntry(editorState.project.currentModule.name, targetIndex)
     }
 }
 
@@ -695,6 +768,8 @@ private fun MarkerState.handleMouseRelease(
     tool: Tool,
     event: PointerEvent,
     submitEntry: () -> Unit,
+    submitEntryWithCascade: () -> Unit,
+    hasCascadeEditions: () -> Boolean,
     audioSectionPlayer: AudioSectionPlayer,
     cutEntry: (Int, position: Float, pixelPosition: Float) -> Unit,
     keyboardState: KeyboardState,
@@ -704,7 +779,7 @@ private fun MarkerState.handleMouseRelease(
     screenRange ?: return
     val caughtAction = keyboardState.getEnabledMouseClickAction(event)
     val handled = when (tool) {
-        Tool.Cursor -> handleCursorRelease(submitEntry)
+        Tool.Cursor -> handleCursorRelease(submitEntry, submitEntryWithCascade, hasCascadeEditions)
         Tool.Scissors -> handleScissorsRelease(canUseOnScreenScissors, cutEntry, event)
         Tool.Pan -> handlePanRelease()
         Tool.Playback -> {
@@ -727,9 +802,16 @@ private fun MarkerState.handleMouseRelease(
 
 private fun MarkerState.handleCursorRelease(
     submitEntry: () -> Unit,
+    submitEntryWithCascade: () -> Unit,
+    hasCascadeEditions: () -> Boolean,
 ): Boolean = if (cursorState.value.mouse == MarkerCursorState.Mouse.Dragging) {
+    val wasCascading = cursorState.value.cascadingDrag
     cursorState.update { finishDragging() }
-    submitEntry()
+    if (wasCascading && hasCascadeEditions()) {
+        submitEntryWithCascade()
+    } else {
+        submitEntry()
+    }
     true
 } else {
     false
@@ -817,7 +899,8 @@ private fun MarkerState.handleScissorsCut(
     cutEntry(entryIndex, timePosition, position)
 }
 
-private fun MarkerState.editEntryIfNeeded(
+// internal for testing: this is the drag-result -> Edition conversion, the core of committing a drag operation
+internal fun MarkerState.editEntryIfNeeded(
     updated: List<EntryInPixel>,
     editEntries: (List<Edition>) -> Unit,
     method: Edition.Method,
@@ -833,14 +916,32 @@ private fun MarkerState.editEntryIfNeeded(
             else -> labelerConf.fields[pointIndex].name
         }
 
+        fun getChangedFieldNames(entry: EntryInPixel): List<String> {
+            val original = entriesInPixel.first { it.index == entry.index }
+            return buildList {
+                if (entry.start != original.start) add("start")
+                labelerConf.fields.forEachIndexed { index, field ->
+                    if (entry.points[index] != original.points[index]) add(field.name)
+                }
+                if (entry.end != original.end) add("end")
+            }
+        }
+
         val editions = edited.map { entry ->
             val entryInMillis = entryConverter.convertToMillis(entry)
             val entryIndexInEdited = updated.indexOfFirst { it.index == entry.index }
-            val editedFieldName = getEditedFieldName(getPointIndexAsSingleEntry(entryIndexInEdited, pointIndex))
+            val pointIndexAsSingleEntry = getPointIndexAsSingleEntry(entryIndexInEdited, pointIndex)
+            val fieldNames = if (pointIndexAsSingleEntry == MarkerCursorState.NONE_POINT_INDEX) {
+                // this entry does not own the dragged point (e.g. it is co-moved by a locked drag),
+                // so list the fields that actually changed instead
+                getChangedFieldNames(entry)
+            } else {
+                listOf(getEditedFieldName(pointIndexAsSingleEntry))
+            }
             Edition(
                 entry.index,
                 entryInMillis.entry,
-                fieldNames = listOf(editedFieldName),
+                fieldNames = fieldNames,
                 method = method,
             )
         }.toMutableList()

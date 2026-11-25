@@ -16,10 +16,21 @@ fun Strings.ja(): String? = when (this) {
     MenuFileSaveAs -> "名前を付けて保存..."
     MenuFileProjectSetting -> "プロジェクト設定..."
     MenuFileImportProject -> "プロジェクトをインポート..."
+    MenuFileModuleManagement -> "サブプロジェクトの管理（実験的）"
+    MenuFileModuleManagementAdd -> "サブプロジェクトを追加..."
+    MenuFileModuleManagementRename -> "このサブプロジェクトの名前を編集..."
+    MenuFileModuleManagementRemove -> "このサブプロジェクトを削除..."
+    MenuFileModuleManagementDuplicate -> "このサブプロジェクトを複製..."
+    ModuleOperationAddDefaultName -> "サブプロジェクトを追加"
+    ModuleOperationRenameDefaultName -> "このサブプロジェクトの名前を編集"
+    ModuleOperationRemoveDefaultName -> "このサブプロジェクトを削除"
+    ModuleOperationDuplicateDefaultName -> "このサブプロジェクトを複製"
     MenuFileReloadLabelFile -> "ラベルファイルを再読み込み"
     MenuFileReloadLabelFilePickFile -> "ファイルから..."
     MenuFileReloadLabelFileDefault -> "出力先ファイルから..."
     MenuFileReloadLabelFileDefaultWithoutConfirmation -> "出力先ファイルから（確認なし）"
+    MenuFileReloadLabelFileAllModules -> "すべてのサブプロジェクトの出力先ファイルから..."
+    MenuFileReloadLabelFileAllModulesWithoutConfirmation -> "すべてのサブプロジェクトの出力先ファイルから（確認なし）"
     MenuFileExport -> "ラベルファイルをエクスポート..."
     MenuFileExportOverwrite -> "ラベルファイルを上書きエクスポート"
     MenuFileExportOverwriteAll -> "すべてのラベルファイルを上書きエクスポート"
@@ -202,6 +213,8 @@ fun Strings.ja(): String? = when (this) {
         "エントリ「%s」を削除します。\n" +
             "このエントリはサンプルに紐付けられている唯一のエントリのため、削除すると、サンプルはプロジェクトから消えますが、" +
             "メニュー「表示」->「サンプルリスト」で確認・再度追加できます。"
+    AskIfRemoveEntriesDialogDescription -> "%d 個のエントリを削除します。"
+    EditEntriesTagDialogDescription -> "選択した %d 個のエントリのタグを設定します。空にするとタグがクリアされます。"
     AskIfLoadAutoSavedProjectDialogDescription ->
         "自動保存されたプロジェクトファイルが見つかりました。読み込みますか？" +
             "このファイルは、他のプロジェクトを開く・新規作成するときに削除されます。"
@@ -460,6 +473,19 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditor -> "エディタ"
     PreferencesEditorDescription -> "エディタの表示と動作をカスタマイズします。"
     PreferencesEditorPlayerCursorColor -> "再生カーソルの色"
+    PreferencesEditorEntryNamePresets -> "エントリ名のプリセット"
+    PreferencesEditorEntryNamePresetsDescription ->
+        "エントリ名を入力するダイアログ（エントリの名前変更やカット時など）で、すばやく適用できるエントリ名のプリセットです。"
+    PreferencesStringListEmptyPlaceholder -> "項目がありません"
+    PreferencesStringListNewItemPlaceholder -> "新しい項目..."
+    PreferencesStringListImport -> "ファイルからインポート"
+    PreferencesStringListExport -> "ファイルにエクスポート"
+    PreferencesStringListImportDialogTitle -> "ファイルからインポート"
+    PreferencesStringListExportDialogTitle -> "ファイルにエクスポート"
+    PreferencesStringListImportSuccess -> "項目をインポートしました。"
+    PreferencesStringListImportFailure -> "選択したファイルのインポートに失敗しました。"
+    PreferencesStringListExportSuccess -> "項目をエクスポートしました。"
+    PreferencesStringListExportFailure -> "選択したファイルへのエクスポートに失敗しました。"
     PreferencesEditorLockedDrag -> "連動ドラッグ"
     PreferencesEditorLockedDragDescription ->
         "連動ドラッグを有効にする条件を選択します。" +
@@ -470,6 +496,15 @@ fun Strings.ja(): String? = when (this) {
     PreferencesEditorLockedSettingParameterWithCursor -> "カーソル位置に設定する場合も連動ドラッグを有効にする"
     PreferencesEditorLockedSettingParameterWithCursorDescription ->
         "「パラメータをカーソル位置に設定」ショートカットでパラメータを設定するときにも、連動ドラッグ設定を適用します。"
+    PreferencesEditorClickToJumpToEntry -> "クリックでエントリーへ移動"
+    PreferencesEditorClickToJumpToEntryDescription ->
+        "複数エントリー編集モードで、キャンバス上のエントリーをクリックすると現在のエントリーになります。"
+    PreferencesEditorCascadedDrag -> "カスケードドラッグ"
+    PreferencesEditorCascadedDragDescription ->
+        "並列サブプロジェクトの枠線に対するカスケードドラッグを有効にするかどうかを選択します。\n" +
+            "「カスケードドラッグを有効」に設定すると、並列サブプロジェクト間で揃っている枠線が一緒に移動します。"
+    PreferencesEditorCascadedDragDisabled -> "単一の枠線のみドラッグ"
+    PreferencesEditorCascadedDragEnabled -> "カスケードドラッグを有効"
     PreferencesEditorNotes -> "備考"
     PreferencesEditorNotesDescription -> "エントリの備考（スターマーク、完了、タグ、追加情報）に関する表示と動作をカスタマイズします。"
     PreferencesEditorShowDone -> "\"完了\"状態を表示"
@@ -547,6 +582,10 @@ fun Strings.ja(): String? = when (this) {
     PreferencesAutoSaveTargetProject -> "プロジェクトファイルに上書き"
     PreferencesAutoSaveTargetRecord -> "一時ファイル"
     PreferencesAutoSaveIntervalSec -> "間隔（秒）"
+    PreferencesAutoSavePermanentBackupMaxCount -> "保存されるバックアップの最大数"
+    PreferencesAutoSavePermanentBackupMaxCountDescription ->
+        "プロジェクトファイルが自動保存または手動保存されるときにバックアップが保存されます。 " +
+            "制限を超えた場合、最も古いバックアップが削除されます。"
     PreferencesAutoReload -> "自動再読み込み"
     PreferencesAutoReloadDescription -> "該当のラベルファイルに変更がある時の自動再読み込みの動作をカスタマイズします。"
     PreferencesAutoReloadBehavior -> "動作"
@@ -601,8 +640,8 @@ fun Strings.ja(): String? = when (this) {
     ActionInputResolution -> "キャンパス解像度を入力"
     ActionCancelDialog -> "ダイアログを閉じる"
     ActionScissorsCut -> "カーソル位置でカット"
-    ActionSetValue1 -> "パラメータ1をカーソル位置に設定"
-    ActionSetValue2 -> "パラメータ2をカーソル位置に設定"
+    ActionSetValue1 -> "パラメータ1をカーソル位置に設定（複数エントリー編集モードではカーソル位置のエントリーの左境界）"
+    ActionSetValue2 -> "パラメータ2をカーソル位置に設定（複数エントリー編集モードではカーソル位置のエントリーの右境界）"
     ActionSetValue3 -> "パラメータ3をカーソル位置に設定"
     ActionSetValue4 -> "パラメータ4をカーソル位置に設定"
     ActionSetValue5 -> "パラメータ5をカーソル位置に設定"
@@ -611,6 +650,8 @@ fun Strings.ja(): String? = when (this) {
     ActionSetValue8 -> "パラメータ8をカーソル位置に設定"
     ActionSetValue9 -> "パラメータ9をカーソル位置に設定"
     ActionSetValue10 -> "パラメータ10をカーソル位置に設定"
+    ActionSetCurrentEntryLeft -> "現在のエントリーの左境界をカーソル位置に設定（複数エントリー編集モード）"
+    ActionSetCurrentEntryRight -> "現在のエントリーの右境界をカーソル位置に設定（複数エントリー編集モード）"
     ActionSetProperty1 -> "プロパティ1の値を入力"
     ActionSetProperty2 -> "プロパティ2の値を入力"
     ActionSetProperty3 -> "プロパティ3の値を入力"
@@ -633,6 +674,7 @@ fun Strings.ja(): String? = when (this) {
     ActionMoveParameterWithPlaybackPreview -> "パラメータラインをドラッグ（プレビュー再生）"
     ActionMoveParameterIgnoringConstraints -> "パラメータラインをドラッグ（制約を無視）"
     ActionMoveParameterInvertingLocked -> "パラメータラインをドラッグ（連動ドラグ設定を反転）"
+    ActionMoveParameterInvertingCascaded -> "パラメータラインをドラッグ（カスケードドラッグ設定を反転）"
     ActionPlayAudioSection -> "クリック位置の部分の音声を再生"
     ActionPlayAudioUntilEnd -> "クリック位置から最後までの音声を再生"
     ActionPlayAudioUntilScreenEnd -> "クリック位置から画面の最後までの音声を再生"
@@ -776,5 +818,11 @@ fun Strings.ja(): String? = when (this) {
     EditorContextActionFilterUnstarred -> "スターマークのないエントリをフィルター"
     EditorContextActionFilterDone -> "完了したエントリをフィルター"
     EditorContextActionFilterUndone -> "未完了のエントリをフィルター"
+    EditorContextActionSetEntriesDone -> "%d 個のエントリを完了にする"
+    EditorContextActionSetEntriesUndone -> "%d 個のエントリを未完了にする"
+    EditorContextActionSetEntriesStarred -> "%d 個のエントリにスターマークを付ける"
+    EditorContextActionSetEntriesUnstarred -> "%d 個のエントリのスターマークを外す"
+    EditorContextActionEditEntriesTag -> "%d 個のエントリのタグを設定..."
+    EditorContextActionRemoveEntries -> "%d 個のエントリを削除..."
     else -> null
 }

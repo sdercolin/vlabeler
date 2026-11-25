@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.editor.labeler
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CenterFocusWeak
 import androidx.compose.material.icons.filled.Expand
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.ui.AppState
+import com.sdercolin.vlabeler.util.runIf
 
 @Composable
 fun BottomBar(state: BottomBarState, appState: AppState) {
@@ -45,13 +48,70 @@ fun BottomBar(state: BottomBarState, appState: AppState) {
             modifier = Modifier.fillMaxWidth().height(30.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            if (state.shouldShowModuleNavigation) {
+                Box(
+                    Modifier.width(30.dp).fillMaxHeight()
+                        .clickable(
+                            enabled = state.canGoPreviousModule,
+                            onClick = state.goPreviousModule,
+                        )
+                        .padding(start = 8.dp),
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = "<",
+                        style = MaterialTheme.typography.caption,
+                    )
+                }
+                Box(
+                    Modifier.fillMaxHeight()
+                        .widthIn(min = 85.dp)
+                        .clickable { state.openJumpToModuleDialog() }
+                        .padding(horizontal = 5.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.align(Alignment.Center),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(12.dp),
+                            imageVector = Icons.Default.Folder,
+                            contentDescription = null,
+                        )
+                        Spacer(Modifier.width(5.dp))
+                        Text(
+                            text = "${state.currentModuleIndex + 1} / ${state.moduleCount}",
+                            style = MaterialTheme.typography.caption,
+                        )
+                    }
+                }
+                Box(
+                    Modifier.width(30.dp).fillMaxHeight()
+                        .clickable(
+                            enabled = state.canGoNextModule,
+                            onClick = state.goNextModule,
+                        ),
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = ">",
+                        style = MaterialTheme.typography.caption,
+                    )
+                }
+                Box(
+                    Modifier.padding(horizontal = 5.dp)
+                        .width(1.dp)
+                        .height(16.dp)
+                        .background(color = MaterialTheme.colors.onSurface.copy(alpha = 0.2f)),
+                )
+            }
             Box(
                 Modifier.width(30.dp).fillMaxHeight()
                     .clickable(
                         enabled = state.canGoPrevious,
                         onClick = state.goPreviousSample,
                     )
-                    .padding(start = 8.dp),
+                    .runIf(!state.shouldShowModuleNavigation) { padding(start = 8.dp) },
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),

@@ -1,12 +1,18 @@
 package com.sdercolin.vlabeler.ui.dialog
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
@@ -21,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextRange
@@ -30,6 +37,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.ui.common.ConfirmButton
 import com.sdercolin.vlabeler.ui.string.*
+import com.sdercolin.vlabeler.ui.theme.White20
 import com.sdercolin.vlabeler.util.removeControlCharacters
 
 data class InputEntryNameDialogArgs(
@@ -38,6 +46,7 @@ data class InputEntryNameDialogArgs(
     val invalidOptions: List<String>,
     val showSnackbar: (String) -> Unit,
     val purpose: InputEntryNameDialogPurpose,
+    val presets: List<String> = listOf(),
 ) : EmbeddedDialogArgs
 
 enum class InputEntryNameDialogPurpose(val stringKey: Strings) {
@@ -53,6 +62,7 @@ data class InputEntryNameDialogResult(
     val purpose: InputEntryNameDialogPurpose,
 ) : EmbeddedDialogResult<InputEntryNameDialogArgs>
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InputEntryNameDialog(
     args: InputEntryNameDialogArgs,
@@ -101,6 +111,29 @@ fun InputEntryNameDialog(
                 onDone = { trySubmit() },
             ),
         )
+        if (args.presets.isNotEmpty()) {
+            Spacer(Modifier.height(15.dp))
+            FlowRow(
+                modifier = Modifier.widthIn(max = 400.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                args.presets.forEach { preset ->
+                    Text(
+                        text = preset,
+                        modifier = Modifier
+                            .background(color = White20, shape = RoundedCornerShape(12.dp))
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                input = TextFieldValue(preset, selection = TextRange(0, preset.length))
+                                focusRequester.requestFocus()
+                            }
+                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                        style = MaterialTheme.typography.caption,
+                    )
+                }
+            }
+        }
         Spacer(Modifier.height(25.dp))
         Row(modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.End) {
             TextButton(

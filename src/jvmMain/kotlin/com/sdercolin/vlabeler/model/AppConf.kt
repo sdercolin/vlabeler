@@ -349,6 +349,9 @@ data class AppConf(
      * @param showTag When true, the tag or "New tag" button is shown in the editor and entry lists.
      * @param showExtra When true, the extra editor button/icon is shown in the editor and entry lists.
      * @param continuousLabelNames Appearance of the label names in the editor for continuous labelers.
+     * @param clickToJumpToEntry When true, clicking an entry on the canvas in multiple entry edit mode makes it the
+     *    current entry.
+     * @param entryNamePresets Preset entry names that can be quickly applied in entry name input dialogs.
      */
     @Serializable
     @Immutable
@@ -360,7 +363,9 @@ data class AppConf(
         val scissorsSubmitThreshold: Int = DEFAULT_SCISSORS_SUBMIT_THRESHOLD,
         val autoScroll: AutoScroll = AutoScroll(),
         val lockedDrag: LockedDrag = DEFAULT_LOCKED_DRAG,
+        val cascadedDrag: CascadedDrag = DEFAULT_CASCADED_DRAG,
         val lockedSettingParameterWithCursor: Boolean = DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR,
+        val clickToJumpToEntry: Boolean = DEFAULT_CLICK_TO_JUMP_TO_ENTRY,
         val showDone: Boolean = DEFAULT_SHOW_DONE,
         val showStar: Boolean = DEFAULT_SHOW_STAR,
         val showTag: Boolean = DEFAULT_SHOW_TAG,
@@ -378,6 +383,7 @@ data class AppConf(
             color = DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_COLOR,
             width = DEFAULT_CURSOR_POSITION_ENTRY_BORDER_HIGHLIGHT_WIDTH,
         ),
+        val entryNamePresets: List<String> = listOf(),
     ) {
 
         /**
@@ -398,6 +404,16 @@ data class AppConf(
 
         @Serializable
         @Immutable
+        enum class CascadedDrag(override val stringKey: Strings) : LocalizedText {
+            @SerialName("Disabled")
+            Disabled(Strings.PreferencesEditorCascadedDragDisabled),
+
+            @SerialName("Enabled")
+            Enabled(Strings.PreferencesEditorCascadedDragEnabled),
+        }
+
+        @Serializable
+        @Immutable
         data class EntryBorderHighlight(
             val enabled: Boolean,
             val color: String,
@@ -412,7 +428,9 @@ data class AppConf(
             const val MIN_SCISSORS_SUBMIT_THRESHOLD = 1
             const val MAX_SCISSORS_SUBMIT_THRESHOLD = 50
             val DEFAULT_LOCKED_DRAG = LockedDrag.UseLabeler
+            val DEFAULT_CASCADED_DRAG = CascadedDrag.Disabled
             const val DEFAULT_LOCKED_SETTING_PARAMETER_WITH_CURSOR = true
+            const val DEFAULT_CLICK_TO_JUMP_TO_ENTRY = false
             const val DEFAULT_SHOW_DONE = true
             const val DEFAULT_SHOW_STAR = true
             const val DEFAULT_SHOW_TAG = true
@@ -679,6 +697,7 @@ data class AppConf(
     data class AutoSave(
         val target: Target = DEFAULT_TARGET,
         val intervalSec: Int = DEFAULT_INTERVAL_SEC,
+        val permanentBackupMaxCount: Int = DEFAULT_PERMANENT_BACKUP_MAX_COUNT,
     ) {
         /**
          * Targets of the auto-save.
@@ -710,6 +729,9 @@ data class AppConf(
             val DEFAULT_TARGET = Target.Record
             const val DEFAULT_INTERVAL_SEC = 30
             const val MIN_INTERVAL_SEC = 1
+            const val DEFAULT_PERMANENT_BACKUP_MAX_COUNT = 0
+            const val MIN_PERMANENT_BACKUP_MAX_COUNT = 0
+            const val MAX_PERMANENT_BACKUP_MAX_COUNT = 100
         }
     }
 

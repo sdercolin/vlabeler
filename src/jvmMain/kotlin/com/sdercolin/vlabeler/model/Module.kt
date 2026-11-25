@@ -344,6 +344,27 @@ data class Module(
         return copy(entries = entries.toMutableList().apply { this[index] = editedEntry })
     }
 
+    fun setEntriesDone(indexes: List<Int>, done: Boolean): Module {
+        val entries = entries.toMutableList()
+        indexes.forEach { entries[it] = entries[it].copy(notes = entries[it].notes.copy(done = done)) }
+        return copy(entries = entries)
+    }
+
+    fun setEntriesStar(indexes: List<Int>, star: Boolean): Module {
+        val entries = entries.toMutableList()
+        indexes.forEach { entries[it] = entries[it].copy(notes = entries[it].notes.copy(star = star)) }
+        return copy(entries = entries)
+    }
+
+    fun editEntriesTag(indexes: List<Int>, tag: String): Module {
+        val entries = entries.toMutableList()
+        indexes.forEach { entries[it] = entries[it].tagEdited(tag) }
+        return copy(entries = entries)
+    }
+
+    fun removeEntries(indexes: List<Int>, labelerConf: LabelerConf): Module =
+        indexes.sortedDescending().fold(this) { module, index -> module.removeEntry(index, labelerConf) }
+
     fun validate(multipleEditMode: Boolean, labelerConf: LabelerConf): Module {
         // Check multiMode enabled
         if (multipleEditMode) require(

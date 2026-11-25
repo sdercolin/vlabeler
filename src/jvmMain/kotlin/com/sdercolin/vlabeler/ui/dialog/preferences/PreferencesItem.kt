@@ -147,6 +147,32 @@ sealed class PreferencesItem(
         validationRules,
     )
 
+    class StringListInput(
+        title: Strings,
+        description: Strings?,
+        clickableTags: List<ClickableTag>,
+        columnStyle: Boolean,
+        defaultValue: List<String>,
+        select: (AppConf) -> List<String>,
+        update: AppConf.(List<String>) -> AppConf,
+        enabled: (AppConf) -> Boolean,
+        /**
+         * When true, import/export buttons are shown, allowing the list to be read from / written to a plain-text file
+         * with one item per line.
+         */
+        val importExportEnabled: Boolean = false,
+    ) : Valued<List<String>>(
+        title,
+        description,
+        clickableTags,
+        columnStyle,
+        defaultValue,
+        select,
+        update,
+        enabled,
+        validationRules = listOf(),
+    )
+
     class ColorStringInput(
         title: Strings,
         description: Strings?,

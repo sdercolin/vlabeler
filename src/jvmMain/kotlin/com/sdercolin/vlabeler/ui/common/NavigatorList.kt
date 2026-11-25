@@ -35,8 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isCtrlPressed
+import androidx.compose.ui.input.pointer.isMetaPressed
 import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -58,18 +61,33 @@ interface NavigatorListState<S : ContextMenuSubject<A>, A : ContextMenuAction<A>
 
     val labelerConf: LabelerConf
 
+    val allowMultiSelection: Boolean get() = false
+    val multiSelectedIndexes: Set<Int> get() = emptySet()
+    fun multiSelectToggle(index: Int) {}
+    fun multiSelectRange(index: Int) {}
+    fun multiSelectClear() {}
+
     fun submit(index: Int)
     fun updateProject(project: Project)
     fun calculateResult(): Pair<Boolean, List<S>>
-    fun updateSearch() {
+
+    /**
+     * Recalculates the displayed results and updates the highlighted item.
+     *
+     * @param selectFirst when true (the user is actively typing a search query), the first result is highlighted so
+     *   that pressing Enter jumps to the top match. When false (the list is being opened or the current entry/module
+     *   changed via navigation), the current entry/module is highlighted instead, giving a useful pre-selection.
+     */
+    fun updateSearch(selectFirst: Boolean = false) {
         val (active, newResults) = calculateResult()
         searchResult = newResults
-        selectedIndex = if (hasFocus) {
-            if (newResults.isNotEmpty()) 0 else null
-        } else {
-            newResults.indexOfFirst { it.index == currentIndex }.takeIf { it >= 0 }
+        selectedIndex = when {
+            newResults.isEmpty() -> null
+            selectFirst -> 0
+            else -> newResults.indexOfFirst { it.index == currentIndex }.takeIf { it >= 0 }
         }
         isFiltered = active
+        multiSelectClear()
     }
 
     fun submitCurrent() {
@@ -124,6 +142,7 @@ fun <S : ContextMenuSubject<A>, A : ContextMenuAction<A>> ColumnScope.NavigatorL
                     val isHovered by hoverInteractionSource.collectIsHoveredAsState()
                     val backgroundColor = when {
                         index == state.selectedIndex -> MaterialTheme.colors.primaryVariant
+                        index in state.multiSelectedIndexes -> MaterialTheme.colors.primaryVariant.alpha(0.7f)
                         isHovered -> MaterialTheme.colors.primaryVariant.alpha(0.5f)
                         else -> null
                     }
@@ -136,8 +155,30 @@ fun <S : ContextMenuSubject<A>, A : ContextMenuAction<A>> ColumnScope.NavigatorL
                             .hoverable(hoverInteractionSource)
                             .padding(end = 20.dp)
                             .onPointerEvent(PointerEventType.Press) {
-                                if (it.buttons.isPrimaryPressed.not() || it.buttons.isSecondaryPressed) {
+                                if (it.buttons.isSecondaryPressed) {
+                                    // Right-clicking outside the multi-selection dismisses it, so that
+                                    // the context menu targets the item under the cursor.
+                                    if (index !in state.multiSelectedIndexes) {
+                                        state.multiSelectClear()
+                                    }
                                     return@onPointerEvent
+                                }
+                                if (it.buttons.isPrimaryPressed.not()) {
+                                    return@onPointerEvent
+                                }
+                                if (state.allowMultiSelection) {
+                                    val modifiers = it.keyboardModifiers
+                                    when {
+                                        modifiers.isCtrlPressed || modifiers.isMetaPressed -> {
+                                            state.multiSelectToggle(index)
+                                            return@onPointerEvent
+                                        }
+                                        modifiers.isShiftPressed -> {
+                                            state.multiSelectRange(index)
+                                            return@onPointerEvent
+                                        }
+                                        else -> state.multiSelectClear()
+                                    }
                                 }
                                 pressedIndex = index
                                 state.selectedIndex = index

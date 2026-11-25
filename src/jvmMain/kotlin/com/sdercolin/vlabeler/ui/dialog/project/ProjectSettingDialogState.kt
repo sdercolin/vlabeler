@@ -80,7 +80,8 @@ class ProjectSettingDialogState(
     val isOutputFileValid: Boolean
         get() {
             return try {
-                val outputFile = outputFile ?: return true
+                // an empty output file means "no output file", the same as null (see createNewProject)
+                val outputFile = outputFile?.ifEmpty { null } ?: return true
                 val parent = outputFile.toFile().parentFile ?: return false
                 return parent.isDirectory
             } catch (e: Exception) {
