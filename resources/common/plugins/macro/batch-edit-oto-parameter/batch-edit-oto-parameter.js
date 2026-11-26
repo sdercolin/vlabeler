@@ -124,6 +124,12 @@ for (let index of selectedEntryIndexes) {
 
     edited.start = Math.min(...edited.points, edited.start)
 
+    // the labeler reads the cutoff from extras[0] (rawRight) when end is relative to the sample end
+    if (edited.end <= 0) {
+        edited.needSync = true
+        edited.extras = [String(-edited.end), ...edited.extras.slice(1)]
+    }
+
     if (debug) {
         console.log(`Edited: ${JSON.stringify(edited)}`)
     }
