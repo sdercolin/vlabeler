@@ -4,6 +4,7 @@ import com.sdercolin.vlabeler.exception.PluginRuntimeException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 /**
  * Integration tests for the bundled "batch-edit-oto-parameter" macro plugin.
@@ -85,6 +86,43 @@ class MacroPluginBatchEditOtoParameterTest : MacroPluginTestBase() {
         assertEquals(listOf(570f, 650f, 490f, 450f), entries[1].points) // 100 -> 200
         assertEquals(listOf(110f, 170f, 40f, 10f), entries[2].points)
         assertEquals(listOf(570f, 650f, 430f, 450f), entries[3].points)
+    }
+
+    @Test
+    fun testSetPositiveCutoffUpdatesRawRight() {
+        val plugin = loadMacroPlugin("batch-edit-oto-parameter")
+        val project = createUtauSingerProject()
+        val params = plugin.paramsWith(
+            "parameter" to "cutoff",
+            "expression" to "123",
+            "keepDistance" to false,
+        )
+
+        val result = runMacro(plugin, params, project)
+
+        // a positive cutoff is relative to the sample end, and is written from extras[0] (rawRight) by the labeler
+        result.currentModule.entries.forEach {
+            assertEquals(-123f, it.end)
+            assertEquals("123", it.extras[0])
+            assertTrue(it.needSync)
+        }
+    }
+
+    @Test
+    fun testSetNegativeCutoffKeepsAbsoluteEnd() {
+        val plugin = loadMacroPlugin("batch-edit-oto-parameter")
+        val project = createUtauSingerProject()
+        val params = plugin.paramsWith(
+            "parameter" to "cutoff",
+            "expression" to "-200",
+            "keepDistance" to false,
+        )
+
+        val result = runMacro(plugin, params, project)
+
+        val entries = result.currentModule.entries
+        assertEquals(210f, entries[0].end)
+        assertEquals(650f, entries[1].end)
     }
 
     @Test
